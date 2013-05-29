@@ -136,15 +136,23 @@
       <xsl:otherwise>  <!-- Otherwise, render the main navigation as a widget (generally assumes the context is the sidebar). -->
       
       	<div id="portalNavigation" class="fl-widget">
-        	<div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
-          	<div class="fl-widget-titlebar">
-                <h2>
-                    <xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/>
-                </h2>
-                <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
-                    <a href="javascript:;" title="upMsg:getMessage('add.tab', $USER_LANG)" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
-                </xsl:if>
-          	</div>
+          <div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
+            <div class="fl-widget-titlebar">
+              <xsl:choose>
+                <xsl:when test="$USE_SIDEBAR_TOGGLE='true'">
+                  <a href="javascript:;" title="{upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)}">
+                    <span class="icon"></span>
+                    <h2><xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/></h2>
+                    <span class="labelopen"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.open', $USER_LANG)"/></span>
+                    <span class="labelclose"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)"/></span>
+                   </a>
+                 </xsl:when>
+                <xsl:otherwise><h2><xsl:value-of select="upMsg:getMessage('navigation', $USER_LANG)"/></h2></xsl:otherwise>
+              </xsl:choose>
+              <xsl:if test="$AUTHENTICATED='true' and $USE_ADD_TAB='true' and not(//focused)">
+                <a href="javascript:;" title="upMsg:getMessage('add.tab', $USER_LANG)" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/></a>
+              </xsl:if>
+            </div>
             <div class="fl-widget-content">
               <ul id="portalNavigationList" class="fl-listmenu flc-reorderer-column">
                  <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">

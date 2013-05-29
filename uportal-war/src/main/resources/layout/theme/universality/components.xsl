@@ -376,8 +376,18 @@
   	<xsl:if test="upAuth:canRender($USER_ID, 'portlet-admin') or upGroup:isUserDeepMemberOfGroupName($USER_ID, 'Fragment Owners')">
       <div id="portalAdminLinks" class="fl-widget">
         <div class="fl-widget-inner">
-        	<div class="fl-widget-titlebar">
-          	<h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2>
+          <div class="fl-widget-titlebar">
+            <xsl:choose>
+              <xsl:when test="$USE_SIDEBAR_TOGGLE='true'">
+                <a href="javascript:;" title="{upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)}">
+                  <span class="icon"></span>
+                  <h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2>
+                  <span class="labelopen"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.open', $USER_LANG)"/></span>
+                  <span class="labelclose"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)"/></span>
+                </a>
+              </xsl:when>
+              <xsl:otherwise><h2><xsl:value-of select="upMsg:getMessage('administration', $USER_LANG)"/></h2></xsl:otherwise>
+            </xsl:choose>
           </div>
           <div class="fl-widget-content">
             <ul class="fl-listmenu">
@@ -415,16 +425,26 @@
   	<xsl:if test="count(/layout/navigation/descendant::tabChannel[@quicklink > 0]) > 0"> <!-- Write out markup only if one or more quicklinks exist. -->
       <div id="portalQuicklinks" class="fl-widget">
       	<div class="fl-widget-inner">
-        	<div class="fl-widget-titlebar">
-        		<h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2>
+          <div class="fl-widget-titlebar">
+            <xsl:choose>
+              <xsl:when test="$USE_SIDEBAR_TOGGLE='true'">
+                <a href="javascript:;" title="{upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)}">
+                  <span class="icon"></span>
+                  <h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2>
+                  <span class="labelopen"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.open', $USER_LANG)"/></span>
+                  <span class="labelclose"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)"/></span>
+                </a>
+              </xsl:when>
+              <xsl:otherwise><h2><xsl:value-of select="upMsg:getMessage('quicklinks', $USER_LANG)"/></h2></xsl:otherwise>
+            </xsl:choose>
           </div>
-        	<div class="fl-widget-content">
+          <div class="fl-widget-content">
             <ul class="fl-listmenu">  <!-- Navigation list. -->
               <xsl:apply-templates select="/layout/navigation/descendant::tabChannel[@quicklink > 0]" mode="quicklink"> <!-- Selects from the XML only those portlets with the matching quicklink parameter. -->
                 <xsl:sort select="@quicklink" order="ascending" /> <!-- Sorts the subsequent array in ascending order by the value of the quicklink parameter. -->
               </xsl:apply-templates>
             </ul>
-      		</div>
+      	  </div>
         </div>
       </div>
     </xsl:if>
@@ -478,7 +498,17 @@
         <div id="portalSidebarGroupLinks{position()}" class="fl-widget">
           <div class="fl-widget-inner">
             <div class="fl-widget-titlebar">
-              <h2><xsl:value-of select="@name"/></h2>
+              <xsl:choose>
+                <xsl:when test="$USE_SIDEBAR_TOGGLE='true'">
+                  <a href="javascript:;" title="{upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)}">
+                    <span class="icon"></span>
+                    <h2><xsl:value-of select="@name"/></h2>
+                    <span class="labelopen"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.open', $USER_LANG)"/></span>
+                    <span class="labelclose"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)"/></span>
+                  </a>
+                </xsl:when>
+                <xsl:otherwise><h2><xsl:value-of select="@name"/></h2></xsl:otherwise>
+              </xsl:choose>
             </div>
             <div class="fl-widget-content">
               <ul class="fl-listmenu">
@@ -531,7 +561,17 @@
     <div id="webSearchContainer" class="fl-widget">
       <div class="fl-widget-inner">
       	<div class="fl-widget-titlebar">
-      		<h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2>
+          <xsl:choose>
+            <xsl:when test="$USE_SIDEBAR_TOGGLE='true'">
+              <a href="javascript:;" title="{upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)}">
+                 <span class="icon"></span>
+                 <h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2>
+                 <span class="labelopen"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.open', $USER_LANG)"/></span>
+                 <span class="labelclose"><xsl:value-of select="upMsg:getMessage('sidebar.titlebar.close', $USER_LANG)"/></span>
+               </a>
+             </xsl:when>
+             <xsl:otherwise><h2><label for="webSearchInput"><xsl:value-of select="upMsg:getMessage('web.search', $USER_LANG)"/></label></h2></xsl:otherwise>
+          </xsl:choose>
         </div>
         <div class="fl-widget-content">
             <xsl:variable name="searchUrl">
