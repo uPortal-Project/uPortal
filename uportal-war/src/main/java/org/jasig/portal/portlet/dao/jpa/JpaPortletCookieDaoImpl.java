@@ -176,7 +176,9 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 		logger.debug("finished purging {} portal cookies with expiration before {}", deletedPortalCookies, now);
 		
 		final Query deleteEmptyPortalCookieQuery = entityManager.createQuery(this.deleteEmptyPortalCookieQueryString);
-		final DateTime emptyExpiration = now.minusSeconds(maxAge).plusSeconds(emptyCookieMaxAge);
+		//Add the maxAge to now and then subtract the emptyCookieMaxAge
+		//For example (now + 1 year) - 1 day == the empty-cookie expiration date 
+		final DateTime emptyExpiration = now.plusSeconds(maxAge).minusSeconds(emptyCookieMaxAge);
         deleteEmptyPortalCookieQuery.setParameter(this.nowParameter.getName(), emptyExpiration);
 		final int deletedEmptyPortalCookies = deleteEmptyPortalCookieQuery.executeUpdate();
 		logger.debug("finished purging {} empty portal cookies with expiration before {}", deletedEmptyPortalCookies, emptyExpiration);
