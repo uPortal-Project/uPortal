@@ -100,7 +100,17 @@
             <description>Order in quicklinks list in portal sidebar</description>
             <single-text-parameter-input display="text"/>
         </parameter>
-    
+   
+	<parameter>
+            <name>printable</name>
+            <label>portlet.print.enable</label>
+            <single-choice-parameter-input display="select">
+                <default>false</default>
+                <option value="false" label="false"/>
+                <option value="true" label="true"/>
+            </single-choice-parameter-input>
+        </parameter>
+ 
     </step>
     
 </portlet-publishing-definition>
