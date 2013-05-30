@@ -98,4 +98,5 @@
   <js>javascript/uportal/flyout-nav.js</js>
   <js>javascript/uportal/up-translator.js</js>
   <js>javascript/uportal/up-sidebar-improved.js</js>
+  <js>javascript/uportal/up-print-plugin.js</js>
 </resources>
