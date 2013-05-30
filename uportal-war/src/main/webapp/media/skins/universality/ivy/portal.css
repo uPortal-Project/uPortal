@@ -1339,7 +1339,7 @@
   float: left;
   height: 16px;
   width: 16px;
-  background-image: url("../common/images/portlet_icons_flat.png");
+  background-image: url("../common/images/portlet_icons_with_printflat.png");
   background-repeat: no-repeat;
   background-position: 0 0;
 }
@@ -1402,6 +1402,12 @@
 }
 .up .up-portlet-wrapper .up-portlet-titlebar .return:hover .icon, .up .up-portlet-wrapper .up-portlet-titlebar .return:focus .icon {
   background-position: -144px -16px;
+}
+.up .up-portlet-wrapper .up-portlet-titlebar .print .icon {
+  background-position: -160px 0px;
+}
+.up .up-portlet-wrapper .up-portlet-titlebar .print:hover .icon, .up .up-portlet-wrapper .up-portlet-titlebar .print:focus .icon {
+  background-position: -160px -16px;
 }
 .up .up-portlet-wrapper .up-portlet-content-wrapper {
   margin: 0;
