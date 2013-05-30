@@ -336,6 +336,8 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
             entityManager.remove(existingQuarterDetail);
         }
         
+        entityManager.flush();
+        
         //Add all new QDs that were not in the existing set
         for (final QuarterDetail newQuarterDetail : newQuarterDetails) {
             entityManager.persist(newQuarterDetail);
@@ -360,10 +362,10 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
         final Set<AcademicTermDetailImpl> existingAcademicTermDetails = new HashSet<AcademicTermDetailImpl>(query.getResultList());
         
         for (final Iterator<AcademicTermDetail> newAcademicTermDetailsItr = newAcademicTermDetails.iterator(); newAcademicTermDetailsItr.hasNext();) {
-            final AcademicTermDetail AcademicTermDetail = newAcademicTermDetailsItr.next();
+            final AcademicTermDetail academicTermDetail = newAcademicTermDetailsItr.next();
             
             //If ATD exists in both new and existing remove it from both
-            if (existingAcademicTermDetails.remove(AcademicTermDetail)) {
+            if (existingAcademicTermDetails.remove(academicTermDetail)) {
                 newAcademicTermDetailsItr.remove();
             }
         }
@@ -374,6 +376,8 @@ public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao imple
         for (final AcademicTermDetailImpl existingAcademicTermDetail : existingAcademicTermDetails) {
             entityManager.remove(existingAcademicTermDetail);
         }
+        
+        entityManager.flush();
         
         //Add all new ATDs that were not in the existing set
         for (final AcademicTermDetail newAcademicTermDetail : newAcademicTermDetails) {

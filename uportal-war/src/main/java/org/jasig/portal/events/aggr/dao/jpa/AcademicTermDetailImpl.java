@@ -172,9 +172,8 @@ public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable 
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.endDateMidnight == null) ? 0 : this.endDateMidnight.hashCode());
-        result = prime * result + ((this.startDateMidnight == null) ? 0 : this.startDateMidnight.hashCode());
-        result = prime * result + ((this.termName == null) ? 0 : this.termName.hashCode());
+        result = prime * result + ((end == null) ? 0 : end.hashCode());
+        result = prime * result + ((start == null) ? 0 : start.hashCode());
         return result;
     }
 
@@ -184,26 +183,20 @@ public class AcademicTermDetailImpl implements AcademicTermDetail, Serializable 
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof AcademicTermDetail))
             return false;
-        AcademicTermDetailImpl other = (AcademicTermDetailImpl) obj;
-        if (this.endDateMidnight == null) {
-            if (other.endDateMidnight != null)
+        AcademicTermDetail other = (AcademicTermDetail) obj;
+        if (getEnd() == null) {
+            if (other.getEnd() != null)
                 return false;
         }
-        else if (!this.endDateMidnight.equals(other.endDateMidnight))
+        else if (!getEnd().equals(other.getEnd()))
             return false;
-        if (this.startDateMidnight == null) {
-            if (other.startDateMidnight != null)
+        if (getStart() == null) {
+            if (other.getStart() != null)
                 return false;
         }
-        else if (!this.startDateMidnight.equals(other.startDateMidnight))
-            return false;
-        if (this.termName == null) {
-            if (other.termName != null)
-                return false;
-        }
-        else if (!this.termName.equals(other.termName))
+        else if (!getStart().equals(other.getStart()))
             return false;
         return true;
     }
