@@ -53,7 +53,15 @@ public enum CharacterEventTypes {
      */
     PORTLET_HEADER,
     /**
-     * @see JsonLayoutPlaceholderEvent
+     * @see org.jasig.portal.json.rendering.JsonLayoutPlaceholderEvent
      */
-    JSON_LAYOUT;
+    JSON_LAYOUT,
+    /**
+     * @see PortletAnalyticsDataPlaceholderEvent 
+     */
+    PORTLET_ANALYTICS_DATA,
+    /**
+     * @see PageAnalyticsDataPlaceholderEvent 
+     */
+    PAGE_ANALYTICS_DATA;
 }

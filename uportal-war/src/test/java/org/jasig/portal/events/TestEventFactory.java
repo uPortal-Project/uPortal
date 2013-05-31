@@ -42,7 +42,7 @@ public final class TestEventFactory {
     public static LoginEvent newLoginEvent(Object source, String serverName, String eventSessionId, IPerson person, 
             Set<String> groups, Map<String, List<String>> attributes) {
         
-        final PortalEventBuilder portalEventBuilder = new PortalEventBuilder(source, serverName, eventSessionId, person);
+        final PortalEventBuilder portalEventBuilder = new PortalEventBuilder(source, serverName, eventSessionId, person, null);
         return new LoginEvent(portalEventBuilder, groups, attributes);
     }
     

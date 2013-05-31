@@ -216,7 +216,7 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
     private static final long EVENT_DELAY = 100;
     protected List<PortalEvent> generateEvents() throws Exception {
         final String sessionId = "1234567890123_system_AAAAAAAAAAA";
-        final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE);
+        final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE, null);
         
         final Set<String> groups = ImmutableSet.of("Student", "Employee");
         final Map<String, List<String>> attributes = ImmutableMap.of("username", (List<String>)ImmutableList.of("system"), "roles", (List<String>)ImmutableList.of("student", "employee"));

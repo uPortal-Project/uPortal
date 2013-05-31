@@ -105,7 +105,7 @@ public class UserFilteringPortalEventHandlerTest {
 
         public static class TestPortalEventBuilder extends PortalEventBuilder {
             public TestPortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
-                super(source, serverName, eventSessionId, person);
+                super(source, serverName, eventSessionId, person, null);
             }
         }
     }

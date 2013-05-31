@@ -614,7 +614,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     public String getPortletHeadOutput(IPortletWindowId portletWindowId,
     		HttpServletRequest request, HttpServletResponse response) {
     	if(doesPortletNeedHeaderWorker(portletWindowId, request)) {
-    		final IPortletRenderExecutionWorker tracker = getRenderedPortletHeader(portletWindowId, request, response);
+    		final IPortletRenderExecutionWorker tracker = getRenderedPortletHeaderWorker(portletWindowId, request, response);
     		final long timeout = getPortletRenderTimeout(portletWindowId, request);
     		try {
     			final String output = tracker.getOutput(timeout);
@@ -670,7 +670,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      */
     @Override
     public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-    	final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
+    	final IPortletRenderExecutionWorker tracker = getRenderedPortletBodyWorker(portletWindowId, request, response);
         final long timeout = getPortletRenderTimeout(portletWindowId, request);
 
 		try {
@@ -690,8 +690,18 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		}
     }
 
-    
-    
+    @Override
+    public long getPortletRenderTime(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            final PortletRenderResult portletRenderResult = getPortletRenderResult(portletWindowId, request, response);
+            return portletRenderResult.getRenderTime();
+        } catch (Exception e) {
+            logger.warn("unable to get portlet render time, returning -1 " + portletWindowId);
+        }
+        
+        return -1;
+    }
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -718,11 +728,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final IPortletDefinitionParameter disableDynamicTitle = portletDefinition.getParameter("disableDynamicTitle");
         
         if (disableDynamicTitle == null || !Boolean.parseBoolean(disableDynamicTitle.getValue())) {
-            final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
-            final long timeout = getPortletRenderTimeout(portletWindowId, request);
-            
     		try {
-    			final PortletRenderResult portletRenderResult = tracker.get(timeout);
+    			final PortletRenderResult portletRenderResult = getPortletRenderResult(portletWindowId, request, response);
     			if (portletRenderResult != null) {
         	        final String title = portletRenderResult.getTitle();
         	        if (title != null) {
@@ -756,11 +763,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 
     @Override
     public int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
-        final long timeout = getPortletRenderTimeout(portletWindowId, request);
-        
         try {
-            final PortletRenderResult portletRenderResult = tracker.get(timeout);
+            final PortletRenderResult portletRenderResult = getPortletRenderResult(portletWindowId, request, response);
             if (portletRenderResult != null) {
                 final int newItemCount = portletRenderResult.getNewItemCount();
                 return newItemCount;
@@ -775,11 +779,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     
     @Override
     public String getPortletLink(IPortletWindowId portletWindowId, String defaultPortletUrl, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletRenderExecutionWorker tracker = getRenderedPortletBody(portletWindowId, request, response);
-        final long timeout = getPortletRenderTimeout(portletWindowId, request);
-        
         try {
-            final PortletRenderResult portletRenderResult = tracker.get(timeout);
+            final PortletRenderResult portletRenderResult = getPortletRenderResult(portletWindowId, request, response);
             if (portletRenderResult != null) {
                 final String link = portletRenderResult.getExternalLink();
                 if (StringUtils.isNotBlank(link)) {
@@ -873,7 +874,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         return parentPortletEntity.getPortletDefinition();
     }
 
-    protected IPortletRenderExecutionWorker getRenderedPortletHeader(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+    protected IPortletRenderExecutionWorker getRenderedPortletHeaderWorker(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
     	final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletHeaderRenderingMap = this.getPortletHeaderRenderingMap(request);
     	IPortletRenderExecutionWorker portletHeaderRenderWorker = portletHeaderRenderingMap.get(portletWindowId);
     	if (portletHeaderRenderWorker == null) {
@@ -881,7 +882,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         }
         return portletHeaderRenderWorker;
     }
-    protected IPortletRenderExecutionWorker getRenderedPortletBody(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
+    
+    protected IPortletRenderExecutionWorker getRenderedPortletBodyWorker(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
         final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
         IPortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
         if (tracker == null) {
@@ -889,6 +891,19 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             
         }
         return tracker;
+    }
+    
+    /**
+     * Returns the PortletRenderResult waiting up to the portlet's timeout
+     * 
+     * @return The PortletRenderResult from the portlet's execution
+     * @throws TimeoutException If the portlet's timeout was hit before a result was returned 
+     * @throws Exception The exception thrown by the portlet during execution 
+     */
+    protected PortletRenderResult getPortletRenderResult(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final IPortletRenderExecutionWorker tracker = getRenderedPortletBodyWorker(portletWindowId, request, response);
+        final long timeout = getPortletRenderTimeout(portletWindowId, request);
+        return tracker.get(timeout);
     }
     
     /**

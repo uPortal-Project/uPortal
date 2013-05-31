@@ -82,11 +82,6 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
-    <tag>
-        <name>compressJs</name>
-        <tag-class>org.jasig.portal.utils.jsp.CompressJsTag</tag-class>
-        <body-content>scriptless</body-content>
-    </tag>
     <function>
         <name>contains</name>
         <function-class>org.jasig.portal.utils.jsp.Util</function-class>
@@ -109,6 +104,15 @@
         <function-signature>boolean instanceOf(java.lang.Object, java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${up:instanceOf(obj, 'java.lang.Object')}">
+        </example>
+    </function>
+    <function>
+        <description>Converts an object to JSON using Jackson</description>
+        <name>json</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>java.lang.String json(java.lang.Object)</function-signature>
+        <example>
+            ${up:json(obj)}
         </example>
     </function>
 </taglib>

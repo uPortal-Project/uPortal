@@ -138,6 +138,11 @@ public interface IPortletExecutionManager {
      * be used. If the portlet is not already rendering it will be started.
      */
     public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    
+    /**
+     * Get the duration it took for the portlet to render.
+     */
+    public long getPortletRenderTime(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
 
     /**

@@ -129,7 +129,7 @@
         var fluid = up.fluid;
         var pager = null;
         
-        var attrs = <json:serialize value="${ queryAttributes }"/>;
+        var attrs = ${up:json(queryAttributes)};
 
         var options = {
             annotateColumnRange: 'displayName',

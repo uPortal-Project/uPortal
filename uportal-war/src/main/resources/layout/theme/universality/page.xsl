@@ -117,11 +117,16 @@
             up.jQuery = jQuery.noConflict(true);
             up.fluid = fluid;
             up._ = _.noConflict();
+            up._.templateSettings = {
+              interpolate : /{{=(.+?)}}/g, 
+              evaluate    : /{{(.+?)}}/g
+            };
             up.Backbone = Backbone.noConflict();
             fluid = null;
             fluid_1_4 = null;
         </script>
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+        <xsl:copy-of select="//channel[@fname = 'google-analytics']"/>
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>
         </xsl:for-each>
@@ -172,6 +177,12 @@
             </xsl:choose>
           </div> 
         </div>
+        <script type="text/javascript">
+            up.analytics = up.analytics || {};
+            up.analytics.institution = '<xsl:value-of select="$INSTITUTION" />';
+            up.analytics.portletData = <portlet-analytics-data/>;
+            up.analytics.pageData = <page-analytics-data/>;
+        </script>
       </body>
     </html>
   </xsl:template>

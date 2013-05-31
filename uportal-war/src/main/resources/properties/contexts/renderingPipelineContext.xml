@@ -234,6 +234,14 @@
                     <key><util:constant static-field="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource.CHUNK_POINT" /></key>
                     <bean class="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource" />
                 </entry>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.rendering.PortletAnalyticsDataPlaceholderEventSource.PORTLET_ANALYTICS_SCRIPT" /></key>
+                    <bean class="org.jasig.portal.rendering.PortletAnalyticsDataPlaceholderEventSource" />
+                </entry>
+                <entry>
+                    <key><util:constant static-field="org.jasig.portal.rendering.PageAnalyticsDataPlaceholderEventSource.PAGE_ANALYTICS_SCRIPT" /></key>
+                    <bean class="org.jasig.portal.rendering.PageAnalyticsDataPlaceholderEventSource" />
+                </entry>
             </map>
         </property>
         <property name="chunkingPatterns">
@@ -272,9 +280,14 @@
     <bean id="portletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
         <property name="wrappedComponent" ref="portletRenderingInitiationCharacterComponent" />
     </bean>
+    
+    <bean id="analyticsIncorporationComponent" class="org.jasig.portal.rendering.AnalyticsIncorporationComponent">
+        <property name="wrappedComponent" ref="portletRenderingIncorporationComponent" />
+    </bean>
+    
     <bean id="portalRenderingPipeline" class="org.jasig.portal.rendering.DynamicRenderingPipeline">
         <qualifier value="main" />
-        <property name="pipeline" ref="portletRenderingIncorporationComponent" />
+        <property name="pipeline" ref="analyticsIncorporationComponent" />
     </bean>
     
     

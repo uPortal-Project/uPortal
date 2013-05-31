@@ -116,7 +116,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         
         for (final Map.Entry<String, List<String>> parameterEntry : parameterMap.entrySet()) {
             final List<String> values = parameterEntry.getValue();
-            if (values == null) {
+            if (values == null || values.isEmpty()) {
                 builder.put(parameterEntry.getKey(), Collections.<String>emptyList()); 
             }
             else {
@@ -132,7 +132,7 @@ public class ParameterMap extends LinkedHashMap<String, String[]> {
         
         for (final Map.Entry<String, String[]> parameterEntry : parameterMap.entrySet()) {
             final String[] values = parameterEntry.getValue();
-            if (values == null) {
+            if (values == null || values.length == 0) {
                 builder.put(parameterEntry.getKey(), Collections.<String>emptyList());
             }
             else {

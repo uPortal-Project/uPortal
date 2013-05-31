@@ -79,4 +79,8 @@ public class CharacterEventReaderDelegate implements CharacterEventReader {
     public void close() {
         this.delegate.close();
     }
+    
+    public CharacterEventReader getParent() {
+        return delegate;
+    }
 }

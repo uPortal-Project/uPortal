@@ -132,10 +132,10 @@ public class PortletRenderingIncorporationComponent extends CharacterPipelineCom
                     
                     return CharacterDataEventImpl.create(link);
                 }
+                default: {
+                    return event;
+                }
             }
-
-            
-            return event;
         }
     }
 }

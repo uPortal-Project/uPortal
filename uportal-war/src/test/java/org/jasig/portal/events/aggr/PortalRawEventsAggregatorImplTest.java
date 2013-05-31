@@ -159,7 +159,7 @@ public class PortalRawEventsAggregatorImplTest {
         
         private static class MockPortalEventBuilder extends PortalEventBuilder {
             public MockPortalEventBuilder(Object source, String serverName, String eventSessionId, IPerson person) {
-                super(source, serverName, eventSessionId, person);
+                super(source, serverName, eventSessionId, person, null);
             }
         }
     }
