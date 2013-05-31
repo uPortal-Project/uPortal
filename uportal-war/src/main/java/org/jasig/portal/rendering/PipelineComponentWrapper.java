@@ -19,6 +19,9 @@
 
 package org.jasig.portal.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Wraps another {@link PipelineComponent}
@@ -27,6 +30,8 @@ package org.jasig.portal.rendering;
  * @version $Revision$
  */
 public abstract class PipelineComponentWrapper<R, E> implements PipelineComponent<R, E> {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
     protected PipelineComponent<R, E> wrappedComponent;
 
     /**

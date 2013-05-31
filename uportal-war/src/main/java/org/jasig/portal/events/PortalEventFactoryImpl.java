@@ -363,6 +363,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     }
     
     protected PortalEventBuilder createPortalEventBuilder(Object source, HttpServletRequest request) {
+        request = getCurrentPortalRequest(request);
         final IPerson person = this.getPerson(request);
         return this.createPortalEventBuilder(source, person, request);
     }
@@ -370,21 +371,26 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     protected PortalEventBuilder createPortalEventBuilder(Object source, IPerson person, HttpServletRequest request) {
         final String serverName = this.portalInfoProvider.getServerName();
         final String eventSessionId = this.getPortalEventSessionId(request, person);
-        return new PortalEventBuilder(source, serverName, eventSessionId, person);
+        request = getCurrentPortalRequest(request);
+        return new PortalEventBuilder(source, serverName, eventSessionId, person, request);
+    }
+    
+    protected HttpServletRequest getCurrentPortalRequest(HttpServletRequest request) {
+        if (request == null) {
+            try {
+                return portalRequestUtils.getCurrentPortalRequest();
+            }
+            catch (IllegalStateException e) {
+                return null;
+            }
+        }
+        
+        return portalRequestUtils.getOriginalPortalRequest(request);
     }
     
     protected IPerson getPerson(HttpServletRequest request) {
         if (request == null) {
-            try {
-                request = portalRequestUtils.getCurrentPortalRequest();
-            }
-            catch (IllegalStateException e) {
-                //Ignore
-            }
-            
-            if (request == null) {
-                return SystemPerson.INSTANCE;
-            }
+            return SystemPerson.INSTANCE;
         }
 
         return this.personManager.getPerson(request);

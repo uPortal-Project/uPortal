@@ -340,6 +340,11 @@
                 </xsl:choose>
                 <xsl:call-template name="footer" />
             </div>
+            <script type="text/javascript">
+                var portletData = <portlet-analytics-data/>;
+                var pageData = <page-analytics-data/>;
+                var dimensionData = <dimension-analytics-data/>;
+            </script>
         </body>
     </html>
 </xsl:template>

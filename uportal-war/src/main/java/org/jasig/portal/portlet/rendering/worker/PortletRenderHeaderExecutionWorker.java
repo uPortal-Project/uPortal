@@ -37,7 +37,7 @@ import org.jasig.portal.portlet.rendering.RenderPortletOutputHandler;
  * @author Nicholas Blair
  * @version $Id$
  */
-public class PortletRenderHeaderExecutionWorker extends
+class PortletRenderHeaderExecutionWorker extends
 		PortletExecutionWorker<PortletRenderResult> implements
 		IPortletRenderExecutionWorker {
 

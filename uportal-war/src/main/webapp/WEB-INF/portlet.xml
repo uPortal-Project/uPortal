@@ -685,6 +685,25 @@
             <title>Translator</title>
         </portlet-info>
     </portlet>
+    <portlet>
+        <portlet-name>GoogleAnalytics</portlet-name>
+        <display-name xml:lang="en">Google Analytics</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/GoogleAnalytics-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>CONFIG</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Google Analytics</title>
+        </portlet-info>
+    </portlet>
 
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>

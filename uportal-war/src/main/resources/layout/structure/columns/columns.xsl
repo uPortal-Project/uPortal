@@ -90,10 +90,10 @@
       </layout_fragment>
     </xsl:when>
     <xsl:otherwise>
-
+  
   <layout>
     <xsl:call-template name="debug-info"/>  
-
+  
     <xsl:if test="/layout/@dlm:fragmentName">
         <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
     </xsl:if>
@@ -101,28 +101,29 @@
     <header>
       <xsl:choose>
         <xsl:when test="$userLayoutRoot = 'root'">
-            <!-- BEGIN display channel-headers for each channel visible on the page -->
+        	<!-- BEGIN display channel-headers for each channel visible on the page -->
             <xsl:for-each select="child::folder[@type='header']/descendant::channel">
-                <channel-header ID="{@ID}"/>
-            </xsl:for-each>
-            <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
-                <channel-header ID="{@ID}"/>
-            </xsl:for-each>
-            <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-                <channel-header ID="{@ID}"/>
-            </xsl:for-each>
-            <!-- END display channel-headers for each channel visible on the page -->  
+        		<channel-header ID="{@ID}"/>
+      		</xsl:for-each>
+      		<xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+        		<channel-header ID="{@ID}"/>
+      		</xsl:for-each>
+      		<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+        		<channel-header ID="{@ID}"/>
+      		</xsl:for-each>
+      
+      		<xsl:for-each select="child::folder[@type='header']">
+          		<xsl:copy-of select=".//channel"/>
+      		</xsl:for-each> 
+      		<!-- END display channel-headers for each channel visible on the page -->  
         </xsl:when>
-        <xsl:otherwise>
-            <!-- display only focused channel-header -->
-            <channel-header ID="{$userLayoutRoot}"/>
-        </xsl:otherwise>  
+      	<xsl:otherwise>
+      		<!-- display only focused channel-header -->
+      		<channel-header ID="{$userLayoutRoot}"/>
+      	</xsl:otherwise>  
       </xsl:choose>
-      <xsl:for-each select="child::folder[@type='header']">
-          <xsl:copy-of select=".//channel"/>
-      </xsl:for-each> 
     </header>
-
+    
     <xsl:call-template name="tabList"/>
 
     <content>

@@ -105,11 +105,16 @@
                 <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
                 <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
                 <entry key="org.jasig.portal.version.om.Version"><bean class="org.jasig.portal.spring.properties.VersionEditor"/></entry>
+                <entry key="org.codehaus.jackson.JsonNode">
+                    <bean class="org.jasig.portal.spring.properties.MappingJackson2JsonTreeEditor">
+                        <property name="objectMapper" ref="objectMapper" />
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
 
-    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+    <bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
         <property name="propertyEditorRegistrars">
             <list>
                 <ref bean="portalPropertyEditorRegistrar"/>
@@ -147,4 +152,5 @@
         </property>
     </bean>
     
+    <bean id="objectMapper" class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
 </beans>
