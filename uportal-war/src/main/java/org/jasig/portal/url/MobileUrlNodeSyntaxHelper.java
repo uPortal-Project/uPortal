@@ -141,10 +141,15 @@ public class MobileUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             
             portletEntity = this.portletEntityRegistry.getOrCreatePortletEntityByFname(request, userInstance, fname, subscribeId);
         }
-        
-        final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
-        return portletWindow.getPortletWindowId();
+        if(portletEntity != null) {
+            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
+            return portletWindow.getPortletWindowId();
+        }
+        else {
+            this.logger.warn(targetedLayoutNodeId + " node for portlet of folder " + folderName + " can't be targeted by the request.");
+            return null;
+        }
     }
 
 }
