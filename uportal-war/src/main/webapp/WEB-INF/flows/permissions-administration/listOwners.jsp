@@ -172,19 +172,22 @@ up.jQuery(function() {
                 initialText: "John",
                 searchFunction: function(searchterm) {
                     var principals = [];
-                    $.ajax({
-                       url: "<c:url value="/api/permissions/principals.json"/>",
-                       data: { q: searchterm },
-                       async: false,
-                       success: function (data) {
-                           $(data.groups).each( function (idx, group) {
-                               principals.push({ value: group.principalString, text: group.name || group.keys });
-                           });
-                           $(data.people).each( function (idx, person) {
-                               principals.push({ value: person.principalString, text: person.name || person.id });
-                           });
-                       }
-                    });
+                    if (searchterms.length > 2) {
+                       $.ajax({
+                          url: "<c:url value="/api/permissions/principals.json"/>",
+                          data: { q: searchterm },
+                          async: false,
+                          timeout: '10000',
+                          success: function (data) {
+                              $(data.groups).each( function (idx, group) {
+                                  principals.push({ value: group.principalString, text: group.name || group.keys });
+                              });
+                              $(data.people).each( function (idx, person) {
+                                  principals.push({ value: person.principalString, text: person.name || person.id });
+                              });
+                          }
+                       });
+                    }
                     return principals;
                 }
             }
