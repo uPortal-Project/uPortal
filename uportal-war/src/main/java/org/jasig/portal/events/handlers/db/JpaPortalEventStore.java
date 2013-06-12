@@ -203,7 +203,20 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
         int resultCount = 0;
         for (final ScrollableResults results = query.scroll(ScrollMode.FORWARD_ONLY); results.next(); ) {
             final PersistentPortalEvent persistentPortalEvent = (PersistentPortalEvent)results.get(0);
-            final PortalEvent portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
+            final PortalEvent portalEvent;
+            try {
+                portalEvent = this.toPortalEvent(persistentPortalEvent.getEventData(), persistentPortalEvent.getEventType());
+            }
+            catch (RuntimeException e) {
+                this.logger.warn("Failed to convert PersistentPortalEvent to PortalEvent: " + persistentPortalEvent, e);
+                
+                //Mark the event as aggregated and store the mark to prevent trying to reprocess the broken event data
+                persistentPortalEvent.setAggregated(true);
+                session.persist(persistentPortalEvent);
+                
+                continue;
+            }
+            
             final Boolean eventHandled = handler.apply(portalEvent);
             if (!eventHandled) {
                 this.logger.debug("Aggregation stop requested before processing event {}", portalEvent);
