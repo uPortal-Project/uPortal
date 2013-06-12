@@ -83,7 +83,7 @@
             <set name="flowScope.supportsConfig" value="portletAdministrationHelper.supportsConfigMode(portlet)"/>
         </on-entry>
         <on-render>
-            <set name="flashScope.portletDef" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
+            <set name="flashScope.portletDescriptor" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
             <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(portlet)"/>
         </on-render>
         <transition on="back" to="basicInfo" validate="false">
