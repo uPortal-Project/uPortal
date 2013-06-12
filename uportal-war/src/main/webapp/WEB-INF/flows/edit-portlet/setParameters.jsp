@@ -72,28 +72,28 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <spring:message code="this.portlet.supports.rich.config.message"/>
       </div>
     </c:if>
-    
-    <!-- Portlet Section -->
+
+      <!-- Portlet.xml Preferences Section -->
       <div class="portlet-section" role="region">
         <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
         </div>
         <div class="content">
           <p class="note" role="note"><spring:message code="default.preferences.provided.by.portlet.descriptor"/></p>
-          <table>
+          <table class="portlet-table">
             <thead>
               <tr>
-                <th><spring:message code="preference"/></th>
+                <th><spring:message code="preferences"/></th>
                 <th><spring:message code="values"/></th>
                 <th><spring:message code="read.only.prevents.user.customization"/></th>
               </tr>
             </thead>
             <tbody>
               <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
-                <tr>
+                <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
                   <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
                   <td>
-                    <c:forEach var="value" items="${ fn:escapeXml(pref.values )}">
+                    <c:forEach var="value" items="${ pref.values }">
                         <div>${ fn:escapeXml(value )}</div>
                     </c:forEach>
                   </td>
@@ -103,7 +103,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tbody>
           </table>
         </div>
-      </div> <!-- end: portlet-section -->
+      </div>
+      <!-- END: Portlet.xml Preferences Section -->
 
     <!-- Step Loop -->
     <c:forEach items="${ cpd.steps }" var="step"  varStatus="status">
@@ -148,7 +149,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               </tbody>
             </table>        
           </c:if> <!-- End Portlet Parameters -->
-  
+
           <c:if test="${ portlet.portlet }">
             <c:if test="${ fn:length(step.preferences) > 0 }">
               <div class="preference-options-section">

@@ -96,10 +96,13 @@
     </bean>
 
     <!-- The following attribute names are used in searching for users through
-        person-directory, such as from within the Directory framework portlet. -->
+       person-directory, such as from within the Directory framework portlet. These should correspond to
+       the internal names (keys, not the ldap attribute names) of the queryAttributeMapping property of
+       bean uPortalLdapAttributeSource in personDirectoryContext.xml. -->
     <util:list id="directoryQueryAttributes">
         <value>givenName</value>
         <value>sn</value>
+        <value>cn</value>
     </util:list>
 
     <util:map id="directoryDisplayAttributes">
