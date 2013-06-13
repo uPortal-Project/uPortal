@@ -42,4 +42,37 @@ under the License.
     <name>SSP_ROLES</name>
     <value>SSP_COACH</value>
   </attribute>
+  <attribute>
+    <name>DATA_DISABILITY</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_ACADEMIC_RESOURCE_CENTER</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_COUNSELING_SERVICES</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_DISPLACED_WORKERS</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_EARLY_ALERT</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_ENGLISH_SECOND_LANGUAGE</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_FAST_FORWARD</name>
+    <value>TRUE</value>
+  </attribute>
+  <attribute>
+    <name>DATA_INDIVIDUALIZED_LEARNING_PLAN</name>
+    <value>TRUE</value>
+  </attribute>
+
 </user>
