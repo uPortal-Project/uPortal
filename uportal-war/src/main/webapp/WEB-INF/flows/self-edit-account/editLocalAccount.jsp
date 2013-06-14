@@ -37,7 +37,7 @@
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
 
-        <form:form modelAttribute="accountForm" action="${formUrl}" method="POST">
+        <form:form id="${n}accountForm" modelAttribute="accountForm" action="${formUrl}" method="POST">
 
             <!-- Portlet Messages -->
             <spring:hasBindErrors name="person">
@@ -94,11 +94,11 @@
                             <!--  Password and confirm password -->
                             <tr>
                                 <td class="attribute-name"><strong><spring:message code="password"/></strong></td>
-                                <td><form:password path="password"/></td>
+                                <td><form:password id="${n}password" path="password"/></td>
                             </tr>
                             <tr>
                                 <td class="attribute-name"><strong><spring:message code="confirm.password"/></strong></td>
-                                <td><form:password path="confirmPassword"/></td>
+                                <td><form:password id="${n}confirmPassword" path="confirmPassword"/></td>
                             </tr>
 
                         </tbody>
@@ -152,6 +152,15 @@
                     }
                 }
             );
+            $("#${n}accountForm").submit(function(e) {
+                if ($("#${n}password").get(0).textLength > 0
+                       && $("#${n}password").get(0).value != $("#${n}confirmPassword").get(0).value) {
+                    alert ("<spring:message code="passwords.must.match" htmlEscape="false" javaScriptEscape="true"/>");
+                    return false;
+                }
+            });
+            // Clear the password field so it does not appear the user is attempting to set their password
+            $("#${n}password").get(0).value="";
         });
     });
 </script>

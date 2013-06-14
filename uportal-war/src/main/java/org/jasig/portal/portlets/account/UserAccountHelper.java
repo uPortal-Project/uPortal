@@ -348,27 +348,26 @@ public class UserAccountHelper {
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
         
         // update the account attributes to match those specified in the form
-        Map<String, List<String>> attributes = new HashMap<String, List<String>>();        
-        for (Map.Entry<String, StringListAttribute> entry : form.getAttributes().entrySet()) {
-            if (entry.getValue() != null && !entry.getValue().isBlank()) {
-                
-                /*
-                 * SANITY CHECK #2:  Has the user hand-added an attribute he or 
-                 * she is not permitted to modify (or cleverly tweaked the HTTP 
-                 * request)? 
-                 */
-                if (!ap.hasPermission("UP_USERS", "EDIT_USER_ATTRIBUTE", entry.getKey())) {
-                    throw new RuntimeException("Current user " + currentUser.getName()
-                            + " does not have permissions to edit attribute " 
-                            + entry.getKey());
-                }
-                
-                attributes.put(entry.getKey(), entry.getValue().getValue());
+        List<Preference> editableAttributes = getEditableUserAttributes(currentUser);
+        for (Preference editableAttribute : editableAttributes) {
+            String attributeName = editableAttribute.getName();
 
+            /*
+             * SANITY CHECK #2:  Should never fail since getEditableUserAttributes should return only
+             * editable attribute names, but do this anyway just in case.
+             */
+            if (!ap.hasPermission("UP_USERS", "EDIT_USER_ATTRIBUTE", attributeName)) {
+                throw new RuntimeException("Current user " + currentUser.getName()
+                        + " does not have permissions to edit attribute " + attributeName);
+            }
+
+            if (form.getAttributes().get(attributeName) == null || form.getAttributes().get(attributeName).isBlank()) {
+                account.removeAttribute(attributeName);
+            } else {
+                account.setAttribute(attributeName, form.getAttributes().get(attributeName).getValue());
             }
         }
-        account.setAttributes(attributes);
-        
+
         // if a new password has been specified, update the account password
         if (StringUtils.isNotBlank(form.getPassword())) {
             account.setPassword(passwordService.encryptPassword(form.getPassword()));
