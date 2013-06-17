@@ -111,10 +111,6 @@
             <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
                 <channel-header ID="{@ID}"/>
             </xsl:for-each>
-
-            <xsl:for-each select="child::folder[@type='header']">
-                <xsl:copy-of select=".//channel"/>
-            </xsl:for-each> 
             <!-- END display channel-headers for each channel visible on the page -->  
         </xsl:when>
         <xsl:otherwise>
@@ -122,6 +118,9 @@
             <channel-header ID="{$userLayoutRoot}"/>
         </xsl:otherwise>  
       </xsl:choose>
+      <xsl:for-each select="child::folder[@type='header']">
+          <xsl:copy-of select=".//channel"/>
+      </xsl:for-each> 
     </header>
 
     <xsl:call-template name="tabList"/>
