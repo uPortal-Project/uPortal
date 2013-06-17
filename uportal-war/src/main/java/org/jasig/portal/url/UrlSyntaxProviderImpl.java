@@ -1070,6 +1070,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     url.addParameter(PARAM_CACHEABILITY + prefixedPortletWindowId, cacheability);
                 }
                 
+                final String resourceId = portletUrlBuilder.getResourceId();
+                if (!targeted && resourceId != null) {
+                    url.addParameter(PARAM_RESOURCE_ID + prefixedPortletWindowId, resourceId);
+                }
+                
                 break;
             }
             default: {

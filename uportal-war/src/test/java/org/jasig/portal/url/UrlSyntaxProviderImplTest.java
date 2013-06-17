@@ -342,6 +342,102 @@ public class UrlSyntaxProviderImplTest {
     }
 
     @Test
+    public void testSingleFolderPortletResourceDelegationFnameSubscribeIdResourceUrlGeneration() throws Exception {
+        final String layoutNodeId = "n2";
+        final String subscribeId1 = "s3";
+        final String subscribeId2 = "dlg-71-44";
+        final String fname = "fname";
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
+
+        when(portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(urlNodeSyntaxHelper.getFolderNamesForLayoutNode(request, subscribeId1)).thenReturn(Arrays.asList(layoutNodeId));
+        when(urlNodeSyntaxHelper.getFolderNameForPortlet(request, portletWindowId1)).thenReturn(fname + "." + subscribeId1);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId1)).thenReturn(portletWindow1);
+        when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
+        when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId1);
+        
+        when(portletWindowRegistry.getPortletWindow(request, portletWindowId2)).thenReturn(portletWindow2);
+        when(portletWindow2.getPortletEntity()).thenReturn(portletEntity2);
+        when(portletWindow2.getDelegationParentId()).thenReturn(portletWindowId1);
+        when(portletEntity2.getLayoutNodeId()).thenReturn(subscribeId2);
+        
+        final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RESOURCE);
+        final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
+        portletUrlBuilder1.setWindowState(WindowState.NORMAL);
+        portletUrlBuilder1.setParameter("action", "dashboard");
+        final IPortletUrlBuilder portletUrlBuilder2 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId2);
+        portletUrlBuilder2.setParameter("a", "b");
+        portletUrlBuilder2.setParameter("b", "c");
+        portletUrlBuilder2.setPortletMode(PortletMode.HELP);
+        portletUrlBuilder2.setResourceId("delegateResourceId");
+        
+        final String url = portalUrlBuilder.getUrlString();
+                     
+        assertEquals("/uPortal/f/n2/p/fname.s3/normal/resource.uP?pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c", url);
+    }
+    
+    @Test
+    public void testSingleFolderPortletResourceDelegationFnameSubscribeIdResourceUrlParsing() throws Exception {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContextPath("/uPortal");
+        request.setRequestURI("/f/n2/p/fname.s3/normal/resource.uP");
+        request.setQueryString("?pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c");
+        request.addParameter("pP_action", "dashboard");
+        request.addParameter("pCa", "pw2");
+        request.addParameter("pCd_pw2", "pw1");
+        request.addParameter("pCr_pw2", "delegateResourceId");
+        request.addParameter("pP_pw2_a", "b");
+        request.addParameter("pP_pw2_b", "c");
+        
+        final MockPortletWindowId portletWindowId1 = new MockPortletWindowId("pw1");
+        final MockPortletWindowId portletWindowId2 = new MockPortletWindowId("pw2");
+        
+        when(this.portalRequestUtils.getOriginalPortalRequest(request)).thenReturn(request);
+        when(urlNodeSyntaxHelperRegistry.getCurrentUrlNodeSyntaxHelper(request)).thenReturn(urlNodeSyntaxHelper);
+        when(this.urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, Arrays.asList("n2"))).thenReturn("n2");
+        when(this.urlNodeSyntaxHelper.getPortletForFolderName(request, "n2", "fname.s3")).thenReturn(portletWindowId1);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw2")).thenReturn(portletWindowId2);
+        when(this.portletWindowRegistry.getPortletWindowId(request, "pw1")).thenReturn(portletWindowId1);
+        
+        final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
+        
+        assertNotNull(portalRequestInfo);
+        assertEquals("n2", portalRequestInfo.getTargetedLayoutNodeId());
+        assertEquals(portletWindowId1, portalRequestInfo.getTargetedPortletWindowId());
+        assertEquals(UrlState.NORMAL, portalRequestInfo.getUrlState());
+        assertEquals(UrlType.RESOURCE, portalRequestInfo.getUrlType());
+        
+        final Map<IPortletWindowId, ? extends IPortletRequestInfo> portletRequestInfoMap = portalRequestInfo.getPortletRequestInfoMap();
+        assertNotNull(portletRequestInfoMap);
+        assertEquals(2, portletRequestInfoMap.size());
+        
+        final IPortletRequestInfo portletRequestInfo = portletRequestInfoMap.get(portletWindowId1);
+        assertNotNull(portletRequestInfo);
+        assertEquals(portletWindowId1, portletRequestInfo.getPortletWindowId());
+        assertEquals(ImmutableMap.of("action", Arrays.asList("dashboard")), portletRequestInfo.getPortletParameters());
+        assertNull(portletRequestInfo.getWindowState());
+        assertNull(portletRequestInfo.getPortletMode());
+        assertNull(portletRequestInfo.getDelegateParentWindowId());
+        assertNull(portletRequestInfo.getResourceId());
+        
+        final IPortletRequestInfo portletRequestInfo2 = portletRequestInfoMap.get(portletWindowId2);
+        assertNotNull(portletRequestInfo2);
+        assertEquals(portletWindowId2, portletRequestInfo2.getPortletWindowId());
+        assertEquals(ImmutableMap.of("a", Arrays.asList("b"), "b", Arrays.asList("c")), portletRequestInfo2.getPortletParameters());
+        assertNull(portletRequestInfo2.getWindowState());
+        assertNull(portletRequestInfo2.getPortletMode());
+        assertEquals(portletWindowId1, portletRequestInfo2.getDelegateParentWindowId());
+        assertEquals("delegateResourceId", portletRequestInfo2.getResourceId());
+    }
+
+    @Test
     public void testSingleFolderPortletDelegationFnameSubscribeIdMinimizedRenderUrlGeneration() throws Exception {
         final String layoutNodeId = "n2";
         final String subscribeId1 = "s3";
