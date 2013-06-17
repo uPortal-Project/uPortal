@@ -535,6 +535,11 @@
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
+
+    <!-- Emergency Alert -->
+    <div id="portalHeaderBlock">
+      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
+    </div>
   </xsl:template>
   <!-- ==================================================== -->
     
