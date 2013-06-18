@@ -843,7 +843,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
-        if (form.getPortletName() == null || form.getApplicationId() == null) {
+        if (form.getPortletName() == null || (form.getApplicationId() == null && !form.isFramework())) {
             return null;
         }
         
