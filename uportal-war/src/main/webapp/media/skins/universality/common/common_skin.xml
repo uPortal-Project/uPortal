@@ -73,6 +73,8 @@
   <js included="plain" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.js</js>
   <js included="aggregated" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js</js>
   
+  <js import="true">../../common/common_skin.xml</js>
+  
   <js>javascript/uportal/up-util.js</js>
   <js>javascript/uportal/up-portlet-registry.js</js>
   <js>javascript/uportal/up-entity-registry.js</js>
