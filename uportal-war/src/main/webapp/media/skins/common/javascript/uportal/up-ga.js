@@ -50,8 +50,8 @@ var uportal = uportal || {};
     */
    var createTracker = function(propertyConfig) {
       var createSettings = {};
-      _.each(propertyConfig.config, function(setting) {
-         //Name isn't supported, we assume the default tracker is used
+      _.each(propertyConfig.config || [], function(setting) {
+         //Name isn't supported, we assume the default tracker is used in other places
          if (setting.name != "name") {
             createSettings[setting.name] = setting.value;
          }
@@ -64,7 +64,7 @@ var uportal = uportal || {};
     */
    var setDimensions = function(propertyConfig) {
       var dimensions = {};
-      _.each(propertyConfig.dimensionGroups, function(setting) {
+      _.each(propertyConfig.dimensionGroups || [], function(setting) {
          dimensions['dimension' + setting.name] = setting.value;
       });
       
@@ -96,7 +96,15 @@ var uportal = uportal || {};
    };
    
    $(document).ready(function(){
+      //Fail safe, if the analytics library isn't loaded make sure the function exists
+      window['ga']=window['ga']||function() {};
+      
       var propertyConfig = findPropertyConfig();
+      
+      //No property config means nothing to do
+      if (propertyConfig == null) {
+         return;
+      }
 
       //Create the tracker
       createTracker(propertyConfig);
