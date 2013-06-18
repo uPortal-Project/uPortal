@@ -105,8 +105,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	        var $ = up.jQuery;
 	        var portlets = {};
 	        <c:forEach items="${contexts}" var="context">
-	            portlets['${context.name}'] = [<c:forEach items="${context.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName}'}${status.last ? '' : ','}</c:forEach>];
-	        </c:forEach>
+	            portlets['${context.name}'] = [<c:forEach items="${context.portlets}" var="portlet" varStatus="status">{name: '${portlet.portletName}', title: '${fn:length(portlet.displayNames) > 0 ? fn:replace(portlet.displayNames[0].displayName, "'", "\\'") : fn:replace(portlet.portletName, "'", "\\'")}'}${status.last ? '' : ','}</c:forEach>];
+		</c:forEach>
 	        $(document).ready(function(){
 	            $("select[name=application]").change(function(){
 	                var select = $("select[name=portlet]").html("");
