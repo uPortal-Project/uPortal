@@ -21,14 +21,15 @@ package org.jasig.portal.dao.usertype;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectReader;
-import org.codehaus.jackson.map.ObjectWriter;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
+import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -61,7 +62,15 @@ public class JacksonColumnMapper extends AbstractStringColumnMapper<Object> {
     private final ObjectReader objectReader;
     
     public JacksonColumnMapper() {
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper;
+        try {
+            final ObjectMapperFactoryBean omfb = new ObjectMapperFactoryBean();
+            omfb.afterPropertiesSet();
+            mapper = omfb.getObject();
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Failed to create ObjectMapper", e);
+        }
 
         customizeObjectMapper(mapper);
         

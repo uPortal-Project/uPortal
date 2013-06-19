@@ -9,12 +9,13 @@ import javax.portlet.ValidatorException;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @Repository
@@ -23,7 +24,7 @@ public class PortletPreferencesJsonDaoImpl implements PortletPreferencesJsonDao 
     
     private ObjectMapper mapper;
 
-    @Autowired(required=false)
+    @Autowired
     public void setMapper(ObjectMapper mapper) {
         this.mapper = mapper;
     }

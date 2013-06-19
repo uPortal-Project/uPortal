@@ -26,6 +26,7 @@ import javax.portlet.EventRequest;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
@@ -41,8 +42,8 @@ public final class PortletEventExecutionEvent extends PortletExecutionEvent {
         this.eventName = null;
     }
 
-    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, QName eventName) {
-        super(eventBuilder, fname, executionTime, parameters);
+    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, QName eventName) {
+        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
         Validate.notNull(eventName, "eventName");
         this.eventName = eventName;
     }

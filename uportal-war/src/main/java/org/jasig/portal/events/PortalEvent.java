@@ -24,17 +24,17 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.SerializableObject;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 /**
  * ApplicationEvent specific to the Portal.
@@ -44,7 +44,7 @@ import org.springframework.context.ApplicationEvent;
  * @since 2.6
  *
  */
-@JsonAutoDetect(value=JsonMethod.FIELD, fieldVisibility=Visibility.ANY)
+@JsonAutoDetect(getterVisibility=Visibility.NONE, setterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, fieldVisibility=Visibility.ANY)
 @JsonTypeInfo(use=Id.MINIMAL_CLASS)
 @JsonIgnoreProperties(value="source")
 public abstract class PortalEvent extends ApplicationEvent {

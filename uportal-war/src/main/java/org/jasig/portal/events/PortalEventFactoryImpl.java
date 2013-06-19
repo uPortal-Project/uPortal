@@ -41,6 +41,7 @@ import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.logging.ConditionalExceptionLogger;
 import org.jasig.portal.logging.ConditionalExceptionLoggerImpl;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -299,53 +300,82 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     }
 
     @Override
+    @Deprecated
     public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
+            Map<String, List<String>> parameters) {
+        publishPortletActionExecutionEvent(request, source, null, fname, executionTime, parameters);
+    }
+    @Override
+    public void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId, String fname, long executionTime,
             Map<String, List<String>> parameters) {
         
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, fname, executionTime, parameters);
+        final PortletActionExecutionEvent portletActionExecutionEvent = new PortletActionExecutionEvent(eventBuilder, portletWindowId, fname, executionTime, parameters);
         this.applicationEventPublisher.publishEvent(portletActionExecutionEvent);
     }
 
     @Override
+    @Deprecated
     public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
             Map<String, List<String>> parameters, QName eventName) {
-
+        publishPortletEventExecutionEvent(request, source, null, fname, executionTime, parameters, eventName);
+    }
+    @Override
+    public void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId, String fname, long executionTime,
+            Map<String, List<String>> parameters, QName eventName) {
+        
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, fname, executionTime, parameters, eventName);
+        final PortletEventExecutionEvent portletEventExecutionEvent = new PortletEventExecutionEvent(eventBuilder, portletWindowId, fname, executionTime, parameters, eventName);
         this.applicationEventPublisher.publishEvent(portletEventExecutionEvent);
     }
     
-    
     @Override
+    @Deprecated
     public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, String fname,
+            long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
+        publishPortletRenderHeaderExecutionEvent(request, source, null, fname, executionTime, parameters, targeted, cached);
+    }
+    @Override
+    public void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId, String fname,
             long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted, cached);
+        final PortletRenderHeaderExecutionEvent portletRenderHeaderExecutionEvent = new PortletRenderHeaderExecutionEvent(eventBuilder, portletWindowId, fname, executionTime, parameters, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderHeaderExecutionEvent);
     }
 
     @Override
+    @Deprecated
     public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
+            Map<String, List<String>> parameters, boolean targeted, boolean cached) {
+        publishPortletRenderExecutionEvent(request, source, null, fname, executionTime, parameters, targeted, cached);
+    }
+    @Override
+    public void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId, String fname, long executionTime,
             Map<String, List<String>> parameters, boolean targeted, boolean cached) {
         
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
-        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, fname, executionTime, parameters, targeted, cached);
+        final PortletRenderExecutionEvent portletRenderExecutionEvent = new PortletRenderExecutionEvent(eventBuilder, portletWindowId, fname, executionTime, parameters, targeted, cached);
         this.applicationEventPublisher.publishEvent(portletRenderExecutionEvent);
     }
 
     @Override
+    @Deprecated
     public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, String fname, long executionTime,
+            Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
+        publishPortletResourceExecutionEvent(request, source, null, fname, executionTime, parameters, resourceId, usedBrowserCache, usedPortalCache);
+    }
+    @Override
+    public void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId, String fname, long executionTime,
             Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
 
         parameters = pruneParameters(parameters);
         final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
         final PortletResourceExecutionEvent portletResourceExecutionEvent = new PortletResourceExecutionEvent(
-                eventBuilder, fname, executionTime, parameters, resourceId, usedBrowserCache, usedPortalCache);
+                eventBuilder, portletWindowId, fname, executionTime, parameters, resourceId, usedBrowserCache, usedPortalCache);
         this.applicationEventPublisher.publishEvent(portletResourceExecutionEvent);
     }
     

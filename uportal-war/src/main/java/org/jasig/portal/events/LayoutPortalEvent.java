@@ -20,8 +20,9 @@
 package org.jasig.portal.events;
 
 import org.apache.commons.lang.Validate;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.jasig.portal.security.IPerson;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**

@@ -22,8 +22,10 @@ package org.jasig.portal.events;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.jasig.portal.portlet.om.IPortletWindowId;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
 /**
@@ -39,7 +41,7 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
      * Still here to support deserializing old event json
      * @deprecated use {@link #usedPortalCache} instead
      */
-    @JsonSerialize(include = Inclusion.NON_NULL)
+    @JsonInclude(Include.NON_NULL)
     @Deprecated
     private Boolean cached;
     private Boolean usedPortalCache;
@@ -49,8 +51,8 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
         this.targeted = false;
     }
 
-    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache) {
-        super(eventBuilder, fname, executionTime, parameters);
+    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache) {
+        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
         this.targeted = targeted;
         this.usedPortalCache = usedPortalCache;
     }

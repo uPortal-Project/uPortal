@@ -29,12 +29,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -43,10 +37,14 @@ import org.jasig.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 
 /**
@@ -60,7 +58,7 @@ import com.google.common.base.Function;
 @Repository
 public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalEventDao {
 
-    private final ObjectMapper mapper;
+    private ObjectMapper mapper;
     private String deleteQuery;
     private String selectQuery;
     private String selectUnaggregatedQuery;
@@ -71,13 +69,11 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
     private ParameterExpression<DateTime> endTimeParameter;
 
     
-    public JpaPortalEventStore() {
-        mapper = new ObjectMapper();
-        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector());
-        mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
-        mapper.getSerializationConfig().withAnnotationIntrospector(pair);
+    @Autowired
+    public void setMapper(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
-    
+
     /**
      * Frequency that updated events should be flushed during a call to {@link #aggregatePortalEvents(DateTime, DateTime, int, FunctionWithoutResult)}, defaults to 1000.
      */

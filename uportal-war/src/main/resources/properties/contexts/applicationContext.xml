@@ -105,7 +105,7 @@
                 <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
                 <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
                 <entry key="org.jasig.portal.version.om.Version"><bean class="org.jasig.portal.spring.properties.VersionEditor"/></entry>
-                <entry key="org.codehaus.jackson.JsonNode">
+                <entry key="com.fasterxml.jackson.databind.JsonNode">
                     <bean class="org.jasig.portal.spring.properties.MappingJackson2JsonTreeEditor">
                         <property name="objectMapper" ref="objectMapper" />
                     </bean>

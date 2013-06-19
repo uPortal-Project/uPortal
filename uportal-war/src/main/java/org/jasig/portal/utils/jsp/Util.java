@@ -23,12 +23,11 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSP Static utility functions
@@ -39,10 +38,17 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 public class Util {
     private static final ObjectMapper OBJECT_MAPPER;
     static {
-        final ObjectMapper mapper = new ObjectMapper();
-        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector());
-        mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
-        mapper.getSerializationConfig().withAnnotationIntrospector(pair);
+        ObjectMapper mapper;
+        try {
+            final ObjectMapperFactoryBean omfb = new ObjectMapperFactoryBean();
+            omfb.afterPropertiesSet();
+            mapper = omfb.getObject();
+        }
+        catch (Exception e) {
+            mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+        }
+        
         OBJECT_MAPPER = mapper;
     }
     

@@ -18,10 +18,9 @@
  */
 package org.jasig.portal.events.aggr;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Random;
-import java.util.concurrent.Callable;
 
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.apache.commons.math3.stat.descriptive.moment.SecondMoment;
@@ -30,22 +29,22 @@ import org.apache.commons.math3.stat.descriptive.rank.Min;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.commons.math3.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math3.stat.descriptive.summary.SumOfSquares;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectReader;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.annotate.JsonFilter;
-import org.codehaus.jackson.map.ser.FilterProvider;
-import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
-import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
-import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:jpaAggrEventsTestContext.xml")
@@ -119,15 +118,16 @@ public class JpaStatisticalSummaryTest extends BaseAggrEventsJpaDaoTest {
         assertEquals(expected, sus.getResult(), 0.1);
         
         final ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
         
         //Configure Jackson to just use fields
-        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        mapper.setVisibility(JsonMethod.GETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.IS_GETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.SETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.CREATOR, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        mapper.setVisibility(PropertyAccessor.GETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.SETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.CREATOR, Visibility.NONE);
         
-        mapper.getSerializationConfig().addMixInAnnotations(Object.class, IgnoreTypeMixIn.class);
+        mapper.addMixInAnnotations(Object.class, IgnoreTypeMixIn.class);
         
         final FilterProvider filters = new SimpleFilterProvider().addFilter("storedDataFilter", SimpleBeanPropertyFilter.serializeAllExcept("storedData"));
 

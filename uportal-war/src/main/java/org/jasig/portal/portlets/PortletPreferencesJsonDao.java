@@ -8,7 +8,7 @@ import javax.portlet.ValidatorException;
 
 import net.sf.json.JSONObject;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * DAO That stores/retrieves objects as JSON in portlet preferences

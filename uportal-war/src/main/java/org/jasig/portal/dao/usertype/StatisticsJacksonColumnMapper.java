@@ -19,14 +19,15 @@
 package org.jasig.portal.dao.usertype;
 
 import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.annotate.JsonFilter;
-import org.codehaus.jackson.map.ser.FilterProvider;
-import org.codehaus.jackson.map.ser.impl.SimpleBeanPropertyFilter;
-import org.codehaus.jackson.map.ser.impl.SimpleFilterProvider;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
 /**
  * Used for mapping instances of {@link UnivariateStatistic} to/from JSON
@@ -40,15 +41,15 @@ public class StatisticsJacksonColumnMapper extends JacksonColumnMapper {
     @Override
     protected void customizeObjectMapper(ObjectMapper mapper) {
       //Just operate on fields
-        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        mapper.setVisibility(JsonMethod.GETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.IS_GETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.SETTER, Visibility.NONE);
-        mapper.setVisibility(JsonMethod.CREATOR, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+        mapper.setVisibility(PropertyAccessor.GETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.SETTER, Visibility.NONE);
+        mapper.setVisibility(PropertyAccessor.CREATOR, Visibility.NONE);
         
         //Ignore the empty storedData field in all of the stat summary objects
         filters = new SimpleFilterProvider().addFilter(StoredDataFilterMixIn.FILTER_NAME, SimpleBeanPropertyFilter.serializeAllExcept("storedData"));
-        mapper.getSerializationConfig().addMixInAnnotations(Object.class, StoredDataFilterMixIn.class);
+        mapper.addMixInAnnotations(Object.class, StoredDataFilterMixIn.class);
     }
     @JsonFilter(StoredDataFilterMixIn.FILTER_NAME)
     private interface StoredDataFilterMixIn {
