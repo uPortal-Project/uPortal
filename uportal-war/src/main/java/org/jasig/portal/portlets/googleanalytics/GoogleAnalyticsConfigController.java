@@ -11,7 +11,6 @@ import javax.portlet.ReadOnlyException;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ValidatorException;
 
-import org.codehaus.jackson.JsonNode;
 import org.jasig.portal.portlets.PortletPreferencesJsonDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 
 @Controller

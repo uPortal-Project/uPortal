@@ -693,7 +693,7 @@
             <name>contextConfigLocation</name>
             <value>classpath:/properties/contexts/portlet/GoogleAnalytics-portlet.xml</value>
         </init-param>
-        <expiration-cache>0</expiration-cache>
+        <expiration-cache>-1</expiration-cache>
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>VIEW</portlet-mode>

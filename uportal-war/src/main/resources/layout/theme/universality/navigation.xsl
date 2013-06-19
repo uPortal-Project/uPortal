@@ -426,9 +426,11 @@
                         </xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                      <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
-                  </a>
+                  <div class="up-portlet-fname-subnav-wrapper {@fname}">
+                    <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                        <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
+                    </a>
+                  </div>
                 </li>
               </xsl:for-each>
               

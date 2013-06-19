@@ -87,26 +87,134 @@ var uportal = uportal || {};
          'title' : 'Tab: ' + up.analytics.pageData.tab.tabName
       });
    };
+   
+   /**
+    * Safe way to resolve the portlet's fname from the windowId,
+    * falls back to just using the portlet's windowId as the value
+    * if no fname is found in the portletData
+    */
+   var getPortletFname = function(windowId) {
+      var portletData = up.analytics.portletData[windowId];
+      if (portletDate == null) {
+         return windowId;
+      }
+      
+      return portletData.fname;
+   };
+   
+   /**
+    * Safe way to resolve the portlet's title from the windowId,
+    * falls back to just using getPortletFname(windowId) if the title
+    * can't be found
+    */
+   var getRenderedPortletTitle = function(windowId) {
+      var portletWindowWrapper = $("div.up-portlet-windowId-content-wrapper." + windowId);
+      if (portletWindowWrapper == null) {
+         return getPortletFname(windowId);
+      }
+      
+      var portletWrapper = portletWindowWrapper.parents("div.up-portlet-wrapper-inner");
+      if (portletWrapper == null) {
+         return getPortletFname(windowId);
+      }
+      
+      var portletTitle = portletWrapper.find("div.up-portlet-titlebar h2 a");
+      if (portletTitle == null) {
+         return getPortletFname(windowId);
+      }
+      
+      
+      return portletTitle.text().trim();
+   };
 
    /**
     * Build the portlet URI for the specified portlet
     */
-   var getPortletUri = function(portletData) {
-      // TODO need the title here, might need to include entity or window id in
-      // the portlet event
-      return '/portlet/' + portletData.fname + '/' + portletData.fname;
+   var getPortletUri = function(fname) {
+      return '/portlet/' + fname;
    };
 
    /**
     * Set variables specific to the specified portlet
     */
-   var setPortletVariables = function(portletData) {
+   var setPortletVariables = function(windowId, portletData) {
+      var portletTitle = getRenderedPortletTitle(windowId);
+      
+      if (portletData == null) {
+         portletData = up.analytics.portletData[windowId];
+      }
+      
       ga('set', {
-         'page' : getPortletUri(portletData),
-         // TODO need the title here, might need to include entity or window id
-         // in the portlet event
-         'title' : 'Portlet: ' + portletData.fname
+         'page' : getPortletUri(portletData.fname),
+         'title' : 'Portlet: ' + portletTitle
       });
+   };
+   
+   /**
+    * Determine the fname of the portle the clicked flyout was rendered for
+    */
+   var getFlyoutFname = function(clickedLink) {
+      var classes = clickedLink.parents("div.up-portlet-fname-subnav-wrapper").attr("class").split(/\s+/);
+      return _.find(classes, function(cls) {
+         if (cls != "up-portlet-fname-subnav-wrapper") {
+            return cls;
+         }
+      });
+   }
+   
+   /**
+    * Determine the fname of the portle the clicked flyout was rendered for
+    */
+   var getExternaLinkWindowId = function(clickedLink) {
+      var classAttr = clickedLink.parents("div.up-portlet-windowId-content-wrapper").attr("class");
+      if (classAttr == null) {
+         return null;
+      }
+
+      var classes = clickedLink.parents("div.up-portlet-windowId-content-wrapper").attr("class").split(/\s+/);
+      return _.find(classes, function(cls) {
+         if (cls != "up-portlet-windowId-content-wrapper") {
+            return cls;
+         }
+      });
+   }
+   
+   /**
+    * Handler for sending an analytics event when a link is clicked and then dealing
+    * with opening a new window or emulating the click
+    */
+   var handleLinkClickEvent = function(event, clickedLink, eventOpts) {
+      // Click will open in a new window if it is the middle button or the
+      // meta or control keys are held
+      var newWindow = event.button == 1 || event.metaKey || event.ctrlKey || clickedLink.attr("target") != null;
+
+      var clickFunction;
+      if (newWindow) {
+         clickFunction = function() {
+         };
+      } else {
+         clickFunction = function() {
+            document.location = clickedLink.attr("href");
+         };
+      }
+      
+      // Send the event
+      setPageVariables();
+      ga('send', $.extend({
+         'hitType' : 'event',
+         'hitCallback' : clickFunction
+      }, eventOpts));
+
+      // If not opening a new window prevent the event and set the fallback
+      // to make sure the page navigates even if the hitCallback
+      // is never called
+      if (!newWindow) {
+         // Fallback in case hitCallback takes too long to get called, don't
+         // want clicks to hang
+         setTimeout(clickFunction, 200);
+
+         event.preventDefault();
+      }
    };
 
    /**
@@ -115,56 +223,46 @@ var uportal = uportal || {};
     */
    var addFlyoutHandlers = function() {
       $("ul.fl-tabs li.portal-navigation a.portal-subnav-link").click(function(event) {
-         setPageVariables();
-
          var clickedLink = $(this);
 
          // Find the target portlet's title
-         var portletTitle = clickedLink.find("span.portal-subnav-label").text()
+         var portletFlyoutTitle = clickedLink.find("span.portal-subnav-label").text()
 
          // Find the target portlet's fname
-         var classes = clickedLink.parent().attr("class").split(/\s+/);
-         var fname;
-         if (classes.length > 0) {
-            fname = classes[classes.length - 1];
-         } else {
-            fname = portletTitle;
-         }
-
-         // Click will open in a new window if it is the middle button or the
-         // meta or control keys are held
-         var newWindow = event.button == 1 || event.metaKey || event.ctrlKey;
-
-         var clickFunction;
-         if (newWindow) {
-            clickFunction = function() {
-            };
-         } else {
-            clickFunction = function() {
-               document.location = clickedLink.attr("href");
-            };
-         }
-
-         // Send the event
-         ga('send', {
-            'hitType' : 'event',
+         var fname = getFlyoutFname(clickedLink);
+         
+         // Setup the page level state
+         setPageVariables();
+         
+         // Send the event and deal with the click
+         handleLinkClickEvent(event, clickedLink, {
             'eventCategory' : 'Flyout Link',
-            'eventAction' : getPortletUri({
-               fname : fname
-            }),
-            'eventLabel' : portletTitle,
-            'hitCallback' : clickFunction
+            'eventAction' : getPortletUri(fname),
+            'eventLabel' : portletFlyoutTitle
          });
-
-         // If not opening a new window prevent the event and set the fallback
-         // to make sure the page navigates even if the hitCallback
-         // is never called
-         if (!newWindow) {
-            // Fallback in case hitCallback takes too long to get called, don't
-            // want clicks to hang
-            setTimeout(clickFunction, 200);
-
-            event.preventDefault();
+      });
+   };
+   
+   var addExternalLinkHandlers = function() {
+      $('a').click(function(event) {
+         var clickedLink = $(this);
+         
+         var linkHost = clickedLink.prop("hostname");
+         if (linkHost != "" && linkHost != document.domain) {
+            var windowId = getExternaLinkWindowId(clickedLink)
+            if (windowId != null) {
+               setPortletVariables(windowId);
+            }
+            else {
+               setPageVariables();
+            }
+            
+            // Send the event and deal with the click
+            handleLinkClickEvent(event, clickedLink, {
+               'eventCategory' : 'Outbound Link',
+               'eventAction' : clickedLink.prop("href"),
+               'eventLabel' : clickedLink.text()
+            });
          }
       });
    };
@@ -194,18 +292,21 @@ var uportal = uportal || {};
       ga('send', 'timing', 'tab', getTabUri(), (up.analytics.pageData.executionTimeNano / 1000000));
 
       // Portlet Events
-      _.each(up.analytics.portletData, function(portletData) {
+      _.each(up.analytics.portletData, function(portletData, windowId) {
          // TODO configure portlet analytics include/exclude list
          if (portletData.fname == "google-analytics-config") {
             return;
          }
 
-         setPortletVariables(portletData);
+         setPortletVariables(windowId, portletData);
          ga('send', 'pageview');
-         ga('send', 'timing', 'portlet', getPortletUri(portletData), (portletData.executionTimeNano / 1000000));
+         ga('send', 'timing', 'portlet', getPortletUri(portletData.fname), (portletData.executionTimeNano / 1000000));
       });
 
       // Add handlers to deal with click events on flyouts
       addFlyoutHandlers();
+      
+      // Add handlers to deal with click events on external links
+      addExternalLinkHandlers();
    });
 })(jQuery, _);

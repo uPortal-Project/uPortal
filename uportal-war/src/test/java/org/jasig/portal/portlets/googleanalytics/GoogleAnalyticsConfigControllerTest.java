@@ -3,11 +3,12 @@ package org.jasig.portal.portlets.googleanalytics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GoogleAnalyticsConfigControllerTest {
     private ObjectMapper objectMapper;
