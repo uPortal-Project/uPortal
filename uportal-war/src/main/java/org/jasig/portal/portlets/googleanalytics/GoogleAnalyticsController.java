@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
-import org.codehaus.jackson.JsonNode;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.PortletPreferencesJsonDao;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 @Controller
 @RequestMapping("VIEW")
@@ -48,7 +49,7 @@ public class GoogleAnalyticsController {
         
         final JsonNode institutions = config.get("institutions");
         if (institutions != null) {
-            for (final Iterator<JsonNode> institutionsItr = institutions.getElements(); institutionsItr.hasNext(); ) {
+            for (final Iterator<JsonNode> institutionsItr = institutions.elements(); institutionsItr.hasNext(); ) {
                 final JsonNode institution = institutionsItr.next();
                 this.filterAnalyticsGroups(groupMember, institution, isMemberCache);
             }
@@ -77,7 +78,7 @@ public class GoogleAnalyticsController {
             return;
         }
         
-        for (final Iterator<JsonNode> groupItr = dimensionGroups.getElements(); groupItr.hasNext(); ) {
+        for (final Iterator<JsonNode> groupItr = dimensionGroups.elements(); groupItr.hasNext(); ) {
             final JsonNode group = groupItr.next();
             
             final JsonNode valueNode = group.get("value");
@@ -85,7 +86,7 @@ public class GoogleAnalyticsController {
                 continue;
             }
             
-            final String groupName = valueNode.getTextValue();
+            final String groupName = valueNode.asText();
         
             Boolean isMember = isMemberCache.get(groupName);
             if (isMember == null) {
