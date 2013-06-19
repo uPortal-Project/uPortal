@@ -162,7 +162,7 @@
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.2.9</hsqldb.version>
         <icu4j.version>51.1</icu4j.version>
-        <jackson.version>1.9.11</jackson.version>
+        <jackson2.version>2.2.2</jackson2.version>
         <jansi.version>1.8</jansi.version>
         <javassist.version>3.17.1-GA</javassist.version>
         <jasig-portlet-utils.version>1.1.0</jasig-portlet-utils.version> 
@@ -250,6 +250,16 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>${jackson2.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -687,21 +697,6 @@
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-xml</artifactId>
                 <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-xc</artifactId>
-                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.staxmate</groupId>

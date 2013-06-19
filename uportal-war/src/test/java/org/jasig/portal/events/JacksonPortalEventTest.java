@@ -27,13 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.jasig.portal.security.SystemPerson;
+import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -53,15 +51,19 @@ public class JacksonPortalEventTest {
         
         final LoginEvent loginEvent = new LoginEvent(eventBuilder, groups, attributes);
         
-        final ObjectMapper mapper = new ObjectMapper();
-        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector());
-        mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
-        mapper.getSerializationConfig().withAnnotationIntrospector(pair);
-        
+        final ObjectMapperFactoryBean omfb = new ObjectMapperFactoryBean();
+        omfb.afterPropertiesSet();
+        final ObjectMapper mapper = omfb.getObject();
         
         final StringWriter writer = new StringWriter();
         mapper.writeValue(writer, loginEvent);
         final String json = writer.toString();
+        
+        final String expectedStart = "{\"@c\":\".LoginEvent\",\"timestamp\"";
+        assertEquals(expectedStart, json.substring(0, expectedStart.length()));
+        
+        final String expectedEnd = ",\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\",\"groups\":[\"Student\",\"Employee\"],\"attributes\":{\"username\":[\"system\"],\"roles\":[\"student\",\"employee\"]}}";
+        assertEquals(expectedEnd, json.substring(json.indexOf(',', expectedStart.length())));
         
         final PortalEvent event = mapper.readValue(new StringReader(json), PortalEvent.class);
         

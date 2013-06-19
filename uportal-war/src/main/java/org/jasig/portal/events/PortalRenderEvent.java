@@ -25,10 +25,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.Validate;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Constructor assumes that Map passed in is completely immutable
@@ -48,7 +49,7 @@ public final class PortalRenderEvent extends PortalEvent {
      * Still here to support deserializing old event json
      * @deprecated use {@link #executionTimeNano} instead
      */
-    @JsonSerialize(include = Inclusion.NON_NULL)
+    @JsonInclude(Include.NON_NULL)
     @Deprecated
     private Long executionTime;
     private long executionTimeNano;

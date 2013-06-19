@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.portlet.ResourceRequest;
 
+import org.jasig.portal.portlet.om.IPortletWindowId;
+
 
 /**
  * @author Eric Dalquist
@@ -43,9 +45,9 @@ public final class PortletResourceExecutionEvent extends PortletExecutionEvent {
         this.usedPortalCache = false;
     }
 
-    PortletResourceExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters, 
+    PortletResourceExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, 
             String resourceId, boolean usedBrowserCache, boolean usedPortalCache) {
-        super(eventBuilder, fname, executionTime, parameters);
+        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
         this.resourceId = resourceId;
         this.usedBrowserCache = usedBrowserCache;
         this.usedPortalCache = usedPortalCache;

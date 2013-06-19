@@ -3,10 +3,11 @@ package org.jasig.portal.spring.properties;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Converts to/from the generic {@link JsonNode} API

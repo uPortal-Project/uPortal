@@ -18,8 +18,8 @@
  */
 package org.jasig.portal.portlets.search.google;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -45,7 +45,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -67,9 +67,9 @@ public class GoogleCustomSearchServiceTest {
     @Before
     public void setup() throws Exception {
         //Add handling of text/javascript content type
-        final MappingJacksonHttpMessageConverter converter = new MappingJacksonHttpMessageConverter();
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         final List<MediaType> supportedMediaTypes = new LinkedList<MediaType>(converter.getSupportedMediaTypes());
-        final MediaType textJavascriptMediaType = new MediaType("text", "javascript", MappingJacksonHttpMessageConverter.DEFAULT_CHARSET);
+        final MediaType textJavascriptMediaType = new MediaType("text", "javascript", MappingJackson2HttpMessageConverter.DEFAULT_CHARSET);
         supportedMediaTypes.add(textJavascriptMediaType);
         converter.setSupportedMediaTypes(supportedMediaTypes);
         restTemplate.getMessageConverters().add(converter);

@@ -242,13 +242,13 @@ public class JpaPortalEventStoreTest extends BaseRawEventsJpaDaoTest {
         
         
         Thread.sleep(EVENT_DELAY);
-        events.add(new PortletActionExecutionEvent(eventBuilder, "portletA", 5, ImmutableMap.<String, List<String>>of(ActionRequest.ACTION_NAME, ImmutableList.of("foobar"))));
+        events.add(new PortletActionExecutionEvent(eventBuilder, null, "portletA", 5, ImmutableMap.<String, List<String>>of(ActionRequest.ACTION_NAME, ImmutableList.of("foobar"))));
         Thread.sleep(EVENT_DELAY);
-        events.add(new PortletEventExecutionEvent(eventBuilder, "portletA", 7, ImmutableMap.<String, List<String>>of(), new QName("http://www.jasig.org/foo", "event", "e")));
+        events.add(new PortletEventExecutionEvent(eventBuilder, null, "portletA", 7, ImmutableMap.<String, List<String>>of(), new QName("http://www.jasig.org/foo", "event", "e")));
         Thread.sleep(EVENT_DELAY);
-        events.add(new PortletRenderExecutionEvent(eventBuilder, "portletA", 13, ImmutableMap.<String, List<String>>of(), true, false));
+        events.add(new PortletRenderExecutionEvent(eventBuilder, null, "portletA", 13, ImmutableMap.<String, List<String>>of(), true, false));
         Thread.sleep(EVENT_DELAY);
-        events.add(new PortletResourceExecutionEvent(eventBuilder, "portletA", 17, ImmutableMap.<String, List<String>>of(), "someImage.jpg", false, false));
+        events.add(new PortletResourceExecutionEvent(eventBuilder, null, "portletA", 17, ImmutableMap.<String, List<String>>of(), "someImage.jpg", false, false));
         
         Thread.sleep(EVENT_DELAY);
         events.add(new LogoutEvent(eventBuilder));

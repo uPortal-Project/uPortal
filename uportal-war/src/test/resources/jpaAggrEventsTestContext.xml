@@ -65,6 +65,7 @@
         <constructor-arg value="net.sf.ehcache.Ehcache" />
     </bean>
     
+    <bean class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">

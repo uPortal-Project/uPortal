@@ -26,13 +26,14 @@ import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
-import org.codehaus.jackson.JsonNode;
 import org.jasig.portal.portlets.search.IPortalSearchService;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestOperations;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Service for searching using the Google Custom-Search API:
@@ -98,7 +99,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
         final List<SearchResult> searchResultList = searchResults.getSearchResult();
         
         final JsonNode results = googleResponse.get("responseData").get("results");
-        for (final Iterator<JsonNode> resultItr = results.getElements(); resultItr.hasNext();) {
+        for (final Iterator<JsonNode> resultItr = results.elements(); resultItr.hasNext();) {
             final JsonNode googleResult = resultItr.next();
             
             final SearchResult searchResult = new SearchResult();

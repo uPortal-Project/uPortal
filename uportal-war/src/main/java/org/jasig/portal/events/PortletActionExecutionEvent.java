@@ -22,6 +22,8 @@ package org.jasig.portal.events;
 import java.util.List;
 import java.util.Map;
 
+import org.jasig.portal.portlet.om.IPortletWindowId;
+
 /**
  * @author Eric Dalquist
  * @version $Revision$
@@ -33,8 +35,8 @@ public final class PortletActionExecutionEvent extends PortletExecutionEvent {
     private PortletActionExecutionEvent() {
     }
 
-    PortletActionExecutionEvent(PortalEventBuilder eventBuilder, String fname, long executionTime, Map<String, List<String>> parameters) {
-        super(eventBuilder, fname, executionTime, parameters);
+    PortletActionExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters) {
+        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
     }
 
     /* (non-Javadoc)

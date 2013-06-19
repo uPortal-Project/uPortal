@@ -31,16 +31,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-import org.codehaus.jackson.map.introspect.JacksonAnnotationIntrospector;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.jasig.portal.utils.Populator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -56,10 +54,17 @@ public final class CacheKey implements Serializable, TaggedCacheEntry {
     
     private final static ObjectWriter WRITER;
     static {
-        final ObjectMapper mapper = new ObjectMapper();
-        final AnnotationIntrospector pair = new AnnotationIntrospector.Pair(new JacksonAnnotationIntrospector(), new JaxbAnnotationIntrospector());
-        mapper.getDeserializationConfig().withAnnotationIntrospector(pair);
-        mapper.getSerializationConfig().withAnnotationIntrospector(pair);
+        ObjectMapper mapper;
+        try {
+            final ObjectMapperFactoryBean omfb = new ObjectMapperFactoryBean();
+            omfb.afterPropertiesSet();
+            mapper = omfb.getObject();
+        }
+        catch (Exception e) {
+            mapper = new ObjectMapper();
+            mapper.findAndRegisterModules();
+        }
+        
         WRITER = mapper.writerWithDefaultPrettyPrinter();
     }
 
