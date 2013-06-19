@@ -87,43 +87,41 @@ var uportal = uportal || {};
          'title' : 'Tab: ' + up.analytics.pageData.tab.tabName
       });
    };
-   
+
    /**
-    * Safe way to resolve the portlet's fname from the windowId,
-    * falls back to just using the portlet's windowId as the value
-    * if no fname is found in the portletData
+    * Safe way to resolve the portlet's fname from the windowId, falls back to
+    * just using the portlet's windowId as the value if no fname is found in the
+    * portletData
     */
    var getPortletFname = function(windowId) {
       var portletData = up.analytics.portletData[windowId];
       if (portletDate == null) {
          return windowId;
       }
-      
+
       return portletData.fname;
    };
-   
+
    /**
-    * Safe way to resolve the portlet's title from the windowId,
-    * falls back to just using getPortletFname(windowId) if the title
-    * can't be found
+    * Safe way to resolve the portlet's title from the windowId, falls back to
+    * just using getPortletFname(windowId) if the title can't be found
     */
    var getRenderedPortletTitle = function(windowId) {
       var portletWindowWrapper = $("div.up-portlet-windowId-content-wrapper." + windowId);
       if (portletWindowWrapper == null) {
          return getPortletFname(windowId);
       }
-      
+
       var portletWrapper = portletWindowWrapper.parents("div.up-portlet-wrapper-inner");
       if (portletWrapper == null) {
          return getPortletFname(windowId);
       }
-      
+
       var portletTitle = portletWrapper.find("div.up-portlet-titlebar h2 a");
       if (portletTitle == null) {
          return getPortletFname(windowId);
       }
-      
-      
+
       return portletTitle.text().trim();
    };
 
@@ -139,17 +137,17 @@ var uportal = uportal || {};
     */
    var setPortletVariables = function(windowId, portletData) {
       var portletTitle = getRenderedPortletTitle(windowId);
-      
+
       if (portletData == null) {
          portletData = up.analytics.portletData[windowId];
       }
-      
+
       ga('set', {
          'page' : getPortletUri(portletData.fname),
          'title' : 'Portlet: ' + portletTitle
       });
    };
-   
+
    /**
     * Determine the fname of the portle the clicked flyout was rendered for
     */
@@ -160,8 +158,8 @@ var uportal = uportal || {};
             return cls;
          }
       });
-   }
-   
+   };
+
    /**
     * Determine the fname of the portle the clicked flyout was rendered for
     */
@@ -177,11 +175,11 @@ var uportal = uportal || {};
             return cls;
          }
       });
-   }
-   
+   };
+
    /**
-    * Handler for sending an analytics event when a link is clicked and then dealing
-    * with opening a new window or emulating the click
+    * Handler for sending an analytics event when a link is clicked and then
+    * dealing with opening a new window or emulating the click
     */
    var handleLinkClickEvent = function(event, clickedLink, eventOpts) {
       // Click will open in a new window if it is the middle button or the
@@ -197,7 +195,7 @@ var uportal = uportal || {};
             document.location = clickedLink.attr("href");
          };
       }
-      
+
       // Send the event
       setPageVariables();
       ga('send', $.extend({
@@ -226,14 +224,14 @@ var uportal = uportal || {};
          var clickedLink = $(this);
 
          // Find the target portlet's title
-         var portletFlyoutTitle = clickedLink.find("span.portal-subnav-label").text()
+         var portletFlyoutTitle = clickedLink.find("span.portal-subnav-label").text();
 
          // Find the target portlet's fname
          var fname = getFlyoutFname(clickedLink);
-         
+
          // Setup the page level state
          setPageVariables();
-         
+
          // Send the event and deal with the click
          handleLinkClickEvent(event, clickedLink, {
             'eventCategory' : 'Flyout Link',
@@ -242,21 +240,24 @@ var uportal = uportal || {};
          });
       });
    };
-   
+
+   /**
+    * Inspects all clicks on links, any of the clicks that result in existing to
+    * a different host are tracked as Outbound Link events
+    */
    var addExternalLinkHandlers = function() {
       $('a').click(function(event) {
          var clickedLink = $(this);
-         
+
          var linkHost = clickedLink.prop("hostname");
          if (linkHost != "" && linkHost != document.domain) {
-            var windowId = getExternaLinkWindowId(clickedLink)
+            var windowId = getExternaLinkWindowId(clickedLink);
             if (windowId != null) {
                setPortletVariables(windowId);
-            }
-            else {
+            } else {
                setPageVariables();
             }
-            
+
             // Send the event and deal with the click
             handleLinkClickEvent(event, clickedLink, {
                'eventCategory' : 'Outbound Link',
@@ -305,7 +306,7 @@ var uportal = uportal || {};
 
       // Add handlers to deal with click events on flyouts
       addFlyoutHandlers();
-      
+
       // Add handlers to deal with click events on external links
       addExternalLinkHandlers();
    });
