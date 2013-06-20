@@ -149,12 +149,14 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
         pageData.put("executionTimeNano", System.nanoTime() - startTime);
         
         final IPortalRequestInfo portalRequestInfo = urlSyntaxProvider.getPortalRequestInfo(request);
+        pageData.put("urlState", portalRequestInfo.getUrlState());
+        
         final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
         if (targetedLayoutNodeId != null) {
             final AggregatedTabMapping mappedTabForLayoutId = aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
             pageData.put("tab", mappedTabForLayoutId);
-            pageData.put("urlState", portalRequestInfo.getUrlState());
         }
+        
 
         try {
             return mapper.writeValueAsString(pageData);

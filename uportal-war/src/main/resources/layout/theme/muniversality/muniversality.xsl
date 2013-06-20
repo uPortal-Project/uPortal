@@ -341,9 +341,10 @@
                 <xsl:call-template name="footer" />
             </div>
             <script type="text/javascript">
-                var portletData = <portlet-analytics-data/>;
-                var pageData = <page-analytics-data/>;
-                var dimensionData = <dimension-analytics-data/>;
+                up.analytics = up.analytics || {};
+                up.analytics.institution = '<xsl:value-of select="$INSTITUTION" />';
+                up.analytics.portletData = <portlet-analytics-data/>;
+                up.analytics.pageData = <page-analytics-data/>;
             </script>
         </body>
     </html>

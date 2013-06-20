@@ -74,17 +74,48 @@ var uportal = uportal || {};
    /**
     * Build the page URI for a tab
     */
-   var getTabUri = function() {
-      return '/tab/' + up.analytics.pageData.tab.fragmentName + '/' + up.analytics.pageData.tab.tabName;
+   var getTabUri = function(fragmentName, tabName) {
+      if (up.analytics.pageData.tab != null) {
+         fragmentName = fragmentName || up.analytics.pageData.tab.fragmentName;
+         tabName = tabName || up.analytics.pageData.tab.tabName
+      }
+      
+      var uri = '/';
+      
+      if (fragmentName != null) {
+         uri += 'tab/' + fragmentName;
+         
+         if (tabName != null) {
+            uri += '/' + tabName;
+         }
+      }
+      
+      return uri
    };
 
    /**
     * Set variables specific to the current page
     */
-   var setPageVariables = function() {
+   var setPageVariables = function(fragmentName, tabName) {
+      if (up.analytics.pageData.tab != null) {
+         fragmentName = fragmentName || up.analytics.pageData.tab.fragmentName;
+         tabName = tabName || up.analytics.pageData.tab.tabName
+      }
+      
+      var title;
+      if (tabName != null) {
+         title = 'Tab: ' + tabName;
+      }
+      else if (up.analytics.pageData.urlState == null) {
+         title = "Portal Home"
+      }
+      else {
+         title = "No Tab"
+      }
+      
       ga('set', {
-         'page' : getTabUri(),
-         'title' : 'Tab: ' + up.analytics.pageData.tab.tabName
+         'page' : getTabUri(fragmentName, tabName),
+         'title' : title
       });
    };
 
@@ -147,14 +178,26 @@ var uportal = uportal || {};
          'title' : 'Portlet: ' + portletTitle
       });
    };
-
+   
    /**
-    * Determine the fname of the portle the clicked flyout was rendered for
+    * Finds a child element based on the selector and then return the first
+    * class element that is not equal to excludedClasses or contained in the
+    * excludedClasses array
     */
-   var getFlyoutFname = function(clickedLink) {
-      var classes = clickedLink.parents("div.up-portlet-fname-subnav-wrapper").attr("class").split(/\s+/);
+   var getInfoClass = function(selectorFunction, excludedClasses) {
+      // Convert excludedClasses to an array for simpler code below
+      if (!_.isArray(excludedClasses)) {
+         excludedClasses = [excludedClasses];
+      }
+      
+      var classAttr = selectorFunction().attr("class");
+      if (classAttr == null) {
+         return null;
+      }
+
+      var classes = classAttr.split(/\s+/);
       return _.find(classes, function(cls) {
-         if (cls != "up-portlet-fname-subnav-wrapper") {
+         if (!_.contains(excludedClasses, cls)) {
             return cls;
          }
       });
@@ -163,18 +206,19 @@ var uportal = uportal || {};
    /**
     * Determine the fname of the portle the clicked flyout was rendered for
     */
-   var getExternaLinkWindowId = function(clickedLink) {
-      var classAttr = clickedLink.parents("div.up-portlet-windowId-content-wrapper").attr("class");
-      if (classAttr == null) {
-         return null;
-      }
+   var getFlyoutFname = function(clickedLink) {
+      return getInfoClass(function() {
+         return clickedLink.parents("div.up-portlet-fname-subnav-wrapper")
+      }, "up-portlet-fname-subnav-wrapper");
+   };
 
-      var classes = clickedLink.parents("div.up-portlet-windowId-content-wrapper").attr("class").split(/\s+/);
-      return _.find(classes, function(cls) {
-         if (cls != "up-portlet-windowId-content-wrapper") {
-            return cls;
-         }
-      });
+   /**
+    * Determine the fname of the portle the clicked flyout was rendered for
+    */
+   var getExternaLinkWindowId = function(clickedLink) {
+      return getInfoClass(function() {
+         return clickedLink.parents("div.up-portlet-windowId-content-wrapper")
+      }, "up-portlet-windowId-content-wrapper");
    };
 
    /**
@@ -267,6 +311,26 @@ var uportal = uportal || {};
          }
       });
    };
+   
+   var addMobileListTabHandlers = function() {
+      $('ul.up-portal-nav li.up-tab').click(function(event) {
+         var clickedTab = $(this);
+         
+         //Ignore clicks on already open tabs
+         if (clickedTab.hasClass("up-tab-open")) {
+            return;
+         }
+         
+         var fragmentName = getInfoClass(function() {
+               return clickedTab.find("div.up-tab-owner");
+            }, "up-tab-owner");
+
+         var tabName = clickedTab.find("span.up-tab-name").text().trim();
+         
+         setPageVariables(fragmentName, tabName);
+         ga('send', 'pageview');
+      });
+   };
 
    $(document).ready(function() {
       // Fail safe, if the analytics library isn't loaded make sure the function
@@ -289,8 +353,16 @@ var uportal = uportal || {};
 
       // Page Event
       setPageVariables();
-      ga('send', 'pageview');
-      ga('send', 'timing', 'tab', getTabUri(), (up.analytics.pageData.executionTimeNano / 1000000));
+      // Don't bother sending the view in MAX WindowState
+      if (up.analytics.pageData.urlState != "MAX") {
+         ga('send', 'pageview');
+      }
+      ga('send', {
+        'hitType': 'timing',
+        'timingCategory': 'tab',
+        'timingVar': getTabUri(),
+        'timingValue': (up.analytics.pageData.executionTimeNano / 1000000)
+      });
 
       // Portlet Events
       _.each(up.analytics.portletData, function(portletData, windowId) {
@@ -301,7 +373,12 @@ var uportal = uportal || {};
 
          setPortletVariables(windowId, portletData);
          ga('send', 'pageview');
-         ga('send', 'timing', 'portlet', getPortletUri(portletData.fname), (portletData.executionTimeNano / 1000000));
+         ga('send', {
+           'hitType': 'timing',
+           'timingCategory': 'portlet',
+           'timingVar': getPortletUri(portletData.fname),
+           'timingValue':(portletData.executionTimeNano / 1000000)
+         });
       });
 
       // Add handlers to deal with click events on flyouts
@@ -309,5 +386,8 @@ var uportal = uportal || {};
 
       // Add handlers to deal with click events on external links
       addExternalLinkHandlers();
+      
+      // Add handlers to deal with "tab" clicks on the mobile accordian view
+      addMobileListTabHandlers();
    });
 })(jQuery, _);

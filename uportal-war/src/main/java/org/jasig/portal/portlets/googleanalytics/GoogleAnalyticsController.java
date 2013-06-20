@@ -104,23 +104,29 @@ public class GoogleAnalyticsController {
      * Check if the user is a member of the specified group name
      */
     protected boolean isMember(IGroupMember groupMember, String groupName) {
-        IGroupMember group = GroupService.findGroup(groupName);
-        if (group != null) {
+        try {
+            IGroupMember group = GroupService.findGroup(groupName);
+            if (group != null) {
+                return groupMember.isDeepMemberOf(group);
+            }
+    
+            
+            final EntityIdentifier[] results = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
+            if (results == null || results.length == 0) {
+                this.logger.warn("No portal group found for '{}' no users will be placed in that group for analytics", groupName);
+                return false;
+            }
+            
+            if (results.length > 1) {
+                this.logger.warn("{} groups were found for groupName '{}'. The first result will be used.", results.length, groupName);
+            }
+            
+            group = GroupService.getGroupMember(results[0]);
             return groupMember.isDeepMemberOf(group);
         }
-
-        
-        final EntityIdentifier[] results = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
-        if (results == null || results.length == 0) {
-            this.logger.warn("No portal group found for '{}' no users will be placed in that group for analytics", groupName);
+        catch (Exception e) {
+            this.logger.warn("Failed to determine if {} is a member of {}, returning false", groupMember, groupName, e);
             return false;
         }
-        
-        if (results.length > 1) {
-            this.logger.warn("{} groups were found for groupName '{}'. The first result will be used.", results.length, groupName);
-        }
-        
-        group = GroupService.getGroupMember(results[0]);
-        return groupMember.isDeepMemberOf(group);
     }
 }
