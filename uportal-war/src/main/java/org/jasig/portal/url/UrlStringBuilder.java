@@ -69,6 +69,34 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
     }
     
     /**
+     * Creates a URL with no host, protocol or port. The URL will start with protocol://host
+     * 
+     * @param encoding The encoding to use for parameters
+     */
+    public UrlStringBuilder(String encoding, String protocol, String host) {
+        this(encoding, protocol, host, null);
+    }
+    
+    /**
+     * Creates a URL with no host, protocol or port. The URL will start with protocol://host:port
+     * 
+     * @param encoding The encoding to use for parameters
+     */
+    public UrlStringBuilder(String encoding, String protocol, String host, Integer port) {
+        Validate.notNull(encoding, "encoding can not be null");
+        this.checkEncoding(encoding);
+        
+        Validate.notNull(protocol, "protocol can not be null");
+        Validate.notNull(host, " host can not be null");
+
+        this.encoding = encoding;
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+        this.context = null;
+    }
+    
+    /**
      * Copy constructor
      */
     public UrlStringBuilder(UrlStringBuilder urlBuilder) {
