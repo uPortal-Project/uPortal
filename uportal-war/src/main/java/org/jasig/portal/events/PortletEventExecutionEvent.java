@@ -19,14 +19,10 @@
 
 package org.jasig.portal.events;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.portlet.EventRequest;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
@@ -42,8 +38,8 @@ public final class PortletEventExecutionEvent extends PortletExecutionEvent {
         this.eventName = null;
     }
 
-    PortletEventExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, QName eventName) {
-        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
+    PortletEventExecutionEvent(PortletExecutionEventBuilder eventBuilder, QName eventName) {
+        super(eventBuilder);
         Validate.notNull(eventName, "eventName");
         this.eventName = eventName;
     }
@@ -56,9 +52,6 @@ public final class PortletEventExecutionEvent extends PortletExecutionEvent {
         return this.eventName;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return super.toString() + 

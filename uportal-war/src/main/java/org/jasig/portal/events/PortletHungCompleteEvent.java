@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.events;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 
 /**
@@ -40,6 +41,8 @@ public class PortletHungCompleteEvent extends PortalEvent {
 
     PortletHungCompleteEvent(PortalEventBuilder eventBuilder, IPortletExecutionWorker<?> worker) {
         super(eventBuilder);
+        
+        Validate.notNull(worker, "worker");
         
         this.worker = worker;
         this.fname = worker.getPortletFname();

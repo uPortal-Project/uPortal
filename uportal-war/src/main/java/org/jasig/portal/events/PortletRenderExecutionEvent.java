@@ -19,11 +19,6 @@
 
 package org.jasig.portal.events;
 
-import java.util.List;
-import java.util.Map;
-
-import org.jasig.portal.portlet.om.IPortletWindowId;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -51,8 +46,8 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
         this.targeted = false;
     }
 
-    PortletRenderExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache) {
-        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
+    PortletRenderExecutionEvent(PortletExecutionEventBuilder eventBuilder, boolean targeted, boolean usedPortalCache) {
+        super(eventBuilder);
         this.targeted = targeted;
         this.usedPortalCache = usedPortalCache;
     }
@@ -82,9 +77,6 @@ public final class PortletRenderExecutionEvent extends PortletExecutionEvent {
         return this.usedPortalCache;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return super.toString() + 

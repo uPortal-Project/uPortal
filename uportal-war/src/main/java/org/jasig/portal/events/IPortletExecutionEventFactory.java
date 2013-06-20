@@ -18,9 +18,6 @@
  */
 package org.jasig.portal.events;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
@@ -44,34 +41,22 @@ public interface IPortletExecutionEventFactory {
             IPortletExecutionWorker<?> worker);
     
     //********** Portlet Execution Events **********//
-    
+
     void publishPortletActionExecutionEvent(HttpServletRequest request, Object source,
-            IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters);
-    void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, 
-            IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, QName eventName);
-    void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, 
-            IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
-    void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, 
-            IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
-    void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, 
-            IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache);
-    
-    @Deprecated
-    void publishPortletActionExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters);
-    @Deprecated
-    void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, QName eventName);
-    @Deprecated
-    void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
-    @Deprecated
-    void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean usedPortalCache);
-    @Deprecated
-    void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source, 
-            String fname, long executionTime, Map<String, List<String>> parameters, String resourceId, boolean usedBrowserCache, boolean usedPortalCache);
-    
+            IPortletWindowId portletWindowId, long executionTime);
+
+    void publishPortletEventExecutionEvent(HttpServletRequest request, Object source, IPortletWindowId portletWindowId,
+            long executionTime, QName eventName);
+
+    void publishPortletRenderHeaderExecutionEvent(HttpServletRequest request, Object source,
+            IPortletWindowId portletWindowId, long executionTime, boolean targeted, boolean cached);
+
+    void publishPortletRenderExecutionEvent(HttpServletRequest request, Object source,
+            IPortletWindowId portletWindowId, long executionTime, boolean targeted, boolean cached);
+
+    void publishPortletResourceExecutionEvent(HttpServletRequest request, Object source,
+            IPortletWindowId portletWindowId, long executionTime, boolean usedBrowserCache, boolean usedPortalCache);
+
     //********** Portal Rendering Pipeline Events **********//
     
     void publishPortalRenderEvent(HttpServletRequest request, Object source, String requestPathInfo, long executionTime,
