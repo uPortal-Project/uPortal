@@ -1,8 +1,12 @@
-package org.jasig.portal.events.tincan;
+package org.jasig.portal.events.tincan.om;
+
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.jasig.portal.events.tincan.json.LrsVerbSerializer;
 
 /**
  * A list of verbs from http://www.adlnet.gov/expapi/verbs/
  */
+@JsonSerialize(using=LrsVerbSerializer.class)
 public enum LrsVerb {
     ANSWERED,
     ASKED,
