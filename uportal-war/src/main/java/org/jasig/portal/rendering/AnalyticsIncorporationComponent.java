@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +31,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.BeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 
@@ -66,10 +67,15 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
         initMapper();
     }
     
-
+    /**
+     * Configure the ObjectMapper to filter out all fields on the events except
+     * those that are actually needed for the analytics reporting
+     */
     private void initMapper() {
+        final BeanPropertyFilter filterOutAllExcept = SimpleBeanPropertyFilter.filterOutAllExcept("fname", "executionTimeNano");
         this.mapper.addMixInAnnotations(PortalEvent.class, PortletRenderExecutionEventFilterMixIn.class);
-        final FilterProvider filterProvider = new SimpleFilterProvider().addFilter(PortletRenderExecutionEventFilterMixIn.FILTER_NAME, SimpleBeanPropertyFilter.filterOutAllExcept("fname", "executionTimeNano", "parameters"));
+        final SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+        filterProvider.addFilter(PortletRenderExecutionEventFilterMixIn.FILTER_NAME, filterOutAllExcept);
         this.portletEventWriter = this.mapper.writer(filterProvider);
     }
 
@@ -113,9 +119,13 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
         for (final PortalEvent portalEvent : portalEvents) {
             if (portalEvent instanceof PortletRenderExecutionEvent) {
                 final PortletRenderExecutionEvent portletRenderEvent = (PortletRenderExecutionEvent) portalEvent;
-                final IPortletWindowId portletWindowId = portletRenderEvent.getPortletWindowId();
-                final String eventKey = portletWindowId != null ? portletWindowId.getStringId() : portletRenderEvent.getFname();
-                renderEvents.put(eventKey, portletRenderEvent);
+
+                //Don't write out info for minimized portlets
+                if (!WindowState.MINIMIZED.equals(portletRenderEvent.getWindowState())) {
+                    final IPortletWindowId portletWindowId = portletRenderEvent.getPortletWindowId();
+                    final String eventKey = portletWindowId != null ? portletWindowId.getStringId() : portletRenderEvent.getFname();
+                    renderEvents.put(eventKey, portletRenderEvent);
+                }
             }
         }
         
@@ -143,6 +153,7 @@ public class AnalyticsIncorporationComponent extends CharacterPipelineComponentW
         if (targetedLayoutNodeId != null) {
             final AggregatedTabMapping mappedTabForLayoutId = aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
             pageData.put("tab", mappedTabForLayoutId);
+            pageData.put("urlState", portalRequestInfo.getUrlState());
         }
 
         try {

@@ -171,5 +171,25 @@ public abstract class PortalEvent extends ApplicationEvent {
             this.person = person;
             this.portalRequest = portalRequest;
         }
+
+        protected Object getSource() {
+            return source;
+        }
+
+        protected String getServerName() {
+            return serverName;
+        }
+
+        protected String getEventSessionId() {
+            return eventSessionId;
+        }
+
+        protected IPerson getPerson() {
+            return person;
+        }
+
+        protected HttpServletRequest getPortalRequest() {
+            return portalRequest;
+        }
     }
 }

@@ -1,5 +1,7 @@
 package org.jasig.portal.spring.beans.factory;
 
+
+
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,5 +25,4 @@ public class ObjectMapperFactoryBean extends AbstractFactoryBean<ObjectMapper> {
         
         return mapper;
     }
-
 }

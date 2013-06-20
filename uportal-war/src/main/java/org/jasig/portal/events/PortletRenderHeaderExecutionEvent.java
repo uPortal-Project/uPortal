@@ -19,10 +19,6 @@
 
 package org.jasig.portal.events;
 
-import java.util.List;
-import java.util.Map;
-
-import org.jasig.portal.portlet.om.IPortletWindowId;
 
 
 /**
@@ -41,8 +37,8 @@ public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEve
         this.cached = false;
     }
 
-    PortletRenderHeaderExecutionEvent(PortalEventBuilder eventBuilder, IPortletWindowId portletWindowId, String fname, long executionTime, Map<String, List<String>> parameters, boolean targeted, boolean cached) {
-        super(eventBuilder, portletWindowId, fname, executionTime, parameters);
+    PortletRenderHeaderExecutionEvent(PortletExecutionEventBuilder eventBuilder, boolean targeted, boolean cached) {
+        super(eventBuilder);
         this.targeted = targeted;
         this.cached = cached;
     }
@@ -61,9 +57,6 @@ public final class PortletRenderHeaderExecutionEvent extends PortletExecutionEve
         return this.cached;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return super.toString() + 

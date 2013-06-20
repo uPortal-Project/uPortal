@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.portlet.PortletMode;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
@@ -45,14 +47,15 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
     public void testEventFiltering() throws Exception {
         final String sessionId = "1234567890123_system_AAAAAAAAAAA";
         final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE, null);
+        final PortletExecutionEvent.PortletExecutionEventBuilder portletExecutionEventBuilder = new PortletExecutionEvent.PortletExecutionEventBuilder(eventBuilder, new MockPortletWindowId("pw1"), "fname1", 123450000, Collections.<String, List<String>>emptyMap(), WindowState.NORMAL, PortletMode.VIEW);
 
         final Set<PortalEvent> portalEvents = ImmutableSet.<PortalEvent>of(
-                new PortletRenderExecutionEvent(eventBuilder, new MockPortletWindowId("pw1"), "fname1", 123450000, Collections.<String, List<String>>emptyMap(), false, false)
+                new PortletRenderExecutionEvent(portletExecutionEventBuilder, false, false)
             );
         
         final String result = analyticsIncorporationComponent.serializePortletRenderExecutionEvents(portalEvents);
         
-        assertEquals("{\"pw1\":{\"fname\":\"fname1\",\"executionTimeNano\":123450000,\"parameters\":{}}}", result);
+        assertEquals("{\"pw1\":{\"fname\":\"fname1\",\"executionTimeNano\":123450000}}", result);
     }
     
     private static class TestableAnalyticsIncorporationComponent extends AnalyticsIncorporationComponent {
@@ -78,7 +81,8 @@ public class AnalyticsIncorporationComponentEventSerializationTest {
     private PortalEvent createEvent() {
         final String sessionId = "1234567890123_system_AAAAAAAAAAA";
         final PortalEvent.PortalEventBuilder eventBuilder = new PortalEvent.PortalEventBuilder(this, "example.com", sessionId, SystemPerson.INSTANCE, null);
-        return new PortletRenderExecutionEvent(eventBuilder, new MockPortletWindowId("pw1"), "fname1", 123450000, Collections.<String, List<String>>emptyMap(), false, false);
+        final PortletExecutionEvent.PortletExecutionEventBuilder portletExecutionEventBuilder = new PortletExecutionEvent.PortletExecutionEventBuilder(eventBuilder, new MockPortletWindowId("pw1"), "fname1", 123450000, Collections.<String, List<String>>emptyMap(), WindowState.NORMAL, PortletMode.VIEW);
+        return new PortletRenderExecutionEvent(portletExecutionEventBuilder, false, false);
     }
     
     @Test
