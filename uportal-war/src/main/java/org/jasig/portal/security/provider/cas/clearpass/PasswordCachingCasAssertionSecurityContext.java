@@ -52,7 +52,23 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
             return;
         }
 
-        final String password = retrievePasswordFromResponse(proxyTicket);
+        String password = null;
+        try {
+            password = retrievePasswordFromResponse(proxyTicket);
+        } catch (Exception e) {
+            /* 
+             * uPortal failed to obtain the user's password from the ClearPass 
+             * feature.  This issue commonly occurs in local dev environments 
+             * because CAS will not share the user's credential over a non-SSL 
+             * connection.  We need to log this event, but should not fail the 
+             * whole AuthN.
+             */
+            if (log.isWarnEnabled()) {
+                log.warn("Unable to retrieve the credential from the ClearPass " +
+                        "service for principal:  " + assertion.getPrincipal().getName());
+            }
+            return;
+        }
 
         if (password != null) {
             log.debug("Password retrieved from ClearPass.");
