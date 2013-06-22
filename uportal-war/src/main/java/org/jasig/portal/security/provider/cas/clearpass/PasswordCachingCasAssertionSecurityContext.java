@@ -46,15 +46,16 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
 
     @Override
     protected final void postAuthenticate(final Assertion assertion) {
-        final String proxyTicket = assertion.getPrincipal().getProxyTicketFor(this.clearPassUrl);
-
-        if (proxyTicket == null) {
-            log.error("Unable to obtain proxy ticket for ClearPass service.");
-            return;
-        }
 
         String password = null;
         try {
+            final String proxyTicket = assertion.getPrincipal().getProxyTicketFor(this.clearPassUrl);
+
+            if (proxyTicket == null) {
+                log.error("Unable to obtain proxy ticket for ClearPass service.");
+                return;
+            }
+
             password = retrievePasswordFromResponse(proxyTicket);
         } catch (Exception e) {
             /* 
@@ -66,7 +67,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
              */
             if (log.isWarnEnabled()) {
                 log.warn("Unable to retrieve the credential from the ClearPass " +
-                        "service for principal:  " + assertion.getPrincipal().getName());
+                        "service for principal:  " + assertion.getPrincipal().getName(), e);
             }
             return;
         }
