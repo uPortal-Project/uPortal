@@ -3,7 +3,6 @@ package org.jasig.portal.events.tincan;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.jasig.portal.events.tincan.om.LrsObject;
 import org.jasig.portal.events.tincan.om.LrsStatement;
 import org.springframework.scheduling.annotation.Scheduled;
 
