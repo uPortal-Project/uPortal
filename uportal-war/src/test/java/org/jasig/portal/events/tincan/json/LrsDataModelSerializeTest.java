@@ -8,6 +8,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.jasig.portal.events.tincan.om.LocalizedString;
 import org.jasig.portal.events.tincan.om.LrsActor;
 import org.jasig.portal.events.tincan.om.LrsObject;
+import org.jasig.portal.events.tincan.om.LrsStatement;
 import org.jasig.portal.events.tincan.om.LrsVerb;
 import org.jasig.portal.url.UrlStringBuilder;
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class LrsDataModelSerializeTest {
     }
     
     @Test
-    public void testLrcObjectSerialize() throws Exception {
+    public void testLrsObjectSerialize() throws Exception {
         final UrlStringBuilder idBuilder = new UrlStringBuilder("UTF-8", "http", "www.example.com");
         idBuilder.addPath("portlets", "fname");
         
@@ -50,5 +51,25 @@ public class LrsDataModelSerializeTest {
         final String result = this.objectMapper.writeValueAsString(lrsObject);
         
         assertEquals("{\"id\":\"http://www.example.com/portlets/fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en_US\":\"Portlet Name\"},\"description\":{\"en_US\":\"Portlet Description\"}}}", result);
+    }
+    
+
+    
+    @Test
+    public void testLrsStatementSerialize() throws Exception {
+        final LrsActor lrsActor = new LrsActor("user@example.com", "John Doe");
+        
+        final UrlStringBuilder idBuilder = new UrlStringBuilder("UTF-8", "http", "www.example.com");
+        idBuilder.addPath("portlets", "fname");
+        
+        final LrsObject lrsObject = new LrsObject(idBuilder, "Activity", 
+                ImmutableMap.of("name", new LocalizedString(new Locale("en", "us"), "Portlet Name"),
+                                "description", new LocalizedString(new Locale("en", "us"), "Portlet Description")));
+
+        final LrsStatement lrsStatement = new LrsStatement(lrsActor, LrsVerb.INITIALIZED, lrsObject);
+        
+        final String result = this.objectMapper.writeValueAsString(lrsStatement);
+        
+        assertEquals("{\"actor\":{\"mbox\":\"user@example.com\",\"name\":\"John Doe\",\"objectType\":\"Agent\"},\"verb\":{\"id\":\"http://adlnet.gov/expapi/verbs/initialized\",\"display\":{\"en-us\":\"initialized\"}},\"object\":{\"id\":\"http://www.example.com/portlets/fname\",\"objectType\":\"Activity\",\"definition\":{\"name\":{\"en_US\":\"Portlet Name\"},\"description\":{\"en_US\":\"Portlet Description\"}}}}", result);
     }
 }
