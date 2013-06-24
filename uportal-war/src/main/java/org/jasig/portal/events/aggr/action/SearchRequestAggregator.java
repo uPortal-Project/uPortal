@@ -25,7 +25,7 @@ import org.jasig.portal.events.PortletEventExecutionEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
-import org.jasig.portal.events.aggr.BasePortalEventAggregator;
+import org.jasig.portal.events.aggr.BaseIntervalAwarePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -43,7 +43,7 @@ import java.util.Map;
 /**
  * @author Chris Waymire (chris@waymire.net)
  */
-public class SearchRequestAggregator extends BasePortalEventAggregator<PortletActionExecutionEvent, SearchRequestAggregationImpl, SearchRequestAggregationKey> {
+public class SearchRequestAggregator extends BaseIntervalAwarePortalEventAggregator<PortletActionExecutionEvent, SearchRequestAggregationImpl, SearchRequestAggregationKey> {
     private static final String TARGET_FNAME = "search";
     private static final String TARGET_PARAM = "query";
 

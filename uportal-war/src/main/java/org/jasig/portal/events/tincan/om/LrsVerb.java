@@ -34,7 +34,7 @@ public enum LrsVerb {
     TERMINATED,
     VOIDED;
     
-    private final static String BASE_URI = "http://adlnet.gov/expapi/verbs/";
+    public final static String BASE_URI = "http://adlnet.gov/expapi/verbs/";
     private final String uri;
     
     private LrsVerb() {
