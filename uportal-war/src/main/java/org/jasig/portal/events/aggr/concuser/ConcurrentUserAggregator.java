@@ -23,7 +23,7 @@ import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
-import org.jasig.portal.events.aggr.BasePortalEventAggregator;
+import org.jasig.portal.events.aggr.BaseIntervalAwarePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class ConcurrentUserAggregator extends BasePortalEventAggregator<PortalEvent, ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> {
+public class ConcurrentUserAggregator extends BaseIntervalAwarePortalEventAggregator<PortalEvent, ConcurrentUserAggregationImpl, ConcurrentUserAggregationKey> {
     private ConcurrentUserAggregationPrivateDao concurrentUserAggregationDao;
 
     @Autowired

@@ -19,47 +19,24 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Map;
-
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.session.EventSession;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class LoggingPortalEventAggregator implements IPortalEventAggregator<PortalEvent> {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+public class LoggingPortalEventAggregator extends
+        BasePortalEventAggregator<PortalEvent> implements
+        SimplePortalEventAggregator<PortalEvent> {
     
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
         return true;
     }
     
-    public boolean supports(PortalEvent event) {
-        return true;
-    }
-
     @Override
-    public void aggregateEvent(PortalEvent e, EventSession eventSession,
-            EventAggregationContext eventAggregationContext,
-            Map<AggregationInterval, AggregationIntervalInfo> currentIntervals) {
-        
+    public void aggregateEvent(PortalEvent e, EventSession eventSession) {
         logger.debug("EVENT   : {}", e);
-    }
-
-    @Override
-    public void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext,
-            Map<AggregationInterval, AggregationIntervalInfo> intervals) {
-        
-        logger.debug("INTERVAL: {} - {}", interval, intervals.get(interval));
-    }
-
-    @Override
-    public int cleanUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval) {
-        return 0;
     }
 }

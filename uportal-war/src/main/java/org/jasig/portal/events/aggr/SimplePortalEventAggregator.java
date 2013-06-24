@@ -22,6 +22,7 @@ package org.jasig.portal.events.aggr;
 import javax.persistence.FlushModeType;
 
 import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.aggr.session.EventSession;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 
 /**
@@ -32,14 +33,12 @@ import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortalEventAggregator<E extends PortalEvent> {
+public interface SimplePortalEventAggregator<E extends PortalEvent> extends IPortalEventAggregator<E> {
     /**
-     * @return true if this aggregator supports the specified event type
+     * Add the specified event to the aggregate
+     * 
+     * @param e The event to aggregate
+     * @param eventSession Information about the event session associated with the event
      */
-    boolean supports(Class<? extends PortalEvent> type);
-    
-    /**
-     * @return true if this aggregator supports the specified event
-     */
-    boolean supports(PortalEvent event);
+    void aggregateEvent(E e, EventSession eventSession);
 }
