@@ -26,7 +26,7 @@ import org.jasig.portal.events.PortletMovedInLayoutPortalEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
-import org.jasig.portal.events.aggr.BasePortalEventAggregator;
+import org.jasig.portal.events.aggr.BaseIntervalAwarePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -43,7 +43,7 @@ import java.util.Map;
  *
  * @author Chris Waymire <cwaymire@unicon.net>
  */
-public class PortletLayoutAggregator extends BasePortalEventAggregator<PortletLayoutPortalEvent, PortletLayoutAggregationImpl, PortletLayoutAggregationKey> {
+public class PortletLayoutAggregator extends BaseIntervalAwarePortalEventAggregator<PortletLayoutPortalEvent, PortletLayoutAggregationImpl, PortletLayoutAggregationKey> {
     private static final String MAPPED_PORTLETS_CACHE_KEY = PortletLayoutAggregator.class.getName() + "_MAPPED_PORTLETS";
 
     private PortletLayoutAggregationPrivateDao portletLayoutAggregationDao;
