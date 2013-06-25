@@ -2,6 +2,9 @@ package org.jasig.portal.events.tincan;
 
 import java.util.Locale;
 
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.LogoutEvent;
 import org.jasig.portal.events.PortalEvent;
@@ -22,10 +25,11 @@ import org.jasig.portal.events.tincan.om.LrsActor;
 import org.jasig.portal.events.tincan.om.LrsObject;
 import org.jasig.portal.events.tincan.om.LrsStatement;
 import org.jasig.portal.events.tincan.om.LrsVerb;
-import org.jasig.portal.url.UrlStringBuilder;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -38,11 +42,10 @@ public class TinCanPortalEventAggregator extends
     private TinCanEventSender tinCanEventSender;
     private AggregatedTabLookupDao aggregatedTabLookupDao;
     private AggregatedPortletLookupDao aggregatedPortletLookupDao;
+    private Ehcache lrsActorCache;
     
     private String emailAttributeName = "mail";
     private String displayNameAttributeName = "displayName";
-    private String objectProtocol = "http";
-    private String objectHost = "adlnet.gov";
     
     @Autowired
     public void setAggregatedTabLookupDao(AggregatedTabLookupDao aggregatedTabLookupDao) {
@@ -63,23 +66,23 @@ public class TinCanPortalEventAggregator extends
     public void setPersonAttributeDao(IPersonAttributeDao personAttributeDao) {
         this.personAttributeDao = personAttributeDao;
     }
+    
+    @Autowired
+    @Qualifier("org.jasig.portal.events.tincan.LrsActorCache")
+    public void setLrsActorCache(Ehcache lrsActorCache) {
+        this.lrsActorCache = lrsActorCache;
+    }
 
+    @Value("${org.jasig.portal.events.tincan.TinCanPortalEventAggregator.emailAttributeName:mail}")
     public void setEmailAttributeName(String emailAttributeName) {
         this.emailAttributeName = emailAttributeName;
     }
 
+    @Value("${org.jasig.portal.events.tincan.TinCanPortalEventAggregator.displayNameAttributeName:displayName}")
     public void setDisplayNameAttributeName(String displayNameAttributeName) {
         this.displayNameAttributeName = displayNameAttributeName;
     }
 
-    public void setObjectProtocol(String objectProtocol) {
-        this.objectProtocol = objectProtocol;
-    }
-
-    public void setObjectHost(String objectHost) {
-        this.objectHost = objectHost;
-    }
-    
 
     @Override
     public boolean supports(Class<? extends PortalEvent> type) {
@@ -110,23 +113,21 @@ public class TinCanPortalEventAggregator extends
     }
     
     protected LrsObject getLrsObject(PortalEvent e) {
-        final UrlStringBuilder objectId = new UrlStringBuilder("UTF-8", this.objectHost, this.objectProtocol);
+        final UrnBuilder objectIdBuilder = new UrnBuilder("UTF-8", "tincan", "uportal", "activities");
+        
         final Builder<String, LocalizedString> definitionBuilder = ImmutableMap.builder();
         
-        //TODO add context path
-        //objectId.addPath(element);
-        
         if (e instanceof LoginEvent) {
-            objectId.addPath("Login");
+            objectIdBuilder.add("Login");
         }
         else if (e instanceof LogoutEvent) {
-            objectId.addPath("Logout");
+            objectIdBuilder.add("Logout");
         }
         else if (e instanceof PortalRenderEvent) {
             final String targetedLayoutNodeId = ((PortalRenderEvent) e).getTargetedLayoutNodeId();
             final AggregatedTabMapping aggregatedTabMapping = aggregatedTabLookupDao.getMappedTabForLayoutId(targetedLayoutNodeId);
             
-            objectId.addPath(aggregatedTabMapping.getFragmentName());
+            objectIdBuilder.add("tab", aggregatedTabMapping.getFragmentName());
             
             definitionBuilder.put("name", new LocalizedString(Locale.US, aggregatedTabMapping.getDisplayString()));
         }
@@ -134,12 +135,12 @@ public class TinCanPortalEventAggregator extends
             final String fname = ((PortletExecutionEvent) e).getFname();
             final AggregatedPortletMapping mappedPortletForFname = this.aggregatedPortletLookupDao.getMappedPortletForFname(fname);
             
-            objectId.addPath(fname);
+            objectIdBuilder.add("portlet", fname);
             
             definitionBuilder.put("name", new LocalizedString(Locale.US, mappedPortletForFname.getName()));
         }
         
-        return new LrsObject(objectId, "Activity", definitionBuilder.build());
+        return new LrsObject(objectIdBuilder.getUri(), "Activity", definitionBuilder.build());
     }
     
     protected LrsVerb getLrsVerb(PortalEvent e) {
@@ -165,23 +166,29 @@ public class TinCanPortalEventAggregator extends
         return null;
     }
     
-    //TODO cache this lookup/object creation
     protected LrsActor getLrsActor(PortalEvent e) {
         final String userName = e.getUserName();
+        
+        Element element = this.lrsActorCache.get(userName);
+        if (element != null) {
+            return (LrsActor)element.getObjectValue();
+        }
 
         final String email;
         final String name;
         final IPersonAttributes person = personAttributeDao.getPerson(userName);
         if (person == null) {
             email = userName;
-            name = userName;
+            name = userName + "@example.com";
         }
         else {
             email = getEmail(person);
             name = getName(person);
         }
         
-        return new LrsActor("mailto:" + email, name);
+        final LrsActor lrsActor = new LrsActor("mailto:" + email, name);
+        this.lrsActorCache.put(new Element(userName, lrsActor));
+        return lrsActor;
     }
     
     protected String getEmail(IPersonAttributes person) {
@@ -190,7 +197,7 @@ public class TinCanPortalEventAggregator extends
             return email.toString();
         }
         
-        return person.getName();
+        return person.getName() + "@example.com";
     }
     
     protected String getName(IPersonAttributes person) {
