@@ -19,9 +19,6 @@
 
 package org.jasig.portal.url;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -41,10 +38,9 @@ import org.apache.commons.lang.Validate;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public final class UrlStringBuilder implements Serializable, Cloneable {
+public final class UrlStringBuilder extends BaseEncodedStringBuilder {
     private static final long serialVersionUID = 1L;
 
-    private final String encoding;
     private final String protocol;
     private final String host;
     private final Integer port;
@@ -58,10 +54,8 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
      * @param encoding The encoding to use for parameters
      */
     public UrlStringBuilder(String encoding, String context) {
-        Validate.notNull(encoding, "encoding can not be null");
-        this.checkEncoding(encoding);
+        super(encoding);
 
-        this.encoding = encoding;
         this.protocol = null;
         this.host = null;
         this.port = null;
@@ -83,13 +77,11 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
      * @param encoding The encoding to use for parameters
      */
     public UrlStringBuilder(String encoding, String protocol, String host, Integer port) {
-        Validate.notNull(encoding, "encoding can not be null");
-        this.checkEncoding(encoding);
+        super(encoding);
         
         Validate.notNull(protocol, "protocol can not be null");
         Validate.notNull(host, " host can not be null");
 
-        this.encoding = encoding;
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -100,9 +92,8 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
      * Copy constructor
      */
     public UrlStringBuilder(UrlStringBuilder urlBuilder) {
-        Validate.notNull(urlBuilder, "urlBuilder can not be null");
+        super(urlBuilder.getEncoding());
 
-        this.encoding = urlBuilder.encoding;
         this.host = urlBuilder.host;
         this.protocol = urlBuilder.protocol;
         this.port = urlBuilder.port;
@@ -118,30 +109,12 @@ public final class UrlStringBuilder implements Serializable, Cloneable {
         }
     }
 
-    protected void checkEncoding(String encoding) {
-        try {
-            URLEncoder.encode("", encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Encoding '" + encoding + "' is not supported", e);
-        }
-    }
-    
     protected <T> List<T> copy(List<T> l) {
         return l == null ? null : new ArrayList<T>(l);
     }
     
     protected <T> List<T> copy(T[] t) {
         return t == null ? null : new ArrayList<T>(Arrays.asList(t));
-    }
-    
-    protected String encode(String s) {
-        try {
-            return URLEncoder.encode(s, this.encoding);
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Encoding '" + this.encoding + "' is not supported. This should have been caught in the consructor.", e);
-        }
     }
     
     /**

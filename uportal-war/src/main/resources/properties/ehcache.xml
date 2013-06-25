@@ -96,6 +96,14 @@
     <!-- ****************************************************************** -->
     
     <!-- 
+     | Caches username -> LrsActor resolution
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.events.tincan.LrsActorCache"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+    
+    <!-- 
      | Caches layout node id -> tab name resolutions done by the tab renderer aggregator
      | - not replicated
      +-->

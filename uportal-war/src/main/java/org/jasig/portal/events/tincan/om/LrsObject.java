@@ -1,8 +1,7 @@
 package org.jasig.portal.events.tincan.om;
 
+import java.net.URI;
 import java.util.Map;
-
-import org.jasig.portal.url.UrlStringBuilder;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -12,20 +11,17 @@ import com.google.common.collect.ImmutableMap;
  * @author Eric Dalquist
  */
 public class LrsObject {
-    private final String id;
+    private final URI id;
     private final String objectType;
     private final Map<String, LocalizedString> definition;
     
-    public LrsObject(UrlStringBuilder id, String objectType, Map<String, LocalizedString> definition) {
-        this.id = id.toString();
-        if (this.id.startsWith("/")) {
-            throw new IllegalArgumentException("id must be an absolute URL: " + id);
-        }
+    public LrsObject(URI id, String objectType, Map<String, LocalizedString> definition) {
+        this.id = id;
         this.objectType = objectType;
         this.definition = ImmutableMap.copyOf(definition);
     }
 
-    public String getId() {
+    public URI getId() {
         return id;
     }
 
