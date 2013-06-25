@@ -179,7 +179,7 @@
         </div>
         <script type="text/javascript">
             up.analytics = up.analytics || {};
-            up.analytics.institution = '<xsl:value-of select="$INSTITUTION" />';
+            up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
             up.analytics.portletData = <portlet-analytics-data/>;
             up.analytics.pageData = <page-analytics-data/>;
         </script>
