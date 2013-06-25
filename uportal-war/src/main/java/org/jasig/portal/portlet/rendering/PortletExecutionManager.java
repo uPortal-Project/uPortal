@@ -218,7 +218,10 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         if (!portletRenderExecutionWorker.isRetrieved()) {
             final IPortletWindowId portletWindowId = portletRenderExecutionWorker.getPortletWindowId();
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-            this.logger.warn("Portlet worker started but never retrieved for: " + portletWindow);
+            this.logger.warn("Portlet worker started but never retrieved for: " + portletWindow
+                    + ": If random portlet fnames it may be users switching tabs before page is done rendering. "
+                    + "If repeatedly occurring with one portlet fname see "
+                    + "http://jasig.275507.n4.nabble.com/Portlet-worker-started-but-never-retrieved-td4580698.html");
             
             try {
                 portletRenderExecutionWorker.get(0);
