@@ -29,8 +29,8 @@ var uportal = uportal || {};
       }
 
       if (_.isArray(up.analytics.model.institutions)) {
-         var propertyConfig = _.find(up.analytics.model.institutions, function(propertyConfig) {
-            if (propertyConfig.name == up.analytics.institution) {
+         var propertyConfig = _.find(up.analytics.model.hosts, function(propertyConfig) {
+            if (propertyConfig.name == up.analytics.host) {
                return propertyConfig;
             }
          });

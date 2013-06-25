@@ -185,6 +185,7 @@
   <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
   <xsl:param name="subscriptionsSupported">true</xsl:param>
   <xsl:param name="UP_VERSION">uPortal</xsl:param>
+  <xsl:param name="HOST_NAME"></xsl:param>
   <xsl:param name="SERVER_NAME"></xsl:param>
   <xsl:param name="STATS_SESSION_ID"></xsl:param>
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>

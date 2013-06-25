@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
+import javax.portlet.RenderRequest;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IGroupMember;
@@ -36,21 +36,21 @@ public class GoogleAnalyticsController {
     }
     
     @RenderMapping
-    public String renderAnalyticsHeader(PortletRequest portletRequest, ModelMap model) throws IOException {
-        final String remoteUser = portletRequest.getRemoteUser();
+    public String renderAnalyticsHeader(RenderRequest request, ModelMap model) throws IOException {
+        final String remoteUser = request.getRemoteUser();
         final IGroupMember groupMember = GroupService.getGroupMember(remoteUser, IPerson.class);
         final Map<String, Boolean> isMemberCache = new HashMap<String, Boolean>();
         
-        final PortletPreferences preferences = portletRequest.getPreferences();
+        final PortletPreferences preferences = request.getPreferences();
         final JsonNode config = this.portletPreferencesJsonDao.getJsonNode(preferences, GoogleAnalyticsConfigController.CONFIG_PREF_NAME);
         
         final JsonNode propertyConfig = config.get("defaultConfig");
         this.filterAnalyticsGroups(groupMember, propertyConfig, isMemberCache);
         
-        final JsonNode institutions = config.get("institutions");
-        if (institutions != null) {
-            for (final Iterator<JsonNode> institutionsItr = institutions.elements(); institutionsItr.hasNext(); ) {
-                final JsonNode institution = institutionsItr.next();
+        final JsonNode hosts = config.get("hosts");
+        if (hosts != null) {
+            for (final Iterator<JsonNode> hostsItr = hosts.elements(); hostsItr.hasNext(); ) {
+                final JsonNode institution = hostsItr.next();
                 this.filterAnalyticsGroups(groupMember, institution, isMemberCache);
             }
         }

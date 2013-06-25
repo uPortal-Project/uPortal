@@ -24,7 +24,7 @@
 <div id="${n}google-analytics-config" class="google-analytics-config">
     <div class="property-configs">
     </div>
-    <button class="addPropertyConfig">Add Institution</button> <button class="saveConfig">Save</button> <button class="done">Done</button>
+    <button class="addPropertyConfig">Add Host</button> <button class="saveConfig">Save</button> <button class="done">Done</button>
 </div>
 
 <script id="${n}propertyConfigTemplate" type="text/template">
@@ -64,7 +64,7 @@
 </script>
 
 <style>
-    .google-analytics-config div.analytics-institution {
+    .google-analytics-config div.analytics-host {
         border-style: solid;
         border-width: thin;
         padding: 1em;
@@ -156,7 +156,7 @@ up.analytics.config.view = up.analytics.config.view || {};
       initialize : function(data) {
          data = data || {};
          this.set("defaultConfig", new up.analytics.config.model.PropertyConfiguration(data.defaultConfig || {}));
-         this.set("institutions", new up.analytics.config.model.PropertyConfigurationList(data.institutions || []));
+         this.set("hosts", new up.analytics.config.model.PropertyConfigurationList(data.hosts || []));
       }
    });
 
@@ -259,7 +259,7 @@ up.analytics.config.view = up.analytics.config.view || {};
 
    up.analytics.config.view.PropertyConfigurationView = Backbone.View.extend({
       tagName : "div",
-      className : "analytics-institution",
+      className : "analytics-host",
       template : _.template($("#${n}propertyConfigTemplate").html()),
       initialize : function(options) {
           this.isDefaultConfig = (options.isDefaultConfig == true);
@@ -318,8 +318,8 @@ up.analytics.config.view = up.analytics.config.view || {};
          _.bindAll(this);
 
          this.listenTo(this.model, 'change', this.render);
-         this.listenTo(this.model.get("institutions"), 'add', this.render);
-         this.listenTo(this.model.get("institutions"), 'remove', this.render);
+         this.listenTo(this.model.get("hosts"), 'add', this.render);
+         this.listenTo(this.model.get("hosts"), 'remove', this.render);
 
          this.render();
       },
@@ -338,12 +338,12 @@ up.analytics.config.view = up.analytics.config.view || {};
          });
          container.appendChild(defaultConfigView.render().el);
 
-         var institutions = this.model.get("institutions");
-         _.forEach(institutions.models, function(institutionConfig) {
-            var institutionView = new up.analytics.config.view.PropertyConfigurationView({
-               model : institutionConfig
+         var hosts = this.model.get("hosts");
+         _.forEach(hosts.models, function(hostConfig) {
+            var hostView = new up.analytics.config.view.PropertyConfigurationView({
+               model : hostConfig
             });
-            container.appendChild(institutionView.render().el);
+            container.appendChild(hostView.render().el);
          }, this);
 
          this.$el.find(".property-configs").html(container);
@@ -351,10 +351,10 @@ up.analytics.config.view = up.analytics.config.view || {};
          return this;
       },
       newPropertyConfig : function() {
-         var instName = window.prompt("Institution Name ?");
+         var instName = window.prompt("Host Name:");
          if (!instName)
             return;
-         this.model.get("institutions").create({
+         this.model.get("hosts").create({
             "name" : instName
          });
       },
