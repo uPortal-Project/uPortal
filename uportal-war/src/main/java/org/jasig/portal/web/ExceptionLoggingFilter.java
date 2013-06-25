@@ -26,7 +26,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,18 @@ public class ExceptionLoggingFilter implements Filter {
             chain.doFilter(request, response);
         }
         catch (Throwable t) {
-            this.logger.error(t.getMessage(), t);
+            StringBuilder msg = new StringBuilder();
+            if (request instanceof HttpServletRequest) {
+                HttpServletRequest req = (HttpServletRequest) request;
+                msg.append("for URL=" + req.getRequestURI());
+                if (StringUtils.isNotBlank(req.getQueryString())) {
+                    msg.append("?" + req.getQueryString());
+                }
+                msg.append(", user=" + req.getRemoteUser());
+                msg.append(" ");
+            }
+            msg.append(", from IP=" + request.getRemoteAddr());
+            this.logger.error("uPortal: unhandled exception '" + t.getMessage() + "' " + msg.toString(), t);
             
             if (t instanceof Error) {
                 throw (Error)t;
