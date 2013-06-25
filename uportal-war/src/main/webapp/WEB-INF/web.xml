@@ -72,7 +72,7 @@
         <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
     </listener>
     
-    <!--filter>
+    <filter>
         <filter-name>CAS Validate Filter</filter-name>
         <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
         <init-param>
@@ -91,7 +91,7 @@
             <param-name>proxyReceptorUrl</param-name>
             <param-value>/CasProxyServlet</param-value>
         </init-param>
-    </filter-->
+    </filter>
     
     <filter>
         <filter-name>CAS Assertion ThreadLocal Filter</filter-name>
