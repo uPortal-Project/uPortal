@@ -109,6 +109,7 @@
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         
+        <xsl:copy-of select="//channel[@fname = 'google-analytics-config']"/>
         <xsl:call-template name="skinResources">
             <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
         </xsl:call-template>
@@ -126,7 +127,6 @@
             fluid_1_4 = null;
         </script>
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-        <xsl:copy-of select="//channel[@fname = 'google-analytics']"/>
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>
         </xsl:for-each>
