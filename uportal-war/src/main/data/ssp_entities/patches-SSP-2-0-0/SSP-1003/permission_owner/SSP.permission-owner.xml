@@ -35,16 +35,4 @@
     <desc>PERSON_LEGACY_REMARK_WRITE</desc>
     <targetProvider>portalSystemTargetProvider</targetProvider>
   </activity>
-  <activity>
-    <name>PERSON_STUDENT_DOCUMENT_READ</name>
-    <fname>PERSON_STUDENT_DOCUMENT_READ</fname>
-    <desc>PERSON_STUDENT_DOCUMENT_READ</desc>
-    <targetProvider>portalSystemTargetProvider</targetProvider>
-  </activity>
-  <activity>
-    <name>PERSON_STUDENT_DOCUMENT_WRITE</name>
-    <fname>PERSON_STUDENT_DOCUMENT_WRITE</fname>
-    <desc>PERSON_STUDENT_DOCUMENT_WRITE</desc>
-    <targetProvider>portalSystemTargetProvider</targetProvider>
-  </activity>  
 </permission-owner>
