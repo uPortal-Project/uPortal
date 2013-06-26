@@ -232,7 +232,7 @@
    | Institution Settings can be used to change intitution-specific parts of the theme.
    | Refer to localization notes above for changing text and labels used in the theme.
   -->
-  <xsl:variable name="HELP_URL">http://www.jasig.org/uportal</xsl:variable>
+  <xsl:variable name="HELP_URL">https://wiki.jasig.org/display/SSP/SSP+User+Guides</xsl:variable>
   <xsl:variable name="LOGIN_HELP_URL">http://www.jasig.org/uportal</xsl:variable>
   <xsl:variable name="CAS_NEW_USER_URL">http://www.jasig.org/cas</xsl:variable>
 
