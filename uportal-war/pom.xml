@@ -116,6 +116,11 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>
@@ -178,6 +183,11 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>
@@ -279,11 +289,23 @@
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         
         <dependency>
             <groupId>org.jasig.resourceserver</groupId>
             <artifactId>resource-server-utils</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -314,6 +336,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
         </dependency>
         
         <dependency>
@@ -438,6 +465,12 @@
 
         
         <!-- ===== Provided Dependencies ====================================== -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>javax.ccpp</groupId>
             <artifactId>ccpp</artifactId>
@@ -590,7 +623,6 @@
                     <include>properties/security.properties</include>
                     <include>properties/contexts/userContext.xml</include>
                     <include>properties/groups/PAGSGroupStoreConfig.xml</include>
-                    <include>logback.xml</include>
                 </includes>
             </resource>
             <!-- 
@@ -714,6 +746,24 @@
                     </filters>
                     <attachClasses>true</attachClasses>
                     <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>log4j.properties</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>false</filtering>
+                            <excludes>
+                                <exclude>log4j.properties</exclude>
+                            </excludes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>
@@ -731,22 +781,13 @@
             <plugin>
                 <groupId>org.jasig.maven</groupId>
                 <artifactId>sass-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>compile-sass-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>update-stylesheets</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                    </execution>
-                </executions>
+                <configuration>
+                    <baseOutputDirectory>${basedir}/src/main/webapp</baseOutputDirectory>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
-                <version>${resource-server.version}</version>
                 <executions>
                     <execution>
                         <id>aggregate-universality-skins</id>
@@ -757,7 +798,6 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/universality/**/skin.xml</include>
                             </includes>
@@ -773,7 +813,6 @@
                         <inherited>false</inherited>
                         <configuration>
                             <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
                             <includes>
                                 <include>media/skins/muniversality/**/skin.xml</include>
                             </includes>
@@ -848,35 +887,6 @@
                         </dependencies>
                     </plugin>
                 </plugins>
-                <pluginManagement>
-                  <plugins>
-                    <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-                    <plugin>
-                      <groupId>org.eclipse.m2e</groupId>
-                      <artifactId>lifecycle-mapping</artifactId>
-                      <version>1.0.0</version>
-                      <configuration>
-                        <lifecycleMappingMetadata>
-                          <pluginExecutions>
-                            <pluginExecution>
-                              <pluginExecutionFilter>
-                                <groupId>org.codehaus.mojo.jspc</groupId>
-                                <artifactId>jspc-maven-plugin</artifactId>
-                                <versionRange>[2.0-alpha-3,)</versionRange>
-                                <goals>
-                                  <goal>compile</goal>
-                                </goals>
-                              </pluginExecutionFilter>
-                              <action>
-                                <ignore></ignore>
-                              </action>
-                            </pluginExecution>
-                          </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                      </configuration>
-                    </plugin>
-                  </plugins>
-                </pluginManagement>
             </build>
         </profile>
     </profiles>
