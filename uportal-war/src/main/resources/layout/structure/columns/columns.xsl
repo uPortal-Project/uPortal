@@ -32,6 +32,8 @@
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
 <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
+<!-- Used to build the sidebarGroupsList:  discover sidebar groups, add each to the list ONLY ONCE -->
+<xsl:key name="sidebarGroupKey" match="layout/folder/folder[@hidden='false' and @type='sidebar']" use="@name"/>
 
   <xsl:variable name="activeTabIdx">
     <!-- if the activeTab is a number then it is the active tab index -->
@@ -122,6 +124,8 @@
       		<channel-header ID="{$userLayoutRoot}"/>
       	</xsl:otherwise>  
       </xsl:choose>
+      
+      
     </header>
     
     <xsl:call-template name="tabList"/>
@@ -145,6 +149,8 @@
         </xsl:otherwise>
       </xsl:choose>
     </content>
+
+    <xsl:call-template name="sidebarList"/>
 
     <footer>
       <xsl:for-each select="child::folder[attribute::type='footer']">
@@ -236,6 +242,24 @@
       </tab>
     </xsl:for-each>
   </navigation>
+</xsl:template>
+
+<xsl:template name="sidebarList">
+  <sidebar>
+    <!-- To define sidebar elements - hidden from navigation but shown in sidebar and herited from DLM and ordered by precedence on tab-->
+    <xsl:for-each select="/layout/folder/folder[@type='sidebar' and @hidden='false' and generate-id() = generate-id(key('sidebarGroupKey',@name)[1])]">
+      <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+      <sidebarGroup name="{@name}">
+        <xsl:for-each select="key('sidebarGroupKey',@name)">
+          <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+                 <xsl:for-each select="descendant::channel">
+                   <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+                   <sidebarChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}"/>
+                 </xsl:for-each>
+        </xsl:for-each>
+      </sidebarGroup>
+    </xsl:for-each>
+  </sidebar>
 </xsl:template>
 
 <xsl:template match="folder[@hidden='false']">

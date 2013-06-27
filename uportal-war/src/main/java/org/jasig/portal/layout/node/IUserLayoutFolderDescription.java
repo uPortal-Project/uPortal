@@ -34,8 +34,9 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
     public static final int REGULAR_TYPE=0;
     public static final int HEADER_TYPE=1;
     public static final int FOOTER_TYPE=2;
-
-    public static final String[] folderTypeNames= {"regular","header","footer"};
+    public static final int SIDEBAR_TYPE=3;
+ 
+    public static final String[] folderTypeNames= {"regular","header","footer","sidebar"};
 
     /**
      * Returns folder type.
