@@ -240,7 +240,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             for (int i=0; i < nodes.getLength(); i++) {
           	  Element fd = (Element) nodes.item(i);
           	  String type = fd.getAttribute("type");
-          	  if (type != null && (type.equals("header") || type.equals("footer"))) {
+          	  if (type != null && (type.equals("header") || type.equals("footer") || type.equals("sidebar"))) {
           		  // Here's where we do the work...
           		  if (LOG.isDebugEnabled()) {
           			  LOG.debug("RDBMUserLayoutStore examining the '" 

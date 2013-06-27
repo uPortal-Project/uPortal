@@ -31,7 +31,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -39,9 +39,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:dlm="http://www.uportal.org/layout/dlm"
   xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
   xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -49,9 +49,9 @@
   xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
   xsi:schemaLocation="
           https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-  exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+  exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
   version="1.0">
-    
+
   <!-- ========== TEMPLATE: PORTAL PIPE ========== -->
   <!-- =========================================== -->
   <!--
@@ -74,17 +74,17 @@
    | This template renders a pipe ( | ), generally used to separate links.
   -->
   <xsl:template name="portal.pipe">
-		<span class="portal-pipe">|</span> 
+		<span class="portal-pipe">|</span>
   </xsl:template>
   <!-- =========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR ========== -->
   <!-- =============================================== -->
   <!--
    | This template renders the portal page bar.
   -->
-  <xsl:template name="portal.page.bar">  
+  <xsl:template name="portal.page.bar">
     <div id="portalPageBar">
       <xsl:choose>
         <xsl:when test="//focused">
@@ -119,8 +119,8 @@
     </div>
   </xsl:template>
   <!-- =============================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR TITLE ========== -->
   <!-- ===================================================== -->
   <!--
@@ -138,11 +138,11 @@
         <xsl:call-template name="portal.page.bar.title.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
         <!-- ****** PORTAL PAGE BAR TITLE BLOCK ****** -->
       </xsl:otherwise>
-    </xsl:choose>  
+    </xsl:choose>
   </xsl:template>
   <!-- ===================================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK HOME ========== -->
   <!-- ========================================================== -->
   <!--
@@ -174,8 +174,8 @@
       </li>
   </xsl:template>
   <!-- ========================================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK ADMIN ========== -->
   <!-- ========================================================== -->
   <!--
@@ -201,7 +201,7 @@
     </xsl:if>
   </xsl:template>
   <!-- ========================================================== -->
-  
+
 
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK SITEMAP ========== -->
   <!-- ============================================================ -->
@@ -218,8 +218,8 @@
     </xsl:if>
   </xsl:template>
   <!-- ============================================================ -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK HELP ========== -->
   <!-- ========================================================= -->
   <!--
@@ -233,8 +233,8 @@
     </li>
   </xsl:template>
   <!-- ========================================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTAL PAGE BAR LINK LOGOUT ========== -->
   <!-- ========================================================= -->
   <!--
@@ -250,14 +250,14 @@
     </xsl:if>
   </xsl:template>
   <!-- ========================================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: LOGO ========== -->
   <!-- ==================================== -->
   <!--
    | This template renders the portal logo.
   -->
-  <xsl:template name="logo">  
+  <xsl:template name="logo">
     <div id="portalLogo">
       <xsl:variable name="homeUrl">
         <xsl:call-template name="portalUrl"/>
@@ -279,8 +279,8 @@
     </div>
   </xsl:template>
   <!-- ==================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: LOGIN ========== -->
   <!-- ===================================== -->
   <!--
@@ -309,8 +309,8 @@
     </div>
   </xsl:template>
   <!-- ===================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: LOGIN CHANNEL ========== -->
   <!-- ============================================= -->
   <!--
@@ -320,19 +320,19 @@
     <xsl:copy-of select="//channel[@fname='login']"/>
   </xsl:template>
   <!-- ============================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: CAS LOGIN ========== -->
   <!-- ========================================= -->
   <!--
    | This template renders links for CAS login.
   -->
-  <xsl:template name="external.login">  
+  <xsl:template name="external.login">
     <div id="portalCASLogin" class="fl-widget-content">
       <a id="portalCASLoginLink" class="button" href="{$EXTERNAL_LOGIN_URL}" title="{upMsg:getMessage('sign.in.via.cas', $USER_LANG)}">
         <span><xsl:value-of select="upMsg:getMessage('sign.in', $USER_LANG)"/><!--&#160;<span class="via-cas"><xsl:value-of select="upMsg:getMessage('with.cas', $USER_LANG)"/></span>--></span>
       </a>
-      <p><xsl:value-of select="upMsg:getMessage('new.user.question', $USER_LANG)"/>&#160; 
+      <p><xsl:value-of select="upMsg:getMessage('new.user.question', $USER_LANG)"/>&#160;
         <a id="portalCASLoginNewLink" href="{$CAS_NEW_USER_URL}" title="{upMsg:getMessage('create.new.portal.account', $USER_LANG)}">
           <xsl:value-of select="upMsg:getMessage('new.user', $USER_LANG)"/>
         </a>.
@@ -340,14 +340,14 @@
     </div>
   </xsl:template>
   <!-- ========================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: WELCOME ========== -->
   <!-- ======================================= -->
   <!--
    | This template renders links for CAS login.
   -->
-  <xsl:template name="welcome">  
+  <xsl:template name="welcome">
     <xsl:if test="$AUTHENTICATED='true'"> <!-- Welcome only displays if the user is logged in. -->
       <div id="portalWelcome">
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
@@ -365,8 +365,8 @@
     </xsl:if>
   </xsl:template>
   <!-- ======================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: ADMINISTRATION LINKS ========== -->
   <!-- ========================================== -->
   <!--
@@ -405,7 +405,7 @@
     </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
-  
+
   <!-- ========== TEMPLATE: QUICKLINKS ========== -->
   <!-- ========================================== -->
   <!--
@@ -430,11 +430,11 @@
     </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
-	
-  
+
+
   <!-- ========== TEMPLATE: QUICKLINKS LIST ========== -->
   <!-- =============================================== -->
-  <!-- 
+  <!--
    | This template renders quicklinks navigation list.
   -->
   <xsl:template match="tabChannel" mode="quicklink">
@@ -465,9 +465,63 @@
       </a>
     </li>
   </xsl:template>
+  <!-- ========================================== -->
+
+  <!-- ========== TEMPLATE: dlm.sidebar.links ========== -->
+  <!-- ========================================== -->
+  <!--
+   | This template renders the sidebar links component pushed from dlm, list of links to high priority portlets regardless of the portlet's placement within the layout.
+  -->
+  <xsl:template name="dlm.sidebar.links">
+    <xsl:for-each select="/layout/sidebar/sidebarGroup">
+      <xsl:if test="count(//sidebarChannel) > 0">
+        <div id="portalSidebarGroupLinks{position()}" class="fl-widget">
+          <div class="fl-widget-inner">
+            <div class="fl-widget-titlebar">
+              <h2><xsl:value-of select="@name"/></h2>
+            </div>
+            <div class="fl-widget-content">
+              <ul class="fl-listmenu">
+                <xsl:apply-templates/>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="sidebarChannel">
+    <xsl:variable name="sLinkID" select="@ID" /> <!-- Pull the unique ID from the portlet parameter in the XML if one exists. -->
+    <xsl:variable name="POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+      <xsl:choose>
+        <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+        <xsl:when test="position()=1">first</xsl:when>
+        <xsl:when test="position()=last()">last</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <li id="{$sLinkID}" class="{$POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+      <xsl:variable name="subNavUrl">
+        <xsl:call-template name="portalUrl">
+          <xsl:with-param name="url">
+            <url:portal-url>
+              <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+              <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+            </url:portal-url>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:variable>
+      <a href="{$subNavUrl}" title="{@title}">  <!-- Navigation item link. -->
+        <span>
+          {up-portlet-title(<xsl:value-of select="@ID" />)}
+        </span>
+      </a>
+    </li>
+  </xsl:template>
   <!-- =============================================== -->
-	
-  
+
+
   <!-- ========== TEMPLATE: WEB SEARCH ========== -->
   <!-- ========================================== -->
   <!--
@@ -499,8 +553,8 @@
     </div>
   </xsl:template>
   <!-- ========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: BREADCRUMB ========== -->
   <!-- ========================================== -->
   <!--
@@ -534,8 +588,8 @@
     </div>
   </xsl:template>
   <!-- ========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PAGE TITLE ========== -->
   <!-- ========================================== -->
   <!--
@@ -554,8 +608,8 @@
     </h1>
   </xsl:template>
   <!-- ========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: BACK TO HOME ========== -->
   <!-- ============================================ -->
   <!--
@@ -577,11 +631,11 @@
   	</xsl:if>
   </xsl:template>
   <!-- ============================================ -->
-  
+
   <!-- ====== TEMPLATE: CUSTOMIZE MESSAGE ======= -->
   <!-- ========================================== -->
   <!--
-   | This template renders the customize page message. This message should only 
+   | This template renders the customize page message. This message should only
    | render when no portlets have been added to a users layout.
   -->
   <xsl:template name="page.customize.message">
@@ -589,5 +643,5 @@
       <p><xsl:value-of select="upMsg:getMessage('customize.this.page.description', $USER_LANG)"/></p>
   </xsl:template>
   <!-- ========================================== -->
-  
+
 </xsl:stylesheet>
