@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.0.12-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -43,11 +43,6 @@
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
         </dependency>
         
         <dependency>
@@ -322,11 +317,6 @@
         </dependency>
         
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
-        
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
@@ -468,7 +458,7 @@
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <artifactId>servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -533,38 +523,6 @@
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-
-		<dependency>
-           	<groupId>org.jasig.cas</groupId>
-           	<artifactId>cas-server-extension-clearpass</artifactId>
-            <exclusions>
-             <exclusion>
-               <groupId>org.jasig.cas</groupId>
-               <artifactId>cas-server-core</artifactId>
-             </exclusion>
-             <exclusion>
-             	<groupId>javax.validation</groupId>	
-               	<artifactId>validation-api</artifactId>
-             </exclusion>
-             <exclusion>
-             	<groupId>org.slf4j</groupId>	
-               	<artifactId>slf4j-log4j12</artifactId>
-             </exclusion>
-            </exclusions>
-            <scope>runtime</scope>
-         </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
@@ -658,28 +616,6 @@
             </resource>
         </resources>
         <plugins>
-            <plugin>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                              <bannedDependencies>
-                                 <excludes>
-                                    <exclude>commons-logging:commons-logging</exclude>
-                                    <exclude>commons-logging:commons-logging-api</exclude>
-                                    <exclude>log4j:log4j</exclude>
-                                 </excludes>
-                              </bannedDependencies>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <!-- Generates JAXB binding classes -->            
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
