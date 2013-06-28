@@ -46,6 +46,8 @@
   <!-- Styles for the tokeninput jQuery plugin. -->
   <css>css/token-input.css</css>
 
+  <!-- Default visual style for sidebar content with show/how feature. -->
+  <css>css/sidebar.css</css>
 
   <js included="plain" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.js</js>
   <js included="aggregated" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.min.js</js>
@@ -95,4 +97,5 @@
   <js>javascript/uportal/up-parameter-editor.js</js>
   <js>javascript/uportal/flyout-nav.js</js>
   <js>javascript/uportal/up-translator.js</js>
+  <js>javascript/uportal/up-sidebar-improved.js</js>
 </resources>
