@@ -54,6 +54,12 @@
         </parameter>
     
         <parameter>
+            <name>alternativeMaximixedLink</name>
+            <label>open.alternative.url.in.maximized.view</label>
+            <single-text-parameter-input display="text"/>
+        </parameter>
+
+        <parameter>
             <name>alternate</name>
             <label>use.alternate.appearance</label>
             <single-choice-parameter-input display="select">
@@ -110,7 +116,7 @@
                 <option value="true" label="true"/>
             </single-choice-parameter-input>
         </parameter>
- 
+    
     </step>
     
 </portlet-publishing-definition>
