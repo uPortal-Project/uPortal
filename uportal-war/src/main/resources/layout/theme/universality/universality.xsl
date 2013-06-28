@@ -267,6 +267,8 @@
   | USE_SIDEBAR - Sets the use of a sidebar in the logged in, dashboard view.  This sidebar can contain UI components (navigation, quicklinks, etc.) and custom institution content (blocks), but not portlets.  Values are 'true' or 'false'.
   | USE_SIDEBAR_FOCUSED - Sets the use of a sidebar when a portlet is focused.  Values are 'true' or 'false'.
   | USE_SIDEBAR_GUEST - Sets the use of a sidebar when logged out.  Values are 'true' or 'false'.
+  | USE_SIDEBAR_TOGGLE - Set the use of the up-sidebar-improved.js to enable authenticated users to show or hide the sidebar and sidebar elements.
+  | SIDEBAR_TOGGLE_INIT - Sets the sidebar state as shown or hidden at the user connection, values are 'opened' or 'closed'.
   | SIDEBAR_LOCATION - Sets the location of the sidebar - if used - in the logged in, dashboard view.  Values are 'left' or 'right'.
   | SIDEBAR_LOCATION_FOCUSED - Sets the location of the sidebar - if used - in the focused view.  Values are 'left' or 'right'.
   | SIDEBAR_LOCATION_GUEST - Sets the location of the sidebar - if used - when logged out.  Values are 'left' or 'right'.
@@ -293,6 +295,20 @@
     <xsl:choose>
       <xsl:when test="$INSTITUTION='ivy'">false</xsl:when>
       <xsl:otherwise>false</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+
+  <xsl:param name="USE_SIDEBAR_TOGGLE">
+    <xsl:choose>
+      <xsl:when test="$USE_SIDEBAR='false' or $INSTITUTION='ivy'">false</xsl:when>
+      <xsl:otherwise>true</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+
+  <xsl:param name="SIDEBAR_TOGGLE_INIT">
+    <xsl:choose>
+      <xsl:when test="USE_SIDEBAR_TOGGLE='false' or $INSTITUTION='ivy'">opened</xsl:when>
+      <xsl:otherwise>closed</xsl:otherwise>
     </xsl:choose>
   </xsl:param>
 

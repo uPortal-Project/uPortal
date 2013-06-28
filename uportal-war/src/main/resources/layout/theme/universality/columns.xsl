@@ -122,22 +122,28 @@
    | This template renders the left navigation column of the page body.
   -->
   <xsl:template name="sidebar">
-  	<div id="portalSidebar">
-    	<xsl:variable name="FSS_SIDEBAR_LOCATION_CLASS">
+    <div id="portalSidebar">
+      <xsl:variable name="FSS_SIDEBAR_LOCATION_CLASS">
       	<xsl:call-template name="sidebar.location" /> <!-- Template located in page.xsl. -->
       </xsl:variable>
-    	<xsl:attribute name="class">
+      <xsl:variable name="SIDEBAR_USE_TOGGLE_CLASS">
+        <xsl:choose>
+          <xsl:when test="$USE_SIDEBAR_TOGGLE='true' and $AUTHENTICATED='true'"> sidebarToggle <xsl:value-of select="$SIDEBAR_TOGGLE_INIT"/> </xsl:when>
+          <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:attribute name="class">
       	<xsl:choose>
           <xsl:when test="$AUTHENTICATED='true'">
             <xsl:choose>
               <!-- when focused -->
-              <xsl:when test="$PORTAL_VIEW='focused'">fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:when>
+              <xsl:when test="$PORTAL_VIEW='focused'">fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <xsl:value-of select="$SIDEBAR_USE_TOGGLE_CLASS"/></xsl:when>
               <!-- when dashboard -->
-              <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:otherwise>
+              <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <xsl:value-of select="$SIDEBAR_USE_TOGGLE_CLASS"/></xsl:otherwise>
             </xsl:choose>
           </xsl:when>
           <!-- when logged out -->
-          <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/></xsl:otherwise>
+          <xsl:otherwise>fl-col-fixed fl-force-<xsl:value-of select="$FSS_SIDEBAR_LOCATION_CLASS"/> <xsl:value-of select="$SIDEBAR_USE_TOGGLE_CLASS"/></xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
       
@@ -145,7 +151,14 @@
       	
         <xsl:choose>
           <xsl:when test="$AUTHENTICATED='true'">
-          
+             <xsl:if test="$USE_SIDEBAR_TOGGLE='true'">
+                <div id="portalSidebarToggleButton" class="fl-widget">
+                  <a hef="javascript:;" title="{upMsg:getMessage('sidebar.toggle.button.close', $USER_LANG)}">
+                    <h2 class="textopen"><xsl:value-of select="upMsg:getMessage('sidebar.toggle.button.open', $USER_LANG)"/></h2>
+                    <h2 class="textclose"><xsl:value-of select="upMsg:getMessage('sidebar.toggle.button.close', $USER_LANG)"/></h2>
+                  </a>
+                </div>
+              </xsl:if>   
             <xsl:choose>
               <xsl:when test="$PORTAL_VIEW='focused'">
               
