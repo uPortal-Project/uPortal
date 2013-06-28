@@ -107,7 +107,7 @@ public final class SsoController {
             // Inputs
             Inputs inputs = null;
             try {
-                inputs = Inputs.parse(req);
+                inputs = Inputs.parse(req, checkTimeStampRange);
             } catch (Exception e) {
                 return sendError(res, HttpServletResponse.SC_BAD_REQUEST,
                     "One or more required inputs was not specified");
@@ -181,7 +181,10 @@ public final class SsoController {
         final String timeStamp) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(username.getBytes("UTF-8"));
-        md.update(timeStamp.getBytes("UTF-8"));
+        //Since timeStamp is optional, include in md5 calc only if present; if not present, don't include
+        if(null != timeStamp){
+        	md.update(timeStamp.getBytes("UTF-8"));
+        }
         md.update(sharedSecret.getBytes("UTF-8"));
         final byte[] hash = md.digest();
         final String md5 = new String(Hex.encode(hash));
@@ -226,7 +229,7 @@ public final class SsoController {
         private final String timeStamp;
         private final String view;
 
-        public static Inputs parse(HttpServletRequest req) {
+        public static Inputs parse(HttpServletRequest req, boolean checkTimeStampRange) {
 
             final String username = req.getParameter(USERNAME_PARAMETER);
             final String formattedCourse = req.getParameter(FORMATTED_COURSE_PARAMETER);
@@ -236,22 +239,25 @@ public final class SsoController {
             final String view = req.getParameter(VIEW);
 
             return new Inputs(username, formattedCourse, studentSchoolId,
-                    token, timeStamp, view);
+                    token, timeStamp, view, checkTimeStampRange);
 
         }
 
         private Inputs(final String username, final String formattedCourse,
-                final String studentSchoolId, final String token, final String timeStamp, final String view) {
+                final String studentSchoolId, final String token, final String timeStamp, 
+                final String view, boolean checkTimeStampRange) {
 
             Assert.hasText(username, "Required parameter 'username' is missing");
             Assert.hasText(token, "Required parameter 'token' is missing");
-            Assert.hasText(timeStamp, "Required parameter 'timeStamp' is missing");
+            if(checkTimeStampRange){
+            	Assert.hasText(timeStamp, "Required parameter 'timeStamp' is missing");
+            }
 
             this.username = username;
             this.token = token;
             this.timeStamp = timeStamp;
             this.view = view;
-            //Check the incoming EA params iff ea.new is indicated
+            //Check the incoming EA params if ea.new is indicated
             if(null != this.view && this.view.equals(EA_VIEW)){
                 Assert.hasText(formattedCourse, "Required parameter 'formattedCourse' is missing");
                 Assert.hasText(studentSchoolId, "Required parameter 'studentSchoolId' is missing");
