@@ -196,9 +196,9 @@ table.purpose-layout td {margin:0; padding:0;}
 
 
 /* Columns */
-.portal-page-column {clear:left; float:left; display:inline;}
+.portal-page-column {float:left; display:inline;}
 .portal-page-column-inner {padding-bottom:1em; min-height:100px;}
-.columns-1 .column-1 {width:100%;}
+.columns-1 .column-1 {clear:inherit; width:100%;}
 .columns-2 .column-1 .portal-page-column-inner,
 .columns-3 .column-1 .portal-page-column-inner,
 .columns-4 .column-1 .portal-page-column-inner,
