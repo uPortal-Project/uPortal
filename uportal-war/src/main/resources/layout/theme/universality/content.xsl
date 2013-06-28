@@ -31,7 +31,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -39,9 +39,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -49,21 +49,21 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
     version="1.0">
-      
+
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->
   <!--
    | This template renders the portlet containers: chrome and controls.
   -->
   <xsl:template match="channel|blocked-channel">
-    
+
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
-      <xsl:choose> 
-        <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when> 
-        <xsl:otherwise>movable</xsl:otherwise> 
-      </xsl:choose> 
+      <xsl:choose>
+        <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
+        <xsl:otherwise>movable</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
 
     <xsl:variable name="DELETABLE">
@@ -72,35 +72,35 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
+
     <xsl:variable name="PORTLET_CHROME"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
         <xsl:when test="./parameter[@name='showChrome']/@value='false'">no-chrome</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
+
     <xsl:variable name="PORTLET_HIGHLIGHT"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
         <xsl:when test="./parameter[@name='highlight']/@value='true'">highlight</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
+
     <xsl:variable name="PORTLET_ALTERNATE"> <!-- Test to determine if the portlet has been given the alternate flag. -->
       <xsl:choose>
         <xsl:when test="./parameter[@name='alternate']/@value='true'">alternate</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
+
     <!-- Tests for optional portlet parameter removeFromLayout which can be used to not render a portlet in the layout.  The main use case for this function is to have a portlet be a quicklink and then remove it from otherwise rendering. -->
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
-    
+
     <!-- ****** PORTLET CONTAINER ****** -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <div id="portlet_{@ID}" class="fl-widget up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
-          
+
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
@@ -112,14 +112,14 @@
                 </div>
               </div>
           </xsl:when>
-        
+
           <!-- ***** RENDER CHROME ***** -->
           <xsl:otherwise>
             <div class="up-portlet-wrapper-inner">
             <!-- ****** PORTLET TOP BLOCK ****** -->
             <xsl:call-template name="portlet.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** PORTLET TOP BLOCK ****** -->
-            
+
             <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
             <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar"> <!-- Portlet toolbar. -->
               <xsl:if test="$USE_PORTLET_MINIMIZE_CONTENT='true'">
@@ -175,20 +175,31 @@
                     </xsl:with-param>
                   </xsl:call-template>
                 </xsl:variable>
-                <a id="{@ID}" href="{$portletMaxUrl}"> <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-                  {up-portlet-title(<xsl:value-of select="@ID" />)}
-                </a>
+                <xsl:element name="a">
+                  <xsl:attribute name="id"><xsl:value-of select="@ID"/></xsl:attribute>
+                  <xsl:choose>
+                    <xsl:when test="./parameter[@name='alternativeMaximixedLink'] and string-length(./parameter[@name='alternativeMaximixedLink']/@value) > 0">
+                      <xsl:attribute name="href"><xsl:value-of select="./parameter[@name='alternativeMaximixedLink']/@value" /></xsl:attribute>
+                      <xsl:attribute name="target">_blank</xsl:attribute>
+                      <xsl:attribute name="class">externalLink</xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:attribute name="href"><xsl:value-of select="$portletMaxUrl" /></xsl:attribute>
+                      </xsl:otherwise>
+                  </xsl:choose>
+                  {up-portlet-title(<xsl:value-of select="@ID"/>)}
+                </xsl:element>
               </h2>
               <xsl:call-template name="controls"/>
             </div>
-            
+
             <!-- ****** PORTLET CONTENT ****** -->
             <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper"> <!-- Portlet content container. -->
               <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
                 <xsl:call-template name="portlet-content"/>
               </div>
             </div>
-            
+
             <!-- ****** PORTLET BOTTOM BLOCK ****** -->
             <xsl:call-template name="portlet.bottom.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
             <!-- ****** PORTLET BOTTOM BLOCK ****** -->
@@ -199,10 +210,10 @@
     </div>
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     </xsl:if>
-  
+
   </xsl:template>
   <!-- ======================================= -->
-  
+
   <!-- ========== TEMPLATE: PORLET CONTENT ========== -->
   <!-- ============================================== -->
   <!--
@@ -225,7 +236,7 @@
         </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <!-- ========== TEMPLATE: PORLET FOCUSED ========== -->
   <!-- ============================================== -->
   <!--
@@ -241,7 +252,7 @@
     </div>
   </xsl:template>
   <!-- ============================================== -->
-  
+
   <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
@@ -341,12 +352,24 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:variable>
-        <a href="{$portletMaxUrl}" title="{upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control focus">
-        	<xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
-          		<span class="icon"></span>
-          	</xsl:if>
-      	  	<span class="label"><xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/></span>
-        </a>
+        <xsl:element name="a">
+          <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)" /></xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="./parameter[@name='alternativeMaximixedLink'] and string-length(./parameter[@name='alternativeMaximixedLink']/@value) > 0">
+              <xsl:attribute name="href"><xsl:value-of select="./parameter[@name='alternativeMaximixedLink']/@value" /></xsl:attribute>
+              <xsl:attribute name="target">_blank</xsl:attribute>
+              <xsl:attribute name="class">up-portlet-control focus externalLink</xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="href"><xsl:value-of select="$portletMaxUrl" /></xsl:attribute>
+              <xsl:attribute name="class">up-portlet-control focus</xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
+            <span class="icon"></span>
+          </xsl:if>
+	  <span class="label"><xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/></span>
+        </xsl:element>
       </xsl:if>
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
         <xsl:variable name="removePortletUrl">
@@ -410,5 +433,5 @@
     </div>
   </xsl:template>
   <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
-		
+
 </xsl:stylesheet>
