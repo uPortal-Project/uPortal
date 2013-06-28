@@ -240,6 +240,18 @@
                 </xsl:attribute>
               </xsl:when>
             </xsl:choose>
+            <xsl:choose>
+              <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
+                <xsl:attribute name="alternativeMaximixedLink">
+                  <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
+                </xsl:attribute>
+              </xsl:when>
+              <xsl:when test="parameter[@name='alternativeMaximixedLink']">
+                <xsl:attribute name="alternativeMaximixedLink">
+                  <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
+                </xsl:attribute>
+              </xsl:when>
+            </xsl:choose>
           </tabChannel>
         </xsl:for-each>
       </tab>
@@ -255,10 +267,23 @@
       <sidebarGroup name="{@name}">
         <xsl:for-each select="key('sidebarGroupKey',@name)">
           <xsl:sort select="number(@dlm:precedence)" order="descending"/>
-                 <xsl:for-each select="descendant::channel">
-                   <xsl:sort select="number(@dlm:precedence)" order="descending"/>
-                   <sidebarChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}"/>
-                 </xsl:for-each>
+            <xsl:for-each select="descendant::channel">
+              <xsl:sort select="number(@dlm:precedence)" order="descending"/>
+              <sidebarChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
+                <xsl:choose>
+                  <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
+                    <xsl:attribute name="alternativeMaximixedLink">
+                      <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
+                    </xsl:attribute>
+                  </xsl:when>
+                  <xsl:when test="parameter[@name='alternativeMaximixedLink']">
+                    <xsl:attribute name="alternativeMaximixedLink">
+                      <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
+                    </xsl:attribute>
+                  </xsl:when>
+                </xsl:choose>
+              </sidebarChannel>
+            </xsl:for-each>
         </xsl:for-each>
       </sidebarGroup>
     </xsl:for-each>

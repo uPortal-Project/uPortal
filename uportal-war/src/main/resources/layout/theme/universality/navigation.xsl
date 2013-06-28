@@ -30,7 +30,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -38,9 +38,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -49,9 +49,9 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle dlm xsi"
     version="1.0">
-      
+
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- ========================================== -->
   <!--
@@ -63,7 +63,7 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <xsl:choose>
     	<xsl:when test="$CONTEXT = 'header'">  <!-- When the context is 'header' render the main navigation as tabs. -->
-      	
+
         <div id="portalNavigation">
           <!-- Optional Tab Groups -->
           <xsl:if test="$USE_TAB_GROUPS='true'">
@@ -120,7 +120,7 @@
                <xsl:with-param name="CONTEXT" select="$CONTEXT"/>
              </xsl:apply-templates>
             </ul>
-            
+
             <xsl:if test="$USE_SUBNAVIGATION_ROW='true'">
               <div id="portalNavigationSubrow">
                 <xsl:call-template name="subnavigation">
@@ -131,10 +131,10 @@
             </xsl:if>
           </div>
         </div>
-      
+
       </xsl:when>
       <xsl:otherwise>  <!-- Otherwise, render the main navigation as a widget (generally assumes the context is the sidebar). -->
-      
+
       	<div id="portalNavigation" class="fl-widget">
           <div id="portalNavigationInner" class="fl-widget-inner {$CONTEXT}">
             <div class="fl-widget-titlebar">
@@ -162,14 +162,14 @@
             </div>
           </div>
         </div>
-      
+
       </xsl:otherwise>
     </xsl:choose>
-    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->   
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
   </xsl:template>
   <!-- ========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: NAVIGATION TABS ========== -->
   <!-- ========================================== -->
   <!--
@@ -278,7 +278,7 @@
           </xsl:with-param>
         </xsl:call-template>
       </xsl:variable>
-      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">  
+      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
@@ -308,11 +308,11 @@
         </xsl:call-template>
       </xsl:if>
     </li>
-  
+
   </xsl:template>
   <!-- ========================================== -->
-  
-    
+
+
   <!-- ========== TEMPLATE: PORTLET NAVIGATION ========== -->
   <!-- ================================================== -->
   <!--
@@ -360,7 +360,7 @@
             </ul>
           </xsl:for-each>
     		</div>
-      </div>  
+      </div>
     </div>
   </xsl:template>
   <!-- ================================================== -->
@@ -376,7 +376,7 @@
   <xsl:template name="subnavigation">
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->
     <xsl:param name="TAB_POSITION"/> <!-- Provides the position of the tab -->
-    
+
     <div> <!-- Unique ID is needed for the flyout menus javascript. -->
       <xsl:attribute name="id">
         <xsl:choose>
@@ -396,7 +396,7 @@
         	<xsl:otherwise></xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      
+
       <div>  <!-- Inner div for additional presentation/formatting options. -->
         <xsl:attribute name="id">
           <xsl:choose>
@@ -413,7 +413,7 @@
         <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
         	<xsl:choose>
           	<xsl:when test="$CONTEXT='flyout'">
-            
+
               <xsl:for-each select="tabChannel">
                 <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
                   <xsl:choose>
@@ -435,16 +435,28 @@
                     </xsl:call-template>
                   </xsl:variable>
                   <div class="up-portlet-fname-subnav-wrapper {@fname}">
-                    <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
-                        <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
-                    </a>
+                    <xsl:element name="a"> <!-- Navigation item link. -->
+                      <xsl:attribute name="title"><xsl:value-of select="@description" /></xsl:attribute>
+                      <xsl:choose>
+                        <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
+                          <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
+                          <xsl:attribute name="target">_blank</xsl:attribute>
+                          <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <xsl:attribute name="href"><xsl:value-of select="$portletSubNavLink" /></xsl:attribute>
+                          <xsl:attribute name="class">portal-subnav-link</xsl:attribute>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                      <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
+                    </xsl:element>
                   </div>
                 </li>
               </xsl:for-each>
-              
+
             </xsl:when>
             <xsl:otherwise>
-            	
+
               <xsl:for-each select="//navigation/tab[@activeTab='true']/tabChannel">
                 <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
                   <xsl:choose>
@@ -465,23 +477,35 @@
                         </xsl:with-param>
                     </xsl:call-template>
                   </xsl:variable>
-                  <a href="{$portletSubNavLink}" title="{@description}" class="portal-subnav-link">  <!-- Navigation item link. -->
+                  <xsl:element name="a"> <!-- Navigation item link. -->
+                    <xsl:attribute name="title"><xsl:value-of select="@description" /></xsl:attribute>
+                    <xsl:choose>
+                      <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
+                        <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
+                        <xsl:attribute name="target">_blank</xsl:attribute>
+                        <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:attribute name="href"><xsl:value-of select="$portletSubNavLink" /></xsl:attribute>
+                        <xsl:attribute name="class">portal-subnav-link</xsl:attribute>
+                      </xsl:otherwise>
+                    </xsl:choose>
                     <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
-                  </a>
+                  </xsl:element>
                 </li>
               </xsl:for-each>
-              
+
             </xsl:otherwise>
           </xsl:choose>
         </ul>
-    	</div> 
+	</div>
     </div>
-    
+
   </xsl:template>
   <!-- ================================================== -->
-  
-  
-  
+
+
+
   <!-- ========== TEMPLATE: FLYOUT MENU SCRIPTS ========== -->
   <!-- =================================================== -->
   <!--
@@ -490,7 +514,7 @@
   <xsl:template name="flyout.menu.scripts">
     <script type="text/javascript">
       up.jQuery(document).ready(function(){
-        // initialize the flyout menus and add onmouseover and onmouseout events to 
+        // initialize the flyout menus and add onmouseover and onmouseout events to
         // all the navigation elements with subnavigation flyouts
         var flyouts = new Array();
         var flyoutOptions = { flyoutMenu: '.portal-flyout-container' };
@@ -501,6 +525,6 @@
     </script>
   </xsl:template>
   <!-- =================================================== -->
-	
-		
+
+
 </xsl:stylesheet>

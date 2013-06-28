@@ -922,7 +922,7 @@
                       <div><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
                       <ul>
                           <xsl:for-each select="tabChannel">
-                              <xsl:variable name="portletLinkUrl">
+                            <xsl:variable name="portletLinkUrl">
                               <xsl:call-template name="portalUrl">
                                 <xsl:with-param name="url">
                                   <url:portal-url>
@@ -932,7 +932,19 @@
                                 </xsl:with-param>
                               </xsl:call-template>
                             </xsl:variable>
-                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@name" /></a></li>
+                            <li><xsl:element name="a">
+                                <xsl:choose>
+                                  <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
+                                    <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
+                                    <xsl:attribute name="target">_blank</xsl:attribute>
+                                    <xsl:attribute name="class">externalLink</xsl:attribute>
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    <xsl:attribute name="href"><xsl:value-of select="$portletLinkUrl" /></xsl:attribute>
+                                  </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:value-of select="@name" />
+                              </xsl:element></li>
                         </xsl:for-each>
                       </ul>
                     </div>
