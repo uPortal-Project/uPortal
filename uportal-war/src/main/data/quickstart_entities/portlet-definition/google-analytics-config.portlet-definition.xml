@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <portlet-definition version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/subscribed-fragment" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/user">
-    <title>GoogleAnalytics</title>
-    <name>GoogleAnalytics</name>
+    <title>Google Analytics Configuration</title>
+    <name>Google Analytics Configuration</name>
     <fname>google-analytics-config</fname>
-    <desc></desc>
+    <desc>Configuration and Script Rendering for Google Analytics</desc>
     <type>Portlet</type>
     <timeout>1000</timeout>
     <portlet-descriptor>
@@ -51,37 +51,24 @@
         <name>config</name>
         <readOnly>false</readOnly>
         <value>
+        <!-- 
 {
    "defaultConfig":{
       "name":"",
-      "propertyId":"UA-39233702-2",
+      "propertyId":"UA-12345678-1",
       "config":[
-         {
-            "name":"name",
-            "value":"wisc.edu"
-         }
       ],
       "dimensionGroups":[
          {"name":"1","value":"Administrators"},
-         {"name":"2","value":"Applicant - Graduate"},
-         {"name":"3","value":"Applicant - Professional"},
-         {"name":"4","value":"Applicant - Special"},
-         {"name":"5","value":"Applicant - Undergraduate"},
-         {"name":"6","value":"Facstaff"},
-         {"name":"7","value":"Facstaff - Former Appointment"},
-         {"name":"8","value":"Former Student"},
-         {"name":"9","value":"Not Portal Activated"},
-         {"name":"10","value":"Portal Ineligible"},
-         {"name":"11","value":"Student"},
-         {"name":"12","value":"System Portal Ineligible"},
-         {"name":"13","value":"Users - Advisors"},
-         {"name":"14","value":"Users - Instructors"}
+         {"name":"2","value":"Student"},
+         {"name":"3","value":"Staff"}
       ]
    },
    "hosts":[
 
    ]
 }
+ -->
         </value>
     </portlet-preference>
 </portlet-definition>
