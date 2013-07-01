@@ -74,7 +74,7 @@
     <UNICAST />
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
-    <AUTH auth_class="org.jasig.portal.jgroups.auth.HashedDaoAuthToken"/>
+    <!-- <AUTH auth_class="org.jasig.portal.jgroups.auth.HashedDaoAuthToken"/> -->
     <pbcast.GMS print_local_addr="true" join_timeout="3000"
 
                 view_bundling="true"/>
