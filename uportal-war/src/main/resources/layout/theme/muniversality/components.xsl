@@ -146,7 +146,7 @@
               </xsl:variable>
               <xsl:element name="a">
                 <xsl:attribute name="href"><xsl:value-of select="$portletUrl" /></xsl:attribute>
-                <xsl:attribute name="title">To view <xsl:value-of select="@title" /></xsl:attribute>
+                <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('to.view', $USER_LANG)" /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
                 <xsl:choose>
                   <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
                     <xsl:attribute name="target">_blank</xsl:attribute>
@@ -198,7 +198,7 @@
                         <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
                         <xsl:element name="a">
                           <xsl:attribute name="href"><xsl:value-of select="$portletUrl" /></xsl:attribute>
-                          <xsl:attribute name="title">To view <xsl:value-of select="@title" /></xsl:attribute>
+                          <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('to.view', $USER_LANG)" /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
                           <xsl:choose>
                             <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
                               <xsl:attribute name="target">_blank</xsl:attribute>
