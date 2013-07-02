@@ -303,6 +303,11 @@
             <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-ws-util</artifactId>
+        </dependency>
 
         <dependency> 
             <groupId>org.jasypt</groupId> 
