@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,11 +63,13 @@ import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -92,6 +95,7 @@ public class UpdatePreferencesServlet {
 	private IUserInstanceManager userInstanceManager;
 	private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
 	private IUserLayoutStore userLayoutStore;
+    private MessageSource messageSource;
 
 	@Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
@@ -123,6 +127,10 @@ public class UpdatePreferencesServlet {
         this.userInstanceManager = userInstanceManager;
     }
 
+    @Autowired
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 	// default tab name
 	protected static final String DEFAULT_TAB_NAME = "New Tab";
 
@@ -544,8 +552,7 @@ public class UpdatePreferencesServlet {
 				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
 				newColumn.setName("Column");
 				newColumn.setId("tbd");
-				newColumn
-						.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+				newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
 				newColumn.setHidden(false);
 				newColumn.setUnremovable(false);
 				newColumn.setImmutable(false);
@@ -574,6 +581,12 @@ public class UpdatePreferencesServlet {
 					siblingId);
 		}
 
+		final Locale locale = RequestContextUtils.getLocale(request);
+
+		if (node == null) {
+			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.add.portlet.in.tab", "Can't add a new channel", locale)));
+		}
+
 		String nodeId = node.getId();
 
 		try {
@@ -581,10 +594,11 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
+			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Can't add a new channel", locale)));
 		}
 
 		Map<String, String> model = new HashMap<String, String>();
-		model.put("response", "Added new channel");
+		model.put("response", getMessage("success.add.portlet", "Added a new channel", locale));
 		model.put("newNodeId", nodeId);
 		return new ModelAndView("jsonView", model);
 
@@ -852,6 +866,11 @@ public class UpdatePreferencesServlet {
         }
 
         return per;
+
+	}
+
+	protected String getMessage(String key, String defaultName, Locale locale) {
+		return messageSource.getMessage(key, new Object[] {}, defaultName, locale);
 	}
 
 	/**
