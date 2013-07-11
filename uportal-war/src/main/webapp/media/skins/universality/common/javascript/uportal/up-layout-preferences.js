@@ -229,6 +229,8 @@ var uportal = uportal || {};
 
                 $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
 
+                that.components.gallery.refreshPaneLink();
+
                 that.components.portletReorderer.refresh();
             }
         );
