@@ -41,6 +41,29 @@ var uportal = uportal || {};
         return up.defaultNodeIdExtractor($("#portalNavigationList li.active"));
     };
 
+    var typeMsg = { ERROR : "error",
+		WARN : "warn",
+		SUCCESS : "success"
+	};
+    /*
+     * Diplay messages
+     * msg : should be text
+     * type : should be a css class definition on message div, values are "error", "warn", "success"
+     * callback : should be a function or null
+     */
+    var showMessage = function (msg, type, callback) {
+        var messageDiv = $("#portalPageBodyMessage");
+        if (msg && type) {
+		var delay = (type == typeMsg.ERROR) ? 5000 : 2000;
+		if (messageDiv.length != 0) {
+			messageDiv.html('<p>' + msg + '</p>');
+			messageDiv.removeClass().addClass(type).show().delay(delay).fadeOut(400, callback);
+		} else return callback;
+	} else {
+		return callback;
+	}
+    };
+
 
     /*
      * LAYOUT COLUMN EDITING FUNCTIONS
@@ -285,8 +308,15 @@ var uportal = uportal || {};
 
                                         that.persistence.update(options,
                                            function(data) {
-                                              window.location = that.urlProvider.getTabUrl(getActiveTabId());
-                                           }
+                                                if (data.error) {
+                                                    showMessage(data.error, typeMsg.ERROR);
+                                                /*} else if (data.response) {
+                                                    showMessage(data.response, typeMsg.SUCCESS, function(){window.location = that.urlProvider.getTabUrl(getActiveTabId());});
+                                                */
+                                                } else {
+                                                    window.location = that.urlProvider.getTabUrl(getActiveTabId());
+                                                }
+                                            }
                                         );
                                     },
                                     onPortletDrag: function (portlet, method, targetID) {
@@ -299,7 +329,14 @@ var uportal = uportal || {};
                                                 elementID: targetID
                                             },
                                             function(xml) {
+                                                if (xml.error) {
+                                                    showMessage(xml.error, typeMsg.ERROR);
+	                                            /*} else if (data.response) {
+                                                    showMessage(xml.response, typeMsg.SUCCESS, function(){window.location = that.urlProvider.getTabUrl(getActiveTabId());});
+                                                */
+                                                } else {
                                                 window.location = that.urlProvider.getTabUrl(getActiveTabId());
+                                                }
                                             }
                                         );
                                     }
