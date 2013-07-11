@@ -335,6 +335,12 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
 #portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 
+/** Page Message for returned action messages */
+#portalPageBodyMessage {display: none;border-radius: 7px 7px 7px 7px;margin-bottom: 1em;}
+#portalPageBodyMessage.error {background-color: #FFB6C1;border: 1px solid #FF0000;}
+#portalPageBodyMessage.warn {background-color: #FFCC00;border: 1px solid #F58821;}
+#portalPageBodyMessage.success {background-color: #90EE90;border: 1px solid #008000;}
+#portalPageBodyMessage p {font-weight: bold; margin-bottom: 2px; text-align: center;}
 
 /* Quick Links */
 #portalQuicklinks {}

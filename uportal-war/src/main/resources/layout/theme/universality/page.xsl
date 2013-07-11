@@ -303,6 +303,7 @@
                 <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
                   <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                   <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+			<div id="portalPageBodyMessage"></div>
                   	<!-- ****** CONTENT TOP BLOCK ****** -->
                     <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                     <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -314,6 +315,7 @@
                   </div>
                 </xsl:when>
                 <xsl:otherwise>
+                  <div id="portalPageBodyMessage"></div>
                 	<!-- ****** CONTENT TOP BLOCK ****** -->
                   <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                   <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -337,6 +339,7 @@
                     <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <div id="portalPageBodyMessage"></div>
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -351,6 +354,7 @@
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                      <div id="portalPageBodyMessage"></div>
                     	<!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -373,6 +377,7 @@
                     <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <div id="portalPageBodyMessage"></div>
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -386,6 +391,7 @@
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                      <div id="portalPageBodyMessage"></div>
                     	<!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
