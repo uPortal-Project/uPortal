@@ -73,7 +73,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Provides targets for AJAX preference setting calls.
- * 
+ *
  * @author jennifer.bourey@yale.edu
  * @version $Revision$ $Date$
  */
@@ -85,7 +85,7 @@ public class UpdatePreferencesServlet {
     private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
 
     protected final Log log = LogFactory.getLog(getClass());
-	
+
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IUserIdentityStore userIdentityStore;
 	private IUserFragmentSubscriptionDao userFragmentInfoDao;
@@ -112,12 +112,12 @@ public class UpdatePreferencesServlet {
     public void setUserIdentityStore(IUserIdentityStore userStore) {
         this.userIdentityStore = userStore;
     }
-    
+
     @Autowired
     public void setUserFragmentInfoDao(IUserFragmentSubscriptionDao userFragmentInfoDao) {
         this.userFragmentInfoDao = userFragmentInfoDao;
     }
-    
+
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -128,7 +128,7 @@ public class UpdatePreferencesServlet {
 
 	/**
 	 * Remove an element from the layout.
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @return
@@ -146,17 +146,17 @@ public class UpdatePreferencesServlet {
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         try {
-            
-            // if the element ID starts with the fragment prefix and is a folder, 
+
+            // if the element ID starts with the fragment prefix and is a folder,
             // attempt first to treat it as a pulled fragment subscription
             String elementId = request.getParameter("elementID");
-            if (elementId != null && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX) && 
+            if (elementId != null && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX) &&
                     ulm.getNode( elementId ) instanceof org.jasig.portal.layout.node.UserLayoutFolderDescription) {
-                
+
                 removeSubscription(per, elementId, ulm);
-                
+
             } else {
-                // Delete the requested element node.  This code is the same for 
+                // Delete the requested element node.  This code is the same for
                 // all node types, so we can just have a generic action.
                ulm.deleteNode(elementId);
             }
@@ -164,7 +164,7 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 
             return new ModelAndView("jsonView", Collections.EMPTY_MAP);
-            
+
         } catch (Exception e) {
             log.warn("Failed to remove element from layout", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -174,7 +174,7 @@ public class UpdatePreferencesServlet {
 
     /**
      * Subscribe a user to a pre-formatted tab (pulled DLM fragment).
-     * 
+     *
      * @param request
      * @param response
      * @return
@@ -190,7 +190,7 @@ public class UpdatePreferencesServlet {
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
-        // Get the fragment owner's name from the request and construct 
+        // Get the fragment owner's name from the request and construct
         // an IPerson object representing that user
         String fragmentOwnerName = request.getParameter("sourceID");
         if (StringUtils.isBlank(fragmentOwnerName)) {
@@ -214,7 +214,7 @@ public class UpdatePreferencesServlet {
             userFragmentInfo.setActive(true);
             userFragmentInfoDao.updateUserFragmentInfo(userFragmentInfo);
         }
-        
+
         try {
             // reload user layout and stylesheet to incorporate new DLM fragment
             ulm.loadUserLayout(true);
@@ -242,7 +242,7 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 
             return new ModelAndView("jsonView", Collections.singletonMap("tabId", sourceId));
-            
+
         } catch (Exception e) {
             log.warn("Error subscribing to fragment owned by "
                     + fragmentOwnerName, e);
@@ -251,10 +251,10 @@ public class UpdatePreferencesServlet {
         }
 
     }
-    
+
 	/**
 	 * Move a portlet to another location on the tab.
-	 * 
+	 *
 	 * @param ulm
 	 * @param request
 	 * @param response
@@ -281,9 +281,9 @@ public class UpdatePreferencesServlet {
 		// isn't actually relevant if we're appending the source element.
 		String destinationId = request.getParameter("elementID");
 
-		
+
 		if (isTab(ulm, destinationId)) {
-			// if the target is a tab type node, move the portlet to 
+			// if the target is a tab type node, move the portlet to
 			// the end of the first column
 		    @SuppressWarnings("unchecked")
 			Enumeration<String> columns = ulm.getChildIds(destinationId);
@@ -336,13 +336,13 @@ public class UpdatePreferencesServlet {
         return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 
 	}
-	
+
 	/**
 	 * Change the number of columns on a specified tab.  In the event that the user is
-	 * decreasing the number of columns, extra columns will be stripped from the 
+	 * decreasing the number of columns, extra columns will be stripped from the
 	 * right-hand side.  Any channels in these columns will be moved to the bottom of
 	 * the last preserved column.
-	 * 
+	 *
 	 * @param per
 	 * @param upm
 	 * @param ulm
@@ -353,9 +353,9 @@ public class UpdatePreferencesServlet {
 	 */
     @RequestMapping(method = RequestMethod.POST, params = "action=changeColumns")
 	public ModelAndView changeColumns(HttpServletRequest request,
-			HttpServletResponse response, @RequestParam("tabId") String tabId, 
-			@RequestParam("widths[]") String[] widths, 
-			@RequestParam(value = "deleted[]", required = false) String[] deleted, 
+			HttpServletResponse response, @RequestParam("tabId") String tabId,
+			@RequestParam("widths[]") String[] widths,
+			@RequestParam(value = "deleted[]", required = false) String[] deleted,
 			@RequestParam(value = "acceptor", required = false) String acceptor) throws IOException, PortalException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
@@ -365,7 +365,7 @@ public class UpdatePreferencesServlet {
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
 		int newColumnCount = widths.length;
-        
+
 		// build a list of the current columns for this tab
         @SuppressWarnings("unchecked")
 		Enumeration<String> columns = ulm.getChildIds(tabId);
@@ -374,10 +374,10 @@ public class UpdatePreferencesServlet {
 			columnList.add(columns.nextElement());
 		}
         int oldColumnCount = columnList.size();
-        
+
         Map<String, Object> model = new HashMap<String, Object>();
 
-        // if the new layout has more columns 
+        // if the new layout has more columns
 		if (newColumnCount > oldColumnCount) {
 	        List<String> newColumnIds = new ArrayList<String>();
 			for (int i = columnList.size(); i < newColumnCount; i++) {
@@ -396,23 +396,23 @@ public class UpdatePreferencesServlet {
 				IUserLayoutNodeDescription node = ulm.addNode(newColumn, tabId,
 						null);
 				newColumnIds.add(node.getId());
-				
+
 	            model.put("newColumnIds", newColumnIds);
 				columnList.add(node.getId());
 
 			}
 
-		} 
-		
+		}
+
 		// if the new layout has fewer columns
 		else if (deleted != null && deleted.length > 0) {
-		    
+
 	        if (columnList.size() != widths.length + deleted.length) {
 	            // TODO: error?
 	        }
-	        
+
 		    for (String columnId : deleted) {
-		        
+
                 // move all channels in the current column to the last valid column
                 @SuppressWarnings("unchecked")
                 Enumeration channels = ulm.getChildIds(columnId);
@@ -422,8 +422,8 @@ public class UpdatePreferencesServlet {
                 }
 
                 // delete the column from the user's layout
-                ulm.deleteNode(columnId); 
-                
+                ulm.deleteNode(columnId);
+
                 columnList.remove(columnId);
             }
 		}
@@ -440,7 +440,7 @@ public class UpdatePreferencesServlet {
 			}
 			count++;
 		}
-		
+
 		try {
 		    ulm.saveUserLayout();
 		} catch (Exception e) {
@@ -453,7 +453,7 @@ public class UpdatePreferencesServlet {
 
 	/**
 	 * Move a tab left or right.
-	 * 
+	 *
 	 * @param per
 	 * @param upm
 	 * @param ulm
@@ -500,7 +500,7 @@ public class UpdatePreferencesServlet {
 
 	/**
 	 * Add a new channel.
-	 * 
+	 *
 	 * @param per
 	 * @param upm
 	 * @param ulm
@@ -523,7 +523,7 @@ public class UpdatePreferencesServlet {
 		String method = request.getParameter("position");
 
 		IPortletDefinition definition = portletDefinitionRegistry.getPortletDefinition(sourceId);
-		
+
         IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(definition);
 
 		IUserLayoutNodeDescription node = null;
@@ -592,7 +592,7 @@ public class UpdatePreferencesServlet {
 
 	/**
 	 * Update the user's preferred skin.
-	 * 
+	 *
 	 * @param per
 	 * @param upm
 	 * @param ulm
@@ -607,7 +607,7 @@ public class UpdatePreferencesServlet {
 
 		String skinName = request.getParameter("skinName");
 		this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME, "skin", skinName);
-		
+
 		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 	}
 
@@ -615,9 +615,9 @@ public class UpdatePreferencesServlet {
 	/**
 	 * Add a new tab to the layout.  The new tab will be appended to the end of the
 	 * list and named with the BLANK_TAB_NAME variable.
-	 * 
+	 *
 	 * @param request
-	 * @throws IOException 
+	 * @throws IOException
 	 */
     @RequestMapping(method = RequestMethod.POST, params="action=addTab")
 	public ModelAndView addTab(HttpServletRequest request, HttpServletResponse response, @RequestParam("widths[]") String[] widths) throws IOException {
@@ -666,7 +666,7 @@ public class UpdatePreferencesServlet {
 
             // add the column to our layout
             ulm.addNode(newColumn, tabId, null);
-            
+
             this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, newColumn.getId(), "width", width + "%");
             try {
                 // This sets the column attribute in memory but doesn't persist it.  Comment says saves changes "prior to persisting"
@@ -679,7 +679,7 @@ public class UpdatePreferencesServlet {
         }
 
         // ## 'tabGroup' value (optional feature)
-        // Set the 'tabGroup' attribute on the folder element that describes 
+        // Set the 'tabGroup' attribute on the folder element that describes
         // this new tab;  use the currently active tabGroup.
         if (request.getParameter(TAB_GROUP_PARAMETER)!= null) {
 
@@ -707,9 +707,9 @@ public class UpdatePreferencesServlet {
 
 	/**
 	 * Rename a specified tab.
-	 * 
+	 *
 	 * @param request
-	 * @throws IOException 
+	 * @throws IOException
 	 */
     @RequestMapping(method = RequestMethod.POST, params = "action=renameTab")
 	public ModelAndView renameTab(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -732,13 +732,13 @@ public class UpdatePreferencesServlet {
 		    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		    return null;
 		}
-		
+
 		/*
 		 * Update the tab and save the layout
 		 */
 	    tab.setName(StringUtils.isBlank(tabName) ? DEFAULT_TAB_NAME : tabName);
 		final boolean updated = ulm.updateNode(tab);
-		
+
 		if (updated) {
     		try {
     			// save the user's layout
@@ -746,7 +746,7 @@ public class UpdatePreferencesServlet {
     		} catch (Exception e) {
     			log.warn("Error saving layout", e);
     		}
-    
+
     		//TODO why do we have to do this, shouldn't modifying the layout be enough to trigger a full re-render (layout's cache key changes)
     		this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, tabId, "name", tabName);
 		}
@@ -758,20 +758,20 @@ public class UpdatePreferencesServlet {
 
     @RequestMapping(method = RequestMethod.POST, params = "action=updatePermissions")
     public ModelAndView updatePermissions(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
+
         IUserInstance ui = userInstanceManager.getUserInstance(request);
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         String elementId = request.getParameter("elementID");
         IUserLayoutNodeDescription node = ulm.getNode(elementId);
-        
+
         if (node == null){
             log.warn("Failed to locate node for permissions update");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return null;
         }
-        
+
         String deletable = request.getParameter("deletable");
         if (!StringUtils.isBlank(deletable)) {
             node.setDeleteAllowed(Boolean.valueOf(deletable));
@@ -786,14 +786,14 @@ public class UpdatePreferencesServlet {
         if (!StringUtils.isBlank(editable)) {
             node.setEditAllowed(Boolean.valueOf(editable));
         }
-        
+
         String canAddChildren = request.getParameter("addChildAllowed");
         if (!StringUtils.isBlank(canAddChildren)) {
             node.setAddChildAllowed(Boolean.valueOf(canAddChildren));
         }
-        
+
         ulm.updateNode(node);
-        
+
         try {
             // save the user's layout
             ulm.saveUserLayout();
@@ -804,37 +804,37 @@ public class UpdatePreferencesServlet {
         return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 
     }
-    
+
     protected void removeSubscription(IPerson per, String elementId, IUserLayoutManager ulm) {
-        
+
         // get the fragment owner's ID from the element string
         String userIdString = StringUtils.substringBetween(elementId, Constants.FRAGMENT_ID_USER_PREFIX, Constants.FRAGMENT_ID_LAYOUT_PREFIX);
         int userId = NumberUtils.toInt(userIdString,0);
-        
+
         // construct a new person object representing the fragment owner
         RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
         fragmentOwner.setID(userId);
         fragmentOwner.setUserName(userIdentityStore.getPortalUserName(userId));
-        
+
         // attempt to find a subscription for this fragment
         IUserFragmentSubscription subscription = userFragmentInfoDao.getUserFragmentInfo(per, fragmentOwner);
-        
+
         // if a subscription was found, remove it's registration
         if (subscription != null) {
             userFragmentInfoDao.deleteUserFragmentInfo(subscription);
             ulm.loadUserLayout(true);
-        } 
-        
+        }
+
         // otherwise, delete the node
         else {
             ulm.deleteNode(elementId);
         }
-    
+
     }
-	
+
 	/**
 	 * A folder is a tab if its parent element is the layout element
-	 * 
+	 *
 	 * @param folder the folder in question
 	 * @return <code>true</code> if the folder is a tab, otherwise <code>false</code>
 	 */
@@ -843,21 +843,20 @@ public class UpdatePreferencesServlet {
 		// we could be a bit more careful here and actually check the type
 		return ulm.getRootFolderId().equals(ulm.getParentId(folderId));
 	}
-	
+
 	protected IPerson getPerson(IUserInstance ui, HttpServletResponse response) throws IOException {
         IPerson per = ui.getPerson();
         if (per.isGuest()) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
-        
-        return per;
 
+        return per;
 	}
 
 	/**
 	 * A folder is a column if its parent is a tab element
-	 * 
+	 *
 	 * @param folder the folder in question
 	 * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
 	 */
