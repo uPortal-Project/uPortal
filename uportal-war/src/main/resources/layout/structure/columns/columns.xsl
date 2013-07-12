@@ -115,10 +115,10 @@
       		</xsl:for-each>
       		<!-- END display channel-headers for each channel visible on the page -->  
         </xsl:when>
-      	<xsl:otherwise>
-      		<!-- display only focused channel-header -->
-      		<channel-header ID="{$userLayoutRoot}"/>
-      	</xsl:otherwise>
+        <xsl:otherwise>
+		<!-- display only focused channel-header -->
+		<channel-header ID="{$userLayoutRoot}"/>
+        </xsl:otherwise>
       </xsl:choose>
       
       <!-- Allows header portlets to appear in the output, even in focused mode -->
@@ -189,6 +189,9 @@
         <xsl:for-each select="attribute::*">
           <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
         </xsl:for-each>
+        <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
+          <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
+        </xsl:if>
         <!-- Add 'activeTab' and 'activeTabPosition' attributes as appropriate -->
         <xsl:choose>
           <xsl:when test="$activeTabID = @ID">

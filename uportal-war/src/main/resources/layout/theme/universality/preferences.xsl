@@ -420,14 +420,22 @@
                         <xsl:value-of
                             select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
                     </legend>
-                    <xsl:for-each select="/layout/navigation/tab">
-                        <input name="targetTab" id="targetTab{@ID}"
-                            value="{@ID}" type="radio" />
-                        <label for="targetTab{@ID}" class="portlet-form-field-label">
-                            <xsl:value-of select="@name" />
-                        </label>
-                        <br />
-                    </xsl:for-each>
+                    <xsl:variable name="unlockedTab" select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']" />
+                    <xsl:choose>
+                      <xsl:when test="$unlockedTab">
+                        <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
+                            <input name="targetTab" id="targetTab{@ID}"
+                                value="{@ID}" type="radio" />
+                            <label for="targetTab{@ID}" class="portlet-form-field-label">
+                                <xsl:value-of select="@name" />
+                            </label>
+                            <br />
+                        </xsl:for-each>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="upMsg:getMessage('error.add.portlet.in.layout', $USER_LANG)" />
+                      </xsl:otherwise>
+                    </xsl:choose>
                 </fieldset>
                 <p>
                     <input name="portletId" type="hidden"
