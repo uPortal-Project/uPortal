@@ -20,7 +20,7 @@
 
 -->
 
-<!-- 
+<!--
  | This file determines the base page layout and presentation of the portal.
  | The file is imported by the base stylesheet universality.xsl.
  | Parameters and templates from other XSL files may be referenced; refer to universality.xsl for the list of parameters and imported XSL files.
@@ -30,7 +30,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -38,9 +38,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -48,12 +48,12 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
     version="1.0">
-  
+
   <!-- ========== TEMPLATE: PAGE ========== -->
   <!-- ==================================== -->
-  <!-- 
+  <!--
    | This template defines the base HTML definitions for the output document.
    | This template defines the base page of both the default portal page view (xml: layout) and the view when a portlet has been detached (xml: layout_fragment).
    | The main layout of the page has three subsections: header (TEMPLATE: PAGE HEADER), content (TEMPLATE: PAGE BODY), and footer (TEMPLATE: PAGE FOOTER), defined below.
@@ -82,7 +82,7 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    
+
     <html lang="{$USER_LANG}">
       <head>
         <title>
@@ -108,7 +108,7 @@
         <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
-        
+
         <xsl:copy-of select="//channel[@fname = 'google-analytics-config']"/>
         <xsl:call-template name="skinResources">
             <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
@@ -119,7 +119,7 @@
             up.fluid = fluid;
             up._ = _.noConflict();
             up._.templateSettings = {
-              interpolate : /{{=(.+?)}}/g, 
+              interpolate : /{{=(.+?)}}/g,
               evaluate    : /{{(.+?)}}/g
             };
             up.Backbone = Backbone.noConflict();
@@ -130,25 +130,25 @@
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>
         </xsl:for-each>
-       
+
       </head>
-      
+
       <body id="portal" class="up {$FLUID_THEME_CLASS}">
         <div id="portalPage" class="{$LOGIN_STATE} {$PORTAL_VIEW} fl-container-flex">  <!-- Main div for presentation/formatting options. -->
         	<div id="portalPageInner" class="{$PAGE_COLUMN_CLASS} {$SIDEBAR_CLASS} {$FRAGMENT_ADMIN_CLASS}">  <!-- Inner div for additional presentation/formatting options. -->
             <xsl:choose>
               <xsl:when test="/layout_fragment"> <!-- When detached. -->
-              
+
                 <xsl:for-each select="content//channel">
                   <xsl:apply-templates select=".">
                   	<xsl:with-param name="detachedContent" select="'true'"/>
                   </xsl:apply-templates>
                 </xsl:for-each>
-              
+
               </xsl:when>
               <xsl:otherwise> <!-- Otherwise, default. -->
-				
-                <xsl:call-template name="alert.block"/>			
+
+                <xsl:call-template name="alert.block"/>
                 <xsl:apply-templates select="header"/>
                 <xsl:call-template name="main.navigation"/>
                 <xsl:if test="not(//focused)">
@@ -172,10 +172,10 @@
                 <xsl:if test="$SIDEBAR_CLASS"> <!-- Script to fix content height when a sidebar is present. -->
                     <xsl:call-template name="js.content.height"/>
                 </xsl:if>
-                
+
               </xsl:otherwise>
             </xsl:choose>
-          </div> 
+          </div>
         </div>
         <script type="text/javascript">
             up.analytics = up.analytics || {};
@@ -187,17 +187,17 @@
     </html>
   </xsl:template>
   <!-- ==================================== -->
-  
-	
+
+
   <!-- ========== TEMPLATE: PAGE HEADER ========== -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the page header.
   -->
   <xsl:template match="header">
     <div id="portalPageHeader" class="fl-container-flex">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageHeaderInner">  <!-- Inner div for additional presentation/formatting options. -->
-    
+
 	        <xsl:choose>
 	          <xsl:when test="$AUTHENTICATED != 'true'">
 	            <!-- ****** HEADER GUEST BLOCK ****** -->
@@ -210,7 +210,7 @@
 		            <!-- ****** HEADER FOCUSED BLOCK ****** -->
 		            <xsl:call-template name="header.focused.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
 		            <!-- ****** HEADER FOCUSED BLOCK ****** -->
-		          </xsl:when>   
+		          </xsl:when>
 		          <xsl:otherwise>
 		            <!-- ****** HEADER BLOCK ****** -->
 		            <xsl:call-template name="header.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
@@ -224,11 +224,11 @@
     </div>
   </xsl:template>
   <!-- =========================================== -->
-  
-	
+
+
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the page navigation.
   -->
   <xsl:template name="main.navigation">
@@ -237,8 +237,8 @@
     <!-- ****** MAIN NAVIGATION BLOCK ****** -->
   </xsl:template>
   <!-- =========================================== -->
-	
-  
+
+
   <!-- ========== TEMPLATE: PAGE BODY ========== -->
   <!-- ========================================= -->
   <!--
@@ -255,7 +255,7 @@
     </xsl:variable>
     <div id="portalPageBody" class="fl-container-flex fl-fix">  <!-- Div for presentation/formatting options. -->
     	<div id="portalPageBodyInner">  <!-- Inner div for additional presentation/formatting options. -->
-      
+
         <!-- ****** BODY LAYOUT ****** -->
         <div id="portalPageBodyLayout">
         	<xsl:attribute name="class"> <!-- Write appropriate FSS class based on use of sidebar and number of columns to produce column layout. -->
@@ -279,30 +279,31 @@
 
               </xsl:when>
               <xsl:otherwise> <!-- Guest View -->
-              
+
                 <xsl:choose>
                   <xsl:when test="$USE_SIDEBAR_GUEST='true'">fl-col-mixed-<xsl:value-of select="$SIDEBAR_WIDTH_GUEST" /></xsl:when>
                   <xsl:otherwise>fl-container-flex</xsl:otherwise>
                 </xsl:choose>
-                
+
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
-          
+
           <!-- ****** SIDEBAR, PAGE TITLE, & COLUMNS ****** -->
           <!-- Useage of the sidebar and subsequent UI components are set by parameters in universality.xsl. -->
           <xsl:variable name="FSS_SIDEBAR_LOCATION_CLASS">
             <xsl:call-template name="sidebar.location" /> <!-- Template located below. -->
           </xsl:variable>
-          
+
           <xsl:choose>
             <xsl:when test="$PORTAL_VIEW='focused'">
-            
+
               <!-- === FOCUSED VIEW === -->
               <xsl:choose>
                 <xsl:when test="$USE_SIDEBAR_FOCUSED='true'"> <!-- Sidebar. -->
                   <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                   <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+			<div id="portalPageBodyMessage"></div>
                   	<!-- ****** CONTENT TOP BLOCK ****** -->
                     <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                     <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -314,6 +315,7 @@
                   </div>
                 </xsl:when>
                 <xsl:otherwise>
+                  <div id="portalPageBodyMessage"></div>
                 	<!-- ****** CONTENT TOP BLOCK ****** -->
                   <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                   <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -324,19 +326,20 @@
                   <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                 </xsl:otherwise>
               </xsl:choose>
-              
+
             </xsl:when>
             <xsl:otherwise>
-            
+
               <!-- === DASHBOARD VIEW === -->
               <xsl:choose>
                 <xsl:when test="$AUTHENTICATED='true'">
-                  
+
                   <!-- Signed In -->
                   <xsl:choose>
                     <xsl:when test="$USE_SIDEBAR='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <div id="portalPageBodyMessage"></div>
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -351,6 +354,7 @@
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                      <div id="portalPageBodyMessage"></div>
                     	<!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -364,15 +368,16 @@
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                     </xsl:otherwise>
                   </xsl:choose>
-                  
+
                 </xsl:when>
                 <xsl:otherwise>
-                  
+
                   <!-- Signed Out -->
                   <xsl:choose>
                     <xsl:when test="$USE_SIDEBAR_GUEST='true'"> <!-- Sidebar. -->
                       <xsl:call-template name="sidebar"/> <!-- Template located in columns.xsl. -->
                       <div class="fl-container-flex-{$FSS_SIDEBAR_LOCATION_CLASS}">
+                        <div id="portalPageBodyMessage"></div>
                       	<!-- ****** CONTENT TOP BLOCK ****** -->
                         <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                         <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -386,6 +391,7 @@
                       </div>
                     </xsl:when>
                     <xsl:otherwise>
+                      <div id="portalPageBodyMessage"></div>
                     	<!-- ****** CONTENT TOP BLOCK ****** -->
                       <xsl:call-template name="content.top.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
                       <!-- ****** CONTENT TOP BLOCK ****** -->
@@ -398,25 +404,25 @@
                       <!-- ****** CONTENT BOTTOM BLOCK ****** -->
                     </xsl:otherwise>
                   </xsl:choose>
-                  
+
                 </xsl:otherwise>
               </xsl:choose>
-              
+
             </xsl:otherwise>
           </xsl:choose>
 
           <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       	</div> <!-- End portalPageBodyLayout -->
-        
-    	</div> <!-- End portalPageBodyInner -->
+
+      </div> <!-- End portalPageBodyInner -->
     </div> <!-- End portalPageBody -->
-    
+
   </xsl:template>
   <!-- ========================================= -->
 
   <!-- ======= TEMPLATE: CUSTOMIZE MESSAGE ======= -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the customize page message.
   -->
   <xsl:template name="page.customize.row">
@@ -432,7 +438,7 @@
 
   <!-- ========== TEMPLATE: PAGE TITLE ========== -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the page title.
   -->
   <xsl:template name="page.title.row">
@@ -445,11 +451,11 @@
     </div>
   </xsl:template>
   <!-- =========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PAGE TITLE FOCUSED ========== -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the page title when focused.
   -->
   <xsl:template name="page.title.row.focused">
@@ -462,22 +468,22 @@
     </div>
   </xsl:template>
   <!-- =========================================== -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PAGE FOOTER ========== -->
   <!-- =========================================== -->
-  <!-- 
+  <!--
    | This template renders the page footer.
    | The footer channel is located at: webpages\stylesheets\org\jasig\portal\channels\CGenericXSLT\footer\footer_webbrowser.xsl.
   -->
   <xsl:template match="footer">
     <div id="portalPageFooter" class="fl-container-flex">
     	<div id="portalPageFooterInner">
-      
+
         <!-- ****** FOOTER BLOCK ****** -->
         <xsl:call-template name="footer.block"/> <!-- Calls a template of institution custom content from universality.xsl. -->
         <!-- ****** FOOTER BLOCK ****** -->
-      
+
       </div>
     </div>
   </xsl:template>
@@ -506,13 +512,13 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  <!-- ============================================ --> 
-    
-  
+  <!-- ============================================ -->
+
+
   <!-- ==================================================== -->
   <!-- ========== TEMPLATE: JAVASCRIPT CONTENT HEIGHT ========== -->
   <!-- ==================================================== -->
-  <!-- 
+  <!--
    | YELLOW
    | This template outputs a script to ensure that when a sidebar is used, all columns of the content contaier are the same height (fixes collapsed content area due to floated sidebar, which sometimes has a greater height). The issue only occurs when there is a floated sidebar, so the script is set to run only when a sidebar is present.
   -->

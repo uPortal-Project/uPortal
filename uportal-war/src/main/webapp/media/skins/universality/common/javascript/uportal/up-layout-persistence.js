@@ -24,12 +24,12 @@ var up = up || {};
 
     /**
      * Instantiate a LayoutPersistence component
-     * 
+     *
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
     up.LayoutPreferencesPersistence = function(container, options) {
-        
+
         // construct the new component
         var that = fluid.initView("up.LayoutPreferencesPersistence", container, options);
 
@@ -46,11 +46,11 @@ var up = up || {};
                 }
             });
         };
-        
+
         return that;
     };
 
-    
+
     // defaults
     fluid.defaults("up.LayoutPreferencesPersistence", {
         saveLayoutUrl: null,
@@ -71,5 +71,5 @@ var up = up || {};
             }
         }
     });
-    
+
 })(jQuery, fluid);

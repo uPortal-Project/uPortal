@@ -22,7 +22,7 @@ var uportal = uportal || {};
 
 (function($, fluid){
 
-    var layouts = [ 
+    var layouts = [
        { nameKey: "fullWidth", columns: [ 100 ] },
        { nameKey: "narrowWide", columns: [ 40, 60 ] },
        { nameKey: "even", columns: [ 50, 50 ] },
@@ -31,29 +31,52 @@ var uportal = uportal || {};
        { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
        { nameKey: "even", columns: [ 25, 25, 25, 25 ] }
    ];
-               
+
 
     /*
      * GENERAL UTILITY METHODS
      */
-    
+
     var getActiveTabId = function () {
         return up.defaultNodeIdExtractor($("#portalNavigationList li.active"));
     };
-        
-     
+
+    var typeMsg = { ERROR : "error",
+		WARN : "warn",
+		SUCCESS : "success"
+	};
+    /*
+     * Diplay messages
+     * msg : should be text
+     * type : should be a css class definition on message div, values are "error", "warn", "success"
+     * callback : should be a function or null
+     */
+    var showMessage = function (msg, type, callback) {
+        var messageDiv = $("#portalPageBodyMessage");
+        if (msg && type) {
+		var delay = (type == typeMsg.ERROR) ? 5000 : 2000;
+		if (messageDiv.length != 0) {
+			messageDiv.html('<p>' + msg + '</p>');
+			messageDiv.removeClass().addClass(type).show().delay(delay).fadeOut(400, callback);
+		} else return callback;
+	} else {
+		return callback;
+	}
+    };
+
+
     /*
      * LAYOUT COLUMN EDITING FUNCTIONS
      */
-    
+
     /**
      * Return an array representing the currently-chosen layout
-     * 
+     *
      * @return layout columns array
      */
     var getCurrentLayout = function() {
         var columns = [];
-        
+
         // iterate through the CSS classnames for each column and parse
         // the fl-container-flex classnames to determine the width percentage for
         // each column
@@ -63,24 +86,24 @@ var uportal = uportal || {};
                 columns.push(Number(flClass[0].match("[0-9]+")[0]));
             }
         });
-        
+
         // if no columns were found, indicate that this is a single-column
         // layout
         if (columns.length == 0) columns.push(100);
-        
+
         return columns;
     };
-    
+
     /**
      * Return an array of currently-existing columns which may be deleted.
      * Deletable columns are calculated based on the column permissions themselves,
      * as well as the permissions of the columns' contents.
-     * 
+     *
      * @return column array
      */
     var getDeletableColumns = function() {
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-        
+
         // a deletable column must be marked deletable and contain no locked
         // children
         var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
@@ -88,7 +111,7 @@ var uportal = uportal || {};
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
             var acceptorColumns = columns.filter(".canAddChildren");
-            // if there are no acceptor columns, mark any columns that 
+            // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
                 deletableColumns = deletableColumns.filter(":not(:has(.up-portlet-wrapper))");
@@ -97,24 +120,24 @@ var uportal = uportal || {};
 
         return deletableColumns;
     };
-    
+
     var getPermittedLayouts = function() {
-    	
+
         var canAddColumns = $("#portalNavigation_" + getActiveTabId()).hasClass("canAddChildren");
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-        
+
         // a deletable column must be marked deletable and contain no locked
         // children
         var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
-        
+
         // set the minimum number of columns according to how
         // many deletable columns the layout currently contains
         var minColumns = columns.length - deletableColumns.length;
-        
+
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
             var acceptorColumns = columns.filter(".canAddChildren");
-            // if there are no acceptor columns, mark any columns that 
+            // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
                 deletableColumns = deletableColumns.filter(":not(:has(.up-portlet-wrapper))");
@@ -130,7 +153,7 @@ var uportal = uportal || {};
                 if (!separateAcceptor) minColumns++;
             }
         }
-        
+
         // set disabled to true for layouts not permitted
         $(layouts).each(function(idx, layout) {
             var cannotAddColumns    = !canAddColumns && layout.columns.length > columns.length,
@@ -140,16 +163,16 @@ var uportal = uportal || {};
                 layout.disabled = true;
             }
         });
-        
+
         return layouts;
     };
-    
+
     var updateColumns = function(layout, that) {
         var newcolumns = layout.columns;
         var columnCount = $("#portalPageBodyColumns [id^=column_]").size();
-        
+
         var post = {action: 'changeColumns', tabId: getActiveTabId(), widths: newcolumns};
-        
+
         if (newcolumns.length < columnCount) {
             var numToDelete = columnCount - newcolumns.length;
             var deletables = getDeletableColumns();
@@ -159,15 +182,15 @@ var uportal = uportal || {};
                 deletes.push(deletables[deletables.length-i-1]);
                 post.deleted.push(up.defaultNodeIdExtractor(deletables[deletables.length-i-1]));
             }
-            
+
             var acceptors = $("#portalPageBodyColumns > [id^=column_].canAddChildren");
             var acceptor = acceptors.filter(":first");
             post.acceptor = up.defaultNodeIdExtractor(acceptor);
         }
-        
-        that.persistence.update(post, 
-            function(data) { 
-            
+
+        that.persistence.update(post,
+            function(data) {
+
                 // add any new columns to the page
                 $(data.newColumnIds).each(function(){
                     var id = this;
@@ -178,7 +201,7 @@ var uportal = uportal || {};
                                 .html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>")
                         );
                 });
-                    
+
                 // remove any deleted columns from the page
                 $(deletes).each(function(idx, del){
                     $(this).find("div[id*=portlet_]").each(function(idx, portlet){
@@ -186,16 +209,16 @@ var uportal = uportal || {};
                     });
                     $(this).remove();
                 });
-                
+
                 // update the widths and CSS classnames for each column
                 // on the page
                 $('#portalPageBodyColumns > [id^=column_]').each(function(i){
-                    
+
                     var column = $(this).removeClass("single left right");
                     $(this.className.split(" ")).each(function(idx, className){
                         if (className.match("fl-container-flex")) $(column).removeClass(className);
                     });
-                    
+
                     var newclasses = "fl-container-flex" + newcolumns[i];
                     if (newcolumns.length == 1) newclasses += " single";
                     else if (i == 0) newclasses += " left";
@@ -203,50 +226,52 @@ var uportal = uportal || {};
                     else newclasses += " middle";
                     $(column).addClass(newclasses);
                 });
-                
+
                 $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
-                
+
+                that.components.gallery.refreshPaneLink();
+
                 that.components.portletReorderer.refresh();
             }
         );
     };
 
-    
+
 
     /**
      * Instantiate a LayoutPersistence component
-     * 
+     *
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
     up.LayoutPreferences = function(container, options) {
-        
+
         // construct the new component
         var that = fluid.initView("up.LayoutPreferences", container, options);
-        
+
         that.persistence = up.LayoutPreferencesPersistence(
-           container, 
-           { 
+           container,
+           {
                saveLayoutUrl: that.options.layoutPersistenceUrl,
                messages: {error: that.options.messages.persistenceError }
            }
         );
-        
+
         that.urlProvider = up.UrlProvider(
-            container, 
+            container,
             { portalContext: that.options.portalContext }
         );
-        
+
         that.components = {};
-        
+
         // initialize the gallery component
         that.components.gallery = up.PortalGallery(
-            ".up-gallery", 
+            ".up-gallery",
             {
                 // content browsing pane
                 browseContentPane: {
                     options: {
-                
+
                         // "add stuff" sub-pane
                         portletBrowser: {
                             options: {
@@ -262,31 +287,38 @@ var uportal = uportal || {};
                                 listeners: {
                                     onPortletSelect: function(componentThat, portlet) {
                                         var options, firstChannel;
-                                    
+
                                         // set the main options for this persistence
                                         // request
                                         options = { action: 'addPortlet', channelID: portlet.id };
-                                        
+
                                         // get the first channel element that's
                                         // unlocked
                                         firstChannel = $("div[id*=portlet_].movable:first");
-                                        
+
                                         // if the page has no content just add
                                         //  the new portlet to the tab
                                         if (firstChannel.size() == 0) {
                                             options['elementID'] = getActiveTabId();
-                                        } 
-                                        
-                                        // otherwise 
+                                        }
+
+                                        // otherwise
                                         else {
                                             options['elementID'] = up.defaultNodeIdExtractor(firstChannel);
                                             options['position'] = 'insertBefore';
                                         }
-                                        
+
                                         that.persistence.update(options,
                                            function(data) {
-                                              window.location = that.urlProvider.getTabUrl(getActiveTabId());
-                                           }
+                                                if (data.error) {
+                                                    showMessage(data.error, typeMsg.ERROR);
+                                                /*} else if (data.response) {
+                                                    showMessage(data.response, typeMsg.SUCCESS, function(){window.location = that.urlProvider.getTabUrl(getActiveTabId());});
+                                                */
+                                                } else {
+                                                    window.location = that.urlProvider.getTabUrl(getActiveTabId());
+                                                }
+                                            }
                                         );
                                     },
                                     onPortletDrag: function (portlet, method, targetID) {
@@ -299,22 +331,29 @@ var uportal = uportal || {};
                                                 elementID: targetID
                                             },
                                             function(xml) {
+                                                if (xml.error) {
+                                                    showMessage(xml.error, typeMsg.ERROR);
+	                                            /*} else if (data.response) {
+                                                    showMessage(xml.response, typeMsg.SUCCESS, function(){window.location = that.urlProvider.getTabUrl(getActiveTabId());});
+                                                */
+                                                } else {
                                                 window.location = that.urlProvider.getTabUrl(getActiveTabId());
+                                                }
                                             }
                                         );
                                     }
                                 }
                             }
                         },
-                        
+
                         // "packaged stuff" sub-pane
                         fragmentBrowser: {
                             options: {
                                 fragmentServiceUrl: that.options.subscribableTabUrl,
-                                listeners: { 
+                                listeners: {
                                     onFragmentSelect: function(componentThat, fragment) {
                                         var lastTab, targetId;
-                                        
+
                                         // use the current last tab as the target id
                                         lastTab = $("[id*=portalNavigation_]:last");
                                         targetId = up.defaultNodeIdExtractor(lastTab);
@@ -325,9 +364,9 @@ var uportal = uportal || {};
                                             {
                                                 action: "subscribeToTab",
                                                 sourceID: fragment.ownerID,
-                                                method: 'appendAfter', 
-                                                elementID: targetId  
-                                            }, 
+                                                method: 'appendAfter',
+                                                elementID: targetId
+                                            },
                                             function(data) {
                                                 // redirect the browser to the
                                                 // new tab
@@ -340,7 +379,7 @@ var uportal = uportal || {};
                         }
                     }
                 },
-                
+
                 // use stuff pane
                 useContentPane: {
                     options: {
@@ -374,7 +413,7 @@ var uportal = uportal || {};
                         }
                     }
                 },
-                
+
                 // colors pane
                 skinPane: {
                     options: {
@@ -388,7 +427,7 @@ var uportal = uportal || {};
                                         // the page with the new skin
                                         onSelectSkin: function (skin) {
                                             that.persistence.update(
-                                                { action: 'chooseSkin', skinName: skin.key }, 
+                                                { action: 'chooseSkin', skinName: skin.key },
                                                 function (data) {
                                                     window.location = that.urlProvider.getTabUrl(getActiveTabId());
                                                 }
@@ -403,13 +442,13 @@ var uportal = uportal || {};
                         }
                     }
                 },
-                
+
                 // layouts pane
                 layoutPane: {
                     options: {
                         listeners: {
                             onInitialize: function (overallThat) {
-                                // add a LayoutSelector component to the 
+                                // add a LayoutSelector component to the
                                 // layouts pane
                                 up.LayoutSelector(".layouts-list", {
                                     currentLayout: getCurrentLayout(),
@@ -431,7 +470,7 @@ var uportal = uportal || {};
                 }
             }
         );
-        
+
         that.components.tabManager = up.TabManager("#portalNavigation", {
             listeners: {
                 onTabEdit: function (newValue, oldValue, editNode, viewNode) {
@@ -439,7 +478,7 @@ var uportal = uportal || {};
                 },
                 onTabRemove: function (anchor) {
                     if (!confirm(that.options.messages.confirmRemoveTab)) return false;
-                    
+
                     var li, id
                     li = anchor.parentNode;
                     id = up.defaultNodeIdExtractor(li);
@@ -482,7 +521,7 @@ var uportal = uportal || {};
             numberOfPortlets: that.options.numberOfPortlets,
             addTabLabel: that.options.messages.addTabLabel
         });
-        
+
         // initialize the portlet reorderer
 		// checks to see if chrome toolbars exist on the layout
 		// if so, initialize portlet reorderer
@@ -533,7 +572,7 @@ var uportal = uportal || {};
         return that;
     };
 
-    
+
     // defaults
     fluid.defaults("up.LayoutPreferences", {
         tabContext: "header",
@@ -549,49 +588,49 @@ var uportal = uportal || {};
             persistenceError: "Error persisting layout change"
         }
     });
-    
-    
+
+
     /**
      * Instantiate a FocusedLayoutPersistence component
-     * 
+     *
      * @param {Object} component Container the element containing the fragment browser
      * @param {Object} options configuration options for the components
      */
     up.FocusedLayoutPreferences = function(container, options) {
-        
+
         // construct the new component
         var that = fluid.initView("up.FocusedLayoutPreferences", container, options);
-        
+
         that.persistence = up.LayoutPreferencesPersistence(
-           container, 
-           { 
+           container,
+           {
                saveLayoutUrl: that.options.layoutPersistenceUrl,
                messages: {error: that.options.messages.persistenceError }
            }
         );
-        
+
         that.urlProvider = up.UrlProvider(
-            container, 
+            container,
             { portalContext: that.options.portalContext }
         );
-        
+
         that.components = {};
-        
+
         // initialize the focused content adding dialog link
         $("#focusedContentDialogLink").click(function () {
-            
+
             // initialize the dialog
             $(".focused-content-dialog").dialog({ width: 500, modal: true });
-            
+
             // wire the form to persist portlet addition
             $(".focused-content-dialog form").submit(function () {
                 var portletId, tabId, form;
-                
+
                 // collect form data
                 form = this;
                 portletId = form.portletId.value;
                 tabId = $(form).find("[name=targetTab]:checked").val();
-                
+
                 // persist the portlet addition
                 that.persistence.update(
                     {
@@ -606,16 +645,16 @@ var uportal = uportal || {};
                 );
                 return false;
             });
-            
+
             // re-wire the form to open the initialized dialog
             $(this).unbind("click").click(function () {
                 $(".focused-content-dialog").dialog("open");
             });
         });
-        
+
         return that;
     };
-    
+
     // defaults
     fluid.defaults("up.FocusedLayoutPreferences", {
         portalContext: "/uPortal",
@@ -624,5 +663,5 @@ var uportal = uportal || {};
             persistenceError: "Error persisting layout change"
         }
     });
-    
+
 })(jQuery, fluid);

@@ -51,7 +51,7 @@
   </xsl:variable>
 
   <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
-  
+
   <!-- Evaluate the 'activeTabGroup' (optional feature) -->
   <xsl:variable name="activeTabGroup">
     <xsl:choose>
@@ -60,7 +60,7 @@
       </xsl:when>
       <xsl:otherwise>DEFAULT_TABGROUP</xsl:otherwise>
     </xsl:choose>
-  </xsl:variable> 
+  </xsl:variable>
 
 <xsl:template name="debug-info">
     <!-- This element is not (presently) consumed by the theme transform, but it can be written to the logs easy debugging -->
@@ -74,12 +74,12 @@
         <activeTabGroup><xsl:value-of select="$activeTabGroup"></xsl:value-of></activeTabGroup>
         <tabsInTabGroup><xsl:value-of select="count(/layout/folder/folder[@tabGroup=$activeTabGroup and @type='regular' and @hidden='false'])"/></tabsInTabGroup>
         <userImpersonation><xsl:value-of select="$userImpersonating"/></userImpersonation>
-    </debug>    
+    </debug>
 </xsl:template>
 
 <xsl:template match="layout">
   <xsl:for-each select="folder[@type='root']">
-  
+
   <xsl:choose>
     <xsl:when test="$userLayoutRoot != 'root' and $detached = 'true'">
       <layout_fragment>
@@ -92,10 +92,10 @@
       </layout_fragment>
     </xsl:when>
     <xsl:otherwise>
-  
+
   <layout>
-    <xsl:call-template name="debug-info"/>  
-  
+    <xsl:call-template name="debug-info"/>
+
     <xsl:if test="/layout/@dlm:fragmentName">
         <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
     </xsl:if>
@@ -110,24 +110,24 @@
       		<xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
         		<channel-header ID="{@ID}"/>
       		</xsl:for-each>
-      		<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-        		<channel-header ID="{@ID}"/>
-      		</xsl:for-each>
-      
-      		<xsl:for-each select="child::folder[@type='header']">
-          		<xsl:copy-of select=".//channel"/>
-      		</xsl:for-each> 
-      		<!-- END display channel-headers for each channel visible on the page -->  
+		<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+			<channel-header ID="{@ID}"/>
+		</xsl:for-each>
+
+	    <xsl:for-each select="child::folder[@type='header']">
+		    <xsl:copy-of select=".//channel"/>
+		</xsl:for-each>
+		<!-- END display channel-headers for each channel visible on the page -->
         </xsl:when>
-      	<xsl:otherwise>
-      		<!-- display only focused channel-header -->
-      		<channel-header ID="{$userLayoutRoot}"/>
-      	</xsl:otherwise>  
+        <xsl:otherwise>
+		<!-- display only focused channel-header -->
+		<channel-header ID="{$userLayoutRoot}"/>
+        </xsl:otherwise>
       </xsl:choose>
-      
-      
+
+
     </header>
-    
+
     <xsl:call-template name="tabList"/>
 
     <content>
@@ -157,8 +157,8 @@
 	      <xsl:copy-of select=".//channel"/>
       </xsl:for-each>
     </footer>
-    
-  </layout>    
+
+  </layout>
 
     </xsl:otherwise>
   </xsl:choose>
@@ -182,13 +182,16 @@
         </xsl:if>
       </xsl:for-each>
     </tabGroupsList>
-    <!-- The tabs -->  
+    <!-- The tabs -->
     <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
       <tab>
         <!-- Copy folder attributes verbatim -->
         <xsl:for-each select="attribute::*">
           <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
         </xsl:for-each>
+        <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
+          <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
+        </xsl:if>
         <!-- Add 'activeTab' and 'activeTabPosition' attributes as appropriate -->
         <xsl:choose>
           <xsl:when test="$activeTabID = @ID">
