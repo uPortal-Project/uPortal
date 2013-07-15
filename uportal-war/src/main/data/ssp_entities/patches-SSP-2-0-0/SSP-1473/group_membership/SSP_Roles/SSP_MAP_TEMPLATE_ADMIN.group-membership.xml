@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -19,18 +18,13 @@
     under the License.
 
 -->
+
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>SSP Roles</name>
+  <name>SSP_MAP_TEMPLATE_ADMIN</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>Contains child groups representing the individual permissions in SSP</description>
-  <children>
-    <group>SSP_ADMINISTRATOR</group>
-    <group>SSP_SUPPORT_STAFF</group>
-    <group>SSP_COACH</group>
-    <group>SSP_DEVELOPER</group>
-    <group>SSP_FACULTY</group>
-    <group>SSP_MANAGER</group>
-    <group>SSP_MAP_TEMPLATE_ADMIN</group>
+  <description>Parent group to which permissions in SSP are attached. Members of this group's child groups will have the permissions associated with the role.</description>
+  <children> 
+    <group>(is) SSP_MAP_TEMPLATE_ADMIN</group>
   </children>
 </group>

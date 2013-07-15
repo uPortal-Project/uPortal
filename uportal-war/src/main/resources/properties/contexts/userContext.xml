@@ -180,6 +180,10 @@
             			<property name="label" value="Manager" />
             			<property name="value" value="SSP_MANAGER" />
             		</bean>
+                    <bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="MAP Template Admin" />
+            			<property name="value" value="SSP_MAP_TEMPLATE_ADMIN" />
+            		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
             			<property name="label" value="Support Staff" />
             			<property name="value" value="SSP_SUPPORT_STAFF" />

@@ -1,0 +1,8 @@
+You'll need to import
+{src-root}/uportal-war/src/main/data/ssp_entities/group_membership/SSP_Roles/SSP_Roles.group-membership.xml
+as well. Otherwise the new group introduced by this patch (SSP_MAP_TEMPLATE_ADMIN)
+will not appear under the SSP Roles top-level group in the uP Group Management
+portlet. Unfortunately, we cannot just include a file here in the patch
+defining an incremental change to that file. The importer handles it with
+"replace" semantics and the order of file processing across all patches is
+not defined.
