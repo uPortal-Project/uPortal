@@ -322,7 +322,15 @@
                         <xsl:call-template name="mobile.header" />
                     </xsl:otherwise>
                 </xsl:choose>
-                
+
+                <!-- Render header portlets -->
+                <div class="role-alert">
+                    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
+                </div>
+                <div class="role-tips">
+                    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'tips']/parent::*"/>
+                </div>
+
                 <xsl:choose>
                     <xsl:when test="//focused">
                         <xsl:call-template name="mobile.channel.content.focused" />
