@@ -32,5 +32,6 @@
     <group>SSP_FACULTY</group>
     <group>SSP_MANAGER</group>
     <group>SSP_MAP_TEMPLATE_ADMIN</group>
+    <group>SSP_STUDENT</group>
   </children>
 </group>
