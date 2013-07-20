@@ -26,11 +26,12 @@
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="header" unremovable="true">
       <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n5"/>
-      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n6"/>
-      <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n7"/>
+      <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n6"/>
+      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n7"/>
+      <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n8"/>
       <channel fname="google-analytics-config" unremovable="true" hidden="false" immutable="false" ID="n9"/>
     </folder>
-    <folder ID="s8" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false">
+    <folder ID="s10" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false">
     </folder>
   </folder>
 </layout>
