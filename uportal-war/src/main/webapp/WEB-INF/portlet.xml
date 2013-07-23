@@ -41,7 +41,7 @@
         <portlet-info>
             <title>Attribute Swapper Portlet</title>
         </portlet-info>
-        
+
         <portlet-preferences>
             <preference>
                 <name>person-lookup.personSearchResults.resultsMessage</name>
@@ -685,6 +685,7 @@
             <title>Translator</title>
         </portlet-info>
     </portlet>
+
     <portlet>
         <portlet-name>GoogleAnalytics</portlet-name>
         <display-name xml:lang="en">Google Analytics</display-name>
@@ -703,6 +704,69 @@
         <portlet-info>
             <title>Google Analytics</title>
         </portlet-info>
+    </portlet>
+
+    <portlet>
+        <description>BackgroundPreferencePortlet renders a background image in the header
+        of the portlet.  It also provides a configuration page where the user can choose
+        their own background image from a list of supplied options.
+        </description>
+        <portlet-name>backgroundPreference</portlet-name>
+        <display-name>BackgroundPreference Portlet</display-name>
+
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/BackgroundPreference.xml</value>
+        </init-param>
+
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+
+        <supported-locale>en</supported-locale>
+
+        <portlet-info>
+            <title>Background Image Portlet</title>
+            <short-title>Background Image Portlet</short-title>
+            <keywords>background,image</keywords>
+        </portlet-info>
+
+        <portlet-preferences>
+            <!-- HTML element or class to apply background image to -->
+            <preference>
+                <name>defaultBackgroundContainerSelector</name>
+                <value>#portalPageBody</value>
+            </preference>
+            <preference>
+                <name>defaultBackgroundImages</name>
+            </preference>
+            <!-- HTML element or class to apply background image to -->
+            <preference>
+                <name>mobileBackgroundContainerSelector</name>
+                <value>#page</value>
+            </preference>
+            <preference>
+                <name>mobileBackgroundImages</name>
+            </preference>
+            <!-- HTML element or class to apply opacity to -->
+            <preference>
+                <name>applyOpacityTo</name>
+                <value>.up-portlet-wrapper</value>
+            </preference>
+            <!-- CSS opacity to apply to HTML element from 'applyOpacityTo' -->
+            <preference>
+                <name>opacityCssValue</name>
+                <value>0.85</value>
+            </preference>
+        </portlet-preferences>
+
+        <!-- To determine if user has mobile device -->
+        <security-role-ref>
+            <role-name>mobileUserGroup</role-name>
+            <role-link>Mobile Device Access</role-link>
+        </security-role-ref>
     </portlet>
 
     <custom-portlet-mode>

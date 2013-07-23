@@ -97,7 +97,7 @@
       						</xsl:for-each>
       
       						<xsl:for-each select="child::folder[@type='header']">
-          						<xsl:copy-of select=".//channel"/>
+          						<xsl:copy-of select=".//channel[not(parameter[@name='hideFromMobile']/@value = 'true')]"/>
       						</xsl:for-each> 
       						<!-- END display channel-headers for each channel visible on the page -->  
         				</xsl:when>
@@ -146,7 +146,7 @@
                 <!--footer-->
                 <footer>
                     <xsl:for-each select="child::folder[attribute::type='footer']">
-                    	<xsl:copy-of select=".//channel"/>
+                    	<xsl:copy-of select=".//channel[not(parameter[@name='hideFromMobile']/@value = 'true')]"/>
                     </xsl:for-each>
                 </footer>
                 
