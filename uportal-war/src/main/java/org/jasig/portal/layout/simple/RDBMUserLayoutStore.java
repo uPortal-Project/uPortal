@@ -866,7 +866,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
           rs.close();
         }
 
-        if (!databaseMetadata.supportsOuterJoins()) { // Pick up structure parameters
+        if (!databaseMetadata.supportsOuterJoins() && structChanIds.length() > 0) { // Pick up structure parameters
           // first, get the struct ids for the channels
           String sql = "SELECT STRUCT_ID FROM UP_LAYOUT_STRUCT WHERE USER_ID=" + userId +
             " AND LAYOUT_ID=" + layoutId +
