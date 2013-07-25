@@ -73,7 +73,18 @@
         <antcall target="prepare-deploy" />
     </target>
 
-    <target name="clean" depends="prepare" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
+    <target name="clean" depends="prepare-qs" description="Remove files used in packaging and generated packages and runs 'mvn clean' on the uPortal project.">
+    	<property name="uportal.dir" value="${quickstart.dir}/${uportal.finalName}" />
+    	<echo>${uportal.dir}/build.xml</echo>
+    	<if>
+            <available file="${uportal.dir}/build.xml" />
+    		<then>
+                <ant target="hsql-shutdown" antfile="${uportal.dir}/build.xml" dir="${uportal.dir}">
+                    <property name="env" value="${environment.token}"/>
+                </ant>
+			</then>
+		</if>
+    	
         <delete dir="${target.dir}" />
 
         <ant target="mvn" antfile="${uportal.source.dir}/build.xml" dir="${uportal.source.dir}">
