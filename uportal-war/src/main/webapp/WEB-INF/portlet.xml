@@ -717,7 +717,7 @@
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/BackgroundPreference.xml</value>
+            <value>classpath:/properties/contexts/portlet/BackgroundPreference-portlet.xml</value>
         </init-param>
 
         <supports>
