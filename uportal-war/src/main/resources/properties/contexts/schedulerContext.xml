@@ -71,5 +71,7 @@
         <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" 	fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
+        <task:scheduled ref="jpaSsoTicketDao" method="purgeExpiredSsoTickets" fixed-delay="120011"/> <!-- ~2 minute period -->
+
     </task:scheduled-tasks>
 </beans>

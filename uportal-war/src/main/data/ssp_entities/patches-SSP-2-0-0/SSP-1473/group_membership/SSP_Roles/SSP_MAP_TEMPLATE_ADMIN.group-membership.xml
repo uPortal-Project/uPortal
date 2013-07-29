@@ -19,14 +19,12 @@
 
 -->
 
-<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
-  <owner>SSP</owner>
-  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
-  <principal> 
-    <group>SSP_DEVELOPER</group> 
-  </principal>
-  <activity>PERSON_STUDENT_DOCUMENT_READ</activity>
-  <target permission-type="GRANT"> 
-    <literal>ALL</literal> 
-  </target>
-</permission-set>
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+  <name>SSP_MAP_TEMPLATE_ADMIN</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>Parent group to which permissions in SSP are attached. Members of this group's child groups will have the permissions associated with the role.</description>
+  <children> 
+    <group>(is) SSP_MAP_TEMPLATE_ADMIN</group>
+  </children>
+</group>

@@ -23,9 +23,9 @@
   <owner>SSP</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>SSP_ADMINISTRATOR</group> 
+    <group>SSP_MAP_TEMPLATE_ADMIN</group>
   </principal>
-  <activity>PERSON_STUDENT_DOCUMENT_READ</activity>
+  <activity>MAP_PUBLIC_TEMPLATE_WRITE</activity>
   <target permission-type="GRANT"> 
     <literal>ALL</literal> 
   </target>

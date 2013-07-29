@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Jasig under one or more contributor license
@@ -19,19 +18,15 @@
     under the License.
 
 -->
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>SSP Roles</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
-  <creator>system</creator>
-  <description>Contains child groups representing the individual permissions in SSP</description>
-  <children>
-    <group>SSP_ADMINISTRATOR</group>
-    <group>SSP_SUPPORT_STAFF</group>
-    <group>SSP_COACH</group>
+
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>SSP</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal> 
     <group>SSP_DEVELOPER</group>
-    <group>SSP_FACULTY</group>
-    <group>SSP_MANAGER</group>
-    <group>SSP_MAP_TEMPLATE_ADMIN</group>
-    <group>SSP_STUDENT</group>
-  </children>
-</group>
+  </principal>
+  <activity>MAP_PUBLIC_TEMPLATE_WRITE</activity>
+  <target permission-type="GRANT"> 
+    <literal>ALL</literal> 
+  </target>
+</permission-set>

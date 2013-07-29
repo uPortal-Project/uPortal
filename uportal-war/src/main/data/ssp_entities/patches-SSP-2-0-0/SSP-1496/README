@@ -1,0 +1,8 @@
+This patch dir intentionally empty except for this readme. SSP-1496 deals
+with registering the SSP_STUDENT group with the top-level SSP Roles group. That
+needs to be done by (re)importing
+{src-root}/uportal-war/src/main/data/ssp_entities/group_membership/SSP_Roles/SSP_Roles.group-membership.xml
+as well. As noted in the README in the SSP1473 patch, we can't just put
+an entity file in this directory to define an incremental change to that top-
+level group... whatever we define here will overwrite whatever might have
+run earlier, and the order of patch execution is not defined.

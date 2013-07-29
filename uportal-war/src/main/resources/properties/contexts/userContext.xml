@@ -30,8 +30,9 @@
     
     <!-- 
      | The concrete IPersonManager implementation to be used
+     | drew (2012/07/26):  Use of RemoteUserSecurityContextFactory requires RemoteUserPersonManager
      +-->
-   	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+   	<bean id="personManager" class="org.jasig.portal.security.provider.RemoteUserPersonManager" />
 
 
     <util:map id="profileKeyMappings">
@@ -178,6 +179,10 @@
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
             			<property name="label" value="Manager" />
             			<property name="value" value="SSP_MANAGER" />
+            		</bean>
+                    <bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="MAP Template Admin" />
+            			<property name="value" value="SSP_MAP_TEMPLATE_ADMIN" />
             		</bean>
             		<bean class="org.jasig.portal.portletpublishing.xml.Option">
             			<property name="label" value="Support Staff" />
