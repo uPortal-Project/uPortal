@@ -808,6 +808,23 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <version>1.3.3</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/uPortal4/less</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/uPortal4/css</outputDirectory>
+                    <compress>true</compress>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-plugin</artifactId>
                 <version>${resource-server.version}</version>

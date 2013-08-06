@@ -1,0 +1,437 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+ /* ==========================================================================
+   Mobile First
+   ========================================================================== */
+/*
+ * This stylesheet uses a "Mobile First" approach.
+ * The default layout/style is designed for the smallest screen (linear layout),
+ * flexing *larger* from there.
+ * In adding or modifying this stylesheet, remember to make the base styles for
+ * mobile (first), then in the "Responsive" section at the bottom of the 
+ * stylesheet create styles for larger screens.
+ * For more information on Mobile First:
+ * http://www.techradar.com/news/internet/mobile-web-design-tips-mobile-should-come-first-719677
+ */
+
+
+/* ==========================================================================
+   Variables
+   ========================================================================== */
+
+/*
+ * Grayscale colors. 1 is lightest, 10 is darkest.
+ */
+
+@grayscale1: #F5F5F5;
+@grayscale2: #E5E5E5;
+@grayscale3: #D8D8D8;
+@grayscale4: #CCCCCC;
+@grayscale5: #ADADAD;
+@grayscale6: #999999;
+@grayscale7: #8C8C8C;
+@grayscale8: #696969;
+@grayscale9: #404040;
+@grayscale10: #333333;
+
+/*
+ * Primary color with 3 lightened shades and 3 darkened shades.
+ */
+
+@color1: #4065B0; // medium blue
+@color1-light: lighten(@color1, 10%);
+@color1-lighter: lighten(@color1, 25%);
+@color1-lightest: lighten(@color1, 50%);
+@color1-dark: darken(@color1, 10%);
+@color1-darker: darken(@color1, 25%);
+@color1-darkest: darken(@color1, 50%);
+
+/*
+ * Secondary color with 3 lightened shades and 3 darkened shades.
+ */
+
+@color2: #8AA9D8;  // light blue
+@color2-light: lighten(@color1, 10%);
+@color2-lighter: lighten(@color1, 25%);
+@color2-lightest: lighten(@color1, 50%);
+@color2-dark: darken(@color1, 10%);
+@color2-darker: darken(@color1, 25%);
+@color2-darkest: darken(@color1, 50%);
+
+/*
+ * Tertiary color with 3 lightened shades and 3 darkened shades.
+ */
+
+@color3: #F68923;  // orange
+@color3-light: lighten(@color1, 10%);
+@color3-lighter: lighten(@color1, 25%);
+@color3-lightest: lighten(@color1, 50%);
+@color3-dark: darken(@color1, 10%);
+@color3-darker: darken(@color1, 25%);
+@color3-darkest: darken(@color1, 50%);
+
+
+/* ==========================================================================
+   Helpers: utility mixins
+   ========================================================================== */
+
+/*
+ * Import a bunch of helpful CSS3 mixins for LESS.
+ */
+
+@import "mixins.less";
+
+/*
+ * Class used to reveal hidden elements; applied with JavaScript.
+ */
+
+.show {
+    display: block !important;
+}
+
+/*
+ * Base formatting for converting a block-list to an inline-list.
+ */
+
+.inline-block-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/*
+ * Simple float. Pass in the direction; default is left.
+ */
+
+.float (@direction: left) {
+    float: @direction;
+}
+
+/* ==========================================================================
+   Namespace: .portal
+   ========================================================================== */
+
+/* 
+ * Everything in this stylesheet is scoped (nested) within ".portal".
+ * As a best practice, anything added to this stylesheet (that is not a variable 
+ * or mixin) should also be scoped within the namespace.
+ */
+
+.portal {
+
+/*
+ * Using the Google Font "Oxygen" as the base font.
+ * Font is currently being incldued in the markup.
+ */
+
+    //font-family: 'Oxygen', sans-serif;
+
+/*
+ * Remove Bootstap margins to get full width.
+ */
+
+    padding-left: 0;
+    padding-right: 0;
+
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+    .portal-header {
+        background: @color1;
+        color: #FFF;
+
+        .container {
+            padding: 0 20px;
+        }
+
+        .portal-nav {
+            
+            .container {
+                padding: 0;
+            }
+        }
+    }
+
+    .portal-global {
+        position: absolute;
+        top: 10px;
+        right: 0;
+    }
+
+    .portal-editing {
+        .inline-block-list;
+        
+        li {
+            .float;
+        }
+    }
+
+    .portal-logo {
+        font-size: 400%;
+        text-rendering: optimizelegibility;
+        text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
+        margin: 30px 0;
+    }
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+    .portal-nav {
+        background: @color1-dark;
+
+        .menu-toggle {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            padding: 0.5rem 1rem;
+            background: @color2;
+            color: #FFF;
+            .border-radius;
+            font-weight: bold;
+            color: #FFF;
+            text-decoration: none;
+
+            &:hover, &:focus {
+                background: @color3;
+            }
+
+            i {
+                padding-right: 0.25em;
+            }
+        }
+
+        .menu {
+            .inline-block-list;
+            display: none;
+
+            li {
+                border-bottom: 1px solid @color1;
+
+                a {
+                    display: block;
+                    color: @grayscale3;
+                    font-weight: bold;
+                    text-decoration: none;
+                    padding: 8px 14px;
+
+                    i {
+                        float: right;
+                        margin-top: 2px;
+                        margin-right: -6px;
+                        opacity: .5;
+                        background-image: url("../bootstrap/img/glyphicons-halflings-white.png");
+                    }
+
+                    &:hover, &:focus {
+                        background: @color1-light;
+                        color: #FFF;
+
+                        i {
+                            opacity: 1;
+                        }
+                    }
+                }                    
+            }
+
+            .active {
+
+                a {
+                    background: @color1-darker;
+                    color: #FFF;
+
+                    i {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+        
+    } // end .portal-nav
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+
+    .portal-content {
+        background: @grayscale2;
+        padding: 2px;
+    }
+
+    .portlet {
+        background: #FFF;
+        border: 1px solid @grayscale3;
+        margin-bottom: 2px;
+    }
+
+    .portlet-header {
+
+    }
+
+    .portlet-title {
+        color: @grayscale10;
+        margin: 0;
+        padding-left: 20px;
+        font-size: 120%;
+    }
+
+    .portlet-content {
+        color: @grayscale8;
+        padding: 0 20px 20px 20px;
+    }
+
+    .borderless {
+        background: @grayscale10;
+        border-color: #000;
+
+        .portlet-header {
+            display: none;
+        }
+
+        .portlet-content {
+            color: @grayscale2;
+            padding: 20px;
+        }
+        
+    }
+
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+    .portal-footer {
+        background: @grayscale10;
+        color: @grayscale6;
+        font-size: 80%;
+        padding: 20px;
+
+        a {
+            color: @grayscale6;
+
+            &:hover, &:focus {
+                color: @grayscale2;
+            }
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 120%;
+        }
+
+        ul {
+            .inline-block-list;
+            li {
+                .float;
+                margin-right: 10px;
+            }
+        }
+
+        p {
+            clear: both;
+            font-size: 80%;
+        }
+    }
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+
+/*
+ * When the screen size is larger than 769px wide...
+ * (Corresponds to the smallest breakpoint in Bootstrap)
+ */
+
+@media only screen and (min-width: 769px) {
+
+/*
+ * Convert navigation from toggled block menu to inline tabs.
+ */
+    .portal-nav {
+
+        .menu-toggle {
+            display: none;
+        }
+
+        i {
+            display: none;
+        }
+
+        .menu {
+            display: block;
+            .inline-block-list;
+
+            li {
+                border: none;
+                .float;
+
+                a {
+                    display: inline-block;
+                    line-height: 30px;
+                    padding: 6px 20px;
+                }
+            }
+        }
+    }
+
+/*
+ * Adjust spacing and styling.
+ */
+
+     .portal-header {
+
+         .container {
+             padding: 0;
+         }
+     }
+
+     .portal-global {
+         position: relative;
+         top: 0;
+         left: 0;
+        .gradient (@color1-dark, @color1);
+        border-bottom: 1px solid @color1-light;
+        .drop-shadow;
+        text-align: right;
+        padding: 4px 0;
+    }
+
+    .portal-content {
+        padding: 20px 0;
+    }
+
+     .portlet {
+         margin-bottom: 10px;
+         .border-radius;
+     }
+
+     .portal-footer {
+         padding: 20px 0;
+     }
+
+} // end @media
+
+
+} // end .portal
