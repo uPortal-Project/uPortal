@@ -117,9 +117,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <tr rsf:id="header:">
                     <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="principal"/></a></th>
                     <th id="${n}permissionTarget" class="flc-pager-sort-header"><a rsf:id="permissionTarget" title="Click to sort" href="javascript:;"><spring:message code="target"/></a></th>
-                    <th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="grant.deny"/></a></th>
-                    <th id="${n}permissionEdit" rsf:id="permissionEdit"><spring:message code="edit"/></th>
-                    <th id="${n}permissionDelete" rsf:id="permissionDelete"><spring:message code="delete"/></th>
+                    <th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="grant.deny"/></a></th>                    
+					<th id="${n}permissionEdit"><span rsf:id="permissionEdit"><spring:message code="edit"/></span></th>
+					<th id="${n}permissionDelete"><span rsf:id="permissionDelete"><spring:message code="delete"/></span></th>
                 </tr>
             </thead>
             <tbody id="${n}permissionsBody">
