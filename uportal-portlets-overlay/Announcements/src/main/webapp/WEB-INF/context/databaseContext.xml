@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- Database configuration beans -->
+    <!-- DATASOURCE CONNECTIONS BEANS -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName">
+            <value>${hibernate.connection.driver_class}</value>
+        </property>
+        <property name="url">
+            <value>${hibernate.connection.url}</value>
+        </property>
+        <property name="username">
+            <value>${hibernate.connection.username}</value>
+        </property>
+        <property name="password">
+            <value>${hibernate.connection.password}</value>
+        </property>
+        <property name="validationQuery">
+            <value>${driver.validationQuery}</value>
+        </property>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="minEvictableIdleTimeMillis" value="60000"/>
+        <property name="timeBetweenEvictionRunsMillis" value="10000"/>
+        <property name="initialSize" value="3"/>
+        <property name="maxActive" value="10"/>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- DAO creation for both portlets -->
+    <bean id="announcementService" class="org.jasig.portlet.announcements.service.HibernateAnnouncementService">
+        <property name="sessionFactory">
+            <ref bean="sessionFactory"/>
+        </property>
+    </bean>
+
+    <!-- Emergency Topic Definition -->
+    <bean id="emergencyTopic" class="org.jasig.portlet.announcements.model.Topic">
+        <property name="creator"><value>automatic</value></property>
+        <property name="title"><value>EMERGENCY</value></property>
+        <property name="description"><value>Do not edit this topic!</value></property>
+        <property name="allowRss"><value>false</value></property>
+        <property name="subscriptionMethod"><value>4</value></property>
+        <property name="audience">
+            <set>
+                <value>Everyone</value>
+            </set>
+        </property>
+        <property name="admins">
+            <set>
+                <value>Portal_Administrators</value>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="topicSubscriptionService" class="org.jasig.portlet.announcements.service.UserConfiguredTopicSubscriptionService" init-method="init">
+        <property name="announcementService" ref="announcementService"/>
+        <property name="emergencyTopic" ref="emergencyTopic"/>
+    </bean>
+
+    <bean id="configService" class="org.jasig.portlet.announcements.service.ConfigService"/>
+    <bean id="groupService" class="org.jasig.portlet.announcements.service.PortletXMLGroupService" init-method="init" />
+
+</beans>

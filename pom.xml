@@ -107,6 +107,7 @@
         <filters.file>filters/${env}.properties</filters.file>
 
         <!-- WAR Dependency Version Properties -->
+        <Announcements.version>2.0.0-M2</Announcements.version>
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
         <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>
         <cas-server.version>3.5.1</cas-server.version>
