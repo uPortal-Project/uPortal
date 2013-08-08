@@ -494,7 +494,7 @@
   -->
   <xsl:template name="dlm.sidebar.links">
     <xsl:for-each select="/layout/sidebar/sidebarGroup">
-      <xsl:if test="count(//sidebarChannel) > 0">
+      <xsl:if test="count(./sidebarChannel) > 0">
         <div id="portalSidebarGroupLinks{position()}" class="fl-widget">
           <div class="fl-widget-inner">
             <div class="fl-widget-titlebar">
