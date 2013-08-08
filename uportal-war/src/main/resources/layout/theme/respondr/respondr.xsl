@@ -107,6 +107,7 @@
  -->
 <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
 <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
+<xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
 <!-- ========================================================================= -->
 
 
@@ -154,18 +155,6 @@
 <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
 <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
-<!-- xsl:variable name="FLUID_THEME">
-    <xsl:call-template name="skinParameter">
-        <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-        <xsl:with-param name="name">fss-theme</xsl:with-param>
-    </xsl:call-template>
-</xsl:variable>
-<xsl:variable name="FLUID_THEME_CLASS">
-    <xsl:choose>
-        <xsl:when test="$FLUID_THEME"><xsl:value-of select="$FLUID_THEME"/></xsl:when>
-        <xsl:otherwise>fl-theme-uportal</xsl:otherwise>
-    </xsl:choose>
-</xsl:variable -->
 <xsl:variable name="FOCUSED_CLASS">
     <xsl:choose>
         <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
@@ -199,49 +188,20 @@
 <xsl:param name="baseActionURL">render.uP</xsl:param>
 <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
-    
+<xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
+  <xsl:choose>
+    <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
+    <xsl:otherwise>false</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
+<!-- ****** PORTLET SETTINGS ****** -->
+<!--
  | GREEN
- | This template renders the Javascript links in the page <head>.
- | Javascript files are located in the uPortal skins directory:
- | /media/skins/muniversality/common/[theme_name]/javascript
- | Support across mobile browsers for Javascript is limited and
- | should be used with caution when developing solutions.
- | Template contents can be any valid XSL or XHTML.
+ | Portlet Settings can be used to change aspects of the portlet chrome.
  -->
-<xsl:template name="page.js">
-
-    <script type="text/javascript">
-        var up = up || {};
-        up.jQuery = jQuery.noConflict(true);
-
-        (function($) {
-
-            $(function() {
-                var navMenuToggle = function() {
-                    var menu = $(".portal-nav .menu"), menuToggle = $(".portal-nav .menu-toggle");
-                    // Toggle the menu visibility when the button is clicked.
-                    menuToggle.click(function() {
-                        //alert("Handler for .click() called.");
-                        menu.toggleClass("show");
-                        return false;
-                    });
-                    // Console for debugging.
-                    console.debug("menu", menu, "menuToggle", menuToggle);
-                }
-
-                navMenuToggle();
-            });
-
-        })(up.jQuery);
-
-    </script>
-</xsl:template>
-<!-- ========================================================================= -->
+<xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
+<xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
 
 
 <!-- ========================================================================= -->
@@ -279,35 +239,74 @@
 
 
 <!-- ========================================================================= -->
-<!-- ========== TEMPLATE: FOOTER ============================================= -->
+<!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
 <!-- ========================================================================= -->
-<!--
- | GREEN
- | The footer template currently contains the portal's copyright information. This area can be 
- | customized to contain any number of links or institution identifiers. This template renders 
- | in all areas of the portal (unauthenticated, focused and non-focused). 
- | Template contents can be any valid XSL or XHTML.
+<!-- 
+ | YELLOW
+ | This template initializes portal-wide JavaScript and cleans up the global namespace.
  -->
-<xsl:template name="footer">
-    <!--<p>
-    	<a href="http://www.jasig.org/uportal/about/license">uPortal is licensed under the Apache License, Version 2.0</a>
-    </p>-->
+<xsl:template name="page.js">
+  <script type="text/javascript">
+    var up = up || {};
+    up.jQuery = jQuery.noConflict(true);
+
+    (function($) {
+      $(function() {
+        var navMenuToggle = function() {
+          var menu = $(".portal-nav .menu"), menuToggle = $(".portal-nav .menu-toggle");
+          // Toggle the menu visibility when the button is clicked.
+          menuToggle.click(function() {
+            //alert("Handler for .click() called.");
+            menu.toggleClass("show");
+            return false;
+          });
+          // Console for debugging.
+          console.debug("menu", menu, "menuToggle", menuToggle);
+        }
+
+        navMenuToggle();
+      });
+    })(up.jQuery);
+  </script>
 </xsl:template>
 <!-- ========================================================================= -->
 
 
 <!-- ========================================================================= -->
-<!-- ========== TEMPLATE: LOGO =============================================== -->
+<!-- ========== TEMPLATE: NAVIGATION ==================================== -->
 <!-- ========================================================================= -->
-<!--
- | GREEN
- | A place to put a logo on the dashboard view.
- | Template contents can be any valid XSL or XHTML.
+<!-- 
+ | YELLOW
+ | This template renders the tabs at the top of the page.
  -->
-<xsl:template name="logo">
-    <!--div class="logo">
-    	<img src="$CONTEXT_PATH/media/skins/muniversality/common/images/umobile_logo_flat.png" alt="uMobile" />
-    </div-->
+<xsl:template match="navigation">
+    <nav class="portal-nav">
+        <div class="container">
+            <a href="#" class="menu-toggle"><i class="icon-align-justify"></i> Menu</a>
+            <ul class="menu">
+                <xsl:for-each select="tab">
+                    <li>
+                        <xsl:if test="@activeTab='true'">
+                            <xsl:attribute name="class">active</xsl:attribute>
+                        </xsl:if>
+                        <a>
+                            <xsl:attribute name="href">
+                                <xsl:call-template name="portalUrl">
+                                    <xsl:with-param name="url">
+                                        <url:portal-url>
+                                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                                        </url:portal-url>
+                                    </xsl:with-param>
+                                </xsl:call-template>
+                            </xsl:attribute>
+                            <i class="icon-chevron-right"></i>
+                            <xsl:value-of select="@name" />
+                        </a>
+                    </li>
+                </xsl:for-each>
+            </ul>
+        </div>
+    </nav>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -349,126 +348,11 @@
                     <div class="container">
                         <h1 class="portal-logo">uPortal</h1>
                     </div>
-                    <nav class="portal-nav">
-                        <div class="container">
-                            <a href="#" class="menu-toggle"><i class="icon-align-justify"></i> Menu</a>
-                            <ul class="menu">
-                                <li class="active"><a href="portal.html"><i class="icon-chevron-right"></i>Home</a></li>
-                                <li><a href="portal1.html"><i class="icon-chevron-right"></i>Page One</a></li>
-                                <li><a href="portal2.html"><i class="icon-chevron-right"></i>Page Two</a></li>
-                                <li><a href="portal3.html"><i class="icon-chevron-right"></i>Page Three</a></li>
-                                <li><a href="portal4.html"><i class="icon-chevron-right"></i>Page Four</a></li>
-                            </ul>
-                        </div>
-                    </nav>
+                    <xsl:apply-templates select="layout/navigation" />
                 </header>
                 <div class="portal-content" role="main">
                     <div class="container">
-                        <!-- IF: {developer permission = yes} and {developer-toggle = on}
-                        <div class="portal-developer">
-                            <h2>Developer Tools</h2>
-                            <dt>uPortal Version</dt><dd>${UP_VERSION}</dd>
-                            <dt>Server Name</dt><dd>${SERVER_NAME}</dd>
-                            <dt>Session Key</dt><dd>${SESSION_NAME}</dd>
-                        </div-->
-                        <!-- END IF -->
-                        <div class="row-fluid">
-                            <div class="span12">
-                                <section class="portlet borderless">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Portlet Title</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <h3>Borderless!</h3>
-                                        <p>Nulla vitae elit libero, a pharetra augue. Vestibulum id ligula porta felis euismod semper.</p>
-                                    </div>
-                                </section>
-                            </div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span7">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Pictures From Around The Community</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <img src="img/apereo_conf.jpg" alt="Open Apereo Conference 2013: Attendees of the Tuesday Keynote." />
-                                        <p>Open Apereo Conference 2013: Attendees of the Tuesday Keynote.</p>
-                                    </div>
-                                </section>
-                            </div>
-                            <div class="span5">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Gratuituous Form</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <form>
-                                            <label for="name">Name that portal</label>
-                                            <input id="name" type="text" placeholder="My Awesome Portal" />
-                                            <fieldset>
-                                                <legend>Technology Desires</legend>
-                                                <label class="checkbox">
-                                                    <input name="tech" type="checkbox" value="responsive"/>Responsive!
-                                                </label>
-                                                <label class="checkbox">
-                                                    <input name="tech" type="checkbox" value="html"/>HTML5
-                                                </label>
-                                                <label class="checkbox">
-                                                    <input name="tech" type="checkbox" value="css"/>CSS
-                                                </label>
-                                                <label class="checkbox">
-                                                    <input name="tech" type="checkbox" value="jquery"/>jQuery
-                                                </label>
-                                            </fieldset>
-                                            <button type="submit" class="btn">Submit</button>
-                                        </form>
-                                    </div>
-                                </section>
-                            </div>
-                        </div>
-                        <div class="row-fluid">
-                            <div class="span3">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Portlet Title</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <p>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Maecenas sed diam eget risus varius blandit sit amet non magna. Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
-                                    </div>
-                                </section>
-                            </div>
-                            <div class="span3">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Portlet Title</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <p>Etiam porta sem malesuada magna mollis euismod. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Maecenas faucibus mollis interdum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
-                                    </div>
-                                </section>
-                            </div>
-                            <div class="span3">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Portlet Title</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <p>Donec sed odio dui. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Nulla vitae elit libero, a pharetra augue. Donec sed odio dui. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Curabitur blandit tempus porttitor. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.</p>
-                                    </div>
-                                </section>
-                            </div>
-                            <div class="span3">
-                                <section class="portlet">
-                                    <header class="portlet-header">
-                                        <h2 class="portlet-title">Portlet Title</h2>
-                                    </header>
-                                    <div class="portlet-content">
-                                        <p>Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis vestibulum. Nullam id dolor id nibh ultricies vehicula ut id elit. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Sed posuere consectetur est at lobortis. Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.</p>
-                                    </div>
-                                </section>
-                            </div>
-                        </div> 
+                        <xsl:apply-templates select="layout/content" />
                     </div>
                 </div>
                 <footer class="portal-footer" role="contentinfo">
