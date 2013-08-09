@@ -58,9 +58,14 @@
    | This template renders the main content of the page (stuff organized into rows).
   -->
   <xsl:template match="content">
+    <!-- Handles dashboard mode -->
     <xsl:for-each select="column">
       <xsl:call-template name="row" /> <!-- A bit wordy, but prefer to use a template named row over one with match=column for clarity. -->
     </xsl:for-each>
+    <!-- Handles focused mode -->
+    <xsl:apply-templates select="focused/channel">
+      <xsl:with-param name="WIDTH_CSS_CLASS">span12</xsl:with-param>
+    </xsl:apply-templates>
   </xsl:template>
 
   <!-- ========== TEMPLATE: TAB ========== -->
