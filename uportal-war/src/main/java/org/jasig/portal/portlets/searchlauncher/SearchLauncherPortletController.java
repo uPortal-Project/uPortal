@@ -19,61 +19,26 @@
 
 package org.jasig.portal.portlets.searchlauncher;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.Event;
-import javax.portlet.EventRequest;
-import javax.portlet.EventResponse;
-import org.springframework.ui.Model;
-import org.springframework.web.portlet.bind.annotation.RenderMapping;
-import javax.portlet.RenderRequest;
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
-import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.search.PortletUrl;
-import org.jasig.portal.search.PortletUrlParameter;
-import org.jasig.portal.search.PortletUrlType;
-import org.jasig.portal.search.SearchConstants;
-import org.jasig.portal.search.SearchRequest;
-import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.search.SearchResults;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
-import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -119,5 +84,4 @@ public class SearchLauncherPortletController {
     	model.put("searchUrl", url);
     	return new ModelAndView("/jsp/SearchLauncher/searchLauncher", model);
     }
-    
 }
