@@ -125,18 +125,6 @@
       </xsl:choose>
     </xsl:variable>
 
-    <!-- EXAMPLE
-    <div class="span3">
-      <section class="portlet">
-        <header class="portlet-header">
-          <h2 class="portlet-title">Portlet Title</h2>
-        </header>
-        <div class="portlet-content">
-          <p>Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Maecenas sed diam eget risus varius blandit sit amet non magna. Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Integer posuere erat a ante venenatis dapibus posuere velit aliquet.</p>
-        </div>
-      </section>
-    </div> -->
-
     <!-- ****** PORTLET CONTAINER ****** -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <div class="{$WIDTH_CSS_CLASS}">

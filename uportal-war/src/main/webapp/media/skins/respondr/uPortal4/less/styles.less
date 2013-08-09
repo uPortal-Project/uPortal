@@ -249,7 +249,7 @@
                             opacity: 1;
                         }
                     }
-                }                    
+                }
             }
 
             .active {
@@ -315,10 +315,10 @@
 
 
 /* ==========================================================================
-   Footer
+   Footer Nav
    ========================================================================== */
 
-    .portal-footer {
+    .portal-footer-nav {
         background: @grayscale10;
         color: @grayscale6;
         font-size: 80%;
@@ -329,6 +329,40 @@
 
             &:hover, &:focus {
                 color: @grayscale2;
+            }
+        }
+
+        h4 a {
+            color: @grayscale2;
+            margin: 0;
+
+            &:hover, &:focus {
+                color: @grayscale2;
+            }
+        }
+
+        ul {
+            list-style-type: none;
+            margin-left: 10px;
+            display: none;
+        }
+    }
+
+/* ==========================================================================
+   Footer Legal
+   ========================================================================== */
+
+    .portal-footer-legal {
+        background: @grayscale9;
+        color: @grayscale5;
+        font-size: 80%;
+        padding: 20px;
+
+        a {
+            color: @grayscale5;
+
+            &:hover, &:focus {
+                color: @grayscale1;
             }
         }
 
@@ -401,16 +435,15 @@
  */
 
      .portal-header {
-
          .container {
              padding: 0;
          }
      }
 
      .portal-global {
-         position: relative;
-         top: 0;
-         left: 0;
+        position: relative;
+        top: 0;
+        left: 0;
         .gradient (@color1-dark, @color1);
         border-bottom: 1px solid @color1-light;
         .drop-shadow;
@@ -422,14 +455,21 @@
         padding: 20px 0;
     }
 
-     .portlet {
-         margin-bottom: 10px;
-         .border-radius;
-     }
+    .portlet {
+        margin-bottom: 10px;
+        .border-radius;
+    }
 
-     .portal-footer {
-         padding: 20px 0;
-     }
+    .portal-footer-legal, .portal-footer-nav {
+        padding: 20px 0;
+    }
+    
+    .portal-footer-nav {
+        ul {
+            display: block;
+        }
+    }
+    
 
 } // end @media
 

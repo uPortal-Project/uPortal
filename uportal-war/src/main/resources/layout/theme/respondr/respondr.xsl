@@ -88,6 +88,7 @@
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
@@ -312,6 +313,104 @@
 
 
 <!-- ========================================================================= -->
+<!-- ========== TEMPLATE: FOOTER NAV ==================================== -->
+<!-- ========================================================================= -->
+<!-- 
+ | YELLOW
+ | This template renders the tabs at the top of the page.
+ -->
+<xsl:template name="footer.nav">
+    <footer class="portal-footer-nav" role="contentinfo">
+        <div class="container">
+
+            <!--
+             | Tab layout:
+             | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
+             |   -portlet1     -portlet5     -portlet7     -portlet8
+             |   -portlet2     -portlet6                   -portlet9
+             |   -portlet3                                 -portlet10
+             |   -portlet4
+             |
+             | Tab5 ....
+             +-->
+
+            <a name="sitemap"></a>
+            <xsl:variable name="TAB_WRAP_COUNT" select="4" />
+
+            <xsl:for-each select="//navigation/tab">
+                <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
+                    <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
+                    <div class="row-fluid">
+                        <xsl:for-each select="//navigation/tab">
+                            <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+                                <xsl:variable name="tabLinkUrl">
+                                    <xsl:call-template name="portalUrl">
+                                        <xsl:with-param name="url">
+                                            <url:portal-url>
+                                                <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                            </url:portal-url>
+                                        </xsl:with-param>
+                                    </xsl:call-template>
+                                </xsl:variable>
+                                <div class="span3">
+                                    <h4><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
+                                    <ul>
+                                        <xsl:for-each select="tabChannel">
+                                            <xsl:variable name="portletLinkUrl">
+                                                <xsl:call-template name="portalUrl">
+                                                    <xsl:with-param name="url">
+                                                        <url:portal-url>
+                                                            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                            <url:portlet-url state="MAXIMIZED" />
+                                                        </url:portal-url>
+                                                    </xsl:with-param>
+                                                </xsl:call-template>
+                                            </xsl:variable>
+                                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@name" /></a></li>
+                                        </xsl:for-each>
+                                    </ul>
+                                </div>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </div>
+                </xsl:if>
+            </xsl:for-each>
+
+        </div>
+    </footer>
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ========================================================================= -->
+<!-- ========== TEMPLATE: FOOTER LEGAL ==================================== -->
+<!-- ========================================================================= -->
+<!-- 
+ | YELLOW
+ | This template renders the tabs at the top of the page.
+ -->
+<xsl:template name="footer.legal">
+    <footer class="portal-footer-legal" role="contentinfo">
+        <div class="container">
+            <div class="portal-power">
+                <h2><a href="http://www.jasig.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></h2>
+                <ul>
+                    <li><a href="http://www.jasig.org/" target="_blank">Jasig.org</a></li>
+                    <li><a href="http://www.jasig.org/uportal" target="_blank">uPortal.org</a></li>
+                    <li><a href="http://www.jasig.org/uportal/download" target="_blank">Download</a></li>
+                    <li><a href="http://www.jasig.org/uportal/community" target="_blank">Community</a></li>
+                    <li><a href="http://www.jasig.org/uportal/privacy" target="_blank">Privacy Policy</a></li>
+                    <li><a href="http://www.jasig.org/uportal/accessibility" target="_blank">Accessibility</a></li>
+                </ul>
+                <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
+            </div>
+        </div>
+    </footer>
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ========================================================================= -->
 <!-- ========== TEMPLATE: ROOT =============================================== -->
 <!-- ========================================================================= -->
 <!-- 
@@ -355,22 +454,8 @@
                         <xsl:apply-templates select="layout/content" />
                     </div>
                 </div>
-                <footer class="portal-footer" role="contentinfo">
-                    <div class="container">
-                        <div class="portal-power">
-                            <h2><a href="http://www.jasig.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></h2>
-                            <ul>
-                                <li><a href="http://www.jasig.org/" target="_blank">Jasig.org</a></li>
-                                <li><a href="http://www.jasig.org/uportal" target="_blank">uPortal.org</a></li>
-                                <li><a href="http://www.jasig.org/uportal/download" target="_blank">Download</a></li>
-                                <li><a href="http://www.jasig.org/uportal/community" target="_blank">Community</a></li>
-                                <li><a href="http://www.jasig.org/uportal/privacy" target="_blank">Privacy Policy</a></li>
-                                <li><a href="http://www.jasig.org/uportal/accessibility" target="_blank">Accessibility</a></li>
-                            </ul>
-                            <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
-                        </div>
-                    </div>
-                </footer>
+                <xsl:call-template name="footer.nav" />
+                <xsl:call-template name="footer.legal" />
             </div>
 
             <script type="text/javascript">
@@ -383,6 +468,5 @@
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
-
 
 </xsl:stylesheet>
