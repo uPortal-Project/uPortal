@@ -427,6 +427,9 @@
             <xsl:call-template name="skinResources">
                 <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
             </xsl:call-template>
+            <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
+                <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
+            </xsl:if>
             <xsl:call-template name="page.js" />
         </head>
         <body class="up dashboard portal">
