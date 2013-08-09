@@ -451,8 +451,8 @@
     <xsl:call-template name="logo"/>
 
     <!-- Web Search -->
-    <xsl:call-template name="web.search"/>
-
+    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/>
+    
     <!-- Quicklinks
     <xsl:call-template name="quicklinks"/> -->
 
