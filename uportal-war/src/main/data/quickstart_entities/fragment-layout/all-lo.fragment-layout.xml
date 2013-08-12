@@ -30,6 +30,7 @@
       <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n7"/>
       <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n8"/>
       <channel fname="google-analytics-config" unremovable="true" hidden="false" immutable="false" ID="n9"/>
+      <channel fname="searchlauncher" unremovable="false" hidden="false" immutable="false" ID="n11"/>
     </folder>
     <folder ID="s10" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false">
     </folder>
