@@ -107,18 +107,19 @@
         <filters.file>filters/${env}.properties</filters.file>
 
         <!-- WAR Dependency Version Properties -->
+        <AnnouncementsPortlet.version>2.0.0-M3</AnnouncementsPortlet.version>
         <BookmarksPortlet.version>1.0.11</BookmarksPortlet.version>
-        <CalendarPortlet.version>2.1.0-RC2</CalendarPortlet.version>
+        <CalendarPortlet.version>2.1.2</CalendarPortlet.version>
         <cas-server.version>3.5.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.0.4</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>1.0.4</jasig-widget-portlets.version>
-        <NewsReaderPortlet.version>3.0.5</NewsReaderPortlet.version>
+        <jasig-widget-portlets.version>2.0.0-M1</jasig-widget-portlets.version>
+        <NewsReaderPortlet.version>3.0.7</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.0.3</NotificationPortlet.version>
-        <SimpleContentPortlet.version>1.0.6</SimpleContentPortlet.version>
+        <SimpleContentPortlet.version>1.0.7</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.0.9</WeatherPortlet.version>
-        <WebProxyPortlet.version>1.1.7</WebProxyPortlet.version>
+        <WebProxyPortlet.version>1.1.8</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>

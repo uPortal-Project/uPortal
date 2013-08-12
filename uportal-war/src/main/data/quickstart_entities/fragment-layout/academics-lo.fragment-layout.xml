@@ -31,15 +31,16 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="courses" unremovable="false" hidden="false" immutable="false" ID="n7"/>
+        <channel fname="announcements" unremovable="false" hidden="false" immutable="false" ID="n7"/>
+        <channel fname="courses" unremovable="false" hidden="false" immutable="false" ID="n8"/>
       </folder>
-      <folder ID="s8" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
+      <folder ID="s9" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
         <channel fname="notification" unremovable="false" hidden="false" immutable="false" ID="n10"/>
-        <channel fname="google-docs" unremovable="false" hidden="false" immutable="false" ID="n9"/>
+        <channel fname="google-docs" unremovable="false" hidden="false" immutable="false" ID="n11"/>
       </folder>
     </folder>
   </folder>

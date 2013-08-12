@@ -151,6 +151,7 @@
                                 <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
                                 <pathelement path="${runtime_classpath}" />
                                 <pathelement path="${plugin_classpath}" />
+                                <pathelement location="${servlet.jar}" />
                             </classpath>
 
                             <arg value="classpath://org/jasig/portlet/calendar/io/import.crn.xml" />
