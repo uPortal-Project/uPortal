@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!-- For some reason I can't put this as an attribute in topic.  When it is present, the XML is not parsed or read
+     and no error message occurs.  You only get an empty Topic record.
+     xmlns="http://www.uPortal.org/schema/announcement/topic"
+-->
+<topic
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.uPortal.org/schema/announcement/topic http://www.uPortal.org/schema/announcement/topic.xsd">
+    <title>Campus Services</title>
+    <description>Notices to all students, faculty, and staff about campus services</description>
+    <allowRss>true</allowRss>
+    <subscriptionMethod>2</subscriptionMethod>
+    <audience>
+        <member>All_Logged_In_Users</member>
+    </audience>
+    <creator>admin</creator>
+    <moderators></moderators>
+    <admins></admins>
+    <authors></authors>
+    <announcements>
+        <announcement>
+            <title>New Portal Update</title>
+            <abstract>New features added in updated version of the portal</abstract>
+            <message><![CDATA[
+<p>The portal has been updated to a <strong>new version</strong> that has several interesting new features. Students, Staff, and Faculty are encouraged to experiment with these features and add them to their customized view.</p>
+<ul>
+<li>To create a new tab, click the "Add Tab" button near the top-right of the page.</li>
+<li>To add content to an existing tab, click the "Customize" tray under the list of tabs.&nbsp; You can search for content by entering a search term, or you can scroll through to view all available content to add to your personalized portal page.&nbsp; You can also change your colors or layouts.</li>
+<li>To re-arrange content on a page, grab the portlet's title and drag it to the new location.</li>
+</ul>
+<p>There are many other portlets that we may add to the portal.&nbsp; You can view a list of available portlets at the <a href="https://wiki.jasig.org/display/PLT/Home" target="_blank">Apereo Portlet page</a>, then submit your suggestions using the Suggestions portlet.</p>
+            ]]></message>
+            <startDisplay>2013-08-01</startDisplay>
+            <endDisplay>2016-12-31</endDisplay>
+            <published>true</published>
+            <link>https://wiki.jasig.org/display/PLT/Home</link>
+            <author>admin</author>
+        </announcement>
+    </announcements>
+</topic>

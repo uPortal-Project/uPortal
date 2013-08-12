@@ -22,7 +22,14 @@
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jasig.portal.portlets-overlay</groupId>
+            <artifactId>Announcements</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+
         <dependency>
             <groupId>org.jasig.portal.portlets-overlay</groupId>
             <artifactId>BookmarksPortlet</artifactId>

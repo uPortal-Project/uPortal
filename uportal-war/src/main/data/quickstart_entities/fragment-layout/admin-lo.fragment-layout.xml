@@ -42,8 +42,9 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="please-register" unremovable="false" hidden="false" immutable="false" ID="n11"/>
-        <channel fname="emergency-alert-admin" unremovable="false" hidden="false" immutable="false" ID="n12"/>
+          <channel fname="announcementsAdmin" unremovable="false" hidden="false" immutable="false" ID="n11"/>
+          <channel fname="emergency-alert-admin" unremovable="false" hidden="false" immutable="false" ID="n12"/>
+          <channel fname="please-register" unremovable="false" hidden="false" immutable="false" ID="n13"/>
       </folder>
     </folder>
   </folder>
