@@ -186,26 +186,41 @@
             <xsl:for-each select="//navigation/tab">
                 { "id": "<xsl:value-of select="@ID"/>", "title": "<xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>",
                 "portlets": [
-                <xsl:for-each select="channel">
-                    <xsl:variable name="defaultPortletUrl">
-                        <xsl:call-template name="portalUrl">
-                            <xsl:with-param name="url">
-                                <url:portal-url>
-                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                    <url:portlet-url state="DETACHED" />
-                                </url:portal-url>
-                            </xsl:with-param>
-                        </xsl:call-template>
-                    </xsl:variable>
-                    <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
-                    <xsl:variable name="iconUrl">
-                        <xsl:choose>
-                            <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
-                                <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
-                            </xsl:when>
-                            <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:variable>
+                    <xsl:apply-templates select="channel" />
+                ]}<xsl:if test="position() != last()">,</xsl:if>
+            </xsl:for-each>]}
+    }<json/></layout>
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ========================================================================= -->
+<!-- ========== TEMPLATE: PORTLET =============================================== -->
+<!-- ========================================================================= -->
+<!-- 
+| RED
+| This template defines the method for expressing the presence of a portlet within a layout.
+-->
+<xsl:template match="channel">
+    <xsl:variable name="defaultPortletUrl">
+        <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                    <url:portlet-url state="DETACHED" />
+                </url:portal-url>
+            </xsl:with-param>
+        </xsl:call-template>
+    </xsl:variable>
+    <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
+    <xsl:variable name="iconUrl">
+        <xsl:choose>
+            <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
+                <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
+            </xsl:when>
+            <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
                     {
                         "fname": "<xsl:value-of select="@fname"/>",
                         "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
@@ -214,11 +229,7 @@
                         "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                         "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
-                </xsl:for-each>]}<xsl:if test="position() != last()">,</xsl:if>
-            </xsl:for-each>]}
-    }<json/></layout>
 </xsl:template>
 <!-- ========================================================================= -->
-
 
 </xsl:stylesheet>
