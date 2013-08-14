@@ -181,14 +181,26 @@
     <layout><json/>{
         "user": "<xsl:value-of select="$USER_ID"/>",
         "locale": "<xsl:value-of select="$USER_LANG"/>", 
-        "layout":
-            { "folders": [
-            <xsl:for-each select="//navigation/tab">
+        "layout": {
+            "header": {
+                "portlets": [
+                    <xsl:apply-templates select="layout/header/channel" />
+                ]
+            },
+            "folders": [
+                <xsl:for-each select="//navigation/tab">
                 { "id": "<xsl:value-of select="@ID"/>", "title": "<xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>",
                 "portlets": [
                     <xsl:apply-templates select="channel" />
                 ]}<xsl:if test="position() != last()">,</xsl:if>
-            </xsl:for-each>]}
+                </xsl:for-each>
+            ],
+            "footer": {
+                "portlets": [
+                    <xsl:apply-templates select="layout/footer/channel" />
+                ]
+            }
+        }
     }<json/></layout>
 </xsl:template>
 <!-- ========================================================================= -->
