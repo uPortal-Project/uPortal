@@ -214,6 +214,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                  <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
                                 </div>
                             </c:forEach>
+                            <input type="hidden" name="portletPreferences['${fn:escapeXml(name)}'].value" value="" />
                             <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value</a>
                         </td>
                         <td>
