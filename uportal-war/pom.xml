@@ -716,7 +716,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
+                    <argLine>-Xmx512m -XX:MaxPermSize=512m -Duser.timezone=UTC</argLine>
                     <systemPropertyVariables>
                         <org.jasig.portal.test>true</org.jasig.portal.test>
                     </systemPropertyVariables>
