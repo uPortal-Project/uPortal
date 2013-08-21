@@ -55,15 +55,93 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.jasig.ssp</groupId>
+                                    <artifactId>ssp</artifactId>
+                                    <type>war</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/ssp-scratch</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <source>
+                                def work = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF.work')
+                                def orig = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF')
+                                work.withPrintWriter { w ->
+
+                                    // Make sure last line is only blank line,
+                                    // else Manifest parser gets grumpy
+                                    orig.eachLine { line ->
+                                        line = line.trim()
+                                        if ( line ) {
+                                            w.println(line)
+                                        }
+                                    }
+
+                                    w.println("SSP-Overlay-Artifact: ${project.groupId}:${project.artifactId}")
+                                    w.println("SSP-Overlay-Artifact-Version: ${project.version}")
+                                    w.println("SSP-Overlay-Build-Date: ${maven.build.timestamp}")
+                                    w.println("SSP-Overlay-SCM-Revision: ${project.properties['buildNumber']}")
+                                    w.println()
+                                }
+                                work.renameTo(orig)
+                            </source>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
+                    <archive>
+                        <manifestFile>${project.build.directory}/ssp-scratch/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
                     <overlays>
                         <overlay>
                             <groupId>org.jasig.ssp</groupId>
                             <artifactId>ssp</artifactId>
-                            <includes> 
-                                <include>**</include> 
-                                <include>META-INF/context.xml</include> 
+                            <includes>
+                                <include>**</include>
+                                <include>META-INF/context.xml</include>
                             </includes>
                         </overlay>
                     </overlays>
