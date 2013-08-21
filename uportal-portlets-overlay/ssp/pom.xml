@@ -104,26 +104,27 @@
                         </goals>
                         <configuration>
                             <source>
-                                def work = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF.work')
+
+                                import java.util.jar.Manifest
+
                                 def orig = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF')
-                                work.withPrintWriter { w ->
-
-                                    // Make sure last line is only blank line,
-                                    // else Manifest parser gets grumpy
-                                    orig.eachLine { line ->
-                                        line = line.trim()
-                                        if ( line ) {
-                                            w.println(line)
-                                        }
-                                    }
-
-                                    w.println("SSP-Overlay-Artifact: ${project.groupId}:${project.artifactId}")
-                                    w.println("SSP-Overlay-Artifact-Version: ${project.version}")
-                                    w.println("SSP-Overlay-Build-Date: ${maven.build.timestamp}")
-                                    w.println("SSP-Overlay-SCM-Revision: ${project.properties['buildNumber']}")
-                                    w.println()
+                                def origParsed = null
+                                orig.withInputStream { is ->
+                                    origParsed = new Manifest(is)
+                                    def origAttribs = origParsed.getMainAttributes();
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-Artifact", "${project.groupId}:${project.artifactId}")
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-Artifact-Version", "${project.version}")
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-Build-Date", "${maven.build.timestamp}")
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-SCM-Revision", "${project.properties['buildNumber']}")
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-Note", "Local patches and JSR-168 deployment")
                                 }
-                                work.renameTo(orig)
+
+                                def tmp = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF.tmp')
+                                tmp.withOutputStream { os ->
+                                    origParsed.write(os)
+                                }
+                                tmp.renameTo(orig)
+                                
                             </source>
                         </configuration>
                     </execution>
