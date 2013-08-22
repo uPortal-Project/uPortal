@@ -23,34 +23,24 @@
             <type>war</type>
         </dependency>
         
-        <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
     
 
     <build>
+        <filters>
+            <filter>../../${filters.file}</filter>
+        </filters>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <filters>
-                        <filter>${basedir}/../../${filters.file}</filter>
-                    </filters>
-                    <dependentWarExcludes>
-                        WEB-INF/lib/hsqldb-*.jar
-                    </dependentWarExcludes>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
-                </configuration>
+                <version>2.4</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
