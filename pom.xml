@@ -118,7 +118,7 @@
         <NewsReaderPortlet.version>3.0.7</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.0.3</NotificationPortlet.version>
         <SimpleContentPortlet.version>1.0.7</SimpleContentPortlet.version>
-        <WeatherPortlet.version>1.0.9</WeatherPortlet.version>
+        <WeatherPortlet.version>1.0.10</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.8</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
