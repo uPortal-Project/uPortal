@@ -123,6 +123,7 @@
                                 tmp.withOutputStream { os ->
                                     origParsed.write(os)
                                 }
+                                orig.delete()
                                 tmp.renameTo(orig)
                                 
                             </source>
