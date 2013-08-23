@@ -98,8 +98,8 @@
         	</props>
         </property>
         <property name="portalVersion" value="${org.jasig.portal.version}" />
-        <property name="buildDate" value="${org.jasig.portal.buildDate" />
-        <property name="scmRevision" value="${org.jasig.portal.scmRevision" />
+        <property name="buildDate" value="${org.jasig.portal.buildDate}" />
+        <property name="scmRevision" value="${org.jasig.portal.scmRevision}" />
     </bean>
     
     <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
