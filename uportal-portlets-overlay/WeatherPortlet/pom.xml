@@ -40,7 +40,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
+                <configuration>
+                    <!-- Define an exclude to insure we retain META-INF/context.xml -->
+                    <dependentWarExcludes>
+                        WEB-INF/lib/hsqldb-*.jar
+                    </dependentWarExcludes>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
