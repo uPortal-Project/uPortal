@@ -14,6 +14,10 @@
     <name>SSP Platform WAR</name>
     <description>The SSP Platform web application.</description>
     
+	<properties>
+		<timestamp>${maven.build.timestamp}</timestamp>		
+	</properties>
+	
     <dependencies>    
         <!-- ***** SSP JDBC Driver *****
          | The groupId, artifactId and version are configured in the root POM.
@@ -603,7 +607,36 @@
                 </excludes>
             </resource>
         </resources>
-        <plugins>
+        <plugins>			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.2</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-timestamp</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <format>{0,date,MMddyyyyHHmmss}</format>
+                            <items>
+                                <item>timestamp</item>
+                            </items>
+                            <buildNumberPropertyName>buildDateTime</buildNumberPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+				<configuration>				
+				</configuration>
+			</plugin>			
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>

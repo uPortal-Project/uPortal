@@ -43,12 +43,30 @@ public class PortalContextImpl implements PortalContext {
     private Set<PortletMode> portletModes = Collections.emptySet();
     private Set<WindowState> windowStates = Collections.emptySet();
     private String portalVersion;
+    private String buildDate;
+    private String scmRevision;
     
     public void setPortalVersion(String portalVersion) {
         this.portalVersion = portalVersion;
     }
+    
+    public String getBuildDate() {
+		return buildDate;
+	}
 
-    /**
+	public void setBuildDate(String buildDate) {
+		this.buildDate = buildDate;
+	}
+
+	public String getScmRevision() {
+		return scmRevision;
+	}
+
+	public void setScmRevision(String scmRevision) {
+		this.scmRevision = scmRevision;
+	}
+
+	/**
      * @return the portalProperties, will not be null.
      */
     public Properties getPortalProperties() {
