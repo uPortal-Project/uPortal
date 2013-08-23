@@ -868,17 +868,34 @@
     <script type="text/javascript">
 		 up.jQuery(document).ready(function() {
                 var platformBuildDate = intToDate(<xsl:value-of select="$BUILDDATE"/>);
-                up.jQuery('#PlatformDate').text(platformBuildDate);
+                var platformVersion = "<xsl:value-of select="$UP_VERSION"/>";
+                var platformRevision = "<xsl:value-of select="$SCMREVISION"/>";
+                var platformInfo = "";
+                var sspInfo = "";
+                var toggle = 0;
+
                 up.jQuery.ajax({
 					type: 'get',
 			        url: '/ssp/api/1/server/version',			       
 			        success:function(data)
 			        {
-                       var sspBuildDate = intToDate(data.buildDate);
-			           up.jQuery('#SSPVersion').text("SSP Version: " +data.artifactVersion
-			           +"   |   SSP BuildDate: " +sspBuildDate +"   |   SSP SCM Revision: " +data.scmRevision);
+			           sspInfo = "<p>SSP Version: " +data.artifactVersion
+			           +"   |   SSP BuildDate: " +intToDate(data.buildDate) +"   |   SSP SCM Revision: " +data.scmRevision +" </p>";
 			        }
 	 			});
+
+                platformInfo = "<p>Platform Version: " +platformVersion  +"  |  Platform BuildDate: "
+                    +platformBuildDate +"  |  Platform SCM Revision: " +platformRevision +" </p>";
+
+                up.jQuery('#InfoToggle').click(function() {
+                        if ( toggle == 0 ) {
+                            up.jQuery('#InfoToggle').html(sspInfo + platformInfo);
+                            toggle = 1;
+                        } else {
+                            up.jQuery('#InfoToggle').text("Click here for Version Information");
+                            toggle = 0;
+                        }
+                });
 		});
 
         function intToDate( integerDate ) {
@@ -905,14 +922,9 @@
         }
     </script>
     <div class="copyright">
-    	<p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
-    	<p>Platform Version: <xsl:value-of select="$UP_VERSION"/>   |
-    	Platform BuildDate:  <span id="PlatformDate"></span>   |
-    	Platform SCM Revision: <xsl:value-of select="$SCMREVISION"/>
-    	</p>
-    	<p id="SSPVersion"></p>
+         <p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
+         <div id="InfoToggle">Click here for Version Information</div>
     </div>
-
 
   </xsl:template>
   <!-- ============================================ -->
