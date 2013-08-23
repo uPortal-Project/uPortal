@@ -185,6 +185,8 @@
   <xsl:param name="subscriptionsSupported">true</xsl:param>
   <xsl:param name="UP_VERSION">uPortal</xsl:param>
   <xsl:param name="SERVER_NAME"></xsl:param>
+  <xsl:param name="BUILDDATE"></xsl:param>
+  <xsl:param name="SCMREVISION"></xsl:param>
   <xsl:param name="STATS_SESSION_ID"></xsl:param>
   <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
   <xsl:param name="PORTAL_VIEW">
@@ -860,16 +862,64 @@
     <!-- Site Map -->
     <!--<div id="portalPageFooterNav">
         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'footerNav']/parent::*"/>
-    </div>-->
- 	<p class="copyright">Student Success Plan  |  Copyright 2013, JA-SIG, Inc.  |  All rights reserved.</p>
-		
+    </div>-->   
     
+    <!-- Copyright -->
+    <script type="text/javascript">
+		 up.jQuery(document).ready(function() {
+                var platformBuildDate = intToDate(<xsl:value-of select="$BUILDDATE"/>);
+                up.jQuery('#PlatformDate').text(platformBuildDate);
+                up.jQuery.ajax({
+					type: 'get',
+			        url: '/ssp/api/1/server/version',			       
+			        success:function(data)
+			        {
+                       var sspBuildDate = intToDate(data.buildDate);
+			           up.jQuery('#SSPVersion').text("SSP Version: " +data.artifactVersion
+			           +"   |   SSP BuildDate: " +sspBuildDate +"   |   SSP SCM Revision: " +data.scmRevision);
+			        }
+	 			});
+		});
+
+        function intToDate( integerDate ) {
+            var split = new Date().toString().split(" ");
+            var timeZoneFormatted = split[split.length - 2] + " " + split[split.length - 1];
+            var tempDate = integerDate.toString().trim();
+
+            //this checks if leading 0 stripped add space if so
+            if ( tempDate.length != 14 ) {
+                tempDate = " " + tempDate;
+            }
+
+            //eliminate duplicate GMT depends on system
+            if ( timeZoneFormatted.indexOf("GMT") == -1 ) {
+                timeZoneFormatted = "GMT " + timeZoneFormatted;
+            }
+
+            var date = tempDate.substring(0,2) +"/" +tempDate.substring(2,4) +"/";
+            date += tempDate.substring(4,8) +" " +tempDate.substring(8,10) +":";
+            date += tempDate.substring(10,12) +":" +tempDate.substring(12) +" ";
+            date += timeZoneFormatted +" ";
+
+            return date;
+        }
+    </script>
+    <div class="copyright">
+    	<p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
+    	<p>Platform Version: <xsl:value-of select="$UP_VERSION"/>   |
+    	Platform BuildDate:  <span id="PlatformDate"></span>   |
+    	Platform SCM Revision: <xsl:value-of select="$SCMREVISION"/>
+    	</p>
+    	<p id="SSPVersion"></p>
+    </div>
+
+
   </xsl:template>
   <!-- ============================================ -->
-  
+
   <!-- ========== TEMPLATE: PORTLET TOP BLOCK ========== -->
   <!-- ================================================= -->
-  <!-- 
+  <!--
    | GREEN
    | This template renders custom content on the portlet container top for additional decoration, primarily for rounded corners.
    | Template contents can be any valid XSL or XHTML.
@@ -881,11 +931,11 @@
     </div>
   </xsl:template>
   <!-- ================================================= -->
-  
-  
+
+
   <!-- ========== TEMPLATE: PORTLET BOTTOM BLOCK ========== -->
   <!-- ==================================================== -->
-  <!-- 
+  <!--
    | GREEN
    | This template renders custom content on the portlet container bottom for additional decoration, primarily for rounded corners.
    | Template contents can be any valid XSL or XHTML.
