@@ -41,7 +41,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <!-- Define an exclude to insure we retain META-INF/context.xml -->
+                    <!-- Define an exclude to insure we retain META-INF/context.xml (META-INF is excluded by default) -->
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>
