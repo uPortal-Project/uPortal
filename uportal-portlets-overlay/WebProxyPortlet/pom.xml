@@ -49,6 +49,7 @@
                     <filters>
                         <filter>${basedir}/../../${filters.file}</filter>
                     </filters>
+                    <!-- A side effect of this exclude is we'll retain META-INF/context.xml (META-INF is excluded by default) -->
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>

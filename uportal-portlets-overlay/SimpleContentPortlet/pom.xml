@@ -36,6 +36,15 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <!-- A side effect of this exclude is we'll retain META-INF/context.xml (META-INF is excluded by default) -->
+                    <dependentWarExcludes>
+                        WEB-INF/lib/hsqldb-*.jar
+                    </dependentWarExcludes>
+                </configuration>
+            </plugin>
            <plugin>
                 <groupId>org.apache.portals.pluto</groupId>
                 <artifactId>maven-pluto-plugin</artifactId>
