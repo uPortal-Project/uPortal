@@ -640,6 +640,9 @@
 
             <mkdir dir="${server.base}/shared/lib" />
             <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
+            <antcall target="fastWarDeploy">
+                <param name="warPath" value="${uportal-ear.dir}/target/ssp-platform/ssp.war" />
+            </antcall>
         </uportal-ear-macro>
     </target>
 

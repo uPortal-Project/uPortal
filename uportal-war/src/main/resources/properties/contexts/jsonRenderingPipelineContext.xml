@@ -57,7 +57,9 @@
                         <bean class="org.jasig.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
-                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>
+                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>                                                                
+                                    <entry key="buildDate-UP_FRAMEWORK" value="${org.jasig.portal.buildDate}"/>
+                                    <entry key="scmRevision-UP_FRAMEWORK" value="${org.jasig.portal.scmRevision}"/>
                                 </map>
                             </property>
                         </bean>
