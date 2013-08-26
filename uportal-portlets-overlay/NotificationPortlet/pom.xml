@@ -46,14 +46,17 @@
                 <excludes>
                     <!-- This list needs to be identical to the one below...  -->
                     <exclude>*.properties</exclude>
+                    <exclude>logback.xml</exclude>
                 </excludes>
             </resource>
             <resource>
                 <filtering>true</filtering>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <!-- List files or patterns to be filtered here...  -->
+                    <!-- List files or patterns to be filtered here. Restrict the list to avoid accidentally
+                         substituting maven or other environmental tokens in other files.-->
                     <include>*.properties</include>
+                    <include>logback.xml</include>
                 </includes>
             </resource>
         </resources>
@@ -62,10 +65,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <!-- Define an exclude to insure we retain META-INF/context.xml (META-INF is excluded by default) -->
-                    <dependentWarExcludes>
-                        WEB-INF/lib/hsqldb-*.jar
-                    </dependentWarExcludes>
+                    <!-- By specifying an exclude we'll retain META-INF/context.xml (META-INF is excluded by default).
+                         Context.xml is important because it allows the ResourceUrl to 'see' the ResourceServingWebapp
+                         to determine if a resource is available there, which allows for browser caching of common
+                         libraries -->
+                    <dependentWarExcludes>junkname.jar</dependentWarExcludes>
                 </configuration>
             </plugin>
             <plugin>
