@@ -867,7 +867,7 @@
     <!-- Copyright -->
     <script type="text/javascript">
 		 up.jQuery(document).ready(function() {
-                var platformBuildDate = intToDate(<xsl:value-of select="$BUILDDATE"/>);
+                var platformBuildDate = <xsl:value-of select="$BUILDDATE"/>;
                 var platformVersion = "<xsl:value-of select="$UP_VERSION"/>";
                 var platformRevision = "<xsl:value-of select="$SCMREVISION"/>";
                 var platformInfo = "";
@@ -885,7 +885,7 @@
 	 			});
 
                 platformInfo = "<p>Platform Version: " +platformVersion  +"  |  Platform BuildDate: "
-                    +platformBuildDate +"  |  Platform SCM Revision: " +platformRevision +" </p>";
+                    +intToDate(platformBuildDate) +"  |  Platform SCM Revision: " +platformRevision +" </p>";
 
                 up.jQuery('#InfoToggle').click(function() {
                         if ( toggle == 0 ) {
@@ -899,26 +899,27 @@
 		});
 
         function intToDate( integerDate ) {
-            var split = new Date().toString().split(" ");
-            var timeZoneFormatted = split[split.length - 2] + " " + split[split.length - 1];
-            var tempDate = integerDate.toString().trim();
 
-            //this checks if leading 0 stripped add space if so
-            if ( tempDate.length != 14 ) {
-                tempDate = " " + tempDate;
+            var dateToOutput = "";
+
+            if ( integerDate ) {
+                var dateFromInt = new Date(parseInt(integerDate));
+
+                 if ( !isNaN(dateFromInt) ) {
+                    var splitDate = dateFromInt.toString().split(" ");
+                    var timeZoneFormatted = splitDate[splitDate.length - 2] + " " + splitDate[splitDate.length - 1];
+
+                    dateToOutput = (('0' + (dateFromInt.getMonth()+1)).slice(-2)) + "/"
+                        +(('0' + dateFromInt.getDate()).slice(-2)) +"/"
+                        +dateFromInt.getFullYear() +"   "
+                        +(('0' + dateFromInt.getHours()).slice(-2)) +":"
+                        +(('0' + dateFromInt.getMinutes()).slice(-2)) +":"
+                        +(('0' + dateFromInt.getSeconds()).slice(-2)) +"   "
+                        +timeZoneFormatted +"   ";
+                 }
             }
 
-            //eliminate duplicate GMT depends on system
-            if ( timeZoneFormatted.indexOf("GMT") == -1 ) {
-                timeZoneFormatted = "GMT " + timeZoneFormatted;
-            }
-
-            var date = tempDate.substring(0,2) +"/" +tempDate.substring(2,4) +"/";
-            date += tempDate.substring(4,8) +" " +tempDate.substring(8,10) +":";
-            date += tempDate.substring(10,12) +":" +tempDate.substring(12) +" ";
-            date += timeZoneFormatted +" ";
-
-            return date;
+            return dateToOutput;
         }
     </script>
     <div class="copyright">
