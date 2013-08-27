@@ -28,7 +28,7 @@ var uportal = uportal || {};
          return null;
       }
 
-      if (_.isArray(up.analytics.model.institutions)) {
+      if (_.isArray(up.analytics.model.hosts)) {
          var propertyConfig = _.find(up.analytics.model.hosts, function(propertyConfig) {
             if (propertyConfig.name == up.analytics.host) {
                return propertyConfig;
