@@ -198,7 +198,7 @@
         <tika.version>1.3</tika.version>
         <tomcat-jdbc.version>7.0.37</tomcat-jdbc.version>
         <uportal-ear-deployer.version>1.0.1</uportal-ear-deployer.version>
-        <uportal-maven-plugin.version>1.0.0</uportal-maven-plugin.version>
+        <uportal-maven-plugin.version>1.0.1</uportal-maven-plugin.version>
         <usertype.version>3.0.0.GA</usertype.version>
         <woodstox.version>4.1.5</woodstox.version>
         <xmlunit.version>1.4</xmlunit.version>
