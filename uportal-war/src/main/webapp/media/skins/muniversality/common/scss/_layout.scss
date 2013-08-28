@@ -9,6 +9,10 @@
  */
  
  .up {
+    #page-inner {
+        min-height: inherit;
+    }
+ 
 	.ui-content .ui-header {
 	    /*margin-top: -15px;
 	    margin-left: -15px;

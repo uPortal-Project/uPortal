@@ -745,7 +745,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>mobileBackgroundContainerSelector</name>
-                <value>#page</value>
+                <value>#page-inner</value>
             </preference>
             <preference>
                 <name>mobileBackgroundImages</name>
