@@ -1,5 +1,6 @@
 package org.jasig.portal.portlets.backgroundpreference;
 
+import org.jasig.portal.rest.AjaxSuccessController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,15 +50,13 @@ public class ViewBackgroundPreferenceController {
     }
 
     @ActionMapping(params = {"action=savePreferences"})
-    public void savePreferences(ActionRequest req, ActionResponse res, 
-            @RequestParam(required=false) String backgroundImage, 
-            @RequestParam String redirectLocation) throws Exception {
+    public void savePreferences(ActionRequest req, ActionResponse res,
+            @RequestParam(required=false) String backgroundImage) throws Exception {
 
         imageSetSelectionStrategy.setSelectedImage(req, backgroundImage);
 
-        // Reirect the user whence he came because the mobile rendering will 
-        // otherwise attempt to MAXIMIZE the portlet... which is nonsense
-        res.sendRedirect(redirectLocation);
+        // Reirect to a basic HTTP 200 success response to save a full page cycle
+        res.sendRedirect(req.getContextPath() + "/api" + AjaxSuccessController.SUCCESS_URL);
 
     }
 

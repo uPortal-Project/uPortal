@@ -314,40 +314,42 @@
         </head>
         <body class="up {$FLUID_THEME_CLASS} dashboard-{$VIEW}">
             <div class="portal {$FOCUSED_CLASS}" data-role="page" id="page">
-                <xsl:choose>
-                    <xsl:when test="//focused">
-                        <xsl:call-template name="mobile.header.focused" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="mobile.header" />
-                    </xsl:otherwise>
-                </xsl:choose>
+                <div id="page-inner">
+                    <xsl:choose>
+                        <xsl:when test="//focused">
+                            <xsl:call-template name="mobile.header.focused" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:call-template name="mobile.header" />
+                        </xsl:otherwise>
+                    </xsl:choose>
 
-                <!-- Render header portlets -->
-                <div class="role-alert">
-                    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
-                </div>
-                <div class="role-tips">
-                    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'tips']/parent::*"/>
-                </div>
+                    <!-- Render header portlets -->
+                    <div class="role-alert">
+                        <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
+                    </div>
+                    <div class="role-tips">
+                        <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'tips']/parent::*"/>
+                    </div>
 
-                <xsl:choose>
-                    <xsl:when test="//focused">
-                        <xsl:call-template name="mobile.channel.content.focused" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="$VIEW = 'grid'">
-                                <xsl:call-template name="mobile.navigation.grid" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="mobile.navigation.list" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                        <xsl:call-template name="logo" />
-                    </xsl:otherwise>
-                </xsl:choose>
-                <xsl:call-template name="footer" />
+                    <xsl:choose>
+                        <xsl:when test="//focused">
+                            <xsl:call-template name="mobile.channel.content.focused" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:choose>
+                                <xsl:when test="$VIEW = 'grid'">
+                                    <xsl:call-template name="mobile.navigation.grid" />
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:call-template name="mobile.navigation.list" />
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:call-template name="logo" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:call-template name="footer" />
+                </div>
             </div>
             <script type="text/javascript">
                 up.analytics = up.analytics || {};

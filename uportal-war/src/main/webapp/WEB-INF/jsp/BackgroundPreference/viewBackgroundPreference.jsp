@@ -32,7 +32,7 @@
 
     /* Styles to set the background to the previously-selected image */
     <c:if test="${backgroundImage ne null}">
-    ${backgroundContainerSelector} {
+    ${backgroundContainerSelector}, html.um-dashboard {
         background-image: url("${backgroundImage}");
         background-size: cover;
     }
@@ -40,6 +40,10 @@
         opacity: ${opacityCssValue};
     }
     </c:if>
+
+    html.um-dashboard, html.um-dashboard body {
+        background-color: transparent;
+    }
 
     /* Syles for the background selector widget itself  */
     #${n}background-edit-control {
@@ -139,31 +143,88 @@
     </div>
     <form class="background-edit-form" action="${savePreferencesUrl}" method="post">
         <input class="background-value" type="hidden" name="backgroundImage" value="${backgroundImage}" />
-        <input class="redirect-location" type="hidden" name="redirectLocation" value="" />
    </form>
 </div>
-<script>
-    up.jQuery(function() {
-        var $ = up.jQuery,
-        $editButton = $('#${n}background-edit-control .background-edit-button'),
-        $menu = $('#${n}background-edit-control .background-edit-menu'),
-        $backgroundEditForm = $("#${n}background-edit-control .background-edit-form"),
-        $backgroundValue = $('#${n}background-edit-control .background-value');
-        
-        $('#${n}background-edit-control .redirect-location').attr('value', window.location.pathname);
 
-        $editButton.click(function () {
-            $menu.width($editButton.outerWidth());
-            $editButton.toggleClass('active');
-            $menu.toggle('slide', {direction: 'up'});
-        });
-        $menu.find('a').click(function(e) {
-            e.preventDefault();
-            var selectedValue = $(this).find('img').attr('src') || '';
-            $backgroundValue.attr('value', selectedValue);
-            $backgroundEditForm.submit();
-        });
-    });
+<script id="backgroundScript">
+(function(){
+    var BackgroundChanger = function() {
+        var elements = {
+            coreElement: '',
+            button: '',
+            menu: '',
+            form: '',
+            background: ''
+        };
+
+        var changeBackground = function() {
+            if (elements.background) {
+                $('body').css('background-color','transparent');
+                elements.coreElement.css({'background-image': 'url('+elements.background+')', 'background-size': 'cover'});
+            } else {
+                elements.coreElement.css({'background-image': 'none', 'background-size': 'auto'});
+            }
+        };
+
+        var setBackground = function(el) {
+            elements.background = $(el).find('img').attr('src') || '';
+            elements.form.find('.background-value').val(elements.background);
+
+            changeBackground();
+
+            elements.form.submit();
+        };
+
+        var toggleMenu = function() {
+            elements.button.toggleClass('active');
+            elements.menu.slideToggle();
+        };
+
+        var setWidth = function() {
+            elements.menu.width(elements.button.outerWidth());
+        }
+
+        var privateInit = function() {
+            elements.button = $('#${n}background-edit-control .background-edit-button');
+            elements.menu = $('#${n}background-edit-control .background-edit-menu');
+            elements.form = $("#${n}background-edit-control .background-edit-form");
+            elements.coreElement = ($('${backgroundContainerSelector}').size() > 0) ? $('${backgroundContainerSelector}') : $('html')
+
+            elements.form.submit(function() {
+                $.post(this.action, elements.form.serialize());
+                return false;
+            });
+            elements.button.click(function () {
+                setWidth();
+                toggleMenu();
+            });
+            
+            elements.menu.find('a').click(function(e) {
+                e.preventDefault();
+                setBackground(this);
+                
+                toggleMenu();
+            });
+        };
+
+        (function init() {
+            if (typeof up !== 'undefined') { 
+                $ = up.jQuery;
+            } 
+
+            $(function() {
+                privateInit();
+            });
+        })();
+
+        return {
+            init: function() {
+                 privateInit();
+            }
+        };
+
+    }();
+})();
+
 </script>
-
 </c:if>
