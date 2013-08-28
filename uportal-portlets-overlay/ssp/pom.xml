@@ -114,7 +114,7 @@
                                     def origAttribs = origParsed.getMainAttributes();
                                     origAttribs.putValue("SSP-Ext-UPOverlay-Artifact", "${project.groupId}:${project.artifactId}")
                                     origAttribs.putValue("SSP-Ext-UPOverlay-Artifact-Version", "${project.version}")
-                                    origAttribs.putValue("SSP-Ext-UPOverlay-Build-Date", "${maven.build.timestamp}")
+                                    origAttribs.putValue("SSP-Ext-UPOverlay-Build-Date", "${project.properties['timestamp']}")
                                     origAttribs.putValue("SSP-Ext-UPOverlay-SCM-Revision", "${project.properties['buildNumber']}")
                                     origAttribs.putValue("SSP-Ext-UPOverlay-Note", "Local patches and JSR-168 deployment")
                                 }
