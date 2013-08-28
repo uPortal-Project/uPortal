@@ -924,7 +924,7 @@
     </script>
     <div class="copyright">
          <p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
-         <div id="InfoToggle">Click here for Version Information</div>
+         <div style="cursor: pointer" id="InfoToggle">Click here for Version Information</div>
     </div>
 
   </xsl:template>
