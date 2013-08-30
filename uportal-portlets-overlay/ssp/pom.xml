@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
         <artifactId>platform-portlets-overlay</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.jasig.ssp</groupId>
             <artifactId>ssp</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.0</version>
             <type>war</type>
             <exclusions>
                 <exclusion>
@@ -109,7 +109,7 @@
 
                                 def orig = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF')
                                 def origParsed = null
-                                orig.withInputStream { is ->
+                                orig.withInputStream { is -&gt;
                                     origParsed = new Manifest(is)
                                     def origAttribs = origParsed.getMainAttributes();
                                     origAttribs.putValue("SSP-Ext-UPOverlay-Artifact", "${project.groupId}:${project.artifactId}")
@@ -120,7 +120,7 @@
                                 }
 
                                 def tmp = new File(project.build.directory, 'ssp-scratch/META-INF/MANIFEST.MF.tmp')
-                                tmp.withOutputStream { os ->
+                                tmp.withOutputStream { os -&gt;
                                     origParsed.write(os)
                                 }
                                 orig.delete()
