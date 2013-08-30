@@ -41,14 +41,18 @@
      | Required for:
      |  - SimpleLdapSecurityContext
      +-->
-
-    <!-- Delcare the legacy support bean to make LdapServices still work -->
     <!--
-    <alias name="defaultLdapServer" alias="Main"/>
     <bean id="defaultLdapServer" class="org.jasig.portal.ldap.ContextSourceLdapServerImpl">
-        <property name="contextSource" ref="defaultLdapContext"/>
+        <property name="contextSource">
+            <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
+                <property name="url" value="${ldap.url}"/>
+                <property name="userDn" value="${ldap.userName}"/>
+                <property name="password" value="${ldap.password}"/>
+                <property name="pooled" value="false"/>
+            </bean>
+        </property>
         <property name="uidAttribute" value="uid"/>
-        <property name="baseDN" value="${ldap.old_base}"/>
+        <property name="baseDN" value="${ldap.baseDn}"/>
     </bean>
     -->
     
@@ -90,4 +94,5 @@
         <property name="pooled" value="false"/>
     </bean>
     -->
+
 </beans>
