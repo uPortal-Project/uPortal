@@ -106,4 +106,10 @@
         <appender-ref ref="LOG" />
     </logger-->
 
+  <!-- Temporary - this is to address EMAILPLT-149 to prevent unnecessary WARN messages from showing up in the log files when using
+       Exchange Web Services.  Issue left open for "proper" fix. -->
+  <logger name="org.apache.http.client.protocol.RequestTargetAuthentication" additivity="false" level="ERROR">
+    <appender-ref ref="LOG" />
+  </logger>
+
 </configuration>
