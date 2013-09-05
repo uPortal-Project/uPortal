@@ -147,7 +147,8 @@
 <!-- 
 | YELLOW
 | Skin Settings can be used to change the location of skin files.
---> 
+-->
+<xsl:param name="userImpersonating">false</xsl:param>
 <xsl:param name="skin">uPortal4</xsl:param>
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="SKIN" select="$skin"/>
@@ -442,7 +443,7 @@
                                 <li><a href="#">Edit Page</a></li>
                             </ul-->
                             <div class="portal-user">
-                                <span class="portal-username">User Name</span>
+                                <xsl:call-template name="welcome" />
                                 <!--span class="portal-signout"><a href="#">Sign out</a></span-->
                             </div>
                         </div>
