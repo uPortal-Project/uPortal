@@ -17,6 +17,7 @@
 
     <modules>
         <module>AnnouncementsPortlet</module>
+        <module>basiclti-portlet</module>
         <module>BookmarksPortlet</module>
         <module>CalendarPortlet</module>
         <module>cas</module>
