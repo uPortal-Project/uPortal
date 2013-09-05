@@ -448,7 +448,8 @@
                         </div>
                     </div>
                     <div class="container">
-                        <h1 class="portal-logo">uPortal</h1>
+                        <h1 class="portal-logo" style="text-align:left;float:left;vertical-align:middle;">uPortal</h1>
+                        <h1 style="text-align:right;float:right;vertical-align:middle;"><xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/></h1>
                     </div>
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
