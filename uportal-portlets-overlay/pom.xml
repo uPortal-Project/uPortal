@@ -16,6 +16,7 @@
     <description>Parent package for portlets deployed with uPortal.</description>
 
     <modules>
+        <module>basiclti-portlet</module>
         <module>BookmarksPortlet</module>
         <module>CalendarPortlet</module>
         <module>cas</module>
