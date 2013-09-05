@@ -115,6 +115,7 @@
         <jasig-widget-portlets.version>2.0.0</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.7</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.0.4</NotificationPortlet.version>
+        <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
         <SimpleContentPortlet.version>1.0.8-M1</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.1.0</WeatherPortlet.version>
         <WebProxyPortlet.version>2.0.0-M2</WebProxyPortlet.version>
