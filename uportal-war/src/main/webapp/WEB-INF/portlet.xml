@@ -661,6 +661,82 @@
             <title>Log In</title>
         </portlet-info>
     </portlet>
+    
+    <portlet>
+        <portlet-name>LoginLauncher</portlet-name>
+        <display-name xml:lang="en">Login</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/LoginLauncher-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Log In</title>
+        </portlet-info>
+    </portlet>
+    
+    <portlet>
+        <portlet-name>WelcomeMessage</portlet-name>
+        <display-name xml:lang="en">WelcomeMessage</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/WelcomeMessage-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>WelcomeMessage</title>
+        </portlet-info>
+    </portlet>
+    
+    <portlet>
+        <portlet-name>LogoutLauncher</portlet-name>
+        <display-name xml:lang="en">WelcomeMessage</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/LogoutLauncher-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>LogoutLauncher</title>
+        </portlet-info>
+    </portlet>
+    
+    <portlet>
+        <portlet-name>uPortalMessage</portlet-name>
+        <display-name xml:lang="en">uPortalMessage</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/uPortalMessage-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>uPortalMessage</title>
+        </portlet-info>
+    </portlet>
 
     <portlet>
         <portlet-name>ForgotPassword</portlet-name>
