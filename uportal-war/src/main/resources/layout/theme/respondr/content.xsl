@@ -446,7 +446,7 @@
    | This template renders dynamic welcome message
   -->
   <xsl:template name="welcome">
-    <!-- <xsl:if test="$AUTHENTICATED='true'"> --> <!-- Welcome only displays if the user is logged in. -->
+    <xsl:if test="$USER_ID!='guest'">
       <div id="portalWelcome">
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:choose>
@@ -460,7 +460,7 @@
         &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       </div>
-    <!-- </xsl:if> -->
+    </xsl:if>
   </xsl:template>
   <!-- ======================================= -->
 </xsl:stylesheet>
