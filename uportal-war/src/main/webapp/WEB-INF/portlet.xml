@@ -661,6 +661,25 @@
             <title>Log In</title>
         </portlet-info>
     </portlet>
+    
+    <portlet>
+        <portlet-name>LoginLauncher</portlet-name>
+        <display-name xml:lang="en">Login</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/LoginLauncher-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Log In</title>
+        </portlet-info>
+    </portlet>
 
     <portlet>
         <portlet-name>ForgotPassword</portlet-name>
