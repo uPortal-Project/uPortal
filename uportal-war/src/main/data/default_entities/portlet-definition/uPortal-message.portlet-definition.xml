@@ -20,51 +20,25 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>SearchLauncher</title>
-    <name>SearchLauncher</name>
-    <fname>search-launcher</fname>
-    <desc>Search the portal, directory, and campus web.</desc>
+    <title>uPortalMessage</title>
+    <name>uPortalMessage</name>
+    <fname>uportal-message</fname>
+    <desc>uPortalMessage</desc>
     <type>Portlet</type>
     <timeout>30000</timeout>
     <portlet-descriptor>
         <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>SearchLauncher</ns2:portletName>
+        <ns2:portletName>uPortalMessage</ns2:portletName>
     </portlet-descriptor>
-    <category>Information</category>
     <group>Everyone</group>
+    <parameter>
+        <name>role</name>
+        <value>uportalmessage</value>
+    </parameter>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>
-    <parameter>
-        <name>iconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/system-search.png</value>
-    </parameter>
-    <parameter>
-        <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/search.png</value>
-    </parameter>
-    <parameter>
-        <name>role</name>
-        <value>searchLauncher</value>
-    </parameter>
-    <portlet-preference>
-        <name>searchEngines</name>
-        <readOnly>false</readOnly>
-        <value>directory</value>
-        <value>campus-web</value>
-        <value>portal</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>gsaBaseUrl</name>
-        <readOnly>false</readOnly>
-        <value>http://google.yale.edu/search</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>gsaSite</name>
-        <readOnly>false</readOnly>
-        <value>Yale_University</value>
-    </portlet-preference>
     <portlet-preference>
         <name>viewLocation</name>
         <readOnly>false</readOnly>
