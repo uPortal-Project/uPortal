@@ -446,21 +446,9 @@
    | This template renders dynamic welcome message
   -->
   <xsl:template name="welcome">
-    <!-- <xsl:if test="$AUTHENTICATED='true'"> --> <!-- Welcome only displays if the user is logged in. -->
-      <div id="portalWelcome">
-        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-        <xsl:choose>
-          <xsl:when test="$userImpersonating = 'true'">
-            <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
-          </xsl:otherwise>
-        </xsl:choose>
-        &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
-        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-      </div>
-    <!-- </xsl:if> -->
+    <xsl:if test="$USER_ID!='guest'">
+      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'welcomeMessage']/parent::*"/>
+    </xsl:if>
   </xsl:template>
   <!-- ======================================= -->
 </xsl:stylesheet>
