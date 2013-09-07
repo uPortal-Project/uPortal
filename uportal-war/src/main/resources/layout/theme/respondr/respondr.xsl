@@ -441,10 +441,7 @@
                             <!--ul class="portal-editing">
                                 <li><a href="#">Edit Page</a></li>
                             </ul-->
-                            <div class="portal-user">
-                                <span class="portal-username">User Name</span>
-                                <!--span class="portal-signout"><a href="#">Sign out</a></span-->
-                            </div>
+                            <xsl:call-template name="portal.page.bar.link.signin" />
                         </div>
                     </div>
                     <div class="container">
@@ -471,5 +468,9 @@
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
-
+  <xsl:template name="portal.page.bar.link.signin">
+     <xsl:if test="$USER_ID='guest'">
+         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'loginLauncher']/parent::*"/>
+     </xsl:if>
+  </xsl:template> 
 </xsl:stylesheet>

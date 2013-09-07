@@ -17,44 +17,35 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.searchlauncher;
+package org.jasig.portal.portlets;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
-import org.springframework.web.portlet.bind.annotation.ActionMapping;
-import org.springframework.web.portlet.bind.annotation.EventMapping;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
-/**
- * SearchPortletController produces both a search form and results for configured
- * search services.
- * 
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
- */
-@Controller
-@RequestMapping("VIEW")
-public class SearchLauncherPortletController {
+public class LaunchPortletController {
     protected final Logger logger = LoggerFactory.getLogger(getClass());    
+    private String launchUrl;
+    private String viewLocation;
     private IPortalUrlProvider portalUrlProvider;
     private IPortalRequestUtils portalRequestUtils;
+    private static final String VIEW_LOCATION = "viewLocation";
+    private static final String LAUNCH_URL = "launchUrl";
 
     @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
@@ -66,22 +57,61 @@ public class SearchLauncherPortletController {
         Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
     }
-    
-    /**
-     * Display the main user-facing view of the portlet.
-     * 
-     * @param request
-     * @return
-     */
+
     @RequestMapping
     public ModelAndView getView(PortletRequest portletRequest) {
+        final Map<String,Object> model = new HashMap<String, Object>();
+        String urlForModel = getUrlForLauncherModel(portletRequest);
+        String viewLocationUrl = getViewLocation(portletRequest);
+        model.put("launchUrl", urlForModel);
+        return new ModelAndView(viewLocationUrl, model);
+    }
+
+	private String getViewLocation(PortletRequest portletRequest) {
+		String viewLocationUrl;
+        PortletPreferences prefs = portletRequest.getPreferences();
+        String preferenceViewLocation = prefs.getValue(VIEW_LOCATION, "");
+        if(StringUtils.isNotBlank(preferenceViewLocation)) {
+            viewLocationUrl = preferenceViewLocation;
+        } else {
+            viewLocationUrl = viewLocation;
+        }
+		return viewLocationUrl;
+	}
+
+    private String getUrlForLauncherModel(PortletRequest portletRequest) {
+        String urlForModel;
+        PortletPreferences prefs = portletRequest.getPreferences();
+        String preferenceLaunchUrl = prefs.getValue(LAUNCH_URL, "");
+        if (StringUtils.isNotBlank(preferenceLaunchUrl)) {
+            urlForModel = preferenceLaunchUrl;
+        } else if (StringUtils.isNotBlank(launchUrl)) {
+            urlForModel = launchUrl;
+        } else {
+            urlForModel = getUrlForSearchLauncherModel(portletRequest);
+        }
+        return urlForModel;
+    }
+
+    private String getUrlForSearchLauncherModel(PortletRequest portletRequest) {
         final HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpRequest, "search", UrlType.ACTION);
-        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+        return portalUrlBuilder.getUrlString();
+    }
 
-        final Map<String,Object> model = new HashMap<String, Object>();
-    	String url = portalUrlBuilder.getUrlString();
-    	model.put("searchUrl", url);
-    	return new ModelAndView("/jsp/SearchLauncher/searchLauncher", model);
+    public String getViewLocation() {
+        return viewLocation;
+    }
+
+    public void setViewLocation(String viewLocation) {
+        this.viewLocation = viewLocation;
+    }
+
+    public String getLaunchUrl() {
+        return launchUrl;
+    }
+
+    public void setLaunchUrl(String launchUrl) {
+        this.launchUrl = launchUrl;
     }
 }
