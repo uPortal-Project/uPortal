@@ -443,7 +443,7 @@
                             </ul-->
                             <div class="portal-user">
                                 <span class="portal-username">User Name</span>
-                                <!--span class="portal-signout"><a href="#">Sign out</a></span-->
+                                <xsl:call-template name="portal.page.bar.link.logout" />
                             </div>
                         </div>
                     </div>
@@ -471,5 +471,12 @@
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
-
+  <xsl:template name="portal.page.bar.link.logout">
+    <!-- <xsl:if test="$AUTHENTICATED='true'"> -->
+    <span class="portal-username">&#160;-&#160;</span>
+    <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content">
+      <span class="label"><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></span>
+    </a>
+    <!-- </xsl:if> -->
+  </xsl:template>
 </xsl:stylesheet>
