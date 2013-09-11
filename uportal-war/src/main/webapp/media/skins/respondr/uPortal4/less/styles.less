@@ -124,6 +124,26 @@
     float: @direction;
 }
 
+.round-all {
+    .border-radiuses-top(5px);
+    .border-radiuses-bottom(5px);
+}
+.round-top {
+    .border-radiuses-top(5px);
+}
+.round-bottom {
+    .border-radiuses-bottom(5px);
+}
+
+/* ==========================================================================
+   Native Tags
+   ========================================================================== */
+body {
+    /* Using the furley pattern from http://subtlepatterns.com */
+    background: url(../../common/images/furley_bg.png);
+}
+
+
 /* ==========================================================================
    Namespace: .portal
    ========================================================================== */
@@ -272,27 +292,32 @@
    ========================================================================== */
 
     .portal-content {
-        background: @grayscale2;
+        // background: @grayscale2;
         padding: 2px;
     }
 
     .portlet {
-        background: #FFF;
-        border: 1px solid @grayscale3;
+        // background: #FFF;
+        // border: 1px solid @grayscale3;
         margin-bottom: 2px;
+        padding: 10px;
     }
 
     .portlet-header {
 
     }
 
+    // .portlet-title {
+    //     color: @grayscale10;
+    //     margin: 0;
+    //     padding-left: 20px;
+    //     font-size: 120%;
+    // }
     .portlet-title {
-        color: @grayscale10;
-        margin: 0;
-        padding-left: 20px;
-        font-size: 120%;
-    }
+        .btn-group {
 
+        }
+    }
     .portlet-content {
         color: @grayscale8;
         padding: 0 20px 20px 20px;
@@ -313,6 +338,81 @@
         
     }
 
+    section h1 {
+        font-size: 135%;
+    }
+    section h2 {
+        font-size: 125%;
+    }
+    section h3 {
+        font-size: 115%;
+    }
+    section h4 {
+        font-size: 105%;
+    }
+
+    .up-portlet-wrapper-inner {
+        margin-bottom: 10px;
+    }
+    
+    .up-portlet-wrapper-inner .up-portlet-titlebar {
+            
+    }
+    .up-portlet-titlebar {
+        // background-color: #e9e9e9; /* Old browsers */
+        .gradient (@grayscale1, @grayscale3);
+        border: 1px solid #e5e5e5;
+        border-bottom: none;
+        position: relative;
+
+        h2 {
+            font-size: 14px;
+            padding: 7px 7px;
+            margin: 0;
+            list-style: none;
+            line-height: 20px;
+        }
+
+        .btn-group {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            margin: 0;
+
+            >a {
+                color: @grayscale6;
+                font-size: 11px;
+                font-weight: normal;
+            }
+        }
+
+        .caret {
+            border-top-color: @grayscale6;
+        }
+    }
+    // .up-portlet-wrapper-inner .up-portlet-titlebar h2 {
+
+    // }
+
+    
+
+    // .up-portlet-control, .up-portlet-control:hover {
+    //     color: #666;
+    //     float:right;
+    //     margin-left:2px;
+    //     margin-right:2px;
+    //     text-decoration:none;
+    //     display: block;
+    //     background-position:center;
+    //     cursor:pointer;
+    // }
+    .up-portlet-content-wrapper {
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        border-top: none;
+        overflow: hidden;
+        padding: 10px;
+    }
 
 /* ==========================================================================
    Footer Nav

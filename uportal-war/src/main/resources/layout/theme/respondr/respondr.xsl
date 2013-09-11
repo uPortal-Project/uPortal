@@ -239,6 +239,14 @@
 <!-- ========================================================================= -->
 
 
+<xsl:template name="page.temp">
+    <!-- <link href="/uPortal/media/skins/respondr/uPortal4/css/temp.css" rel="stylesheet" type="text/css" /> -->
+    <!-- <link href="/uPortal/media/skins/respondr/uPortal4/css/temp.css" rel="stylesheet" type="text/css" /> -->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+</xsl:template>
+
+
+
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
 <!-- ========================================================================= -->
@@ -431,6 +439,8 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
+
+            <xsl:call-template name="page.temp" />
         </head>
         <body class="up dashboard portal">
 
