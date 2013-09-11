@@ -77,6 +77,22 @@
     -webkit-background-clip: padding-box; 
     background-clip:         padding-box; 
 }
+.border-radiuses-top (@top: 0) {
+    -webkit-border-top-right-radius:    @top;
+    -webkit-border-top-left-radius:     @top;
+    -moz-border-radius-topright:        @top;
+    -moz-border-radius-topleft:         @top;
+    border-top-right-radius:            @top;
+    border-top-left-radius:             @top;
+}
+.border-radiuses-bottom (@bottom: 0) {
+    -webkit-border-bottom-right-radius:    @bottom;
+    -webkit-border-bottom-left-radius:     @bottom;
+    -moz-border-radius-bottomright:        @bottom;
+    -moz-border-radius-bottomleft:         @bottom;
+    border-bottom-right-radius:            @bottom;
+    border-bottom-left-radius:             @bottom;
+}
 
 .opacity (@opacity: 0.5) {
     -webkit-opacity:     @opacity;
