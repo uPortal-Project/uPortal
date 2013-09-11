@@ -789,7 +789,7 @@
 
             <echo message="Starting HSQL on ${port}" />
             <echo message="Using: ${database}" />
-            <java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
+            <java fork="true" spawn="${spawn}" maxmemory="64M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
                 <classpath refid="hsql.classpath" />
 
                 <arg value="--database.0" />
