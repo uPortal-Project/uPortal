@@ -454,13 +454,16 @@
                             </ul-->
                             <div class="portal-user">
                                 <xsl:call-template name="welcome" />
-                                <!--span class="portal-signout"><a href="#">Sign out</a></span-->
+                                <xsl:call-template name="portal.page.bar.link.logout" />
                             </div>
+                            <xsl:call-template name="portal.page.bar.link.signin" />
                         </div>
                     </div>
                     <div class="container">
                         <h1 class="portal-logo" style="text-align:left;float:left;vertical-align:middle;">uPortal</h1>
-                        <h1 style="text-align:right;float:right;vertical-align:middle;"><xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/></h1>
+                        <xsl:if test="$USER_ID!='guest'">
+                          <h1 class="portal-logo search-launcher" style="text-align:right;float:right;vertical-align:middle;"><xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/></h1>
+                        </xsl:if>
                     </div>
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
@@ -484,11 +487,13 @@
 </xsl:template>
 <!-- ========================================================================= -->
   <xsl:template name="portal.page.bar.link.logout">
-    <!-- <xsl:if test="$AUTHENTICATED='true'"> -->
-    <span class="portal-username">&#160;-&#160;</span>
-    <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content">
-      <span class="label"><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></span>
-    </a>
-    <!-- </xsl:if> -->
+    <xsl:if test="$USER_ID!='guest'">
+      <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="btn up-portlet-control hide-content"><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></a>
+    </xsl:if>
   </xsl:template>
+  <xsl:template name="portal.page.bar.link.signin">
+     <xsl:if test="$USER_ID='guest'">
+         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'loginLauncher']/parent::*"/>
+     </xsl:if>
+  </xsl:template> 
 </xsl:stylesheet>
