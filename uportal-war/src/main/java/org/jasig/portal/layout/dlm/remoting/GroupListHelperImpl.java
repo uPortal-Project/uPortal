@@ -79,8 +79,12 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		for(int i=0;i<identifiers.length;i++) {
 			if(identifiers[i].getType().equals(identifierType)) {
 				IGroupMember entity = GroupService.getGroupMember(identifiers[i]);
-                JsonEntityBean jsonBean = getEntity(entity);
-                results.add(jsonBean);
+				if(entity != null) {
+				    JsonEntityBean jsonBean = getEntity(entity);
+				    results.add(jsonBean);
+				} else {
+				    log.warn("Grouper member entity of " + identifiers[i].getKey() + " is null.");
+				}
 			}
 		}
 		
