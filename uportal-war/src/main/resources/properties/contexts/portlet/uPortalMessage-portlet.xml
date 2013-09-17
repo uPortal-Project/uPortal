@@ -21,7 +21,7 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
+       xmlns="http://www.springframework.org/schema/beans" 
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
@@ -35,8 +35,9 @@
         <property name="portletModeMap">
             <map>
                 <entry key="view">
-                    <bean id="searchLauncher" class="org.jasig.portal.portlets.LaunchPortletController">
-                        <property name="viewLocation" value="/jsp/SearchLauncher/searchLauncher"/>
+                    <bean id="uPortalMessage" class="org.jasig.portal.portlets.LaunchPortletController">
+                        <property name="launchUrl" value="Not Used"/>
+                        <property name="viewLocation" value="/jsp/uPortal/uPortal"/>
                     </bean>
                 </entry>
             </map>
@@ -46,3 +47,4 @@
     <bean parent="primaryPropertyPlaceholderConfigurer" />
     
 </beans>
+
