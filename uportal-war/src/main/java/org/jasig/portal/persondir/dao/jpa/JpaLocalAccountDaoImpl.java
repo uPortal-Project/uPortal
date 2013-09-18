@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CollectionJoin;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.ParameterExpression;
@@ -47,6 +49,8 @@ import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.persondir.LocalAccountQuery;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.util.CaseCanonicalizationMode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -58,6 +62,11 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     private CriteriaQuery<LocalAccountPersonImpl> findAccountByNameQuery;
     private CriteriaQuery<String> findAvailableAttributesQuery;
     private ParameterExpression<String> nameParameter;
+    @Value("${org.jasig.portal.persondir.ILocalAccountDao.usernameCaseCanonicalizationMode:NONE}")
+    private CaseCanonicalizationMode usernameCaseCanonicalizationMode = CaseCanonicalizationMode.NONE;
+    private Locale usernameCaseCanonicalizationLocale = Locale.getDefault();
+    @Value("${org.jasig.portal.persondir.ILocalAccountDao.usernameCaseCanonicalizationMode.inconsistentlyCasedPersistentUsernames:true}")
+    private boolean inconsistentlyCasedPersistentUsernames = true;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -84,7 +93,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
                 accountRoot.fetch(LocalAccountPersonImpl_.attributes, JoinType.LEFT).fetch(LocalAccountPersonAttributeImpl_.values, JoinType.LEFT);
                 criteriaQuery.select(accountRoot);
                 criteriaQuery.where(
-                    cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), nameParameter)
+                    cb.equal(getCanonicalizedNameColumn(cb, accountRoot), nameParameter)
                 );
                 
                 return criteriaQuery;
@@ -113,6 +122,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     @Override
     @PortalTransactional
     public ILocalAccountPerson createPerson(String username) {
+        username = usernameCaseCanonicalizationMode.canonicalize(username, usernameCaseCanonicalizationLocale);
         final ILocalAccountPerson person = new LocalAccountPersonImpl(username);
         
         this.getEntityManager().persist(person);
@@ -122,6 +132,7 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     
     @Override
     public ILocalAccountPerson getPerson(String username) {
+        username = usernameCaseCanonicalizationMode.canonicalize(username, usernameCaseCanonicalizationLocale);
         final TypedQuery<LocalAccountPersonImpl> query = this.createCachedQuery(this.findAccountByNameQuery);
         query.setParameter(this.nameParameter, username);
         
@@ -181,11 +192,14 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
         
         final List<Predicate> whereParts = new LinkedList<Predicate>();
         final Map<Parameter<String>, String> params = new LinkedHashMap<Parameter<String>, String>();
-        
+
         // if a username has been specified, append it to the query
         if (query.getName() != null) {
-            whereParts.add(cb.equal(accountRoot.get(LocalAccountPersonImpl_.name), this.nameParameter));
-            params.put(this.nameParameter, query.getName());
+
+            final Expression canonicalizedNameColumn = getCanonicalizedNameColumn(cb, accountRoot);
+            whereParts.add(cb.equal(canonicalizedNameColumn, this.nameParameter));
+            final String canonicalizedNameQueryValue = usernameCaseCanonicalizationMode.canonicalize(query.getName(), usernameCaseCanonicalizationLocale);
+            params.put(this.nameParameter, canonicalizedNameQueryValue);
         }
         
         //Build Predicate for each attribute being queried
@@ -244,12 +258,62 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
         return new ArrayList<ILocalAccountPerson>(accounts);
     }
 
+    private Expression getCanonicalizedNameColumn(CriteriaBuilder cb, Root<LocalAccountPersonImpl> accountRoot) {
+        if ( inconsistentlyCasedPersistentUsernames ) {
+            switch ( usernameCaseCanonicalizationMode ) {
+                case LOWER:
+                    return cb.lower(accountRoot.get(LocalAccountPersonImpl_.name));
+                case UPPER:
+                    return cb.upper(accountRoot.get(LocalAccountPersonImpl_.name));
+                default:
+                    return accountRoot.get(LocalAccountPersonImpl_.name);
+            }
+        } else {
+            return accountRoot.get(LocalAccountPersonImpl_.name);
+        }
+
+    }
+
     @Override
     public Set<String> getCurrentAttributeNames() {
         final TypedQuery<String> query = this.createCachedQuery(this.findAvailableAttributesQuery);
 
         final List<String> nameList = query.getResultList();
         return new LinkedHashSet<String>(nameList);
+    }
+
+    public CaseCanonicalizationMode getUsernameCaseCanonicalizationMode() {
+        return usernameCaseCanonicalizationMode;
+    }
+
+    public void setUsernameCaseCanonicalizationMode(CaseCanonicalizationMode usernameCaseCanonicalizationMode) {
+        this.usernameCaseCanonicalizationMode = usernameCaseCanonicalizationMode;
+    }
+
+    public Locale getUsernameCaseCanonicalizationLocale() {
+        return usernameCaseCanonicalizationLocale;
+    }
+
+    public void setUsernameCaseCanonicalizationLocale(Locale usernameCaseCanonicalizationLocale) {
+        this.usernameCaseCanonicalizationLocale = usernameCaseCanonicalizationLocale;
+    }
+
+    public boolean isInconsistentlyCasedPersistentUsernames() {
+        return inconsistentlyCasedPersistentUsernames;
+    }
+
+    /**
+     * Set to {@link code} if you have a case-sensitive underlying data store
+     * with username values stored in a non-canonical casing and you need
+     * case-insensitive searching. Will then have the effect of applying
+     * a function to the stored value prior to comparisons. Beware of
+     * possibly very poor performance that can result if your storage layer
+     * does not support function-based indices.
+     *
+     * @param inconsistentlyCasedPersistentUsernames
+     */
+    public void setInconsistentlyCasedPersistentUsernames(boolean inconsistentlyCasedPersistentUsernames) {
+        this.inconsistentlyCasedPersistentUsernames = inconsistentlyCasedPersistentUsernames;
     }
 
 }

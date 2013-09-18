@@ -114,11 +114,29 @@
         </property>
     </bean>
 
+    <util:set id="username-logical-attributes">
+        <value>username</value>
+        <value>uid</value>
+        <value>username</value>
+        <value>user.login.id</value>
+        <value>schoolId</value>
+    </util:set>
+
+    <bean abstract="true" id="usernameCanonicalizing">
+        <property name="usernameCaseCanonicalizationMode" value="LOWER" />
+    </bean>
+
+    <bean abstract="true" parent="usernameCanonicalizing" id="logicalAttributeCanonicalizing">
+        <property name="caseInsensitiveResultAttributesAsCollection" ref="username-logical-attributes" />
+        <property name="caseInsensitiveQueryAttributesAsCollection" ref="username-logical-attributes" />
+    </bean>
+
     <!--
      | The person attributes DAO that returns the attributes from the request. Uses a currentUserProvider since the
      | username may not always be provided by the request object.
      +-->
     <bean id="requestAttributesDao"
+          parent="usernameCanonicalizing"
         class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
         <property name="descriptors" ref="requestAdditionalDescriptors" />
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
@@ -161,7 +179,9 @@
      | Looks in the local person-directory data. This is only used for portal-local users such as fragment owners
      | All attributes are searchable via this configuration, results are cached by the underlying DAO
      +-->
-    <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
+    <bean id="uPortalAccountUserSource"
+          parent="logicalAttributeCanonicalizing"
+          class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
         <property name="localAccountDao" ref="localAccountDao"/>
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="queryAttributeMapping">
@@ -215,7 +235,8 @@
         </property>
         <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
         <property name="cachedPersonAttributesDao" >
-            <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+            <bean parent="logicalAttributeCanonicalizing"
+                  class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
                 <constructor-arg index="0" ref="PersonDB" />
                 <constructor-arg>
                     <value> 
@@ -229,6 +250,13 @@
                     <map>
                         <entry key="username" value="USER_NAME" />
                     </map>
+                </property>
+                <!-- Only need caseInsensitiveDataAttributesAsCollection if the
+                underlying data is non-canonically cased -->
+                <property name="caseInsensitiveDataAttributesAsCollection">
+                    <set>
+                        <value>USER_NAME</value>
+                    </set>
                 </property>
                 <property name="resultAttributeMapping">
                     <map>
