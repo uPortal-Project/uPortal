@@ -103,8 +103,8 @@
             </div>
             <p class="no-permissions-message" style="display:none"><spring:message code="no.matching.users"/></p>
 
-            <div class="view-pager flc-pager-top" style="display:none;">
-                <ul id="pager-top" class="fl-pager-ui">
+            <div class="view-pager flc-pager-top" >
+                <ul id="pager-top" class="fl-pager-ui" style="text-align: center">
                     <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
                     <li>
                          <ul class="flc-pager-links demo-pager-links" style="margin:0; display:inline">
