@@ -17,7 +17,7 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>org.jasig.portlet</groupId>
+            <groupId>org.jasig.portlet.proxy</groupId>
             <artifactId>WebProxyPortlet</artifactId>
             <version>${WebProxyPortlet.version}</version>
             <type>war</type>
