@@ -19,6 +19,7 @@
 
 package org.jasig.portal.services;
 
+import java.util.Iterator;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
@@ -79,7 +80,16 @@ public class GroupService implements IGroupConstants
         super();
         initializeCompositeService();
     }
-    
+
+    /**
+     * Returns the groups that contain the <code>IGroupMember</code>.
+     * @param gm IGroupMember
+     */
+    public static Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+    {
+        return instance().ifindContainingGroups(gm);
+    }
+
     /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
@@ -233,6 +243,15 @@ protected GroupServiceConfiguration getServiceConfiguration() throws GroupsExcep
     catch (Exception ex)
         { throw new GroupsException("Problem retrieving service configuration", ex);}
 }
+
+    /**
+     * Returns the groups that contain the <code>IGroupMember</code>.
+     * @param gm IGroupMember
+     */
+    protected Iterator ifindContainingGroups(IGroupMember gm) throws GroupsException
+    {
+        return compositeGroupService.findContainingGroups(gm);
+    }
 
     /**
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
