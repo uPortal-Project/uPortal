@@ -48,6 +48,8 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
+import org.jasig.portal.api.PlatformApiBroker;
+import org.jasig.portal.api.PlatformApiBrokerImpl;
 import org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,6 +116,13 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         this.portletAppDescriptorService = portletAppDescriptorService;
     }
 
+    private PlatformApiBrokerImpl platformApiBroker;
+
+    @Autowired
+    public void setPlatformApiBroker(PlatformApiBrokerImpl platformApiBroker) {
+        this.platformApiBroker = platformApiBroker;
+    }
+
     // Public Methods ----------------------------------------------------------
 
     /**
@@ -136,6 +145,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp,
                     requestDispatcherService);
 
+            portletContext.setAttribute(PlatformApiBroker.PORTLET_CONTEXT_ATTRIBUTE_NAME,platformApiBroker);
             portletContexts.put(contextPath, portletContext);
 
             fireRegistered(portletContext);
