@@ -9,18 +9,11 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>uportal-platform-api</artifactId>
-    <version>0.1.0</version>
     <packaging>jar</packaging>
 
     <name>uPortal Platform API</name>
     <description>uPortal Platform API</description>
 
-    <properties>
-        <project.build.sourceVersion>1.6</project.build.sourceVersion>
-        <project.build.targetVersion>1.6</project.build.targetVersion>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    
     <build>
         <plugins>
         </plugins>

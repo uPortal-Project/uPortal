@@ -165,7 +165,7 @@
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-platform-api</artifactId>
-            <version>0.1.0</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 

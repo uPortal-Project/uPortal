@@ -69,9 +69,9 @@ public final class EntityService {
             identifierType = entityEnum.getClazz();
         }
 
-        for(int i=0;i<identifiers.length;i++) {
-            if(identifiers[i].getType().equals(identifierType)) {
-                IGroupMember groupMember = GroupService.getGroupMember(identifiers[i]);
+        for(EntityIdentifier entityIdentifier : identifiers) {
+            if(entityIdentifier.getType().equals(identifierType)) {
+                IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
                 Entity entity = getEntity(groupMember);
                 results.add(entity);
             }
@@ -183,7 +183,7 @@ public final class EntityService {
     /**
      * <p>Convenience method that looks up the name of the given group member.
      * Used for person types.</p>
-     * @param groupMember Entity to look up
+     * @param entity Entity to look up
      * @return groupMember's name or null if there's an error
      */
     public String lookupEntityName(Entity entity) {

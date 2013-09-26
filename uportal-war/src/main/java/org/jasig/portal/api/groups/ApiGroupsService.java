@@ -74,12 +74,11 @@ public class ApiGroupsService implements GroupsService {
     @Override
     public Set<Entity> getGroupsForMember(String memberName) {
         Set<Entity> groups = new HashSet<Entity>();
-        if(!StringUtils.isEmpty(memberName)) {
-            IEntityNameFinder finder = EntityNameFinderService.instance().getNameFinder(EntityEnum.PERSON.getClazz());
+        if(StringUtils.isNotEmpty(memberName)) {
             EntityIdentifier[] identifiers = GroupService.searchForEntities(memberName, GroupService.IS,EntityEnum.PERSON.getClazz());
-            for(int i=0;i<identifiers.length;i++) {
-                if(identifiers[i].getType().equals(EntityEnum.PERSON.getClazz())) {
-                    IGroupMember groupMember = GroupService.getGroupMember(identifiers[i]);
+            for(EntityIdentifier entityIdentifier : identifiers) {
+                if(entityIdentifier.getType().equals(EntityEnum.PERSON.getClazz())) {
+                    IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
                     if(memberName.equalsIgnoreCase(groupMember.getKey())) {
                         Iterator it = GroupService.findContainingGroups(groupMember);
                         while(it.hasNext()) {
@@ -98,10 +97,8 @@ public class ApiGroupsService implements GroupsService {
     @Override
     public Entity findMember(String memberName,boolean populateChildren) {
         Set<Entity> members = findMembers(memberName);
-        if((members != null) && (members.size() > 0)) {
-            Entity entity = null;
-            for(Iterator<Entity> it = members.iterator(); it.hasNext(); ) {
-                entity = it.next();
+        if(members != null) {
+            for(Entity entity :members) {
                 if(entity.getId().equalsIgnoreCase(memberName)) {
                     return entity;
                 }
@@ -118,12 +115,11 @@ public class ApiGroupsService implements GroupsService {
     @Override
     public Set<Entity> getMembersForGroup(String groupName) {
         Set<Entity> members = new HashSet<Entity>();
-        if(!StringUtils.isEmpty(groupName)) {
-            IEntityNameFinder finder = EntityNameFinderService.instance().getNameFinder(IEntityGroup.class);
+        if(StringUtils.isNotEmpty(groupName)) {
             EntityIdentifier[] identifiers = GroupService.searchForGroups(groupName,GroupService.IS,EntityEnum.GROUP.getClazz());
-            for(int i=0;i<identifiers.length;i++) {
-                if(identifiers[i].getType().equals(IEntityGroup.class)) {
-                    IGroupMember groupMember = GroupService.getGroupMember(identifiers[i]);
+            for(EntityIdentifier entityIdentifier : identifiers) {
+                if(entityIdentifier.getType().equals(IEntityGroup.class)) {
+                    IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
                     if(groupMember.getLeafType().equals(IPerson.class)) {
                         String groupMemberName = EntityService.instance().lookupEntityName(EntityEnum.GROUP,groupMember.getKey());
                         if(groupName.equalsIgnoreCase(groupMemberName)) {
