@@ -186,18 +186,6 @@
     <targetProvider>portalSystemTargetProvider</targetProvider> 
   </activity>
   <activity> 
-    <name>PERSON_TEST_READ</name>  
-    <fname>PERSON_TEST_READ</fname>  
-    <desc>PERSON_TEST_READ</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>
-  <activity> 
-    <name>PERSON_TRANSCRIPT_READ</name>  
-    <fname>PERSON_TRANSCRIPT_READ</fname>  
-    <desc>PERSON_TRANSCRIPT_READ</desc>  
-    <targetProvider>portalSystemTargetProvider</targetProvider> 
-  </activity>
-  <activity> 
     <name>PERSON_PROGRAM_STATUS_READ</name>  
     <fname>PERSON_PROGRAM_STATUS_READ</fname>  
     <desc>PERSON_PROGRAM_STATUS_READ</desc>  
