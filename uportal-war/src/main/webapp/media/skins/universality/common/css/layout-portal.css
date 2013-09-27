@@ -27,14 +27,14 @@
  * CSS that sets the visual style of the portal (and portlets) is handled by individual skins.
  * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
  */
- 
+
 /* uPORTAL DEVELOPMENT STANDARDS AND GUIDELINES
  * For the standards and guidelines that govern the user interface of uPortal portlets including HTML, CSS, JavaScript, accessibilty, naming conventions, 3rd Party libraries (like jQuery and the Fluid Skinning System) and more, refer to:
  * http://www.ja-sig.org/wiki/x/cQ
  */
- 
- 
-/* 
+
+
+/*
 ----------------------------------------------------
   Fluid Skinning System extensions and overrides.
 ----------------------------------------------------
@@ -129,10 +129,10 @@
 .fl-theme-mist :focus, .fl-theme-mist .selectable,
 .fl-theme-coal :focus, .fl-theme-coal .selectable {outline:1px dotted #CCC;}
  */
-/* 
+/*
 ------------------------------------
   uPortal Layout and Structure.
------------------------------------- 
+------------------------------------
  * uPortal is namespaced with "up", a class of the <body> tag.
  */
 
@@ -179,10 +179,10 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageBarLinks li {margin:0; padding:0; display:inline;}
 #portalPageBarLinks li {list-style-type:none;}
 #portalPageBarLinks a {padding:0 0.5em;}
-#portalSkipNav a, 
-#portalSkipNav a:hover, 
+#portalSkipNav a,
+#portalSkipNav a:hover,
 #portalSkipNav a:visited {position:absolute; left:0; top:-500px; width:1px; height:1px; overflow:hidden;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
-#portalSkipNav a:active, 
+#portalSkipNav a:active,
 #portalSkipNav a:focus {position:static; width:auto; height:auto;} /* This sets the skip-to links to be completely hidden until a user tabs to the link. */
 #portalLogo {}
 #portalWelcome {display:inline; padding-right:2em;}
@@ -335,10 +335,16 @@ table.purpose-layout td {margin:0; padding:0;}
 #portalPageBodyCustomizeMessageRowContents h1 {margin: 0 0 .3em 0; font-weight: normal; border: none;}
 #portalPageBodyCustomizeMessageRowContents .fl-font-blue {font-weight: bold;}
 
+/** Page Message for returned action messages */
+#portalPageBodyMessage {display: none;border-radius: 7px 7px 7px 7px;margin-bottom: 1em;}
+#portalPageBodyMessage.error {background-color: #FFB6C1;border: 1px solid #FF0000;}
+#portalPageBodyMessage.warn {background-color: #FFCC00;border: 1px solid #F58821;}
+#portalPageBodyMessage.success {background-color: #90EE90;border: 1px solid #008000;}
+#portalPageBodyMessage p {font-weight: bold; margin-bottom: 2px; text-align: center;}
 
 /* Quick Links */
 #portalQuicklinks {}
-#portalQuicklinks ul, 
+#portalQuicklinks ul,
 #portalQuicklinks li {margin:0; padding:0;}
 
 
@@ -378,14 +384,14 @@ table.purpose-layout td {margin:0; padding:0;}
 #skinList .fl-widget-content {padding:1em;}
 
 
-/* 
+/*
 ------------------------------------
   uPortal Gallery.
------------------------------------- 
+------------------------------------
  * The gallery is a sliding drawer that provides interfaces for customizing the protal.
  */
 
-/* Gallery Layout 
+/* Gallery Layout
  * Includes Fluid layout overides.
  * Generally the overall layout should not need to be altered.
  * If needed, override these values on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
@@ -409,7 +415,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .content .use-content {overflow-y: hidden;}
 
 
-/* Gallery Menu Items 
+/* Gallery Menu Items
  * The navigation menu of gallery views.
  */
 .up-gallery .menu {height:190px; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left-width:1px; border-left-style:solid; border-right-width:1px; border-right-style:solid;}
@@ -424,7 +430,7 @@ table.purpose-layout td {margin:0; padding:0;}
 *:first-child+html .up-gallery .menu li {height:25px;}
 
 
-/* Gallery Handle 
+/* Gallery Handle
  * Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer.
  */
 .up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; height:7px; clear:both;}
@@ -433,20 +439,20 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .handle a span {text-transform:uppercase; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block;}
 
 
-/* Gallery Modal Loaders 
+/* Gallery Modal Loaders
  * Preloaders while the content loads, following the opening of the drawer.
  */
 .up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background-image:url("../images/gallery-content-preloader.gif"); background-position:50% 50%; background-repeat:no-repeat;}
 .up-gallery .gallery-loader span {display: none;}
 
 
-/* Gallery Close Button 
+/* Gallery Close Button
  * An explicit close button, that closes the drawer.
  */
 .up-gallery .close-button {position:absolute; left:32px; bottom:5px;}
 
 
-/* Gallery Add/Use Portlet Filters 
+/* Gallery Add/Use Portlet Filters
  * Search and category filters for the add portlet and use portlet views.
  */
 .up-gallery .portlet-search-form {margin-bottom:10px;}
@@ -471,7 +477,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .categories li.active a {text-decoration:underline;}
 
 
-/* Gallery List Pager 
+/* Gallery List Pager
  * Pagination controls for lists in the gallery.
  */
 .up-gallery .pager-button-up span,
@@ -485,7 +491,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .pager-button-down {cursor:pointer; position:relative; height:62px;}
 
 
-/* Gallery Results List 
+/* Gallery Results List
  * General formatting for results lists (portlets, packages, skins, and layouts).
  */
 .up-gallery .results-wrapper {font-size:10px; position:relative;}
@@ -524,16 +530,16 @@ table.purpose-layout td {margin:0; padding:0;}
 .up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
 .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 /* IE7 adjustments*/
-*:first-child+html .up-gallery .results-wrapper .portlet-list li, 
-*:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;} 
+*:first-child+html .up-gallery .results-wrapper .portlet-list li,
+*:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;}
 
 
-/* Gallery Skin List 
+/* Gallery Skin List
  * The list of skins.
  */
 .up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
 
-/* Gallery Layout List 
+/* Gallery Layout List
  * The list of page layouts.
  */
 .up-gallery .results-wrapper .layouts-list li {width:140px; height:50%;}
@@ -549,7 +555,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
 .portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
 .portlet.ui-draggable-dragging .portlet-thumb-link {
-    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,#ffffff); 
+    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,#ffffff);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#ffffff)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,#ffffff);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(#ffffff));}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper {
@@ -619,7 +625,7 @@ table.purpose-layout td {margin:0; padding:0;}
 /* Drop Marker */
 .fl-reorderer-sidebar-dropMarker {display: inline-block; border: 1px solid #d26600 !important; background-color: #F68922 !important; margin: 0 2px !important; filter:alpha(opacity=80) !important;
     opacity:.8 !important; padding: .31em 1em !important; *display: inline !important; *height: 10px; *padding: 0em .13em !important; *zoom: 1 !important;}
-    
+
 #guestLocaleSelection .portlet .portlet-form { background-color: #fff; border: none; width: auto; }
 #guestLocaleSelection .portlet .portlet-form li { margin:0 0 5px 30px; }
 #guestLocaleSelection .portlet .portlet-form form .buttons { margin: 0 0 0 50px; }

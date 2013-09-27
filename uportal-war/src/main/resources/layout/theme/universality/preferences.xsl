@@ -30,7 +30,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -38,9 +38,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -48,17 +48,17 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
     version="1.0">
 
 <!-- ==== TEMPLATE: Gallery Add Portlet Selection ==== -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the add portlet selection view of 
-| the gallery. The list of portlets to select from is 
-| rendered by a separate template below. Adding a portlet 
+<!--
+| This template renders the add portlet selection view of
+| the gallery. The list of portlets to select from is
+| rendered by a separate template below. Adding a portlet
 | places and persists the portlet into the user's layout.
--->  
+-->
     <xsl:template name="gallery-add-content-pane">
         <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
             <div class="fl-col-fixed fl-force-left content-filters-wrapper">
@@ -119,10 +119,10 @@
 
 <!-- ==== TEMPLATE: Gallery Use Portlet Selection ==== -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the use portlet selection view of 
-| the gallery. The list of portlets to select from is 
-| rendered by a separate template below. Using a portlet 
+<!--
+| This template renders the use portlet selection view of
+| the gallery. The list of portlets to select from is
+| rendered by a separate template below. Using a portlet
 | does not add the portlet to the user's layout.
 -->
     <xsl:template name="gallery-use-content-pane">
@@ -171,14 +171,14 @@
                 </div>
             </div>
         </div>
-    </xsl:template>    
+    </xsl:template>
 
 <!-- ========= TEMPLATE: Gallery Portlet List ======== -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the list of portlets available to 
+<!--
+| This template renders the list of portlets available to
 | both the add portlet and use portlet views of the gallery.
--->    
+-->
     <xsl:template name="gallery-add-content-pane-portlet-list">
         <xsl:param name="CONTEXT"/><!--Catches the context parameter.-->
         <div class="results-wrapper portlet-results fl-col-mixed2">
@@ -225,8 +225,8 @@
 
 <!-- == TEMPLATE: Gallery Packaged Portlet Selection = -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the packaged portlet selection 
+<!--
+| This template renders the packaged portlet selection
 | view of the gallery.
 -->
     <xsl:template name="gallery-add-content-pane-fragment-list">
@@ -256,7 +256,7 @@
 
 <!-- ============= TEMPLATE: Gallery Pager =========== -->
 <!-- ================================================= -->
-<!-- 
+<!--
 | This template renders the gallery pager.
 -->
     <xsl:template name="gallery-pager">
@@ -293,8 +293,8 @@
 
 <!-- ======== TEMPLATE: Gallery Skin Selection ======= -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the skin selection view of the 
+<!--
+| This template renders the skin selection view of the
 | gallery.
 -->
     <xsl:template name="gallery-skin-pane">
@@ -321,11 +321,11 @@
             </div>
         </div>
     </xsl:template>
-    
+
 <!-- ======= TEMPLATE: Gallery Layout Selection ====== -->
 <!-- ================================================= -->
-<!-- 
-| This template renders the layout selection view of the 
+<!--
+| This template renders the layout selection view of the
 | gallery.
 -->
     <xsl:template name="gallery-layout-pane">
@@ -353,13 +353,13 @@
             </div>
         </div>
     </xsl:template>
-	
+
 <!-- =============== TEMPLATE: Gallery =============== -->
 <!-- ================================================= -->
-<!-- 
+<!--
 | This template renders the base structure of the gallery.
-| The gallery contains the interfaces for customizing the 
-| portal. Individual views presented within the gallery are 
+| The gallery contains the interfaces for customizing the
+| portal. Individual views presented within the gallery are
 | in separate templates above. Customization options are
 | only available to authenticated users.
 -->
@@ -406,9 +406,9 @@
     </xsl:template>
 
  <xsl:template name="preferences">
-  
+
   <xsl:choose>
-   
+
    <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
     <div id="ajaxMenus" style="display:none;">
         <!-- Add Channel Menu -->
@@ -420,14 +420,22 @@
                         <xsl:value-of
                             select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
                     </legend>
-                    <xsl:for-each select="/layout/navigation/tab">
-                        <input name="targetTab" id="targetTab{@ID}"
-                            value="{@ID}" type="radio" />
-                        <label for="targetTab{@ID}" class="portlet-form-field-label">
-                            <xsl:value-of select="@name" />
-                        </label>
-                        <br />
-                    </xsl:for-each>
+                    <xsl:variable name="unlockedTab" select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']" />
+                    <xsl:choose>
+                      <xsl:when test="$unlockedTab">
+                        <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
+                            <input name="targetTab" id="targetTab{@ID}"
+                                value="{@ID}" type="radio" />
+                            <label for="targetTab{@ID}" class="portlet-form-field-label">
+                                <xsl:value-of select="@name" />
+                            </label>
+                            <br />
+                        </xsl:for-each>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="upMsg:getMessage('error.add.portlet.in.layout', $USER_LANG)" />
+                      </xsl:otherwise>
+                    </xsl:choose>
                 </fieldset>
                 <p>
                     <input name="portletId" type="hidden"
@@ -455,19 +463,19 @@
         });
     </script>
    </xsl:when>
-   
+
    <xsl:when test="not(//focused)">
-  
+
     <div id="dojoMenus" class="dialogs" style="display:none;">
-           
+
      <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-     
+
          <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
                 </div>
-            
+
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
@@ -482,7 +490,7 @@
                                     <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
                                     <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
                                 </p>
-                            
+
                                 <div class="buttons">
                                     <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
@@ -492,13 +500,13 @@
                 </div>
              </div>
          </div>
-         
+
          <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-            
+
                 <div class="fl-widget-content content portlet-content" role="main">
                     <form>
                         <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
@@ -509,7 +517,7 @@
                             <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
                             <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
                         </p>
-                        
+
                         <div class="buttons">
                             <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                         </div>
@@ -517,13 +525,13 @@
                 </div>
             </div>
          </div>
-         
+
          <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-            
+
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
@@ -536,7 +544,7 @@
                                     <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
                                     <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
                                 </p>
-                                
+
                                 <div class="buttons">
                                     <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
@@ -547,11 +555,11 @@
             </div>
          </div>
      </xsl:if>
-    
+
      <div id="portalDropWarning" class="drop-warning" style="display:none;">
       <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
      </div>
-     
+
     </div>
     <script type="text/javascript">
        up.jQuery(document).ready(function(){
@@ -578,8 +586,8 @@
               layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
               channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
               subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
-              messages: { 
-                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>', 
+              messages: {
+                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
                   confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
                   addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
                   column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
@@ -597,9 +605,9 @@
           );
        });
     </script>
-      
+
    </xsl:when>
   </xsl:choose>
  </xsl:template>
- 
+
 </xsl:stylesheet>
