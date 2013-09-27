@@ -584,7 +584,7 @@ public class UpdatePreferencesServlet {
 		final Locale locale = RequestContextUtils.getLocale(request);
 
 		if (node == null) {
-			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.add.portlet.in.tab", "Can't add a new channel", locale)));
+			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.add.portlet.in.tab", "Can''t add a new channel", locale)));
 		}
 
 		String nodeId = node.getId();
@@ -594,7 +594,7 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
-			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Can't add a new channel", locale)));
+			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Can''t add a new channel", locale)));
 		}
 
 		Map<String, String> model = new HashMap<String, String>();
