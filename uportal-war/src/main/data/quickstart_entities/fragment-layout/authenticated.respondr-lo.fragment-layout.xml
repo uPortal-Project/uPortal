@@ -19,12 +19,14 @@
     under the License.
 
 -->
-<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="all-lo">
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="authenticated.respondr-lo">
   <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
     <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="header" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="header" unremovable="true">
+      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n17"/>
+      <channel fname="welcome-message" unremovable="false" hidden="false" immutable="false" ID="n19"/>
     </folder>
     <folder ID="s10" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false">
     </folder>
