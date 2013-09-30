@@ -34,12 +34,14 @@ public class StringListAttribute implements Serializable {
     }
     
     public StringListAttribute(List<String> value) {
+        removeAllEmptyItems(value);
         this.value = value;
     }
 
     public StringListAttribute(String[] value) {
-    	List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<String>();
         values.addAll(Arrays.<String>asList(value));
+        removeAllEmptyItems(values);
         this.value = values;
     }
 
@@ -73,15 +75,21 @@ public class StringListAttribute implements Serializable {
      * @param value the value to set
      */
     public void setValue(List<String> value) {
+        removeAllEmptyItems(value);
         this.value = value;
     }
 
     public void setValue(String[] value) {
-    	List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<String>();
         values.addAll(Arrays.<String>asList(value));
+        removeAllEmptyItems(values);
         this.value = values;
     }
-
+    
+    private void removeAllEmptyItems(List<String> value) {
+        value.removeAll(Arrays.asList("", null));
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
