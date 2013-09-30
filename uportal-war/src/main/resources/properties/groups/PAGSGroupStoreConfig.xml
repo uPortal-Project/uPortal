@@ -63,6 +63,7 @@
       <member-key>authenticated_users</member-key>
       <member-key>desktop_device_access</member-key>
       <member-key>mobile_device_access</member-key>
+      <member-key>responder_theme_users</member-key>
     </members>
   </group>
 
@@ -132,7 +133,22 @@
     </selection-test>
   </group>
 
-    <!--==================== Other Examples ====================-->
+  <group>
+    <group-key>responder_theme_users</group-key>
+    <group-name>Responder Theme Users</group-name>
+    <group-description>User Access by Theme</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name></attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
+          <test-value>respondr</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+
+<!--==================== Other Examples ====================-->
 
 
 <!--
