@@ -195,7 +195,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <table>
                 <thead>
                   <tr>
-                      <th><spring:message code="parameter"/></th>
+                      <th><spring:message code="preference"/></th>
                       <th><spring:message code="value"/></th>
                       <th><spring:message code="read.only.prevents.user.customization"/></th>
                     <th></th>
