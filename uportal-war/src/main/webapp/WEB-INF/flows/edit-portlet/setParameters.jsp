@@ -286,6 +286,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             multivalued: false,
                             messages: {
                               remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                              removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
                               addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                             }
 					      }
@@ -301,6 +302,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             multivalued: true,
                             messages: {
                               remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                              removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
                               addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
                             }
                           }

@@ -289,7 +289,7 @@ var up = up || {};
             formContainer: '#uptrans-formContainer',
             addMessage: '#uptrans-addMessage' },
         messages: {
-            messageTranslationSaved: 'Message translation has been succesfully saved',
+            messageTranslationSaved: 'Message translation has been successfully saved',
             portletTranslationSaved: 'Portlet definition translation has been successfully saved'
         }
     });
