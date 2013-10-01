@@ -30,7 +30,6 @@
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>SearchLauncher</ns2:portletName>
     </portlet-descriptor>
-    <category>Information</category>
     <group>Everyone</group>
     <parameter>
         <name>disableDynamicTitle</name>
