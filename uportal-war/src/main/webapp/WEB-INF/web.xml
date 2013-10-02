@@ -34,7 +34,7 @@
         <param-value>classpath:/properties/contexts/*.xml,classpath:/properties/contextOverrides/*.xml</param-value>
     </context-param>
 
-    <!-- Needed to remove JMX registration and allow for classloader GC -->
+    <!-- Needed to remove JMX registration and allow for classloader GC. Should be first listener per http://logback.qos.ch/manual/loggingSeparation.html#hotDeploy -->
     <listener>
         <listener-class>ch.qos.logback.classic.selector.servlet.ContextDetachingSCL</listener-class>
     </listener>
