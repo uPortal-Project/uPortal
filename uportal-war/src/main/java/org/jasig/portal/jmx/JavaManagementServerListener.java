@@ -54,12 +54,30 @@ public class JavaManagementServerListener implements ServletContextListener {
     private static final String LOGGER_NAME = JavaManagementServerListener.class.getName();
 
     private JavaManagementServerBean javaManagementServerBean;
+    
+    private Log logger;
+    
+    /**
+     * Inits and/or returns already initialized logger.  <br>
+     * You have to use this method in order to use the logger,<br> 
+     * you should not call the private variable directly<br>
+     * This was done because tomcat can run initialize on listeners in parallel <br>
+     * and some logging configurations rely on other listeners.
+     * @return the log for this class
+     */
+    protected Log getLogger() {
+    	Log l = this.logger;
+	  if (l == null) {
+	    l = LogFactory.getLog(LOGGER_NAME);
+	    this.logger = l;
+	  }
+	  return l;
+	}
 
     /**
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     public void contextInitialized(ServletContextEvent event) {
-    	Log logger = LogFactory.getLog(LOGGER_NAME);
         final ServletContext servletContext = event.getServletContext();
         
         //Create the bean
@@ -80,7 +98,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortOne(portOne);
         }
         catch (NumberFormatException nfe) {
-            logger.warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
+            getLogger().warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
         }
         
         //Get the second rmi port from the init parameters
@@ -90,7 +108,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortTwo(portTwo);
         }
         catch (NumberFormatException nfe) {
-            logger.debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
+        	getLogger().debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
         }
         
         this.javaManagementServerBean.startServer();
