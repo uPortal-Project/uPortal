@@ -58,9 +58,11 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     /**
      * Inits and/or returns already initialized logger.  <br>
      * You have to use this method in order to use the logger,<br> 
-     * you should not call the private variable directly<br>
-     * This was done because tomcat can run initialize on listeners in parallel <br>
-     * and some logging configurations rely on other listeners.
+     * you should not call the private variable directly.<br>
+     * This was done because Tomcat may instantiate all listeners before calling contextInitialized on any listener.<br>
+     * Note that there is no synchronization here on purpose. The object returned by getLog for a logger name is<br>
+     * idempotent and getLog itself is thread safe. Eventually all <br>
+     * threads will see an instance level logger variable and calls to getLog will stop.
      * @return the log for this class
      */
     protected Logger getLogger() {
