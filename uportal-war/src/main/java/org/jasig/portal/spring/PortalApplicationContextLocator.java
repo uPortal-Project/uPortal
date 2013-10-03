@@ -51,7 +51,26 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @version $Revision$
  */
 public class PortalApplicationContextLocator implements ServletContextListener {
-	private static String LOGGER_NAME = PortalApplicationContextLocator.class.getName(); 
+	private static String LOGGER_NAME = PortalApplicationContextLocator.class.getName();
+	
+    private static Log logger;
+    
+    /**
+     * Inits and/or returns already initialized logger.  <br>
+     * You have to use this method in order to use the logger,<br> 
+     * you should not call the private variable directly<br>
+     * This was done because tomcat can run initialize on listeners in parallel <br>
+     * and some logging configurations rely on other listeners.
+     * @return the log for this class
+     */
+    protected static Log getLogger() {
+      Log l = logger;
+	  if (l == null) {
+	    l = LogFactory.getLog(LOGGER_NAME);
+	    logger = l;
+	  }
+	  return l;
+	}
 
     private static final SingletonDoubleCheckedCreator<ConfigurableApplicationContext> applicationContextCreator = new PortalApplicationContextCreator();
     private static Throwable directCreatorThrowable;
@@ -121,18 +140,17 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      * @return The {@link ApplicationContext} for the portal. 
      */
     public static ApplicationContext getApplicationContext() {
-    	Log logger = LogFactory.getLog(LOGGER_NAME);
         final ServletContext context = servletContext;
 
         if (context != null) {
-        	logger.debug("Using WebApplicationContext");
+        	getLogger().debug("Using WebApplicationContext");
 
             if (applicationContextCreator.isCreated()) {
                 final IllegalStateException createException = new IllegalStateException(
                         "A portal managed ApplicationContext has already been created but now a ServletContext is available and a WebApplicationContext will be returned. "
                                 + "This situation should be resolved by delaying calls to this class until after the web-application has completely initialized.");
-                logger.error(createException, createException);
-                logger.error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
+                getLogger().error(createException, createException);
+                getLogger().error("Stack trace of original ApplicationContext creator", directCreatorThrowable);
                 throw createException;
             }
 
@@ -156,7 +174,6 @@ public class PortalApplicationContextLocator implements ServletContextListener {
      * this method does nothing but log an error message.
      */
     public static void shutdown() {
-    	Log logger = LogFactory.getLog(LOGGER_NAME);
 
         if (applicationContextCreator.isCreated()) {
             final ConfigurableApplicationContext applicationContext = applicationContextCreator.get();
@@ -165,7 +182,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
         else {
             final IllegalStateException createException = new IllegalStateException(
                     "No portal managed ApplicationContext has been created, there is nothing to shutdown.");
-            logger.error(createException, createException);
+            getLogger().error(createException, createException);
         }
     }
 
@@ -177,13 +194,12 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
         @Override
         protected ConfigurableApplicationContext createSingleton(Object... args) {
-        	Log logger = LogFactory.getLog(LOGGER_NAME);
-        	
+        	        	
             if (Boolean.getBoolean("org.jasig.portal.test")) {
                 throw new IllegalStateException(PortalApplicationContextLocator.class.getName() + " MUST NOT be used in unit tests");
             }
             
-            logger.info("Creating new lazily initialized GenericApplicationContext for the portal");
+            getLogger().info("Creating new lazily initialized GenericApplicationContext for the portal");
 
             final long startTime = System.currentTimeMillis();
 
@@ -197,7 +213,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
 
             directCreatorThrowable = new Throwable();
             directCreatorThrowable.fillInStackTrace();
-            logger.info("Created new lazily initialized GenericApplicationContext for the portal in "
+            getLogger().info("Created new lazily initialized GenericApplicationContext for the portal in "
                     + (System.currentTimeMillis() - startTime) + "ms");
 
             return genericApplicationContext;

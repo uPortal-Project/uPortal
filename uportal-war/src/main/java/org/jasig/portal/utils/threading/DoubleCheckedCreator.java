@@ -35,6 +35,25 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class DoubleCheckedCreator<T> {
 	private static String LOGGER_NAME = DoubleCheckedCreator.class.getName();
+	
+    private Log logger;
+    
+    /**
+     * Inits and/or returns already initialized logger.  <br>
+     * You have to use this method in order to use the logger,<br> 
+     * you should not call the private variable directly<br>
+     * This was done because tomcat can run initialize on listeners in parallel <br>
+     * and some logging configurations rely on other listeners.
+     * @return the log for this class
+     */
+    protected Log getLogger() {
+    	Log l = this.logger;
+	  if (l == null) {
+	    l = LogFactory.getLog(LOGGER_NAME);
+	    this.logger = l;
+	  }
+	  return l;
+	}
     
     private final ReadWriteLock readWriteLock;
     protected final Lock readLock;
@@ -81,7 +100,6 @@ public abstract class DoubleCheckedCreator<T> {
      * @return A retrieved or created object.
      */
     public final T get(Object... args) {
-    	final Log logger = LogFactory.getLog(LOGGER_NAME);
         //Grab a read lock to try retrieving the object
         this.readLock.lock();
         try {
@@ -89,8 +107,8 @@ public abstract class DoubleCheckedCreator<T> {
             //See if the object already exists and is valid
             final T value = this.retrieve(args);
             if (!this.invalid(value, args)) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Using retrieved Object='" + value + "'");
+                if (getLogger().isDebugEnabled()) {
+                	getLogger().debug("Using retrieved Object='" + value + "'");
                 }
                 
                 return value;
@@ -112,12 +130,12 @@ public abstract class DoubleCheckedCreator<T> {
                 //Object is not valid, create it
                 value = this.create(args);
                 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Created new Object='" + value + "'");
+                if (getLogger().isDebugEnabled()) {
+                	getLogger().debug("Created new Object='" + value + "'");
                 }
             }
-            else if (logger.isDebugEnabled()) {
-                logger.debug("Using retrieved Object='" + value + "'");
+            else if (getLogger().isDebugEnabled()) {
+            	getLogger().debug("Using retrieved Object='" + value + "'");
             }
             
             return value;
