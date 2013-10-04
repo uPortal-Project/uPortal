@@ -27,5 +27,6 @@
   <children>
     <literal>admin</literal>
     <literal>admin-lo</literal>
+    <group>SSP_ADMINISTRATOR</group>
   </children>
 </group>

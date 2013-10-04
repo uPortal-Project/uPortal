@@ -1,0 +1,3 @@
+If you're upgrading to 2.1 from a previous version please rerun data import for 
+src/main/data/ssp-entities/group_membership/Portal_Administrators.group-membershipp.xml 
+or add SSP_ADMINISTRATOR as a child of Portal_Administrator via a SQL update.
