@@ -198,6 +198,37 @@
                         query to each subsequent DAO. I.e. subsequent DAOs in the cascade list will
                         *not* be given a chance to process the original query. But they will if you add
                         them directly to the MergingPersonAttributeDaoImpl.personAttributeDaos list here.)
+
+                        Also, for consistent search wildcarding (https://issues.jasig.org/browse/SSP-1669)
+                        and "simple" user search behavior across uP-local and other JDBC and/or LDAP
+                        DAOs you may add, strongly consider adding the following configuration to each
+                        of the latter:
+
+                            <property name="queryType" value="OR" />
+                            <property name="allowUsernameWildcards" value="false" />
+                            <property name="wildcardDataAttributes" value="true" />
+
+                        If you derive SSP group memberships from a multi-valued LDAP attribute, you will
+                        almost certainly want to exclude that attribute from wildcarded searches with:
+
+                            <property name="wildcardedDataAttributeExclusions">
+                                <set>
+                                    <value>YOUR_ROLE_ATTRIBUTE_NAME</value>
+                                </set>
+                            </property>
+
+                        YOUR_ATTRIBUTE_NAME from that example should be replaced with the physical
+                        LDAP attribute name, not the logical name by which that attribute is known
+                        to the application.
+
+                        Independently of the group membership issue, and for both JDBC and LDAP
+                        DAOs, you will also likely need to explicitly configure the name physical
+                        attribute which represents a username:
+
+                            <property name="usernameDataAttribute" value="YOUR_USERNAME_ATTRIBUTE_NAME" />
+
+                        Doing so is unecessary if your physical and logical username attributes have
+                        the same name.
                         -->
                     </list>
                 </property>
