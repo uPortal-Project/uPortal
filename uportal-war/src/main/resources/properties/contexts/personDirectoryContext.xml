@@ -189,7 +189,15 @@
                                 </list>
                             </property>
                         </bean>
-                        <!-- ADDITIONAL ATTRIBUTE SOURCES GET ADDED HERE
+                        <!--
+
+
+                        ## Where Do I Put My Deployment-Specific Attriubute Sources? ##
+
+                        Define them as standalone, top-level beans below, and refer to them here
+                        with elements like:
+
+                            <bean ref="myAttributeSourceId" />
 
                         Don't add more sources to the CascadingPersonAttributeDao.personAttributeDaos
                         list above unless you're adding "special" DAOs tasked with augmenting/transforming
@@ -199,7 +207,110 @@
                         *not* be given a chance to process the original query. But they will if you add
                         them directly to the MergingPersonAttributeDaoImpl.personAttributeDaos list here.)
 
-                        Also, for consistent search wildcarding (https://issues.jasig.org/browse/SSP-1669)
+                        For more background see https://issues.jasig.org/browse/SSP-1738
+
+                        ## How Do I Control Which Attributes Will Be Case-In/Sensitive ##
+
+                        At a minimum you often want username attributes to be treated case-insensitively
+                        *and* to be returned to the application in a canonicalized casing. To do that
+                        you typically define three beans:
+
+                            1) A set of all logical (i.e. app-facing) attributes which are considered
+                            username attributes, e.g.:
+
+                                <util:set id="username-logical-attributes">
+                                    <value>username</value>
+                                    <value>uid</value>
+                                    <value>username</value>
+                                    <value>user.login.id</value>
+                                    <value>schoolId</value>
+                                </util:set>
+
+                            Only include schoolId in this set if your schoolIds and usernames are
+                            identical (which is the default assumption in the OOTB uP DAO).
+
+                            2) A base bean defining the username case canonicalization mode (usually
+                            UPPER or LOWER), e.g.:
+
+                                <bean abstract="true" id="usernameCanonicalizing">
+                                    <property name="usernameCaseCanonicalizationMode" value="LOWER" />
+                                </bean>
+
+                            3) A base bean that inherits the canonicalization casing mode, specifies
+                            that this mode should be used when mapping usernames out of an attribute
+                            source, and specifies that queries on any username attribute should be
+                            case-insensitive, e.g.:
+
+                                <bean abstract="true" parent="usernameCanonicalizing" id="logicalAttributeCanonicalizing">
+                                    <property name="caseInsensitiveResultAttributesAsCollection" ref="username-logical-attributes" />
+                                    <property name="caseInsensitiveQueryAttributesAsCollection" ref="username-logical-attributes" />
+                                </bean>
+
+                        Then specify "logicalAttributeCanonicalizing" as the parent bean of:
+
+                          - uPortalAccountUserSource
+                          - The concrete SingleRowJdbcPersonAttributeDao nested inside uPortalJdbcUserSource
+                          - Your deployment-specific DAOs
+
+                        E.g.:
+
+                            <bean id="myAttributeSourceId"
+                                    parent="logicalAttributeCanonicalizing"
+                                    class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
+
+                                ...snip...
+
+                            </bean>
+
+                        If your up_user table already has non-canoncially cased usernames you'll also
+                        need to set this in the concrete SingleRowJdbcPersonAttributeDao nested inside
+                        uPortalJdbcUserSource:
+
+                            <property name="caseInsensitiveDataAttributesAsCollection">
+                                <set>
+                                    <value>USER_NAME</value>
+                                </set>
+                            </property>
+
+                        If you have other attributes which should be treated case-insensitively, create
+                        a merged set between the username-logical-attributes bean and a set containing
+                        those other attributes, e.g.:
+
+                            <bean id="case-insensitive-query-attributes" parent="username-logical-attributes"
+                                    class="org.springframework.beans.factory.config.SetFactoryBean">
+                                <property name="sourceSet">
+                                    <set merge="true">
+                                        <value>sn</value>
+                                        <value>lastName</value>
+                                    </set>
+                                </property>
+                            </bean>
+
+                        Then reference that bean instead of username-logical-attributes from
+                        logicalAttributeCanonicalizing for either or both of the
+                        caseInsensitiveResultAttributesAsCollection (for canonicalization on mapping out of
+                        the DAOs) and caseInsensitiveQueryAttributesAsCollection properties (for
+                        canonicalization on mapping into the DAOs via queries).
+
+                        Note that if your underlying data layer is case-sensitive and you're storing non-
+                        canonical values in it, you'll need to explicitly list out such *physical* attributes
+                        in your DAOs using the caseInsensitiveDataAttributesAsCollection property as
+                        shown above. Note that this typically has a negative performance impact unless your
+                        data layer supports (and is configured with) function-based indexes.
+
+                        Finally, note that for historical reasons, the uP-local attribute source treats all
+                        non-username attributes case-insensitively in *queries*, regardless of how
+                        caseInsensitiveQueryAttributesAsCollection is configured. But the uP-local attribute
+                        source *will* honor your caseInsensitiveResultAttributesAsCollection configuration
+                        if you also want to canonicalize those physical attributes when mapping them to
+                        logical attributes.
+
+                        For more background see https://issues.jasig.org/browse/SSP-1668.
+
+
+                        ## How Do I Control Which Attribute Searches Will Be Wildcarded? ##
+
+                        For consistent search wildcarding
                         and "simple" user search behavior across uP-local and other JDBC and/or LDAP
                         DAOs you may add, strongly consider adding the following configuration to each
                         of the latter:
@@ -217,7 +328,7 @@
                                 </set>
                             </property>
 
-                        YOUR_ATTRIBUTE_NAME from that example should be replaced with the physical
+                        YOUR_ROLE_ATTRIBUTE_NAME from that example should be replaced with the physical
                         LDAP attribute name, not the logical name by which that attribute is known
                         to the application.
 
@@ -229,6 +340,9 @@
 
                         Doing so is unecessary if your physical and logical username attributes have
                         the same name.
+
+                        For more background see https://issues.jasig.org/browse/SSP-1669.
+
                         -->
                     </list>
                 </property>
