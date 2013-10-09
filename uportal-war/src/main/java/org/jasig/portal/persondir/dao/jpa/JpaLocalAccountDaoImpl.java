@@ -67,10 +67,25 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
     private Locale usernameCaseCanonicalizationLocale = Locale.getDefault();
     @Value("${org.jasig.portal.persondir.ILocalAccountDao.usernameCaseCanonicalizationMode.inconsistentlyCasedPersistentUsernames:true}")
     private boolean inconsistentlyCasedPersistentUsernames = true;
+    @Value("${org.jasig.portal.persondir.ILocalAccountDao.wildcardedDataAttributeExclusions:}")
+    private String wildcardedDataAttributeExclusions;
+    private Set<String> wildcardedDataAttributeExclusionsSet;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.nameParameter = this.createParameterExpression(String.class, "name");
+
+        this.wildcardedDataAttributeExclusionsSet = new LinkedHashSet<String>();
+        if ( this.wildcardedDataAttributeExclusions != null && !("".equals(this.wildcardedDataAttributeExclusions.trim())) ) {
+            String[] exclusions = wildcardedDataAttributeExclusions.split(",");
+            for ( String exclusion : exclusions ) {
+                exclusion = exclusion.trim();
+                if ( "".equals(exclusion) ) {
+                    continue;
+                }
+                this.wildcardedDataAttributeExclusionsSet.add(exclusion.trim());
+            }
+        }
         
         this.findAllAccountsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<LocalAccountPersonImpl>>() {
             @Override
@@ -221,10 +236,13 @@ public class JpaLocalAccountDaoImpl extends BasePortalJpaDao implements ILocalAc
                 final ParameterExpression<String> valueParam = this.createParameterExpression(String.class, "attrValue" + paramCount);
                 
                 params.put(nameParam, entry.getKey());
+
                 if ( value.contains(IPersonAttributeDao.WILDCARD) ) {
                     params.put(valueParam, value.replaceAll(Pattern.quote(IPersonAttributeDao.WILDCARD), "%").toLowerCase());
-                } else {
+                } else if ( this.wildcardedDataAttributeExclusionsSet == null || !(this.wildcardedDataAttributeExclusionsSet.contains(entry.getKey())) ) {
                     params.put(valueParam, "%" + value.toLowerCase() + "%");
+                } else {
+                    params.put(valueParam, value.toLowerCase());
                 }
                 
                 //Build the and(eq, like) predicate and add it to the list of predicates for the where clause
