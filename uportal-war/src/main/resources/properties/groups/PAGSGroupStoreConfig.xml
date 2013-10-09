@@ -79,6 +79,7 @@
       <member-key>DATA_ENGLISH_SECOND_LANGUAGE</member-key>
       <member-key>DATA_FAST_FORWARD</member-key>
       <member-key>DATA_INDIVIDUALIZED_LEARNING_PLAN</member-key>
+      <member-key>DATA_CL_01</member-key>
     </members>
   </group>
 
@@ -360,6 +361,306 @@
     </selection-test>
   </group>
 
+  <group>
+    <group-key>DATA_CL_01</group-key>
+    <group-name>(has) DATA_CL_01</group-name>
+    <group-description>Generic confidentiality level 1.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_01</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_02</group-key>
+    <group-name>(has) DATA_CL_02</group-name>
+    <group-description>Generic confidentiality level 2.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_02</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_03</group-key>
+    <group-name>(has) DATA_CL_03</group-name>
+    <group-description>Generic confidentiality level 3.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_03</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_04</group-key>
+    <group-name>(has) DATA_CL_04</group-name>
+    <group-description>Generic confidentiality level 4.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_04</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_05</group-key>
+    <group-name>(has) DATA_CL_05</group-name>
+    <group-description>Generic confidentiality level 1.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_05</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+   <group>
+    <group-key>DATA_CL_06</group-key>
+    <group-name>(has) DATA_CL_06</group-name>
+    <group-description>Generic confidentiality level 6.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_01</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_07</group-key>
+    <group-name>(has) DATA_CL_07</group-name>
+    <group-description>Generic confidentiality level 7.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_07</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_08</group-key>
+    <group-name>(has) DATA_CL_08</group-name>
+    <group-description>Generic confidentiality level 8.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_08</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_09</group-key>
+    <group-name>(has) DATA_CL_09</group-name>
+    <group-description>Generic confidentiality level 9.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_09</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_10</group-key>
+    <group-name>(has) DATA_CL_10</group-name>
+    <group-description>Generic confidentiality level 10.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_10</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_11</group-key>
+    <group-name>(has) DATA_CL_11</group-name>
+    <group-description>Generic confidentiality level 11.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_11</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_12</group-key>
+    <group-name>(has) DATA_CL_12</group-name>
+    <group-description>Generic confidentiality level 12.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_12</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_13</group-key>
+    <group-name>(has) DATA_CL_13</group-name>
+    <group-description>Generic confidentiality level 12.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_13</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_14</group-key>
+    <group-name>(has) DATA_CL_14</group-name>
+    <group-description>Generic confidentiality level 14.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_14</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_15</group-key>
+    <group-name>(has) DATA_CL_15</group-name>
+    <group-description>Generic confidentiality level 15.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_15</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_16</group-key>
+    <group-name>(has) DATA_CL_16</group-name>
+    <group-description>Generic confidentiality level 16.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_16</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>
+  
+  <group>
+    <group-key>DATA_CL_17</group-key>
+    <group-name>(has) DATA_CL_17</group-name>
+    <group-description>Generic confidentiality level 17.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_17</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group>    
+  
+  <group>
+    <group-key>DATA_CL_18</group-key>
+    <group-name>(has) DATA_CL_18</group-name>
+    <group-description>Generic confidentiality level 18.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_18</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group> 
+  
+  <group>
+    <group-key>DATA_CL_19</group-key>
+    <group-name>(has) DATA_CL_19</group-name>
+    <group-description>Generic confidentiality level 19.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_19</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group> 
+  
+  <group>
+    <group-key>DATA_CL_20</group-key>
+    <group-name>(has) DATA_CL_20</group-name>
+    <group-description>Generic confidentiality level 20.</group-description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>DATA_CL_20</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>TRUE</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </group> 
+  
   <!--==================== Other Examples ====================-->
 
 

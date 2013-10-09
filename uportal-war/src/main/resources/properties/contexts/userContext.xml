@@ -390,6 +390,500 @@
             <constructor-arg value="FALSE"/>
         </bean>
 
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_01"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_01"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_02"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_02"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_03"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_03"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_04"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_04"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_05"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_05"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>      
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_06"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_06"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_07"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_07"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_08"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_08"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_09"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_09"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_10"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_10"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_11"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_11"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_12"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_12"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_13"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_13"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_14"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_14"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_15"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_15"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_16"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_16"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_17"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_17"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_18"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_18"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_19"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_19"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean> 
+        
+        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+            factory-method="createSingleChoicePreference">
+            <!-- String name -->
+            <constructor-arg value="DATA_CL_20"/>
+            <!-- String label (optionally a key for messages.properties) -->
+            <constructor-arg value="DATA_CL_20"/>
+            <!-- SingleChoiceDisplay displayType -->
+            <constructor-arg value="SELECT"/>
+			<!-- List<Option> options -->
+            <constructor-arg>
+            	<list>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="FALSE" />
+            			<property name="value" value="FALSE" />
+            		</bean>
+            		<bean class="org.jasig.portal.portletpublishing.xml.Option">
+            			<property name="label" value="TRUE" />
+            			<property name="value" value="TRUE" />
+            		</bean>
+            	</list>
+            </constructor-arg>
+            <!-- String defaultValue -->
+            <constructor-arg value="FALSE"/>
+        </bean>                                                                                                                                                  
     </util:list>
     
     <!-- Spring mail-sending service -->
