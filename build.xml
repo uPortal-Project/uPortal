@@ -119,6 +119,7 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
+	<property name="uportal-db.dir" value="${basedir}/uportal-db" />
     <property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
@@ -1316,6 +1317,33 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </uportal-parent-macro>
         </sequential>
     </macrodef>
+	
+    <!--
+     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
+     | dependencies. The task also ensures the uportal-db artifact exists and is up to date.
+     |
+     | The following are available in the search-api-sub-tasks element:
+     | properties from the uportal-parent-macro macrodef
+     | pom object   - uportal-db.pom                       - The Maven POM object for the uportal-db pom
+     | property     - uportal-db.artifact                  - The full path to the uportal-db WAR
+     | path         - uportal-db.classpath                 - The uportal-db classpath not including the uportal-db WAR
+     +-->
+    <macrodef name="uportal-db-macro">
+        <element name="uportal-db-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <uportal-parent-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+
+                <maven-artifact-macro project-name="uportal-db-api" project-path="${uportal-db.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <!--
+                     | Execute the uportal-db-sub-tasks
+                     +-->
+                    <uportal-db-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-parent-macro>
+        </sequential>
+    </macrodef>
 
     <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
@@ -1331,6 +1359,28 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
+            <uportal-db-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+
+                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
+                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
+                    </artifact:dependencies>
+
+                    <!--
+                     | Include the uportal-war-classes JAR in the final classpath
+                     +-->
+                    <path id="uportal-war-full.classpath">
+                        <path refid="uportal-war-classes.classpath" />
+                        <path refid="uportal-war.classpath" />
+                    </path>
+
+                    <!--
+                     | Execute the war-sub-tasks
+                     +-->
+                    <war-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-db-macro>
             <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
 
