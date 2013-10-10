@@ -14,14 +14,13 @@
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
     
-    <dependencies>  
-        <!-- ***** Portal JDBC Driver *****
-         | The groupId, artifactId and version are configured in the root POM.
-         +-->
+    <dependencies>
+        <!-- ***** Portal JDBC Driver ***** -->
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
         </dependency>
         
         <dependency>

@@ -22,14 +22,13 @@
             <version>${AnnouncementsPortlet.version}</version>
             <type>war</type>
         </dependency>
-        
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -100,9 +99,10 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>${jdbc.groupId}</groupId>
-                        <artifactId>${jdbc.artifactId}</artifactId>
-                        <version>${jdbc.version}</version>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uportal-db</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
                         <scope>compile</scope>
                     </dependency>
                     <dependency>
