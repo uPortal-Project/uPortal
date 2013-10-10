@@ -39,9 +39,11 @@
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>compile</scope>
         </dependency>
         
         <dependency>
@@ -146,12 +148,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>        
-        
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <scope>test</scope>
-        </dependency>
                     
     </dependencies>
 

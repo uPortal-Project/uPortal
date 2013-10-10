@@ -88,11 +88,6 @@
         <!-- The final name of the uPortal web-application -->
         <uportal.docbase>uPortal</uportal.docbase>
         <project-site-path>/uportal/${project.version}</project-site-path>
-        
-        <!-- The JDBC Driver used by uPortal -->
-        <jdbc.groupId>org.hsqldb</jdbc.groupId>
-        <jdbc.artifactId>hsqldb</jdbc.artifactId>
-        <jdbc.version>${hsqldb.version}</jdbc.version>
 
         <!--
          | Environment name and filters file for environment-specific build
@@ -220,6 +215,7 @@
     </properties>
 
     <modules>
+        <module>uportal-db</module>
         <module>uportal-war</module>
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>

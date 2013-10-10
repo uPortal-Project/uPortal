@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>uportal-db</artifactId>
+    <packaging>pom</packaging>
+
+    <name>uPortal DB</name>
+    <description>
+    The goal of this module is to be able to deploy all the db driver jars to all environments
+    instead of needing to change parent pom properties and rebuilding for each environment.
+    The same effect used to be accomplished by manually updating all related poms with hardcoded
+    dependencies, this module allows for just one place to be updated and the change propogates to all the
+    packaged modules/portlets.
+    </description>
+
+    <properties>
+        <hsqldb.version>2.2.9</hsqldb.version>
+<!--
+        <postgres.version>8.3-603.jdbc3</postgres.version>
+        <db2.version>version</db2.version>
+        <mssql.version>4.0</mssql.version>
+        <mysql.version>5.1.25</mysql.version>
+        <oracle.version>11.2.0.3</oracle.version>
+        <sybase.version>version</sybase.version>
+-->
+    </properties>
+
+    <dependencies>
+<!-- Add any db drivers that are applicable to any of your environments -->
+	    <dependency>
+	        <groupId>org.hsqldb</groupId>
+	        <artifactId>hsqldb</artifactId>
+	        <version>${hsqldb.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+<!-- The following db drivers should be uncommented based on all deployed to environments' db needs
+ex. Dev work is done with hsql but the test environment and prod are using postgres, uncomment the postgres
+driver dependency with hsql to include them with the other deployed driver jars -->
+	    <!--
+	    <dependency>
+            <groupId>postgresql</groupId>
+	        <artifactId>postgresql</artifactId>
+	        <version>${postgres.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>com.ibm.db2</groupId>
+	        <artifactId>db2-jdbc</artifactId>
+	        <version>${db2.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${mssql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6_g</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybase</groupId>
+            <artifactId>sybase-jconnect</artifactId>
+            <version>${sybase.version}</version>
+        </dependency>
+	    -->
+    </dependencies>
+</project>
