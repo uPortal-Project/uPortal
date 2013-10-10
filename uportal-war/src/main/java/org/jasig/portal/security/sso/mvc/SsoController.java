@@ -56,7 +56,9 @@ public final class SsoController {
 
     private static final String USERNAME_PARAMETER = "username";
     private static final String FORMATTED_COURSE_PARAMETER = "formattedCourse";
+    private static final String SECTION_CODE_PARAMETER = "sectionCode";
     private static final String STUDENT_SCHOOL_ID_PARAMETER = "studentSchoolId";
+    private static final String STUDENT_USER_NAME_PARAMETER = "studentUserName";
     private static final String TOKEN_PARAMETER = "token";
     private static final String TIMESTAMP = "timeStamp";
     private static final String VIEW = "view";
@@ -67,6 +69,8 @@ public final class SsoController {
     private static final Object ACTION_VALUE = "enterAlert";
     private static final Object SCHOOL_ID_KEY = "pP_schoolId";
     private static final Object FORMATTED_COURSE_ID_KEY = "pP_formattedCourse";
+    private static final Object STUDENT_USER_NAME_KEY = "pP_studentUserName";
+    private static final Object SECTION_CODE_KEY = "pP_sectionCode";
     private static final String EA_VIEW = "ea.new";
 
     // For building the loginUrl
@@ -141,9 +145,15 @@ public final class SsoController {
             final StringBuilder redirect = new StringBuilder();
             if(null != inputs.getView() && EA_VIEW.equals(inputs.getView())){
                 redirect.append(req.getContextPath()).append(EA_PORTLET_PATH)
-                .append("?").append(ACTION_KEY).append("=").append(ACTION_VALUE)
-                .append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"))
-                .append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
+                .append("?").append(ACTION_KEY).append("=").append(ACTION_VALUE);
+                if(inputs.hasStudentSchoolId())
+                	redirect.append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"));
+                if(inputs.hasFormattedCourse())
+                	redirect.append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
+                if(inputs.hasStudentUserName())
+                	redirect.append("&").append(STUDENT_USER_NAME_KEY).append("=").append(URLEncoder.encode(inputs.getStudentUserName(), "UTF-8"));
+                if(inputs.hasSectionCode())
+                	redirect.append("&").append(SECTION_CODE_KEY).append("=").append(URLEncoder.encode(inputs.getSectionCode(), "UTF-8"));
             }else{
                 redirect.append(req.getContextPath());
             }
@@ -224,7 +234,9 @@ public final class SsoController {
 
         private final String username;
         private final String formattedCourse;
+        private final String sectionCode;
         private final String studentSchoolId;
+        private final String studentUserName;
         private final String token;
         private final String timeStamp;
         private final String view;
@@ -233,18 +245,27 @@ public final class SsoController {
 
             final String username = req.getParameter(USERNAME_PARAMETER);
             final String formattedCourse = req.getParameter(FORMATTED_COURSE_PARAMETER);
+            final String sectionCode = req.getParameter(SECTION_CODE_PARAMETER);
             final String studentSchoolId = req.getParameter(STUDENT_SCHOOL_ID_PARAMETER);
+            final String studentUserName = req.getParameter(USER_NAME_ID_PARAMETER);
             final String token = req.getParameter(TOKEN_PARAMETER);
             final String timeStamp = req.getParameter(TIMESTAMP);
             final String view = req.getParameter(VIEW);
 
-            return new Inputs(username, formattedCourse, studentSchoolId,
+            return new Inputs(username, 
+            		formattedCourse, 
+            		sectionCode,
+            		studentSchoolId,
+            		studentUserName,
                     token, timeStamp, view, checkTimeStampRange);
 
         }
 
-        private Inputs(final String username, final String formattedCourse,
-                final String studentSchoolId, final String token, final String timeStamp, 
+        private Inputs(final String username, final String formattedCourse, 
+        		final String sectionCode,
+                final String studentSchoolId,
+                final String studentUserName,
+                final String token, final String timeStamp, 
                 final String view, boolean checkTimeStampRange) {
 
             Assert.hasText(username, "Required parameter 'username' is missing");
@@ -259,13 +280,17 @@ public final class SsoController {
             this.view = view;
             //Check the incoming EA params if ea.new is indicated
             if(null != this.view && this.view.equals(EA_VIEW)){
-                Assert.hasText(formattedCourse, "Required parameter 'formattedCourse' is missing");
-                Assert.hasText(studentSchoolId, "Required parameter 'studentSchoolId' is missing");
+                Assert.hasText(formattedCourse || sectionCode, "Required parameter 'formattedCourse' is missing");
+                Assert.hasText(studentSchoolId || studentUserName, "Required parameter 'studentSchoolId' is missing");
                 this.formattedCourse = formattedCourse;
                 this.studentSchoolId = studentSchoolId;
+                this.sectionCode = sectionCode;
+                this.studentUserName = studentUserName;
             }else{
                 this.formattedCourse = null;
                 this.studentSchoolId = null;
+                this.sectionCode = null;
+                this.studentUserName = null;
             }
         }
 
@@ -279,6 +304,31 @@ public final class SsoController {
 
         public String getStudentSchoolId() {
             return studentSchoolId;
+        }
+        
+        public String getSectionCode() {
+            return sectionCode;
+        }
+
+        public String getStudentUserName() {
+            return studentUserName;
+        }
+        
+
+        public Boolean hasFormattedCourse() {
+            return StringUtils.isNotBlank(formattedCourse);
+        }
+
+        public Boolean hasStudentSchoolId() {
+            return StringUtils.isNotBlank(studentSchoolId);
+        }
+        
+        public Boolean hasSectionCode() {
+            return StringUtils.isNotBlank(sectionCode);
+        }
+
+        public String hasStudentUserName() {
+            return StringUtils.isNotBlank(studentUserName);
         }
 
         public String getToken() {
