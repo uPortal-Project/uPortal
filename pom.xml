@@ -215,6 +215,7 @@
     </properties>
 
     <modules>
+        <module>uportal-db</module>
         <module>uportal-war</module>
         <module>uportal-ear</module>
         <module>uportal-portlets-overlay</module>

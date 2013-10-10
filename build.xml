@@ -1361,25 +1361,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <sequential>
             <uportal-db-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
-                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
-                    </artifact:dependencies>
-
-                    <!--
-                     | Include the uportal-war-classes JAR in the final classpath
-                     +-->
-                    <path id="uportal-war-full.classpath">
-                        <path refid="uportal-war-classes.classpath" />
-                        <path refid="uportal-war.classpath" />
-                    </path>
-
-                    <!--
-                     | Execute the war-sub-tasks
-                     +-->
-                    <war-sub-tasks />
-                </maven-artifact-macro>
             </uportal-db-macro>
             <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />

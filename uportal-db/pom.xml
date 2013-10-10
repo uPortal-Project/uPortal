@@ -24,39 +24,15 @@
 
     <properties>
         <hsqldb.version>2.2.9</hsqldb.version>
-<!--    <postgre.version>8.3-603.jdbc3</postgre.version> -->
+<!--
+        <postgres.version>8.3-603.jdbc3</postgres.version>
+        <db2.version>version</db2.version>
+        <mssql.version>4.0</mssql.version>
+        <mysql.version>5.1.25</mysql.version>
+        <oracle.version>11.2.0.3</oracle.version>
+        <sybase.version>version</sybase.version>
+-->
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-<!-- Add any db drivers that are applicable to any of your environments -->
-	        <dependency>
-	            <groupId>org.hsqldb</groupId>
-	            <artifactId>hsqldb</artifactId>
-	            <version>${hsqldb.version}</version>
-	            <scope>compile</scope>
-	        </dependency> 
-<!-- The following db drivers should be uncommented based on all deployed to environments' db needs
-ex. Dev work is done with hsql but the test environment and prod are using postgres, uncomment the postgres
-driver dependency with hsql to include them with the other deployed driver jars -->
-	        <!--
-	        <dependency>
-	            <groupId>postgresql</groupId>
-	            <artifactId>postgresql</artifactId>
-	            <version>${postgre.version}</version>
-	            <scope>compile</scope>
-	        </dependency>
-	        <dependency>
-	            <groupId>another db group id</groupId>
-	            <artifactId>another db artifact id</artifactId>
-	            <version>another db version</version>
-	            <scope>compile</scope>
-	        </dependency>
-	        ...
-	        ...
-	        -->
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 <!-- Add any db drivers that are applicable to any of your environments -->
@@ -71,19 +47,37 @@ ex. Dev work is done with hsql but the test environment and prod are using postg
 driver dependency with hsql to include them with the other deployed driver jars -->
 	    <!--
 	    <dependency>
-	        <groupId>postgresql</groupId>
+            <groupId>postgresql</groupId>
 	        <artifactId>postgresql</artifactId>
-	        <version>${postgre.version}</version>
+	        <version>${postgres.version}</version>
 	        <scope>compile</scope>
 	    </dependency>
 	    <dependency>
-	        <groupId>another db group id</groupId>
-	        <artifactId>another db artifact id</artifactId>
-	        <version>another db version</version>
+	        <groupId>com.ibm.db2</groupId>
+	        <artifactId>db2-jdbc</artifactId>
+	        <version>${db2.version}</version>
 	        <scope>compile</scope>
 	    </dependency>
-	    ...
-	    ...
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${mssql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6_g</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybase</groupId>
+            <artifactId>sybase-jconnect</artifactId>
+            <version>${sybase.version}</version>
+        </dependency>
 	    -->
     </dependencies>
 </project>
