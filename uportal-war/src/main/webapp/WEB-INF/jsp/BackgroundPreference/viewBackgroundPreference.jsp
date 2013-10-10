@@ -34,7 +34,8 @@
     <c:if test="${backgroundImage ne null}">
     ${backgroundContainerSelector}, html.um-dashboard {
         background-image: url("${backgroundImage}");
-        background-size: cover;
+        background-size: 100%;
+		background-attachment: fixed;
     }
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
