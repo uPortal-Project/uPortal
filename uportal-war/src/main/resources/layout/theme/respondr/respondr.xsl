@@ -196,6 +196,13 @@
     <xsl:otherwise>false</xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
+<xsl:param name="USE_AJAX" select="'true'"/>
+<xsl:param name="JS_LIBRARY_SKIN">
+    <xsl:choose>
+      <xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+</xsl:param>
 
 <!-- ****** PORTLET SETTINGS ****** -->
 <!--
@@ -244,6 +251,12 @@
     <!-- <link href="/uPortal/media/skins/respondr/uPortal4/css/temp.css" rel="stylesheet" type="text/css" /> -->
     <!-- <link href="/uPortal/media/skins/respondr/uPortal4/css/temp.css" rel="stylesheet" type="text/css" /> -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet" />
+</xsl:template>
+
+
+<xsl:template name="page.overrides">
+    <!-- <link href="/uPortal/media/skins/respondr/uPortal4/css/temp.css" rel="stylesheet" type="text/css" /> -->
+    <link href="/uPortal/media/skins/respondr/uPortal4/css/fluid_stopgap.css" rel="stylesheet" type="text/css" />
 </xsl:template>
 
 
@@ -429,7 +442,7 @@
  | Template contents can be any valid XSL or XHTML.
  -->
 <xsl:template match="/">
-    <html lang="{$USER_LANG}">
+    <html lang="{$USER_LANG}" class="respondr">
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
@@ -442,8 +455,10 @@
             <xsl:call-template name="page.js" />
 
             <xsl:call-template name="page.temp" />
+
+            <xsl:call-template name="page.overrides" />
         </head>
-        <body class="up dashboard portal">
+        <body class="up dashboard portal fl-theme-mist">
 
             <div id="wrapper">
                 <header class="portal-header" role="banner">
