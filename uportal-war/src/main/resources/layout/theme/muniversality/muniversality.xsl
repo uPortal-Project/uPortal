@@ -302,7 +302,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html lang="{$USER_LANG}">
+    <html lang="{$USER_LANG}" class="muniversality>
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
