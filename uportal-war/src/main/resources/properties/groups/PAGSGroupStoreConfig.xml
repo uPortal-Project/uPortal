@@ -443,7 +443,7 @@
     <selection-test>
       <test-group>
         <test>
-          <attribute-name>DATA_CL_01</attribute-name>
+          <attribute-name>DATA_CL_06</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>TRUE</test-value>
         </test>
