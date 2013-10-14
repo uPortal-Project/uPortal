@@ -23,9 +23,9 @@
   <owner>SSP</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal> 
-    <group>SSP_DEVELOPER</group> 
+    <group>SSP_ADMINISTRATOR</group> 
   </principal>
-  <activity>DATA_ENGLISH_SECOND_LANGAGE</activity>
+  <activity>DATA_ENGLISH_SECOND_LANGUAGE</activity>
   <target permission-type="GRANT"> 
     <literal>ALL</literal> 
   </target>
