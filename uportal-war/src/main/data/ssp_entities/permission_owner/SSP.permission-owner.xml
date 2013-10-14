@@ -288,9 +288,9 @@
     <targetProvider>portalSystemTargetProvider</targetProvider> 
   </activity>
   <activity> 
-    <name>DATA_ENGLISH_SECOND_LANGAGE</name>  
-    <fname>DATA_ENGLISH_SECOND_LANGAGE</fname>  
-    <desc>DATA_ENGLISH_SECOND_LANGAGE</desc>  
+    <name>DATA_ENGLISH_SECOND_LANGUAGE</name>  
+    <fname>DATA_ENGLISH_SECOND_LANGUAGE</fname>  
+    <desc>DATA_ENGLISH_SECOND_LANGUAGE</desc>  
     <targetProvider>portalSystemTargetProvider</targetProvider> 
   </activity>
   <activity> 
