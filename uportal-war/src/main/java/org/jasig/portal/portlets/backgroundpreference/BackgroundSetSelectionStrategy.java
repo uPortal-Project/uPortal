@@ -32,6 +32,8 @@ public interface BackgroundSetSelectionStrategy {
 
     String[] getImageSet(PortletRequest req);
 
+    String[] getImageThumbnailSet(PortletRequest req);
+
     String getSelectedImage(PortletRequest req);
 
     String getBackgroundContainerSelector(PortletRequest req);

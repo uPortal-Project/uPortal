@@ -61,6 +61,10 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
             return prefix + "BackgroundImages";
         }
 
+        public String getImageThumbnailSetPreferenceName() {
+            return prefix + "BackgroundThumbnailImages";
+        }
+
         public String getSelectedBackgroundImagePreferenceName() {
             return prefix + "SelectedBackgroundImage";
         }
@@ -77,6 +81,13 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
         PreferenceNames names = PreferenceNames.getInstance(req);
         PortletPreferences prefs = req.getPreferences();
         return prefs.getValues(names.getImageSetPreferenceName(), null);
+    }
+
+    @Override
+    public String[] getImageThumbnailSet(PortletRequest req) {
+        PreferenceNames names = PreferenceNames.getInstance(req);
+        PortletPreferences prefs = req.getPreferences();
+        return prefs.getValues(names.getImageThumbnailSetPreferenceName(), null);
     }
 
     @Override
