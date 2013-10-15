@@ -134,7 +134,7 @@
         <a href="#">
             <span class="caption">None</span>
         </a>
-        <c:forEach var="image" items="${images}" varStatus="status">
+        <c:forEach var="image" items="${thumbnailImages}" varStatus="status">
             <a href="#">
                 <img src="${image}" />
                 <span class="caption">Background ${status.index + 1}</span>
