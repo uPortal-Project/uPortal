@@ -36,6 +36,7 @@ import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.security.sso.ISsoTicket;
 import org.jasig.portal.security.sso.ISsoTicketDao;
@@ -59,6 +60,7 @@ public final class SsoController {
     private static final String SECTION_CODE_PARAMETER = "sectionCode";
     private static final String STUDENT_SCHOOL_ID_PARAMETER = "studentSchoolId";
     private static final String STUDENT_USER_NAME_PARAMETER = "studentUserName";
+    private static final String TERM_CODE_PARAMETER = "termCode";
     private static final String TOKEN_PARAMETER = "token";
     private static final String TIMESTAMP = "timeStamp";
     private static final String VIEW = "view";
@@ -70,6 +72,7 @@ public final class SsoController {
     private static final Object SCHOOL_ID_KEY = "pP_schoolId";
     private static final Object FORMATTED_COURSE_ID_KEY = "pP_formattedCourse";
     private static final Object STUDENT_USER_NAME_KEY = "pP_studentUserName";
+    private static final Object TERM_CODE_KEY = "pP_termCode";
     private static final Object SECTION_CODE_KEY = "pP_sectionCode";
     private static final String EA_VIEW = "ea.new";
 
@@ -154,6 +157,8 @@ public final class SsoController {
                 	redirect.append("&").append(STUDENT_USER_NAME_KEY).append("=").append(URLEncoder.encode(inputs.getStudentUserName(), "UTF-8"));
                 if(inputs.hasSectionCode())
                 	redirect.append("&").append(SECTION_CODE_KEY).append("=").append(URLEncoder.encode(inputs.getSectionCode(), "UTF-8"));
+                if(inputs.hasTermCode())
+                	redirect.append("&").append(TERM_CODE_KEY).append("=").append(URLEncoder.encode(inputs.getTermCode(), "UTF-8"));
             }else{
                 redirect.append(req.getContextPath());
             }
@@ -239,15 +244,19 @@ public final class SsoController {
         private final String studentUserName;
         private final String token;
         private final String timeStamp;
+        private final String termCode;
         private final String view;
 
         public static Inputs parse(HttpServletRequest req, boolean checkTimeStampRange) {
 
             final String username = req.getParameter(USERNAME_PARAMETER);
+            
+            
             final String formattedCourse = req.getParameter(FORMATTED_COURSE_PARAMETER);
             final String sectionCode = req.getParameter(SECTION_CODE_PARAMETER);
             final String studentSchoolId = req.getParameter(STUDENT_SCHOOL_ID_PARAMETER);
-            final String studentUserName = req.getParameter(USER_NAME_ID_PARAMETER);
+            final String studentUserName = req.getParameter(STUDENT_USER_NAME_PARAMETER);
+            final String termCode = req.getParameter(TERM_CODE_PARAMETER);
             final String token = req.getParameter(TOKEN_PARAMETER);
             final String timeStamp = req.getParameter(TIMESTAMP);
             final String view = req.getParameter(VIEW);
@@ -257,7 +266,7 @@ public final class SsoController {
             		sectionCode,
             		studentSchoolId,
             		studentUserName,
-                    token, timeStamp, view, checkTimeStampRange);
+                    token, timeStamp, termCode, view, checkTimeStampRange);
 
         }
 
@@ -266,6 +275,7 @@ public final class SsoController {
                 final String studentSchoolId,
                 final String studentUserName,
                 final String token, final String timeStamp, 
+                final String termCode,
                 final String view, boolean checkTimeStampRange) {
 
             Assert.hasText(username, "Required parameter 'username' is missing");
@@ -277,15 +287,20 @@ public final class SsoController {
             this.username = username;
             this.token = token;
             this.timeStamp = timeStamp;
+            this.termCode = termCode;
             this.view = view;
             //Check the incoming EA params if ea.new is indicated
             if(null != this.view && this.view.equals(EA_VIEW)){
-                Assert.hasText(formattedCourse || sectionCode, "Required parameter 'formattedCourse' is missing");
-                Assert.hasText(studentSchoolId || studentUserName, "Required parameter 'studentSchoolId' is missing");
                 this.formattedCourse = formattedCourse;
                 this.studentSchoolId = studentSchoolId;
                 this.sectionCode = sectionCode;
                 this.studentUserName = studentUserName;
+                Boolean hasCourse = this.hasFormattedCourse();
+                Boolean hasSec = this.hasSectionCode();
+                Boolean hasCourseInformation = hasCourse || hasSec;
+                Boolean hasStudentInformation = hasStudentSchoolId() || hasStudentUserName();
+                Assert.isTrue(hasCourseInformation, "Required parameter 'formattedCourse' is missing");
+                Assert.isTrue(hasStudentInformation, "Required parameter 'studentSchoolId' is missing");
             }else{
                 this.formattedCourse = null;
                 this.studentSchoolId = null;
@@ -327,9 +342,18 @@ public final class SsoController {
             return StringUtils.isNotBlank(sectionCode);
         }
 
-        public String hasStudentUserName() {
+        public Boolean hasStudentUserName() {
             return StringUtils.isNotBlank(studentUserName);
         }
+        
+        public Boolean hasTermCode() {
+            return StringUtils.isNotBlank(termCode);
+        }
+        
+        public String getTermCode() {
+            return termCode;
+        }
+        
 
         public String getToken() {
             return token;
