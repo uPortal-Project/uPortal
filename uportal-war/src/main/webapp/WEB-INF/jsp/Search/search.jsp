@@ -102,17 +102,22 @@
                     </div>
                 </div>
             </div>
-
-<script type="text/javascript">
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
+<script type="text/javascript"><rs:compressJs>
 up.jQuery(function () {
-  var $ = up.jQuery;
-  var fluid = up.fluid;
+    var ${n} = ${n} || {};
+    ${n}.jQuery = jQuery.noConflict(true);
+    ${n}.fluid = fluid;
+    fluid = null;
+    fluid_1_4 = null;
   
-  up.jQuery(document).ready(function () {
-    up.jQuery("#${n}searchResults").tabs();
+    ${n}.jQuery(document).ready(function () {
+    ${n}.jQuery("#${n}searchResults").tabs();
   });
 });
-</script>
+</rs:compressJs></script>
         </c:if>
 
       </div>  
