@@ -35,7 +35,7 @@
     ${backgroundContainerSelector}, html.um-dashboard {
         background-image: url("${backgroundImage}");
         background-size: 100%;
-		background-attachment: fixed;
+        background-attachment: fixed;
     }
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
