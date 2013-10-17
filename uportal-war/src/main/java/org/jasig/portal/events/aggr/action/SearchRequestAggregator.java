@@ -72,7 +72,7 @@ public class SearchRequestAggregator extends BasePortalEventAggregator<PortletAc
                 {
                     if((params.get(TARGET_PARAM) != null) && !params.get(TARGET_PARAM).isEmpty())
                     {
-                        if(!StringUtils.isEmpty(params.get(TARGET_PARAM).get(0)))
+                        if(!StringUtils.isBlank(params.get(TARGET_PARAM).get(0)))
                         {
                             return true;
                         }
