@@ -34,7 +34,8 @@
     <c:if test="${backgroundImage ne null}">
     ${backgroundContainerSelector}, html.um-dashboard {
         background-image: url("${backgroundImage}");
-        background-size: cover;
+        background-size: 100%;
+        background-attachment: fixed;
     }
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
@@ -160,14 +161,15 @@
         var changeBackground = function() {
             if (elements.background) {
                 $('body').css('background-color','transparent');
-                elements.coreElement.css({'background-image': 'url('+elements.background+')', 'background-size': 'cover'});
+                elements.coreElement.css({'background-image': 'url('+elements.background+')', 'background-size': '100%', 'background-attachment': 'fixed'});
             } else {
-                elements.coreElement.css({'background-image': 'none', 'background-size': 'auto'});
+                elements.coreElement.css({'background-image': 'none', 'background-size': 'auto', 'background-attachment': 'scroll'});
             }
         };
 
         var setBackground = function(el) {
             elements.background = $(el).find('img').attr('src') || '';
+            elements.background = elements.background.replace("/thumbnails","");
             elements.form.find('.background-value').val(elements.background);
 
             changeBackground();
