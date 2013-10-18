@@ -30,7 +30,6 @@
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>backgroundPreference</ns2:portletName>
     </portlet-descriptor>
-    <category>Information</category>
     <group>Authenticated Users</group>
     <parameter>
         <name>alternate</name>
@@ -79,9 +78,21 @@
         <value>/uPortal/media/skins/universality/backgroundImages/nebula.jpg</value>
     </portlet-preference>
     <portlet-preference>
+        <name>defaultBackgroundThumbnailImages</name>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/galaxy.jpg</value>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/mountain.jpg</value>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/nebula.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
         <name>mobileBackgroundImages</name>
         <value>/uPortal/media/skins/muniversality/backgroundImages/galaxy.jpg</value>
         <value>/uPortal/media/skins/muniversality/backgroundImages/mountain.jpg</value>
         <value>/uPortal/media/skins/muniversality/backgroundImages/nebula.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>mobileBackgroundThumbnailImages</name>
+        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/galaxy.jpg</value>
+        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/mountain.jpg</value>
+        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/nebula.jpg</value>
     </portlet-preference>
 </portlet-definition>
