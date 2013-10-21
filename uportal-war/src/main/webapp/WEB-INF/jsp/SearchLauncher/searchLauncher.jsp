@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<h1 class="portal-logo search-launcher" style="text-align:right;float:right;vertical-align:middle;">
+<h1 class="search-launcher" style="text-align:right;float:right;vertical-align:middle;">
   <div id="webSearchContainer" class="fl-widget">
     <div class="fl-widget-inner">
       <div class="fl-widget-content">
