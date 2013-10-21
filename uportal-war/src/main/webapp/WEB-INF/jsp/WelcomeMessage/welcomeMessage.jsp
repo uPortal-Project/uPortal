@@ -5,9 +5,9 @@
 
 <c:choose>
   <c:when test="${userImpersonating} = 'true'">
-    <div id="portalWelcome"><span class="user-name">${idSwapped}&nbsp;${displayName}</span></div>
+    <span class="user-name">${idSwapped}&nbsp;${displayName}&nbsp;</span>
   </c:when>
   <c:otherwise>
-    <div id="portalWelcome"><span class="user-name">${signedIn}&nbsp;${displayName}</span></div>
+    <span class="user-name">${signedIn}&nbsp;${displayName}&nbsp;</span>
   </c:otherwise>
 </c:choose>

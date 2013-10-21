@@ -220,7 +220,7 @@ body {
 
         .menu-toggle {
             position: absolute;
-            top: 40px;
+            top: 20px;
             right: 20px;
             padding: 0.5rem 1rem;
             background: @color2;
@@ -498,6 +498,46 @@ body {
  * (Corresponds to the smallest breakpoint in Bootstrap)
  */
 
+
+@media only screen and (max-width: 769px) {
+
+    .portal-login {
+        margin-top: 13px;
+        margin-right: 100px;
+    }
+    
+    .portal-logout {
+        margin-top: 13px;
+        margin-right: 100px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .search-launcher {
+        margin-bottom: 5px;
+        margin-top: 0px;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .search-launcher input[type="text"] {
+        width: 100%;
+    }
+    
+    .form-search {
+        margin-bottom: 0px;
+        margin-right: 83px;
+    }
+
+    .portal-logo {
+        margin-top: 20px;
+        margin-right: 258px;
+        margin-bottom: 5px;
+    }
+}
+
 @media only screen and (min-width: 769px) {
 
 /*
@@ -538,6 +578,18 @@ body {
          .container {
              padding: 0;
          }
+         
+        .portal-user {
+            display: block;
+        }
+        
+        .search-launcher {
+            margin-top: 25px;
+            display: block;
+            text-align: right;
+            float: right;
+            vertical-align: middle;
+        }
      }
 
      .portal-global {
