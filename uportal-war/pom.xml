@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.0.13</version>
+        <version>4.0.14-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
