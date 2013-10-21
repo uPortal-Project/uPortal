@@ -67,9 +67,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   	<h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
-        <ul>
-          <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
-          <li><a class="button" href="${ popularPortletsUrl }" title="<spring:message code="popular.portlets"/>"><span><spring:message code="popular.portlets"/></span></a></li>
+        <ul class="btn-group">
+          <li class="btn"><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
+          <li class="btn"><a class="button" href="${ popularPortletsUrl }" title="<spring:message code="popular.portlets"/>"><span><spring:message code="popular.portlets"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right portlet-search-view">
@@ -133,7 +133,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
         <div style="clear:both"></div>
 
-        <table id="${n}categoriesTable1" summary="<spring:message code="registered.portlet.list"/>" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
+        <table id="${n}categoriesTable1" summary="<spring:message code="registered.portlet.list"/>" xmlns:rsf="http://ponder.org.uk" class="portlet-table table table-bordered table-hover" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
               <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="name"/></a></th>
