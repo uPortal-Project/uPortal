@@ -211,7 +211,9 @@
  -->
 <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
 <xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
-
+<xsl:param name="USE_ADD_TAB" select="'true'" /> <!-- Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
+<xsl:param name="TAB_CONTEXT">header</xsl:param><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
+<xsl:param name="subscriptionsSupported">true</xsl:param>
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE TITLE ========================================= -->
@@ -308,7 +310,9 @@
     <nav class="portal-nav">
         <div class="container">
             <a href="#" class="menu-toggle"><i class="icon-align-justify"></i> Menu</a>
-            <ul class="menu">
+            <div id="portalNavigation" role="main" aria-multiselectable="false" aria-readonly="false" aria-disabled="false" tabindex="0">
+            <div id="portalNavigationInner" class="header">
+            <ul class="menu fl-tabs flc-reorderer-column">
                 <xsl:for-each select="tab">
                     <li>
                         <xsl:if test="@activeTab='true'">
@@ -329,7 +333,16 @@
                         </a>
                     </li>
                 </xsl:for-each>
+                <xsl:if test="$USE_ADD_TAB='true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
+                    <li class="portal-navigation-add-item">
+                        <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/>
+                            <i class="icon-chevron-right"></i>
+                        </a>
+                    </li>
+                </xsl:if>
             </ul>
+            </div>
+            </div>
         </div>
     </nav>
 </xsl:template>
@@ -498,6 +511,50 @@
                 up.analytics.pageData = <page-analytics-data/>;
             </script>
         </body>
+      <script type="text/javascript">
+        up.jQuery(document).ready(function(){
+          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+              up.FragmentPermissionsManager(
+                "body",
+                {
+                  savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                  messages: {
+                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+                  }
+                }
+              );
+          </xsl:if>
+          up.LayoutPreferences(
+            "body",
+            {
+              tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
+              numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
+              portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
+              currentSkin: '<xsl:value-of select="$SKIN"/>',
+              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
+              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
+              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
+              messages: {
+                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
+                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
+                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
+                  column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
+                  columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
+                  fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
+                  narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
+                  even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
+                  wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
+                  narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
+                  searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
+                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
+                  persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+              }
+            }
+          );
+       });
+    </script>
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
