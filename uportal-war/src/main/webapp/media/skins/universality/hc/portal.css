@@ -1376,6 +1376,12 @@
 .up .up-portlet-wrapper .up-portlet-titlebar .return:hover .icon, .up .up-portlet-wrapper .up-portlet-titlebar .return:focus .icon {
   background-position: -0px -0px;
 }
+.up .up-portlet-wrapper .up-portlet-titlebar .print .icon {
+  background-position: -0px 0px;
+}
+.up .up-portlet-wrapper .up-portlet-titlebar .print:hover .icon, .up .up-portlet-wrapper .up-portlet-titlebar .print:focus .icon {
+  background-position: -0px -0px;
+}
 .up .up-portlet-wrapper .up-portlet-content-wrapper {
   margin: 0;
 }
@@ -1451,7 +1457,7 @@
   -webkit-border-radius: 0 0 10px 10px;
   border-radius: 0 0 10px 10px;
 }
-.up .up-portlet-wrapper.locked .up-portlet-titlebar h2 {
+.up .up-portlet-wrapper.locked .up-portlet-titlebar h2 a {
   padding-left: 5px;
   background: none;
 }

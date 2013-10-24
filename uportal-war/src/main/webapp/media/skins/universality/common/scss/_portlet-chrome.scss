@@ -145,8 +145,11 @@
 			.return {
 				@include portlet-control($portletControlIconSize, 9);
 			}
+			.print{
+				@include portlet-control($portletControlIconSize, 10);
+			}
 		}
-		
+
 		.up-portlet-content-wrapper {
 			margin: 0;
 		}	
@@ -174,7 +177,7 @@
 		@include portlet-chrome($portletLockedBackground,$portletLockedGradient1,$portletLockedGradient2,$portletLockedTitle,$portletLockedTitleShadow,$portletLockedTitleHover,$portletLockedBorder,$portletLockedContentBorder,$portletLockedContentBackground);
 		
 		@if($portletLockedTitleIcon != false) {
-			.up-portlet-titlebar h2 {
+			.up-portlet-titlebar h2 a {
 				padding-left: $portletControlIconSize + 5;
 				background: $portletLockedTitleIcon;
 			}
