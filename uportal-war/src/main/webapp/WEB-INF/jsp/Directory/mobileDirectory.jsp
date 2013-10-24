@@ -28,8 +28,8 @@
 <div id="${n}search">
 
     <div data-role="header" class="titlebar portlet-titlebar search-back-div" style="${ empty query ? 'display:none' : '' }">
-        <a data-role="button"  data-icon="back" data-inline="true" class="search-back-link" id="${n}gridViewLink" href="javascript:;">Back</a>
-        <h2 class="search-engine-name">Directory Search Results</h2>
+        <a data-role="button"  data-icon="back" data-inline="true" class="search-back-link" id="${n}gridViewLink" href="javascript:;"><spring:message code="back"/></a>
+        <h2 class="search-engine-name"><spring:message code="search.directory.searchresults"/></h2>
     </div>
 
     <div class="portlet">
@@ -40,7 +40,7 @@
             <form action="${ formUrl }" method="POST">
                 <input type="hidden" name="engine" value="${ engine }"/>
                 <input name="query" value="${ fn:escapeXml(query )}"/> 
-                <input data-inline="true" type="submit" value="Search"/>
+                <input data-inline="true" type="submit" value="<spring:message code="search.directory.submit"/>"/>
             </form>
         </div>
     </div>

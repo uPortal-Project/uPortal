@@ -42,7 +42,7 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
+            <input name="query" maxlength="200" value="${ fn:escapeXml(query)}"/> <input type="submit" value="<spring:message code="search.submit"/>"/>
         </form>
         
         <c:if test="${hitMaxQueries}">
