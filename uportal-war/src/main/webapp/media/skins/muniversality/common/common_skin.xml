@@ -38,8 +38,8 @@
 
   <css>jquerymobile.accordion.listview.css</css>
   
-  <js included="plain" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.js</js>
-  <js included="aggregated" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.min.js</js>
+  <js included="plain" resource="true">/rs/jquery/1.8.3/jquery-1.8.3.js</js>
+  <js included="aggregated" resource="true">/rs/jquery/1.8.3/jquery-1.8.3.min.js</js>
   
   <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
   <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
@@ -63,8 +63,8 @@
   
   <js>../common/javascript/up-mobile-config.js</js>
 
-  <js included="plain" resource="true">/rs/jquery-mobile/1.1.1/jquery.mobile-1.1.1.js</js>
-  <js included="aggregated" resource="true">/rs/jquery-mobile/1.1.1/jquery.mobile-1.1.1.min.js</js>
+  <js included="plain" resource="true">/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.js</js>
+  <js included="aggregated" resource="true">/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.min.js</js>
   
   <js import="true">../../common/common_skin.xml</js>
   
