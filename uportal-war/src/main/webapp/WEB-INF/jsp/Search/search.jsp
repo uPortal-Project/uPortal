@@ -44,7 +44,7 @@
 
         <form action="${ formUrl }" method="POST">
             <input id="${n}searchInput" class="searchInput" name="query" value="${ fn:escapeXml(query )}"/>
-            <input type="submit" value="Search"/>
+            <input type="submit" value="<spring:message code="search.submit"/>"/>
             <input class="autocompleteUrl" name="autocompleteUrl" type="hidden" value="${autocompleteUrl}"/>
         </form>
         
