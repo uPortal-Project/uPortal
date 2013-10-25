@@ -335,8 +335,8 @@
                 </xsl:for-each>
                 <xsl:if test="$USE_ADD_TAB='true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
                     <li class="portal-navigation-add-item">
-                        <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add"><xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/>
-                            <i class="icon-chevron-right"></i>
+                        <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
+                            <i class="icon-plus-sign"></i>
                         </a>
                     </li>
                 </xsl:if>
