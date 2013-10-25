@@ -26,6 +26,7 @@
         <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
         <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
         <attribute mode="deepMemberOf" name="SSP_SUPPORT_STAFF"/>
+<attribute mode="deepMemberOf" name="SSP_REPORTS"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
