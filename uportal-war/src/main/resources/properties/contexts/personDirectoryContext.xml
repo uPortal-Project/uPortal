@@ -396,6 +396,7 @@
         <property name="queryAttributeMapping">
             <map>
                 <entry key="username" value="username" />
+                <entry key="schoolId" value="username" />
                 <entry key="givenName" value="givenName" />
                 <entry key="sn" value="sn"/>
             </map>

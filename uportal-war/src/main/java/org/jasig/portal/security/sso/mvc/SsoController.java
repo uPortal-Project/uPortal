@@ -28,19 +28,19 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
+import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.security.sso.ISsoTicket;
 import org.jasig.portal.security.sso.ISsoTicketDao;
 import org.jasig.portal.security.sso.RemoteUserFilterBean;
+import org.jasig.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +56,8 @@ import org.springframework.web.servlet.ModelAndView;
 public final class SsoController {
 
     private static final String USERNAME_PARAMETER = "username";
+    private static final String SCHOOL_ID_PARAMETER = "schoolId";
+    private static final String SCHOOL_ID_PERSONDIR_LOGICAL_ATTR_NAME = "schoolId";
     private static final String FORMATTED_COURSE_PARAMETER = "formattedCourse";
     private static final String SECTION_CODE_PARAMETER = "sectionCode";
     private static final String STUDENT_SCHOOL_ID_PARAMETER = "studentSchoolId";
@@ -98,6 +100,9 @@ public final class SsoController {
     @Autowired
     private ISsoTicketDao ticketDao;
 
+    @Autowired
+    private IPersonLookupHelper personLookupHelper;
+
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @RequestMapping
@@ -107,8 +112,8 @@ public final class SsoController {
 
             // Verify secure connection if we must have one
             if (requireSecure && !req.isSecure()) {
-                return sendError(res, HttpServletResponse.SC_FORBIDDEN,
-                    "The SSO handshake requires a secure connection (SSL)");
+                return sendClientError(res, HttpServletResponse.SC_FORBIDDEN,
+                        "The SSO handshake requires a secure connection (SSL)");
             }
 
             // Inputs
@@ -116,33 +121,47 @@ public final class SsoController {
             try {
                 inputs = Inputs.parse(req, checkTimeStampRange);
             } catch (Exception e) {
-                return sendError(res, HttpServletResponse.SC_BAD_REQUEST,
-                    "One or more required inputs was not specified");
+                return sendClientError(res, HttpServletResponse.SC_BAD_REQUEST,
+                        "One or more required inputs was not specified", e);
             }
 
             // Verify the request is authorized
             try {
-                if (!validateToken(inputs.getUsername(), inputs.getToken(), inputs.getTimeStamp())) {
-                    return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Not authorized");
+                if (!validateToken(inputs)) {
+                    return sendClientError(res, HttpServletResponse.SC_FORBIDDEN, "Not authorized");
                 }
             } catch (Exception e) {
-                return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
+                return sendServerError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error", e);
             }
 
             //Verify if TimeStamp range needs to be checked
             if(checkTimeStampRange){
                 try {
                     if (!validateTimeStampRange(inputs.getTimeStamp())) {
-                        return sendError(res, HttpServletResponse.SC_FORBIDDEN, "Timestamp out of range");
+                        return sendClientError(res, HttpServletResponse.SC_FORBIDDEN, "Timestamp out of range");
                     }
+                } catch ( ParseException e ) {
+                    return sendClientError(res, HttpServletResponse.SC_BAD_REQUEST, "Timestamp parse failure", e);
                 } catch (Exception e) {
-                    return sendError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error");
+                    return sendServerError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Authorization check error", e);
                 }
             }
 
             // Generate a ticket
-            log.info("Generating SSO ticket for user '{}'", inputs.getUsername());
-            ISsoTicket ticket = ticketDao.issueTicket(inputs.getUsername());
+            String username = null;
+            try {
+                username = resolveToValidUsername(inputs);
+            } catch ( Exception e ) {
+                return sendServerError(res, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "End user lookup error", e);
+            }
+
+            if ( username == null ) {
+                return sendClientError(res, HttpServletResponse.SC_BAD_REQUEST, "Missing or invalid end user identifier(s)");
+            }
+
+            log.info("Generating SSO ticket for username '{}'", username);
+            ISsoTicket ticket = ticketDao.issueTicket(username);
+
 
             // refUrl (redirect destination after login)
             final StringBuilder redirect = new StringBuilder();
@@ -150,11 +169,11 @@ public final class SsoController {
                 redirect.append(req.getContextPath()).append(EA_PORTLET_PATH)
                 .append("?").append(ACTION_KEY).append("=").append(ACTION_VALUE);
                 if(inputs.hasStudentSchoolId())
-                	redirect.append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"));
+                    redirect.append("&").append(SCHOOL_ID_KEY).append("=").append(URLEncoder.encode(inputs.getStudentSchoolId(), "UTF-8"));
                 if(inputs.hasFormattedCourse())
-                	redirect.append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
+                    redirect.append("&").append(FORMATTED_COURSE_ID_KEY).append("=").append(URLEncoder.encode(inputs.getFormattedCourse(), "UTF-8"));
                 if(inputs.hasStudentUserName())
-                	redirect.append("&").append(STUDENT_USER_NAME_KEY).append("=").append(URLEncoder.encode(inputs.getStudentUserName(), "UTF-8"));
+                    redirect.append("&").append(STUDENT_USER_NAME_KEY).append("=").append(URLEncoder.encode(inputs.getStudentUserName(), "UTF-8"));
                 if(inputs.hasSectionCode())
                 	redirect.append("&").append(SECTION_CODE_KEY).append("=").append(URLEncoder.encode(inputs.getSectionCode(), "UTF-8"));
                 if(inputs.hasTermCode())
@@ -176,26 +195,120 @@ public final class SsoController {
             rslt.put(URL_FIELD, login.toString());
             return new ModelAndView("json", rslt);
         }else{
-            return sendError(res, HttpServletResponse.SC_FORBIDDEN, "SSO key not configured");
+            return sendServerError(res, HttpServletResponse.SC_FORBIDDEN, "SSO key not configured");
         }
     }
+
+    /**
+     *
+     * @param inputs
+     * @return
+     */
+    private String resolveToValidUsername(Inputs inputs) {
+        if ( inputs.hasUsername() ) {
+            // Hisorically we didn't validate that the user actually exists
+            // before generating the ticket, but once we introduced the schoolId
+            // option, we went ahead and started validating the underlying
+            // user's existence in both cases for symmetry
+            return resolveCanonicalUsername(inputs.getUsername());
+        } else if ( inputs.hasSchoolId() ) {
+            return resolveCanonicalUsernameFromSchoolId(inputs.getSchoolId());
+        }
+        return null;
+    }
+
+    private String resolveCanonicalUsername(String username) {
+        final IPersonAttributes person =
+                personLookupHelper.findPerson(SystemPerson.INSTANCE, username);
+        return person == null ? null : person.getName();
+    }
+
+    private String resolveCanonicalUsernameFromSchoolId(String schoolId) {
+        final List<IPersonAttributes> persons =
+                personLookupHelper.searchForPeople(SystemPerson.INSTANCE,
+                    personBySchoolIdSearchQuery(schoolId));
+        if ( persons == null || persons.isEmpty() ) {
+            return null;
+        }
+        if ( persons.size() > 1 ) {
+            throw new IllegalStateException("SchoolId [" + schoolId
+                    + "] matched too many users (" + persons.size() + ")");
+        }
+        return persons.get(0).getName();
+    }
+
+    private Map<String, Object> personBySchoolIdSearchQuery(String schoolId) {
+        Map<String,Object> query = new HashMap<String,Object>();
+        query.put(SCHOOL_ID_PERSONDIR_LOGICAL_ATTR_NAME, schoolId);
+        return query;
+    }
+
+
+    /**
+     * Selects either {@code username} or {@code schoolId} from the given
+     * {@link Inputs}.
+     *
+     * <p><em>Implementation note: make sure the preference order here matches
+     * {@link #normalizeUserIdentifier(org.jasig.portal.security.sso.mvc.SsoController.Inputs)}</em></p>
+     *
+     * @param inputs
+     * @return
+     */
+    private String getUserIdentifier(Inputs inputs) {
+        return inputs.hasUsername() ? inputs.getUsername() : inputs.getSchoolId();
+    }
+
+    private String findUsernameForSchoolId(String schoolId) {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+
 
     /*
      * Implementation
      */
 
+    private ModelAndView sendServerError(final HttpServletResponse res, final int status, final String message) {
+        return sendServerError(res, status, message, null);
+    }
+
+    private ModelAndView sendServerError(final HttpServletResponse res, final int status, final String message, final Exception cause) {
+        // Unexpected server-side failure, so go ahead and fill up the logs
+        if ( cause != null ) {
+            log.error("Sending server error response {}: {}", new Object[]{status, message, cause});
+        }
+        return sendError(res,status,message);
+    }
+
+    private ModelAndView sendClientError(final HttpServletResponse res, final int status, final String message) {
+        return sendClientError(res,status,message,null);
+    }
+
+    private ModelAndView sendClientError(final HttpServletResponse res, final int status, final String message, final Exception cause) {
+        // This is for client errors, so only need to log at 'info'. I.e. this isn't an unexpected server-side failure,
+        // so filling up the logs is pointless in most cases
+        if ( cause != null ) {
+            log.info("Sending client error response {}: {}", new Object[] { status, message, cause });
+        }
+        return sendError(res,status,message);
+    }
+
     private ModelAndView sendError(final HttpServletResponse res, final int status, final String message) {
         final Map<String,Object> rslt = new HashMap<String,Object>();
-        res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        res.setStatus(status);
         rslt.put(SUCCESS_FIELD, false);
         rslt.put(MESSAGE_FIELD, message);
         return new ModelAndView("json", rslt);
     }
 
-    private boolean validateToken(final String username, final String token,
+    private boolean validateToken(Inputs input) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        return validateToken(getUserIdentifier(input), input.getToken(), input.getTimeStamp());
+    }
+
+    private boolean validateToken(final String userIdentifier, final String token,
         final String timeStamp) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         final MessageDigest md = MessageDigest.getInstance("MD5");
-        md.update(username.getBytes("UTF-8"));
+        md.update(userIdentifier.getBytes("UTF-8"));
         //Since timeStamp is optional, include in md5 calc only if present; if not present, don't include
         if(null != timeStamp){
         	md.update(timeStamp.getBytes("UTF-8"));
@@ -206,7 +319,7 @@ public final class SsoController {
         return md5.equalsIgnoreCase(token);
     }
 
-    private boolean validateTimeStampRange(final String timeStamp){
+    private boolean validateTimeStampRange(final String timeStamp) throws ParseException {
         boolean rc = true;
         TimeZone utc = TimeZone.getTimeZone("UTC");
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss'Z'");
@@ -215,18 +328,12 @@ public final class SsoController {
         long nowMinus5Raw = System.currentTimeMillis() - (signedUrlToLiveMinutes * 60000);
         long nowPlus5Raw = System.currentTimeMillis() + (signedUrlToLiveMinutes * 60000);
 
-        Date ts = null;
-
-        try{
-            ts = df.parse(timeStamp);
-            long tsMillis = ts.getTime();
-            if(nowMinus5Raw > tsMillis ||
-                tsMillis > nowPlus5Raw){
-                //Return false if timestamp is outside +/- 5 signedUrlToLiveMinutes of current time
-                rc = false;
-            }
-        }catch (ParseException e){
-            e.printStackTrace();
+        Date ts = df.parse(timeStamp);
+        long tsMillis = ts.getTime();
+        if(nowMinus5Raw > tsMillis ||
+            tsMillis > nowPlus5Raw){
+            //Return false if timestamp is outside +/- 5 signedUrlToLiveMinutes of current time
+            rc = false;
         }
         return rc;
     }
@@ -238,6 +345,7 @@ public final class SsoController {
     private static final class Inputs {
 
         private final String username;
+        private final String schoolId;
         private final String formattedCourse;
         private final String sectionCode;
         private final String studentSchoolId;
@@ -250,7 +358,7 @@ public final class SsoController {
         public static Inputs parse(HttpServletRequest req, boolean checkTimeStampRange) {
 
             final String username = req.getParameter(USERNAME_PARAMETER);
-            
+            final String schoolId = req.getParameter(SCHOOL_ID_PARAMETER);
             
             final String formattedCourse = req.getParameter(FORMATTED_COURSE_PARAMETER);
             final String sectionCode = req.getParameter(SECTION_CODE_PARAMETER);
@@ -261,7 +369,8 @@ public final class SsoController {
             final String timeStamp = req.getParameter(TIMESTAMP);
             final String view = req.getParameter(VIEW);
 
-            return new Inputs(username, 
+            return new Inputs(username,
+                    schoolId,
             		formattedCourse, 
             		sectionCode,
             		studentSchoolId,
@@ -270,21 +379,24 @@ public final class SsoController {
 
         }
 
-        private Inputs(final String username, final String formattedCourse, 
-        		final String sectionCode,
+        private Inputs(final String username,
+                       final String schoolId,
+                       final String formattedCourse,
+                final String sectionCode,
                 final String studentSchoolId,
                 final String studentUserName,
                 final String token, final String timeStamp, 
                 final String termCode,
                 final String view, boolean checkTimeStampRange) {
 
-            Assert.hasText(username, "Required parameter 'username' is missing");
+            Assert.state(username != null || schoolId != null, "Must specify either 'username' or 'schoolId'");
             Assert.hasText(token, "Required parameter 'token' is missing");
             if(checkTimeStampRange){
             	Assert.hasText(timeStamp, "Required parameter 'timeStamp' is missing");
             }
 
             this.username = username;
+            this.schoolId = schoolId;
             this.token = token;
             this.timeStamp = timeStamp;
             this.termCode = termCode;
@@ -313,6 +425,10 @@ public final class SsoController {
             return username;
         }
 
+        public String getSchoolId() {
+            return schoolId;
+        }
+
         public String getFormattedCourse() {
             return formattedCourse;
         }
@@ -328,25 +444,33 @@ public final class SsoController {
         public String getStudentUserName() {
             return studentUserName;
         }
-        
 
-        public Boolean hasFormattedCourse() {
+
+        public boolean hasUsername() {
+            return StringUtils.isNotBlank(username);
+        }
+
+        public boolean hasSchoolId() {
+            return StringUtils.isNotBlank(schoolId);
+        }
+
+        public boolean hasFormattedCourse() {
             return StringUtils.isNotBlank(formattedCourse);
         }
 
-        public Boolean hasStudentSchoolId() {
+        public boolean hasStudentSchoolId() {
             return StringUtils.isNotBlank(studentSchoolId);
         }
         
-        public Boolean hasSectionCode() {
+        public boolean hasSectionCode() {
             return StringUtils.isNotBlank(sectionCode);
         }
 
-        public Boolean hasStudentUserName() {
+        public boolean hasStudentUserName() {
             return StringUtils.isNotBlank(studentUserName);
         }
         
-        public Boolean hasTermCode() {
+        public boolean hasTermCode() {
             return StringUtils.isNotBlank(termCode);
         }
         

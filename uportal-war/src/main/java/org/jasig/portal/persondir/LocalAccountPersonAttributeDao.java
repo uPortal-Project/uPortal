@@ -205,22 +205,40 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
 
         for (final Map.Entry<String, List<Object>> queryEntry : query.entrySet()) {
             
-            String attrName = queryEntry.getKey();            
-            
+            String attrName = queryEntry.getKey();
+
             if (userNameAttribute.equals(attrName)) {
                 String value = canonicalizeAttribute(attrName, queryEntry.getValue(), caseInsensitiveQueryAttributes).get(0).toString();
                 queryBuilder.setUserName(value);
             } else {
-                List<Object> values = new ArrayList<Object>();
-                for (Object o : queryEntry.getValue()) {
-                    values.add(o.toString());
+
+                Set<String> mappedAttrNames = null;
+                if ( this.queryAttributeMapping != null ) {
+                    mappedAttrNames = this.queryAttributeMapping.get(attrName);
+                } else {
+                    mappedAttrNames = new HashSet<String>();
+                    mappedAttrNames.add(attrName);
                 }
-                values = canonicalizeAttribute(attrName, values, caseInsensitiveQueryAttributes);
-                List<String> valueStrs = new ArrayList<String>();
-                for (Object o : values) {
-                    valueStrs.add((String)o);
+
+                for ( String mappedAttrName : mappedAttrNames ) {
+                    if ( userNameAttribute.equals(mappedAttrName) ) {
+                        // Special handling since username isn't actually a proper attribute in the underlying data
+                        // store
+                        String value = canonicalizeAttribute(attrName, queryEntry.getValue(), caseInsensitiveQueryAttributes).get(0).toString();
+                        queryBuilder.setUserName(value);
+                        continue;
+                    }
+                    List<Object> values = new ArrayList<Object>();
+                    for (Object o : queryEntry.getValue()) {
+                        values.add(o.toString());
+                    }
+                    values = canonicalizeAttribute(attrName, values, caseInsensitiveQueryAttributes);
+                    List<String> valueStrs = new ArrayList<String>();
+                    for (Object o : values) {
+                        valueStrs.add((String)o);
+                    }
+                    queryBuilder.setAttribute(mappedAttrName, valueStrs);
                 }
-                queryBuilder.setAttribute(attrName, valueStrs);
             }
             
         }
