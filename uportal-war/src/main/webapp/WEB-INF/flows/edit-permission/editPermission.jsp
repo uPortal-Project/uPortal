@@ -70,7 +70,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </h3>
         <div class="toolbar">
         	<ul>
-                <li><a href="${ choosePrinicipalsUrl }" class="button"><spring:message code="choose.principals"/></a></li>
+                <li><a href="${ choosePrinicipalsUrl }" class="button btn"><spring:message code="choose.principals"/></a></li>
             </ul>
         </div>
     </div>

@@ -70,7 +70,7 @@
             </select>
         
             <div class="buttons utilities">
-                <input type="submit" value="<spring:message code="login"/>" class="primary button"/>
+                <input type="submit" value="<spring:message code="login"/>" class="primary button btn"/>
             </div>
         </form>
         

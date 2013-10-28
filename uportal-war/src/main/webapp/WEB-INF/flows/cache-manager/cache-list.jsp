@@ -34,7 +34,7 @@
         <h2 class="title" role="heading"><spring:message code="uportal.cache.manager"/></h2>
         <div class="toolbar" role="toolbar">
             <ul>
-                <li><a class="button" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" /></span></a></li>
+                <li><a class="button btn" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" /></span></a></li>
             </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->
@@ -52,7 +52,7 @@
       <div class="content">
         <p class="note" role="note"><spring:message code="select.cache.to.view.stats.and.clear.content"/></p>
       
-        <table class="portlet-table cache-table">
+        <table class="portlet-table table-hover cache-table">
             <thead>
                 <tr>
                     <th><spring:message code="name"/></th>

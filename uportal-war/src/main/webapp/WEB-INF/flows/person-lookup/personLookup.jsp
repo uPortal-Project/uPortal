@@ -54,13 +54,13 @@
                 <!-- Buttons -->
                 <div class="buttons">
                     <spring:message var="searchButtonText" code="search" />
-                    <input class="button primary" type="submit" class="button" value="${searchButtonText}" />
+                    <input class="button primary btn" type="submit" value="${searchButtonText}" />
 
                     <portlet:renderURL var="cancelUrl">
                         <portlet:param name="execution" value="${flowExecutionKey}"/>
                         <portlet:param name="_eventId" value="cancel"/>
                     </portlet:renderURL>
-                    <a class="button" class="button" href="${ cancelUrl }">
+                    <a class="button btn" href="${ cancelUrl }">
                         <spring:message code="cancel" />
                     </a>
                 </div>
@@ -97,7 +97,7 @@
                     </ul>
                 </div>
                 
-                <table id="${n}resultsTable" xmlns:rsf="http://ponder.org.uk">
+                <table id="${n}resultsTable" class="table table-hover" xmlns:rsf="http://ponder.org.uk">
                     <thead>
                         <tr rsf:id="header:">
                             <th id="${n}displayName" class="flc-pager-sort-header">

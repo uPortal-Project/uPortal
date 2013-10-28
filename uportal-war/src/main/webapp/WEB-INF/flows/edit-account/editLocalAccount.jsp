@@ -64,7 +64,7 @@
             <div class="portlet-section" role="region">
                 <div class="content">
 
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <tbody>
 
                             <c:if test="${ accountForm.id < 0 }">
@@ -96,7 +96,7 @@
                 </div>
                 <div id="${n}standardAttributes" class="content">
                 
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <thead>
                             <tr>
                                 <th><spring:message code="attribute.name"/></th>
@@ -132,7 +132,7 @@
                 </div>
                 <div id="${n}customAttributes" class="content">
                 
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <thead>
                             <tr>
                                 <th><spring:message code="attribute.name"/></th>
@@ -193,13 +193,13 @@
                 <div class="content">
             
                     <div class="buttons">
-                        <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
+                        <input class="button btn primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         <c:choose>
                             <c:when test="${ accountForm.id < 0 }">
-                                <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                                <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                             </c:when>
                             <c:otherwise>
-                                <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_finish"/>
+                                <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_finish"/>
                             </c:otherwise>
                         </c:choose>
                     </div>

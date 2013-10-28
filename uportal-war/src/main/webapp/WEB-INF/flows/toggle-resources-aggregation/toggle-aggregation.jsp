@@ -50,11 +50,11 @@
                 <c:choose>
                     <c:when test="${aggregationEnabled}">
                         <input type="hidden" name="newAggregationValue" value="false"/> 
-                        <input class="button" type="submit" value="Disable Aggregation" name="_eventId_disableAggregation"/>
+                        <input class="button btn" type="submit" value="Disable Aggregation" name="_eventId_disableAggregation"/>
                     </c:when>
                     <c:otherwise>
                     	<input type="hidden" name="newAggregationValue" value="true"/> 
-                    	<input class="button" type="submit" value="Enable Aggregation" name="_eventId_enableAggregation"/>
+                    	<input class="button btn" type="submit" value="Enable Aggregation" name="_eventId_enableAggregation"/>
                     </c:otherwise>
                 </c:choose> 
             </form>

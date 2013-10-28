@@ -53,18 +53,18 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(person.name )}</h2>
         <div class="toolbar">
-            <ul>
+            <ul class="btn-group">
                 <c:if test="${ canEdit }">
-                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                    <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </c:if>
-                <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                <li class="btn"><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
                 <c:if test="${ canDelete }">
-                    <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                    <li class="btn"><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
                 </c:if>
                 <c:if test="${ canImpersonate }">
-                    <li><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li>
+                    <li class="btn"><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li>
                 </c:if>
-                <li><a class="button" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout"/></a></li>
+                <li class="btn"><a class="button" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout"/></a></li>
             </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->
@@ -79,7 +79,7 @@
             </div>
             <div class="portlet-content">
 
-                <table class="portlet-table">
+                <table class="portlet-table table">
                     <thead>
                         <tr>
                             <th><spring:message code="attribute.name"/></th>
@@ -118,7 +118,7 @@
         </div>
         
         <div class="buttons">
-            <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
+            <a class="button btn" href="${ backUrl }"><spring:message code="back"/></a>
         </div>
     </div>
 </div>

@@ -46,7 +46,7 @@
             
             <div class="portlet-form">
             
-                <table class="purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
+                <table class="table table-hover purpose-layout" summary="<spring:message code="basicInfo.generalSettingsTableSummary"/>">
                     <thead>
                         <tr>
                             <th><spring:message code="name"/></th>
@@ -67,13 +67,13 @@
                 <div class="buttons">
                     <c:choose>
                         <c:when test="${ completed }">
-                          <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
+                          <input class="button primary btn" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         </c:when>
                         <c:otherwise>
-                          <input class="button primary" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
+                          <input class="button primary btn" type="submit" value="<spring:message code="next"/>" name="_eventId_next"/>
                         </c:otherwise>
                     </c:choose>
-                    <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                    <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                 </div>
             </div>
 

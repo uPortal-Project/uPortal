@@ -53,7 +53,7 @@
                 </div>
                 <div id="${n}userAttributes" class="content">
                 
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <tbody>
 
                             <!-- Print out each attribute -->
@@ -82,7 +82,7 @@
                     <h3 class="title" role="heading"><spring:message code="password"/></h3>
                 </div>
                 <div class="content">
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <thead>
                             <tr>
                                 <th><spring:message code="attribute.name"/></th>
@@ -111,8 +111,8 @@
                 <div class="content">
             
                     <div class="buttons">
-                        <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
-                        <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                        <input class="button btn primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
+                        <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                     </div>
                 </div>
             </div>

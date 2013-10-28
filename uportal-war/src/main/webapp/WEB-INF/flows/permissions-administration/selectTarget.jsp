@@ -96,8 +96,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             <!-- Buttons -->
             <div class="buttons">
-                <input class="button primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_editPermission"/>
-                <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                <input class="button btn primary" type="submit" value="<spring:message code="submit"/>" name="_eventId_editPermission"/>
+                <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
             </div> <!-- end: buttons -->
             
         </form>

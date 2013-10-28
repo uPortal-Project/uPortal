@@ -28,9 +28,9 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="import.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
-            <ul>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/></a></li>
+            <ul class="btn-group">
+                <li class="btn"><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
+                <li class="btn"><a class="button" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/></a></li>
             </ul>
         </div>
     </div>
@@ -54,7 +54,7 @@
                 <div class="fl-uploader-queue-wrapper">
                     <!-- Top of the queue -->
                     <div class="fl-uploader-queue-header">
-                        <table cellspacing="0" cellpadding="0" summary="Headers for the file queue." role="presentation">
+                        <table  class="table" cellspacing="0" cellpadding="0" summary="Headers for the file queue." role="presentation">
                             <caption><spring:message code="file.upload.queue"/>:</caption>
                             <tr>
                                 <th scope="col" class="fl-uploader-file-name"><spring:message code="file.name"/></th>
@@ -67,7 +67,7 @@
                     <!-- Scrollable view -->
                     <div class="flc-scroller fl-scroller">
                         <div class="fl-scroller-inner">
-                            <table cellspacing="0" class="flc-uploader-queue fl-uploader-queue" summary="Queue of files to upload." role="presentation">
+                            <table cellspacing="0" class="flc-uploader-queue fl-uploader-queue table" summary="Queue of files to upload." role="presentation">
                                 <tbody>
                                     <!-- Rows will be rendered in here. -->
                                     
@@ -76,7 +76,7 @@
                                         <th class="flc-uploader-file-name fl-uploader-file-name" scope="row">File Name Placeholder</th>
                                         <td class="flc-uploader-file-size fl-uploader-file-size">0 KB</td>
                                         <td class="fl-uploader-file-actions">
-                                            <button type="button" class="flc-uploader-file-action fl-uploader-file-action" tabindex="-1">
+                                            <button type="button" class="flc-uploader-file-action fl-uploader-file-action btn" tabindex="-1">
                                                 <span class="fl-uploader-button-text fl-uploader-hidden">Remove file from queue</span>
                                             </button>
                                         </td>
@@ -131,8 +131,8 @@
                                      <p class="flc-uploader-errorPanel-section-files">file_1, file_2, file_3, file_4, file_5 </p>
                                  </div>
                                  
-                                 <button type="button" class="flc-uploader-errorPanel-section-toggleDetails fl-uploader-errorPanel-section-toggleDetails">Hide this list</button>
-                                 <button type="button" class="flc-uploader-errorPanel-section-removeButton fl-uploader-errorPanel-section-removeButton">
+                                 <button type="button" class="flc-uploader-errorPanel-section-toggleDetails fl-uploader-errorPanel-section-toggleDetails btn">Hide this list</button>
+                                 <button type="button" class="flc-uploader-errorPanel-section-removeButton fl-uploader-errorPanel-section-removeButton btn">
                                      <span class="flc-uploader-erroredButton-text fl-uploader-hidden">Remove error</span>
                                  </button>
                              </div>
@@ -142,8 +142,8 @@
                 
                 <!-- Action buttons -->
                 <div class="fl-uploader-btns">
-                    <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden">Stop Upload</button>
-                    <button type="button" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim" disabled="disabled">Upload</button>
+                    <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden btn">Stop Upload</button>
+                    <button type="button" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim btn" disabled="disabled">Upload</button>
                 </div>
                 
                 <div class="flc-uploader-status-region fl-offScreen-hidden"></div>

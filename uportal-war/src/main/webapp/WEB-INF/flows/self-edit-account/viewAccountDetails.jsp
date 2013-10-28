@@ -35,7 +35,7 @@
         <c:if test="${ canEditAccount }">
             <div class="toolbar">
                 <ul>
-                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                    <li><a class="button btn" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </ul>
             </div>
         </c:if>
@@ -48,7 +48,7 @@
         <div class="portlet-section" role="region">
             <div class="content">
             
-                <table class="portlet-table">
+                <table class="portlet-table table table-hover">
                     <tbody>
 
                         <!-- Print out each attribute -->

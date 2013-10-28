@@ -80,7 +80,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <h3 class="subtitle">${ fn:escapeXml(activity.description )}</h3>
         <div role="toolbar" class="toolbar">
             <ul>
-                <li><a href="${ createUrl }" class="button"><spring:message code="add.assignment"/></a></li>
+                <li><a href="${ createUrl }" class="button btn"><spring:message code="add.assignment"/></a></li>
             </ul>
         </div>
     </div>
@@ -112,7 +112,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </li>
             </ul>
         </div>
-        <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" title="Assignments of this permission">
+        <table class="portlet-table table table-hover" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk" title="Assignments of this permission">
             <thead>
                 <tr rsf:id="header:">
                     <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="principal"/></a></th>

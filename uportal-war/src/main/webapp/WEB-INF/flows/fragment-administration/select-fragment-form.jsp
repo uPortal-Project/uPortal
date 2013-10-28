@@ -45,7 +45,7 @@
                 </c:forEach>
             </select>
             <%-- onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()" --%>
-            <input class="button" type="submit" value="<spring:message code="go"/>" />
+            <input class="button btn" type="submit" value="<spring:message code="go"/>" />
         </form>
 
 	</div> <!-- end: portlet-content -->

@@ -39,7 +39,7 @@
                 <h3 class="title" role="heading">HTTP Request</h3>
             </div>
             <div class="content">
-                <table class="portlet-table">
+                <table class="portlet-table table table-hover">
                     <thead>
                     	<tr>
                         	<th>Name</th>
@@ -126,7 +126,7 @@
                 <h3 class="title" role="heading">HTTP Header Info</h3>
             </div>
             <div class="content">
-                <table class="portlet-table">
+                <table class="portlet-table table table-hover">
                     <thead>
                     	<tr>
                         	<th>Name</th>
@@ -151,7 +151,7 @@
                 <h3 class="title" role="heading">Locales</h3>
             </div>
             <div class="content">
-                <table class="portlet-table">
+                <table class="portlet-table table table-hover">
                     <thead>
                         <tr>
                             <th>Name</th>

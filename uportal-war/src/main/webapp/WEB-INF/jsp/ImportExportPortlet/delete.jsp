@@ -28,9 +28,9 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="delete.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
-            <ul>
-                <li><a class="button" href="<portlet:renderURL/>"><spring:message code="import"/></a></li>
-                <li><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
+            <ul class="btn-group">
+                <li class="btn"><a class="button" href="<portlet:renderURL/>"><spring:message code="import"/></a></li>
+                <li class="btn"><a class="button" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/></a></li>
             </ul>
         </div>
     </div>
@@ -79,7 +79,7 @@
                     </tr>
                 </table>
                 <div class="buttons">
-                    <input class="button primary" type="submit" value="Delete"/>
+                    <input class="button btn primary" type="submit" value="Delete"/>
                 </div>
             </form>
         </div>

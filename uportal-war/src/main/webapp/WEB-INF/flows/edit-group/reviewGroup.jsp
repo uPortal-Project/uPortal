@@ -64,18 +64,18 @@
         <h3 class="subtitle">${ fn:escapeXml(group.description )}</h3>
         <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
         <div class="toolbar">
-        	<ul>
+        	<ul class="btn-group">
                 <c:if test="${ canEdit }">
-                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                    <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </c:if>
                 <c:if test="${ !isNew }">
-                    <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                    <li class="btn"><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
                 </c:if>
                 <c:if test="${ canDelete }">
-                    <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                    <li class="btn"><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
                 </c:if>
                 <c:if test="${ canCreateMember }">
-                    <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
+                    <li class="btn"><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
                 </c:if>
             </ul>
         </div>
@@ -104,11 +104,11 @@
         <div class="buttons">
             <c:choose>
                 <c:when test="${ isNew }">
-                    <a class="button" href="${ saveUrl }"><spring:message code="save"/></a>
-                    <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
+                    <a class="button btn" href="${ saveUrl }"><spring:message code="save"/></a>
+                    <a class="button btn" href="${ backUrl }"><spring:message code="back"/></a>
                 </c:when>
                 <c:otherwise>
-                    <a class="button" href="${ cancelUrl }"><spring:message code="done"/></a>
+                    <a class="button btn" href="${ cancelUrl }"><spring:message code="done"/></a>
                 </c:otherwise>
             </c:choose>
         </div>

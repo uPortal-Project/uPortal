@@ -258,6 +258,7 @@
 
 <xsl:template name="page.overrides">
     <link href="/uPortal/media/skins/respondr/uPortal4/css/fluid_stopgap.css" rel="stylesheet" type="text/css" />
+    <link href="/uPortal/media/skins/respondr/uPortal4/css/portlet.css" rel="stylesheet" type="text/css" />
 </xsl:template>
 
 

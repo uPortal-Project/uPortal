@@ -67,7 +67,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
 
-        <table class="portlet-table" summary="<spring:message code="this.table.lists.portlets.general.settings"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlets.general.settings"/>">
           <thead>
             <tr>
             	<th><spring:message code="option"/></th>
@@ -110,14 +110,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       
       	<fieldset>
           <legend><spring:message code="portlet.controls"/></legend>
+            <label for="hasHelp" class="checkbox">
               <form:checkbox path="hasHelp"/>
-              <label for="hasHelp"><spring:message code="hasHelp"/></label><br/>
+              <spring:message code="hasHelp"/>
+            </label><br/>
 
+            <label for="editable" class="checkbox">
               <form:checkbox path="editable"/>
-              <label for="editable"><spring:message code="editable"/></label><br/>
+              <spring:message code="editable"/>
+            </label><br/>
 
+            <label for="hasAbout" class="checkbox">
               <form:checkbox path="hasAbout"/>
-              <label for="hasAbout"><spring:message code="hasAbout"/></label><br/>
+              <spring:message code="hasAbout"/>
+            </label><br/>
 
         </fieldset>
         
@@ -128,14 +134,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          <input class="button btn primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
-          <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          <input class="button btn primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+          <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->

@@ -38,7 +38,7 @@
         <div class="toolbar" role="toolbar">
             <ul>
                 <li>
-                    <a class="button" href="${newSearchUrl}"><spring:message code="lookup.person" /></a>
+                    <a class="button btn" href="${newSearchUrl}"><spring:message code="lookup.person" /></a>
                 </li>
             </ul>
         </div>
@@ -48,7 +48,7 @@
 	<div class="fl-widget-content content portlet-content" role="main">
 		
         <form:form modelAttribute="attributeSwapRequest" action="${attributeSwapUrl}">
-            <table class="portlet-table">
+            <table class="portlet-table table table-hover">
                 <thead>
                     <tr>
                         <th><spring:message code="attribute" /></th>
@@ -91,10 +91,10 @@
                 
             <div class="buttons">
                 <spring:message var="updateAttributesText" code="update.attributes" />
-                <input type="submit" class="button primary" name="_eventId_updateAttributes" value="${updateAttributesText}" />
+                <input type="submit" class="button btn primary" name="_eventId_updateAttributes" value="${updateAttributesText}" />
                 
                 <spring:message var="resetAttributesText" code="reset.attributes" />
-                <input type="submit" class="button" name="_eventId_resetAttributes" value="${resetAttributesText}" />
+                <input type="submit" class="button btn" name="_eventId_resetAttributes" value="${resetAttributesText}" />
             </div>
         </form:form>
 

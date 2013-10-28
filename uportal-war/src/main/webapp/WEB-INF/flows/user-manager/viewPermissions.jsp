@@ -134,7 +134,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
                             <p class="no-permissions-message" style="display:none"><spring:message code="no.user.permissions"/></p>
 
-                            <table class="portlet-table" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk">
+                            <table class="portlet-table table table-hover" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk">
                                 <thead>
                                 <tr rsf:id="header:">
                                     <th id="${n}permissionOwner" class="flc-pager-sort-header"><a rsf:id="permissionOwner" title="Click to sort" href="javascript:;"><spring:message code="owner"/></a></th>

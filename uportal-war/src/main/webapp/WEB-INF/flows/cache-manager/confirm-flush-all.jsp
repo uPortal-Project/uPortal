@@ -47,8 +47,8 @@
         <!-- Buttons -->
         <form action="${flushUrl}" method="POST">
             <div class="buttons">
-            	<input class="button primary" type="submit" value="<spring:message code="empty.all.caches"/>" name="_eventId_confirm"/>
-            	<input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+            	<input class="button btn primary" type="submit" value="<spring:message code="empty.all.caches"/>" name="_eventId_confirm"/>
+            	<input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
             </div>
         </form>
     

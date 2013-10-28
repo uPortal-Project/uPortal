@@ -76,8 +76,8 @@
                     | View: Multi Select.
                     ================================================-->
                     <div class="view-multi-select">
-                        <div class="columns-2">
-                            <div class="fl-container-flex60">
+                        <div class="columns-2 row-fluid">
+                            <div class="fl-container-flex60 span8">
                                 <!-- entity -->
                                 <div id="${n}entityBrowser" class="entity-browser">
                                     <!--breadcrumb-->
@@ -133,7 +133,7 @@
                                     <div id="${n}portletSearch" class="portlet-search">
                                         <form id="${n}searchForm">
                                             <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
-                                            <input type="submit" class="button" value="<spring:message code="go"/>" />
+                                            <input type="submit" class="button btn" value="<spring:message code="go"/>" />
                                         </form>
                                         <div id="${n}searchDropDown" class="search-dropdown">
                                             <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
@@ -148,7 +148,7 @@
                                     </div>
                                 </div><!--end: entity-->
                             </div>
-                            <div class="fl-container-flex40">
+                            <div class="fl-container-flex40 span4">
                                 <!--selection-->
                                 <div class="portlet-selection">
                                     <!--titlebar-->
@@ -171,11 +171,11 @@
                                             
                                             <div id="${n}buttonPanel" class="buttons">
                                                 <c:if test="${ showBackButton }">
-                                                    <input class="button" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
+                                                    <input class="button btn" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
                                                 </c:if>
-                                                <input id="${n}buttonPrimary" class="button primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
+                                                <input id="${n}buttonPrimary btn" class="button btn primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
                                                 <c:if test="${ showCancelButton }">
-                                                    <input class="button" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
+                                                    <input class="button btn" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
                                                 </c:if>
                                             </div>
                                         </form>
@@ -266,11 +266,11 @@
                                 <!--buttons-->
                                 <div id="${n}buttonPanel" class="buttons">
                                     <c:if test="${showBackButton}">
-                                        <input class="button" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
+                                        <input class="button btn" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
                                     </c:if>
-                                    <input id="${n}buttonPrimary" class="button primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
+                                    <input id="${n}buttonPrimary" class="button btn primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
                                     <c:if test="${showCancelButton}">
-                                        <input class="button" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
+                                        <input class="button btn" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
                                     </c:if>
                                 </div><!--end: buttons-->
                             </div><!--end: content-->
@@ -280,7 +280,7 @@
                         <div id="${n}portletSearch" class="portlet-search">
                             <form id="${n}searchForm">
                                 <input type="text" name="searchterm" value="<spring:message code="enter.name"/>"/>
-                                <input type="submit" class="button" value="<spring:message code="go"/>" />
+                                <input type="submit" class="button btn" value="<spring:message code="go"/>" />
                             </form>
                             <div id="${n}searchDropDown" class="search-dropdown">
                                 <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>

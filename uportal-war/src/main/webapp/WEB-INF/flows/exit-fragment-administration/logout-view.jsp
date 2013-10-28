@@ -32,7 +32,7 @@
 	  <form name="fragmentAdminExitForm" action="${actionUrl}" method="POST">
 	    <c:set var="userHtml"><strong>${fn:escapeXml(remoteUser)}</strong></c:set>
 	  	<label for="exitFragment"><spring:message code="you.are.currently.logged.in.as.for.dlm.fragment.administration" arguments="${userHtml}" htmlEscape="false"/></label>
-	  	<input class="button" id="exitFragment" type="Submit" value="<spring:message code="exit"/>" name="_eventId_logout"/>
+	  	<input class="button btn" id="exitFragment" type="Submit" value="<spring:message code="exit"/>" name="_eventId_logout"/>
 	  </form>
 	</div>
 </div>

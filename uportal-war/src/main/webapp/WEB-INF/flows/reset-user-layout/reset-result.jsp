@@ -48,7 +48,7 @@
     <!-- Buttons -->
     <form action="${formUrl}" method="POST">
         <div class="buttons">
-        	<input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_continue"/>
+        	<input class="button primary btn" type="submit" value="<spring:message code="continue"/>" name="_eventId_continue"/>
         </div>
     </form>
     

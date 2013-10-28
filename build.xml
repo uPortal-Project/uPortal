@@ -1444,7 +1444,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
 
     <!--
      | Utility target for executing a maven with some number (up to 10) of goals. The
-     | target should automaticly work on all OSs as long as 'mvn' is on the path.
+     | target should automatically work on all OSs as long as 'mvn' is on the path.
      +-->
     <target name="mvn">
         <property name="goal" value="-Djasig.ignore" />

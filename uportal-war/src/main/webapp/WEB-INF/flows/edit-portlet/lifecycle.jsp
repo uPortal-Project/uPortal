@@ -69,7 +69,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="">
+        <table class="portlet-table table table-hover" summary="">
           <thead>
             <tr>
               <th><spring:message code="option"/></th>
@@ -104,7 +104,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content"> 
  
-        <table class="portlet-table" summary="<spring:message code="publish.and.expiration.dates"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="publish.and.expiration.dates"/>">
           <thead>
             <tr>
               <th><spring:message code="option"/></th>
@@ -150,7 +150,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content"> 
  
-        <table class="portlet-table" summary="<spring:message code="publish.and.expiration.dates"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="publish.and.expiration.dates"/>">
           <thead>
             <tr>
               <th><spring:message code="option"/></th>
@@ -192,14 +192,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          <input class="button btn primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
-          <input class="button" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          <input class="button btn primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+          <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

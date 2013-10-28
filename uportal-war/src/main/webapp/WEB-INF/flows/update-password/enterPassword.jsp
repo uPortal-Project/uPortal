@@ -51,7 +51,7 @@
                     <h3 class="title" role="heading"><spring:message code="password"/></h3>
                 </div>
                 <div class="content">
-                    <table class="portlet-table">
+                    <table class="portlet-table table table-hover">
                         <tbody>
 
                             <!--  Password and confirm password -->
@@ -78,7 +78,7 @@
                 <div class="content">
             
                     <div class="buttons">
-                        <input class="button primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
+                        <input class="button btn primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                     </div>
                 </div>
             </div>

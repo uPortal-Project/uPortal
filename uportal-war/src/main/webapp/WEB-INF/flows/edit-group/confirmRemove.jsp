@@ -50,8 +50,8 @@
         
         <!-- Portlet Buttons -->
         <div class="buttons">
-          <input class="button primary" type="submit" value="<spring:message code="remove"/>" name="_eventId_removeGroup"/>
-          <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+          <input class="button btn primary" type="submit" value="<spring:message code="remove"/>" name="_eventId_removeGroup"/>
+          <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
         </div>
         
         </form> <!-- End Form -->

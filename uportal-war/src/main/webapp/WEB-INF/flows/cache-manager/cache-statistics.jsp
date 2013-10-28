@@ -40,7 +40,7 @@
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
       
-        <table class="portlet-table">
+        <table class="portlet-table table table-hover">
             <thead>
                 <tr><th><spring:message code="cache.property"/></th><th><spring:message code="value"/></th></tr>
             </thead>
@@ -80,8 +80,8 @@
 
     <!-- Portlet Buttons -->
     <div class="buttons">
-        <a class="button primary" href="${ flushUrl }"><spring:message code="empty.cache"/></a>
-        <a class="button" href="${ homeUrl }"><spring:message code="cancel"/></a>
+        <a class="button btn primary" href="${ flushUrl }"><spring:message code="empty.cache"/></a>
+        <a class="button btn" href="${ homeUrl }"><spring:message code="cancel"/></a>
     </div>
     
   </div>

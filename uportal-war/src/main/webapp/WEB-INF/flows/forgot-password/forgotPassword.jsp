@@ -51,7 +51,7 @@
             </p>
         
             <div class="buttons utilities">
-                <input type="submit" value="<spring:message code="reset"/>" class="primary button"/>
+                <input type="submit" value="<spring:message code="reset"/>" class="primary button btn"/>
             </div>
         </form>
 

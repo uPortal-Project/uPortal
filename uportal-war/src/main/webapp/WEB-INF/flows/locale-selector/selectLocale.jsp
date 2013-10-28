@@ -47,7 +47,7 @@
                     </c:forEach>
                 </ul>
                 <div class="buttons">
-                    <input class="button primary" type="submit" value="<spring:message code="update"/>" name="_eventId_updateLocale"/>
+                    <input class="button btn primary" type="submit" value="<spring:message code="update"/>" name="_eventId_updateLocale"/>
                 </div>
             </form>
     	</div>

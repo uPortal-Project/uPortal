@@ -96,7 +96,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
           <thead>
             <tr>
               <th><spring:message code="configuration"/></th>
@@ -165,7 +165,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
           <thead>
             <tr>
               <th><spring:message code="configuration"/></th>
@@ -201,7 +201,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
         </div>
         <div class="content">
-          <table class="portlet-table">
+          <table class="portlet-table table table-hover">
             <thead>
               <tr>
                 <th><spring:message code="preferences"/></th>
@@ -244,7 +244,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
         <div class="content">
         
-          <table class="portlet-table" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
+          <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlet.configurations"/>">
             <thead>
               <tr>
                 <th><spring:message code="preferences"/></th>
@@ -320,7 +320,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="portlet.lifecycle.information"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="portlet.lifecycle.information"/>">
           <thead>
             <tr>
               <th><spring:message code="option"/></th>
@@ -358,11 +358,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
 		<!-- Buttons -->
     <div class="buttons">
-    	<a class="button primary" href="${ saveUrl }"><spring:message code="save"/></a>
+    	<a class="button btn primary" href="${ saveUrl }"><spring:message code="save"/></a>
     	<c:if test="${supportsConfig and portlet.id == null}">
-    	   <a class="button primary" href="${ saveAndConfigUrl }"><spring:message code="save.and.configure"/></a>
+    	   <a class="button btn primary" href="${ saveAndConfigUrl }"><spring:message code="save.and.configure"/></a>
     	</c:if>
-    	<a class="button" href="${ cancelUrl }"><spring:message code="cancel"/></a>
+    	<a class="button btn" href="${ cancelUrl }"><spring:message code="cancel"/></a>
     </div>
     
   </div> <!-- end: portlet-content -->
