@@ -53,7 +53,7 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(person.name )}</h2>
         <div class="toolbar">
-            <ul class="btn-group">
+            <ul>
                 <c:if test="${ canEdit }">
                     <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </c:if>

@@ -64,7 +64,7 @@
         <h3 class="subtitle">${ fn:escapeXml(group.description )}</h3>
         <div class="details">Created by ${ fn:escapeXml(group.creatorId )}</div>
         <div class="toolbar">
-        	<ul class="btn-group">
+        	<ul>
                 <c:if test="${ canEdit }">
                     <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </c:if>

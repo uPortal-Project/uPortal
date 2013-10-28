@@ -102,6 +102,31 @@
     list-style-type: none;
   }
 
+  /* Entity Browser */
+  .entity-browser .titlebar {background-color: #F8F8F8;}
+  .entity-browser .titlebar:hover,
+  .entity-browser .titlebar:focus {background-color:#FFC; cursor: pointer;}
+  .entity-browser .titlebar .title {font-size: 120%;}
+  .entity-browser .titlebar .select {background: transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png") 0 50% no-repeat;}
+  /* selected */
+  .entity-browser .selected {background-color: #D1F0E0;}
+  .entity-browser .selected:hover,
+  .entity-browser .selected:focus {background-color: #C8F0DD;}
+  .entity-browser .selected .title {color: #248222;}
+  .entity-browser .selected .select {background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); cursor: pointer;}
+  /* member list */
+  .entity-browser .member-list a {background-position:0 50%; background-repeat:no-repeat;}
+  .entity-browser .group .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png);}
+  .entity-browser .person .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png);}
+  .entity-browser .category .member-list a {background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png);}
+  .entity-browser .member-list a:hover,
+  .entity-browser .member-list a:focus {background-color:#FFC; color:#336699;}
+
+  .entity-browser .member-list a {
+    display: block;
+    padding: 1px 0 1px 20px;
+  }
+
   /* Pager */
   /*
    * Formats pagination controls.
@@ -134,7 +159,32 @@
     right: 8px;
     top: 4px;
   }
+
+  /* Buttons in a list; example: Manage Portlets */
+  li.btn a.button {
+    color:#333;
+  }
+
+  a.btn {
+    color:#333;
+  }
 }
+
+/* Selection Basket */
+.portlet .selection-basket a {color: #248222; text-decoration: none; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0 50% no-repeat;}
+.portlet .selection-basket a:hover,
+.portlet .selection-basket a:focus {background-color:#FFFFCC; color:#9F0000; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png);}
+
+/*
+ * Single Selection View.
+ */
+/* selection */
+.portlet .view-single-select .portlet-selection .title.selections {background: transparent;}
+.portlet .view-single-select .selection-basket {color: #AAA; font-size: 120%;}
+.portlet .view-single-select .selection-basket a {background: transparent; cursor: default;}
+.portlet .view-single-select .selection-basket a:hover,
+.portlet .view-single-select .selection-basket a:focus {color: #248222;}
+
 
 .up-autocomplete-dropdown .up-autocomplete-loading {background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
 
@@ -169,6 +219,20 @@
   line-height: 30px;
   list-style-type: none;
 }
+
+/* Group Administration */
+/* Temporary - until Jeff fixes UI. */
+.grp-mgr .titlebar {
+  h4.title {
+    display: inline;
+  }
+  .portlet-selection {
+    .selection-basket {
+      display: inline;
+    }
+  }
+}
+
 /** Error Portlet **/
 .portlet.error .stacktrace {
   width: 100%;
