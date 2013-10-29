@@ -426,7 +426,7 @@
     <not-null>ENTITY_KEY</not-null>
   </table>
 
-  <!-- Used by the EntityPropertyRegistry to store aribtrary properties. -->
+  <!-- Used by the EntityPropertyRegistry to store arbitrary properties. -->
   <table sinceMajor="2" sinceMinor="1">
     <name>UP_ENTITY_PROP</name>
     <desc>Each row represents a property of a portal entity.</desc>
