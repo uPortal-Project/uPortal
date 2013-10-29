@@ -42,7 +42,7 @@ public interface IAttributeSwapperHelper {
 
     
     /**
-     * Gets the Set of attribtues to allow the user to swap values for.
+     * Gets the Set of attributes to allow the user to swap values for.
      * 
      * @param externalContext The {@link ExternalContext} to get the flows's configuration from
      * @return Set of attributes that can be swapped
