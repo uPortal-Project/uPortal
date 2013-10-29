@@ -1,6 +1,7 @@
 /.settings
 /.project
 /.classpath
+/logs
 /bin
 /target
 /build.properties
