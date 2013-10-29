@@ -109,6 +109,7 @@
 <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
 <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
 <xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
+<xsl:import href="navigation.xsl" />
 <!-- ========================================================================= -->
 
 
@@ -211,9 +212,6 @@
  -->
 <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
 <xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
-<xsl:param name="USE_ADD_TAB" select="'true'" /> <!-- Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
-<xsl:param name="TAB_CONTEXT">header</xsl:param><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
-<xsl:param name="subscriptionsSupported">true</xsl:param>
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE TITLE ========================================= -->
@@ -300,57 +298,6 @@
   </script>
 </xsl:template>
 <!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: NAVIGATION ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | YELLOW
- | This template renders the tabs at the top of the page.
- -->
-<xsl:template match="navigation">
-    <nav class="portal-nav">
-        <div class="container">
-            <a href="#" class="menu-toggle"><i class="icon-align-justify"></i> Menu</a>
-            <div id="portalNavigation" role="main" aria-multiselectable="false" aria-readonly="false" aria-disabled="false" tabindex="0">
-            <div id="portalNavigationInner" class="header">
-            <ul class="menu fl-tabs flc-reorderer-column">
-                <xsl:for-each select="tab">
-                    <li>
-                        <xsl:if test="@activeTab='true'">
-                            <xsl:attribute name="class">active</xsl:attribute>
-                        </xsl:if>
-                        <a>
-                            <xsl:attribute name="href">
-                                <xsl:call-template name="portalUrl">
-                                    <xsl:with-param name="url">
-                                        <url:portal-url>
-                                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                        </url:portal-url>
-                                    </xsl:with-param>
-                                </xsl:call-template>
-                            </xsl:attribute>
-                            <i class="icon-chevron-right"></i>
-                            <xsl:value-of select="@name" />
-                        </a>
-                    </li>
-                </xsl:for-each>
-                <xsl:if test="$USE_ADD_TAB='true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
-                    <li class="portal-navigation-add-item">
-                        <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
-                            <i class="icon-plus-sign"></i>
-                        </a>
-                    </li>
-                </xsl:if>
-            </ul>
-            </div>
-            </div>
-        </div>
-    </nav>
-</xsl:template>
-<!-- ========================================================================= -->
-
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: FOOTER NAV ==================================== -->
