@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>34</version>
+        <version>35</version>
     </parent>
     
     <prerequisites>
@@ -768,11 +768,34 @@
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-api</artifactId>
                 <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jasig.resourceserver</groupId>
+                <artifactId>resource-server-core</artifactId>
+                <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-utils</artifactId>
                 <version>${resource-server.version}</version>
+                <exclusions>
+                    <exclusion>
+                         <groupId>org.slf4j</groupId>
+                         <artifactId>jcl-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.jasig.service.persondir</groupId>
