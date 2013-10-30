@@ -170,7 +170,7 @@
   <!-- ****** LOCALIZATION SETTINGS ****** -->
   <!--
    | GREEN
-   | Locatlization Settings can be used to change the localization of the theme.
+   | Localization Settings can be used to change the localization of the theme.
   -->
 	<xsl:param name="USER_LANG">en</xsl:param> <!-- Sets the default user language. -->
 
