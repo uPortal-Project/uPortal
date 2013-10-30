@@ -55,8 +55,8 @@
   <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.min.js</js>
   <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.min.js</js>
 
-  <js included="plain" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.js</js>
-  <js included="aggregated" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js</js>
+  <js included="plain" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
+  <js included="aggregated" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
  
   <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
   <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
