@@ -35,8 +35,8 @@
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-coal.min.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
-  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/ui-darkness/jquery-ui-1.8.13-ui-darkness.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/ui-darkness/jquery-ui-1.8.13-ui-darkness.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.24/theme/ui-darkness/jquery-ui-1.8.24-ui-darkness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.24/theme/ui-darkness/jquery-ui-1.8.24-ui-darkness.min.css</css>
   
   <css import="true">../common/common_skin.xml</css>
   

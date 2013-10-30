@@ -35,8 +35,8 @@
   <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-mist.min.css</css>
   
   <!-- Default jQuery UI theme.  Comment this out if you are using your own custom jQuery UI theme. -->
-  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/smoothness/jquery-ui-1.8.13-smoothness.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/smoothness/jquery-ui-1.8.13-smoothness.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.24/theme/smoothness/jquery-ui-1.8.24-smoothness.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.24/theme/smoothness/jquery-ui-1.8.24-smoothness.min.css</css>
     
   <css import="true">../common/common_skin.xml</css>
   
