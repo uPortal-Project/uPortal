@@ -32,10 +32,6 @@
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPortlet"/>
 </portlet:actionURL>
-<portlet:actionURL var="popularPortletsUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="popularPortlets"/>
-</portlet:actionURL>
 <portlet:actionURL var="editPortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="editPortlet"/>
@@ -69,7 +65,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="fl-col">
         <ul>
           <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
-          <li><a class="button" href="${ popularPortletsUrl }" title="<spring:message code="popular.portlets"/>"><span><spring:message code="popular.portlets"/></span></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right portlet-search-view">
@@ -81,20 +76,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
     <div style="clear:both"></div>
   </div>
-        
-	<!-- Portlet Content -->
+
+  <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
-  
-  	<!-- Portlet Message -->
-  	<div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
-    	<div class="titlebar">
+
+    <!-- Portlet Message -->
+    <div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
+      <div class="titlebar">
         <h3 class="title"><spring:message code="loading"/> . . .</h3>
       </div>
       <div class="content">
-    	  <p><spring:message code="please.wait.while.the.system.finishes.loading.portlet.registry"/></p>
+        <p><spring:message code="please.wait.while.the.system.finishes.loading.portlet.registry"/></p>
       </div>
     </div>
-    
+
     <!-- Portlet Section -->
     <div id="${n}channelAddingTabs" class="fl-pager">   
         <div class="fl-col-flex2">
@@ -153,15 +148,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             </tr>
           </tbody>
         </table>
-      
+
       </div>
-    
+
   </div> <!-- end: portlet-body -->
 
 </div> <!-- end: portlet -->
-    	
-	<script type="text/javascript"><rs:compressJs>
-	 up.jQuery(function() {
+
+    <script type="text/javascript"><rs:compressJs>
+    up.jQuery(function() {
         var $ = up.jQuery;
         var fluid = up.fluid;
         var editUrl = "${ editPortletUrl }";
@@ -283,12 +278,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     }
                 ]
             };
-            
+
             $(categories).each(function(idx, category){
                 selection.optionlist.push(category.id);
                 selection.optionnames.push(category.name);
             });
-            
+
             tree.children.push(selection);
 
             var cutpoints = [ { id: "categorySelect", selector: "#${n}categorySelectMenu" } ];
@@ -359,7 +354,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                       },
                       row: "row:"
                     }
-                    
+
                 },
                 pagerBar: {type: "fluid.pager.pagerBar", options: {
                   pageList: {type: "fluid.pager.renderedPageList",
@@ -387,7 +382,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             return that;
         };
-    
+
         $(document).ready(function() {
             var browser = up.PortletBrowser("#${n}portletBrowser", null,
                 { 
@@ -416,5 +411,5 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             );
         });
 
-   	  });
+    });
     </rs:compressJs></script>

@@ -52,7 +52,6 @@
             <set name="flowScope.portlet" 
                 value="new org.jasig.portal.portlets.portletadmin.PortletDefinitionForm()"/>
         </transition>
-        <transition on="popularPortlets" to="popular-portlets"/>
         <!-- If we're deleting a portlet, confirm the user wants to delete it -->
         <transition on="removePortlet" to="confirmRemove">
             <set name="flowScope.portlet"
@@ -71,14 +70,6 @@
         <input name="portlet" value="portlet"/>
         <transition on="finishPortletEdit" to="finishPortletEdit"/>
         <transition on="cancelPortletEdit" to="finishPortletEdit"/>
-    </subflow-state>
-    
-    <!--
-     | Popular portlets subflow
-     +-->
-    <subflow-state id="popular-portlets" subflow="popular-portlets">
-        <input name="showAdminFeatures" value="true"/>
-        <transition on="doneListPortlets" to="listChannels"/>
     </subflow-state>
 
     <!-- 
