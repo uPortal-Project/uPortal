@@ -86,12 +86,6 @@
         <!-- The final name of the SSP Platform web-application -->
         <ssp.docbase>ssp-platform</ssp.docbase>
         <!--project-site-path>/uportal/${project.version}</project-site-path-->
-        
-        <!-- The JDBC Driver used by SSP -->
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>${postgresql.version}</jdbc.version>
-    
         <!--
          | Environment name and filters file for environment-specific build
          | settings.  By default <environment.name> is blank, and the filters 
@@ -226,6 +220,22 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.jtds</groupId>
+                <artifactId>jtds</artifactId>
+                <version>1.2.4</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>4.0</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.cernunnos</groupId>

@@ -13,22 +13,23 @@
 
     <name>SSP Platform WAR</name>
     <description>The SSP Platform web application.</description>
-    <dependencies>    
-        <!-- ***** SSP JDBC Driver *****
-         | The groupId, artifactId and version are configured in the root POM.
-         +-->
+    <dependencies>     
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.2.4</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.jasig.ssp.platform</groupId>
             <artifactId>platform-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.jasig.ssp.platform</groupId>
             <artifactId>platform-java-api</artifactId>
