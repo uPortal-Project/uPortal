@@ -113,7 +113,9 @@
                             <td headers="${n}displayName">
                                 <a href="javascript:;" rsf:id="displayName">Name</a>
                             </td>
-                            <td headers="${n}username" rsf:id="username">Username</td>
+                            <td headers="${n}username">
+                                <a href="javascript:;" rsf:id="username">Username</a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -141,7 +143,12 @@
                      }
 
                  },
-                 { key: "username", valuebinding: "*.username", sortable: true }
+                 { key: "username", valuebinding: "*.username", sortable: true,
+                     components: {
+                         target: "${selectPersonUrl}".replace("USERNAME", '${"${*.username}"}'),
+                         linktext: '${"${*.username}"}'
+                     }
+                 }
              ],
             bodyRenderer: {
               type: "fluid.pager.selfRender",
@@ -210,3 +217,4 @@
         });
     });
 </script>
+</div>
