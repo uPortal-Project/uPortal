@@ -849,6 +849,13 @@
                         <then>
                             <echo>HSQL is not running</echo>
                         </then>
+                        <elseif>
+                            <contains string="${hsql-shutdown.err.out}" substring="java.io.EOFException" />
+                            <!-- See http://sourceforge.net/tracker/?func=detail&aid=3565829&group_id=23316&atid=378131 -->
+                            <then>
+                                <echo>FYI HSQL shutdown threw java.io.EOFException but we believe did shut down correctly.</echo>
+                            </then>
+                        </elseif>
                         <else>
                             <echo>${hsql-shutdown.err.out}</echo>
                             <throw refid="hsql-shutdown.exceptionId" />
