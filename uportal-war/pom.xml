@@ -15,12 +15,16 @@
     <description>The SSP Platform web application.</description>
     <dependencies>    
         <!-- ***** SSP JDBC Driver *****
-         | The groupId, artifactId and version are configured in the root POM.
+         | The groupId, artifactId and version(s) are configured in the root POM.
          +-->
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>${postgresql.groupId}</groupId>
+            <artifactId>${postgresql.artifactId}</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${mssql.groupId}</groupId>
+            <artifactId>${mssql.artifactId}</artifactId>
         </dependency>
         
         <dependency>

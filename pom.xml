@@ -86,11 +86,14 @@
         <!-- The final name of the SSP Platform web-application -->
         <ssp.docbase>ssp-platform</ssp.docbase>
         <!--project-site-path>/uportal/${project.version}</project-site-path-->
-        
-        <!-- The JDBC Driver used by SSP -->
-        <jdbc.groupId>postgresql</jdbc.groupId>
-        <jdbc.artifactId>postgresql</jdbc.artifactId>
-        <jdbc.version>${postgresql.version}</jdbc.version>
+
+        <postgresql.groupId>postgresql</postgresql.groupId>
+        <postgresql.artifactId>postgresql</postgresql.artifactId>
+        <postgresql.version>8.4-701.jdbc4</postgresql.version>
+
+        <mssql.groupId>net.sourceforge.jtds</mssql.groupId>
+        <mssql.artifactId>jtds</mssql.artifactId>
+        <mssql.version>1.2.4</mssql.version>
     
         <!--
          | Environment name and filters file for environment-specific build
@@ -166,7 +169,6 @@
         <org.springframework.webflow.version>2.3.1.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <postgresql.version>8.4-701.jdbc4</postgresql.version>
         <pluto.version>2.1.0-M2</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>1.8.4</quartz.version>
@@ -356,6 +358,16 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
                 <version>${tomcat-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${postgresql.groupId}</groupId>
+                <artifactId>${postgresql.artifactId}</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${mssql.groupId}</groupId>
+                <artifactId>${mssql.artifactId}</artifactId>
+                <version>${mssql.version}</version>
             </dependency>
             <dependency>
                 <groupId>dom4j</groupId>
