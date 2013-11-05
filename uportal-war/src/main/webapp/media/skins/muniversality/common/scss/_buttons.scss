@@ -18,7 +18,8 @@ $btn-active-selector: ".ui-btn-active";
 		font-family: Helvetica, Arial, sans-serif;
 		font-weight: bold;
 		text-decoration: none;
-		@include text-shadow(dark);
+		// Fix "bad blur effects" with text-shadow on buttons or lists with black text (emailpreview, esuptwitter...)
+		//@include text-shadow(dark);
 		cursor: pointer;
 	}
 }
@@ -30,6 +31,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c3darker;
 		background		: $c3;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c3, $c3darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -38,6 +40,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c1darker;
 		background		: $c1;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c1, $c1darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -70,6 +73,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c3darker;
 		background		: $c3light;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c3light, $c3dark);
 		a.ui-link-inherit { 
 			color		: $white;
@@ -78,6 +82,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c3darker;
 		background		: $c1light;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c1lighter, $c1darker);
 		a.ui-link-inherit {
 			color		: $white;
@@ -109,6 +114,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c3darker;
 		background		: $c3;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c3dark, $c3light);
 		a.ui-link-inherit {
 			color		: $white;
@@ -117,6 +123,7 @@ $btn-active-selector: ".ui-btn-active";
 		border-color	: $c1darker;
 		background		: $c1;
 		color			: $white;
+		@include text-shadow(dark);
 		@include gradient($c1darker, $c1);
 		a.ui-link-inherit {
 			color		: $white;

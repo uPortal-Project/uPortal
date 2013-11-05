@@ -78,9 +78,9 @@
  * Pass in "light" to get a top bevel on dark text./backgrounds. */
 @mixin text-shadow($type: dark) {
 	@if($type == 'light') {
-		text-shadow	: 0 1px 1px $white;	
+		text-shadow	: 0 1px 0 $white;	
 	} @else {
-		text-shadow	: 0 -1px 1px $black;	
+		text-shadow	: 0 -1px 0 $black;	
 	}
 	
 }
