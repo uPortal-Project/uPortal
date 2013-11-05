@@ -174,5 +174,6 @@ h2 { font-size:170%; }
 h3 { font-size:150%; }
 h4, h5, h6 { font-size:120%; }
 
-a, a:active, a:visited { color: #607890; }
-a:hover { color: #036; }
+// Fix ui-collapside-heading-toggle bug
+//a, a:active, a:visited { color: #607890; }
+//a:hover { color: #036; }

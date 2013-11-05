@@ -19,7 +19,8 @@
 		border-width: 1px;
 		border-style: solid;
 		font-weight: bold;
-		text-shadow: 0 -1px 1px $black;
+		// Fix "bad blur effects" with text-shadow on ui-li-dividers with black text
+		//text-shadow: 0 -1px 0 $black;
 		
 		input, select, textarea, button {
 			font-family: Helvetica, Arial, sans-serif;
@@ -51,7 +52,7 @@
 		border-color	: $c2dark;
 		background		: $c2;
 		color			: $white;
-		@include text-shadow();
+		@include text-shadow(dark);
 		@include gradient($c2light, $c2dark);
 		
 		@include button(portal-nav);
@@ -61,7 +62,7 @@
 		border-color	: $c1darker;
 		background		: $c1dark;
 		color			: $white;
-		@include text-shadow();
+		@include text-shadow(dark);
 		@include gradient($c1, $c1darker);
 		
 		@include button(portlet-nav);
@@ -96,6 +97,7 @@
 			border-top		: 1px solid $c1light;
 			background		: $c1;
 			color			: $white;
+			@include text-shadow(dark);
 			@include gradient($c1dark, $c1light);
 			-moz-box-shadow: 0 0 5px #999;
 			-webkit-box-shadow: 0 0 5px #999;
