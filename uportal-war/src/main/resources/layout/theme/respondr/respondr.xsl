@@ -327,7 +327,7 @@
             <xsl:for-each select="//navigation/tab">
                 <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
                     <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
-                    <div class="row-fluid">
+                    <div class="row">
                         <xsl:for-each select="//navigation/tab">
                             <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
                                 <xsl:variable name="tabLinkUrl">
@@ -339,7 +339,7 @@
                                         </xsl:with-param>
                                     </xsl:call-template>
                                 </xsl:variable>
-                                <div class="span3">
+                                <div class="col-md-3">
                                     <h4><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
                                     <ul>
                                         <xsl:for-each select="tabChannel">
@@ -440,8 +440,10 @@
                         </div>
                     </div>
                     <div class="container">
-                        <xsl:call-template name="uportal.message" />
-                        <xsl:call-template name="search" />
+                        <div class="row">
+                            <xsl:call-template name="uportal.message" />
+                            <xsl:call-template name="search" />
+                        </div>
                     </div>
                     <xsl:apply-templates select="layout/navigation" />
                 </header>

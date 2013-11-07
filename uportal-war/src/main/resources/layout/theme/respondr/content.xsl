@@ -64,7 +64,7 @@
     </xsl:for-each>
     <!-- Handles focused mode -->
     <xsl:apply-templates select="focused/channel">
-      <xsl:with-param name="WIDTH_CSS_CLASS">span12</xsl:with-param>
+      <xsl:with-param name="WIDTH_CSS_CLASS">col-md-12</xsl:with-param>
     </xsl:apply-templates>
   </xsl:template>
 
@@ -74,14 +74,14 @@
    | This template renders a tab.
   -->
   <xsl:template name="row">
-    <div class="row-fluid">
+    <div class="row">
       <!-- Tests for optional portlet parameter removeFromLayout which can be used to not render a portlet in the layout.  The main use case for this function is to have a portlet be a quicklink and then remove it from otherwise rendering. -->
       <!-- xsl:apply-templates select="channel|blocked-channel and not(parameter[@name='removeFromLayout']/@value='true') and not(parameter[@name='PORTLET.removeFromLayout']/@value='true')" -->
       <xsl:apply-templates select="channel|blocked-channel">
           <xsl:with-param name="WIDTH_CSS_CLASS">
             <!-- NOTE:  This implementation assumes equal widths in a row of portlets;  we need to introduce a system to choose varying widths. -->
             <!-- NOTE:  This implementation also assumes that the actual number of portlets in the row can be evenly divided by 12;  works for 1, 2, 3, and 4;  need to enforce that or change this implementation. -->
-            <xsl:value-of select="concat('span', string(12 div count(channel)))" />
+            <xsl:value-of select="concat('col-md-', string(12 div count(channel)))" />
           </xsl:with-param>
       </xsl:apply-templates>
     </div>
