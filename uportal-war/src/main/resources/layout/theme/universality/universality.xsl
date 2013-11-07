@@ -884,23 +884,29 @@
                 up.jQuery.ajax({
 					type: 'get',
 			        url: '/ssp/api/1/server/version',			       
-			        success:function(data)
+			        success: function(data)
 			        {
 			           sspInfo = "<p>SSP Version: " +data.artifactVersion
 			           +"   |   SSP BuildDate: " +intToDate(data.buildDate) +"   |   SSP SCM Revision: " +data.scmRevision +" </p>";
-			        }
+                       platformInfo = "<p>Platform Version: " +platformVersion  +"  |  Platform BuildDate: "
+                       +intToDate(platformBuildDate) +"  |  Platform SCM Revision: " +platformRevision +" </p>";
+                       up.jQuery('#InfoToggle').text("Click here for Version Information");
+			        },
+                    error: function()
+                    {
+                        toggle = -1;
+                    }
 	 			});
 
-                platformInfo = "<p>Platform Version: " +platformVersion  +"  |  Platform BuildDate: "
-                    +intToDate(platformBuildDate) +"  |  Platform SCM Revision: " +platformRevision +" </p>";
-
                 up.jQuery('#InfoToggle').click(function() {
-                        if ( toggle == 0 ) {
+                        if ( toggle === 0 ) {
                             up.jQuery('#InfoToggle').html(sspInfo + platformInfo);
                             toggle = 1;
-                        } else {
+                        } else if ( toggle === 1 ) {
                             up.jQuery('#InfoToggle').text("Click here for Version Information");
                             toggle = 0;
+                        } else {
+                            up.jQuery('#InfoToggle').text("");
                         }
                 });
 		});
@@ -931,7 +937,7 @@
     </script>
     <div class="copyright">
          <p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
-         <div style="cursor: pointer" id="InfoToggle">Click here for Version Information</div>
+         <div style="cursor: pointer" id="InfoToggle"> </div>
     </div>
 
   </xsl:template>
