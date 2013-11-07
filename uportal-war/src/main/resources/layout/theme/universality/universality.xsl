@@ -632,6 +632,13 @@
     	<p>CUSTOM CONTENTS.</p>
     </div>
     -->
+    <div>
+        <noscript>
+            <h3>WARNING: JavaScript is disabled!</h3><br />
+            <p><b>SSP needs JavaScript. Please enable JavaScript in your browser settings.</b></p>
+            <br />
+        </noscript>
+    </div>
     <!-- Tips -->
     <div id="portalContentTopBlock">
         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'tips']/parent::*"/>
