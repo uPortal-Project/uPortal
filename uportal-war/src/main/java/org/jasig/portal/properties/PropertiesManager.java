@@ -19,13 +19,16 @@
 
 package  org.jasig.portal.properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer;
+import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
+
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Provides access to properties.
@@ -78,22 +81,28 @@ public class PropertiesManager {
     public static synchronized void setProperties(Properties props){
         PropertiesManager.props = props;
     }
-    
+
+    public static Properties readDefaultProperties() throws IOException {
+        String pfile = System.getProperty(PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE);
+        if (pfile == null) {
+            pfile = PORTAL_PROPERTIES_FILE_NAME;
+        }
+        final Properties props = new Properties();
+        props.load(PropertiesManager.class.getResourceAsStream(pfile));
+        return props;
+    }
+
     /**
      * Load up the portal properties.  Right now the portal properties is a simple
      * .properties file with name value pairs.  It may evolve to become an XML file
      * later on.
      */
     protected static void loadProps() {
-        PropertiesManager.props = new Properties();
         try {
-            String pfile = System.getProperty(PORTAL_PROPERTIES_FILE_SYSTEM_VARIABLE);
-            if (pfile == null) {
-                pfile = PORTAL_PROPERTIES_FILE_NAME;
-            }
-            PropertiesManager.props.load(PropertiesManager.class.getResourceAsStream(pfile));
+            PropertiesManager.props = readDefaultProperties();
         } catch (Throwable t) {
             log.error("Unable to read portal.properties file.", t);
+            PropertiesManager.props = new Properties();
         }
     }
     

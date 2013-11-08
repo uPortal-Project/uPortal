@@ -34,7 +34,10 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+
+import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
@@ -64,6 +67,8 @@ public class AuthorizationService
     Properties pr = new Properties();
     try {
       pr.load(secprops);
+      // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
+      pr = ContextPropertyPlaceholderUtils.resolve(pr, UnresolvablePlaceholderStrategy.IGNORE);
 		secprops.close();
       // Look for our authorization factory and instantiate an instance of it or die trying.
       if ((s_factoryName = pr.getProperty("authorizationProvider")) == null) {

@@ -19,6 +19,10 @@
 
 package org.jasig.portal.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -28,8 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * This class provides a static "factory" method that returns a security context
@@ -134,7 +137,11 @@ public class InitialSecurityContextFactory {
                 }
                 
                 //Load the context configurations
-                contextConfigBase.rootConfig = loadContextConfigurationChain(rootContext, securityProperties);
+                // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
+                final Properties processedSecurityProperties =
+                        ContextPropertyPlaceholderUtils.resolve(securityProperties,
+                                UnresolvablePlaceholderStrategy.IGNORE);
+                contextConfigBase.rootConfig = loadContextConfigurationChain(rootContext, processedSecurityProperties);
                 contextConfigBase.initialized = true;
             }
         }
@@ -152,7 +159,7 @@ public class InitialSecurityContextFactory {
             throw ep;
         }
     }
-    
+
     /**
      * Recursivly parses the tree of {@link ContextConfiguration} objects to create
      * a tree (chain) of {@link ISecurityContext}s. The root context is returned by

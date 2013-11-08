@@ -42,11 +42,14 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
+import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+
+import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * PortalPreAuthenticatedProcessingFilter enables Spring Security 
@@ -88,7 +91,10 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             String key;
             // We retrieve the tokens representing the credential and principal
             // parameters from the security properties file.
-            Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
+            // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
+            Properties props =
+                    ContextPropertyPlaceholderUtils.resolve(ResourceLoader.getResourceAsProperties(getClass(),
+                            "/properties/security.properties"), UnresolvablePlaceholderStrategy.IGNORE);
             Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 String propName = (String) propNames.nextElement();

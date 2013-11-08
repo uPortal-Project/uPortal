@@ -37,11 +37,17 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * Simple servlet to handle user logout. When a user
@@ -53,13 +59,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/Logout")
-public class LogoutController implements InitializingBean {
+public class LogoutController implements InitializingBean, ApplicationContextAware {
 
     private static final Log log = LogFactory.getLog(LogoutController.class);
 
     private Map<String, String> redirectMap;
     private IPortalEventFactory portalEventFactory;
     private IPersonManager personManager;
+    private ApplicationContext applicationContext;
 
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -78,9 +85,13 @@ public class LogoutController implements InitializingBean {
         try {
             // We retrieve the redirect strings for each context
             // from the security properties file.
+            // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
             String key;
-            final Properties props = ResourceLoader.getResourceAsProperties(LogoutController.class,
-                    "/properties/security.properties");
+            final Properties props =
+                    ContextPropertyPlaceholderUtils.resolve(
+                            ResourceLoader.getResourceAsProperties(LogoutController.class,
+                                    "/properties/security.properties"), applicationContext,
+                            UnresolvablePlaceholderStrategy.IGNORE);
             final Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 final String propName = (String) propNames.nextElement();
@@ -240,5 +251,10 @@ public class LogoutController implements InitializingBean {
             log.debug("LogoutController::getRedirectionUrl()" + " redirectionURL = " + redirect);
         }
         return redirect;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

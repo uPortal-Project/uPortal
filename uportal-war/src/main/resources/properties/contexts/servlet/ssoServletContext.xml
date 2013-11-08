@@ -29,19 +29,13 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
+    <import resource="../configContext.xml" />
+
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.jasig.portal.security.sso.mvc"/>
-
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-              <value>classpath:/properties/portal.properties</value>
-            </list>
-        </property>
-    </bean>
 
 </beans>

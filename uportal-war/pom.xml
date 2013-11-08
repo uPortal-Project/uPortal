@@ -581,28 +581,30 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <!-- 
-                 | Enumerate filtered files explicitly to avoid issues with other 
-                 | config tech, e.g. Spring property placeholder 
+                <!--
+                 | Enumerate filtered files explicitly to avoid issues with other
+                 | config tech, e.g. Spring property placeholder.
+                 |
+                 | In general, we (SSP-Platform) rely on runtime property placeholder
+                 | dereferencing and thus the list of filtered files here is much smaller
+                 | than in canonical uPortal source distros. There are a few properties
+                 | from the build that we need to be carried over into runtime, though.
+                 | That's what build.properties captures.
                  +-->
                 <includes>
-                    <include>properties/portal.properties</include>
-                    <include>properties/rdbm.properties</include>
-                    <include>properties/security.properties</include>
-                    <include>properties/contexts/userContext.xml</include>
+                    <include>properties/build.properties</include>
                 </includes>
             </resource>
-            <!-- 
+            <!--
              | Declare a mutually exclusive resource set for non-filtered files.
+             | Without this, the only resources copied into the binary will be
+             | the filtered files listed immediately above.
              +-->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <excludes>
-                    <exclude>properties/portal.properties</exclude>
-                    <exclude>properties/rdbm.properties</exclude>
-                    <exclude>properties/security.properties</exclude>
-                    <exclude>properties/contexts/userContext.xml</exclude>
+                    <exclude>properties/build.properties</exclude>
                 </excludes>
             </resource>
         </resources>

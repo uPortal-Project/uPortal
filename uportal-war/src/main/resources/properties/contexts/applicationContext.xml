@@ -44,16 +44,12 @@
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\."/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
     </context:component-scan>
-    
-    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-              <value>classpath:/properties/rdbm.properties</value>
-              <value>classpath:/properties/security.properties</value>
-              <value>classpath:/properties/portal.properties</value>
-            </list>
-        </property>
-    </bean>
+
+    <!-- propertiesManagerInitializer bean goes here rather than in configContext.xml b/c it's not intended to
+         be instantiated per-servlet/portlet. It really should only fire once per webapp startup, and then for the root
+         application context. -->
+    <bean id="propertiesManagerInitializer" class="org.jasig.portal.properties.PropertiesManagerInitializer"
+          depends-on="primaryPropertyPlaceholderConfigurer" />
     
     <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
@@ -66,7 +62,7 @@
             </props>
         </property>
     </bean>
-    
+
     <util:map id="productVersions" value-type="org.jasig.portal.version.om.Version">
     	<entry value="4.0.6">
     		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>

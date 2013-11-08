@@ -33,26 +33,6 @@
     
 
     <build>
-        <filters>
-            <filter>../../${filters.file}</filter>
-        </filters>
-        <resources>
-            <resource>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <!-- List files or patterns to be filtered here...  -->
-                    <include>changeme*/*.*</include>
-                </includes>
-            </resource>
-            <resource>
-                <filtering>false</filtering>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <!-- List the same files or patterns as above here...  -->
-                </excludes>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

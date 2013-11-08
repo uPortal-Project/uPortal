@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <!-- Refactored out of applicationContext.xml b/c the same BeanFactoryPostProcessor needs to be used by
+    child (servlet/portlet) contexts. -->
+    <bean id="primaryPropertyPlaceholderConfigurer" class="org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+
+                <!-- Special properties set at build time -->
+                <value>classpath:/properties/build.properties</value>
+
+                <!-- Canonical pre-SSP-1888/UP-3648 includes. Not typically relevant any longer
+                because the SSP-Platform build no longer dereferences property placeholders
+                at build time except for the build.properties file listed above. Instead, we
+                tend to rely on runtime dereferencing, using the two ssp-platform-config*.properties
+                files references further below. -->
+                <value>classpath:/properties/rdbm.properties</value>
+                <value>classpath:/properties/security.properties</value>
+                <value>classpath:/properties/portal.properties</value>
+
+                <!-- post-SSP-1888/UP-3648 defaults file. Contents based on the "legacy"
+                <uportal-war-src>/filters/local.properties. -->
+                <value>classpath:/properties/ssp-platform-config.default.properties</value>
+
+                <!-- Optional overrides of those defaults. Unlike in UP-3648, we only
+                 allow a single override file (that patch allows several). This greatly
+                 simplifies instructions for first-time builds where you're trying to setup
+                 the database using ant commands. Since we only support one override location,
+                 we only need to set a single env var before running that command, and
+                 we're going to get the same property dereferencing behavior that we
+                 do at app server runtime. -->
+                <value>file:${SSP_CONFIGDIR}/ssp-platform-config.properties</value>
+            </list>
+        </property>
+        <property name="ignoreResourceNotFound" value="true" />
+    </bean>
+
+
+</beans>
