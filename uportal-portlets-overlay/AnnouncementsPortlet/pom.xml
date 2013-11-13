@@ -141,16 +141,15 @@
                                 <java failonerror="true" classname="org.jasig.portlet.announcements.Importer">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
+                                        <pathelement location="${project.build.directory}/${project.artifactId}/WEB-INF/context" />
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
                                         <pathelement location="${portlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/classes" />  <!-- Should be in runtime classpath -->
                                     </classpath>
 
                                     <arg value="${dir}" />
-                                    <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
+                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -179,14 +178,15 @@
                                 <java failonerror="true" fork="true" classname="org.jasig.portlet.announcements.Exporter">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
+                                        <pathelement location="${project.build.directory}/${project.artifactId}/WEB-INF/context" />
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
                                         <pathelement location="${portlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
                                     </classpath>
+
                                     <arg value="${dir}" />
-                                    <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
+                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
