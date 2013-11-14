@@ -103,6 +103,7 @@
         cursor: pointer;
         color: rgb(51, 51, 51);
         text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.75);
+        background-color: #DEDEDE;
         background: rgb(245, 245, 245) linear-gradient(to bottom, rgb(255, 255, 255), rgb(230, 230, 230)) repeat-x;
         border: 1px solid rgb(204, 204, 204);
         border-bottom-color: rgb(179, 179, 179);
