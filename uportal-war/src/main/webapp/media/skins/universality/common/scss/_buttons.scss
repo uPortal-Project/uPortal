@@ -328,7 +328,7 @@
   }
 
   // Web search
-  #webSearchContainer input[type='submit'] {
+  #webSearchContainer input[type='submit'], #webSearchContainer button[type='submit'] {
     @include button-type('websearch');
   }
 

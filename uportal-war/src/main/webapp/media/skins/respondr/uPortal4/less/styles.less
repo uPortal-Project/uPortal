@@ -212,6 +212,13 @@ body {
         margin: 30px 0;
     }
 
+    #webSearchContainer {
+        margin-top: 40px;
+    }
+    #webSearchSubmit span {
+        display: none;
+    }
+
 /* ==========================================================================
    Navigation
    ========================================================================== */
@@ -220,7 +227,7 @@ body {
 
         .menu-toggle {
             position: absolute;
-            top: 20px;
+            top: 40px;
             right: 20px;
             padding: 0.5rem 1rem;
             background: @color2;
@@ -253,14 +260,11 @@ body {
                     text-decoration: none;
                     padding: 8px 14px;
 
-                    i.icon-chevron-right {
+                    i {
                         float: right;
                         margin-top: 2px;
                         margin-right: -6px;
                         opacity: .5;
-                        /* Looks broken -- is there a need for this item?
-                         * background-image: url("/ResourceServingWebapp/rs/bootstrap/2.3.2/img/glyphicons-halflings-white.png");
-                         */
                     }
 
                     &:hover, &:focus {
@@ -447,6 +451,7 @@ body {
             list-style-type: none;
             margin-left: 10px;
             display: none;
+            padding: 0;
         }
     }
 
@@ -500,46 +505,6 @@ body {
  * (Corresponds to the smallest breakpoint in Bootstrap)
  */
 
-
-@media only screen and (max-width: 769px) {
-
-    .portal-login {
-        margin-top: 13px;
-        margin-right: 100px;
-    }
-    
-    .portal-logout {
-        margin-top: 13px;
-        margin-right: 100px;
-    }
-
-    .user-name {
-        display: none;
-    }
-
-    .search-launcher {
-        margin-bottom: 5px;
-        margin-top: 0px;
-        white-space: nowrap;
-        width: 100%;
-    }
-
-    .search-launcher input[type="text"] {
-        width: 100%;
-    }
-    
-    .form-search {
-        margin-bottom: 0px;
-        margin-right: 83px;
-    }
-
-    .portal-logo {
-        margin-top: 20px;
-        margin-right: 258px;
-        margin-bottom: 5px;
-    }
-}
-
 @media only screen and (min-width: 769px) {
 
 /*
@@ -551,7 +516,7 @@ body {
             display: none;
         }
 
-        i.icon-chevron-right {
+        i {
             display: none;
         }
 
@@ -568,9 +533,6 @@ body {
                     line-height: 30px;
                     padding: 6px 20px;
                 }
-                &.portal-navigation-add-item {
-                  float: right;
-                }
             }
         }
     }
@@ -582,19 +544,16 @@ body {
      .portal-header {
          .container {
              padding: 0;
+
+             .portal-user {
+                a {
+                    color: @color2;
+                    margin-left: 10px;
+                }
+             }
          }
-         
-        .portal-user {
-            display: block;
-        }
-        
-        .search-launcher {
-            margin-top: 25px;
-            display: block;
-            text-align: right;
-            float: right;
-            vertical-align: middle;
-        }
+
+
      }
 
      .portal-global {

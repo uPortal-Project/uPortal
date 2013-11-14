@@ -26,70 +26,24 @@
 
   <css>http://fonts.googleapis.com/css?family=Oxygen</css>
 
-  <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
-  <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/smoothness/jquery-ui-1.8.13-smoothness.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.8.13/theme/smoothness/jquery-ui-1.8.13-smoothness.min.css</css>
-
   <css included="plain">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.min.css</css>
 
-  <css included="plain">/ResourceServingWebapp/rs/bootstrap/2.3.2/css/bootstrap-2.3.2.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/2.3.2/css/bootstrap-2.3.2.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/bootstrap/3.0.0/css/bootstrap-3.0.0.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/css/bootstrap-3.0.0.min.css</css>
 
-  <css included="plain">/ResourceServingWebapp/rs/bootstrap/2.3.2/css/bootstrap-responsive-2.3.2.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/2.3.2/css/bootstrap-responsive-2.3.2.min.css</css>
-
-  <css>css/styles.css</css>
+  <css included="plain">less/styles.less</css>
+  <css included="aggregated">css/styles.css</css>
 
   <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
 
-  <!-- jQuery 1.8 and above caused issues, some of which were:
-       1. Add Preference on Manage Portlets appeared at top of page instead of middle of window
-       2. Each preference added caused multiple entries (1st created 1, 2nd created 2, 3rd created 3) in Manage Portlets
-       3. Add/Edit tab looked incorrect.
-       Bootstrap works with 1.6.4, though it throws an error because it tries to do $(document).on() which was added in 
-       1.7.
-   -->
-  <js included="plain" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.js</js>
-  <js included="aggregated" resource="true">/rs/jquery/1.6.4/jquery-1.6.4.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.min.js</js>
 
-  <js included="plain" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.js</js>
-  <js included="aggregated" resource="true">/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js</js>
-
-  <js included="plain">/ResourceServingWebapp/rs/bootstrap/2.3.2/js/bootstrap-2.3.2.js</js>
-  <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/2.3.2/js/bootstrap-2.3.2.min.js</js>
-
-  <js included="plain" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.js</js>
-  <js included="aggregated" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js</js>
+  <js included="plain">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.js</js>
+  <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.min.js</js>
 
   <!-- <js included="plain">../common/javascript/less-1.4.1.min.js</js> -->
-
-  <!-- common temporarily excluded until we add underscore for google analytics
-  <js import="true">../../common/common_skin.xml</js>
-  -->
-
-  <js>javascript/uportal/up-util.js</js>
-  <js>javascript/uportal/up-portlet-registry.js</js>
-  <js>javascript/uportal/up-entity-registry.js</js>
-  <js>javascript/uportal/up-portlet-browser.js</js>
-  <js>javascript/uportal/up-layout-draggable-manager.js</js>
-  <js>javascript/uportal/up-layout-gallery.js</js>
-  <js>javascript/uportal/up-fragment-permissions-manager.js</js>
-  <js>javascript/uportal/up-subscription-browser.js</js>
-  <js>javascript/uportal/up-layout-selector.js</js>
-  <js>javascript/uportal/up-skin-selector.js</js>
-  <js>javascript/uportal/up-tab-manager.js</js>
-  <js>javascript/uportal/up-layout-persistence.js</js>
-  <js>javascript/uportal/up-url-provider.js</js>
-  <js>javascript/uportal/up-layout-preferences.js</js>
-  <js>javascript/uportal/up-autocomplete.js</js>
-  <js>javascript/uportal/up-showHideToggle.js</js>
-  <js>javascript/uportal/entity-selector.js</js>
-  <js>javascript/uportal/up-parameter-editor.js</js>
-  <js>javascript/uportal/flyout-nav.js</js>
-  <js>javascript/uportal/up-translator.js</js>
-  <js>javascript/uportal/up-sidebar-improved.js</js>
-  <js>javascript/uportal/up-print-plugin.js</js>
 
 </resources>
