@@ -36,6 +36,7 @@ import org.jasig.portal.events.aggr.login.LoginAggregationKeyImpl;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,8 +116,15 @@ public class ActivityController {
         model.put("usageToday",today);
         model.put("usageYesterday",yesterday);
 
-        return new ModelAndView("jsp/Activity/activity", model);
+        String viewName = isMobile(request) ? "jsp/Activity/mobileActivity" : "jsp/Activity/activity";
+
+        return new ModelAndView(viewName, model);
     }
+
+    public boolean isMobile(PortletRequest request) {
+        String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
+        return "UniversalityMobile".equals(themeName);
+    }   
 
     private PortalActivity buildPortalActivity(PortletRequest request,int timeframe)
     {
