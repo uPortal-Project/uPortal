@@ -307,7 +307,7 @@
 .portlet table.portlet-table th,
 .portlet table.portlet-table td {border-color:#ccc !important;}
 .portlet table.portlet-table th {background-color:#E2E8E7 !important; color:#333; font-size:85%; padding:1px 1em; text-align:left;}
-.portlet table.portlet-table th a {color:#333 !important; padding-right:16px; background:transparent url(../images/sort.png) 0 0 no-repeat;}
+.portlet table.portlet-table th a {color:#333 !important; padding-left:16px; background:transparent url(../images/sort.png) 0% 70% no-repeat;}
 .portlet table.portlet-table td {padding:5px 1em;}
 .portlet table.portlet-table td > div + div > input {margin-top:.5em;}
 .portlet table.portlet-table th:hover,

@@ -563,7 +563,6 @@
 .up #portalPageBodyInner {
   /* Page body. */
   padding: 2.5em 25px;
-  background: #f5f7fa;
 }
 
 /*====================================*/
@@ -1111,7 +1110,7 @@
   opacity: 0.2;
   filter: progid:DXImageTransform.Microsoft.Alpha(opacity=20);
   filter: alpha(opacity=20);
-  border-color: #3A3A3A !important;
+  border-color: #3a3a3a !important;
 }
 .up .up-gallery .gallery-inner .results-wrapper .results-item.disabled:hover, .up .up-gallery .gallery-inner .results-wrapper .results-item.disabled:focus,
 .up .up-gallery .gallery-inner .results-wrapper .results-item.disabled a:hover, .up .up-gallery .gallery-inner .results-wrapper .results-item.disabled a:focus {
@@ -1339,7 +1338,7 @@
   float: left;
   height: 16px;
   width: 16px;
-  background-image: url("../common/images/portlet_icons_with_printflat.png");
+  background-image: url("../common/images/portlet_icons_with_print_flat.png");
   background-repeat: no-repeat;
   background-position: 0 0;
 }
