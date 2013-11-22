@@ -23,8 +23,8 @@
   <dlm:fragment name="Academics" ownerID="academics-lo" precedence="50">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="memberOf" name="Students"/>
-        <attribute mode="memberOf" name="Faculty"/>
+        <attribute mode="deepMemberOf" name="Students"/>
+        <attribute mode="deepMemberOf" name="Faculty"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
