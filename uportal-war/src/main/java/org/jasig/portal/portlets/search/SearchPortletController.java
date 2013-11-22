@@ -19,15 +19,20 @@
 
 package org.jasig.portal.portlets.search;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -37,10 +42,15 @@ import javax.portlet.ActionResponse;
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
 import javax.portlet.EventResponse;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
@@ -70,9 +80,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.ModelAndView;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.EventMapping;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 /**
  * SearchPortletController produces both a search form and results for configured
@@ -87,6 +95,11 @@ public class SearchPortletController {
     private static final String SEARCH_RESULTS_CACHE_NAME = SearchPortletController.class.getName() + ".searchResultsCache";
     private static final String SEARCH_COUNTER_NAME = SearchPortletController.class.getName() + ".searchCounter";
     private static final String SEARCH_HANDLED_CACHE_NAME = SearchPortletController.class.getName() + ".searchHandledCache";
+    private static final String SEARCH_LAST_QUERY_ID = SearchPortletController.class.getName() + ".searchLastQueryId";
+    private static final String AJAX_MAX_QUERIES_URL = "/scripts/search/hitMaxQueriesGive404Result.json";   // URL to nonexistent file
+    private static final String SEARCH_LAUNCH_FNAME = "searchLaunchFname";
+    private static final String AJAX_RESPONSE_RESOURCE_ID = "retrieveSearchJSONResults";
+    private static final List<String> UNDEFINED_SEARCH_RESULT_TYPE = Arrays.asList(new String[] {"UndefinedResultType"});
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());    
     
@@ -100,6 +113,17 @@ public class SearchPortletController {
     private List<String> tabKeys = Collections.emptyList();
     private String defaultTabKey = "portal.results";
     private int maximumSearchesPerMinute = 18;
+
+    private int maxAutocompleteSearchResults = 10;
+    // Map of (search result type, priority) to prioritize search autocomplete results.  0 is default priority.
+    // > 0 is higher priority, < 0 is lower priority.
+    private Map<String, Integer> autocompleteResultTypeToPriorityMap = new HashMap<String, Integer>();
+
+    // TODO: It would be better to revise the search event to have a set of ignored types and expect the
+    // search event listeners to voluntarily ignore the search event if they are one of the ignored types (and
+    // again filtering here in case the search event listener doesn't respect the ignore set).
+    // This requires changing the SearchEvent and unfortunately there is not time for that now.
+    private Set<String> autocompleteIgnoreResultTypes = new HashSet<String>();
     
     @Resource(name="searchServices")
     public void setPortalSearchServices(List<IPortalSearchService> searchServices) {
@@ -120,6 +144,32 @@ public class SearchPortletController {
     @Value("${org.jasig.portal.portlets.searchSearchPortletController.maximumSearchesPerMinute:18}")
     public void setMaximumSearchesPerMinute(int maximumSearchesPerMinute) {
         this.maximumSearchesPerMinute = maximumSearchesPerMinute;
+    }
+
+    public int getMaxAutocompleteSearchResults() {
+        return maxAutocompleteSearchResults;
+    }
+
+    /**
+     * Set the maximum number of autocomplete results for a search
+     */
+    @Value("${org.jasig.portal.portlets.searchSearchPortletController.autocompleteSearchResults:10}")
+    public void setMaxAutocompleteSearchResults(int maxAutocompleteSearchResults) {
+        this.maxAutocompleteSearchResults = maxAutocompleteSearchResults;
+    }
+
+    public Map<String, Integer> getAutocompleteResultTypeToPriorityMap() {
+        return autocompleteResultTypeToPriorityMap;
+    }
+
+    @Resource(name = "searchAutocompletePriorityMap")
+    public void setAutocompleteResultTypeToPriorityMap(Map<String, Integer> autocompleteResultTypeToPriorityMap) {
+        this.autocompleteResultTypeToPriorityMap = autocompleteResultTypeToPriorityMap;
+    }
+
+    @Resource(name = "searchAutocompleteIgnoreResultTypes")
+    public void setAutocompleteIgnoreResultTypes(Set<String> autocompleteIgnoreResultTypes) {
+        this.autocompleteIgnoreResultTypes = autocompleteIgnoreResultTypes;
     }
 
     /**
@@ -179,7 +229,9 @@ public class SearchPortletController {
 
     @ActionMapping
     public void performSearch(@RequestParam(value = "query") String query, 
-            ActionRequest request, ActionResponse response) {
+            ActionRequest request, ActionResponse response,
+            @RequestParam(value="ajax", required=false) final boolean ajax)
+            throws IOException {
         final PortletSession session = request.getPortletSession();
         
         final String queryId = RandomStringUtils.randomAlphanumeric(32);
@@ -201,8 +253,16 @@ public class SearchPortletController {
             
             //Too many searches in the last minute, fail the search
             if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
-                response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
-                response.setRenderParameter("query", query);
+
+                if (!ajax) {
+                    response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
+                    response.setRenderParameter("query", query);
+                } else {
+                    // For Ajax return to a nonexistent file to generate the 404 error since it was easier for the
+                    // UI to have an error response.
+                    final String contextPath = request.getContextPath();
+                    response.sendRedirect(contextPath + AJAX_MAX_QUERIES_URL);
+                }
                 return;
             }
         }
@@ -223,16 +283,37 @@ public class SearchPortletController {
                 searchResultsCache = CacheBuilder.newBuilder().maximumSize(20).expireAfterAccess(5, TimeUnit.MINUTES).<String, PortalSearchResults>build(); 
                 session.setAttribute(SEARCH_RESULTS_CACHE_NAME, searchResultsCache);
             }
+            // Save the last queryId for an ajax autocomplete search response.
+            session.setAttribute(SEARCH_LAST_QUERY_ID, queryId);
         }
         searchResultsCache.put(queryId, results);
-        
+
+        /*
+         * TODO:  For autocomplete I wish we didn't have to go through a whole render phase just
+         * to trigger the events-based features of the portlet, but atm I don't
+         * see a way around it, since..
+         *
+         *   - (1) You can only start an event chain in the Action phase;  and
+         *   - (2) You can only return JSON in a Resource phase;  and
+         *   - (3) An un-redirected Action phase leads to a Render phase, not a
+         *     Resource phase :(
+         *
+         * It would be awesome either (first choice) to do Action > Event > Resource,
+         * or Action > sendRedirect() followed by a Resource request.
+         *
+         * As it stands, this implementation will trigger a complete render on
+         * the portal needlessly.
+         */
+
         // send a search query event
         response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
+
+        logger.debug("Displaying query results for queryId {}, query {}", queryId, query);
         response.setRenderParameter("queryId", queryId);
         response.setRenderParameter("query", query);
+
     }
 
-    
     /**
      * Performs a search of the explicitly configured {@link IPortalSearchService}s. This
      * is done as an event handler so that it can run concurrently with the other portlets
@@ -312,11 +393,53 @@ public class SearchPortletController {
      * Display a search form
      */
     @RequestMapping
-    public String showSearchForm(PortletRequest request) {
+    public ModelAndView showSearchForm(RenderRequest request, RenderResponse response) {
+        final Map<String,Object> model = new HashMap<String, Object>();
+
+        // Determine if this portlet displays the search launch view or regular search view.
+        PortletPreferences prefs = request.getPreferences();
         final boolean isMobile = isMobile(request);
-        return isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+        String viewName = isMobile ? "/jsp/Search/mobileSearch" : "/jsp/Search/search";
+
+        // If this search portlet is configured to be the searchLauncher, calculate the URLs to the indicated
+        // search portlet.
+        final String searchLaunchFname = prefs.getValue(SEARCH_LAUNCH_FNAME, null);
+        if (searchLaunchFname != null) {
+            model.put("searchLaunchUrl", calculateSearchLaunchUrl(request, response));
+            model.put("autocompleteUrl", calculateAutocompleteResourceUrl(request, response));
+            viewName = "/jsp/Search/searchLauncher";
+        }
+        return new ModelAndView(viewName, model);
     }
-    
+
+    /**
+     * Create an actionUrl for the indicated portlet
+     * The resource URL is for the ajax typing search results response.
+     * @param request render request
+     * @param response render response
+     */
+    private String calculateSearchLaunchUrl(RenderRequest request, RenderResponse response) {
+        final HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+        final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpRequest, "search", UrlType.ACTION);
+        return portalUrlBuilder.getUrlString();
+
+    }
+
+    /**
+     * Create a resourceUrl for <code>AJAX_RESPONSE_RESOURCE_ID</code>.
+     * The resource URL is for the ajax typing search results response.
+     * @param request render request
+     * @param response render response
+     */
+    private String calculateAutocompleteResourceUrl(RenderRequest request, RenderResponse response) {
+        final HttpServletRequest httpRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+        final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpRequest, "search", UrlType.RESOURCE);
+        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portalUrlBuilder.getTargetPortletWindowId());
+        portletUrlBuilder.setResourceId(AJAX_RESPONSE_RESOURCE_ID);
+        return portletUrlBuilder.getPortalUrlBuilder().getUrlString();
+
+    }
+
     /**
      * Display search results
      */
@@ -359,7 +482,112 @@ public class SearchPortletController {
         
         return new ModelAndView(viewName, model);
     }
-    
+
+    /**
+     * Display AJAX autocomplete search results for the last query
+     */
+    @ResourceMapping(value = "retrieveSearchJSONResults")
+    public ModelAndView showJSONSearchResults(PortletRequest request) {
+        final Map<String,Object> model = new HashMap<String, Object>();
+        List<AutocompleteResultsModel> results = new ArrayList<AutocompleteResultsModel>();
+
+        final PortletSession session = request.getPortletSession();
+        String queryId = (String) session.getAttribute(SEARCH_LAST_QUERY_ID);
+        if (queryId != null) {
+            final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
+            if (portalSearchResults != null) {
+                final ConcurrentMap<String, List<Tuple<SearchResult, String>>> resultsMap = portalSearchResults.getResults();
+                results = collateResultsForAutoCompleteResponse(resultsMap);
+            }
+        }
+        model.put("results", results);
+        model.put("count", results.size());
+        return new ModelAndView("json", model);
+    }
+
+    /**
+     * Accepts a map (tab name, List of tuple search results) and returns a prioritized list of results for the ajax
+     * autocomplete feature.  The computing impact of moving the list items around should be fairly small since there
+     * are not too many search results (unless we get a lot of search providers, in which case the results could be
+     * put into the appropriate format in the Event SEARCH_RESULTS_QNAME_STRING handling).
+     *
+     * Note that the method (as well as the SearchResults Event handler) do not impose a consistent ordering on results.
+     * The results are ordered by priority, but within a particular priority the same search may have results ordered
+     * differently based upon when the SearchResults Event handler receives the search results event list.  Also if
+     * a search result is in multiple category types, even within the same priority, the search result will show up
+     * multiple times.  Currently all results are in a single category so it is not worth adding extra complexity to
+     * handle a situation that is not present.
+     * @param resultsMap
+     * @return
+     */
+    private List<AutocompleteResultsModel> collateResultsForAutoCompleteResponse
+            (ConcurrentMap<String, List<Tuple<SearchResult, String>>> resultsMap) {
+        SortedMap<Integer, List<AutocompleteResultsModel>> prioritizedResultsMap = getSortedMapResults(resultsMap);
+
+        // Consolidate the results into a single, ordered list of max entries.
+        List<AutocompleteResultsModel> results = new ArrayList<AutocompleteResultsModel>();
+        for (List<AutocompleteResultsModel> items : prioritizedResultsMap.values()) {
+            results.addAll(items);
+            if (results.size() >= maxAutocompleteSearchResults) {
+                break;
+            }
+        }
+        return results.subList(0,
+                results.size() > maxAutocompleteSearchResults ? maxAutocompleteSearchResults : results.size());
+    }
+
+    /**
+     * Return the search results in a sorted map based on priority of the search result type
+     * @param resultsMap Search results map
+     * @return Sorted map of search results ordered on search result type priority
+     */
+    private SortedMap<Integer, List<AutocompleteResultsModel>> getSortedMapResults(
+            ConcurrentMap<String, List<Tuple<SearchResult, String>>> resultsMap) {
+        SortedMap<Integer, List<AutocompleteResultsModel>> prioritizedResultsMap = createAutocompletePriorityMap();
+
+        // Put the results into the map of <priority,list>
+        for (Map.Entry<String, List<Tuple<SearchResult, String>>> entry : resultsMap.entrySet()) {
+            for (Tuple<SearchResult, String> tupleSearchResult : entry.getValue()) {
+                SearchResult searchResult = tupleSearchResult.getFirst();
+                List<String> resultTypes = searchResult.getType();
+                // If the search result doesn't have a type defined, use the undefined result type.
+                if (resultTypes.size() == 0) {
+                    resultTypes = UNDEFINED_SEARCH_RESULT_TYPE;
+                }
+                for (String category : resultTypes) {
+                    // Exclude the result if it is a result type that's in the ignore list.
+                    if (!autocompleteIgnoreResultTypes.contains(category)) {
+                        int priority = calculatePriorityFromCategory(category);
+                        AutocompleteResultsModel result = new AutocompleteResultsModel(
+                                searchResult.getTitle(),
+                                searchResult.getSummary(),
+                                tupleSearchResult.getSecond(),
+                                category);
+                        prioritizedResultsMap.get(priority).add(result);
+                    }
+                }
+            }
+        }
+        return prioritizedResultsMap;
+    }
+
+    private SortedMap<Integer, List<AutocompleteResultsModel>> createAutocompletePriorityMap() {
+        SortedMap<Integer, List<AutocompleteResultsModel>> resultsMap = new TreeMap<Integer, List<AutocompleteResultsModel>>();
+        for (Map.Entry<String, Integer> entry : autocompleteResultTypeToPriorityMap.entrySet()) {
+            if (!resultsMap.containsKey(entry.getValue())) {
+                resultsMap.put(entry.getValue(), new ArrayList<AutocompleteResultsModel>());
+            }
+        }
+        // Insure there is always a default entry of priority 0.
+        resultsMap.put(0, new ArrayList<AutocompleteResultsModel>());
+        return resultsMap;
+    }
+
+    private int calculatePriorityFromCategory(String category) {
+        Integer priority = autocompleteResultTypeToPriorityMap.get(category);
+        return  priority != null ? priority : 0;
+    }
+
 
     /**
      * Get the {@link PortalSearchResults} for the specified query id from the session. If there are no results null

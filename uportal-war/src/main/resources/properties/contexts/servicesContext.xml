@@ -94,11 +94,36 @@
     <util:map id="searchTabs">
         <entry key="googleInstitution.results">
             <list>
-                <value>googleCustom</value>
-                <value>googleAppliance</value>
+                <value>${org.jasig.portal.portlets.googleWebSearch.search.result.type</value>
+                <value>${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}</value>
             </list>
         </entry>
     </util:map>
+
+    <!--
+     | For search autocomplete, indicate a set of priorities for each type of search result type.  Lower values
+     | result in the search result appearing higher in the list (e.g. greater emphasis).
+     |
+     | Key: value set by the various Search services in the SearchResult.type field.
+     |
+     | Value: The value is the general priority for results of that type.  The default priority if not specified
+     | is priority 0.  A positive value is lower than the default priority (i.e. de-emphasizes result),
+     | and a negative value is higher than the default priority (e.g. emphasizes result).
+     +-->
+    <util:map id="searchAutocompletePriorityMap" value-type="java.lang.Integer">
+        <entry key="${org.jasig.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
+        <entry key="${org.jasig.portal.portlets.directory.search.result.type}" value="5"/>
+        <!--<entry key="${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
+        <!--<entry key="${org.jasig.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
+    </util:map>
+
+    <!--
+     | Set of the search result types to exclude from search autocompletion.  The value is the set by the
+     | various Search services in the SearchResult.type field.
+     +-->
+    <util:set id="searchAutocompleteIgnoreResultTypes">
+        <!--<value>${org.jasig.portal.portlets.directory.search.result.type}</value>-->
+    </util:set>
 
     <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">

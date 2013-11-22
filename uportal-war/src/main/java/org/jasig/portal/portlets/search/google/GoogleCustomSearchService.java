@@ -31,6 +31,7 @@ import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestOperations;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,6 +61,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
     
     private String resultSize = "large";
     private String customSearchId;
+    @Value("${org.jasig.portal.portlets.googleWebSearch.search.result.type:googleCustom}")
     private String resultType = "googleCustom";
     
     private RestOperations restOperations;

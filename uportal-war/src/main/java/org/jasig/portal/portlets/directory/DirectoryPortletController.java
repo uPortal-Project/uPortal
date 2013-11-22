@@ -53,6 +53,7 @@ import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,10 +68,13 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 public class DirectoryPortletController {
     
     private static final String MAXIMIZE_ON_SEARCH_PREFERENCE = "DirectoryPortletController.maximizeOnSearch";
-    
+
     protected final Log log = LogFactory.getLog(getClass());
 
     private IPortalRequestUtils portalRequestUtils;
+
+    @Value("${org.jasig.portal.portlets.directory.search.result.type:Directory}")
+    private String directorySearchResultType = "Directory";
     
     @Autowired(required = true)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
@@ -125,7 +129,7 @@ public class DirectoryPortletController {
             for (IPersonAttributes person : people) {
                 final SearchResult result = new SearchResult();
                 result.setTitle((String) person.getAttributeValue("displayName"));
-                result.getType().add("Directory");
+                result.getType().add(directorySearchResultType);
                 
                 PortletUrl url = new PortletUrl();
                 url.setType(PortletUrlType.RENDER);

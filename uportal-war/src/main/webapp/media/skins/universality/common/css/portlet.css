@@ -464,6 +464,9 @@
 .portlet .search-dropdown .search-list .selected a {color: #248222; background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); font-weight: bold;}
 /* loader */
 .portlet .search-dropdown .search-loader {background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
+.portlet .search-portlet .hidden {
+    display: none;
+}
 
 /*
  * Single Selection View.

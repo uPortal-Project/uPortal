@@ -27,16 +27,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.utils.Tuple;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import org.jasig.portal.search.SearchResult;
+import org.jasig.portal.utils.Tuple;
 
 /**
- * Used to collate search results for the SearchPortletController
+ * Used to collate search results for the SearchPortletController.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -47,10 +46,10 @@ public class PortalSearchResults implements Serializable {
     private final Set<String> defaultTab;
     //Map of <result type, Set<result tabs>>
     private final Map<String, Set<String>> resultTypeMappings;
-    
+
     //Map of <tab-key, List<result, url>>
     private final LoadingCache<String, List<Tuple<SearchResult, String>>> results;
-    
+
     public PortalSearchResults(String defaultTab, Map<String, Set<String>> resultTypeMappings) {
         this.defaultTab = ImmutableSet.of(defaultTab);
         this.resultTypeMappings = resultTypeMappings;

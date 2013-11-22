@@ -20,9 +20,10 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
+<c:set var="n"><portlet:namespace/></c:set>
 
 <portlet:actionURL var="formUrl"/>
-<c:set var="n"><portlet:namespace/></c:set>
+<portlet:resourceURL var="autocompleteUrl" id="retrieveSearchJSONResults"/>
 
 <!-- Portlet -->
 <div class="fl-widget portlet search-portlet" role="section">
@@ -42,7 +43,8 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
+            <input class="searchInput" name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
+            <input class="autocompleteUrl" name="autocompleteUrl" type="hidden" value="${autocompleteUrl}"/>
         </form>
         
         <c:if test="${hitMaxQueries}">
@@ -56,7 +58,7 @@
             <div class="portlet-section" role="region">
           
                 <div class="content">
-                    <div id="${n}searchResults">
+                    <div id="${n}searchResults" class="hidden">
                         <ul>
                             <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
                             <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
@@ -102,20 +104,33 @@
                     </div>
                 </div>
             </div>
+        </c:if>
 
-<script type="text/javascript">
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
+<script type="text/javascript"><rs:compressJs>
 up.jQuery(function () {
   var $ = up.jQuery;
   var fluid = up.fluid;
   
-  up.jQuery(document).ready(function () {
-    up.jQuery("#${n}searchResults").tabs();
-  });
+    ${n}.jQuery(document).ready(function () {
+    ${n}.jQuery("#${n}searchResults").tabs();
+    ${n}.jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
+    });
 });
-</script>
-        </c:if>
+</rs:compressJs></script>
 
-      </div>  
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
+    <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
+
+
+    <script language="javascript" type="text/javascript">
+      var searchJq = jQuery.noConflict();
+    </script>
+    <%@ include file="autosuggest_handler.jsp"%>
+
+      </div>
 
     </div>
     
