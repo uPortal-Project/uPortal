@@ -23,7 +23,7 @@
   <dlm:fragment name="Developer" ownerID="developer-lo" precedence="40">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="memberOf" name="Portal Developers"/>
+        <attribute mode="deepMemberOf" name="Portal Developers"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

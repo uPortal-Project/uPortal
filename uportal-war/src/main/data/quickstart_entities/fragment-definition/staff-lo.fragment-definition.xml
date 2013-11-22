@@ -23,7 +23,7 @@
   <dlm:fragment name="Staff" ownerID="staff-lo" precedence="50">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">     
-        <attribute mode="memberOf" name="Staff"/>
+        <attribute mode="deepMemberOf" name="Staff"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
