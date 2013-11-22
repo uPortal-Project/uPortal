@@ -749,10 +749,6 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="content.sidebar.block">
-    <!-- Web Search
-    <xsl:call-template name="web.search"/> -->
-    <!-- Web Search -->
-
     <!-- Main Navigation-->
     <xsl:if test="$TAB_CONTEXT = 'sidebar'">
         <xsl:apply-templates select="//navigation">

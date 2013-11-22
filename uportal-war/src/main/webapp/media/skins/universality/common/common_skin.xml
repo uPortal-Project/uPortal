@@ -30,7 +30,7 @@
   <!-- For layout of portal pages. Common to all skins using the universality theme. -->
   <css>css/layout-portal.css</css>
     
-  <!-- Support for the JSR-168 portlet specficiation. Common to all skins using the universality theme. -->
+  <!-- Support for the JSR-168 portlet specification. Common to all skins using the universality theme. -->
   <css>css/jsr168.css</css>
   
   <!-- uPortal portlet CSS contributed to the Fluid Project. Now importing from Fluid Infusion. Local overrides can be made in portlet.css.

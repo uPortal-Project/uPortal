@@ -541,6 +541,14 @@
         <portlet-info>
             <title>Search</title>
         </portlet-info>
+        <portlet-preferences>
+            <!-- Max number of characters returned for title or description for auto-complete search results.
+                 92 found to be a good fit for keeping most description text at 2 lines. -->
+            <preference>
+                <name>autocompleteMaxTextSize</name>
+                <value>92</value>
+            </preference>
+        </portlet-preferences>
         
         <supported-processing-event>
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
