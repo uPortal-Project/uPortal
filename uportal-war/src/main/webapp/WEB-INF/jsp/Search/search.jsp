@@ -106,28 +106,16 @@
             </div>
         </c:if>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.8.13/jquery-ui-1.8.13.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js"/>"></script>
-<script type="text/javascript"><rs:compressJs>
-up.jQuery(function () {
-  var $ = up.jQuery;
-  var fluid = up.fluid;
-  
-    ${n}.jQuery(document).ready(function () {
-    ${n}.jQuery("#${n}searchResults").tabs();
-    ${n}.jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
-    });
-});
-</rs:compressJs></script>
-
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
     <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
 
-
-    <script language="javascript" type="text/javascript">
+    <script language="javascript" type="text/javascript"><rs:compressJs>
       var searchJq = jQuery.noConflict();
-    </script>
+        searchJq(document).ready(function () {
+        searchJq("#${n}searchResults").tabs();
+        searchJq("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
+    });
+        </rs:compressJs></script>
     <%@ include file="autosuggest_handler.jsp"%>
 
       </div>
