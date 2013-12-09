@@ -431,7 +431,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       public boolean test(IPerson person) {
          for (Iterator<IPersonTester> i = tests.iterator(); i.hasNext(); ) {
             IPersonTester tester = i.next();
-            if (!tester.test(person)) {
+            if ((tester == null) || (!tester.test(person))) {
                return false;
             }
          }
