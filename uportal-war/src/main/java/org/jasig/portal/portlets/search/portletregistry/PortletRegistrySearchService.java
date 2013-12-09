@@ -39,7 +39,6 @@ import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 public class PortletRegistrySearchService implements IPortalSearchService {
 
@@ -47,9 +46,6 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
-
-    @Value("${org.jasig.portal.portlets.portletRegistry.search.result.type:Portlet List}")
-    private String searchResultType = "Portlet List";
 
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
@@ -86,7 +82,7 @@ public class PortletRegistrySearchService implements IPortalSearchService {
                 final SearchResult result = new SearchResult();
                 result.setTitle(portlet.getTitle());
                 result.setSummary(portlet.getDescription());
-                result.getType().add(searchResultType);
+                result.getType().add("Portal Content");
 
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, portlet.getFName());
                 if (portletWindow != null) {

@@ -29,7 +29,6 @@ import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 public class GsaSearchService implements IPortalSearchService {
@@ -58,8 +57,7 @@ public class GsaSearchService implements IPortalSearchService {
     public void setSite(String gsaSite) {
         this.gsaSite = gsaSite;
     }
-
-    @Value("${org.jasig.portal.portlets.googleSearchAppliance.search.result.type:googleAppliance}")
+    
     private String resultType = "googleAppliance";
     
     public void setResultType(String resultType) {
