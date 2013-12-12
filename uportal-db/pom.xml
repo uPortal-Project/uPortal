@@ -22,29 +22,19 @@
     packaged modules/portlets.
     </description>
 
-    <properties>
-        <hsqldb.version>2.2.9</hsqldb.version>
-<!--
-        <postgres.version>8.3-603.jdbc3</postgres.version>
-        <db2.version>version</db2.version>
-        <mssql.version>4.0</mssql.version>
-        <mysql.version>5.1.25</mysql.version>
-        <oracle.version>11.2.0.3</oracle.version>
-        <sybase.version>version</sybase.version>
--->
-    </properties>
-
     <dependencies>
-<!-- Add any db drivers that are applicable to any of your environments -->
+        <!-- Add any db drivers that are applicable to *any* of your environments -->
 	    <dependency>
 	        <groupId>org.hsqldb</groupId>
 	        <artifactId>hsqldb</artifactId>
 	        <version>${hsqldb.version}</version>
 	        <scope>compile</scope>
 	    </dependency>
-<!-- The following db drivers should be uncommented based on all deployed to environments' db needs
-ex. Dev work is done with hsql but the test environment and prod are using postgres, uncomment the postgres
-driver dependency with hsql to include them with the other deployed driver jars -->
+        <!--
+         | The following db drivers should be uncommented and/or modified as needed for server 
+         | deployments.  (Add all thaat are needed.)  Don't forget to add appropriate  .version 
+         | properties to the root pom.xml, or simply enter the appropriate version below.
+         +-->
 	    <!--
 	    <dependency>
             <groupId>postgresql</groupId>
