@@ -114,7 +114,7 @@ public class ProfileEvaluatorFactory implements EvaluatorFactory {
 
     private Evaluator createProfileEvaluator(Node n) {
         NamedNodeMap attribs = n.getAttributes();
-        Node attribNode = attribs.getNamedItem("value");
+        Node attribNode = attribs.getNamedItem("fname");
 
         if (attribNode == null || attribNode.getNodeValue().equals(""))
             throw new RuntimeException("Missing or empty value attribute in '"
