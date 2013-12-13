@@ -67,6 +67,7 @@
             <select id="${n}profile" name="profile">
                 <option value="desktop" ${ profile == 'desktop' ? 'selected=selected' : '' }>Desktop</option>
                 <option value="mobile" ${ profile == 'mobile' ? 'selected=selected' : '' }>Mobile</option>
+                <option value="respondr" ${ profile == 'respondr' ? 'selected=selected' : '' }>Responsive</option>
             </select>
         
             <div class="buttons utilities">
