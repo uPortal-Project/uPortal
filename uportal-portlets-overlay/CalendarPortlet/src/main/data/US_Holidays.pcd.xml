@@ -23,7 +23,7 @@
   <className>httpIcalAdapter</className>
   <name>US Holidays</name>
   <parameters>
-    <parameter name="url">http://ical.mac.com/ical/US32Holidays.ics</parameter>
+	  <parameter name="url">http://www.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics</parameter>
   </parameters>
   <predefinedRoles>
     <role>Everyone</role>
