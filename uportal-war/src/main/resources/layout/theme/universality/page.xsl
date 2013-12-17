@@ -175,7 +175,6 @@
 			                        type: 'get',
 			                        url: '/ssp/api/1/server/version',
 			                        success: function (data) {
-			                            console.log('poke');
 			                        }
 			                    });
 			                    up.jQuery(this).dialog("close");
