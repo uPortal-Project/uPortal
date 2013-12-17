@@ -130,6 +130,75 @@
 							});
 						})(up.jQuery)
         </script>
+        <xsl:if test="($AUTHENTICATED='true')">
+		<div id="dialog" title="Confirmation Required" >
+		  You have been idle for awhile.  You will be logged out in one minute.  
+		</div>        
+        <script type="text/javascript">
+			idleTime = 0;
+			var timeoutInMinutes;
+			
+			up.jQuery("#dialog").dialog({
+			    autoOpen: false,
+			    modal: true
+			});
+			up.jQuery(document).ready(function () {
+				    up.jQuery.ajax({
+				        type: 'get',
+				        url: '/ssp/api/1/server/clientTimeout',
+				        success: function (data) {
+				            timeoutInMinutes = data;
+				        }
+				    });
+			    //Increment the idle time counter every minute.
+			    var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+			    var logoutID = null;
+			    //Zero the idle timer on mouse movement.
+			    up.jQuery(document).mousemove(function (e) {
+			        idleTime = 0;
+			    });
+			    up.jQuery(document).keypress(function (e) {
+			        idleTime = 0;
+			    });
+			});
+
+			function timerIncrement() {
+			    idleTime = idleTime + 1;
+			    if (idleTime > timeoutInMinutes) {
+			        startLogout();
+			        up.jQuery("#dialog").dialog({
+			            buttons: {
+			                "Stay Logged In": function () {
+			                    clearTimeout(logoutID);
+			                    //poke server
+			                    up.jQuery.ajax({
+			                        type: 'get',
+			                        url: '/ssp/api/1/server/version',
+			                        success: function (data) {
+			                            console.log('poke');
+			                        }
+			                    });
+			                    up.jQuery(this).dialog("close");
+			                },
+			                "Log Out": function () {
+			                    up.jQuery(this).dialog("close");
+			                    doLogout();
+			                }
+			            }
+			        });
+			        up.jQuery("#dialog").dialog("open");
+			    }
+			}
+
+			function startLogout() {
+			    logoutID = window.setTimeout(doLogout, 60000);
+			}
+
+			function doLogout() {
+			    window.location = '<xsl:value-of select="$CONTEXT_PATH"/>/Logout';
+			}
+        </script>  
+        </xsl:if>      
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:for-each select="/layout/header/channel-header">
         	 <xsl:copy-of select="."/>
