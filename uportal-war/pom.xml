@@ -621,6 +621,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <revisionOnScmFailure>${maven.build.timestamp}</revisionOnScmFailure>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>

@@ -192,6 +192,8 @@
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.build.timestamp.format>yyyyMMdd-HHmmZ</maven.build.timestamp.format>
     </properties>
 
     <modules>

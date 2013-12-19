@@ -46,6 +46,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <revisionOnScmFailure>${maven.build.timestamp}</revisionOnScmFailure>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
