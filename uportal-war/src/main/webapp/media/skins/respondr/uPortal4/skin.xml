@@ -32,8 +32,7 @@
   <css included="plain">/ResourceServingWebapp/rs/bootstrap/3.0.0/css/bootstrap-3.0.0.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/css/bootstrap-3.0.0.min.css</css>
 
-  <css included="plain">less/styles.less</css>
-  <css included="aggregated">css/styles.css</css>
+  <css>css/styles.css</css>
 
   <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
@@ -43,7 +42,5 @@
 
   <js included="plain">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.js</js>
   <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.min.js</js>
-
-  <!-- <js included="plain">../common/javascript/less-1.4.1.min.js</js> -->
 
 </resources>
