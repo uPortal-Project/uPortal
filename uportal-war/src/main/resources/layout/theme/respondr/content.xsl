@@ -31,7 +31,7 @@
 <!-- ============================================= -->
 <!-- ========== STYLESHEET DELCARATION =========== -->
 <!-- ============================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL and declares the Xalan extension
  | elements used for URL generation and permissions checks.
@@ -39,9 +39,9 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -49,7 +49,7 @@
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
     version="1.0">
 
   <!-- ========== TEMPLATE: CONTENT ========== -->
@@ -59,33 +59,81 @@
   -->
   <xsl:template match="content">
     <!-- Handles dashboard mode -->
-    <xsl:for-each select="column">
-      <xsl:call-template name="row" /> <!-- A bit wordy, but prefer to use a template named row over one with match=column for clarity. -->
-    </xsl:for-each>
+    <xsl:if test="column">
+      <xsl:call-template name="columns">
+        <xsl:with-param name="COLUMNS"><xsl:value-of select="count(column)"/></xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
     <!-- Handles focused mode -->
     <xsl:apply-templates select="focused/channel">
       <xsl:with-param name="WIDTH_CSS_CLASS">col-md-12</xsl:with-param>
     </xsl:apply-templates>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: TAB ========== -->
-  <!-- ======================================= -->
+  <!-- ========== TEMPLATE: BODY COLUMNS ========== -->
+  <!-- ============================================ -->
   <!--
-   | This template renders a tab.
+   | This template renders the columns of the page body.
   -->
-  <xsl:template name="row">
-    <div class="row">
-      <!-- Tests for optional portlet parameter removeFromLayout which can be used to not render a portlet in the layout.  The main use case for this function is to have a portlet be a quicklink and then remove it from otherwise rendering. -->
-      <!-- xsl:apply-templates select="channel|blocked-channel and not(parameter[@name='removeFromLayout']/@value='true') and not(parameter[@name='PORTLET.removeFromLayout']/@value='true')" -->
-      <xsl:apply-templates select="channel|blocked-channel">
-          <xsl:with-param name="WIDTH_CSS_CLASS">
-            <!-- NOTE:  This implementation assumes equal widths in a row of portlets;  we need to introduce a system to choose varying widths. -->
-            <!-- NOTE:  This implementation also assumes that the actual number of portlets in the row can be evenly divided by 12;  works for 1, 2, 3, and 4;  need to enforce that or change this implementation. -->
-            <xsl:value-of select="concat('col-md-', string(12 div count(channel)))" />
-          </xsl:with-param>
-      </xsl:apply-templates>
+  <xsl:template name="columns">
+    <xsl:param name="COLUMNS" />
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+    <div id="portalPageBodyColumns">
+        <xsl:attribute name="class"> <!-- Write appropriate FSS class based on number of columns to produce column layout. -->
+            columns-<xsl:value-of select="$COLUMNS" />
+      </xsl:attribute>
+      <xsl:for-each select="column">
+        <xsl:variable name="NUMBER">
+            <xsl:value-of select="position()" />
+        </xsl:variable>
+        <xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
+            column-<xsl:value-of select="$NUMBER" />
+        </xsl:variable>
+        <!-- 
+         | Per up-layout-selector.js, current valid width selections are 25%,
+         | 33%, 34%, 40%, 50%, 60%, and 100%.  The following approach works
+         | with all of those.  (8.3333 == percentage of total width occupied 
+         | by 1 column in a 12-column grid.)
+         +-->
+        <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="round(number(substring-before(@width,'%')) div 8.3333)" /></xsl:variable>
+        <xsl:variable name="MOVABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="DELETABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="EDITABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="CAN_ADD_CHILDREN">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:addChildAllowed='false')">canAddChildren</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <div id="column_{@ID}" class="portal-page-column {$POSITION} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+          <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
+            <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                <div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
+            </xsl:if>
+            <xsl:apply-templates select="channel|blocked-channel"/> <!-- Render the column's portlets.  -->
+          </div>
+        </div>
+      </xsl:for-each>
     </div>
+    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
   </xsl:template>
+  <!-- ============================================ -->
 
   <!-- ========== TEMPLATE: PORTLET ========== -->
   <!-- ======================================= -->
@@ -93,7 +141,6 @@
    | This template renders the portlet containers: chrome and controls.
   -->
   <xsl:template match="channel|blocked-channel">
-    <xsl:param name="WIDTH_CSS_CLASS"></xsl:param>
 
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
       <xsl:choose> 
@@ -132,7 +179,7 @@
 
     <!-- ****** PORTLET CONTAINER ****** -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div class="{$WIDTH_CSS_CLASS}">
+    <div>
     <section id="portlet_{@ID}" class="{@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
 
         <!-- PORTLET CHROME CHOICE -->
@@ -193,7 +240,7 @@
 
   </xsl:template>
   <!-- ======================================= -->
-  
+
   <!-- ========== TEMPLATE: PORLET CONTENT ========== -->
   <!-- ============================================== -->
   <!--
@@ -216,7 +263,7 @@
         </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
-  
+
   <!-- ========== TEMPLATE: PORLET FOCUSED ========== -->
   <!-- ============================================== -->
   <!--
