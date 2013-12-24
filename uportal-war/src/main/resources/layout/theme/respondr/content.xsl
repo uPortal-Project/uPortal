@@ -78,10 +78,7 @@
   <xsl:template name="columns">
     <xsl:param name="COLUMNS" />
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div id="portalPageBodyColumns">
-        <xsl:attribute name="class"> <!-- Write appropriate FSS class based on number of columns to produce column layout. -->
-            columns-<xsl:value-of select="$COLUMNS" />
-      </xsl:attribute>
+    <div id="portalPageBodyColumns" class="row">
       <xsl:for-each select="column">
         <xsl:variable name="NUMBER">
             <xsl:value-of select="position()" />
