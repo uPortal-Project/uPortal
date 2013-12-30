@@ -48,8 +48,9 @@
                 
                 &lt;p&gt;As you can see, uPortal can aggregate and present content generically for 
                 unauthenticated users. When users log in, uPortal can do much more, with personalized 
-                content, customized layouts, group membership, and access control. These are the 
-                example username, password pairs for the example users included with uPortal:&lt;/p&gt;
+                content, customized layouts, group membership, and access control. Use the
+                "Sign in" button at the top of the page with these example username and password pairs for the
+                example users included with uPortal.&lt;/p&gt;
                 
                 &lt;table&gt;
                     &lt;tr&gt;
