@@ -65,28 +65,9 @@
 
   <js included="plain" resource="true">/rs/jquery-mobile/1.1.1/jquery.mobile-1.1.1.js</js>
   <js included="aggregated" resource="true">/rs/jquery-mobile/1.1.1/jquery.mobile-1.1.1.min.js</js>
-  
-  <js import="true">../../common/common_skin.xml</js>
-  
+
+  <js>../../common/javascript/uportal/up-ga.js</js>
+
   <js>../common/javascript/jquerymobile.accordion.listview.js</js>
-  <!--js>../../universality/common/javascript/uportal/up-util.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-portlet-registry.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-entity-registry.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-portlet-browser.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-layout-draggable-manager.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-layout-gallery.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-fragment-permissions-manager.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-subscription-browser.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-layout-selector.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-skin-selector.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-tab-manager.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-layout-persistence.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-url-provider.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-layout-preferences.js</js-->
-  <!--js>../../universality/common/javascript/uportal/up-autocomplete.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-showHideToggle.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/entity-selector.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/up-parameter-editor.js</js>-->
-  <!--js>../../universality/common/javascript/uportal/flyout-nav.js</js-->
-  <!--js>../../universality/common/javascript/jquery.tokeninput.js</js-->
+
 </resources>

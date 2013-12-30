@@ -23,6 +23,29 @@
 <resources xmlns="http://www.jasig.org/uportal/web/skin"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
-  
+
+  <js>javascript/uportal/up-util.js</js>
+  <js>javascript/uportal/up-portlet-registry.js</js>
+  <js>javascript/uportal/up-entity-registry.js</js>
+  <js>javascript/uportal/up-portlet-browser.js</js>
+  <js>javascript/uportal/up-layout-draggable-manager.js</js>
+  <js>javascript/uportal/up-layout-gallery.js</js>
+  <js>javascript/uportal/up-fragment-permissions-manager.js</js>
+  <js>javascript/uportal/up-subscription-browser.js</js>
+  <js>javascript/uportal/up-layout-selector.js</js>
+  <js>javascript/uportal/up-skin-selector.js</js>
+  <js>javascript/uportal/up-tab-manager.js</js>
+  <js>javascript/uportal/up-layout-persistence.js</js>
+  <js>javascript/uportal/up-url-provider.js</js>
+  <js>javascript/uportal/up-layout-preferences.js</js>
+  <js>javascript/uportal/up-autocomplete.js</js>
+  <js>javascript/uportal/up-showHideToggle.js</js>
+  <js>javascript/uportal/entity-selector.js</js>
+  <js>javascript/uportal/up-parameter-editor.js</js>
+  <js>javascript/uportal/flyout-nav.js</js>
+  <js>javascript/uportal/up-translator.js</js>
+  <js>javascript/uportal/up-sidebar-improved.js</js>
+  <js>javascript/uportal/up-print-plugin.js</js>
   <js>javascript/uportal/up-ga.js</js>
+
 </resources>
