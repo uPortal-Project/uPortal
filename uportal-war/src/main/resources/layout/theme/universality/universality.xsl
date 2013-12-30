@@ -977,7 +977,7 @@
 	          <xsl:value-of select="upMsg:getMessage('privacy.policy', $USER_LANG)"/>
 	        </a>
 	        <xsl:call-template name="portal.pipe"/>
-	        <a href="http://www.jasig.org/uportal/accessibility" target="_blank" title="{upMsg:getMessage('view.uportal.accessibility.information', $USER_LANG)}">
+	        <a href="http://wiki.jasig.org/display/UPM40/Accessibility" target="_blank" title="{upMsg:getMessage('view.uportal.accessibility.information', $USER_LANG)}">
 	          <xsl:value-of select="upMsg:getMessage('uportal.accessibility', $USER_LANG)"/>
 	        </a>
 	      </div>
