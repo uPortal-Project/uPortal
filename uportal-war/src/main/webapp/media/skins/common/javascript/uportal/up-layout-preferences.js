@@ -264,9 +264,9 @@ var uportal = uportal || {};
 
         that.components = {};
 
-        // initialize the gallery component
-        that.components.gallery = up.PortalGallery(
-            ".up-gallery",
+        // initialize the gallery component, if present
+        if (that.options.gallerySelector) that.components.gallery = up.PortalGallery(
+            that.options.gallerySelector,
             {
                 // content browsing pane
                 browseContentPane: {
@@ -584,6 +584,7 @@ var uportal = uportal || {};
         mediaPath: null,
         currentSkin: null,
         isFragmentMode: false,
+        gallerySelector: '.up-gallery',  // Pass null/false to disable
         messages: {
             persistenceError: "Error persisting layout change"
         }
@@ -657,10 +658,10 @@ var uportal = uportal || {};
 
     // defaults
     fluid.defaults("up.FocusedLayoutPreferences", {
-        portalContext: "/uPortal",
+        portalContext: '/uPortal',
         layoutPersistenceUrl: '/uPortal/api/layout',
         messages: {
-            persistenceError: "Error persisting layout change"
+            persistenceError: 'Error persisting layout change'
         }
     });
 

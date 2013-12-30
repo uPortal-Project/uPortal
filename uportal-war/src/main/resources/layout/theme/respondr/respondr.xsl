@@ -493,6 +493,7 @@
               layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
               channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
               subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
+              gallerySelector: null,  // Disable the gallery since the page doesn't include it (for now)
               messages: {
                   confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
                   confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
