@@ -973,7 +973,7 @@
 	          <xsl:value-of select="upMsg:getMessage('uportal.community', $USER_LANG)"/>
 	        </a>
 	        <xsl:call-template name="portal.pipe"/>
-	        <a href="http://www.jasig.org/uportal/privacy" target="_blank" title="{upMsg:getMessage('view.uportal.privacy.policy', $USER_LANG)}">
+	        <a href="http://www.opentracker.net/article/how-write-website-privacy-policy" target="_blank" title="{upMsg:getMessage('view.uportal.privacy.policy', $USER_LANG)}">
 	          <xsl:value-of select="upMsg:getMessage('privacy.policy', $USER_LANG)"/>
 	        </a>
 	        <xsl:call-template name="portal.pipe"/>
