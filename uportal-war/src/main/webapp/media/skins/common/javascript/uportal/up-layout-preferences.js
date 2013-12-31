@@ -204,7 +204,7 @@ var uportal = uportal || {};
 
                 // remove any deleted columns from the page
                 $(deletes).each(function(idx, del){
-                    $(this).find("div[id*=portlet_]").each(function(idx, portlet){
+                    $(this).find("[id^=portlet_]").each(function(idx, portlet){
                         $(portlet).appendTo(acceptor);
                     });
                     $(this).remove();
@@ -294,7 +294,7 @@ var uportal = uportal || {};
 
                                         // get the first channel element that's
                                         // unlocked
-                                        firstChannel = $("div[id*=portlet_].movable:first");
+                                        firstChannel = $("[id^=portlet_].movable:first");
 
                                         // if the page has no content just add
                                         //  the new portlet to the tab
@@ -540,10 +540,10 @@ var uportal = uportal || {};
 	                     afterMove: function(movedNode) {
 	                         var method = 'insertBefore';
 	                         var target = null;
-	                         if ($(movedNode).nextAll('div[id*=portlet_]').size() > 0) {
-	                             target = $(movedNode).nextAll('div[id*=portlet_]').get(0);
-	                         } else if ($(movedNode).prevAll('div[id*=portlet_]').size() > 0) {
-	                             target = $(movedNode).prevAll('div[id*=portlet_]').get(0);
+	                         if ($(movedNode).nextAll('[id^=portlet_]').size() > 0) {
+	                             target = $(movedNode).nextAll('[id^=portlet_]').get(0);
+	                         } else if ($(movedNode).prevAll('[id^=portlet_]').size() > 0) {
+	                             target = $(movedNode).prevAll('[id^=portlet_]').get(0);
 	                             method = 'appendAfter';
 	                         } else {
 	                             target = $(movedNode).parent();

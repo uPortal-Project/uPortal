@@ -461,6 +461,10 @@
                 <xsl:call-template name="footer.legal" />
             </div>
 
+            <div id="portalDropWarning" class="drop-warning" style="display:none;">
+                <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
+            </div>
+
             <script type="text/javascript">
                 up.analytics = up.analytics || {};
                 up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
@@ -471,15 +475,15 @@
       <script type="text/javascript">
         up.jQuery(document).ready(function(){
           <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-              up.FragmentPermissionsManager(
-                "body",
-                {
-                  savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-                  messages: {
-                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
-                  }
-                }
-              );
+          up.FragmentPermissionsManager(
+            "body",
+            {
+              savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+              messages: {
+                columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+              }
+            }
+          );
           </xsl:if>
           up.LayoutPreferences(
             "body",

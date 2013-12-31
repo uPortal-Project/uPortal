@@ -176,8 +176,7 @@
 
     <!-- ****** PORTLET CONTAINER ****** -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div>
-    <section id="portlet_{@ID}" class="{@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
 
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
@@ -232,7 +231,6 @@
         </xsl:choose>
 
     </section>
-    </div>
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
   </xsl:template>
