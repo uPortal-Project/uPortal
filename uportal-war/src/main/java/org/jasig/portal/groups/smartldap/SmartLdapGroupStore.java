@@ -181,9 +181,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                 if (groupKeys != null) {
 
                     List<String> list = new LinkedList<String>();
-                    if (groupKeys instanceof String) {
-                        list.add((String) groupKeys);
-                    } else if (groupKeys instanceof Object[]) {
+                    if (groupKeys instanceof Object[]) {
                         Object[] objs = (Object[]) groupKeys;
                         for (Object o : objs) {
                             list.add((String) o);

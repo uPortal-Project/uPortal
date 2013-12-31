@@ -149,7 +149,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final void put(T e) throws InterruptedException {
-        this.offer(e, -1, null);
+        this.offer(e, -1, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)
@@ -188,7 +188,7 @@ public abstract class QualityOfServiceBlockingQueue<K, T> implements BlockingQue
      */
     @Override
     public final T take() throws InterruptedException {
-        return this.poll(-1, null);
+        return this.poll(-1, TimeUnit.MILLISECONDS);
     }
 
     /* (non-Javadoc)

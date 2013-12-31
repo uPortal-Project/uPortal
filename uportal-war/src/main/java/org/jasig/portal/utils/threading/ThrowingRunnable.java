@@ -42,7 +42,7 @@ public abstract class ThrowingRunnable implements Runnable {
             throw e;
         }
         catch (Throwable t) {
-            new RuntimeException(t);
+            throw new RuntimeException(t);
         }
     }
     
