@@ -566,7 +566,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     return  null;
   }
 
-  /**
+    /**
    *   UserPreferences
    */
   private String getUserBrowserMapping (final IPerson person, final String userAgentArg) {
@@ -582,34 +582,33 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             else {
                 userAgent = userAgentArg;
             }
-            
-            
-      String sQuery =
-        "SELECT PROFILE_FNAME " +
-        "FROM UP_USER_UA_MAP LEFT JOIN UP_USER_PROFILE ON " + 
-        "UP_USER_UA_MAP.PROFILE_ID=UP_USER_PROFILE.PROFILE_ID WHERE UP_USER_UA_MAP.USER_ID=? AND USER_AGENT=?";
-      PreparedStatement pstmt = con.prepareStatement(sQuery);
 
-      try {
-        pstmt.setInt(1, userId);
-        pstmt.setString(2, userAgent);
+          String sQuery =
+            "SELECT PROFILE_FNAME " +
+            "FROM UP_USER_UA_MAP LEFT JOIN UP_USER_PROFILE ON " +
+            "UP_USER_UA_MAP.PROFILE_ID=UP_USER_PROFILE.PROFILE_ID WHERE UP_USER_UA_MAP.USER_ID=? AND USER_AGENT=?";
+          PreparedStatement pstmt = con.prepareStatement(sQuery);
 
-        if (log.isDebugEnabled())
-            log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): '" + sQuery + "' userId: "
-            	+ userId + " userAgent: " + userAgent);
-        ResultSet rs = pstmt.executeQuery();
-        try {
-          if (rs.next()) {
-            return rs.getString("PROFILE_FNAME");
+          try {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, userAgent);
+
+            if (log.isDebugEnabled())
+                log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): '" + sQuery + "' userId: "
+                    + userId + " userAgent: " + userAgent);
+            ResultSet rs = pstmt.executeQuery();
+            try {
+              if (rs.next()) {
+                return rs.getString("PROFILE_FNAME");
+              }
+            } finally {
+              rs.close();
+            }
+          } finally {
+            pstmt.close();
           }
-        } finally {
-          rs.close();
-        }
-      } finally {
-        pstmt.close();
-      }
-      
-      return null;
+
+          return null;
         }
     });
   }
@@ -1662,81 +1661,76 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
               "WHERE USER_ID=? AND PROFILE_ID=?";
     
           int layoutId = 0;
-
           PreparedStatement pstmt = con.prepareStatement(query);
 
+          final int u = userId;
+          final int p = profileId;
+          if (log.isDebugEnabled())
+              log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + u + ", profileId=" + p + " ): " + query);
+
+          pstmt.setInt(1, u);
+          pstmt.setInt(2, p);
           try {
-              final int u = userId;
-            final int p = profileId;
-            if (log.isDebugEnabled())
-                  log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + u + ", profileId=" + p + " ): " + query);
+            ResultSet rs = pstmt.executeQuery();
+              if (rs.next()) {
+                  layoutId = rs.getInt(1);
 
-              pstmt.setInt(1, u);
-              pstmt.setInt(2, p);
-              ResultSet rs = pstmt.executeQuery();
-
-              try {
-                  if (rs.next()) {
-                      layoutId = rs.getInt(1);
-
-                      if (rs.wasNull()) {
-                          layoutId = 0;
-                      }
+                  if (rs.wasNull()) {
+                      layoutId = 0;
                   }
-                  
-                  // find the layout used by the default profle for this user
-                  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE " +
-                		  "WHERE USER_ID=? AND PROFILE_FNAME='" + DEFAULT_LAYOUT_FNAME + "'";
-                	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, userId);
-                	  rs = pstmt.executeQuery();
-                	  int intendedLayoutId = 0;
-                	  if (rs.next()) {
-                		  intendedLayoutId = rs.getInt("LAYOUT_ID");
-                	  if (rs.wasNull()) {
-                		  intendedLayoutId = 0;
-                	  }
-                	  }
-                	  
-                  // check to see if this profile for the current user
-                  // has already used the requested layout
-                	  query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE " +
-                		  "USER_ID=? AND LAYOUT_ID=? AND PROFILE_ID=?";
-                	  pstmt = con.prepareStatement(query);
-                	  pstmt.setInt(1, userId);
-                	  pstmt.setInt(2, intendedLayoutId);
-                	  pstmt.setInt(3, profileId);
-                	  rs = pstmt.executeQuery();
-                  if (!rs.next()) {
-                	  // if the layout's not already been used, update the profile to
-                    	  // point to that layout
-                    	  query = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=? WHERE " +
-                    	  		"USER_ID=? AND PROFILE_ID=?";
-
-                    	  pstmt = con.prepareStatement(query);
-
-                    	  pstmt.setInt(1, intendedLayoutId);
-                    	  pstmt.setInt(2, userId);
-                    	  pstmt.setInt(3, profileId);
-                    	  pstmt.execute();
-                    	  
-
-                    	  layoutId = intendedLayoutId;
-                		  
-                	  }
-                      
-                  
               }
-              finally {
-                  rs.close();
-              }
+          } finally {
+              pstmt.close();
           }
-          finally {
+
+          // find the layout used by the default profile for this user
+          int intendedLayoutId = 0;
+          try {
+              query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE " +
+                      "WHERE USER_ID=? AND PROFILE_FNAME='" + DEFAULT_LAYOUT_FNAME + "'";
+              pstmt = con.prepareStatement(query);
+              pstmt.setInt(1, userId);
+              ResultSet rs = pstmt.executeQuery();
+              if (rs.next()) {
+                  intendedLayoutId = rs.getInt("LAYOUT_ID");
+                  if (rs.wasNull()) {
+                      intendedLayoutId = 0;
+                  }
+              }
+          } finally {
+              pstmt.close();
+          }
+
+          // check to see if this profile for the current user has already used the requested layout
+          try {
+              query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE " +
+                  "USER_ID=? AND LAYOUT_ID=? AND PROFILE_ID=?";
+              pstmt = con.prepareStatement(query);
+              pstmt.setInt(1, userId);
+              pstmt.setInt(2, intendedLayoutId);
+              pstmt.setInt(3, profileId);
+              ResultSet rs = pstmt.executeQuery();
+              if (!rs.next()) {
+                  // if the layout's not already been used, update the profile to point to that layout
+                  String update = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=? WHERE " +
+                        "USER_ID=? AND PROFILE_ID=?";
+
+                  PreparedStatement updateStmt = con.prepareStatement(update);
+                  updateStmt.setInt(1, intendedLayoutId);
+                  updateStmt.setInt(2, userId);
+                  updateStmt.setInt(3, profileId);
+                  try {
+                      updateStmt.execute();
+                  } finally {
+                      updateStmt.close();
+                  }
+                  layoutId = intendedLayoutId;
+              }
+          } finally {
               pstmt.close();
           }
           
           return layoutId;
-          
           }
       });
   }
