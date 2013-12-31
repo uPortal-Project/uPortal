@@ -56,7 +56,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class RDBMLocaleStore implements ILocaleStore {
 
     protected final Log logger = LogFactory.getLog(this.getClass());
-    
+
     protected TransactionOperations transactionOperations;
     protected JdbcOperations jdbcOperations;
 
@@ -70,37 +70,37 @@ public class RDBMLocaleStore implements ILocaleStore {
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
     }
-    
+
     @Override
     public Locale[] getUserLocales(final IPerson person) {
         return jdbcOperations.execute(new ConnectionCallback<Locale[]>() {
             @Override
             public Locale[] doInConnection(Connection con) throws SQLException, DataAccessException {
-                
-            final List<Locale> localeList = new ArrayList<Locale>();
-            final String query = "SELECT * FROM UP_USER_LOCALE WHERE USER_ID=? ORDER BY PRIORITY";
-            final PreparedStatement pstmt = con.prepareStatement(query);
-            try {
-                pstmt.clearParameters();
-                pstmt.setInt(1, person.getID());
-                logger.debug(query);
-                final ResultSet rs = pstmt.executeQuery();
+
+                final List<Locale> localeList = new ArrayList<Locale>();
+                final String query = "SELECT * FROM UP_USER_LOCALE WHERE USER_ID=? ORDER BY PRIORITY";
+                final PreparedStatement pstmt = con.prepareStatement(query);
                 try {
-                    while (rs.next()) {
-                        final String localeString = rs.getString("LOCALE");
-                        final Locale locale = LocaleManager.parseLocale(localeString);
-                        localeList.add(locale);
+                    pstmt.clearParameters();
+                    pstmt.setInt(1, person.getID());
+                    logger.debug(query);
+                    final ResultSet rs = pstmt.executeQuery();
+                    try {
+                        while (rs.next()) {
+                            final String localeString = rs.getString("LOCALE");
+                            final Locale locale = LocaleManager.parseLocale(localeString);
+                            localeList.add(locale);
+                        }
+                    }
+                    finally {
+                        rs.close();
                     }
                 }
                 finally {
-                    rs.close();
+                    pstmt.close();
                 }
-            }
-            finally {
-                pstmt.close();
-            }
-            
-            return localeList.toArray(new Locale[localeList.size()]);
+
+                return localeList.toArray(new Locale[localeList.size()]);
 
             }
         });
@@ -115,38 +115,38 @@ public class RDBMLocaleStore implements ILocaleStore {
                     @Override
                     public Object doInConnection(Connection con) throws SQLException, DataAccessException {
 
-            // Delete the existing list of locales
-            final String delete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID=?";
-            PreparedStatement pstmt = con.prepareStatement(delete);
-            try {
-                pstmt.clearParameters();
-                pstmt.setInt(1, person.getID());
-                logger.debug(delete);
-                pstmt.executeUpdate();
+                        // Delete the existing list of locales
+                        final String delete = "DELETE FROM UP_USER_LOCALE WHERE USER_ID=?";
+                        PreparedStatement pstmt = con.prepareStatement(delete);
+                        try {
+                            pstmt.clearParameters();
+                            pstmt.setInt(1, person.getID());
+                            logger.debug(delete);
+                            pstmt.executeUpdate();
 
-            }
-            finally {
-                pstmt.close();
-            }
-            // Insert the new list of locales
-            final String insert = "INSERT INTO UP_USER_LOCALE VALUES (?, ?, ?)";
-            pstmt = con.prepareStatement(insert);
-            try {
-                for (int i = 0; i < locales.length; i++) {
-                    pstmt.clearParameters();
-                    pstmt.setInt(1, person.getID());
-                    pstmt.setString(2, locales[i].toString());
-                    pstmt.setInt(3, i);
-                    logger.debug(insert);
-                    pstmt.executeUpdate();
-                }
+                        }
+                        finally {
+                            pstmt.close();
+                        }
+                        // Insert the new list of locales
+                        final String insert = "INSERT INTO UP_USER_LOCALE VALUES (?, ?, ?)";
+                        pstmt = con.prepareStatement(insert);
+                        try {
+                            for (int i = 0; i < locales.length; i++) {
+                                pstmt.clearParameters();
+                                pstmt.setInt(1, person.getID());
+                                pstmt.setString(2, locales[i].toString());
+                                pstmt.setInt(3, i);
+                                logger.debug(insert);
+                                pstmt.executeUpdate();
+                            }
 
-            }
-            finally {
-                pstmt.close();
-            }
-            
-            return null;
+                        }
+                        finally {
+                            pstmt.close();
+                        }
+
+                        return null;
                     }
                 });
             }
