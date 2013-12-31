@@ -187,7 +187,7 @@
                       <xsl:attribute name="href"><xsl:value-of select="$portletMaxUrl" /></xsl:attribute>
                       </xsl:otherwise>
                   </xsl:choose>
-                  {up-portlet-title(<xsl:value-of select="@ID"/>)}
+                  <xsl:value-of select="@title"/>
                 </xsl:element>
               </h2>
               <xsl:call-template name="controls"/>

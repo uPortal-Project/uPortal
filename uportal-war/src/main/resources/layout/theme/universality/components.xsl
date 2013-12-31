@@ -490,7 +490,7 @@
            <xsl:attribute name="href"><xsl:value-of select="$subNavUrl" /></xsl:attribute>
           </xsl:otherwise>
         </xsl:choose>
-        <span>{up-portlet-title(<xsl:value-of select="@ID"/>)}</span>
+        <span><xsl:value-of select="@title"/></span>
       </xsl:element>
     </li>
   </xsl:template>
@@ -563,7 +563,7 @@
             <xsl:attribute name="href"><xsl:value-of select="$subNavUrl" /></xsl:attribute>
           </xsl:otherwise>
         </xsl:choose>
-        <span>{up-portlet-title(<xsl:value-of select="@ID"/>)}</span>
+        <span><xsl:value-of select="@title"/></span>
       </xsl:element>
     </li>
   </xsl:template>

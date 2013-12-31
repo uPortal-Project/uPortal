@@ -211,8 +211,8 @@
                   </xsl:call-template>
                 </xsl:variable>
                 <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-                <a id="{@ID}" href="{$portletMaxUrl}"> 
-                  {up-portlet-title(<xsl:value-of select="@ID" />)}
+                <a id="{@ID}" href="{$portletMaxUrl}">
+                    <xsl:value-of select="@title"/>
                 </a>
 
                 <xsl:call-template name="controls"/>

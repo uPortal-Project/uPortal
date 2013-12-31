@@ -235,7 +235,7 @@
     </xsl:variable>
                     {
                         "fname": "<xsl:value-of select="@fname"/>",
-                        "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
+                        "title": "<xsl:value-of select="@title"/>",
                         "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
                         "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
