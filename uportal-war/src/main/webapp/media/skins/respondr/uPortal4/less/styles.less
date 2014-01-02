@@ -68,24 +68,24 @@
  */
 
 @color2: #8AA9D8;  // light blue
-@color2-light: lighten(@color1, 10%);
-@color2-lighter: lighten(@color1, 25%);
-@color2-lightest: lighten(@color1, 50%);
-@color2-dark: darken(@color1, 10%);
-@color2-darker: darken(@color1, 25%);
-@color2-darkest: darken(@color1, 50%);
+@color2-light: lighten(@color2, 10%);
+@color2-lighter: lighten(@color2, 25%);
+@color2-lightest: lighten(@color2, 50%);
+@color2-dark: darken(@color2, 10%);
+@color2-darker: darken(@color2, 25%);
+@color2-darkest: darken(@color2, 50%);
 
 /*
  * Tertiary color with 3 lightened shades and 3 darkened shades.
  */
 
 @color3: #F68923;  // orange
-@color3-light: lighten(@color1, 10%);
-@color3-lighter: lighten(@color1, 25%);
-@color3-lightest: lighten(@color1, 50%);
-@color3-dark: darken(@color1, 10%);
-@color3-darker: darken(@color1, 25%);
-@color3-darkest: darken(@color1, 50%);
+@color3-light: lighten(@color3, 10%);
+@color3-lighter: lighten(@color3, 25%);
+@color3-lightest: lighten(@color3, 50%);
+@color3-dark: darken(@color3, 10%);
+@color3-darker: darken(@color3, 25%);
+@color3-darkest: darken(@color3, 50%);
 
 
 /* ==========================================================================
@@ -285,6 +285,13 @@ body {
 /* ==========================================================================
    Content
    ========================================================================== */
+
+    /** Page Message for returned action messages */
+    #portalPageBodyMessage {display: none; border-radius: 7px 7px 7px 7px; margin-bottom: 1em;}
+    #portalPageBodyMessage.error {background-color: @color3-lighter; border: 1px solid @color3-dark;}
+    #portalPageBodyMessage.warn {background-color: @color3-lighter; border: 1px solid @color3-dark;}
+    #portalPageBodyMessage.success {background-color: @color2-lighter; border: 1px solid @color2-dark;}
+    #portalPageBodyMessage p {font-weight: bold; margin-bottom: 2px; text-align: center;}
 
     .portlet {
         // background: #FFF;

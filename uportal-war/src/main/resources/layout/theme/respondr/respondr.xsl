@@ -454,6 +454,10 @@
                 </header>
                 <div class="portal-content" role="main">
                     <div class="container">
+                        <!-- Works with up-layout-preferences.js showMessage()  -->
+                        <div class="row">
+                            <div id="portalPageBodyMessage" class="col-md-12"></div>
+                        </div>
                         <xsl:apply-templates select="layout/content" />
                     </div>
                 </div>
