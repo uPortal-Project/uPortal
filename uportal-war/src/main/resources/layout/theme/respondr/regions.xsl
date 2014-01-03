@@ -78,4 +78,15 @@
     </div>
   </xsl:template>
 
+  <!-- ========== TEMPLATE: LOGO ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the top-right search area.
+  -->
+  <xsl:template name="region.search">
+    <div class="region-search col-sm-4">
+      <xsl:copy-of select="//region[@name='search']/channel"/>
+    </div>
+  </xsl:template>
+
 </xsl:stylesheet>

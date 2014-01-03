@@ -441,7 +441,7 @@
                     <div class="container">
                         <div class="row">
                             <xsl:call-template name="region.logo" />
-                            <xsl:call-template name="search" />
+                            <xsl:call-template name="region.search" />
                         </div>
                     </div>
                     <xsl:apply-templates select="layout/navigation" />
@@ -517,10 +517,5 @@
     </script>
     </html>
 </xsl:template>
-<!-- ========================================================================= -->
-  <xsl:template name="search">
-    <xsl:if test="$USER_ID!='guest'">
-      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/>
-    </xsl:if>
-  </xsl:template>
+
 </xsl:stylesheet>

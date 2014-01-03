@@ -7,7 +7,7 @@
 <portlet:actionURL var="ajaxSearchUrl" windowState="maximized"/>
 <portlet:resourceURL var="ajaxResults" id="retrieveSearchJSONResults"/>
 
-<div id="webSearchContainer" class="fl-widget col-sm-4">
+<div id="webSearchContainer" class="fl-widget">
     <div class="fl-widget-inner">
       <div class="fl-widget-content">
         <c:set var="searchLabel"><spring:message code="search"/></c:set>

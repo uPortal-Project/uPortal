@@ -44,6 +44,6 @@
     </bean>
 
     <bean parent="primaryPropertyPlaceholderConfigurer" />
-    
+
 </beans>
 
