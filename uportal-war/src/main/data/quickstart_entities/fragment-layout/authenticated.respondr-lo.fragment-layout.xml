@@ -25,8 +25,8 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="greeting" unremovable="true">
-      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n17"/>
-      <channel fname="welcome-message" unremovable="false" hidden="false" immutable="false" ID="n19"/>
+      <channel fname="welcome-message" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
   </folder>
 </layout>

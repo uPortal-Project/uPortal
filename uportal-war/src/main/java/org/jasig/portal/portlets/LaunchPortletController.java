@@ -49,8 +49,8 @@ public class LaunchPortletController extends AbstractController {
     private String viewLocation;
     private IPortalUrlProvider portalUrlProvider;
     private IPortalRequestUtils portalRequestUtils;
-    private static final String VIEW_LOCATION = "viewLocation";
-    private static final String LAUNCH_URL = "launchUrl";
+    private static final String VIEW_LOCATION_PREFERENCE = "viewLocation";
+    private static final String LAUNCH_URL_PREFERENCE = "launchUrl";
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
     private String launchUrlPortletFname;
@@ -109,7 +109,7 @@ public class LaunchPortletController extends AbstractController {
     private String getViewLocation(PortletRequest portletRequest) {
         String viewLocationUrl;
         PortletPreferences prefs = portletRequest.getPreferences();
-        String preferenceViewLocation = prefs.getValue(VIEW_LOCATION, "");
+        String preferenceViewLocation = prefs.getValue(VIEW_LOCATION_PREFERENCE, "");
         if(StringUtils.isNotBlank(preferenceViewLocation)) {
             viewLocationUrl = preferenceViewLocation;
         } else {
@@ -121,7 +121,7 @@ public class LaunchPortletController extends AbstractController {
     private String getUrlForLauncherModel(PortletRequest portletRequest) {
         String urlForModel;
         PortletPreferences prefs = portletRequest.getPreferences();
-        String preferenceLaunchUrl = prefs.getValue(LAUNCH_URL, "");
+        String preferenceLaunchUrl = prefs.getValue(LAUNCH_URL_PREFERENCE, "");
         if (StringUtils.isNotBlank(preferenceLaunchUrl)) {
             urlForModel = preferenceLaunchUrl;
         } else if (StringUtils.isNotBlank(launchUrl)) {

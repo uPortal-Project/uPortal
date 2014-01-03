@@ -439,7 +439,6 @@
                             </ul-->
                             <div class="portal-user">
                                 <xsl:call-template name="welcome" />
-                                <xsl:call-template name="portal.page.bar.link.logout" />
                             </div>
                             <xsl:call-template name="portal.page.bar.link.signin" />
                         </div>
@@ -524,11 +523,6 @@
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
-  <xsl:template name="portal.page.bar.link.logout">
-    <xsl:if test="$USER_ID!='guest'">
-      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'logoutLauncher']/parent::*"/>
-    </xsl:if>
-  </xsl:template>
   <xsl:template name="portal.page.bar.link.signin">
      <xsl:if test="$USER_ID='guest'">
          <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'loginLauncher']/parent::*"/>
@@ -540,6 +534,6 @@
     </xsl:if>
   </xsl:template>
   <xsl:template name="uportal.message">
-    <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'uportalmessage']/parent::*"/>
+    <xsl:copy-of select="//region[@name='logo']/channel"/>
   </xsl:template> 
 </xsl:stylesheet>

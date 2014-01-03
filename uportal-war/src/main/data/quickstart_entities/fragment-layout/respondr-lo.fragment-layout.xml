@@ -24,8 +24,8 @@
     <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="page-top" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
-    <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="greeting" unremovable="true">
-      <channel fname="uportal-message" unremovable="false" hidden="false" immutable="false" ID="n17"/>
+    <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="logo" unremovable="true">
+      <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n17"/>
     </folder>
   </folder>
 </layout>

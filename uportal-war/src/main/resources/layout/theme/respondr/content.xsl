@@ -488,9 +488,7 @@
    | This template renders dynamic welcome message
   -->
   <xsl:template name="welcome">
-    <xsl:if test="$USER_ID!='guest'">
-      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'welcomeMessage']/parent::*"/>
-    </xsl:if>
+    <xsl:copy-of select="//region[@name='greeting']/channel"/>
   </xsl:template>
   <!-- ======================================= -->
 </xsl:stylesheet>
