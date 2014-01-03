@@ -25,7 +25,6 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="header" unremovable="true">
-      <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n5"/>
       <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n6"/>
       <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n7"/>
       <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n8"/>

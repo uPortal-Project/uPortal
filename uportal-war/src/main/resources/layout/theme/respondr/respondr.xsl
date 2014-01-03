@@ -424,9 +424,7 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
-
             <xsl:call-template name="page.temp" />
-
             <xsl:call-template name="page.overrides" />
         </head>
         <body class="up dashboard portal fl-theme-mist">
@@ -444,6 +442,7 @@
                             <xsl:call-template name="region.search" />
                         </div>
                     </div>
+                    <xsl:call-template name="region.emergency" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
                 <div class="portal-content" role="main">

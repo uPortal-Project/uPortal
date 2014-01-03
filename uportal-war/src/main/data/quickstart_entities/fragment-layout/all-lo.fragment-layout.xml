@@ -24,5 +24,8 @@
     <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="page-top" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
+    <folder ID="s4" hidden="false" immutable="true" name="Header folder" type="emergency" unremovable="true">
+      <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+    </folder>
   </folder>
 </layout>

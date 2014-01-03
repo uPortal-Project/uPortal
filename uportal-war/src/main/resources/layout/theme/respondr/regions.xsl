@@ -62,8 +62,10 @@
    | This template renders portlets in the top-right greeting area.
   -->
   <xsl:template name="region.greeting">
-    <div class="region-greeting portal-user">
-      <xsl:copy-of select="//region[@name='greeting']/channel"/>
+    <div id="region-greeting" class="portal-user">
+      <xsl:for-each select="//region[@name='greeting']/channel">
+        <xsl:call-template name="regions.portlet.decorator" />
+      </xsl:for-each>
     </div>
   </xsl:template>
 
@@ -73,20 +75,52 @@
    | This template renders portlets in the top-left logo area.
   -->
   <xsl:template name="region.logo">
-    <div class="region-logo col-sm-8">
-      <xsl:copy-of select="//region[@name='logo']/channel"/>
+    <div id="region-logo" class="col-sm-8">
+      <xsl:for-each select="//region[@name='logo']/channel">
+        <xsl:call-template name="regions.portlet.decorator" />
+      </xsl:for-each>
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: LOGO ========== -->
+  <!-- ========== TEMPLATE: SEARCH ========== -->
   <!-- ======================================= -->
   <!--
    | This template renders portlets in the top-right search area.
   -->
   <xsl:template name="region.search">
-    <div class="region-search col-sm-4">
-      <xsl:copy-of select="//region[@name='search']/channel"/>
+    <div id="region-search" class="col-sm-4">
+      <xsl:for-each select="//region[@name='search']/channel">
+        <xsl:call-template name="regions.portlet.decorator" />
+      </xsl:for-each>
     </div>
+  </xsl:template>
+
+  <!-- ========== TEMPLATE: EMERGENCY ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the top-right search area.
+  -->
+  <xsl:template name="region.emergency">
+    <div id="region-emergency" class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <xsl:for-each select="//region[@name='emergency']/channel">
+            <xsl:call-template name="regions.portlet.decorator" />
+          </xsl:for-each>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
+  <!-- ========== TEMPLATE: REGIONS PORTLET DECORATOR ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template decorates a portlet that appears in a region (in lieu of chrome).
+  -->
+  <xsl:template name="regions.portlet.decorator">
+    <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname}">
+      <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+    </section>
   </xsl:template>
 
 </xsl:stylesheet>
