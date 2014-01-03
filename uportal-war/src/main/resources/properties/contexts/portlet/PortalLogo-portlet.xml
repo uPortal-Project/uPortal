@@ -36,7 +36,7 @@
                 <entry key="view">
                     <bean id="uPortalMessage" class="org.jasig.portal.portlets.LaunchPortletController">
                         <property name="launchUrl" value="Not Used"/>
-                        <property name="viewLocation" value="/jsp/uPortal/uPortal"/>
+                        <property name="viewLocation" value="/jsp/uPortal/portalLogo"/>
                     </bean>
                 </entry>
             </map>

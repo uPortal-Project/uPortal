@@ -440,7 +440,7 @@
                     </div>
                     <div class="container">
                         <div class="row">
-                            <xsl:call-template name="uportal.message" />
+                            <xsl:call-template name="region.logo" />
                             <xsl:call-template name="search" />
                         </div>
                     </div>
@@ -523,7 +523,4 @@
       <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/>
     </xsl:if>
   </xsl:template>
-  <xsl:template name="uportal.message">
-    <xsl:copy-of select="//region[@name='logo']/channel"/>
-  </xsl:template> 
 </xsl:stylesheet>

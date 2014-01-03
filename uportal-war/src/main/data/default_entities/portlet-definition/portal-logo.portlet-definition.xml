@@ -38,7 +38,7 @@
     <portlet-preference>
         <name>viewLocation</name>
         <readOnly>false</readOnly>
-        <value>/jsp/uPortal/uPortal</value>
+        <value>/jsp/uPortal/portalLogo</value>
     </portlet-preference>
     <portlet-preference>
         <name>launchUrl</name>

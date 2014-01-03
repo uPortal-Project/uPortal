@@ -59,11 +59,22 @@
   <!-- ========== TEMPLATE: GREETING ========== -->
   <!-- ======================================= -->
   <!--
-   | This template renders the main content of the page (stuff organized into rows).
+   | This template renders portlets in the top-right greeting area.
   -->
   <xsl:template name="region.greeting">
     <div class="region-greeting portal-user">
       <xsl:copy-of select="//region[@name='greeting']/channel"/>
+    </div>
+  </xsl:template>
+
+  <!-- ========== TEMPLATE: LOGO ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the top-left logo area.
+  -->
+  <xsl:template name="region.logo">
+    <div class="region-logo col-sm-8">
+      <xsl:copy-of select="//region[@name='logo']/channel"/>
     </div>
   </xsl:template>
 
