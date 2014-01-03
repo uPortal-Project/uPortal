@@ -47,5 +47,5 @@
   <js>javascript/uportal/up-sidebar-improved.js</js>
   <js>javascript/uportal/up-print-plugin.js</js>
   <js>javascript/uportal/up-ga.js</js>
-
+  <js>javascript/uportal/up-announcements.js</js>
 </resources>
