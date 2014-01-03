@@ -108,8 +108,9 @@
  -->
 <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
 <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
-<xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
 <xsl:import href="navigation.xsl" />
+<xsl:import href="regions.xsl" />     <!-- Templates for areas (regions) on the page in which non-tab/column portlets may be placed -->
+<xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
 <!-- ========================================================================= -->
 
 
@@ -434,13 +435,7 @@
                 <header class="portal-header" role="banner">
                     <div class="portal-global">
                         <div class="container">
-                            <!--ul class="portal-editing">
-                                <li><a href="#">Edit Page</a></li>
-                            </ul-->
-                            <div class="portal-user">
-                                <xsl:call-template name="welcome" />
-                            </div>
-                            <xsl:call-template name="portal.page.bar.link.signin" />
+                            <xsl:call-template name="region.greeting" />
                         </div>
                     </div>
                     <div class="container">
@@ -523,11 +518,6 @@
     </html>
 </xsl:template>
 <!-- ========================================================================= -->
-  <xsl:template name="portal.page.bar.link.signin">
-     <xsl:if test="$USER_ID='guest'">
-         <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'loginLauncher']/parent::*"/>
-     </xsl:if>
-  </xsl:template>
   <xsl:template name="search">
     <xsl:if test="$USER_ID!='guest'">
       <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'searchLauncher']/parent::*"/>

@@ -30,11 +30,7 @@
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>LoginLauncher</ns2:portletName>
     </portlet-descriptor>
-    <group>Everyone</group>
-    <parameter>
-        <name>role</name>
-        <value>loginLauncher</value>
-    </parameter>
+    <group>Guests</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

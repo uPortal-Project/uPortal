@@ -480,15 +480,5 @@
         </ul>
     </div>
   </xsl:template>
-  <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
 
-  <!-- ========== TEMPLATE: WELCOME ========== -->
-  <!-- ======================================= -->
-  <!--
-   | This template renders dynamic welcome message
-  -->
-  <xsl:template name="welcome">
-    <xsl:copy-of select="//region[@name='greeting']/channel"/>
-  </xsl:template>
-  <!-- ======================================= -->
 </xsl:stylesheet>
