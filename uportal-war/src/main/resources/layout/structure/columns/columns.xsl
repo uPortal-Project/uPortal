@@ -103,30 +103,47 @@
     <header>
       <xsl:choose>
         <xsl:when test="$userLayoutRoot = 'root'">
-        	<!-- BEGIN display channel-headers for each channel visible on the page -->
-            <xsl:for-each select="child::folder[@type='header']/descendant::channel">
-        		<channel-header ID="{@ID}"/>
-      		</xsl:for-each>
-      		<xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
-        		<channel-header ID="{@ID}"/>
-      		</xsl:for-each>
-      		<xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-        		<channel-header ID="{@ID}"/>
-      		</xsl:for-each>
-      		<!-- END display channel-headers for each channel visible on the page -->  
+          <!-- BEGIN display channel-headers for each channel visible on the page -->
+          <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+            <channel-header ID="{@ID}"/>
+          </xsl:for-each>
+          <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+            <channel-header ID="{@ID}"/>
+          </xsl:for-each>
+          <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+            <channel-header ID="{@ID}"/>
+          </xsl:for-each>
+          <!-- END display channel-headers for each channel visible on the page -->  
         </xsl:when>
         <xsl:otherwise>
-		<!-- display only focused channel-header -->
-		<channel-header ID="{$userLayoutRoot}"/>
+        <!-- display only focused channel-header -->
+        <channel-header ID="{$userLayoutRoot}"/>
         </xsl:otherwise>
       </xsl:choose>
-      
-      <!-- Allows header portlets to appear in the output, even in focused mode -->
-      <xsl:for-each select="child::folder[@type='header']">
-        <xsl:copy-of select=".//channel"/>
-      </xsl:for-each> 
-      
+
     </header>
+
+    <!-- 
+     | Regions and Roles
+     | =================
+     | This section allows non-regular, non-sidebar portlets to appear in the output page,
+     | even in focused mode.  In Universality this is done with a 'role' attribute on the
+     | portlet publication record.
+     |
+     | In Respondr, this is done through regions: folders with a type attribute _other than_
+     | 'root', 'regular', or 'sidebar' (for legacy support).  Any folder type beyond these 
+     | three automatically becomes a region.  Respondr is responsible for recognizing 
+     | region-based portlets and placing them appropriately on the page.  Note that a region 
+     | name can appear multiple times in the output;  this approach allows multiple 
+     | fragments to place portlets in the same region.
+     +-->
+    <regions>
+      <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
+        <region name="{@type}">
+          <xsl:copy-of select="channel"/>
+        </region>
+      </xsl:for-each> 
+    </regions>
 
     <xsl:call-template name="tabList"/>
 

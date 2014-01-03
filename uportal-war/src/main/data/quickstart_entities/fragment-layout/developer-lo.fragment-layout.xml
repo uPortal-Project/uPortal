@@ -21,10 +21,9 @@
 -->
 <layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="developer-lo">
     <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
-        <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="header" unremovable="true">
+        <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="page-top" unremovable="true">
             <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
         </folder>
-        <folder ID="s4" hidden="false" immutable="false" name="Footer folder" type="footer" unremovable="false"/>
         <folder ID="s5" hidden="false" immutable="false" name="Development" type="regular" unremovable="false">
             <structure-attribute>
                 <name>externalId</name>
