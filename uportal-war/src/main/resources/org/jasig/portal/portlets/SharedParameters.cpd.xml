@@ -117,6 +117,13 @@
             </single-choice-parameter-input>
         </parameter>
     
+        <parameter>
+            <name>topics</name>
+            <label>announcements.topics.index</label>
+            <description>Comma seperated list of topic subscriptions</description>
+            <single-text-parameter-input display="text"/>
+        </parameter>
+    
     </step>
     
 </portlet-publishing-definition>

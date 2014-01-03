@@ -76,5 +76,4 @@
   <js included="aggregated" resource="true">/rs/fluid/1.4.0/js/fluid-all-1.4.0.min.js</js>
 
   <js import="true">../../common/common_skin.xml</js>
-
 </resources>

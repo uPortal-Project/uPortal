@@ -93,7 +93,11 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-
+    
+    <xsl:variable name="TOPIC_SUBSCRIPTIONS">
+      <xsl:value-of select="./parameter[@name='topics']/@value"/>
+    </xsl:variable>
+    
     <!-- Tests for optional portlet parameter removeFromLayout which can be used to not render a portlet in the layout.  The main use case for this function is to have a portlet be a quicklink and then remove it from otherwise rendering. -->
     <xsl:if test="not(./parameter[@name='removeFromLayout']/@value='true') and not(./parameter[@name='PORTLET.removeFromLayout']/@value='true')">
 
@@ -192,7 +196,13 @@
               </h2>
               <xsl:call-template name="controls"/>
             </div>
-
+            
+            <!-- ****** PORTLET ANNOUNCEMENTS ****** -->
+            <!-- <xsl:if test="$TOPIC_SUBSCRIPTIONS != ''"> -->
+	            <div id="portletAnnouncements_{@ID}" class="up-portlet-announcements-wrapper" rel="{$TOPIC_SUBSCRIPTIONS}"> <!-- Portlet announcements container. -->
+	            </div>
+            <!-- </xsl:if> -->
+            
             <!-- ****** PORTLET CONTENT ****** -->
             <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper"> <!-- Portlet content container. -->
               <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->

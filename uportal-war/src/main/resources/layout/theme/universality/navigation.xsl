@@ -521,6 +521,8 @@
         up.jQuery("ul.fl-tabs li.portal-navigation").each( function() {
           flyouts.push(uportal.flyoutmenu(this, flyoutOptions));
         });
+        
+        up.announcements(); 
       });
     </script>
   </xsl:template>
