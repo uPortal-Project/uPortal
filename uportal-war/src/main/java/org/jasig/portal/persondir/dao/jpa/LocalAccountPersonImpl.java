@@ -79,7 +79,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     private final long entityVersion;
     
     @NaturalId
-    @Column(name = "USER_NAME", length = 35, nullable = false)
+    @Column(name = "USER_NAME", length = 50, nullable = false)
     private final String name;
     
     @Column(name = "ENCRPTD_PSWD", length = 256)

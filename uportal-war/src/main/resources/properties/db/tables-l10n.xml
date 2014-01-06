@@ -29,7 +29,7 @@
     <name>UP_PERSON_DIR</name>
     <desc>Directory information for a given person, including the MD5 password. Emulates a simple external authentication service, like LDAP.</desc>
     <columns>
-      <column> <name>USER_NAME</name>       <type>VARCHAR</type>   <param>35</param>
+      <column> <name>USER_NAME</name>       <type>VARCHAR</type>   <param>50</param>
         <desc>Authentication prinicipal - Primary key and foreign key foreign key to external authentication system (which is what up_person_dir emulates)</desc>
       </column>
       <column> <name>ENCRPTD_PSWD</name>    <type>VARCHAR</type>   <param>64</param>

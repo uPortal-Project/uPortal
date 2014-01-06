@@ -67,7 +67,7 @@ public class JpaSsoTicket implements ISsoTicket, Serializable {
     @Column(name = "UUID", updatable = false, nullable = false)
     private final String uuid;
 
-    @Column(name = "USER_NAME", updatable = false, nullable = false)
+    @Column(name = "USER_NAME", updatable = false, nullable = false, length = 50)
     private final String username;
 
     @Column(name = "CREATION_DATE", updatable = false, nullable = false)

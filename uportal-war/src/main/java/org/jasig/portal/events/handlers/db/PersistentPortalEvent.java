@@ -82,7 +82,7 @@ public class PersistentPortalEvent implements Serializable {
     private final String eventSessionId;
     
     @Index(name = "IDX_UP_RAW_EVENTS_USER_NAME")
-    @Column(name="USER_NAME", length=35, nullable=false, updatable=false)
+    @Column(name="USER_NAME", length=50, nullable=false, updatable=false)
     @SuppressWarnings("unused")
     private final String userName;
     
