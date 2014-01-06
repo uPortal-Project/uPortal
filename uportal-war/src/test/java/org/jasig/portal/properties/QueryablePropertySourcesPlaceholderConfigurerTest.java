@@ -50,7 +50,6 @@ public class QueryablePropertySourcesPlaceholderConfigurerTest {
 
     @Before
     public void setUp() {
-        assertNull("These tests assume SSP_CONFIGDIR hasn't been set in the OS env.", System.getenv("SSP_CONFIGDIR"));
         System.clearProperty("SSP_CONFIGDIR");
     }
 
