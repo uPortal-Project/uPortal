@@ -147,7 +147,10 @@
 				        type: 'get',
 				        url: '/ssp/api/1/server/clientTimeout',
 				        success: function (data) {
-				            timeoutInMinutes = data;
+				            timeoutInMinutes = data.timeoutMins;
+				        },
+				        error: function() {
+				            timeoutInMinutes = 20; // the server-side default
 				        }
 				    });
 			    //Increment the idle time counter every minute.
