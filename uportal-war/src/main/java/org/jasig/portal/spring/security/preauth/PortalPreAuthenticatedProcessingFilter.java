@@ -44,7 +44,10 @@ import org.jasig.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.ResourceLoader;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -59,7 +62,8 @@ import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPl
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter
+        implements ApplicationContextAware {
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
     
     private String loginPath = "/Login";
@@ -69,6 +73,7 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     protected HashMap<String, String> principalTokens;
     protected Authentication authenticationService = null;
     private IPersonManager personManager;
+    private ApplicationContext applicationContext;
 
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -94,7 +99,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
             Properties props =
                     ContextPropertyPlaceholderUtils.resolve(ResourceLoader.getResourceAsProperties(getClass(),
-                            "/properties/security.properties"), UnresolvablePlaceholderStrategy.IGNORE);
+                            "/properties/security.properties"), applicationContext,
+                            UnresolvablePlaceholderStrategy.IGNORE);
             Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 String propName = (String) propNames.nextElement();
@@ -356,4 +362,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         return (retHash);
     }
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 }
