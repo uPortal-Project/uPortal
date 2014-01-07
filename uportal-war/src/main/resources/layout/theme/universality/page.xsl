@@ -177,6 +177,7 @@
 			                    up.jQuery.ajax({
 			                        type: 'get',
 			                        url: '/ssp/api/1/server/version',
+			                        data: 'force_platform_session_keep_alive=1',
 			                        success: function (data) {
 			                        }
 			                    });
