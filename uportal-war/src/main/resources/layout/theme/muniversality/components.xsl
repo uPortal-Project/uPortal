@@ -166,52 +166,54 @@
     <div class="portal-nav portlet-content">
         <ul data-role="listview" class="up-portal-nav">
             <xsl:for-each select="//navigation/tab">
-            <li data-role="list-divider"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></li>
-                <xsl:for-each select="channel">
-                    <li>
-                        <xsl:variable name="defaultPortletUrl">
-                          <xsl:choose>
-                            <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
-                              <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                              <xsl:call-template name="portalUrl">
-                                <xsl:with-param name="url">
-                                  <url:portal-url>
-                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                    <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-                                  </url:portal-url>
-                                </xsl:with-param>
-                              </xsl:call-template>
-                            </xsl:otherwise>
-                          </xsl:choose>
-                        </xsl:variable>
-                        <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
-                        <xsl:variable name="iconUrl">
-                            <xsl:choose>
-                                <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
-                                    <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
-                                </xsl:when>
-                                <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:variable>
-                        <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
-                        <xsl:element name="a">
-                          <xsl:attribute name="href"><xsl:value-of select="$portletUrl" /></xsl:attribute>
-                          <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('to.view', $USER_LANG)" /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
-                          <xsl:choose>
-                            <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
-                              <xsl:attribute name="target">_blank</xsl:attribute>
-                            </xsl:when>
-                            <xsl:otherwise></xsl:otherwise>
-                          </xsl:choose>
-                          <img class="portlet-icon" src="{$iconUrl}" alt="{@title}"/>
-                          <h3><xsl:value-of select="@title" /></h3>
-                          <p><xsl:value-of select="@description"/></p>
-                          <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
-                        </xsl:element>
-                    </li>
-                </xsl:for-each>
+            	<xsl:if test="@name != '_favorite'">
+	            	<li data-role="list-divider"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></li>
+	                <xsl:for-each select="channel">
+	                    <li>
+	                        <xsl:variable name="defaultPortletUrl">
+	                          <xsl:choose>
+	                            <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
+	                              <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value" />
+	                            </xsl:when>
+	                            <xsl:otherwise>
+	                              <xsl:call-template name="portalUrl">
+	                                <xsl:with-param name="url">
+	                                  <url:portal-url>
+	                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+	                                    <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+	                                  </url:portal-url>
+	                                </xsl:with-param>
+	                              </xsl:call-template>
+	                            </xsl:otherwise>
+	                          </xsl:choose>
+	                        </xsl:variable>
+	                        <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
+	                        <xsl:variable name="iconUrl">
+	                            <xsl:choose>
+	                                <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
+	                                    <xsl:value-of select="parameter[@name='mobileIconUrl']/@value"/>
+	                                </xsl:when>
+	                                <xsl:otherwise><xsl:value-of select="$CONTEXT_PATH"/>/media/skins/icons/mobile/default.png</xsl:otherwise>
+	                            </xsl:choose>
+	                        </xsl:variable>
+	                        <xsl:variable name="newItemCountClasses">ui-li-count badge new-item up-new-item-count-{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</xsl:variable>
+	                        <xsl:element name="a">
+	                          <xsl:attribute name="href"><xsl:value-of select="$portletUrl" /></xsl:attribute>
+	                          <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('to.view', $USER_LANG)" /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
+	                          <xsl:choose>
+	                            <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
+	                              <xsl:attribute name="target">_blank</xsl:attribute>
+	                            </xsl:when>
+	                            <xsl:otherwise></xsl:otherwise>
+	                          </xsl:choose>
+	                          <img class="portlet-icon" src="{$iconUrl}" alt="{@title}"/>
+	                          <h3><xsl:value-of select="@title" /></h3>
+	                          <p><xsl:value-of select="@description"/></p>
+	                          <span class="{$newItemCountClasses}">{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}</span>
+	                        </xsl:element>
+	                    </li>
+	                </xsl:for-each>
+                </xsl:if>
             </xsl:for-each>
         </ul>
     </div>
