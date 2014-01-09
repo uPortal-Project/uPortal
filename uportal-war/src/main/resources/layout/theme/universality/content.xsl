@@ -214,7 +214,7 @@
   </xsl:template>
   <!-- ======================================= -->
 
-  <!-- ========== TEMPLATE: PORLET CONTENT ========== -->
+  <!-- ========== TEMPLATE: PORTLET CONTENT ========== -->
   <!-- ============================================== -->
   <!--
    | Renders the actual portlet content
@@ -237,7 +237,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: PORLET FOCUSED ========== -->
+  <!-- ========== TEMPLATE: PORTLET FOCUSED ========== -->
   <!-- ============================================== -->
   <!--
    | These two templates render the focused portlet content.

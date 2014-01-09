@@ -171,7 +171,7 @@
 <!-- ****** LOCALIZATION SETTINGS ****** -->
 <!-- 
  | GREEN
- | Locatlization Settings can be used to change the localization of the theme.
+ | Localization Settings can be used to change the localization of the theme.
  -->
 <xsl:param name="USER_LANG">en</xsl:param>
 <!-- ======================================== -->
@@ -451,7 +451,16 @@
                         <div class="row">
                             <div id="portalPageBodyMessage" class="col-md-12"></div>
                         </div>
-                        <xsl:apply-templates select="layout/content" />
+
+                        <xsl:choose>
+                            <xsl:when test="$PORTAL_VIEW='focused'">
+                                <!-- === FOCUSED VIEW === -->
+                                <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="layout/content" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </div>
                 </div>
                 <xsl:call-template name="footer.nav" />

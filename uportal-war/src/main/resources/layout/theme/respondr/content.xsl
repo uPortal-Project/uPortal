@@ -236,7 +236,7 @@
   </xsl:template>
   <!-- ======================================= -->
 
-  <!-- ========== TEMPLATE: PORLET CONTENT ========== -->
+  <!-- ========== TEMPLATE: PORTLET CONTENT ========== -->
   <!-- ============================================== -->
   <!--
    | Renders the actual portlet content
