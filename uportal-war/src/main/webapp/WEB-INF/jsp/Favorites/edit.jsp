@@ -35,6 +35,11 @@
       </c:forEach>
     </ul>
 
+  <span>
+    <portlet:renderURL portletMode="VIEW" var="returnToViewModeUrl" />
+    <a href="${returnToViewModeUrl}">Stop editing</a>
+  </span>
+
   <span class="pull-right">
     <!-- TODO : Link to marketplace -->
     <a href="#">Browse for Resources</a>
