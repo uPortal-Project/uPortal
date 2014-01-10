@@ -1,5 +1,6 @@
 package org.jasig.portal.portlets.favorites;
 
+import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -79,6 +81,25 @@ public class FavoritesEditController {
 
         }
         return favorites;
+    }
+
+    @RequestMapping(params = {"action=delete"})
+    public void unFavoriteNode(@RequestParam("nodeId") String nodeId, ActionResponse response) {
+
+        // ferret out the layout manager
+        HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
+        IUserInstance userInstance = this.userInstanceManager.getUserInstance(servletRequest);
+        IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+        IUserLayoutManager layoutManager = preferencesManager.getUserLayoutManager();
+
+        layoutManager.deleteNode(nodeId);
+
+        layoutManager.saveUserLayout();
+
+        // TODO: care about the boolean success return from deleteNode()
+
+        response.setRenderParameter("action", "list");
+        
     }
 
 }

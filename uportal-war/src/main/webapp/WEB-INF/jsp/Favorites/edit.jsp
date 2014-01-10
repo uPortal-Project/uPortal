@@ -31,7 +31,15 @@
         </c:if>
       </c:forEach>
       <c:forEach var="favorite" items="${favorites}">
-        <li class="list-group-item"><span class="glyphicon glyphicon-trash pull-right"></span>${favorite.name}</li>
+        <portlet:actionURL var="unFavoritePortletUrl">
+          <portlet:param name="action" value="delete" />
+          <portlet:param name="nodeId" value="${favorite.id}" />
+        </portlet:actionURL>
+        <li class="list-group-item">
+          <a href="${unFavoritePortletUrl}">
+            <span class="glyphicon glyphicon-trash pull-right"></span>${favorite.name}
+          </a>
+        </li>
       </c:forEach>
     </ul>
 
