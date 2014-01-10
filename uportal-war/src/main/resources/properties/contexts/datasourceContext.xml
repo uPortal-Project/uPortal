@@ -96,8 +96,12 @@
     		<util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
     	</property>
     	<property name="validationQueryMap">
+            <!-- todo: Change to simply use ${hibernate.connection.validationQuery} instead of a map -->
     		<map>
-    			<entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.OracleDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle9iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle10gDialect" value="SELECT 1 FROM DUAL" />
     			<entry key="org.hibernate.dialect.MySQLDialect" value="SELECT 1" />
     			<entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="SELECT 1" />
     			<entry key="org.hibernate.dialect.SQLServerDialect" value="SELECT 1" />

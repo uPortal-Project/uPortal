@@ -26,12 +26,14 @@
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
+            <property name="hibernate.dialect" value="${environment.build.hibernate.dialect}"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="RawEventsDb" transaction-type="RESOURCE_LOCAL">
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-raw-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
+            <property name="hibernate.dialect" value="${environment.build.hibernate.dialect}"/>
         </properties>
     </persistence-unit>
     <persistence-unit name="AggrEventsDb" transaction-type="RESOURCE_LOCAL">
@@ -40,6 +42,7 @@
         <properties>
             <property name="hibernate.ejb.cfgfile" value="/properties/db/hibernate-aggr-events.cfg.xml" />
             <property name="hibernate.archive.autodetection" value="" />
+            <property name="hibernate.dialect" value="${environment.build.hibernate.dialect}"/>
         </properties>
     </persistence-unit>
 </persistence>

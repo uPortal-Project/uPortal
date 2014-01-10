@@ -637,6 +637,7 @@
                     <include>properties/security.properties</include>
                     <include>properties/contexts/userContext.xml</include>
                     <include>properties/groups/PAGSGroupStoreConfig.xml</include>
+                    <include>META-INF/persistence.xml</include>
                     <include>logback.xml</include>
                 </includes>
             </resource>
@@ -647,11 +648,14 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <excludes>
+                    <exclude>org/apache/pluto/driver/container/pluto-configuration.properties</exclude>
                     <exclude>properties/portal.properties</exclude>
                     <exclude>properties/rdbm.properties</exclude>
                     <exclude>properties/security.properties</exclude>
                     <exclude>properties/contexts/userContext.xml</exclude>
                     <exclude>properties/groups/PAGSGroupStoreConfig.xml</exclude>
+                    <exclude>META-INF/persistence.xml</exclude>
+                    <exclude>logback.xml</exclude>
                 </excludes>
             </resource>
             <resource>
