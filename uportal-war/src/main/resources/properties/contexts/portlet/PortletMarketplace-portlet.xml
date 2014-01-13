@@ -33,6 +33,16 @@
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
     </bean>
+    
+    <bean
+    	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    	<property name="viewClass"
+        	value="org.springframework.web.servlet.view.JstlView" />
+    	<property name="prefix" value="/pages/" />
+    	<property name="suffix" value=".jsp" />
+	</bean>
+    
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
 
     <bean parent="primaryPropertyPlaceholderConfigurer" />
 </beans>
