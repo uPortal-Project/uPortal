@@ -77,6 +77,11 @@
         <value>false</value>
     </parameter>
     <portlet-preference>
+        <name>EmergencyAlertController.usePortalJsLibs</name>
+        <readOnly>false</readOnly>
+        <value>false</value>
+    </portlet-preference>
+    <portlet-preference>
         <name>DemoNotificationService.locations</name>
         <readOnly>false</readOnly>
         <value>demo/emergencyAlertDemoNoticationResponse.json</value>
