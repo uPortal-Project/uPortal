@@ -23,7 +23,6 @@
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript"></script>
 <style>
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables display
  */
@@ -284,7 +283,7 @@ tr.even {
 
 </style>
 <c:set var="n"><portlet:namespace/></c:set>
-<div>
+<div id="${n}marketplace">
 <div id="unseen">
 	<table id="${n}portletTable" class="display table">
 		<thead>
@@ -300,16 +299,20 @@ tr.even {
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach var="portlet2" items="${channelBeanList}">
+			<c:forEach var="portlet" items="${channelBeanList}">
 				<tr>
 					<td class="essential" style="white-space: nowrap; border:none;">
-						${portlet2.title}
+						${portlet.title}
 					</td>
 					<td class="optional" style="border:none;">
-						${portlet2.description}
+						${portlet.description}
 					</td>
+					<portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
+						<portlet:param name="action" value="view"/>
+						<portlet:param name="name" value="${portlet.name}"/>
+					</portlet:renderURL>
 					<td class="essential" style="border:none;">
-						get
+						<a href="${entryURL}">get</a>
 					</td>
 				</tr>
 			</c:forEach>

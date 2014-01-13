@@ -36,4 +36,14 @@
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png</value>
     </parameter>
+    <portlet-preference>
+    	<name>screen_shot1</name>
+    	<readOnly>true</readOnly>
+    	<value>http://image.shutterstock.com/display_pic_with_logo/427597/141533524/stock-photo-marketplace-road-sign-141533524.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>screen_shot1_caption</name>
+    	<readOnly>true</readOnly>
+    	<value>The really cool marketplace</value>
+    </portlet-preference>
 </portlet-definition>
