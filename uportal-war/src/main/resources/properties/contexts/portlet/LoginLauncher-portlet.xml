@@ -28,14 +28,14 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets"/>
+    <context:component-scan base-package="org.jasig.portal.portlets.launch"/>
 
     <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
         <property name="portletModeMap">
             <map>
                 <entry key="view">
-                    <bean id="loginLauncher" class="org.jasig.portal.portlets.LaunchPortletController">
+                    <bean id="loginLauncher" class="org.jasig.portal.portlets.launch.LaunchPortletController">
                         <property name="launchUrl" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}"/>
                         <property name="viewLocation" value="/jsp/LoginLauncher/loginLauncher"/>
                     </bean>

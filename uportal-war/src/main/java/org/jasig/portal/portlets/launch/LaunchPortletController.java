@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets;
+package org.jasig.portal.portlets.launch;
 
 import java.util.HashMap;
 import java.util.Map;
