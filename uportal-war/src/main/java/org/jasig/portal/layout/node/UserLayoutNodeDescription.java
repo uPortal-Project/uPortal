@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.node;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.dlm.Constants;
 import org.w3c.dom.Document;
@@ -300,6 +301,18 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
     }
 
     public String toString() {
-    	return "["+id+","+name+"]";
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channel_or_folder?", this.getType()).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
+
     }
 }

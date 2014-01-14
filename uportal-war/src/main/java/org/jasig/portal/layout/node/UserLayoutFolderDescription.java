@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.node;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -99,6 +100,21 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
         super.addNodeAttributes(node);
         node.setAttribute("type", this.folderType);
     }
+
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channel_or_folder?", this.getType()).
+                append("type", this.folderType).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
 
     }
 }
