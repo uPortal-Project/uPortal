@@ -551,7 +551,8 @@
                     <xsl:call-template name="region.emergency" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
-                <div class="portal-content" role="main">
+                <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
+                    <xsl:call-template name="region.system-tray" />
                     <div class="container">
                         <!-- For editing page permissions in fragment-admin mode  -->
                         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">

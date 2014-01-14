@@ -130,6 +130,24 @@
     </div>
   </xsl:template>
 
+  <!-- ========== TEMPLATE: SYSTEM TRAY ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the System Tray area.  This region is one
+   | that could be sensibly moved elsewhere on the page by implementers.
+  -->
+  <xsl:template name="region.system-tray">
+    <div id="region-system-tray" class="container">
+      <div class="row">
+        <div class="col-sm-12 text-right">
+          <xsl:for-each select="//region[@name='system-tray']/channel">
+            <xsl:call-template name="regions.portlet.decorator" />
+          </xsl:for-each>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
   <!-- ========== TEMPLATE: REGIONS PORTLET DECORATOR ========== -->
   <!-- ======================================= -->
   <!--

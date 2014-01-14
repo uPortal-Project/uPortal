@@ -37,9 +37,11 @@
         background-size: 100%;
         background-attachment: fixed;
     }
+    /* Opacity currently not working; selector drop down appears behind portlets; 
+       see http://stackoverflow.com/questions/15558148/possible-opacity-z-index-bug
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
-    }
+    } */
     </c:if>
 
     html.um-dashboard, html.um-dashboard body {
@@ -64,7 +66,7 @@
         overflow-y: scroll;
         z-index: 10000;
         text-align:center;
-        max-height:90%;
+        max-height:515px;
     }
 
     #${n}background-edit-control .background-edit-menu a {
