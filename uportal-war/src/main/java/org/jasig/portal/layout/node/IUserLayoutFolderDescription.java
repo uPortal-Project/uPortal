@@ -31,28 +31,55 @@ import org.w3c.dom.Element;
  */
 public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription {
 
-    public static final int REGULAR_TYPE=0;
-    public static final int HEADER_TYPE=1;
-    public static final int FOOTER_TYPE=2;
-    public static final int SIDEBAR_TYPE=3;
- 
-    public static final String[] folderTypeNames= {"regular","header","footer","sidebar"};
+    /**
+     * Type attribute value of regular layout folders (i.e., tabs displayed normally, not headers, footers,
+     * emergency fragments, tip fragments, favorites-containing meta-fragments, etc.
+     * @since uPortal 4.1
+     */
+    public static final String REGULAR_TYPE = "regular";
 
     /**
-     * Returns folder type.
-     *
-     * @return an <code>int</code> value corresponding
-     * to one of the valid folder types.
+     * Type attribute value of header folders.
+     * @since uPortal 4.1
      */
-    public int getFolderType();
+    public static final String HEADER_TYPE = "header";
+
+    /**
+     * Type attribute value of footer folders.
+     * @since uPortal 4.1
+     */
+    public static final String FOOTER_TYPE = "footer";
+
+    /**
+     * Type attribute value of sidebar folders.
+     * @since uPortal 4.1
+     */
+    public static final String SIDEBAR_TYPE = "sidebar";
+
+    /**
+     * Type attribute value of folders containing user favorites (used by the optional Favorites portlet).
+     * @since uPortal 4.1
+     */
+    public static final String FAVORITES_TYPE = "favorites";
+
+
+    /**
+     * Returns folder type.  Type might be one of the values documented in this interface.
+     * Then again, it might be any other String.
+     *
+     * @since uPortal 4.1
+     * @return a non-null String representing folder type.
+     */
+    public String getFolderType();
 
     /**
      * Assign a type to a folder.
+     * Some useful types are documented in this interface.
      *
-     * @param folderType an <code>int</code> value corresponding
-     * to one of the valid folder types.
+     * @since uPortal 4.1
+     * @param folderType String corresponding to underlying 'type' attribute
      */
-    public void setFolderType(int folderType);
+    public void setFolderType(String folderType);
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current node.
