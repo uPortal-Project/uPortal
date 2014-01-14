@@ -49,8 +49,15 @@
     <!-- Default visual style for sidebar content with show/how feature. -->
     <css>css/sidebar.css</css>
 
-    <js included="plain" resource="true">/rs/jquery/1.8.3/jquery-1.8.3.js</js>
-    <js included="aggregated" resource="true">/rs/jquery/1.8.3/jquery-1.8.3.min.js</js>
+    <!--
+    | NOTE:  The following order is important!
+    +-->
+    <js included="plain">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.min.js</js>
+
+    <!-- Must follow loading of jQuery -->
+    <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.min.js</js>
 
     <js included="plain" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
     <js included="aggregated" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
@@ -63,8 +70,8 @@
     <js included="plain" resource="true">/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.js</js>
     <js included="aggregated" resource="true">/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
 
-    <js included="plain" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.24.js</js>
-    <js included="aggregated" resource="true">/rs/jqueryui/1.8.24/jquery-ui-1.8.24.min.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
 
     <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
     <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
