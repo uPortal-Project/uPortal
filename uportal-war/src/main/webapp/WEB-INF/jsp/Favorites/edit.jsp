@@ -25,11 +25,19 @@
   <%-- TODO: label should come from message bundle --%>
   <p>Edit your favorites:</p>
     <ul class="list-group">
-      <c:forEach var="tab" items="${tabs}">
-        <c:if test="${tab ne '_favorite'}">
-          <li class="list-group-item"><span class="glyphicon glyphicon-trash pull-right"></span>${tab}</li>
-        </c:if>
+
+      <c:forEach var="collection" items="${collections}">
+        <portlet:actionURL var="unFavoriteCollectionUrl">
+          <portlet:param name="action" value="delete" />
+          <portlet:param name="nodeId" value="${collection.id}" />
+        </portlet:actionURL>
+        <li class="list-group-item">
+          <a href="${unFavoriteCollectionUrl}">
+            <span class="glyphicon glyphicon-trash pull-right"></span>${collection.name}
+          </a>
+        </li>
       </c:forEach>
+
       <c:forEach var="favorite" items="${favorites}">
         <portlet:actionURL var="unFavoritePortletUrl">
           <portlet:param name="action" value="delete" />
