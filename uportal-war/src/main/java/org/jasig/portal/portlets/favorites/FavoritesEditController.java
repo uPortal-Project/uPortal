@@ -27,6 +27,8 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,19 +38,19 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Spring PortletMVC Controller for Favorites Portlet implementing EDIT mode.
+ * @since uPortal 4.1
  */
 @Controller
 @RequestMapping("EDIT")
 public class FavoritesEditController {
 
-    //TODO : Make this a preference
-    private static final String FAVORITE_TAB_NAME = "_favorite";
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private FavoritesHelper favoritesHelper;
 
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
@@ -63,6 +65,11 @@ public class FavoritesEditController {
         this.portalRequestUtils = portalRequestUtils;
     }
 
+    @Autowired
+    public void setFavoritesHelper( FavoritesHelper helper) {
+        this.favoritesHelper = helper;
+    }
+
     @RenderMapping
     public String initializeView(Model model) {
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
@@ -70,37 +77,19 @@ public class FavoritesEditController {
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         IUserLayout userLayout = ulm.getUserLayout();
-        List<IUserLayoutNodeDescription> favorites = getFavoritePortlets(FAVORITE_TAB_NAME, userLayout);
-        model.addAttribute("favorites",favorites);
-        model.addAttribute("tabs",userLayout.getFragmentNames());
+
+        List<IUserLayoutNodeDescription> collections = favoritesHelper.getFavoriteCollections(userLayout);
+        model.addAttribute("collections", collections);
+
+        List<IUserLayoutNodeDescription> favorites = favoritesHelper.getFavoritePortlets(userLayout);
+        model.addAttribute("favorites", favorites);
+
+
+
         return "jsp/Favorites/edit";
     }
 
-    @SuppressWarnings("unchecked")
-    public List<IUserLayoutNodeDescription> getFavoritePortlets(String favoriteTabName, IUserLayout userLayout) {
-        List<IUserLayoutNodeDescription> favorites = new LinkedList<IUserLayoutNodeDescription>();
 
-        Enumeration<String> tabs = userLayout.getChildIds(userLayout.getRootId());
-        while(tabs.hasMoreElements()) { //loop over tabs
-            String node = tabs.nextElement();
-            IUserLayoutNodeDescription tabDescription = userLayout.getNodeDescription(node);
-            if(favoriteTabName.equalsIgnoreCase(tabDescription.getName())) {
-                Enumeration<String> columns = userLayout.getChildIds(node);
-                //loop through columns to get a list of portlets
-                while(columns.hasMoreElements()) {
-                    String column = (String) columns.nextElement();
-                    Enumeration<String> portlets = userLayout.getChildIds(column);
-                    while(portlets.hasMoreElements()) {
-                        String portlet = (String) portlets.nextElement();
-                        IUserLayoutNodeDescription portletDescription = userLayout.getNodeDescription(portlet);
-                        favorites.add(portletDescription);
-                    }
-                }
-            }
-
-        }
-        return favorites;
-    }
 
     @RequestMapping(params = {"action=delete"})
     public void unFavoriteNode(@RequestParam("nodeId") String nodeId, ActionResponse response) {
