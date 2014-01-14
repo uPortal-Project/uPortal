@@ -404,6 +404,111 @@
 
 
 <!-- ========================================================================= -->
+<!-- ========== TEMPLATE: PAGE DIALOGS ==================================== -->
+<!-- ========================================================================= -->
+<!-- 
+ | YELLOW
+ | This template renders dialog windows used by certain behaviors in the portal.
+ -->
+<xsl:template name="page.dialogs">
+
+     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+
+         <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
+                </div>
+
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <div class="portlet-section" role="region">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
+                        </div>
+                        <div class="content">
+                            <form>
+                                <p>
+                                    <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
+                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.tab', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.page.properties', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
+                                </p>
+
+                                <div class="buttons">
+                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+             </div>
+         </div>
+
+         <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"></h2>
+                </div>
+
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <form>
+                        <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
+                        <p>
+                            <input type="hidden" name="nodeId" value=""/>
+                            <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.column', $USER_LANG)"/><br />
+                            <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.column.properties', $USER_LANG)"/><br />
+                            <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
+                            <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
+                        </p>
+
+                        <div class="buttons">
+                            <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+         </div>
+
+         <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
+            <div class="fl-widget portlet">
+                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                    <h2 class="title" role="heading"></h2>
+                </div>
+
+                <div class="fl-widget-content content portlet-content" role="main">
+                    <div class="portlet-section" role="region">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
+                        </div>
+                        <div class="content">
+                            <form>
+                                <p>
+                                    <input type="hidden" name="nodeId"/>
+                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
+                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
+                                </p>
+
+                                <div class="buttons">
+                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </xsl:if>
+
+    <div id="portalDropWarning" class="drop-warning" style="display:none;">
+        <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
+    </div>
+
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ========================================================================= -->
 <!-- ========== TEMPLATE: ROOT =============================================== -->
 <!-- ========================================================================= -->
 <!-- 
@@ -431,6 +536,7 @@
 
             <div id="wrapper">
                 <header class="portal-header" role="banner">
+                    <xsl:call-template name="region.page-top" />
                     <div class="portal-global">
                         <div class="container">
                             <xsl:call-template name="region.greeting" />
@@ -447,6 +553,19 @@
                 </header>
                 <div class="portal-content" role="main">
                     <div class="container">
+                        <!-- For editing page permissions in fragment-admin mode  -->
+                        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                            <div class="row">
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3">
+                                    <div id="portalEditPagePermissions" class="fl-fix">
+                                        <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                            <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </xsl:if>
                         <!-- Works with up-layout-preferences.js showMessage()  -->
                         <div class="row">
                             <div id="portalPageBodyMessage" class="col-md-12"></div>
@@ -467,9 +586,7 @@
                 <xsl:call-template name="footer.legal" />
             </div>
 
-            <div id="portalDropWarning" class="drop-warning" style="display:none;">
-                <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
-            </div>
+            <xsl:call-template name="page.dialogs" />
 
             <script type="text/javascript">
                 up.analytics = up.analytics || {};

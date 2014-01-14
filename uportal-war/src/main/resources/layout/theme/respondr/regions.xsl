@@ -56,6 +56,24 @@
     exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
     version="1.0">
 
+  <!-- ========== TEMPLATE: PAGE-TOP ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets at the very top of the page, across the entire width.
+  -->
+  <xsl:template name="region.page-top">
+    <div id="region-page-top" class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <xsl:for-each select="//region[@name='page-top']/channel">
+            <xsl:call-template name="regions.portlet.decorator" />
+          </xsl:for-each>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
+
   <!-- ========== TEMPLATE: GREETING ========== -->
   <!-- ======================================= -->
   <!--
