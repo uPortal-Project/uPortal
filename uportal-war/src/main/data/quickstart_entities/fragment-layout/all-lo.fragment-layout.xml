@@ -30,5 +30,8 @@
     <folder ID="s6" hidden="false" immutable="true" name="System Tray folder" type="system-tray" unremovable="true">
       <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n7"/>
     </folder>
+    <folder ID="s8" hidden="false" immutable="true" name="Highlighted folder" type="highlighted" unremovable="true">
+      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n9"/>
+    </folder>
   </folder>
 </layout>

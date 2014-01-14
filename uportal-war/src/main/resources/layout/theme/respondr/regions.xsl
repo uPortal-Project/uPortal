@@ -148,6 +148,23 @@
     </div>
   </xsl:template>
 
+  <!-- ========== TEMPLATE: HIGHLIGHTED ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the top-right search area.
+  -->
+  <xsl:template name="region.highlighted">
+    <div id="region-highlighted" class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <xsl:for-each select="//region[@name='highlighted']/channel">
+            <xsl:call-template name="regions.portlet.decorator" />
+          </xsl:for-each>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
   <!-- ========== TEMPLATE: REGIONS PORTLET DECORATOR ========== -->
   <!-- ======================================= -->
   <!--
