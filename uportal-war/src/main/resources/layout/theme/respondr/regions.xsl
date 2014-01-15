@@ -86,27 +86,27 @@
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: LOGO ========== -->
-  <!-- ==================================== -->
+  <!-- ========== TEMPLATE: HEADER-LEFT ========== -->
+  <!-- =========================================== -->
   <!--
    | This template renders portlets in the top-left logo area.
   -->
-  <xsl:template name="region.logo">
-    <div id="region-logo" class="col-sm-8">
-      <xsl:for-each select="//region[@name='logo']/channel">
+  <xsl:template name="region.header-left">
+    <div id="region-header-left" class="col-sm-8 text-left">
+      <xsl:for-each select="//region[@name='header-left']/channel">
         <xsl:call-template name="regions.portlet.decorator" />
       </xsl:for-each>
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: SEARCH ========== -->
-  <!-- ====================================== -->
+  <!-- ========== TEMPLATE: HEADER-RIGHT ========== -->
+  <!-- ============================================ -->
   <!--
    | This template renders portlets in the top-right search area.
   -->
-  <xsl:template name="region.search">
-    <div id="region-search" class="col-sm-4">
-      <xsl:for-each select="//region[@name='search']/channel">
+  <xsl:template name="region.header-right">
+    <div id="region-header-right" class="col-sm-4 text-right">
+      <xsl:for-each select="//region[@name='header-right']/channel">
         <xsl:call-template name="regions.portlet.decorator" />
       </xsl:for-each>
     </div>

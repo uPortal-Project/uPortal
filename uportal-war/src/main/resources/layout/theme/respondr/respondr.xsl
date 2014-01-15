@@ -544,8 +544,8 @@
                     </div>
                     <div class="container">
                         <div class="row">
-                            <xsl:call-template name="region.logo" />
-                            <xsl:call-template name="region.search" />
+                            <xsl:call-template name="region.header-left" />
+                            <xsl:call-template name="region.header-right" />
                         </div>
                     </div>
                     <xsl:call-template name="region.emergency" />
