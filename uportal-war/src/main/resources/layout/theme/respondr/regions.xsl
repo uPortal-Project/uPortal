@@ -73,14 +73,14 @@
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: GREETING ========== -->
-  <!-- ======================================== -->
+  <!-- ========== TEMPLATE: PRE-HEADER ========== -->
+  <!-- ========================================== -->
   <!--
    | This template renders portlets in the top-right greeting area.
   -->
-  <xsl:template name="region.greeting">
-    <div id="region-greeting" class="portal-user">
-      <xsl:for-each select="//region[@name='greeting']/channel">
+  <xsl:template name="region.pre-header">
+    <div id="region-pre-header" class="portal-user">
+      <xsl:for-each select="//region[@name='pre-header']/channel">
         <xsl:call-template name="regions.portlet.decorator" />
       </xsl:for-each>
     </div>

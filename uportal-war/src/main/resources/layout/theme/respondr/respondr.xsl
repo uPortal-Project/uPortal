@@ -539,7 +539,7 @@
                 <header class="portal-header" role="banner">
                     <div class="portal-global">
                         <div class="container">
-                            <xsl:call-template name="region.greeting" />
+                            <xsl:call-template name="region.pre-header" />
                         </div>
                     </div>
                     <div class="container">
