@@ -548,7 +548,7 @@
                             <xsl:call-template name="region.header-right" />
                         </div>
                     </div>
-                    <xsl:call-template name="region.emergency" />
+                    <xsl:call-template name="region.header-bottom" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->

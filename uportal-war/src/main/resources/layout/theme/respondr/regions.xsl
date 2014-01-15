@@ -112,16 +112,16 @@
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: EMERGENCY ========== -->
+  <!-- ========== TEMPLATE: HEADER-BOTTOM ========== -->
   <!-- ========================================= -->
   <!--
-   | This template renders portlets in the top-right search area.
+   | This template renders portlets at the bottom of the header area.
   -->
-  <xsl:template name="region.emergency">
-    <div id="region-emergency" class="container">
+  <xsl:template name="region.header-bottom">
+    <div id="region-header-bottom" class="container">
       <div class="row">
         <div class="col-sm-12">
-          <xsl:for-each select="//region[@name='emergency']/channel">
+          <xsl:for-each select="//region[@name='header-bottom']/channel">
             <xsl:call-template name="regions.portlet.decorator" />
           </xsl:for-each>
         </div>
@@ -132,8 +132,7 @@
   <!-- ========== TEMPLATE: SYSTEM TRAY ========== -->
   <!-- =========================================== -->
   <!--
-   | This template renders portlets in the System Tray area.  This region is one
-   | that could be sensibly moved elsewhere on the page by implementers.
+   | NEEDS TO DISAPPEAR;  TO BE REPLACED BY OTHER REGIONS!
   -->
   <xsl:template name="region.system-tray">
     <div id="region-system-tray" class="container">
