@@ -26,8 +26,6 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,10 +39,9 @@ import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITE
  * Utility class supporting Favorites portlet.
  * @since uPortal 4.1
  */
-@Component
-public class FavoritesHelper {
+public final class FavoritesUtils {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static Logger logger = LoggerFactory.getLogger(FavoritesUtils.class);
 
 
     /**
@@ -54,7 +51,7 @@ public class FavoritesHelper {
      * @param userLayout
      * @return non-null List of IUserLayoutDescriptions describing the tabs
      */
-    public List<IUserLayoutNodeDescription> getFavoriteCollections(IUserLayout userLayout) {
+    public static List<IUserLayoutNodeDescription> getFavoriteCollections(IUserLayout userLayout) {
 
         if (null == userLayout) {
             throw new IllegalArgumentException("Cannot get favorites collections aka tabs from a null userLayout");
@@ -125,7 +122,7 @@ public class FavoritesHelper {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<IUserLayoutNodeDescription> getFavoritePortlets(IUserLayout userLayout) {
+    public static List<IUserLayoutNodeDescription> getFavoritePortlets(IUserLayout userLayout) {
 
         logger.trace("Extracting favorite portlets from layout [{}]", userLayout);
 

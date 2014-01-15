@@ -50,8 +50,6 @@ public class FavoritesEditController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private FavoritesHelper favoritesHelper;
-
     private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
 
@@ -65,11 +63,6 @@ public class FavoritesEditController {
         this.portalRequestUtils = portalRequestUtils;
     }
 
-    @Autowired
-    public void setFavoritesHelper( FavoritesHelper helper) {
-        this.favoritesHelper = helper;
-    }
-
     @RenderMapping
     public String initializeView(Model model) {
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
@@ -78,10 +71,10 @@ public class FavoritesEditController {
 
         IUserLayout userLayout = ulm.getUserLayout();
 
-        List<IUserLayoutNodeDescription> collections = favoritesHelper.getFavoriteCollections(userLayout);
+        List<IUserLayoutNodeDescription> collections = FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
-        List<IUserLayoutNodeDescription> favorites = favoritesHelper.getFavoritePortlets(userLayout);
+        List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
         model.addAttribute("favorites", favorites);
 
 
