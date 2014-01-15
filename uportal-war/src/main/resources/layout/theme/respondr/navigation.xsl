@@ -200,7 +200,7 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
         <div class="container">
-        <a href="#" class="menu-toggle"><i class="icon-align-justify"></i> Menu</a>
+        <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
         <div id="portalNavigation" class="fl-widget">
           <div id="portalNavigationInner" class="fl-widget-inner header">
               <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column">
@@ -211,7 +211,7 @@
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
-                          <i class="icon-plus-sign"></i>
+                          <i class="fa fa-plus-sign-circle"></i>
                         </a>
                     </li>
                  </xsl:if>
@@ -330,7 +330,7 @@
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
-        <i class="icon-chevron-right"></i>
+        <i class="fa fa-chevron-right"></i>
       </a>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:deleteAllowed='false')">

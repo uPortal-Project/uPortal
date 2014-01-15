@@ -16,7 +16,7 @@
             <input id="${n}webSearchInput"  class="searchInput input-large search-query form-control" value="" name="query" type="text" placeholder="Enter search terms"/>
             <span class="input-group-btn">
               <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-default" value="${searchLabel}">
-                <span>${searchLabel}</span><i class="icon icon-search"></i></button>
+                <span>${searchLabel}</span><i class="fa fa-search"></i></button>
             </span>
           </div>
             <input class="autocompleteUrl" name="autocompleteUrl" type="hidden" value="${autocompleteUrl}"/>
