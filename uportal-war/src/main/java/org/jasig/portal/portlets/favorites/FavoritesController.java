@@ -40,10 +40,7 @@ import java.util.List;
 @Controller
 @RequestMapping("VIEW")
 public class FavoritesController {
-	
-	//TODO : Make this a preference
-	private static final String FAVORITE_TAB_NAME = "_favorite";
-	
+
 	private IUserInstanceManager userInstanceManager;
     private IPortalRequestUtils portalRequestUtils;
 
@@ -56,45 +53,22 @@ public class FavoritesController {
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-	
-	@RenderMapping
-	public String initializeView(Model model) {
+
+    @RenderMapping
+    public String initializeView(Model model) {
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
-        
+
         IUserLayout userLayout = ulm.getUserLayout();
-        List<IUserLayoutNodeDescription> favorites = getFavoritePortlets(FAVORITE_TAB_NAME, userLayout);
-        model.addAttribute("favorites",favorites);
-        model.addAttribute("tabs",userLayout.getFragmentNames());
-		return "jsp/Favorites/view";
-	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public List<IUserLayoutNodeDescription> getFavoritePortlets(String favoriteTabName, IUserLayout userLayout) {
-		List<IUserLayoutNodeDescription> favorites = new LinkedList<IUserLayoutNodeDescription>();
-		
-		Enumeration<String> tabs = userLayout.getChildIds(userLayout.getRootId());
-		while(tabs.hasMoreElements()) { //loop over tabs
-			String node = tabs.nextElement();
-			IUserLayoutNodeDescription tabDescription = userLayout.getNodeDescription(node);
-			if(favoriteTabName.equalsIgnoreCase(tabDescription.getName())) {
-				Enumeration<String> columns = userLayout.getChildIds(node);
-				//loop through columns to get a list of portlets
-				while(columns.hasMoreElements()) {
-					String column = (String) columns.nextElement();
-					Enumeration<String> portlets = userLayout.getChildIds(column);
-					while(portlets.hasMoreElements()) {
-						String portlet = (String) portlets.nextElement();
-						IUserLayoutNodeDescription portletDescription = userLayout.getNodeDescription(portlet);
-						favorites.add(portletDescription);
-					}
-				}
-			}
-			
-		}
-		return favorites;
-	}
+
+        List<IUserLayoutNodeDescription> collections = FavoritesUtils.getFavoriteCollections(userLayout);
+        model.addAttribute("collections", collections);
+
+        List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
+        model.addAttribute("favorites", favorites);
+
+        return "jsp/Favorites/view";
+    }
 
 }
