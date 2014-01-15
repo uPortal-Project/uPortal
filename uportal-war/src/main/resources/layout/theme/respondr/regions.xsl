@@ -57,7 +57,7 @@
     version="1.0">
 
   <!-- ========== TEMPLATE: PAGE-TOP ========== -->
-  <!-- ======================================= -->
+  <!-- ======================================== -->
   <!--
    | This template renders portlets at the very top of the page, across the entire width.
   -->
@@ -73,9 +73,8 @@
     </div>
   </xsl:template>
 
-
   <!-- ========== TEMPLATE: GREETING ========== -->
-  <!-- ======================================= -->
+  <!-- ======================================== -->
   <!--
    | This template renders portlets in the top-right greeting area.
   -->
@@ -88,7 +87,7 @@
   </xsl:template>
 
   <!-- ========== TEMPLATE: LOGO ========== -->
-  <!-- ======================================= -->
+  <!-- ==================================== -->
   <!--
    | This template renders portlets in the top-left logo area.
   -->
@@ -101,7 +100,7 @@
   </xsl:template>
 
   <!-- ========== TEMPLATE: SEARCH ========== -->
-  <!-- ======================================= -->
+  <!-- ====================================== -->
   <!--
    | This template renders portlets in the top-right search area.
   -->
@@ -114,7 +113,7 @@
   </xsl:template>
 
   <!-- ========== TEMPLATE: EMERGENCY ========== -->
-  <!-- ======================================= -->
+  <!-- ========================================= -->
   <!--
    | This template renders portlets in the top-right search area.
   -->
@@ -131,7 +130,7 @@
   </xsl:template>
 
   <!-- ========== TEMPLATE: SYSTEM TRAY ========== -->
-  <!-- ======================================= -->
+  <!-- =========================================== -->
   <!--
    | This template renders portlets in the System Tray area.  This region is one
    | that could be sensibly moved elsewhere on the page by implementers.
@@ -149,7 +148,7 @@
   </xsl:template>
 
   <!-- ========== TEMPLATE: HIGHLIGHTED ========== -->
-  <!-- ======================================= -->
+  <!-- =========================================== -->
   <!--
    | This template renders portlets in the top-right search area.
   -->
@@ -165,8 +164,25 @@
     </div>
   </xsl:template>
 
+  <!-- ========== TEMPLATE: PAGE-BOTTOM ========== -->
+  <!-- =========================================== -->
+  <!--
+   | This template renders portlets at the very top of the page, across the entire width.
+  -->
+  <xsl:template name="region.page-bottom">
+    <div id="region-page-bottom" class="container">
+      <div class="row">
+        <div class="col-sm-12">
+          <xsl:for-each select="//region[@name='page-bottom']/channel">
+            <xsl:call-template name="regions.portlet.decorator" />
+          </xsl:for-each>
+        </div>
+      </div>
+    </div>
+  </xsl:template>
+
   <!-- ========== TEMPLATE: REGIONS PORTLET DECORATOR ========== -->
-  <!-- ======================================= -->
+  <!-- ========================================================= -->
   <!--
    | This template decorates a portlet that appears in a region (in lieu of chrome).
   -->

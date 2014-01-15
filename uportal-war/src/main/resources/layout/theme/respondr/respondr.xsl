@@ -535,8 +535,8 @@
         <body class="up dashboard portal fl-theme-mist">
 
             <div id="wrapper">
+                <xsl:call-template name="region.page-top" />
                 <header class="portal-header" role="banner">
-                    <xsl:call-template name="region.page-top" />
                     <div class="portal-global">
                         <div class="container">
                             <xsl:call-template name="region.greeting" />
@@ -586,6 +586,7 @@
                 </div>
                 <xsl:call-template name="footer.nav" />
                 <xsl:call-template name="footer.legal" />
+                <xsl:call-template name="region.page-bottom" />
             </div>
 
             <xsl:call-template name="page.dialogs" />
