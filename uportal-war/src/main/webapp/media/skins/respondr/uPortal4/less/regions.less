@@ -33,22 +33,26 @@
        Namespace: .region-pre-header
        ========================================================================== */
 
-    #region-pre-header .up-portlet-wrapper {
-        display: inline-block;
+    #region-pre-header {
+        .up-portlet-wrapper {
+            display: inline-block;
+        }
     }
 
     /* ==========================================================================
        Namespace: .region-header-bottom
        ========================================================================== */
 
-    #region-header-bottom .up-portlet-wrapper {
-        color: #fff;
-
-        a {
-            color: #B2CCE1;
-        }
-        a:hover {
+    #region-header-bottom  {
+        .up-portlet-wrapper {
             color: #fff;
+
+            a {
+                color: #B2CCE1;
+            }
+            a:hover {
+                color: #fff;
+            }
         }
     }
 
@@ -56,8 +60,52 @@
        Namespace: .region-system-tray
        ========================================================================== */
 
-    #region-system-tray .up-portlet-wrapper {
-        display: inline-block;
+    #region-system-tray {
+        .up-portlet-wrapper {
+            display: inline-block;
+        }
     }
 
+    /* ==========================================================================
+       Namespace: region-customizeDrawer
+       ========================================================================== */
+    #region-customize {
+        padding-left: 0;
+
+        button {
+            z-index: 999;
+            margin-top: -1px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            margin-left: 0;
+            padding: 6px 15px 0;
+            font-size: 12px;
+
+            button:focus {
+                outline: none;
+            }
+            i {
+                margin-left: 5px;
+            }
+
+        }
+
+        #customizeOptionsWrapper {
+            margin-top: 1px;
+            z-index: 800;
+        }
+
+        #customizeOptions {
+            background-color: rgb(239, 239, 239);
+            border: 1px solid rgb(204, 204, 204);
+        }
+
+        #customizeOptions.collapse + button i:after {
+            content: "\f0d7";
+        }
+
+        #customizeOptions + button i:after {
+            content: "\f0d8";
+        }
+    }
 }

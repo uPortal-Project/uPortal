@@ -551,6 +551,7 @@
                     <xsl:call-template name="region.header-bottom" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
+                <xsl:call-template name="region.customize" />
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.system-tray" />
                     <xsl:call-template name="region.pre-content" />

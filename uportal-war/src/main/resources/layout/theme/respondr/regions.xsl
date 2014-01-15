@@ -180,6 +180,37 @@
     </div>
   </xsl:template>
 
+  <!-- ========== TEMPLATE: CUSTOMIZE ========== -->
+  <!-- ======================================= -->
+  <!--
+   | This template renders portlets in the top-left logo area.
+  -->
+  <xsl:template name="region.customize">
+    <div id="region-customize" class="container">
+        <div id="customizeOptionsWrapper">
+            <div id="customizeOptions" class="collapse">
+                <div class="container">
+                    <div class="alert alert-info" style="margin-top: 1.5em;">Place customization components here</div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#customizeOptions">CUSTOMIZE <i class="fa"></i></button>
+        </div>
+<!-- 
+        <div id="customizeOptionsWrapper">
+                <div id="customizeOptions" class="in" style="height: auto;">
+                        <div class="container">
+                                <div class="alert alert-info" style="margin-top: 1.5em;">Place customization components here</div>
+                        </div>
+                </div>
+                <button type="button" class="btn btn-default optionsButton collapsed" data-toggle="collapse" data-target="#customizeOptions">CUSTOMIZE <i class="fa"></i></button>
+        </div> -->
+      <!-- <xsl:for-each select="//region[@name='customizeDrawer']/channel">
+        <xsl:call-template name="regions.portlet.decorator" />
+      </xsl:for-each> -->
+    </div>
+  </xsl:template>
+
+
   <!-- ========== TEMPLATE: REGIONS PORTLET DECORATOR ========== -->
   <!-- ========================================================= -->
   <!--
