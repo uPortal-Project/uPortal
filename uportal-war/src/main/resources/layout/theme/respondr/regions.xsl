@@ -146,16 +146,16 @@
     </div>
   </xsl:template>
 
-  <!-- ========== TEMPLATE: HIGHLIGHTED ========== -->
+  <!-- ========== TEMPLATE: PRE-CONTENT ========== -->
   <!-- =========================================== -->
   <!--
-   | This template renders portlets in the top-right search area.
+   | This template renders portlets in the area just above content (columns or focused portlet).
   -->
-  <xsl:template name="region.highlighted">
-    <div id="region-highlighted" class="container">
+  <xsl:template name="region.pre-content">
+    <div id="region-pre-content" class="container">
       <div class="row">
         <div class="col-sm-12">
-          <xsl:for-each select="//region[@name='highlighted']/channel">
+          <xsl:for-each select="//region[@name='pre-content']/channel">
             <xsl:call-template name="regions.portlet.decorator" />
           </xsl:for-each>
         </div>

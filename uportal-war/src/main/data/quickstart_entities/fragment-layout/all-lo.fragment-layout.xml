@@ -30,7 +30,7 @@
     <folder ID="s6" hidden="false" immutable="true" name="System Tray folder" type="system-tray" unremovable="true">
       <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n7"/>
     </folder>
-    <folder ID="s8" hidden="false" immutable="true" name="Highlighted folder" type="highlighted" unremovable="true">
+    <folder ID="s8" hidden="false" immutable="true" name="Pre Content folder" type="pre-content" unremovable="true">
       <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n9"/>
     </folder>
     <folder ID="s10" hidden="false" immutable="true" name="Page Bottom folder" type="page-bottom" unremovable="true">
