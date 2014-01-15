@@ -47,7 +47,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
 
 	private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
 	
-    Hashtable parameters;
+    Hashtable parameters=new Hashtable();
 
     String title=null;
     String description=null;
@@ -63,7 +63,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     
     public UserLayoutChannelDescription() {
         super();
-        parameters=new Hashtable();
     }
 
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
@@ -118,7 +117,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public UserLayoutChannelDescription(Element xmlNode) throws PortalException {
         super( xmlNode );
-        parameters=new Hashtable();
         
         if(!xmlNode.getNodeName().equals("channel")) {
             throw new PortalException("Given XML Element is not a channel!");
