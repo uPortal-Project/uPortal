@@ -445,6 +445,7 @@
                     <xsl:call-template name="region.emergency" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
+                <xsl:call-template name="region.customize" />
                 <div class="portal-content" role="main">
                     <div class="container">
                         <!-- Works with up-layout-preferences.js showMessage()  -->
