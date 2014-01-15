@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
@@ -550,8 +551,22 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
       return LayoutNodeType.PORTLET;
     }
 
-	public String toString() {
-		return "["+channelPublishId+","+title+"]";
-	}
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channelPublishId", this.channelPublishId).
+                append("channelTypeId", this.channelTypeId).
+                append("nodeType", this.getType()).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
+
+    }
 
 }
