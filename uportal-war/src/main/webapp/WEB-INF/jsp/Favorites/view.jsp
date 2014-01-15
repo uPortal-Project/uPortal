@@ -23,14 +23,19 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <div>
 <ul class="list-group">
-	<c:forEach var="tab" items="${tabs}">
-		<c:if test="${tab ne '_favorite'}">
-			<li class="list-group-item"><span class="glyphicon glyphicon-chevron-right pull-right"></span>${tab}</li>
-		</c:if>
-	</c:forEach>
-	<c:forEach var="favorite" items="${favorites}">
-		<li class="list-group-item"><span class="glyphicon glyphicon-star pull-right"></span>${favorite.name}</li>
-	</c:forEach>
+
+  <c:forEach var="collection" items="${collections}">
+    <li class="list-group-item">
+      <span class="glyphicon glyphicon-chevron-right pull-right"></span>${collection.name}
+    </li>
+  </c:forEach>
+
+  <c:forEach var="favorite" items="${favorites}">
+    <li class="list-group-item">
+      <span class="glyphicon glyphicon-star pull-right"></span>${favorite.name}
+    </li>
+  </c:forEach>
+
 </ul>
 
 <span class="pull-right">
