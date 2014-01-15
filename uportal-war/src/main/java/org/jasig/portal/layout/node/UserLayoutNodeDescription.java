@@ -53,6 +53,13 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         this.immutable=d.isImmutable();
         this.unremovable=d.isUnremovable();
         this.hidden=d.isHidden();
+
+        // copy over DLM attributes
+        this.deleteAllowed = d.isDeleteAllowed();
+        this.editAllowed = d.isEditAllowed();
+        this.moveAllowed = d.isMoveAllowed();
+        this.addChildAllowed = d.isAddChildAllowed();
+        this.precedence = d.getPrecedence();
     }
 
     UserLayoutNodeDescription( Element xmlNode )
