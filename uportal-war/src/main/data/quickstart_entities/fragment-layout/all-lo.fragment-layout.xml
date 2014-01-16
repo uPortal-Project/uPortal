@@ -27,7 +27,7 @@
     <folder ID="s4" hidden="false" immutable="true" name="Header Bottom folder" type="header-bottom" unremovable="true">
       <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n5"/>
     </folder>
-    <folder ID="s6" hidden="false" immutable="true" name="System Tray folder" type="system-tray" unremovable="true">
+    <folder ID="s6" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
       <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n7"/>
     </folder>
     <folder ID="s8" hidden="false" immutable="true" name="Pre Content folder" type="pre-content" unremovable="true">
