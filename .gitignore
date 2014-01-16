@@ -12,3 +12,4 @@
 /assembly/.ant-targets-build.xml
 *.iml
 /.idea
+uportal-portlets-overlay/*/overlays
