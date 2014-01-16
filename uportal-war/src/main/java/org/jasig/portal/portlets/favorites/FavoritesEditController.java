@@ -34,9 +34,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionResponse;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -64,7 +67,7 @@ public class FavoritesEditController {
     }
 
     @RenderMapping
-    public String initializeView(Model model) {
+    public String initializeView(Model model, RenderRequest renderRequest) {
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -77,27 +80,72 @@ public class FavoritesEditController {
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
         model.addAttribute("favorites", favorites);
 
+        model.addAttribute("successMessage", renderRequest.getParameter("successMessage"));
 
+        model.addAttribute("errorMessage", renderRequest.getParameter("errorMessage"));
 
         return "jsp/Favorites/edit";
     }
 
 
 
-    @RequestMapping(params = {"action=delete"})
+    @ActionMapping(params = {"action=delete"})
     public void unFavoriteNode(@RequestParam("nodeId") String nodeId, ActionResponse response) {
 
-        // ferret out the layout manager
-        HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
-        IUserInstance userInstance = this.userInstanceManager.getUserInstance(servletRequest);
-        IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        IUserLayoutManager layoutManager = preferencesManager.getUserLayoutManager();
+        try {
 
-        layoutManager.deleteNode(nodeId);
+            // ferret out the layout manager
+            HttpServletRequest servletRequest = this.portalRequestUtils.getCurrentPortalRequest();
+            IUserInstance userInstance = this.userInstanceManager.getUserInstance(servletRequest);
+            IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            IUserLayoutManager layoutManager = preferencesManager.getUserLayoutManager();
 
-        layoutManager.saveUserLayout();
+            IUserLayoutNodeDescription nodeDescription = layoutManager.getNode(nodeId);
 
-        // TODO: care about the boolean success return from deleteNode()
+            String userFacingNodeName = nodeDescription.getName();
+
+            if (nodeDescription.isDeleteAllowed()) {
+
+                boolean nodeSuccessfullyDeleted = layoutManager.deleteNode(nodeId);
+
+                if (nodeSuccessfullyDeleted) {
+                    layoutManager.saveUserLayout();
+
+                    // TODO: use a message bundle
+                    response.setRenderParameter("successMessage", "Successfully un-favorited \"" + userFacingNodeName +
+                            "\".");
+
+                    logger.debug("Successfully un-favorited [{}]", nodeDescription);
+
+                } else {
+                    logger.error("Failed to delete node [{}] on un-favorite request, but this should have succeeded?",
+                            nodeDescription);
+                    // TODO: use a message bundle
+                    response.setRenderParameter("errorMessage", "Failed to un-favorite \"" + userFacingNodeName
+                            + "\"Please contact support if this problem persists.");
+                }
+
+            } else {
+
+                logger.warn(
+                        "Attempt to un-favorite [{}] failed because user lacks permission to delete that layout node.",
+                        nodeDescription);
+
+                // TODO: use a message bundle
+                response.setRenderParameter("errorMessage", "You do not have sufficient privileges to un-favorite \"" +
+                        userFacingNodeName + "\".");
+
+            }
+
+        } catch (Exception e) {
+
+            // TODO: this log message is kind of useless without the username to put the node in context
+            logger.error("Something went wrong un-favoriting nodeId [{}]", nodeId);
+
+            // TODO: get error message from message bundle
+            response.setRenderParameter("errorMessage", "Un-favoriting failed for an unknown reason.  This error has " +
+                    "been logged.  Please contact support for assistance if this problem persists for you.");
+        }
 
         response.setRenderParameter("action", "list");
         
