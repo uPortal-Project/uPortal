@@ -669,14 +669,19 @@
             <title>Log In</title>
         </portlet-info>
     </portlet>
-    
+
+    <!-- 
+      Simple, Spring Portlet MVC portlet implementation that renders a JSP at a 
+      location specified as a portlet preference.  Very similar to the 
+      SimpleJspPortlet in the jasig-widget-portlets project.
+    -->
     <portlet>
-        <portlet-name>LoginLauncher</portlet-name>
-        <display-name xml:lang="en">Login</display-name>
+        <portlet-name>JspInvoker</portlet-name>
+        <display-name xml:lang="en">JspInvoker</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/LoginLauncher-portlet.xml</value>
+            <value>classpath:/properties/contexts/portlet/JspInvoker-portlet.xml</value>
         </init-param>
         <expiration-cache>0</expiration-cache>
         <supports>
@@ -685,65 +690,14 @@
         </supports>
         <supported-locale>en</supported-locale>
         <portlet-info>
-            <title>Log In</title>
+            <title>JspInvoker</title>
         </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>WelcomeMessage</portlet-name>
-        <display-name xml:lang="en">WelcomeMessage</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/WelcomeMessage-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>WelcomeMessage</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>LogoutLauncher</portlet-name>
-        <display-name xml:lang="en">WelcomeMessage</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/LogoutLauncher-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>LogoutLauncher</title>
-        </portlet-info>
-    </portlet>
-    
-    <portlet>
-        <portlet-name>PortalLogo</portlet-name>
-        <display-name xml:lang="en">PortalLogo</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
-        <init-param>
-            <name>contextConfigLocation</name>
-            <value>classpath:/properties/contexts/portlet/PortalLogo-portlet.xml</value>
-        </init-param>
-        <expiration-cache>0</expiration-cache>
-        <supports>
-            <mime-type>text/html</mime-type>
-            <portlet-mode>VIEW</portlet-mode>
-        </supports>
-        <supported-locale>en</supported-locale>
-        <portlet-info>
-            <title>uPortalMessage</title>
-        </portlet-info>
+        <portlet-preferences>
+            <!-- Location of the JSP file to use -->
+            <preference>
+                <name>JspInvokerPortletController.viewLocation</name>
+            </preference>
+        </portlet-preferences>
     </portlet>
 
     <portlet>
@@ -891,6 +845,21 @@
         <portlet-mode>config</portlet-mode>
     </custom-portlet-mode>    
 
+    <user-attribute>
+        <description>The P3P username attribute</description>
+        <name>user.login.id</name>
+    </user-attribute>
+
+    <user-attribute>
+        <description>The uPortal attribute for labelling a user in the UI</description>
+        <name>displayName</name>
+    </user-attribute>
+
+    <user-attribute>
+        <description>Indicates whether the user is impersonating</description>
+        <name>impersonating</name>
+    </user-attribute>
+
     <event-definition>
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
         <value-type>org.jasig.portal.search.SearchRequest</value-type>
@@ -904,4 +873,5 @@
         <name>org.jasig.portal.globalEvent</name>
         <value>{https://source.jasig.org/schemas/uportal/search}SearchRequest</value>
     </container-runtime-option>
+
 </portlet-app>

@@ -28,23 +28,11 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.launch"/>
+    <context:component-scan base-package="org.jasig.portal.portlets.jsp"/>
 
-    <bean id="portletModeHandlerMapping" class="org.springframework.web.portlet.handler.PortletModeHandlerMapping">
+    <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />
-        <property name="portletModeMap">
-            <map>
-                <entry key="view">
-                    <bean id="welcomeMessage" class="org.jasig.portal.portlets.launch.LaunchPortletController">
-                        <property name="launchUrl" value="Not Used"/>
-                        <property name="viewLocation" value="/jsp/WelcomeMessage/welcomeMessage"/>
-                    </bean>
-                </entry>
-            </map>
-        </property>
     </bean>
 
-    <bean parent="primaryPropertyPlaceholderConfigurer" />
-    
 </beans>
 

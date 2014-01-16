@@ -20,15 +20,15 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>PortalLogo</title>
-    <name>PortalLogo</name>
+    <title>Portal Logo</title>
+    <name>Portal Logo</name>
     <fname>portal-logo</fname>
-    <desc>PortalLogo</desc>
+    <desc>Renders the portal logo at the top of the page</desc>
     <type>Portlet</type>
-    <timeout>30000</timeout>
+    <timeout>5000</timeout>
     <portlet-descriptor>
         <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>PortalLogo</ns2:portletName>
+        <ns2:portletName>JspInvoker</ns2:portletName>
     </portlet-descriptor>
     <group>Everyone</group>
     <parameter>
@@ -36,13 +36,8 @@
         <value>true</value>
     </parameter>
     <portlet-preference>
-        <name>viewLocation</name>
+        <name>JspInvokerPortletController.viewLocation</name>
         <readOnly>false</readOnly>
-        <value>/jsp/uPortal/portalLogo</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>launchUrl</name>
-        <readOnly>false</readOnly>
-        <value></value>
+        <value>/jsp/Invoker/logo</value>
     </portlet-preference>
 </portlet-definition>

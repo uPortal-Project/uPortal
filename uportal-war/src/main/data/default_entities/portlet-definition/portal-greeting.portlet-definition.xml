@@ -20,33 +20,24 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>LogoutLauncher</title>
-    <name>LogoutLauncher</name>
-    <fname>logout-launcher</fname>
-    <desc>Logout Launcher form for local portal authentication</desc>
+    <title>Portal Greeting</title>
+    <name>Portal Greeting</name>
+    <fname>portal-greeting</fname>
+    <desc>Greeting that appears at the top of the page for authenticated users</desc>
     <type>Portlet</type>
     <timeout>30000</timeout>
     <portlet-descriptor>
         <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>LogoutLauncher</ns2:portletName>
+        <ns2:portletName>JspInvoker</ns2:portletName>
     </portlet-descriptor>
-    <group>Everyone</group>
-    <parameter>
-        <name>role</name>
-        <value>logoutLauncher</value>
-    </parameter>
+    <group>Authenticated Users</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>
     <portlet-preference>
-        <name>viewLocation</name>
+        <name>JspInvokerPortletController.viewLocation</name>
         <readOnly>false</readOnly>
-        <value>/jsp/Logout/logout</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>launchUrl</name>
-        <readOnly>false</readOnly>
-        <value>/uPortal/Logout</value>
+        <value>/jsp/Invoker/greeting</value>
     </portlet-preference>
 </portlet-definition>

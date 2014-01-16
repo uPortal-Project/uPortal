@@ -171,6 +171,8 @@
                 <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                 <property name="personAttributeDaos">
                     <list>
+                        <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
+                        <bean class="org.jasig.portal.persondir.ImpersonationStatusPersonAttributeDao" />
                         <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
                             <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                             <property name="personAttributeDaos">

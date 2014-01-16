@@ -43,6 +43,10 @@ public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
         this.casLoginUrl = casLoginUrl;
     }
 
+    public String getCasLoginUrl() {
+        return casLoginUrl;
+    }
+
     @Override
     public String encodeLoginAndRefUrl(HttpServletRequest request) throws UnsupportedEncodingException {
         final String requestEncoding = request.getCharacterEncoding();
