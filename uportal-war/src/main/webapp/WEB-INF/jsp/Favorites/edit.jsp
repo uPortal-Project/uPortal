@@ -22,8 +22,31 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 <div>
+
+  <%-- Flag whether a not-un-favorite-able item is encountered.
+  Used to condition display of help text about locked items.
+  If the user has no locked favorites, no need to bother the user about the complexities that do not apply. --%>
+  <c:set var="lockedItemListed" value="false" />
+
   <%-- TODO: label should come from message bundle --%>
   <p>Edit your favorites:</p>
+
+    <c:if test="${not empty errorMessage}">
+      <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <c:out value="${errorMessage}" escapeXml="true" />
+      </div>
+    </c:if>
+
+    <c:if test="${not empty successMessage}">
+      <div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <c:out value="${successMessage}" escapeXml="true" />
+      </div>
+    </c:if>
+
+
+      
     <ul class="list-group">
 
       <c:forEach var="collection" items="${collections}">
@@ -32,9 +55,20 @@
           <portlet:param name="nodeId" value="${collection.id}" />
         </portlet:actionURL>
         <li class="list-group-item">
-          <a href="${unFavoriteCollectionUrl}">
-            <span class="glyphicon glyphicon-trash pull-right"></span>${collection.name}
-          </a>
+          <c:choose>
+            <c:when test="${collection.deleteAllowed}">
+              <a href="${unFavoriteCollectionUrl}">
+                <span class="glyphicon glyphicon-trash pull-right"></span>${collection.name}
+              </a>
+            </c:when>
+            <c:otherwise>
+              <%-- TODO: get the tooltip text from a message bundle. --%>
+              <div data-toggle="tooltip" title="You lack permission to un-favorite this collection.">
+                <span class="glyphicon glyphicon-lock pull-right"></span>${collection.name}
+              </div>
+              <c:set var="lockedItemListed" value="true" />
+            </c:otherwise>
+          </c:choose>
         </li>
       </c:forEach>
 
@@ -44,12 +78,29 @@
           <portlet:param name="nodeId" value="${favorite.id}" />
         </portlet:actionURL>
         <li class="list-group-item">
-          <a href="${unFavoritePortletUrl}">
-            <span class="glyphicon glyphicon-trash pull-right"></span>${favorite.name}
-          </a>
+          <c:choose>
+            <c:when test="${favorite.deleteAllowed}">
+              <a href="${unFavoritePortletUrl}">
+                <span class="glyphicon glyphicon-trash pull-right"></span>${favorite.name}
+              </a>
+            </c:when>
+            <c:otherwise>
+              <%-- TODO: get the tooltip text from a message bundle. --%>
+              <div data-toggle="tooltip" title="You lack permission to un-favorite this portlet.">
+                <span class="glyphicon glyphicon-lock pull-right"></span>${favorite.name}
+              </div>
+              <c:set var="lockedItemListed" value="true" />
+            </c:otherwise>
+          </c:choose>
         </li>
       </c:forEach>
     </ul>
+
+
+    <c:if test="${lockedItemListed}">
+      <%-- TODO: use a message bundle for this message --%>
+      <span class="help-block">Favorites with the lock icon cannot be un-favorited.</span>
+    </c:if>
 
   <span>
     <portlet:renderURL portletMode="VIEW" var="returnToViewModeUrl" />
