@@ -104,6 +104,7 @@
 
   <span>
     <portlet:renderURL portletMode="VIEW" var="returnToViewModeUrl" />
+    <%-- TODO: Use a message bundle for this label --%>
     <a href="${returnToViewModeUrl}">Stop editing</a>
   </span>
 
