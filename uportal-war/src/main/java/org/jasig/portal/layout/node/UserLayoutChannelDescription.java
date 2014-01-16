@@ -67,7 +67,9 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     }
 
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
-        this();
+
+        super(d);
+
         this.title=d.getTitle();
         this.name = d.getName();
         this.description=d.getDescription();
