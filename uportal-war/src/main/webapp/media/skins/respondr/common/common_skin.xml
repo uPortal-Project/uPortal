@@ -40,6 +40,12 @@
     <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
     <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
 
+    <!-- Uncomment for internationalization.  Removed for minor efficiency especially for mobile networks. -->
+    <!--
+    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
+    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
+    -->
+
     <js included="plain">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/js/bootstrap-3.0.0.min.js</js>
 
@@ -51,11 +57,11 @@
      | http://getbootstrap.com/javascript/#js-noconflict) and we can save the bootstrap functions to invoke them
      | manually.
      -->
-    <js included="plain" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
-    <js included="aggregated" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
+    <js included="plain" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
+    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
 
-    <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
-    <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+    <js included="plain" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.js</js>
+    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
 
     <js import="true">../../common/common_skin.xml</js>
 
