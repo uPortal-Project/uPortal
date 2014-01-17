@@ -103,24 +103,23 @@
 	 	<!-- Now let's add some Preferences -->
 	 	<!-- Start with Screen shots and what not -->
 	 	
-	 	<c:if test="${not empty ScreenShots}">
+	 	<c:if test="${not empty Portlet.screenShots}">
 	 		<c:set var="count" value="0" scope="request"/>
 		 	<div class = "row col-xs-12 col-md-4">
 		 		<div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="false">
 			 		<ol class="carousel-indicators marketplace_carousel_indicators">
-			 			<c:forEach var="screenShot" items="${ScreenShots}">
-							<li data-target="marketplace_screenshots_and_videos" data-slide-to="${count}"></li>
-							<c:set var="count" value="${count + 1}" scope="request"/>
+			 			<c:forEach var="screenShot" items="${Portlet.screenShots}" varStatus="loopStatus">
+							<li data-target="marketplace_screenshots_and_videos" data-slide-to="${loopStatus.index}"></li>
 						</c:forEach>
 			  		</ol>
 		 			<div class="carousel-inner marketplace_carousel_inner">
-		 				<c:forEach var="screenShot" items="${ScreenShots}">
+		 				<c:forEach var="screenShot" items="${Portlet.screenShots}">
 		 					<div class="item marketplace_screen_shots">
 		 						<img src="${screenShot.url}" alt="screenshot for portlet">
 		 						<c:if test="${not empty screenShot.captions}">
 		 							<div class="carousel-caption">
 		 								<c:forEach var="portletCaption" items="${screenShot.captions}">
-		 									<h3>"${portletCaption}"</h3>
+		 									<h3>${portletCaption}</h3>
 		 								</c:forEach>
 		 							</div>
 		 						</c:if>
