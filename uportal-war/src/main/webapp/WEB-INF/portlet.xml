@@ -697,6 +697,10 @@
             <preference>
                 <name>JspInvokerPortletController.viewLocation</name>
             </preference>
+            <!-- Names of String beans, if any, that should be made available to the JSP on the model -->
+            <preference>
+                <name>JspInvokerPortletController.beans</name>
+            </preference>
         </portlet-preferences>
     </portlet>
 
