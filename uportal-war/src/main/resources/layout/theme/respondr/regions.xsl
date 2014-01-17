@@ -202,14 +202,13 @@
                     <div id="customizeOptionsWrapper">
                         <div id="customizeOptions" class="collapse">
                             <div class="container">
-                                <div class="alert alert-info" style="margin-top: 1.5em;">Place customization components here</div>
+                                <xsl:for-each select="//region[@name='customize']/channel">
+                                    <xsl:call-template name="regions.portlet.decorator" />
+                                </xsl:for-each>
                             </div>
                         </div>
                         <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#customizeOptions">CUSTOMIZE <i class="fa"></i></button>
                     </div>
-                    <xsl:for-each select="//region[@name='customize']/channel">
-                        <xsl:call-template name="regions.portlet.decorator" />
-                    </xsl:for-each>
                 </div>
             </xsl:if>
         </xsl:if>
