@@ -36,8 +36,8 @@
   <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.0.0/css/bootstrap-3.0.0.min.css</css>
 
     <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
-    <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3.css</css>
-    <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3.min.css</css>
+    <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
+    <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
 
   
 

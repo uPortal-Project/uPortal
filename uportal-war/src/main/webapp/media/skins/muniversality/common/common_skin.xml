@@ -24,8 +24,8 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
-    <css included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
-    <css included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
+    <css included="plain" resource="true">/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
+    <css included="aggregated" resource="true">/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
 
     <!-- Modified jQuery Mobile theme for uMobile. Decided not to use the jQuery Mobile's A,B,C,D,E color scheme setup. -->
     <!--css>jquerymobile/jqm.theme.css</css-->
@@ -48,36 +48,36 @@
     <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
 
     <!-- Uncomment for internationalization.  Removed for minor efficiency especially for mobile networks. -->
     <!--
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
     -->
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.min.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.js</js>
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.min.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.min.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.min.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
+    <js included="plain" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
+    <js included="aggregated" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+    <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
+    <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/backbone/1.0.0/backbone-1.0.0.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
+    <js included="plain" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.js</js>
+    <js included="aggregated" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
 
     <js>../common/javascript/up-mobile-config.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.min.js</js>
+    <js included="plain" resource="true">/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-mobile/1.3.2/jquery.mobile-1.3.2.min.js</js>
 
     <js import="true">../../common/common_skin.xml</js>
 

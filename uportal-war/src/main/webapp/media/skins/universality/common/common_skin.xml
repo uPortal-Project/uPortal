@@ -34,8 +34,8 @@
     <css>css/jsr168.css</css>
 
     <!-- uPortal portlet CSS contributed to the Fluid Project. Now importing from Fluid Infusion. Local overrides can be made in portlet.css.
-    <css resource="true">/ResourceServingWebapp/rs/fluid/1.4-bea0041/fss/css/fss-layout-portlet.css</css>
-    <css resource="true">/ResourceServingWebapp/rs/fluid/1.4-bea0041/fss/css/fss-theme-portlet.css</css> -->
+    <css resource="true">/rs/fluid/1.4-bea0041/fss/css/fss-layout-portlet.css</css>
+    <css resource="true">/rs/fluid/1.4-bea0041/fss/css/fss-theme-portlet.css</css> -->
 
     <!-- For layout of portlet content. Common to all skins using the universality theme. -->
     <css>css/layout-portlet.css</css>
@@ -59,34 +59,34 @@
     <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/form/3.25.0-2013.01.18/jquery.form-3.25.0-2013.01.18.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.js</js>
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.min.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.min.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/jquery.validate-1.11.1.min.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/validation/1.11.1/additional-methods-1.11.1.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
+    <js included="plain" resource="true">/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/cookie/1.0/jquery.cookie-1.0.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
 
     <!-- Uncomment for internationalization.  Removed for minor efficiency especially for mobile networks. -->
     <!--
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
     -->
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+    <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
+    <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/backbone/1.0.0/backbone-1.0.0.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
+    <js included="plain" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.js</js>
+    <js included="aggregated" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
 
-    <js included="plain" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
-    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
+    <js included="plain" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
+    <js included="aggregated" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
 
     <js import="true">../../common/common_skin.xml</js>
 
