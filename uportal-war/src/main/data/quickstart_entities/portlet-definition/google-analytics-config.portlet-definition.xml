@@ -37,7 +37,7 @@
     </parameter>
     <parameter>
         <name>hideFromMobile</name>
-        <value>false</value>
+        <value>true</value>
     </parameter>
     <parameter>
         <name>highlight</name>
