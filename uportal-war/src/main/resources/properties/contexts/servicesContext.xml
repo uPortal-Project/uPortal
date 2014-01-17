@@ -69,7 +69,6 @@
     
     
     <util:list id="searchServices">
-        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
         
         <!-- Uncomment and fill in your Google Custom Search ID to use
         <bean class="org.jasig.portal.portlets.search.google.GoogleCustomSearchService">
@@ -83,6 +82,22 @@
             <property name="site" value="Site"/>
         </bean>
         -->
+        
+        <!--Toggle one of the next two via comment
+        	Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
+        	portlet preferences marked as screen_capture_x and will include a link to the marketplace
+        	entry and possibly more to come
+         -->
+        
+        
+        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+         
+         
+        <!--
+        <bean class="org.jasig.portal.portlets.marketplace.MarketplaceSearchService" />
+        -->
+		
+        
     </util:list>
     
     <!-- 
