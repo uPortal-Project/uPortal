@@ -1,7 +1,25 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.jasig.portal.portlets.marketplace;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -13,7 +31,6 @@ import java.util.TreeSet;
 
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
@@ -107,94 +124,28 @@ public class PortletMarketplaceController {
 	 */
 	@RenderMapping
 	public String initializeView(WebRequest webRequest, PortletRequest portletRequest, Model model){
-		final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
-		IPerson user = personManager.getPerson(servletRequest);
-		ArrayList<ChannelBean> portletList = (ArrayList<ChannelBean>) getListOfChannelBeans(webRequest, user, true);
-		model.addAttribute("channelBeanList", portletList);
+		this.setUpInitialView(webRequest, portletRequest, model);
 		return "jsp/Marketplace/view";
 	}
 	
 	@RenderMapping(params="action=view")
 	public String entryView(RenderRequest renderRequest, RenderResponse renderResponse, WebRequest webRequest, PortletRequest portletRequest, Model model){
-		String name = portletRequest.getParameter("name");
-		IPortletDefinition portlet = this.getChannelBeanByName(name);
-		model.addAttribute("Portlet", portlet);
-		List<ScreenShot> screenShotList = this.getScreenShots(portlet);
-		model.addAttribute("ScreenShots", screenShotList);
+		IPortletDefinition result  = this.getChannelBeanByName(portletRequest.getParameter("name"));
+		if(result == null){
+			this.setUpInitialView(webRequest, portletRequest, model);
+			return "jsp/Marketplace/view";
+		}
+		MarketplacePortletDefinition mpPortlet = new MarketplacePortletDefinition(result);
+		model.addAttribute("Portlet", mpPortlet);
 		return "jsp/Marketplace/entry";
 	}
-    
-	private List<ScreenShot> getScreenShots(IPortletDefinition portlet){
-		
-		List<IPortletPreference> portletPreferences = portlet.getPortletPreferences();
-		List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
-		List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
-		List<ScreenShot> screenshots = new ArrayList<ScreenShot>();
-		
-		//Creates a list of captions and list of urls
-		for(int i=0; i<portletPreferences.size(); i++){
-			//Most screenshots possible is i
-			urls.add(null);
-			captions.add(null);
-			for(int j=0; j<portletPreferences.size(); j++){
-				if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1))){
-					urls.set(i, portletPreferences.get(j));
-				}
-				if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1)+"_caption")){
-					captions.set(i, portletPreferences.get(j));
-				}
-			}			
-		}
-		
-		//
-		for(int i=0; i<urls.size(); i++){
-			if(urls.get(i)!=null){
-				if(captions.size()>i && captions.get(i)!=null){
-					screenshots.add(new ScreenShot(urls.get(i).getValues()[0], Arrays.asList(captions.get(i).getValues())));
-				}else{
-					screenshots.add(new ScreenShot(urls.get(i).getValues()[0]));
-				}
-			}
-		}
-		
-		return screenshots;
-	}
 	
-	public class ScreenShot{
-		private String url;
-		private List<String> captions;
-		
-		public ScreenShot(String url){
-			this.setUrl(url);
-			this.setCaptions(new ArrayList<String>());
-		}
-		
-		public ScreenShot(String url, List<String> captions){
-			this.setUrl(url);
-			this.setCaptions(captions);
-		}
-		public String getUrl() {
-			return url;
-		}
-		public void setUrl(String url) {
-			this.url = url;
-		}
-		/**
-		 * @author vertein
-		 * @return the captions for a screen shot.  Will not return null, might return empty list.
-		 */
-		public List<String> getCaptions() {
-			if(captions==null){
-				this.captions = new ArrayList<String>();
-			}
-			return captions;
-		}
-		
-		public void setCaptions(List<String> captions) {
-			this.captions = captions;
-		}
+	private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model){
+		final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
+		IPerson user = personManager.getPerson(servletRequest);
+		ArrayList<ChannelBean> portletList = (ArrayList<ChannelBean>) getListOfChannelBeans(webRequest, user, true);
+		model.addAttribute("channelBeanList", portletList);
 	}
-	
 	
 	/**
 	 * @author vertein
@@ -207,6 +158,9 @@ public class PortletMarketplaceController {
 	 */
 	public IPortletDefinition getChannelBeanByName(String name){
 		// get a list of all channels 
+		if(name==null || name.isEmpty()){
+			return null;
+		}
 		List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
 		for( IPortletDefinition temp: allChannels){
 			if(temp.getName().equalsIgnoreCase(name)){

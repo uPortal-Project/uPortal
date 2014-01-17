@@ -20,10 +20,24 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
+<%@ taglib uri="/WEB-INF/tag/portletUrl.tld" prefix="pURL" %>
 <c:set var="n"><portlet:namespace/></c:set>
+
+<style>
+	.marketplace_entry_link{
+		font-family: 'Arial';
+		font-weight: 400;
+		color: #666666;
+		font-style: normal;
+		font-size: 13px;
+		text-align: left;
+		line-height: normal;
+	}
+</style>
 
 <portlet:actionURL var="formUrl"/>
 <portlet:resourceURL var="autocompleteUrl" id="retrieveSearchJSONResults"/>
+<c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
 <div class="fl-widget portlet search-portlet" role="section">
@@ -81,6 +95,11 @@
                                   <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
                                 </div>
                                 <div class="result_excerpt">${ result.first.summary }</div>
+                                <!-- Start of display marketplace specific information -->
+                                <c:if test="${up:contains(result.first.type, 'marketplace')}">
+                                	<a class="marketplace_entry_link" href="${pURL:getStringFromPortletUrl(result.first.portletUrl, pageContext.request)}">About this app</a>                             	
+                                </c:if>
+                                <!-- End of display marketplace specific information -->
                               </div>
                             </c:forEach>
                           </div>
