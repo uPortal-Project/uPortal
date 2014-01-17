@@ -43,7 +43,11 @@ public enum UrlState {
     /**
      * Rendering a single portlet where the portlet is responsible for all output, binary output is supported.
      */
-    EXCLUSIVE;
+    EXCLUSIVE,
+    /**
+     * Rendering a single portlet where the portlet fills the page with only a sticky header on the top of the screen
+     */
+    AUXILIARY;
     
     private final String lowercase;
     

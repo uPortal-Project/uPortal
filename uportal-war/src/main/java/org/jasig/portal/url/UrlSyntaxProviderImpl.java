@@ -229,7 +229,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     /**
      * WindowStates that are communicated as part of the path
      */
-    private static final Set<WindowState> PATH_WINDOW_STATES = new LinkedHashSet<WindowState>(Arrays.asList(WindowState.MAXIMIZED, IPortletRenderer.DETACHED, IPortletRenderer.EXCLUSIVE));
+    private static final Set<WindowState> PATH_WINDOW_STATES = new LinkedHashSet<WindowState>(Arrays.asList(WindowState.MAXIMIZED, IPortletRenderer.DETACHED, IPortletRenderer.EXCLUSIVE, IPortletRenderer.AUXILIARY));
     
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private Set<UrlState> statelessUrlStates = EnumSet.of(UrlState.DETACHED, UrlState.EXCLUSIVE);
@@ -438,6 +438,11 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 
                                 case EXCLUSIVE: {
                                     targetedPortletRequestInfo.setWindowState(IPortletRenderer.EXCLUSIVE);
+                                }
+                                break;
+                                
+                                case AUXILIARY: {
+                                    targetedPortletRequestInfo.setWindowState(IPortletRenderer.AUXILIARY);
                                 }
                                 break;
                             }
@@ -1141,6 +1146,10 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         if (IPortletRenderer.EXCLUSIVE.equals(urlWindowState)) {
             return UrlState.EXCLUSIVE;
+        }
+
+        if (IPortletRenderer.AUXILIARY.equals(urlWindowState)) {
+            return UrlState.AUXILIARY;
         }
 
         if (!WindowState.NORMAL.equals(urlWindowState) && !WindowState.MINIMIZED.equals(urlWindowState)) {

@@ -41,6 +41,7 @@ public interface IPortletRenderer {
     public static final WindowState EXCLUSIVE = new WindowState("EXCLUSIVE");
 	public static final WindowState DETACHED = new WindowState("DETACHED");
 	public static final WindowState DASHBOARD = new WindowState("DASHBOARD");
+	public static final WindowState AUXILIARY = new WindowState("AUXILIARY");
 	public static final PortletMode ABOUT = new PortletMode("ABOUT");
 	public static final PortletMode CONFIG = new PortletMode("CONFIG");
 	

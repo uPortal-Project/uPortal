@@ -119,6 +119,10 @@ public class PortletRequestParameterProcessor implements IRequestParameterProces
                         portletWindow.setWindowState(IPortletRenderer.EXCLUSIVE);
                         break;
                     }
+                    case AUXILIARY: {
+                        portletWindow.setWindowState(IPortletRenderer.AUXILIARY);
+                        break;
+                    }
                 }
             }
             
