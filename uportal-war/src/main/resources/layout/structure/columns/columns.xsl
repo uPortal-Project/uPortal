@@ -28,6 +28,7 @@
 <xsl:param name="focusedTabID">none</xsl:param>
 <xsl:param name="defaultTab">1</xsl:param>
 <xsl:param name="detached">false</xsl:param>
+<xsl:param name="auxiliary">false</xsl:param>
 <xsl:param name="userImpersonating">false</xsl:param>
 
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
@@ -69,6 +70,7 @@
         <focusedTabID><xsl:value-of select="$focusedTabID"></xsl:value-of></focusedTabID>
         <defaultTab><xsl:value-of select="$defaultTab"></xsl:value-of></defaultTab>
         <detached><xsl:value-of select="$detached"></xsl:value-of></detached>
+        <auxiliary><xsl:value-of select="$auxiliary"></xsl:value-of></auxiliary>
         <activeTabIdx><xsl:value-of select="$activeTabIdx"></xsl:value-of></activeTabIdx>
         <activeTabID><xsl:value-of select="$activeTabID"></xsl:value-of></activeTabID>
         <activeTabGroup><xsl:value-of select="$activeTabGroup"></xsl:value-of></activeTabGroup>

@@ -28,5 +28,8 @@
       <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n5"/>
       <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
+    <folder ID="s7" hidden="false" immutable="true" name="Return To Dashboard" type="return-to-dashboard" unremovable="true">
+      <channel fname="return-to-dashboard-launcher" unremovable="false" hidden="false" immutable="false" ID="n38"/>
+    </folder>
   </folder>
 </layout>
