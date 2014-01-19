@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Enforces a specific WindowState based on the "dashboardForcedWindowState" {@link IStylesheetDescriptor} parameter. For renderings
  * where a specific portlet is not specified and the stylesheet descriptor specifies a dashboardForcedWindowState then all portlets
  * in the pipeline will have their window state set to the specified value. If the IStylesheetDescriptor is not specified a check is
- * made to ensure the window states are not {@link WindowState#MAXIMIZED}, {@link IPortletRenderer#DETACHED}, or 
+ * made to ensure the window states are not {@link WindowState#MAXIMIZED}, {@link IPortletRenderer#DETACHED}, {@link IPortletRenderer#AUXILIARY}, or 
  * {@link IPortletRenderer#EXCLUSIVE} 
  * 
  * @author Eric Dalquist

@@ -83,6 +83,7 @@
                 <value>MAXIMIZED</value>
                 <value>EXCLUSIVE</value>
                 <value>DETACHED</value>
+                <value>AUXILIARY</value>
             </set>
         </property>
         <property name="portletModes">

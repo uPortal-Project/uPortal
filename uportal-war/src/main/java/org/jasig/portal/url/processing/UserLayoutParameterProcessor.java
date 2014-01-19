@@ -98,29 +98,27 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         }
 
         final UrlState urlState = portalRequestInfo.getUrlState();
+        final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
         switch (urlState) {
             case DETACHED:
                 this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "detached", Boolean.TRUE.toString());
-            case MAX: {
-                final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
+            case AUXILIARY: {
+                this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "auxiliary", Boolean.TRUE.toString());
                 
                 if (portletRequestInfo != null) {
-                    final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
-                    final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
-                    final IPortletEntity portletEntity = portletWindow.getPortletEntity();
-                    
-                    final String channelSubscribeId = portletEntity.getLayoutNodeId();
-                    
-                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", channelSubscribeId);
-                    
-                    if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
-                        // get wrapper implementation for focusing
-                        final TransientUserLayoutManagerWrapper transientUserLayoutManagerWrapper = (TransientUserLayoutManagerWrapper) userLayoutManager;
-                        // .. and now set it as the focused id
-                        transientUserLayoutManagerWrapper.setFocusedId(channelSubscribeId);
-                    }
-                    
-                    //If portletRequestInfo was null just fall through to NORMAL state
+                    setPortletWindowToFocused(request, userLayoutManager, portletRequestInfo);
+                    break;
+                } else {
+                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
+                    break;
+                }
+            }
+            case MAX: {
+                if (portletRequestInfo != null) {
+                    setPortletWindowToFocused(request, userLayoutManager, portletRequestInfo);
+                    break;
+                } else {
+                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
                     break;
                 }
             }
@@ -133,6 +131,23 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
         }
         
         return true;
+    }
+
+    private void setPortletWindowToFocused(HttpServletRequest request, IUserLayoutManager userLayoutManager, IPortletRequestInfo portletRequestInfo) {
+        final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();
+        final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, targetWindowId);
+        final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+        
+        final String channelSubscribeId = portletEntity.getLayoutNodeId();
+        
+        this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", channelSubscribeId);
+        
+        if (userLayoutManager instanceof TransientUserLayoutManagerWrapper) {
+            // get wrapper implementation for focusing
+            final TransientUserLayoutManagerWrapper transientUserLayoutManagerWrapper = (TransientUserLayoutManagerWrapper) userLayoutManager;
+            // .. and now set it as the focused id
+            transientUserLayoutManagerWrapper.setFocusedId(channelSubscribeId);
+        }
     }
     
     protected String findTabIndex(IUserLayoutManager userLayoutManager, String tabId) {

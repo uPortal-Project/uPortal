@@ -54,6 +54,7 @@ public final class PortletUtils {
                 .put(IPortletRenderer.DASHBOARD.toString(), IPortletRenderer.DASHBOARD)
                 .put(IPortletRenderer.DETACHED.toString(), IPortletRenderer.DETACHED)
                 .put(IPortletRenderer.EXCLUSIVE.toString(), IPortletRenderer.EXCLUSIVE)
+                .put(IPortletRenderer.AUXILIARY.toString(), IPortletRenderer.AUXILIARY)
                 .build();
     
     private static final Set<WindowState> TARGETED_WINDOW_STATES =
@@ -61,6 +62,7 @@ public final class PortletUtils {
             .add(WindowState.MAXIMIZED)
             .add(IPortletRenderer.DETACHED)
             .add(IPortletRenderer.EXCLUSIVE)
+            .add(IPortletRenderer.AUXILIARY)
             .build();
                     
     private PortletUtils() {

@@ -111,6 +111,7 @@
 <xsl:import href="navigation.xsl" />
 <xsl:import href="regions.xsl" />     <!-- Templates for areas (regions) on the page in which non-tab/column portlets may be placed -->
 <xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
+<xsl:import href="display.xsl" />     <!-- Templates for displaying portlets in normal or auxiliary windowState -->
 <!-- ========================================================================= -->
 
 
@@ -510,131 +511,14 @@
  | Template contents can be any valid XSL or XHTML.
  -->
 <xsl:template match="/">
-    <html lang="{$USER_LANG}" class="respondr">
-        <head>
-            <xsl:call-template name="page.title" />
-            <xsl:call-template name="page.meta" />
-            <xsl:call-template name="skinResources">
-                <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-            </xsl:call-template>
-            <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
-                <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
-            </xsl:if>
-            <xsl:call-template name="page.js" />
-            <xsl:call-template name="page.overrides" />
-        </head>
-        <body class="up dashboard portal fl-theme-mist">
-
-            <div id="wrapper">
-                <xsl:call-template name="region.page-top" />
-                <header class="portal-header" role="banner">
-                    <div class="portal-global">
-                        <div class="container">
-                            <xsl:call-template name="region.pre-header" />
-                        </div>
-                    </div>
-                    <div class="container">
-                        <div class="row">
-                            <xsl:call-template name="region.header-left" />
-                            <xsl:call-template name="region.header-right" />
-                        </div>
-                    </div>
-                    <xsl:call-template name="region.header-bottom" />
-                    <xsl:apply-templates select="layout/navigation" />
-                </header>
-                <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
-                    <xsl:call-template name="region.customize" />
-                    <xsl:call-template name="region.pre-content" />
-                    <div class="container">
-                        <!-- For editing page permissions in fragment-admin mode  -->
-                        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                            <div class="row">
-                                <div class="col-md-9"></div>
-                                <div class="col-md-3">
-                                    <div id="portalEditPagePermissions" class="fl-fix">
-                                        <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                                            <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </xsl:if>
-                        <!-- Works with up-layout-preferences.js showMessage()  -->
-                        <div class="row">
-                            <div id="portalPageBodyMessage" class="col-md-12"></div>
-                        </div>
-
-                        <xsl:choose>
-                            <xsl:when test="$PORTAL_VIEW='focused'">
-                                <!-- === FOCUSED VIEW === -->
-                                <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="layout/content" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </div>
-                </div>
-                <xsl:call-template name="footer.nav" />
-                <xsl:call-template name="footer.legal" />
-                <xsl:call-template name="region.page-bottom" />
-            </div>
-
-            <xsl:call-template name="page.dialogs" />
-
-            <script type="text/javascript">
-                up.analytics = up.analytics || {};
-                up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
-                up.analytics.portletData = <portlet-analytics-data/>;
-                up.analytics.pageData = <page-analytics-data/>;
-            </script>
-        </body>
-      <script type="text/javascript">
-        up.jQuery(document).ready(function(){
-          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-          up.FragmentPermissionsManager(
-            "body",
-            {
-              savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              messages: {
-                columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
-              }
-            }
-          );
-          </xsl:if>
-          up.LayoutPreferences(
-            "body",
-            {
-              tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
-              numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
-              portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
-              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>',
-              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
-              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
-              gallerySelector: null,  // Disable the gallery since the page doesn't include it (for now)
-              messages: {
-                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
-                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
-                  column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
-                  columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
-                  fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
-                  narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
-                  even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
-                  wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
-                  narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
-                  searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
-                  persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
-              }
-            }
-          );
-       });
-    </script>
-    </html>
+  <xsl:choose>
+    <xsl:when test="$PORTAL_VIEW='focused' and //content/focused/channel[@windowState='auxiliary']">
+      <xsl:call-template name="auxiliary.display"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="normal.display"/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>

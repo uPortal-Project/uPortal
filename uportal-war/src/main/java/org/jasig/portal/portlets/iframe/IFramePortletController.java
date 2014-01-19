@@ -81,10 +81,10 @@ public class IFramePortletController extends AbstractController {
         /** vertical or horizontal alignment */
         put("align", null);
         
-        /** frame height */
+        /** frame width */
         put("width", "100%");
         
-        /** frame width */
+        /** frame height */
         put("height", null);
     }});
 
@@ -109,8 +109,11 @@ public class IFramePortletController extends AbstractController {
 		if (model.get("src") == null) {
 	        model.put("src", preferences.getValue("url", IFRAME_ATTRS.get("src")));	        
 		}
-		
-		return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
+		if (request.getWindowState().toString().equalsIgnoreCase("auxiliary")) {
+			return new ModelAndView("/jsp/IFrame/auxiliaryIframePortlet", "attrs", model);
+		} else {
+			return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
+		}
 	}
 
 }
