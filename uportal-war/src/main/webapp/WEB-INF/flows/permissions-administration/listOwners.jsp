@@ -172,7 +172,7 @@ up.jQuery(function() {
                 initialText: "John",
                 searchFunction: function(searchterm) {
                     var principals = [];
-                    if (searchterms.length > 2) {
+                    if (searchterm.length > 2) {
                        $.ajax({
                           url: "<c:url value="/api/permissions/principals.json"/>",
                           data: { q: searchterm },
