@@ -23,15 +23,16 @@
     <title>Sakai Connector (demo)</title>
     <name>Sakai Connector (demo)</name>
     <fname>sakai-connector</fname>
-    <desc>Embed tools from any of your Sakai sites directly into the portal.</desc>
+    <desc>Embed tools from any of your Sakai sites directly into the portal. Demo connection to Sakai Nightly demo site.</desc>
     <type>Portlet</type>
     <timeout>5000</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/sakai-connector</ns2:webAppName>
         <ns2:portletName>sakai-connector</ns2:portletName>
     </portlet-descriptor>
-    <category>All categories</category>
-    <group>Everyone</group>
+    <category>Academics</category>
+    <category>Demonstration</category>
+    <group>Authenticated Users</group>
     <parameter>
         <name>alternate</name>
         <value>false</value>

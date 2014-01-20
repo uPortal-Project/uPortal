@@ -30,8 +30,9 @@
         <ns2:webAppName>/basiclti-portlet</ns2:webAppName>
         <ns2:portletName>basiclti-portlet</ns2:portletName>
     </portlet-descriptor>
-    <category>All categories</category>
-    <group>Everyone</group>
+    <category>Academics</category>
+    <category>Demonstration</category>
+    <group>Authenticated Users</group>
     <parameter>
         <name>alternate</name>
         <value>false</value>

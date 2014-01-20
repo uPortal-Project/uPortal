@@ -42,5 +42,21 @@
         <channel fname="google-docs" unremovable="false" hidden="false" immutable="false" ID="n11"/>
       </folder>
     </folder>
+      <folder ID="s12" hidden="false" immutable="false" name="LMS" type="regular" unremovable="false">
+          <folder ID="s13" hidden="false" immutable="false" name="Column 1" type="regular" unremovable="false">
+              <structure-attribute>
+                  <name>width</name>
+                  <value>50%</value>
+              </structure-attribute>
+              <channel fname="sakai-connector" unremovable="false" hidden="false" immutable="false" ID="n14"/>
+          </folder>
+          <folder ID="s15" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
+              <structure-attribute>
+                  <name>width</name>
+                  <value>50%</value>
+              </structure-attribute>
+              <channel fname="basiclti-portlet" unremovable="false" hidden="false" immutable="false" ID="n16"/>
+          </folder>
+      </folder>
   </folder>
 </layout>
