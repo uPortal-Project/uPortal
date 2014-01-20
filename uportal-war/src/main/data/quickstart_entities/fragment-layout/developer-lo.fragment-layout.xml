@@ -34,13 +34,13 @@
                     <name>width</name>
                     <value>50%</value>
                 </structure-attribute>
+                <channel fname="snooper" unremovable="false" hidden="false" immutable="false" ID="n7"/>
             </folder>
-            <folder ID="s7" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
+            <folder ID="s8" hidden="false" immutable="false" name="Column 2" type="regular" unremovable="false">
                 <structure-attribute>
                     <name>width</name>
                     <value>50%</value>
                 </structure-attribute>
-                <channel fname="snooper" unremovable="false" hidden="false" immutable="false" ID="n8"/>
             </folder>
         </folder>
         <folder ID="s9" hidden="false" immutable="false" name="Testing" type="regular" unremovable="false">
