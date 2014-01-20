@@ -28,5 +28,8 @@
       <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n5"/>
       <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
+    <folder ID="s7" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+    </folder>
   </folder>
 </layout>

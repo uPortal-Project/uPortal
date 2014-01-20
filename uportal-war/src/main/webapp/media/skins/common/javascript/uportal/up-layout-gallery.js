@@ -483,10 +483,10 @@ var up = up || {};
             that.locate("galleryHandle").addClass('handle-arrow-up');
             that.locate("galleryInner").slideDown(that.options.openSpeed);
             if ($("#portalPageBodyColumns .portal-page-column").hasClass("canAddChildren")) {
-		that.showPane("add-content");
+                that.showPane("add-content");
             } else {
-		that.showPane("use-content");
-		that.hidePaneLink("add-content");
+                that.showPane("use-content");
+                that.hidePaneLink("add-content");
             }
         };
 
