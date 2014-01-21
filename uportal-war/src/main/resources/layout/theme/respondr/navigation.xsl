@@ -52,7 +52,6 @@
     exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle dlm xsi"
     version="1.0">
 
-<xsl:param name="USE_ADD_TAB" select="'true'" /> <!-- Sets the use of a "+" button at the end of the tab list for adding a new tab.  Values are 'true' or 'false'. -->
 <xsl:param name="TAB_CONTEXT" select="'header'"/><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
@@ -207,7 +206,7 @@
                  <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
                    <xsl:with-param name="CONTEXT">header</xsl:with-param>
                  </xsl:apply-templates>
-                 <xsl:if test="$USE_ADD_TAB='true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
+                 <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
@@ -245,6 +244,12 @@
       <xsl:choose>
         <xsl:when test="@activeTab='true'">active fl-tabs-active</xsl:when>
         <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
+      <xsl:choose>
+        <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
+        <xsl:otherwise>locked</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:variable name="NAV_DELETABLE">
@@ -313,7 +318,7 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <xsl:call-template name="portalUrl">
           <xsl:with-param name="url">
@@ -323,15 +328,17 @@
           </xsl:with-param>
         </xsl:call-template>
       </xsl:variable>
-      <xsl:if test="@activeTab='true'">
-        <xsl:attribute name="class">active</xsl:attribute>
-      </xsl:if>
       <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
         <i class="fa fa-chevron-right"></i>
-      </a>
+      </a> <!-- Navigation item link. -->
+      <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
+        <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+          <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
+        </a> <!-- Drag & drop gripper handle. -->
+      </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:deleteAllowed='false')">
           <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
