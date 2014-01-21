@@ -89,13 +89,11 @@
         	entry and possibly more to come
          -->
         
-        
-        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
-         
-         
         <!--
+        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+        --> 
+         
         <bean class="org.jasig.portal.portlets.marketplace.MarketplaceSearchService" />
-        -->
 		
         
     </util:list>
