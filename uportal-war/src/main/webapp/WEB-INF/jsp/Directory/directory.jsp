@@ -29,7 +29,7 @@
 
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading"><spring:message code="search"/></h2>
+    <h2 class="title" role="heading"><spring:message code="search.directory"/></h2>
   </div>
   
   <!-- Portlet Body -->
@@ -41,7 +41,7 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="Search"/>
+            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="<spring:message code='search.directory.submit'/>"/>
         </form>
 
         <c:if test="${not empty query}">

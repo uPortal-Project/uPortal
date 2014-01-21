@@ -31,10 +31,10 @@
         <form action="${ formUrl }" method="POST">
             <c:choose>
                 <c:when test="${ not empty query }">
-                    <input data-type="search"  name="query" value="${ fn:escapeXml(query )}"/>
+                    <input data-type="search" maxlength="200" name="query" value="${ fn:escapeXml(query)}"/>
                 </c:when>
                 <c:otherwise>
-                    <input placeholder="Search..." data-type="search"  name="query"/>
+                    <input maxlength="200" placeholder="<spring:message code='search.placeholder'/>" data-type="search"  name="query"/>
                 </c:otherwise>
             </c:choose>
         </form>
