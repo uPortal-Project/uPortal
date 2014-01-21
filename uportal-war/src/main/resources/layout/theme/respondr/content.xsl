@@ -83,9 +83,8 @@
         <xsl:variable name="NUMBER">
             <xsl:value-of select="position()" />
         </xsl:variable>
-        <xsl:variable name="POSITION"> <!-- Determine column place in the layout and add appropriate class. -->
-            column-<xsl:value-of select="$NUMBER" />
-        </xsl:variable>
+        <!-- Determine column place in the layout and add appropriate class. -->
+        <xsl:variable name="POSITION_CSS_CLASS">column-<xsl:value-of select="$NUMBER" /></xsl:variable>
         <!-- 
          | Per up-layout-selector.js, current valid width selections are 25%,
          | 33%, 34%, 40%, 50%, 60%, and 100%.  The following approach works
@@ -118,7 +117,7 @@
           </xsl:choose>
         </xsl:variable>
 
-        <div id="column_{@ID}" class="portal-page-column {$POSITION} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
                 <div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>

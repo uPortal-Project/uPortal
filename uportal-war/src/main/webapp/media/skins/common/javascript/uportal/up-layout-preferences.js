@@ -214,17 +214,20 @@ var uportal = uportal || {};
                 // on the page
                 $('#portalPageBodyColumns > [id^=column_]').each(function(i){
 
-                    var column = $(this).removeClass("single left right");
-                    $(this.className.split(" ")).each(function(idx, className){
-                        if (className.match("fl-container-flex")) $(column).removeClass(className);
-                    });
+                    // Column Number
+                    var column = $(this).removeClass("column-1 column-2 column-3 column-4 column-5 column-6");
+                    var columnNumberClass = "column-" + (i + 1);
+                    $(column).addClass(columnNumberClass);
 
-                    var newclasses = "fl-container-flex" + newcolumns[i];
-                    if (newcolumns.length == 1) newclasses += " single";
-                    else if (i == 0) newclasses += " left";
-                    else if (i == newcolumns.length - 1) newclasses += " right";
-                    else newclasses += " middle";
-                    $(column).addClass(newclasses);
+                    // Column Width
+                    $(this.className.split(" ")).each(function(idx, className) {
+                        if (className.match(that.options.columnWidthClassPattern)) {
+                            $(column).removeClass(className);
+                        }
+                    });
+                    var columnWidthClass = that.options.columnWidthClassFunction(newcolumns[i]);
+                    $(column).addClass(columnWidthClass);
+
                 });
 
                 $('#portalPageBodyColumns').attr("class", "columns-" + newcolumns.length);
@@ -585,6 +588,10 @@ var uportal = uportal || {};
         currentSkin: null,
         isFragmentMode: false,
         gallerySelector: '.up-gallery',  // Pass null/false to disable
+        columnWidthClassPattern: "fl-container-flex",
+        columnWidthClassFunction: function(column) {
+            return "fl-container-flex" + column;
+        },
         messages: {
             persistenceError: "Error persisting layout change"
         }
