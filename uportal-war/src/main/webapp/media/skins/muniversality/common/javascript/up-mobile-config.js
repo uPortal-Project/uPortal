@@ -22,4 +22,9 @@ $(document).bind("mobileinit", function(){
     ajaxEnabled: false,
     ajaxFormsEnabled: false
   });
+  //disable zoom on mobile
+  $.extend(  $.mobile.zoom, {
+    locked: true,
+    enabled:false
+  });
 });
