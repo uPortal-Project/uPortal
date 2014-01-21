@@ -40,6 +40,11 @@
                             <filtering>true</filtering>
                         </resource>
                     </webResources>
+                    <!-- By specifying an exclude we'll retain META-INF/context.xml (META-INF is excluded by default).
+                         Context.xml is important because it allows the ResourceUrl to 'see' the ResourceServingWebapp
+                         to determine if a resource is available there, which allows for browser caching of common
+                         libraries -->
+                    <dependentWarExcludes>junkname.jar</dependentWarExcludes>
                 </configuration>
             </plugin>
             <plugin>
