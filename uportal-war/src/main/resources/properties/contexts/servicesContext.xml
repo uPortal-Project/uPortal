@@ -94,7 +94,7 @@
     <util:map id="searchTabs">
         <entry key="googleInstitution.results">
             <list>
-                <value>${org.jasig.portal.portlets.googleWebSearch.search.result.type</value>
+                <value>${org.jasig.portal.portlets.googleWebSearch.search.result.type}</value>
                 <value>${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}</value>
             </list>
         </entry>
