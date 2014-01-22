@@ -20,7 +20,7 @@
 
 -->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="AuthenticatedRespondr" ownerID="authenticated.respondr-lo" precedence="80">
+  <dlm:fragment name="AuthenticatedRespondr" ownerID="authenticated.respondr-lo" precedence="90">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="AND">
         <attribute mode="deepMemberOf" name="Authenticated Users"/>
