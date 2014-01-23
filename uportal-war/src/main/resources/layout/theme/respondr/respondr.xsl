@@ -500,16 +500,17 @@
 <!-- ========================================================================= -->
 
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: ROOT =============================================== -->
-<!-- ========================================================================= -->
+<!-- ==================================================================================== -->
+<!-- ========== TEMPLATE: DOCUMENT NORMAL =============================================== -->
+<!-- ==================================================================================== -->
 <!-- 
  | RED
- | This is the root xsl template and it defines the overall structure of the html markup. 
- | Focused and Non-focused content is controlled through an xsl:choose statement.
- | Template contents can be any valid XSL or XHTML.
+ | This approach to rendering is the standard portal experience.  This template 
+ | defines the overall structure of the html markup.  Focused and Non-focused 
+ | content is controlled through an xsl:choose statement.  Template contents can
+ | be any valid XSL or XHTML.
  -->
-<xsl:template match="/">
+<xsl:template name="document.normal">
     <html lang="{$USER_LANG}" class="respondr">
         <head>
             <xsl:call-template name="page.title" />
@@ -643,6 +644,111 @@
        });
     </script>
     </html>
+</xsl:template>
+
+<!-- ====================================================================================== -->
+<!-- ========== TEMPLATE: DOCUMENT DETACHED =============================================== -->
+<!-- ====================================================================================== -->
+<!-- 
+ | RED
+ | This template displays one portlet at a time indetached window state.  It 
+ | toggles between the sticky header and non-sticky header via portlet publish 
+ | parameter showHeaderWhenDetached.
+ -->
+<xsl:template name="document.detached">
+    <html lang="{$USER_LANG}" class="respondr">
+        <head>
+            <xsl:call-template name="page.title" />
+            <xsl:call-template name="page.meta" />
+            <xsl:call-template name="skinResources">
+                <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+            </xsl:call-template>
+            <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
+                <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
+            </xsl:if>
+            <xsl:call-template name="page.js" />
+            <xsl:call-template name="page.overrides" />
+        </head>
+        <body class="up dashboard portal fl-theme-mist">
+            <div id="wrapper">
+                <xsl:choose>
+                    <!-- Show Sticky Header -->
+                    <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'">
+                        <div class="portal-sticky-header">
+                            <header class="portal-header" role="banner">
+                                <div class="portal-global">
+                                    <div class="container">
+                                        <div class="portal-user">
+                                            <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
+                                            <xsl:choose>
+                                                <xsl:when test="$userImpersonating = 'true'">
+                                                    <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                            &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
+                                            -<a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content portal-logout"><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></a>
+                                      </div>
+                                  </div>
+                              </div>
+                          </header>
+                      </div>
+                      <div class="portal-sticky-content" role="main">
+                          <div class="portal-sticky-container">
+                              <div class="row">
+                                  <div id="portalPageBodyMessage" class="col-md-12"></div>
+                              </div>
+                              <xsl:copy-of select="/layout_fragment/content"/>
+                          </div>
+                      </div>
+                  </xsl:when>
+                  <!-- Don't Show Sticky Header -->
+                  <xsl:otherwise>
+                      <div class="portal-sticky-content" role="main">
+                          <div class="portal-container">
+                              <div class="row">
+                                      <div id="portalPageBodyMessage" class="col-md-12"></div>
+                              </div>
+                              <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top">
+                                  <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>
+                              </div>
+                              <xsl:copy-of select="/layout_fragment/content"/>
+                          </div>
+                      </div>
+                  </xsl:otherwise>
+              </xsl:choose>
+
+              </div>
+              <script type="text/javascript">
+                  up.analytics = up.analytics || {};
+                  up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
+                  up.analytics.portletData = <portlet-analytics-data/>;
+                  up.analytics.pageData = <page-analytics-data/>;
+              </script>
+          </body>
+    </html>
+</xsl:template>
+
+<!-- ========================================================================= -->
+<!-- ========== TEMPLATE: ROOT =============================================== -->
+<!-- ========================================================================= -->
+<!-- 
+ | RED
+ | This is the root xsl template.  It chooses the basic nature of how the portal
+ | will be displayed.  The options at this point are normal (dashboard or 
+ | focused), or DETACHED.
+ -->
+<xsl:template match="/">
+    <xsl:choose>
+        <xsl:when test="$PORTAL_VIEW = 'detached'">
+            <xsl:call-template name="document.detached"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:call-template name="document.normal"/>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>
