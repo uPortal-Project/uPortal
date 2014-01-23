@@ -43,7 +43,7 @@ import org.springframework.web.portlet.mvc.AbstractController;
  * @version $Revision$
  */
 public class IFramePortletController extends AbstractController {
-    
+
     protected static final Map<String, String> IFRAME_ATTRS = Collections.unmodifiableMap(new LinkedHashMap<String, String>() {{
         /** document-wide unique id */
         put("id", null);
@@ -88,29 +88,31 @@ public class IFramePortletController extends AbstractController {
         put("height", null);
     }});
 
-
-	@Override
-	protected ModelAndView handleRenderRequestInternal(RenderRequest request,
-			RenderResponse response) throws Exception {
-		
-		Map<String,Object> model = new HashMap<String,Object>();
-		
-		// get the IFrame target URL and the configured height of the IFrame
-		// window from the portlet preferences
-		PortletPreferences preferences = request.getPreferences();
-		
-		for (final Map.Entry<String, String> attrEntry : IFRAME_ATTRS.entrySet()) {
-    		final String attr = attrEntry.getKey();
+    @Override
+    protected ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) throws Exception {
+        
+        Map<String,Object> model = new HashMap<String,Object>();
+        
+        // get the IFrame target URL and the configured height of the IFrame
+        // window from the portlet preferences
+        PortletPreferences preferences = request.getPreferences();
+        
+        for (final Map.Entry<String, String> attrEntry : IFRAME_ATTRS.entrySet()) {
+            final String attr = attrEntry.getKey();
             final String defaultValue = attrEntry.getValue();
             model.put(attr, preferences.getValue(attr, defaultValue));
-		}
-		
+        }
+        
         //Legacy support for url attribute
-		if (model.get("src") == null) {
-	        model.put("src", preferences.getValue("url", IFRAME_ATTRS.get("src")));	        
-		}
-		
-		return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
-	}
+        if (model.get("src") == null) {
+            model.put("src", preferences.getValue("url", IFRAME_ATTRS.get("src")));
+        }
+
+        if (request.getWindowState().toString().equalsIgnoreCase("detached")) {
+            model.put("onload", "parent.resizeIframe(document.body.scrollHeight)");
+        }
+        
+        return new ModelAndView("/jsp/IFrame/iframePortlet", "attrs", model);
+    }
 
 }

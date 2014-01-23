@@ -27,7 +27,16 @@
   </c:forEach>
 </c:set>
 
-<iframe src="${attrs.src}" ${iframeAttrs}>
-    This browser does not support inline frames.<br/> 
-    <a href="${attrs.src}" target="_blank">Click here to view content</a> in a separate window.
-</iframe>
+<body>
+    <iframe id='iFrame' src="${attrs.src}" ${iframeAttrs}>
+        This browser does not support inline frames.<br/> 
+        <a href="${attrs.src}" target="_blank">Click here to view content</a> in a separate window.
+    </iframe>
+</body>
+
+<script type="text/javascript">
+    function resizeIframe(newHeight)
+    {
+        document.getElementById('iFrame').style.height = parseInt(newHeight,10) * 3 + 'px';
+    }
+</script>
