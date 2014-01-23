@@ -155,7 +155,17 @@ up.jQuery(function() {
     var $ = up.jQuery;
 
     $(document).ready(function(){
+        setupPermissionsListOwnersLoadVariables();
+    });
+    
+});
 
+// Unload is being leveraged to reset back to fresh state when the back button is pushed
+$(window).unload( function () {
+    setupPermissionsListOwnersLoadVariables();
+});
+
+function setupPermissionsListOwnersLoadVariables() {
         var submitForm = function(form){
             if (!principalSuggest.getValue() || !permissionSuggest.getValue()) {
                 alert('<spring:message code="please.choose.principal.and.permission.from.the.autocomplete.menus" htmlEscape="false" javaScriptEscape="true"/>');
@@ -228,8 +238,5 @@ up.jQuery(function() {
                 return false;
             }
         });
-    });
-    
-});
+};
 </script>
-
