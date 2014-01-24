@@ -554,7 +554,31 @@
       <!-- Add to Layout Icon -->
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <li>
-          <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></a>
+	        <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
+	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
+	                <span class="icon"></span>
+	            </xsl:if>
+	            <span class="label"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
+	        </a>
+        </li>
+      </xsl:if>
+      <!-- Add to Favorites Icon -->
+      <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
+        <li>
+	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{//focused/channel/@chanID}">
+	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
+	                <span class="icon"></span>
+	            </xsl:if>
+	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
+	            <!-- used for the ajax call to add to favorites in up-favorite.js-->
+	            <script type="text/javascript">
+	            	(function($) {
+  						$( document ).ready(function() {
+	            			$('.addToFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="//focused/channel/@chanID"/>'}, up.addToFavorite);
+	            		});
+					})(up.jQuery);
+	            </script>
+	        </a>
         </li>
       </xsl:if>
         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">

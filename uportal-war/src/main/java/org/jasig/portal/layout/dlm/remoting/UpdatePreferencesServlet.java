@@ -58,6 +58,7 @@ import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
@@ -513,6 +514,47 @@ public class UpdatePreferencesServlet {
 		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
 
 	}
+    
+    @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
+    public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
+    	//setup
+        IUserInstance ui = userInstanceManager.getUserInstance(request);
+
+        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        
+        IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(portletDefinitionRegistry.getPortletDefinition(channelId));
+        
+        final Locale locale = RequestContextUtils.getLocale(request);
+        
+    	//get favorite tab
+        String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
+    	
+    	if(favoriteTabNodeId != null) {
+	        //add portlet to favorite tab
+	        IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
+	        
+	        if (node == null) {
+				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.add.portlet.in.tab", "Can''t add a new favorite", locale)));
+			}
+	
+			try {
+				// save the user's layout
+	            ulm.saveUserLayout();
+			} catch (Exception e) {
+				log.warn("Error saving layout", e);
+				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.persisting.layout.change", "Can''t add a new favorite", locale)));
+			}
+	
+			//document success for notifications
+			Map<String, String> model = new HashMap<String, String>();
+			model.put("response", getMessage("success.add.portlet", "Added a new favorite", locale));
+			model.put("newNodeId", node.getId());
+			return new ModelAndView("jsonView", model);
+    	} else {
+    		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.finding.favorite.tab", "Can''t find favorite tab", locale)));
+    	}
+    }
 
 	/**
 	 * Add a new channel.
@@ -544,34 +586,7 @@ public class UpdatePreferencesServlet {
 
 		IUserLayoutNodeDescription node = null;
 		if (isTab(ulm, destinationId)) {
-            @SuppressWarnings("unchecked")
-			Enumeration<String> columns = ulm.getChildIds(destinationId);
-			if (columns.hasMoreElements()) {
-				while (columns.hasMoreElements()) {
-					// attempt to add this channel to the column
-					node = ulm.addNode(channel, columns.nextElement(), null);
-					// if it couldn't be added to this column, go on and try the next
-					// one.  otherwise, we're set.
-					if (node != null)
-						break;
-				}
-			} else {
-
-				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
-				newColumn.setName("Column");
-				newColumn.setId("tbd");
-				newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-				newColumn.setHidden(false);
-				newColumn.setUnremovable(false);
-				newColumn.setImmutable(false);
-
-				// add the column to our layout
-				IUserLayoutNodeDescription col = ulm.addNode(newColumn,
-						destinationId, null);
-
-				// add the channel
-				node = ulm.addNode(channel, col.getId(), null);
-			}
+			node = addNodeToTab(ulm,channel, destinationId);
 
 		} else if (isColumn(ulm, destinationId)) {
 			// move the channel into the column
@@ -611,6 +626,40 @@ public class UpdatePreferencesServlet {
 		return new ModelAndView("jsonView", model);
 
 	}
+    
+    private IUserLayoutNodeDescription addNodeToTab(IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
+    	IUserLayoutNodeDescription node = null;
+    	
+    	@SuppressWarnings("unchecked")
+		Enumeration<String> columns = ulm.getChildIds(tabId);
+		if (columns.hasMoreElements()) {
+			while (columns.hasMoreElements()) {
+				// attempt to add this channel to the column
+				node = ulm.addNode(channel, columns.nextElement(), null);
+				// if it couldn't be added to this column, go on and try the next
+				// one.  otherwise, we're set.
+				if (node != null)
+					break;
+			}
+		} else {
+
+			IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+			newColumn.setName("Column");
+			newColumn.setId("tbd");
+			newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+			newColumn.setHidden(false);
+			newColumn.setUnremovable(false);
+			newColumn.setImmutable(false);
+
+			// add the column to our layout
+			IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
+
+			// add the channel
+			node = ulm.addNode(channel, col.getId(), null);
+		}
+		
+		return node;
+    }
 
 	/**
 	 * Update the user's preferred skin.
