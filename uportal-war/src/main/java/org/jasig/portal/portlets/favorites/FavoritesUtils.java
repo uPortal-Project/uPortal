@@ -31,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
-
 import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.REGULAR_TYPE;
 import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITES_TYPE;
 
@@ -114,6 +113,36 @@ public final class FavoritesUtils {
         logger.debug("Extracted favorites collections [{}] from [{}]", results, userLayout);
 
         return results;
+    }
+    
+    public static String getFavoriteTabNodeId(IUserLayout userLayout) {
+    	
+        @SuppressWarnings("unchecked")
+		Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
+        
+    	while (childrenOfRoot.hasMoreElements()) { //loop over folders that might be the favorites folder
+            String nodeId = childrenOfRoot.nextElement();
+
+            try {
+
+                IUserLayoutNodeDescription nodeDescription = userLayout.getNodeDescription(nodeId);
+                IUserLayoutNodeDescription.LayoutNodeType nodeType = nodeDescription.getType();
+
+                if (FOLDER.equals(nodeType)
+                        && nodeDescription instanceof IUserLayoutFolderDescription) {
+                	IUserLayoutFolderDescription folderDescription = (IUserLayoutFolderDescription) nodeDescription;
+
+                    if (FAVORITES_TYPE.equalsIgnoreCase(folderDescription.getFolderType())) {
+                    	return folderDescription.getId();
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Ignoring on error a node while examining for favorites: node ID is [{}]", nodeId, e);
+            }
+    	}
+    	
+    	logger.warn("Favorite tab was searched for but not found");
+    	return null; //didn't find favorite tab
     }
 
     /**
