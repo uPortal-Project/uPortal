@@ -24,7 +24,7 @@
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="AND">
         <attribute mode="deepMemberOf" name="Authenticated Users"/>
-        <attribute mode="deepMemberOf" name="Responder Theme Users"/>
+        <attribute mode="deepMemberOf" name="Respondr Theme Users"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

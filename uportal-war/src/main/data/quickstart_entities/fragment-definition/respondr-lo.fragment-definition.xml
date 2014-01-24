@@ -23,7 +23,7 @@
   <dlm:fragment name="Respondr" ownerID="respondr-lo" precedence="80">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="OR">
-        <attribute mode="deepMemberOf" name="Responder Theme Users"/>
+        <attribute mode="deepMemberOf" name="Respondr Theme Users"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
