@@ -37,6 +37,7 @@ import org.jasig.portal.io.xml.IPortalData;
  */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public static final String EDITABLE_PARAM = "editable";
+    public static final String CONFIGURABLE_PARAM = "configurable";
     public static final String HAS_HELP_PARAM = "hasHelp";
     public static final String HAS_ABOUT_PARAM = "hasAbout";
     
