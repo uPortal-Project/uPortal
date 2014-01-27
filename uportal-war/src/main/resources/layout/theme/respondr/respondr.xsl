@@ -247,15 +247,6 @@
 </xsl:template>
 <!-- ========================================================================= -->
 
-<xsl:template name="page.overrides">
-    <link href="/uPortal/media/skins/respondr/uPortal4/css/fluid_stopgap.css" rel="stylesheet" type="text/css" />
-    <link href="/uPortal/media/skins/respondr/uPortal4/css/layout-portal.css" rel="stylesheet" type="text/css" />
-    <link href="/uPortal/media/skins/respondr/uPortal4/css/layout-portlet.css" rel="stylesheet" type="text/css" />
-    <link href="/uPortal/media/skins/respondr/uPortal4/css/portlet.css" rel="stylesheet" type="text/css" />
-</xsl:template>
-
-
-
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
 <!-- ========================================================================= -->
@@ -522,7 +513,6 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
-            <xsl:call-template name="page.overrides" />
         </head>
         <body class="up dashboard portal fl-theme-mist">
 
@@ -667,7 +657,6 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
-            <xsl:call-template name="page.overrides" />
         </head>
         <body class="up dashboard portal fl-theme-mist">
             <div id="wrapper">

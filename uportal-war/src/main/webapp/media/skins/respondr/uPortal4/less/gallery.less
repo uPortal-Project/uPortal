@@ -5,33 +5,13 @@
  * The gallery is a sliding drawer that provides interfaces for customizing the protal.
  */
 
-/* ==========================================================================
-   Helpers: variables
-   ========================================================================== */
-
-/*
- * Colors, etc.
- */
-
-@import "variables.less";
-
-/* ==========================================================================
-   Helpers: utility mixins
-   ========================================================================== */
-
-/*
- * Import a bunch of helpful CSS3 mixins for LESS.
- */
-
-@import "mixins.less";
-
 /* $gray=@grayscale4 | $graylight=@grayscale3 | $graylighter=@grayscale2 | $graylightest=@grayscale1
  * $graydark=@grayscale7 | $graydarker=@grayscale8 | $graydarkest=@grayscale9
  * $dgray=@grayscale8 | $dgraylight=@grayscale7 | $dgraylighter=@grayscale6 | $dgraylightest=@grayscale5
  * $dgraydark=@grayscale8 | $dgraydarker=@grayscale9 | $dgraydarkest=@grayscale10
  * Colors
  */
-@galleryBackground              : @grayscale9;
+@galleryBackground              : @grayscale10;
 @galleryBorder                  : 1px solid @grayscale4;
 @galleryHandleBackground        : #000 url("../../common/images/gallery-bar.png") bottom left repeat-x;
 @galleryHandleBorder            : 1px solid @grayscale7;
@@ -42,37 +22,36 @@
 @galleryHandleIconClosed        : url("../../common/images/gallery-handle-arrow-down.png");
 @galleryHandleIconOpen          : url("../../common/images/gallery-handle-arrow-up.png") !important;
 @galleryBarBackground           : transparent url("../../common/images/gallery-bar.png") top left repeat-x;
-@galleryMenuBackground          : @grayscale7;
-@galleryMenuBorder              : 1px solid @grayscale3;
-@galleryMenuItemBackground      : @grayscale6;
-@galleryMenuItemBorder          : 1px solid @grayscale7;
+@galleryMenuBackground          : @grayscale9;
+@galleryMenuItemBackground      : @grayscale8;
+// @galleryMenuItemBorder          : 1px solid @grayscale7;
 @galleryMenuItemLink            : @grayscale3;
-@galleryMenuItemBackgroundHover : @color1-darkest;
+@galleryMenuItemBackgroundHover : @color1-darker;
 @galleryMenuItemLinkHover       : #fff;
-@galleryMenuItemActiveBackground: @grayscale8;
+@galleryMenuItemActiveBackground: @grayscale10;
 @galleryMenuItemActiveLink      : #fff;
-@galleryMenuItemActiveIcon      : @grayscale8 url("../../common/images/gallery-arrow-right.png") 90% 50% no-repeat;
+@galleryMenuItemActiveIcon      : transparent url("../../common/images/gallery-arrow-right.png") 90% 50% no-repeat;
 @galleryCloseButtonType         : default;
 @galleryFilterBackground        : @grayscale7;
-@galleryFilterBorder            : 1px solid @grayscale5;
+@galleryFilterBorder            : 1px solid @grayscale8;
 @galleryFilterRound             : 5px;
 @galleryFilterTitleRound        : 5px;
-@galleryFilterTitleBackground   : @grayscale8;
-@galleryFilterTitle             : @color1-dark;
-@galleryFilterTitleHover        : @color1-light;
-@galleryFilterTitleActive       : #fff;
+@galleryFilterTitleBackground   : @grayscale10;
+@galleryFilterTitle             : @color1;
+@galleryFilterTitleHover        : @color1-lighter;
+@galleryFilterTitleActive       : @white;
 @galleryFilterTitleActiveHover  : @color1-lighter;
-@galleryFilterTitleActiveBgd    : @grayscale7;
+@galleryFilterTitleActiveBgd    : @grayscale9;
 @galleryFilterSubtitle          : @grayscale2;
 @galleryFilterSubtitleLine      : 1px dotted @grayscale9;
-@galleryFSearchInputBackground  : @grayscale5;
-@galleryFSearchInputText        : @grayscale8;
+@galleryFSearchInputBackground  : @grayscale8;
+@galleryFSearchInputText        : @grayscale10;
 @galleryFSearchInputPadding     : 0.3em;
-@galleryFSearchInputHover       : @grayscale8;
-@galleryFSearchInputFocus       : #fff;
+@galleryFSearchInputHover       : @grayscale7;
+@galleryFSearchInputFocus       : @white;
 @galleryCatLink                 : @grayscale3;
 @galleryCatLinkHover            : @color1;
-@galleryCatActiveLink           : #fff;
+@galleryCatActiveLink           : @white;
 @galleryPackagesText            : @grayscale2;
 @galleryResultsBottomPadding    : 5px;
 @galleryResultsText             : @grayscale4;
@@ -81,15 +60,15 @@
 @galleryRIRound                 : 5px;
 @galleryRIShadow                : 1px 1px 2px #000;
 @galleryRIUtilityHeight         : 16px;
-@galleryRIUtilityBackground     : @grayscale7;
+//@galleryRIUtilityBackground     : @grayscale7;
 @galleryRIUtilityRound          : 5px;
-@galleryRIGripper               : @grayscale7 url("../../common/images/gripper.png") 5px 0px no-repeat;
-@galleryRITitle                 : #fff;
+@galleryRIGripper               : @grayscale9 url("../../common/images/gripper.png") 5px 0px no-repeat;
+@galleryRITitle                 : @white;
 @galleryRIDescription           : @grayscale3;
 @galleryRIBackgroundHover       : @grayscale9;
 @galleryRIBorderHover           : 1px soild @color1;
-@galleryRIGradient1Hover        : @grayscale8;
-@galleryRIGradient2Hover        : @grayscale10;
+@galleryRIGradient1Hover        : @grayscale10;
+@galleryRIGradient2Hover        : #060606;
 @galleryRILink                  : #000;
 @galleryRILinkBackground        : @grayscale8;
 @galleryRILinkGradient1         : @grayscale4;
@@ -102,14 +81,14 @@
 @galleryRISelectedBorderWidth   : 3px;
 @galleryRISelectedBorderStyle   : solid;
 @galleryRISelectedBorderColor   : @color1;
-@galleryPagerText               : #fff;
+@galleryPagerText               : @white;
 @galleryPagerButtonBackground   : @grayscale7;
 @galleryPagerButtonBorder       : 1px solid @grayscale5;
-@galleryPagerButtonGradient1    : @grayscale6;
-@galleryPagerButtonGradient2    : @grayscale8;
+@galleryPagerButtonGradient1    : @grayscale8;
+@galleryPagerButtonGradient2    : @grayscale10;
 @galleryPagerButtonRound        : 5px;
 @galleryPagerBtnBackgroundHover : @grayscale5;
-@galleryPagerBtnBorderHover     : 1px solid @color1;
+// @galleryPagerBtnBorderHover     : 1px solid @color1;
 @galleryPagerBtnGradient1Hover  : @grayscale6;
 @galleryPagerBtnGradient2Hover  : @grayscale10;
 @galleryPagerBtnBgdDisabled     : @grayscale8 !important;
@@ -125,7 +104,7 @@
     .border-radius(@galleryFilterRound);
 }
 .gallery-filter-title-round(@galleryFilterTitleRound) when (@galleryFilterTitleRound) {
-    .border-radiuses(@galleryFilterTitleRound, @galleryFilterTitleRound, 0, 0);
+    .border-radiuses(5px, 0, 0, 5px);
     span {
         .border-radiuses(@galleryFilterTitleRound, @galleryFilterTitleRound, 0, 0);
     }
@@ -163,6 +142,11 @@
          background: @galleryBackground;
          border: @galleryBorder;
 
+         div {
+            margin: 0;
+            padding: 0;
+         }
+
          .handle {
              /* Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer. */
              background: @galleryHandleBackground;
@@ -172,8 +156,8 @@
                  color: @galleryHandleLink;
                  border: @galleryHandleBorder;
                  border-top: none;
-                 .gallery-handle-round(@galleryHandleRound);
-                 .gallery-handle-shadow(@galleryHandleShadow);
+                 // .gallery-handle-round(@galleryHandleRound);
+                 // .gallery-handle-shadow(@galleryHandleShadow);
 
                  span {
                      background-image: @galleryHandleIconClosed;
@@ -185,31 +169,93 @@
          }
 
         .gallery-inner {
-             background: @galleryBarBackground;
+            //.up-gallery .gallery-inner {display:none; overflow: hidden; padding-top:7px; height:200px;  position:relative;}
+             // background: @galleryBarBackground;
+             // border-top: 5px solid @grayscale2;
+             display: none;
+             overflow: hidden;
+             height: 200px;
+             position: relative;
 
              .menu-wrapper{
+                display: block;
+                float: left;
+                height: 200px;
+                position: relative;
+                width: 130px;
                  /* The navigation menu of gallery views. */
+/*
+*:first-child+html .up-gallery .menu li {height:25px;}
+ */
                  .menu {
-                     border: @galleryMenuBorder;
+                     // height:190px;
+                     // padding:10px 0 0 0;
+                     // position:relative;
+                     // margin-top:0;
+                     // margin-bottom:0;
+                     // margin-left:15px;
+                     // margin-right:auto;
+                     // width:100px;
+                     // border-left-width:1px;
+                     // border-left-style:solid;
+                     // border-right-width:1px;
+                     // border-right-style:solid;
+                     // border: @border;
+                     .border();
                      background: @galleryMenuBackground;
+                     height: 190px;
+                     margin: 0 auto 0 15px;
+                     padding: 10px 0 0 0;
+                     position: relative;
+                     width: 100px;
 
                      li {
-                         border: @galleryMenuItemBorder;
+                        // .up-gallery .menu li {
+                        // position:relative;
+                        // height:28px;
+                        // cursor:pointer;
+                        // list-style:none;
+                        // margin:0;
+                        // border-top-width:1px;
+                        // border-top-style:solid;
+                        // }
+                         .border(@grayscale7);
                          background: @galleryMenuItemBackground;
+                         cursor: pointer;
+                         height: 34px;
+                         list-style: none;
+                         margin: 0;
+                         position: relative;
+
 
                          a {
+                            //.up-gallery .menu li a {text-decoration: none; cursor: pointer;}
                              color: @galleryMenuItemLink;
-                         }
-                     }
-                     li:hover, li:active {
-                         background: @galleryMenuItemBackgroundHover;
+                             text-decoration: none;
 
-                         a {
-                             color: @galleryMenuItemLinkHover;
+                             span {
+                                bottom: 0;
+                                display: block;
+                                font-size: 12px;
+                                font-weight: bold;
+                                margin-right: -2px;
+                                padding: 8px;
+                             }
                          }
+                        &:hover, &:active {
+                            background: @galleryMenuItemBackgroundHover;
+
+                            a {
+                                 color: @galleryMenuItemLinkHover;
+                            }
+                        }
+
                      }
+
                      .active {
                          background: @galleryMenuItemActiveBackground;
+                         margin-right: -1px;
+                         border-right: none;
 
                          a {
                              color: @galleryMenuItemActiveLink;
@@ -217,35 +263,58 @@
 
                          span {
                              background: @galleryMenuItemActiveIcon;
+                             position: relative;
+                         }
+                         &:hover {
+                            background: @galleryMenuItemActiveBackground;
                          }
                      }
+                     li.last {
+                        border-bottom-width:1px;
+                        border-bottom-style:solid;
+                    }
 
                  }
-             }
+             } /* end .menu-wrapper */
 
              .content-filters-wrapper {
                  /* Search and category filters for the add portlet and use portlet views. */
-                 background: @galleryFilterBackground;
+                 background: @grayscale9;
                  border: @galleryFilterBorder;
-                 .gallery-filter-round(@galleryFilterRound);
+                 .border-radius();
+                 float: left;
+                 // .gallery-filter-round(@galleryFilterRound);
 
-                 h3 {
-                     /* Filter titles */
+                 h3 { /* Filter titles */
+                 // .up-gallery .content-filters-wrapper h3 {
                      background: @galleryFilterTitleBackground;
                      color: @galleryFilterTitle;
-                     .gallery-filter-title-round(@galleryFilterTitleRound);
+                     margin:0;
+                     padding:5px 0 0 0;
+                     cursor:pointer;
+                     font-size:12px;
+                     .border-radiuses(5px, 0, 0, 5px);
+                     // .gallery-filter-title-round(@galleryFilterTitleRound);
+                     // 
+                     span {
+                        // .up-gallery .content-filters-wrapper h3 span {
+                        padding:1px 10px;
+                     }
                  }
 
                  h3:hover, h3:focus {
                      color: @galleryFilterTitleHover;
                  }
 
-                 .active h3 {
-                     span {
-                         background: @galleryFilterTitleActiveBgd;
-                         color: @galleryFilterTitleActive;
-                     }
-                 }
+                 .active {
+                    h3 {
+                         span {
+                             background: @galleryFilterTitleActiveBgd;
+                             color: @galleryFilterTitleActive;
+                             .border-radiuses(5px, 0, 0, 5px);
+                         }
+                    }
+                } 
 
                  .active h3:hover, .active h3:focus {
                      color: @galleryFilterTitleActiveHover;
@@ -262,6 +331,7 @@
                      background: @galleryFSearchInputBackground;
                      color: @galleryFSearchInputText;
                      padding: @galleryFSearchInputPadding;
+                     .border-radius;
                      &:hover {
                          background: @galleryFSearchInputHover;
                      }
@@ -289,7 +359,7 @@
                      /* Filter packages */
                      color: @galleryPackagesText;
                  }
-             }
+             } /* end .content-filters-wrapper*/
 
              .results-wrapper {
                  /* Results section of the gallery. Lists portlets, packages, skins, or layout options. */
@@ -300,21 +370,34 @@
                  .skins-wrapper .ri-link,
                  .portlet.result-item,
                  .package.results-item {
-                      background: @galleryRIBackground;
-                      border: @galleryRIBorder;
-                     .gallery-ri-round(@galleryRIRound);
-                     .gallery-ri-shadow(@galleryRIShadow);
+
+                    // background: #333333;
+                    // border: 1px solid #595959;
+                    // -moz-border-radius: 5px;
+                    // -webkit-border-radius: 5px;
+                    // border-radius: 5px;
+                    // -moz-box-shadow: 1px 1px 2px black;
+                    // -webkit-box-shadow: 1px 1px 2px black;
+                    // box-shadow: 1px 1px 2px black;
+
+                      background: @grayscale10;
+                      .border(@grayscale5);
+                      .border-radius();
+                     // .gallery-ri-round(@galleryRIRound);
+                     .box-shadow(@galleryRIShadow);
+
                      &:hover,
                      &:focus,
                      &:active {
                          background: @galleryRIBackgroundHover;
                          border: @galleryRIBorderHover;
-                         .gradient(@galleryRIGradient1Hover,@galleryRIGradient2Hover);
+                         .gradient(@galleryRIGradient1Hover, @galleryRIGradient2Hover);
                      }
                  }
                  .layout-wrapper, .skins-wrapper {
                      .ri-link {
-
+                        .border-radiuses(5px, 0, 0, 0);
+                        .gradient(darkgrey, @grayscale8);
                      }
                  }
                  .results-item.disabled {
@@ -339,12 +422,25 @@
                  .ri-wrapper {
                      .ri-utility {
                          height: @galleryRIUtilityHeight;
-                         background: @galleryRIUtilityBackground;
-                         .gallery-ri-utility-round(@galleryRIUtilityRound);
+                         background: @grayscale9;
+                         .border-radiuses(5px, 0, 0, 5px);
+                         // .gallery-ri-utility-round(@galleryRIUtilityRound);
                      }
 
                      .portlet-thumb-gripper {
+// .up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
+// .up-gallery .portlet-thumb-gripper span {}
                          background: @galleryRIGripper;
+                         cursor: move;
+                         display: block;
+
+                         span {
+                            display: block;
+                            height: 16px;
+                            overflow: hidden;
+                            visibility: hidden;
+                            width: 16px;
+                         }
                      }
 
                      .ri-titlebar {
@@ -359,17 +455,20 @@
                 .portlet-wrapper, .package-wrapper {
                     .ri-link {
                         color: @galleryRILink;
-                        background: @galleryRIBackground;
-                        .gallery-ri-link-gradient(@galleryRILinkGradient1);
-                        .gallery-ri-link-round(@galleryRILinkRound);
-
+                        // background: @galleryRIBackground;
+                        .border-radiuses(5px, 0, 0, 0);
+                        .gradient(darkgrey, @grayscale8);
                         display: none;
                     }
                 }
-                .portlet-wrapper:hover, .portlet-wrapper:focus, .package-wrapper:hover, .package-wrapper:focus {
+                .portlet-wrapper:hover,
+                .portlet-wrapper:focus,
+                .package-wrapper:hover,
+                .package-wrapper:focus {
                     .ri-link {
                         background: @galleryRILinkBackgroundHover;
-                        .gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover);
+                        // .gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover);
+                        .gradient(#699bc4, #38678f);
 
                         display: block;
                     }
@@ -382,26 +481,289 @@
                     .pager-button-up, .pager-button-down {
                         background: @galleryPagerButtonBackground;
                         border: @galleryPagerButtonBorder;
-                        .gallery-pager-button-gradient(@galleryPagerButtonGradient1);
-                        .gallery-pager-button-round(@galleryPagerButtonRound);
+                        .gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+                        .border-radius();
+                        // .gallery-pager-button-gradient(@galleryPagerButtonGradient1);
+                        // .gallery-pager-button-round(@galleryPagerButtonRound);
                     }
                     .pager-button-up:hover, .pager-button-up:focus, .pager-button-down:hover, .pager-button-down:focus {
                         background: @galleryPagerBtnBackgroundHover;
-                        border: @galleryPagerBtnBorderHover;
-                        .gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover);
+                        .border(steelblue);
+                        .gradient(#4d4d4d, #0d0d0d);
+                        // .gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover);
 
                     }
                     .fl-pager-disabled {
-                        background: @galleryPagerBtnBgdDisabled;
-                        border: @galleryPagerBtnBorderDisabled;
+                        // background: @galleryPagerBtnBgdDisabled;
+                        background: @grayscale10 !important;
+                        .border(@grayscale9) !important;
                         cursor: default !important;
                         a {
                             cursor: default !important;
                         }
                     }
-                 }
-             }
+                 } // end .pager 
+             } // end .results-wrapper
 
+        } // end .gallery-inner 
+
+        .content-wrapper {
+            margin:0 0 0 127px;
+            padding:8px 0;
+            display:block;
+            height:174px;
         }
-    } 
+        // .up-gallery .content-filters-wrapper {}
+        .content-filters-wrapper {
+            display: block;
+            height: 174px;
+            padding: 0px;
+            position: relative;
+            width: 200px;
+        }
+        .content-results-wrapper {
+            // .up-gallery .content-results-wrapper {margin:0 0 0 220px; display:block; height:172px;}
+            // .up-gallery .content-results-wrapper {padding:0px;}
+            margin: 0 0 0 220px;
+            display: block;
+            height: 172px;
+            padding: 0;
+        }
+        .column-inner {
+            position:relative;
+        }
+
+        .results-wrapper {
+            overflow:hidden;
+            padding-right:1px;
+        }
+
+    }  // end .up-gallery 
+}  // end .portal 
+
+/**
+ * Additional styles
+ */
+
+/*
+------------------------------------
+  uPortal Gallery.
+------------------------------------
+ * The gallery is a sliding drawer that provides interfaces for customizing the protal.
+ */
+
+/* Gallery Layout
+ * Includes Fluid layout overides.
+ * Generally the overall layout should not need to be altered.
+ * If needed, override these values on a per-skin basis by adding the overrides to portal.css within the desired skin folder.
+ */
+.clear-float {clear:both;}
+.up-gallery {position:relative;}
+
+
+// .up-gallery .menu-wrapper {width:130px; display:block; height:200px; position:relative;}
+
+.up-gallery .content {padding-right:8px; }
+
+
+.up-gallery .content-pager-wrapper {padding:0px; width:70px; display:block; height:170px;}
+
+.up-gallery .skins .content-results-wrapper,
+.up-gallery .layouts .content-results-wrapper {margin-left:0px; margin-right:0px;}
+
+.up-gallery .fl-col-mixed2 .fl-col-main {padding-left:0px;}
+.up-gallery .content .add-content,
+.up-gallery .content .use-content {overflow-y: hidden;}
+
+
+/* Gallery Menu Items
+ * The navigation menu of gallery views.
+ */
+// .up-gallery .menu {height:190px; padding:10px 0 0 0; position:relative; margin-top:0; margin-bottom:0; margin-left:15px; margin-right:auto; width:100px; border-left-width:1px; border-left-style:solid; border-right-width:1px; border-right-style:solid;}
+// .up-gallery .menu li {position:relative; height:28px; cursor:pointer; list-style:none; margin:0; border-top-width:1px; border-top-style:solid;}
+// .up-gallery .menu li a {text-decoration: none; cursor: pointer;}
+// .up-gallery .menu li.last {border-bottom-width:1px; border-bottom-style:solid;}
+// .up-gallery .menu li span {
+//     padding:7px;
+//     display:block;
+//     height:14px;
+//     width:110px;
+//     bottom:0;
+//     font-weight:bold; 
+//     font-size:12px;
+// }
+// .up-gallery .menu li.active span {position:relative;}
+// .up-gallery .menu li.active:hover,
+// .up-gallery .menu li.active:focus {outline:none;}
+// .up-gallery .menu li :focus {outline:none;}
+// *:first-child+html .up-gallery .menu li {height:25px;}
+
+
+/* Gallery Handle
+ * Clickable handle that opens the drawer. Once open, the handle can be clicked to close the drawer.
+ */
+.up-gallery .handle {margin:0; padding:0; position:absolute; bottom:-7px; left:0; right:0; height:7px; clear:both;}
+.up-gallery .handle a {width:100px; cursor:pointer; font-size:10px; border-top:0px; position:absolute; top:6px; left:0; margin-left:25px;}
+.up-gallery .handle a:hover {text-decoration: none;}
+.up-gallery .handle a span {text-transform:uppercase; font-weight:bold; padding:1px 25px 2px 10px; margin-right:5px; display:block;}
+
+
+/* Gallery Modal Loaders
+ * Preloaders while the content loads, following the opening of the drawer.
+ */
+.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background-image:url("../../common/images/gallery-content-preloader.gif"); background-position:50% 50%; background-repeat:no-repeat;}
+.up-gallery .gallery-loader span {display: none;}
+
+
+/* Gallery Close Button
+ * An explicit close button, that closes the drawer.
+ */
+.up-gallery .close-button {position:absolute; left:32px; bottom:5px;}
+
+
+/* Gallery Add/Use Portlet Filters
+ * Search and category filters for the add portlet and use portlet views.
+ */
+.up-gallery .portlet-search-form {margin-bottom:10px;}
+.up-gallery .portlet-search-form label,
+.up-gallery .portlet-search-form .portlet-search-submit {display:none;}
+.up .up-gallery .portlet-search-form .portlet-search-input {width:157px;}
+
+.up-gallery .categories,.up-gallery .packages {}
+.up-gallery .categories-column, .up-gallery .packages-column {padding:0;}
+.up-gallery .categories-column, .up-gallery .packages-column {clear:both;}
+.up-gallery .packages-column h3 {position:absolute; top:0; left:56px;}
+.up-gallery .categories-column .categories-wrapper, .up-gallery .packages-column .packages-wrapper {display:none;}
+.up-gallery .categories-column.active .categories-wrapper, .up-gallery .packages-column.active .packages-wrapper {display:block;}
+.portal .up-gallery .packages-wrapper,
+.portal .up-gallery .categories-wrapper {
+    padding:10px;
 }
+.up-gallery .packages p {margin:0; font-size:11px;}
+.up-gallery .categories-column h4 {padding-bottom:1px; margin-bottom:3px; font-size:10px; text-transform:uppercase;}
+.up-gallery .categories ul, .up-gallery .categories li, .up-gallery .categories a {list-style:none; margin:0; padding:0; font-size:10px; text-decoration:none;}
+.up-gallery .categories li {float:left; padding:1px 0 1px 2px;  text-align:left; cursor:pointer;}
+.up-gallery .categories li:after {content:", ";}
+.up-gallery .categories li:last-child:after {content:"";}
+.up-gallery .categories li.active a {text-decoration:underline;}
+
+
+/* Gallery List Pager
+ * Pagination controls for lists in the gallery.
+ */
+.up-gallery .pager-button-up span,
+.up-gallery .pager-button-down span {display:none;}
+.up-gallery .pager-pagination {height:38px; margin:2px 0 2px 0; font-size:10px;}
+.up-gallery .pager-button-up-inner {
+    display:block;
+    height:59px;
+    background: url('../../common/images/gallery-pager-up-active.png') center 85% no-repeat;
+}
+.up-gallery .pager-button-down-inner {
+    display:block;
+    height:59px;
+    background: url('../../common/images/gallery-pager-down-active.png') center 15% no-repeat;
+}
+.up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {
+    background-image: url('../../common/images/gallery-pager-up-inactive.png');
+}
+.up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {
+    background-image: url('../../common/images/gallery-pager-down-inactive.png');
+}
+.up-gallery .pager-button-up,
+.up-gallery .pager-button-down {cursor:pointer; position:relative; height:62px;}
+
+
+/* Gallery Results List
+ * General formatting for results lists (portlets, packages, skins, and layouts).
+ */
+.up-gallery .results-wrapper {font-size:10px; position:relative;}
+.up-gallery .results-wrapper-inner {padding: 0px 5px;}
+.up-gallery .results-wrapper .results-list {
+    list-style:none;
+    padding: 0;
+    padding-top: 5px;
+    margin:0;
+    position:relative;
+    width:100%;
+    overflow:hidden;
+}
+.up-gallery .results-wrapper .results-list .results-item,
+.up-gallery .results-wrapper .results-list .result-item {margin-right: 5px; margin-bottom:5px;}
+.up-gallery .results-wrapper .results-list li {display:block; list-style:none; padding:0; margin:0; position:relative; float:left;}
+.up-gallery .results-wrapper .results-list li .ri-wrapper {padding:0px; position:relative;}
+.up-gallery .results-wrapper .results-list .skins-wrapper .ri-link,
+.up-gallery .results-wrapper .results-list .layout-wrapper .ri-link {display:block; padding:5px;}
+.up-gallery .results-wrapper .results-list .ri-link .ri-content {overflow: hidden;}
+.up-gallery .results-wrapper a {text-decoration:none;}
+.up-gallery .results-column.fl-col-main {margin:0 74px 0 0; padding:0px; position:relative;}
+.up-gallery .results-wrapper .pager-column.fl-col-side {float:right; width:74px; margin:0px; padding:0px;}
+.up-gallery .ri-titlebar {font-size:11px; font-weight:bold; margin-bottom: 5px;}
+.up-gallery .ri-icon {float:left; margin-right:5px;}
+.up-gallery .skins-wrapper .ri-icon {margin-right:0;}
+.up-gallery .ri-icon span {visibility: hidden;}
+.up-gallery .ri-description {clear:right; display:inline;}
+
+/* Gallery Portlet and Package Lists
+ * The list of portlets and packages for add and use.
+ */
+.up-gallery .portlet-list li,
+.up-gallery .package-list li {width: 32%; height:50%;}
+.up-gallery .portlet-list li .portlet-wrapper,
+.up-gallery .package-list li .package-wrapper {height:80px;}
+.up-gallery .portlet-wrapper .ri-link,
+.up-gallery .package-wrapper .ri-link {position: absolute; top: 0px; right: 0px; display: block; cursor:pointer; padding:1px 8px; text-align:center;}
+.up-gallery .portlet-wrapper .ri-icon,
+.up-gallery .package-wrapper .ri-icon {width:32px; height:32px;}
+.up-gallery .package-wrapper .ri-content,
+.up-gallery .portlet-wrapper .ri-content {padding:5px;}
+
+/* Drag Handle */
+// .up-gallery .portlet-thumb-gripper {display: block; cursor: move;}
+// .up-gallery .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+/* IE7 adjustments*/
+*:first-child+html .up-gallery .results-wrapper .portlet-list li,
+*:first-child+html .up-gallery .results-wrapper .package-list li {width:24%;}
+
+
+/* Gallery Skin List
+ * The list of skins.
+ */
+.up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
+
+/* Gallery Layout List
+ * The list of page layouts.
+ */
+.up-gallery .results-wrapper .layouts-list li {width:140px; height:50%;}
+.up-gallery .layout-wrapper .layout-thumb {width: 27px; height:27px;}
+
+
+/* Gallery: Avatar */
+.portlet.ui-draggable-dragging {
+    border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
+    padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333; position: relative;
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto;
+    overflow: hidden; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80);}
+.portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
+.portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
+.portlet.ui-draggable-dragging .portlet-thumb-link {
+    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,@white);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(@white)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,@white);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(@white));}
+.portlet.ui-draggable-dragging .portlet-thumb-gripper {
+    display: block; background: #444444 url("../../common/images/gripper.png") 5px 0px no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
+.portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
+.portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
+.portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
+.portlet.ui-draggable-dragging .portlet-thumb-icon {width:37px; height:37px;}
+.portlet.ui-draggable-dragging .portlet-thumb-icon span {visibility: hidden;}
+.portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 11px;}
+
+
+/* Gallery: Drop Target */
+.layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dotted #960000; font-weight: bold; color: #960000;}
+.layout-draggable-drop-target span {display: block; padding: 65px 5px 5px 5px;}
+.layout-draggable-drop-target-active {}
+.layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("../../common/images/loading.gif") 50% 50% no-repeat;}
+.layout-draggable-target-dropped span {display:none;}
+

@@ -23,7 +23,7 @@
         </div>
         <div class="fl-col-main content-wrapper" role="tabpanel">
             <div class="fl-fix content">
-                <!--xsl:call-template name="gallery-use-content-pane"/-->
+                <!--xsl:call-template name="gallery-add-content-pane"/-->
                 <div class="fl-fix fl-col-mixed fl-col-mixed2 pane add-content">
                     <div class="fl-col-fixed fl-force-left content-filters-wrapper">
                         <div class="categories-column active">
@@ -183,6 +183,7 @@
                     </div>
                     <div class="content-modal content-loading"></div>
                 </div>
+
                 <!--xsl:call-template name="gallery-use-content-pane"/-->
                 <div class="fl-fix fl-col-mixed fl-col-mixed2 use-content" style="display:none">
                     <div class="fl-col-fixed fl-force-left content-filters-wrapper">
@@ -330,6 +331,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div id="galleryLoader" class="gallery-loader"><span><spring:message code="loading"/></span></div>
