@@ -23,16 +23,17 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <div>
 <ul class="list-group">
-
   <c:forEach var="collection" items="${collections}">
     <li class="list-group-item">
-      <span class="glyphicon glyphicon-chevron-right pull-right"></span>${collection.name}
+      <span class="glyphicon glyphicon-chevron-right pull-right"></span>
+      <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">${collection.name}</a>
     </li>
   </c:forEach>
 
   <c:forEach var="favorite" items="${favorites}">
     <li class="list-group-item">
-      <span class="glyphicon glyphicon-star pull-right"></span>${favorite.name}
+      <span class="glyphicon glyphicon-star pull-right"></span>
+      <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">${favorite.name}</a>
     </li>
   </c:forEach>
 
