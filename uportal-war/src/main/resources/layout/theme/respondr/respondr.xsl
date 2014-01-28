@@ -524,7 +524,7 @@
             <xsl:call-template name="page.overrides" />
         </head>
         <body class="up dashboard portal fl-theme-mist">
-
+			<div id="up-notification"></div>
             <div id="wrapper">
                 <xsl:call-template name="region.page-top" />
                 <header class="portal-header" role="banner">
