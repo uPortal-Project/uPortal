@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<profile script="classpath://org/jasig/portal/io/import-profile_v3-2.crn" username="system">
+<profile script="classpath://org/jasig/portal/io/import-profile_v3-2.crn" 
+  username="system" >
   <name>HTML responsive design profile</name>
   <fname>respondr</fname>
   <description>A responsive profile for common web browsers</description>
