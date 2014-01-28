@@ -574,7 +574,7 @@
 	            <script type="text/javascript">
 	            	(function($) {
   						$( document ).ready(function() {
-	            			$('.addToFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="//focused/channel/@chanID"/>'}, up.addToFavorite);
+	            			$('.addToFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="//focused/channel/@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
 	            		});
 					})(up.jQuery);
 	            </script>

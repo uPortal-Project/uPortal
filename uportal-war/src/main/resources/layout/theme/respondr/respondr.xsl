@@ -664,60 +664,36 @@
                 </header>
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
+                    <xsl:call-template name="region.pre-content" />
                     <div class="container">
-                        <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
-                            <xsl:call-template name="region.sidebar-left" />
-                            <!-- The following div must know how many columns are taken by sidebar-left and sidebar-right, if any -->
-                            <xsl:variable name="SIDEBAR_LEFT_COLUMNS">
-                                <xsl:choose>
-                                    <xsl:when test="//region[@name='sidebar-left']/channel">2</xsl:when>
-                                    <xsl:otherwise>0</xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:variable>
-                            <xsl:variable name="SIDEBAR_RIGHT_COLUMNS">
-                                <xsl:choose>
-                                    <xsl:when test="//region[@name='sidebar-right']/channel">2</xsl:when>
-                                    <xsl:otherwise>0</xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:variable>
-                            <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="12 - $SIDEBAR_LEFT_COLUMNS - $SIDEBAR_RIGHT_COLUMNS" /></xsl:variable>
-                            <div class="{$WIDTH_CSS_CLASS}">
-                                <!-- USE FLUID ROWS WITHIN HERE -->
-
-                                <xsl:call-template name="region.pre-content" />
-                                <!-- For editing page permissions in fragment-admin mode  -->
-                                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                                    <div class="row-fluid">
-                                        <div class="col-md-9"></div>
-                                        <div class="col-md-3">
-                                            <div id="portalEditPagePermissions" class="fl-fix">
-                                                <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                                                    <i class="fa fa-align-justify"></i>
-                                                    <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                                                </a>
-                                            </div>
-                                        </div>
+                        <!-- For editing page permissions in fragment-admin mode  -->
+                        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                            <div class="row">
+                                <div class="col-md-9"></div>
+                                <div class="col-md-3">
+                                    <div id="portalEditPagePermissions" class="fl-fix">
+                                        <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                            <i class="fa fa-align-justify"></i>
+                                            <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                                        </a>
                                     </div>
-                                </xsl:if>
-                                <!-- Works with up-layout-preferences.js showMessage()  -->
-                                <div class="row-fluid">
-                                    <div id="portalPageBodyMessage" class="col-md-12"></div>
                                 </div>
-
-                                <xsl:choose>
-                                    <xsl:when test="$PORTAL_VIEW='focused'">
-                                        <!-- === FOCUSED VIEW === -->
-                                        <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:apply-templates select="layout/content" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-
-                                <!-- /USE FLUID ROWS -->
                             </div>
-                            <xsl:call-template name="region.sidebar-right" />
-                        </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
+                        </xsl:if>
+                        <!-- Works with up-layout-preferences.js showMessage()  -->
+                        <div class="row">
+                            <div id="portalPageBodyMessage" class="col-md-12"></div>
+                        </div>
+
+                        <xsl:choose>
+                            <xsl:when test="$PORTAL_VIEW='focused'">
+                                <!-- === FOCUSED VIEW === -->
+                                <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="layout/content" />
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </div>
                 </div>
                 <xsl:call-template name="footer.nav" />
