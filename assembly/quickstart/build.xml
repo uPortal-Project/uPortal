@@ -94,7 +94,7 @@
         <echo message="Starting Tomcat ..." />
         
         <exec executable="${tomcat.dir}/bin/startup.${tcExecutableSuffix}" dir="${tomcat.dir}">
-            <env key="CATALINA_OPTS" value="-server -XX:MaxPermSize=300m -Xmx300m"/>
+            <env key="CATALINA_OPTS" value="-server -XX:MaxPermSize=300m -Xmx500m"/>
             <env key="CATALINA_PID" value="${CATALINA_PID_FILE}"/>
         </exec>
 
