@@ -24,6 +24,7 @@ import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.jasig.portal.portlets.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -67,6 +68,8 @@ public class FavoritesController {
 
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
         model.addAttribute("favorites", favorites);
+        
+        model.addAttribute("marketplaceFname",MarketplacePortletDefinition.MARKETPLACE_FNAME);
 
         return "jsp/Favorites/view";
     }
