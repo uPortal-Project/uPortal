@@ -40,7 +40,6 @@
 </ul>
 
 <span class="pull-right">
-	<!-- TODO : Link to marketplace -->
-	<a href="#">Browse for Resources</a>
+	<a href="${renderRequest.contextPath}/p/${marketplaceFname}/render.uP">Browse for Resources</a>
 </span>
 </div>
