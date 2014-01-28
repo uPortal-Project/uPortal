@@ -118,7 +118,7 @@
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
-                          <i class="fa fa-plus-sign-circle"></i>
+                          <i class="fa fa-plus-circle"></i>
                         </a>
                     </li>
                  </xsl:if>
@@ -240,16 +240,18 @@
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
-        <i class="fa fa-chevron-right"></i>
+        <i class="fa fa-chevron-right visible-xs"></i>
       </a> <!-- Navigation item link. -->
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
         <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+          <i class="fa fa-align-justify"></i>
           <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
         </a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:deleteAllowed='false')">
           <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
+            <i class="fa fa-times"></i>
             <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
           </a><!-- Remove tab icon. -->
         </xsl:if>

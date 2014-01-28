@@ -185,76 +185,7 @@ body {
 /* ==========================================================================
    Navigation
    ========================================================================== */
-    .portal-nav {
-        background: @color1-dark;
-
-        .menu-toggle {
-            position: absolute;
-            top: 40px;
-            right: 20px;
-            padding: 0.5rem 1rem;
-            background: @color2;
-            color: #FFF;
-            .border-radius;
-            font-weight: bold;
-            color: #FFF;
-            text-decoration: none;
-
-            &:hover, &:focus {
-                background: @color3;
-            }
-
-            i {
-                padding-right: 0.25em;
-            }
-        }
-
-        .menu {
-            .inline-block-list;
-            display: none;
-
-            li {
-                border-bottom: 1px solid @color1;
-
-                a {
-                    display: block;
-                    color: @grayscale3;
-                    font-weight: bold;
-                    text-decoration: none;
-                    padding: 8px 14px;
-
-                    i {
-                        float: right;
-                        margin-top: 2px;
-                        margin-right: -6px;
-                        opacity: .5;
-                    }
-
-                    &:hover, &:focus {
-                        background: @color1-light;
-                        color: #FFF;
-
-                        i {
-                            opacity: 1;
-                        }
-                    }
-                }
-            }
-
-            .active {
-
-                a {
-                    background: @color1-darker;
-                    color: #FFF;
-
-                    i {
-                        opacity: 1;
-                    }
-                }
-            }
-        }
-        
-    } // end .portal-nav
+@import "navigation";
 
 /* ==========================================================================
    Content
@@ -465,36 +396,12 @@ body {
  */
 
 @media only screen and (min-width: 769px) {
-
+    #region-customize button {
+        // float: right;
+    }
 /*
  * Convert navigation from toggled block menu to inline tabs.
  */
-    .portal-nav {
-
-        .menu-toggle {
-            display: none;
-        }
-
-        i {
-            display: none;
-        }
-
-        .menu {
-            display: block;
-            .inline-block-list;
-
-            li {
-                border: none;
-                .float;
-
-                a {
-                    display: inline-block;
-                    line-height: 30px;
-                    padding: 6px 20px;
-                }
-            }
-        }
-    }
 
 /*
  * Adjust spacing and styling.
