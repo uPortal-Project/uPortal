@@ -1,0 +1,91 @@
+/* ==========================================================================
+   Footer Nav
+   ========================================================================== */
+
+    .portal-footer-nav {
+        background: @grayscale10;
+        color: @grayscale6;
+        font-size: 80%;
+        padding: 20px;
+
+        a {
+            color: @grayscale6;
+
+            &:hover, &:focus {
+                color: @grayscale2;
+            }
+        }
+
+        h4 a {
+            color: @grayscale2;
+            margin: 0;
+
+            &:hover, &:focus {
+                color: @grayscale2;
+            }
+        }
+
+        ul {
+            list-style-type: none;
+            margin-left: 10px;
+            display: none;
+            padding: 0;
+        }
+    }
+
+/* ==========================================================================
+   Footer Legal
+   ========================================================================== */
+
+    .portal-footer-legal {
+        background: @grayscale9;
+        color: @grayscale5;
+        font-size: 80%;
+        padding: 20px;
+
+        a {
+            color: @grayscale5;
+
+            &:hover, &:focus {
+                color: @grayscale1;
+            }
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 120%;
+        }
+
+        ul {
+            .inline-block-list;
+            li {
+                .float;
+                margin-right: 10px;
+            }
+        }
+
+        p {
+            clear: both;
+            font-size: 80%;
+        }
+    }
+
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+@media only screen and (min-width: 769px) {
+    .portal-footer-legal, .portal-footer-nav {
+        padding: 20px 0;
+    }
+    
+    .portal-footer-nav {
+        ul {
+            display: block;
+        }
+    }
+}

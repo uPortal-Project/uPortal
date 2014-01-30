@@ -1,0 +1,153 @@
+/**
+ * Local Variables
+ */
+@portletWrapperBorderRadius: 5px;
+
+    /** Page Message for returned action messages */
+    #portalPageBodyMessage {
+        display: none; 
+        .border-radius(7px);
+        margin-bottom: 1em;
+    }
+    #portalPageBodyMessage.error {
+        background-color: @color3-lighter;
+        .border(@color3-dark);
+    }
+    #portalPageBodyMessage.warn {
+        background-color: @color3-lighter;
+        .border(@color3-dark);
+    }
+    #portalPageBodyMessage.success {
+        background-color: @color2-lighter;
+        .border(@color2-dark);
+    }
+    #portalPageBodyMessage p {
+        font-weight: bold; margin-bottom: 2px;
+        text-align: center;
+    }
+
+    .portlet {
+        margin-bottom: 2px;
+        padding: 10px;
+    }
+
+    .portlet-header {
+
+    }
+
+    .portlet-title {
+        .border-radiuses-top(5px);
+
+        .btn-group {
+
+        }
+    }
+    .portlet-content {
+        color: @grayscale8;
+        padding: 0 20px 20px 20px;
+    }
+
+    .borderless {
+        background: @grayscale10;
+        border-color: @black;
+
+        .portlet-header {
+            display: none;
+        }
+
+        .portlet-content {
+            color: @grayscale2;
+            padding: 20px;
+        }
+
+    }
+
+    section h1 {
+        font-size: 135%;
+    }
+    section h2 {
+        font-size: 125%;
+    }
+    section h3 {
+        font-size: 115%;
+    }
+    section h4 {
+        font-size: 105%;
+    }
+
+    .up-portlet-wrapper-inner {
+        margin: 10px 0;
+    }
+    
+    .up-portlet-titlebar {
+        // background-color: #e9e9e9; /* Old browsers */
+        .gradient (@grayscale1, @grayscale3);
+        .border(@grayscale2);
+        border-bottom: none;
+        .border-radiuses-top(@portletWrapperBorderRadius);
+        position: relative;
+
+
+        h2 {
+            font-size: 14px;
+            padding: 7px 7px;
+            margin: 0;
+            list-style: none;
+            line-height: 20px;
+        }
+
+        .btn-group {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            margin: 0;
+
+            >a {
+                color: @grayscale6;
+                font-size: 11px;
+                font-weight: normal;
+            }
+        }
+
+        .caret {
+            border-top-color: @grayscale6;
+        }
+    }
+    // .up-portlet-wrapper-inner .up-portlet-titlebar h2 {
+
+    // }
+
+    .up-portlet-content-wrapper {
+        background-color: @white;
+        .border(@grayscale2);
+        border-top: none;
+        .border-radiuses-bottom(@portletWrapperBorderRadius);
+        overflow: hidden;
+        padding: 10px;
+    }
+
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+
+/*
+ * When the screen size is larger than 769px wide...
+ * (Corresponds to the smallest breakpoint in Bootstrap)
+ */
+
+@media only screen and (min-width: 769px) {
+    .portal-content {
+        padding: 0 0 0 20px;
+    }
+
+    .portlet {
+        margin-bottom: 10px;
+        .border-radius;
+    }
+
+}

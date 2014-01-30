@@ -23,8 +23,8 @@
 <skins>
   
   <skin>
-    <skin-key>uPortal4</skin-key>
-    <skin-name>uPortal4</skin-name>
+    <skin-key>defaultSkin</skin-key>
+    <skin-name>defaultSkin</skin-name>
     <skin-description>
       Basic skin for the Respondr theme based on Twitter Bootstrap and Responsive Design
     </skin-description>

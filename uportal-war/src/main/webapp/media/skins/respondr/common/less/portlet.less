@@ -1,0 +1,267 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* uPORTAL PORTLET STYLE CSS
+ * These declarations are scoped for portlet content specifically.
+ * These declarations may be scoped for all portlets and/or for a specific portlet.
+ * These declarations may override the portal-scoped css (see "portal.css" in the same directory).
+ * These declarations are for visual styling only, not for layout.
+ * For portlet-specifc layout CSS, see "layout-portlet.css" in the universality/common/css directory.
+ * This CSS assumes the use of a CSS reset (by default the FSS "fss-reset.css") for browser normalization.
+ */
+
+/* uPORTAL DEVELOPMENT STANDARDS AND GUIDELINES
+ * For the standards and guidelines that govern the user interface of uPortal portlets including HTML, CSS, JavaScript, accessibilty, naming conventions, 3rd Party libraries (like jQuery and the Fluid Skinning System) and more, refer to:
+ * http://www.ja-sig.org/wiki/x/cQ
+ */
+
+/* ICONS
+ * This CSS uses the Silk icon set 1.3 by Mark James:
+ * http://www.famfamfam.com/lab/icons/silk/
+ * which is licensed under a Creative Commons Attribution 2.5 License:
+ * http://creativecommons.org/licenses/by/2.5/
+ * This icon set is free for use under the CCA 2.5 license, so long as there is a link back to the author's site.  This reference is present in the portal footer markup of the universality theme.
+ */
+
+
+ /*====================================*/
+ /* uPortal Portlet Extensions */
+ /*====================================*/
+ /* uPortal-specific additions, extensions, and overrides. */
+
+ /* Portlet */
+/*
+ * Portlet is a structural element, the root portlet div and namespace.
+ * Portlet contains
+ * Portlets are mapped to the WAI-ARIA role "section";
+ * "A renderable structural containment unit in a document or application."
+ * Refer to: http://www.w3.org/TR/wai-aria/roles#section
+ * Additional classes on the root div include:
+ * the FSS structural class ("fl-widget")
+ * the specific portlet class (e.g., "prm-mgr" for Permissions Manager portlet)
+ * and the current portlet view class (e.g., "view-detail" for the Detail view).
+ * For example: <div class="fl-widget portlet prm-mgr view-detail" role="section">
+ */
+
+ .portlet {
+
+  /* Messages */
+  /*
+   * Dynamic system messages to tell people that an (otherwise invisible, backend) event occurred.
+   * Messages can be of these types: status, info, error, alert, success.
+   * Change the base CSS class for the appropriate type of message.
+   * Use an appropriate WAI-ARIA role (either "status" or "alert") on the HTML element to describe the message.
+   * Refer to: http://www.w3.org/TR/wai-aria/roles#status
+   * Use an h3 for the message title, and a paragraph for the message text.
+   * Messages communicate a system event, but should be written so that a _person_ can understand it. Use plain, people-oriented language.
+   */
+   .portlet-msg {
+    border: 2px solid #FFFF00;
+    color: #666;
+    background: #FFFFCC url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/bell.png) 0.5em 0.3em no-repeat;
+
+    &.info {
+        color: @black;
+        background: #99ccff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/information.png) 0.5em 0.3em no-repeat;
+        border-color: #3399ff;
+    }
+
+    &.error {
+        color: #f00;
+        background: #ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/exclamation.png) 0.5em 0.3em no-repeat;
+        border-color: #cc0000;
+    }
+    &.alert {
+        color: @black;
+        background: #FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 0.5em 0.3em no-repeat;
+        border-color: #FF6600;
+    }
+    &.success {
+        color: @black;
+        background: #D1F0E0 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0.5em 0.3em no-repeat;
+        border-color: #009900;
+    }
+}
+.portlet-msg .title {}
+.portlet-msg .content {}
+.portlet-msg.status {}
+
+
+
+/* Panel List */
+  /*
+   * For lists of boxed panels of like content. Larger and more visual than normal un/ordered lists.
+   */
+   /* Large icons */
+   .panel-list.icon-large .panel {padding-left: 4em; background: transparent url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-other.png) 1em 0.5em no-repeat;}
+   .panel-list.icon-large .type-categories {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-file-manager.png);}
+   .panel-list.icon-large .type-people {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png);}
+   .panel-list.icon-large .UP_ERROR_CHAN {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/status/dialog-warning.png);}
+   .panel-list.icon-large .UP_FRAGMENT {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png);}
+   .panel-list.icon-large .UP_USERS {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png);}
+   .panel-list.icon-large .UP_GROUPS {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-file-manager.png);}
+   .panel-list.icon-large .UP_PERMISSIONS {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/emblems/emblem-readonly.png);}
+   .panel-list.icon-large .UP_PORTLET_PUBLISH {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/window-new.png);}
+   .panel-list.icon-large .UP_PORTLET_SUBSCRIBE {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/preferences-system-windows.png);}
+   .panel-list.icon-large .UP_SYSTEM {background-image: url(/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png);}
+
+   /* Titlebars */
+   .titlebar .toolbar ul li {
+    list-style-type: none;
+}
+
+/* Entity Browser */
+.entity-browser .titlebar {background-color: #F8F8F8;}
+.entity-browser .titlebar:hover,
+.entity-browser .titlebar:focus {background-color: #FFC; cursor: pointer;}
+.entity-browser .titlebar .title {font-size: 120%;}
+.entity-browser .titlebar .select {background: transparent url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/add.png") 0 50% no-repeat;}
+/* selected */
+.entity-browser .selected {background-color: #D1F0E0;}
+.entity-browser .selected:hover,
+.entity-browser .selected:focus {background-color: #C8F0DD;}
+.entity-browser .selected .title {color: #248222;}
+.entity-browser .selected .select {background-image: url("/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png"); cursor: pointer;}
+/* member list */
+.entity-browser .member-list a {background-position: 0 50%; background-repeat:no-repeat;}
+.entity-browser .group .member-list a {background-image: url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png);}
+.entity-browser .person .member-list a {background-image: url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/vcard.png);}
+.entity-browser .category .member-list a {background-image: url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tag_orange.png);}
+.entity-browser .member-list a:hover,
+.entity-browser .member-list a:focus {background-color: #FFC; color:#336699;}
+
+.entity-browser .member-list a {
+    display: block;
+    padding: 1px 0 1px 20px;
+}
+
+/* Pager */
+  /*
+   * Formats pagination controls.
+   * Assumes the Fluid Infusion pager component.
+   */
+   /* Fluid Pager */
+   .view-pager ul.fl-pager-ui {text-align: right}
+   .view-pager .fl-pager-ui li {list-style-type: none; display: inline; padding-left: 5px; white-space: nowrap;}
+
+   /* Search Drop-down */
+   /* Affects Manage Groups */
+   .search-dropdown {
+    .border(#AAAAAA);
+    display: none;
+    left: 0;
+    margin-left: 20px;
+    min-height: 100px;
+    min-width: 200px;
+    padding: 0;
+    position: absolute;
+    top: 0;
+}
+
+.view-single-select {
+    position: relative;
+}
+
+.view-single-select .portlet-search {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+}
+
+/* Buttons in a list; example: Manage Portlets */
+li.btn a.button {
+    color: @grayscale10;
+}
+
+a.btn {
+    color: @grayscale10;
+}
+}
+
+/* Selection Basket */
+.portlet .selection-basket a {color: #248222; text-decoration: none; background:transparent url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0 50% no-repeat;}
+.portlet .selection-basket a:hover,
+.portlet .selection-basket a:focus {background-color:#FFFFCC; color:#9F0000; background-image:url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/delete.png);}
+
+/*
+ * Single Selection View.
+ */
+ /* selection */
+ .portlet .view-single-select .portlet-selection .title.selections {background: transparent;}
+ .portlet .view-single-select .selection-basket {color: #AAA; font-size: 120%;}
+ .portlet .view-single-select .selection-basket a {background: transparent; cursor: default;}
+ .portlet .view-single-select .selection-basket a:hover,
+ .portlet .view-single-select .selection-basket a:focus {color: #248222;}
+
+
+ .up-autocomplete-dropdown .up-autocomplete-loading {background: #EFEFEF url("../images/loading.gif") 50% 50% no-repeat;}
+
+ /*====================================*/
+ /* Specific Portlets */
+ /*====================================*/
+ /* Style definitions for structures and elements unique to a specific portlet. */
+
+ /* Portlet Administration */
+ .override-preference td {color:graytext; text-decoration:line-through;}
+
+ /* Permissions Administration */
+ .prm-mgr table .inherited-permission {
+  display: inline-block;
+  margin-left: 1em;
+  padding: 0.2em 0.5em;
+  background: none repeat scroll 0 0 #B0C4DE;
+  color: @white;
+  font-size: 80%;
+  font-weight: bold;
+  text-transform: uppercase;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.prm-mgr .view-permissions .options .flc-pager-top{ overflow: hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > ul{ float:right; display:block; overflow:hidden }
+.prm-mgr .view-permissions .options .flc-pager-top > div{ overflow:hidden; clear:right; float:right }
+.prm-mgr .view-permissions .options .flc-pager-top .flc-pager-links{ margin:0; display:inline }
+
+.prm-mgr.view-editperm #assignments li {
+  line-height: 30px;
+  list-style-type: none;
+}
+
+/* Group Administration */
+/* Temporary - until Jeff fixes UI. */
+.grp-mgr .titlebar {
+  h4.title {
+    display: inline;
+}
+.portlet-selection {
+    .selection-basket {
+      display: inline;
+  }
+}
+}
+
+/** Error Portlet **/
+.portlet.error .stacktrace {
+  width: 100%;
+  height: 20em;
+  overflow: auto;
+  border: 1px solid gray;
+  display: none;
+}

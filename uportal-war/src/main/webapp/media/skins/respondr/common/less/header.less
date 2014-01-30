@@ -1,0 +1,74 @@
+.portal-header {
+    background: @color1;
+    color: @white;
+
+    .portal-nav {
+
+        .container {
+            padding: 0;
+        }
+    }
+}
+
+.portal-global {
+    position: absolute;
+    top: 10px;
+    right: 0;
+}
+
+.portal-editing {
+    .inline-block-list;
+
+    li {
+        .float;
+    }
+}
+
+h1.portal-logo {
+    font-size: 400%;
+    text-rendering: optimizelegibility;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
+    margin: 30px 0 10px 0;
+}
+
+#webSearchContainer {
+    margin: 10px 0 20px 0;
+}
+
+#webSearchSubmit span {
+    display: none;
+}
+
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+@media only screen and (min-width: 769px) {
+     .portal-global {
+        position: relative;
+        top: 0;
+        left: 0;
+        .gradient (@color1-dark, @color1);
+        border-bottom: 1px solid @color1-light;
+        .drop-shadow;
+        text-align: right;
+        padding: 4px 0;
+    }
+
+     .portal-header {
+         .container {
+             padding: 0;
+
+             .portal-user {
+                a {
+                    color: @color2;
+                    margin-left: 10px;
+                }
+             }
+         }
+    }
+}
