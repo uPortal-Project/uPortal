@@ -138,6 +138,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <tr>
               <td class="fl-text-align-right"><spring:message code="edit"/>:</td>
               <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.editable )}" class="pa-edit">${ fn:escapeXml(portlet.editable )}</a></td>
+            </tr>
+            <tr>
+              <td class="fl-text-align-right"><spring:message code="configure"/>:</td>
+              <td><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.configurable )}" class="pa-edit">${ fn:escapeXml(portlet.configurable )}</a></td>
             </tr> 
             <tr>
               <td class="fl-text-align-right"><spring:message code="help"/>:</td>

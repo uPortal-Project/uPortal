@@ -120,6 +120,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <spring:message code="editable"/>
             </label><br/>
 
+            <label for="configurable" class="checkbox">
+              <form:checkbox path="configurable"/>
+              <spring:message code="configurable"/>
+            </label><br/>
+
             <label for="hasAbout" class="checkbox">
               <form:checkbox path="hasAbout"/>
               <spring:message code="hasAbout"/>
