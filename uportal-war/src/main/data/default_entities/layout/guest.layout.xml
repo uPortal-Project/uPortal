@@ -19,7 +19,8 @@
     under the License.
 
 -->
-<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" username="guest">
+<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" 
+    username="guest" >
   <folder hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
     <folder hidden="false" immutable="true" name="Header folder" type="header" unremovable="true">
       <!-- Uncomment to use local login
