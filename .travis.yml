@@ -2,4 +2,8 @@ language: java
 before_install:
   - unset GEM_PATH
 notifications:
-  irc: "chat.freenode.net#jasig-uportal"
+  irc: 
+    channels: 
+    - "chat.freenode.net#jasig-uportal"
+    on_success: change
+    on_failure: change
