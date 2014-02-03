@@ -26,11 +26,12 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
-      <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n5"/>
-      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n6"/>
+      <channel fname="notification-icon" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+      <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n6"/>
+      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n7"/>
     </folder>
-    <folder ID="s7" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
-      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+    <folder ID="s8" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n9"/>
     </folder>
   </folder>
 </layout>
