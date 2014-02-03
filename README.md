@@ -3,6 +3,12 @@ For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.o
 Additional information about uPortal is available on the [uPortal Home Page](http://www.jasig.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
+## Travis-CI Continuous Integration
+
+uPortal uses Travis-CI for lightweight continuous integration.  You can see build statuses at [https://travis-ci.org/Jasig/uPortal].  This handy image summarizes build status for the master branch:
+
+[![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.png?branch=master)](https://travis-ci.org/Jasig/uPortal)
+
 ## Requirements
 * JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
 * Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration changes that must be made for Tomcat 6.0 which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM40/Installing+Tomcat).
