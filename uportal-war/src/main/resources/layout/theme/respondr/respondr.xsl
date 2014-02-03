@@ -544,6 +544,7 @@
                                 <div class="col-md-3">
                                     <div id="portalEditPagePermissions" class="fl-fix">
                                         <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                            <i class="fa fa-align-justify"></i>
                                             <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
                                         </a>
                                     </div>
