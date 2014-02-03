@@ -219,7 +219,43 @@
     <xsl:template name="regions.portlet.decorator">
         <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname}">
             <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
+            <xsl:call-template name="create-hover-menu"/>
         </section>
     </xsl:template>
-
+    
+  <!-- ========== TEMPLATE: Create Hover Menu ========== -->
+  <!-- This template creates a hover menu when a portlet is flagged as configurable
+   |   and the current user has permissions to configure it
+  -->
+  <xsl:template name="create-hover-menu">
+    <xsl:if test="@portletMode!='config' and @windowState!='minimized' and parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', 'PORTLET_ID.@chanID')">
+    <ul class="{@fname}_menu hover-ul" style="list-style:none;display:none;">
+      <xsl:variable name="portletConfigureUrl">
+        <xsl:call-template name="portalUrl">
+          <xsl:with-param name="url">
+            <url:portal-url>
+              <url:fname><xsl:value-of select="@fname"/></url:fname>
+              <url:portlet-url mode="CONFIG" copyCurrentRenderParameters="true" />
+            </url:portal-url>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:variable>
+      <li class="hover-li">
+        <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
+      </li>
+    </ul>
+    <script type="text/javascript">
+    up.jQuery(document).ready(function(){
+      $(".<xsl:value-of select="@fname" />").hover(
+        function () {
+          $('ul.<xsl:value-of select="@fname" />_menu').stop(true,true).slideDown('medium');
+        }, 
+        function () {
+          $('ul.<xsl:value-of select="@fname" />_menu').stop(true,true).slideUp('medium');
+        }
+      );
+    });
+    </script>
+    </xsl:if>
+  </xsl:template>
 </xsl:stylesheet>
