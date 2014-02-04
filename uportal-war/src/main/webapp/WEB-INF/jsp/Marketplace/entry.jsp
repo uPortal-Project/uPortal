@@ -106,10 +106,10 @@
 	 	<c:if test="${not empty Portlet.screenShots}">
 	 		<c:set var="count" value="0" scope="request"/>
 		 	<div class = "row col-xs-12 col-md-4">
-		 		<div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="false">
+		 		<div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
 			 		<ol class="carousel-indicators marketplace_carousel_indicators">
 			 			<c:forEach var="screenShot" items="${Portlet.screenShots}" varStatus="loopStatus">
-							<li data-target="marketplace_screenshots_and_videos" data-slide-to="${loopStatus.index}"></li>
+							<li data-target="#marketplace_screenshots_and_videos" data-slide-to="${loopStatus.index}"></li>
 						</c:forEach>
 			  		</ol>
 		 			<div class="carousel-inner marketplace_carousel_inner">
@@ -126,10 +126,10 @@
 		 					</div>
 		 				</c:forEach>
 		 			</div>
-		 			<a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+		 			<a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
 				    	<span class="glyphicon glyphicon-chevron-left"></span>
 				  	</a>
-				  	<a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+				  	<a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
 				    	<span class="glyphicon glyphicon-chevron-right"></span>
 		  			</a>
 		 		</div>
