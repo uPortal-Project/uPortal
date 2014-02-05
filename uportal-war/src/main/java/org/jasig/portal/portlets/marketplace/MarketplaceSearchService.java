@@ -144,7 +144,8 @@ public class MarketplaceSearchService implements IPortalSearchService {
                 portlet.getName().contains(query) ||
                 (portlet.getDescription() != null && portlet.getDescription().contains(query)) ||
                 portlet.getFName().contains(query) ||
-                this.captionMatches(query, portlet.getScreenShots())
+                this.captionMatches(query, portlet.getScreenShots()) ||
+                this.versionNotesMatches(query, portlet.getPortletVersion())	
                 ;
     }
     
@@ -158,6 +159,23 @@ public class MarketplaceSearchService implements IPortalSearchService {
     	for(ScreenShot screenShot: screenShots){
     		for(String caption: screenShot.getCaptions()){
     			if(caption.contains(query)){
+    				return true;
+    			}
+    		}
+    	}
+    	return false;
+    }
+    
+    /**
+     * @author vertein
+     * @param query
+     * @param portletVersion
+     * @return boolean whether version notes matches.  Used by matches method
+     */
+    protected boolean versionNotesMatches(String query, PortletVersion portletVersion){
+    	if(portletVersion.getReleaseNotes()!=null){
+    		for(String notes : portletVersion.getReleaseNotes()){
+    			if(notes.contains(query)){
     				return true;
     			}
     		}

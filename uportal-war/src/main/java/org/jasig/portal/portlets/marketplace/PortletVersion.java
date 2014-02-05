@@ -27,14 +27,13 @@ public class PortletVersion{
 	private List<String> releaseNotes;
 	
 	public PortletVersion(){
+		
 	}
 	
-	public PortletVersion(String version, String releaseDate, List<String> releaseNotes){
-		this.setVersion(version);
-		this.setReleaseDate(releaseDate);
-		this.setReleaseNotes(releaseNotes);
-	}
-	
+	/**
+	 * 
+	 * @return version of portlet. Can be null if not set via portlet preference.
+	 */
 	public String getVersion() {
 		return version;
 	}
@@ -43,6 +42,10 @@ public class PortletVersion{
 		this.version = version;
 	}
 	
+	/**
+	 * 
+	 * @return releaseDate as String. Can be null if not set via portlet preference.
+	 */
 	public String getReleaseDate() {
 		return releaseDate;
 	}
@@ -51,6 +54,10 @@ public class PortletVersion{
 		this.releaseDate = releaseDate;
 	}
 	
+	/**
+	 * 
+	 * @return List of releaseNotes as strings. Can be null if not set via portlet preference.
+	 */
 	public List<String> getReleaseNotes() {
 		return releaseNotes;
 	}
