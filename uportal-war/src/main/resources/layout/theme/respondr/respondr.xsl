@@ -212,7 +212,7 @@
  | Portlet Settings can be used to change aspects of the portlet chrome.
  -->
 <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
-<xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
+
 
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE TITLE ========================================= -->
@@ -395,6 +395,35 @@
  -->
 <xsl:template name="page.dialogs">
 
+    <xsl:choose>
+        <!-- The normal/usual case:  Dashboard (non-focused) mode -->
+        <xsl:when test="not(//focused)">
+            <xsl:call-template name="page.dialogs.dashboard" />
+        </xsl:when>
+        <!-- UseIt use case:  We are focused on a portlet that is (1) not currently
+             in the user's layout and (2) not a "hidden" portlet.  (Portlets that 
+             are not a member of any category are hidden.) -->
+        <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
+            <xsl:call-template name="page.dialogs.useit" />
+        </xsl:when>
+        <xsl:otherwise>
+            <!-- Currently no up.LayoutPreferences JS to initialize when (1) user is focused (2) on a portlet already in his layout. -->
+        </xsl:otherwise>
+    </xsl:choose>
+
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ================================================================================ -->
+<!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
+<!-- ================================================================================ -->
+<!-- 
+ | YELLOW
+ | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
+ -->
+<xsl:template name="page.dialogs.dashboard">
+
     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
         <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
@@ -525,6 +554,63 @@
             layoutPreferences.components.gallery.openGallery();
         }
     });
+    </script>
+
+</xsl:template>
+<!-- ========================================================================= -->
+
+
+<!-- ================================================================================ -->
+<!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
+<!-- ================================================================================ -->
+<!-- 
+ | YELLOW
+ | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
+ -->
+<xsl:template name="page.dialogs.useit">
+
+    <div id="ajaxMenus" style="display:none;">
+        <!-- Add Portlet Menu -->
+        <div class="focused-content-dialog" title="{upMsg:getMessage('add.content', $USER_LANG)}">
+            <form>
+                <fieldset>
+                    <legend>
+                        <xsl:value-of select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
+                    </legend>
+                    <xsl:variable name="unlockedTab" select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']" />
+                    <xsl:choose>
+                      <xsl:when test="$unlockedTab">
+                        <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
+                            <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio" />
+                            <label for="targetTab{@ID}" class="portlet-form-field-label">
+                                <xsl:value-of select="@name" />
+                            </label>
+                            <br />
+                        </xsl:for-each>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="upMsg:getMessage('error.add.portlet.in.layout', $USER_LANG)" />
+                      </xsl:otherwise>
+                    </xsl:choose>
+                </fieldset>
+                <p>
+                    <input name="portletId" type="hidden" value="{//focused/channel/@chanID}" />
+                    <input type="submit" value="{upMsg:getMessage('add', $USER_LANG)}" class="portlet-form-button" />
+                    &#160;
+                </p>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        up.jQuery(document).ready(function() {
+            up.FocusedLayoutPreferences("body", {
+                portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+                layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                messages: {
+                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+                }
+            });
+        });
     </script>
 
 </xsl:template>

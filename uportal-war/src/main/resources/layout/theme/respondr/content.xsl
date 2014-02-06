@@ -464,12 +464,9 @@
 
       <!-- Add to Layout Icon -->
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
-        <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
-            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
-                <span class="icon"></span>
-            </xsl:if>
-            <span class="label"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
-        </a>
+        <li>
+          <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></a>
+        </li>
       </xsl:if>
         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
           <li>
