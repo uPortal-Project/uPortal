@@ -7,10 +7,9 @@
         right: 20px;
         padding: 0.5rem 1rem;
         background: @color2;
-        color: #FFF;
         .border-radius;
         font-weight: bold;
-        color: #FFF;
+        color: @white;
         text-decoration: none;
 
         &:hover, &:focus {
@@ -41,7 +40,7 @@
 
                 &:hover, &:focus {
                     background: @color1-light;
-                    color: #FFF;
+                    color: @white;
 
                     i {
                         opacity: 1;
@@ -59,6 +58,7 @@
             }
 
             .flc-inlineEdit-edit {
+                color: @grayscale10;
                 margin-top: 8px;
                 margin-bottom: -2px;
                 margin-right: 5px;
@@ -75,7 +75,7 @@
 
             a {
                 background: @color1-darker;
-                color: #FFF;
+                color: @white;
 
                 i {
                     opacity: 1;
@@ -144,10 +144,6 @@
             display: none;
         }
 
-        // .portal-navigation i {
-        //     display: none;
-        // }
-
         .menu {
             display: block;
             .inline-block-list;
@@ -164,17 +160,4 @@
             }
         }
     }
-}
-
-
-/**
- * Old Fluid styles - Placed here just as a stop-gap.  Should be removed once Universality is EOL
- */
-.fl-offScreen-hidden {
-    position: absolute;
-    left: -10000px;
-    top: auto;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
 }

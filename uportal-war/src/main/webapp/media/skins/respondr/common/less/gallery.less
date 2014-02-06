@@ -13,24 +13,24 @@
  */
 @galleryBackground              : @grayscale10;
 @galleryBorder                  : 1px solid @grayscale4;
-@galleryHandleBackground        : #000 url("../../common/images/gallery-bar.png") bottom left repeat-x;
+@galleryHandleBackground        : @black url("./common/images/gallery-bar.png") bottom left repeat-x;
 @galleryHandleBorder            : 1px solid @grayscale7;
-@galleryHandleLinkBackround     : #fff scroll url("../../common/images/gallery-handle.png") 0 0 repeat-x;
+@galleryHandleLinkBackround     : @white scroll url("./common/images/gallery-handle.png") 0 0 repeat-x;
 @galleryHandleLink              : @grayscale9;
 @galleryHandleRound             : 3px;
 @galleryHandleShadow            : 0 1px 2px @grayscale4;
-@galleryHandleIconClosed        : url("../../common/images/gallery-handle-arrow-down.png");
-@galleryHandleIconOpen          : url("../../common/images/gallery-handle-arrow-up.png") !important;
-@galleryBarBackground           : transparent url("../../common/images/gallery-bar.png") top left repeat-x;
+@galleryHandleIconClosed        : url("./common/images/gallery-handle-arrow-down.png");
+@galleryHandleIconOpen          : url("./common/images/gallery-handle-arrow-up.png") !important;
+@galleryBarBackground           : transparent url("./common/images/gallery-bar.png") top left repeat-x;
 @galleryMenuBackground          : @grayscale9;
 @galleryMenuItemBackground      : @grayscale8;
 // @galleryMenuItemBorder          : 1px solid @grayscale7;
 @galleryMenuItemLink            : @grayscale3;
 @galleryMenuItemBackgroundHover : @color1-darker;
-@galleryMenuItemLinkHover       : #fff;
+@galleryMenuItemLinkHover       : @white;
 @galleryMenuItemActiveBackground: @grayscale10;
-@galleryMenuItemActiveLink      : #fff;
-@galleryMenuItemActiveIcon      : transparent url("../../common/images/gallery-arrow-right.png") 90% 50% no-repeat;
+@galleryMenuItemActiveLink      : @white;
+@galleryMenuItemActiveIcon      : transparent url("./common/images/gallery-arrow-right.png") 90% 50% no-repeat;
 @galleryCloseButtonType         : default;
 @galleryFilterBackground        : @grayscale7;
 @galleryFilterBorder            : 1px solid @grayscale8;
@@ -62,7 +62,7 @@
 @galleryRIUtilityHeight         : 16px;
 //@galleryRIUtilityBackground     : @grayscale7;
 @galleryRIUtilityRound          : 5px;
-@galleryRIGripper               : @grayscale9 url("../../common/images/gripper.png") 5px 0px no-repeat;
+@galleryRIGripper               : @grayscale9 url("./common/images/gripper.png") 5px 0px no-repeat;
 @galleryRITitle                 : @white;
 @galleryRIDescription           : @grayscale3;
 @galleryRIBackgroundHover       : @grayscale9;
@@ -611,7 +611,7 @@
 /* Gallery Modal Loaders
  * Preloaders while the content loads, following the opening of the drawer.
  */
-.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background-image:url("../../common/images/gallery-content-preloader.gif"); background-position:50% 50%; background-repeat:no-repeat;}
+.up-gallery .gallery-loader {display: block; margin: 7px 0px 0px 127px; position: absolute; top: 0px; bottom: 0px; left: 0px; right: 0px; background-image:url("./common/images/gallery-content-preloader.gif"); background-position:50% 50%; background-repeat:no-repeat;}
 .up-gallery .gallery-loader span {display: none;}
 
 
@@ -657,18 +657,18 @@
 .up-gallery .pager-button-up-inner {
     display:block;
     height:59px;
-    background: url('../../common/images/gallery-pager-up-active.png') center 85% no-repeat;
+    background: url('./common/images/gallery-pager-up-active.png') center 85% no-repeat;
 }
 .up-gallery .pager-button-down-inner {
     display:block;
     height:59px;
-    background: url('../../common/images/gallery-pager-down-active.png') center 15% no-repeat;
+    background: url('./common/images/gallery-pager-down-active.png') center 15% no-repeat;
 }
 .up-gallery .pager-button-up.fl-pager-disabled .pager-button-up-inner {
-    background-image: url('../../common/images/gallery-pager-up-inactive.png');
+    background-image: url('./common/images/gallery-pager-up-inactive.png');
 }
 .up-gallery .pager-button-down.fl-pager-disabled .pager-button-down-inner {
-    background-image: url('../../common/images/gallery-pager-down-inactive.png');
+    background-image: url('./common/images/gallery-pager-down-inactive.png');
 }
 .up-gallery .pager-button-up,
 .up-gallery .pager-button-down {cursor:pointer; position:relative; height:62px;}
@@ -751,7 +751,7 @@
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(@white)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,@white);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(@white));}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper {
-    display: block; background: #444444 url("../../common/images/gripper.png") 5px 0px no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
+    display: block; background: #444444 url("./common/images/gripper.png") 5px 0px no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 .portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
 .portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
@@ -764,6 +764,6 @@
 .layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dotted #960000; font-weight: bold; color: #960000;}
 .layout-draggable-drop-target span {display: block; padding: 65px 5px 5px 5px;}
 .layout-draggable-drop-target-active {}
-.layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("../../common/images/loading.gif") 50% 50% no-repeat;}
+.layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("./common/images/loading.gif") 50% 50% no-repeat;}
 .layout-draggable-target-dropped span {display:none;}
 

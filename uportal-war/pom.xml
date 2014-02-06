@@ -821,12 +821,13 @@
                 <artifactId>lesscss-maven-plugin</artifactId>
                 <version>1.3.3</version>
                 <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/uPortal4/less</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/uPortal4/css</outputDirectory>
+                    <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/</outputDirectory>
                     <compress>true</compress>
                     <includes>
-                        <include>styles.less</include>
+                        <include>defaultSkin.less</include>
                     </includes>
+                    <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
                 </configuration>
                 <executions>
                     <execution>
