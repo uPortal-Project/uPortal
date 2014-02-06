@@ -395,14 +395,12 @@
  -->
 <xsl:template name="page.dialogs">
 
-     <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-
-         <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+    <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+        <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
                 </div>
-
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
@@ -417,7 +415,6 @@
                                     <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
                                     <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
                                 </p>
-
                                 <div class="buttons">
                                     <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
@@ -425,15 +422,13 @@
                         </div>
                     </div>
                 </div>
-             </div>
-         </div>
-
-         <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
+            </div>
+        </div>
+        <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-
                 <div class="fl-widget-content content portlet-content" role="main">
                     <form>
                         <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
@@ -444,21 +439,18 @@
                             <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
                             <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
                         </p>
-
                         <div class="buttons">
                             <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                         </div>
                     </form>
                 </div>
             </div>
-         </div>
-
-         <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
+        </div>
+        <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
             <div class="fl-widget portlet">
                 <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
                     <h2 class="title" role="heading"></h2>
                 </div>
-
                 <div class="fl-widget-content content portlet-content" role="main">
                     <div class="portlet-section" role="region">
                         <div class="titlebar">
@@ -471,7 +463,6 @@
                                     <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
                                     <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
                                 </p>
-
                                 <div class="buttons">
                                     <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
                                 </div>
@@ -480,12 +471,61 @@
                     </div>
                 </div>
             </div>
-         </div>
-     </xsl:if>
+        </div>
+    </xsl:if><!-- End fragment admin dialogs -->
 
     <div id="portalDropWarning" class="drop-warning" style="display:none;">
         <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
     </div>
+
+    <script type="text/javascript">
+        up.jQuery(document).ready(function(){
+            <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+            up.FragmentPermissionsManager("body", {
+                savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                messages: {
+                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+                }
+            });
+            </xsl:if>
+            var layoutPreferences = up.LayoutPreferences("body", {
+                tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
+                numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
+                portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+                mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
+                currentSkin: '<xsl:value-of select="$SKIN"/>',
+                subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
+                layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+                channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
+                subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
+                columnWidthClassPattern: 'col-md-',
+                columnWidthClassFunction: function(column) {
+                    return 'col-md-' + Math.round(column / 8.3333);
+                },
+                messages: {
+                    confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
+                    confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
+                    addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
+                    column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
+                    columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
+                    fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
+                    narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
+                    even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
+                    wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
+                    narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
+                    searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
+                    allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
+                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+                }
+            }
+        );
+        // For the portlet/Respondr version of the gallery control, 
+        // we must open it ourselves (if present) when the page loads.
+        if(layoutPreferences.components.gallery) {
+            layoutPreferences.components.gallery.openGallery();
+        }
+    });
+    </script>
 
 </xsl:template>
 <!-- ========================================================================= -->
@@ -581,59 +621,6 @@
                 up.analytics.pageData = <page-analytics-data/>;
             </script>
         </body>
-      <script type="text/javascript">
-        up.jQuery(document).ready(function(){
-          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-          up.FragmentPermissionsManager(
-            "body",
-            {
-              savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              messages: {
-                columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
-              }
-            }
-          );
-          </xsl:if>
-          var layoutPreferences = up.LayoutPreferences(
-            "body",
-            {
-              tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
-              numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
-              portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
-              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>',
-              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
-              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
-              columnWidthClassPattern: 'col-md-',
-              columnWidthClassFunction: function(column) {
-                  return 'col-md-' + Math.round(column / 8.3333);
-              },
-              messages: {
-                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
-                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
-                  column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
-                  columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
-                  fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
-                  narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
-                  even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
-                  wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
-                  narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
-                  searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
-                  persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
-              }
-            }
-          );
-          // For the portlet/Respondr version of the gallery control, 
-          // we must open it ourselves (if present) when the page loads.
-          if(layoutPreferences.components.gallery) {
-            layoutPreferences.components.gallery.openGallery();
-          }
-       });
-    </script>
     </html>
 </xsl:template>
 
