@@ -31,8 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
-import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.REGULAR_TYPE;
 import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITES_TYPE;
+import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITE_COLLECTION_TYPE;
 
 /**
  * Utility class supporting Favorites portlet.
@@ -44,8 +44,8 @@ public final class FavoritesUtils {
 
 
     /**
-     * Get the favorite collections of portlets (i.e. tabs in the user layout).
-     * Suitable tabs are of type folder with @type attribute regular.
+     * Get the favorite collections of portlets (i.e. suitable folders ("tabs") in the user layout.)
+     * Suitable layout nodes are of type folder with @type attribute favorite_collection.
      *
      * @param userLayout
      * @return non-null List of IUserLayoutDescriptions describing the tabs
@@ -53,10 +53,10 @@ public final class FavoritesUtils {
     public static List<IUserLayoutNodeDescription> getFavoriteCollections(IUserLayout userLayout) {
 
         if (null == userLayout) {
-            throw new IllegalArgumentException("Cannot get favorites collections aka tabs from a null userLayout");
+            throw new IllegalArgumentException("Cannot get favorites collections from a null userLayout");
         }
 
-        logger.trace("Extracting favorites collections aka tabs from layout [{}]", userLayout);
+        logger.trace("Extracting favorites collections from layout [{}]", userLayout);
 
         Enumeration<String> nodeIds = userLayout.getChildIds(userLayout.getRootId());
 
@@ -79,7 +79,7 @@ public final class FavoritesUtils {
 
                     String folderType = folderDescription.getFolderType();
 
-                    if (REGULAR_TYPE.equals(folderType)) {
+                    if (FAVORITE_COLLECTION_TYPE.equals(folderType)) {
 
                         results.add(nodeDescription);
 
