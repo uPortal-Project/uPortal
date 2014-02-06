@@ -61,6 +61,13 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      */
     public static final String FAVORITES_TYPE = "favorites";
 
+    /**
+     * Type attribute value of folders representing a named collection of user favorites
+     * (used by the optional Favorites portlet).
+     * @since uPortal 4.1
+     */
+    public static final String FAVORITE_COLLECTION_TYPE = "favorite_collection";
+
 
     /**
      * Returns folder type.  Type might be one of the values documented in this interface.
