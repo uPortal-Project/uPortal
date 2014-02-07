@@ -78,13 +78,13 @@
 			<div class="col-md-3 col-xs-6 marketplace_portlet_title">${Portlet.title}</div>
 			<div class="col-md-3 col-xs-6 col-md-push-3" class="${n}go_button">
 				<div class="btn-group marketplace_button_group" style="float:right">
-					<button type="button" class="btn btn-default marketplace_dropdown_button">Go</button>
+					<a href="${renderRequest.contextPath}/p/${Portlet.FName}/render.uP" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button">Go</a>
 					<button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
 						<span class="caret"></span>
 						<span class="sr-only"></span>
 					</button>
 					<ul class="dropdown-menu marketplace_dropdown_menu" role="menu">
-						<li><a href="#">Go</a></li>
+						<li><a href="${renderRequest.contextPath}/p/${Portlet.FName}/render.uP">Go</a></li>
 						<li><a href="#">Add to Favorites</a></li>
 						<li class="divider"></li>
 						<li><a href="#">Share on Twitter</a></li>
