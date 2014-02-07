@@ -131,5 +131,21 @@ public class ChannelBean implements Comparable<ChannelBean>, Serializable {
         return new HashCodeBuilder(464270933, -1074792143).append(this.id)
                 .toHashCode();
     }
+    
+    /**
+     * @author vertein
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString(){
+    	return "ID: "+this.getId()+
+    			" title: "+this.getTitle()+
+    			" Description: "+this.getDescription()+
+    			" fname: "+this.getFname()+
+    			" name: "+this.getName()+
+    			" state: "+this.getState()+
+    			" typeID: "+this.getTypeId()+
+    			" iconUrl: "+this.getIconUrl();
+    }
 
 }
