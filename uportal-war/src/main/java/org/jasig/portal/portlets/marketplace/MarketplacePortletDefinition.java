@@ -40,6 +40,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	private IPortletDefinition portletDefinition;
 	private List<ScreenShot> screenShots;
 	public static final String MARKETPLACE_FNAME = "portletmarketplace";
+	private static final String VERSION_PREFERENCE_NAME = "version";
+	private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
+	private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
+	private PortletVersion portletVersion;
 
 	/**
 	 * 
@@ -48,11 +52,34 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	 */
 	public MarketplacePortletDefinition(IPortletDefinition portletDefinition){
 		this.portletDefinition = portletDefinition;
+		this.setUpDefinitions(portletDefinition);
+	}
+	
+	private void setUpDefinitions(IPortletDefinition portletDefinition){
 		this.setScreenShots(portletDefinition);
+		this.setPortletVersion(portletDefinition);
+	}
+	
+	private void setPortletVersion(IPortletDefinition portlet){
+		PortletVersion portletVersion = new PortletVersion();
+		for(IPortletPreference portletPreference: portlet.getPortletPreferences()){
+			if(MarketplacePortletDefinition.VERSION_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+				portletVersion.setVersion(portletPreference.getValues()[0]);
+			continue;
+			}
+			if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+				portletVersion.setReleaseDate(portletPreference.getValues()[0]);
+				continue;
+			}
+			if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+				portletVersion.setReleaseNotes(Arrays.asList(portletPreference.getValues()));
+				continue;
+			}
+		}
+		this.portletVersion = portletVersion;
 	}
 	
 	private void setScreenShots(IPortletDefinition portlet){
-		
 		List<IPortletPreference> portletPreferences = portlet.getPortletPreferences();
 		List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
 		List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
@@ -91,6 +118,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	 */
 	public List<ScreenShot> getScreenShots() {
 		return screenShots;
+	}
+	
+	/**
+	 * @return the portletVersion
+	 */
+	public PortletVersion getPortletVersion() {
+		return portletVersion;
 	}
 
 	@Override
