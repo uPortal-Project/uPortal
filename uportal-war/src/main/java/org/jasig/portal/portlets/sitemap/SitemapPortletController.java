@@ -46,6 +46,9 @@ import org.springframework.web.portlet.ModelAndView;
 /**
  * SitemapPortletController produces a sitemap view of the current user's
  * portal layout.
+ *
+ * Woefully, this implementation is dependent upon XSLT details of the portal rendering pipeline, which
+ * auto-wire in.  In the case where necessary components fail to auto-wire in, portlet exceptions out at render time.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
@@ -66,8 +69,14 @@ public class SitemapPortletController {
      * must be incorporated into user's layout using this component.
      */
     private StAXPipelineComponent attributeIncorporationComponent;
-    
-    @Autowired(required = true)
+
+    /**
+     * Auto-wires in the structureAttributeIncorporationComponent when available.  Annotated as not required
+     * because portlet detects and treats as a runtime (rather than component-initialization-time) error failure
+     * to find dependencies.
+     * @param attributeIncorporationComponent
+     */
+    @Autowired(required = false)
     @Qualifier("structureAttributeIncorporationComponent")
     public void setStructureAttributeIncorporationComponent(StAXPipelineComponent attributeIncorporationComponent) {
         this.attributeIncorporationComponent = attributeIncorporationComponent;
@@ -77,9 +86,12 @@ public class SitemapPortletController {
     private IPortalRequestUtils portalRequestUtils;
     
     /**
+     * Auto-wires in the PortalRequestUtils when available.  Annotated as not required
+     * because portlet detects and treats as a runtime (rather than component-initialization-time) error failure
+     * to find dependencies.
      * @param portalRequestUtils the portalRequestUtils to set
      */
-    @Autowired(required = true)
+    @Autowired(required = false)
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         Validate.notNull(portalRequestUtils);
         this.portalRequestUtils = portalRequestUtils;
@@ -87,8 +99,14 @@ public class SitemapPortletController {
     
     /** Required by XSL to build portal URL's. */
     private XsltPortalUrlProvider xsltPortalUrlProvider;
-    
-    @Autowired
+
+    /**
+     * Auto-wires in the XsltPortalUrlProvider when available.  Annotated as not required
+     * because portlet detects and treats as a runtime (rather than component-initialization-time) error failure
+     * to find dependencies.
+     * @param xsltPortalUrlProvider
+     */
+    @Autowired(required = false)
     public void setXsltPortalUrlProvider(XsltPortalUrlProvider xsltPortalUrlProvider) {
         this.xsltPortalUrlProvider = xsltPortalUrlProvider;
     }
@@ -108,13 +126,30 @@ public class SitemapPortletController {
      * Display the user sitemap.
      * 
      * @param request
-     * @return
-     * @throws XMLStreamException 
+     * @return "sitemapView" and a supporting model
+     * @throws XMLStreamException
+     * @throws IllegalStateException if components required for the SiteMap portlet fail to auto-wire
      */
     @RequestMapping
     public ModelAndView displaySitemap(PortletRequest request) throws XMLStreamException {
         
         Map<String, Object> model = new HashMap<String, Object>();
+
+        if (this.xsltPortalUrlProvider == null) {
+            throw new IllegalStateException("Sitemap portlet requires a XsltPortalUrlProvider but it failed to " +
+                    "auto-wire");
+        }
+
+        if (this.attributeIncorporationComponent == null) {
+            throw new IllegalStateException("Sitemap portlet requires a StAXPipelineComponent with qualifier structureAttributeIncorporationComponent but it failed to auto-wire");
+        }
+
+        if (this.portalRequestUtils == null) {
+            throw new IllegalStateException("Sitemap portlet requires an IPortalRequestUtils but it failed to " +
+                    "auto-wire");
+        }
+
+
         
         // retrieve the user layout with structure attributes applied (required in order to display tab groups)
         final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
