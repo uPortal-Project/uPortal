@@ -274,7 +274,7 @@ public class CasTicketUserInfoService implements UserInfoService  {
 	/**
 	 * Looks for a security context
 	 * @param context the principal security context
-	 * @return the CAS security contex, or null if not found.
+	 * @return the CAS security context, or null if not found.
 	 */
 	@SuppressWarnings("unchecked")
 	private static ISecurityContext getCasContext(ISecurityContext context) {

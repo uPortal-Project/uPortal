@@ -106,8 +106,15 @@
     </bean>
     
     <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
-    
-    <!--bean id="cachedPasswordUserInfoService" 
+
+    <!--
+     | To enable providing the user's password to portlets that need it, uncomment this bean.
+     | By default it is commented out as a security precaution to prevent portlets from having access
+     | to the password information unless an institution determines they want to enable that capability.
+     | NOTE:  Other configuration is also needed to obtain and cache the user's password so this bean can provide it.
+     | See the uPortal manual https://wiki.jasig.org/display/UPM40/Caching+and+Re-playing+Credentials.
+     -->
+    <!--bean id="cachedPasswordUserInfoService"
         class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">
         <property name="decryptPassword" value="false"/>
     </bean-->
