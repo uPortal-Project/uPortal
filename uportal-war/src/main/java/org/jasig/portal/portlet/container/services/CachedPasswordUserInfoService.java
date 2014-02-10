@@ -163,7 +163,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		return passwordKey;
 	}
 	/**
-	 * @param proxyTicketKey name of the key to save the password under
+	 * @param passwordKey name of the key to save the password under
 	 */
 	public void setPasswordKey(String passwordKey) {
 		this.passwordKey = passwordKey;
@@ -179,7 +179,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		
 		Map<String, String> userInfo = new HashMap<String, String>();
 
-		// check to see if a CAS proxy ticket is expected by this portlet
+		// check to see if a password is expected by this portlet
 		if (isPasswordRequested(request, portletWindow)) {
 
 	        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
@@ -187,7 +187,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	        final IPerson person = userInstance.getPerson();
 			final ISecurityContext context = person.getSecurityContext();
 
-			// if it is, attempt to request a proxy ticket
+			// if it is, attempt to request a password
 			String password = getPassword(context);
 			if (this.decryptPassword && password != null) {
 				password = stringEncryptionService.decrypt(password);
@@ -201,12 +201,12 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 	}
 	
 	/**
-	 * Determine whether the portlet has expects a CAS proxy ticket as one of the 
+	 * Determine whether the portlet has expects a password as one of the
 	 * user attributes.
 	 * 
 	 * @param request portlet request
 	 * @param plutoPortletWindow portlet window
-	 * @return <code>true</code> if a CAS proxy ticket is expected, <code>false</code>
+	 * @return <code>true</code> if a password is expected, <code>false</code>
 	 *         otherwise
 	 * @throws PortletContainerException if expeced attributes cannot be determined
 	 */
@@ -219,7 +219,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
-        // check to see if the proxy ticket key is one of the requested user attributes
+        // check to see if the password key is one of the requested user attributes
         List<? extends UserAttribute> requestedUserAttributes = portletApplicationDescriptor.getUserAttributes();
         for (final UserAttribute userAttributeDD : requestedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
@@ -227,7 +227,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
             	return true;
         }
 
-        // if the proxy ticket key wasn't found in the list of requested attributes
+        // if the password key wasn't found in the list of requested attributes
         return false;
 
     }

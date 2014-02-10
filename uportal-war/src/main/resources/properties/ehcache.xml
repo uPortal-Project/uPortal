@@ -27,6 +27,7 @@
      | General direct-access portal caches are in the first section
      | Hibernate entity caches are in the second section
      | Portal Event Hibernate caches are in the third section
+     | Miscellaneous caches are in the fourth section
      |
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
      | how to configurigure caches in this file
@@ -34,7 +35,11 @@
      
     <!-- Location of persistent caches on disk -->
     <diskStore path="java.io.tmpdir/uPortal" />
-    
+
+    <!-- Use jGroups for Peer discovery.  For more information, see
+     | http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     | https://wiki.jasig.org/display/UPM40/Clustering
+     + -->
     <cacheManagerPeerProviderFactory
         class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
         properties="file=properties/jgroups.xml" />
@@ -1683,4 +1688,43 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- ********************************************************** -->
+    <!-- ***************** Miscellaneous Caches ******************* -->
+    <!-- ********************************************************** -->
+
+    <!--
+     | Caches CAS Proxy-Granting Tickets (PGT) for CAS Clearpass support in a clustered uPortal environment, allowing
+     | a CAS server to make the Clearpass PGT callback to any uPortal server, not just the uPortal server that initiated
+     | the Clearpass PGT Request call to CAS.  Note that this cache data is replicated synchronously (really fired
+     | synchronously - you don't know when the nodes in the cluster actually process the replication) to lessen the
+     | chance that the uPortal node needing the PGT to request the user's password doesn't have it.  The PGT ticket
+     | needs to be retained until requested by the portal to provide to a portlet, then it is not needed anymore since
+     | the password is cached in the SecurityContext.
+     |
+     | Additional configuration steps needed:
+     | - https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml,
+     |          section Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching
+     | - https://wiki.jasig.org/display/CASUM/uPortal+ClearPass+Extension
+     | - https://wiki.jasig.org/display/UPM40/Caching+and+Re-playing+Credentials
+     |
+     | For more information, see:
+     | - https://wiki.jasig.org/display/UPM40/Clustering
+     | - http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     |
+     | - 1 x user logins
+     | - CAS PGT replicated synchronously
+     +-->
+    <!--cache name="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
+           memoryStoreEvictionPolicy="LRU" statistics="true">
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=false,
+                replicatePuts=true,
+                replicateUpdates=true, replicateUpdatesViaCopy=true,
+                replicateRemovals=true "/>
+    </cache-->
+
 </ehcache>
