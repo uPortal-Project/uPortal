@@ -14,3 +14,4 @@
 *.iml
 /.idea
 uportal-portlets-overlay/*/overlays
+uportal-platform-api/target/
