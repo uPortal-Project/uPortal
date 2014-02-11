@@ -405,6 +405,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		}
 
 	    portletDef.addParameter(IPortletDefinition.EDITABLE_PARAM, Boolean.toString(form.isEditable()));
+	    portletDef.addParameter(IPortletDefinition.CONFIGURABLE_PARAM, Boolean.toString(form.isConfigurable()));
 	    portletDef.addParameter(IPortletDefinition.HAS_HELP_PARAM, Boolean.toString(form.isHasHelp()));
 	    portletDef.addParameter(IPortletDefinition.HAS_ABOUT_PARAM, Boolean.toString(form.isHasAbout()));
 	    
@@ -687,41 +688,43 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			return null;
 		}
 	}
-	
-	/**
-	 * Pre-populate a PortletDefinitionForm with portlet-specific information
-	 * using the supplied portlet descriptor.
-	 * 
-	 * @param application
-	 * @param portlet
-	 * @param form
-	 */
-	public void prepopulatePortlet(String application, String portlet, PortletDefinitionForm form) {
-		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
-		final PortletDefinition portletDD;
-		try {
-		    portletDD = portletRegistryService.getPortlet(application, portlet);
+
+    /**
+     * Pre-populate a PortletDefinitionForm with portlet-specific information
+     * using the supplied portlet descriptor.
+     * 
+     * @param application
+     * @param portlet
+     * @param form
+     */
+    public void prepopulatePortlet(String application, String portlet, PortletDefinitionForm form) {
+        final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
+        final PortletDefinition portletDD;
+        try {
+            portletDD = portletRegistryService.getPortlet(application, portlet);
         }
-		catch (PortletContainerException e) {
-		    this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
+        catch (PortletContainerException e) {
+            this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
             return;
         }
-		    
-	    form.setTitle(portletDD.getPortletName());
-		form.setName(portletDD.getPortletName());
-		form.setApplicationId(application);
-		form.setPortletName(portletDD.getPortletName());
-		for (Supports supports : portletDD.getSupports()) {
-			for (String mode : supports.getPortletModes()) {
-				if ("edit".equals(mode)) {
-					form.setEditable(true);
-				} else if ("help".equals(mode)) {
-					form.setHasHelp(true);
-				}
-			}
-		}
-	}
-	
+
+        form.setTitle(portletDD.getPortletName());
+        form.setName(portletDD.getPortletName());
+        form.setApplicationId(application);
+        form.setPortletName(portletDD.getPortletName());
+        for (Supports supports : portletDD.getSupports()) {
+            for (String mode : supports.getPortletModes()) {
+                if ("edit".equalsIgnoreCase(mode)) {
+                    form.setEditable(true);
+                } else if ("help".equalsIgnoreCase(mode)) {
+                    form.setHasHelp(true);
+                } else if ("config".equalsIgnoreCase(mode)) {
+                    form.setConfigurable(true);
+                }
+            }
+        }
+    }
+
 	public PortletLifecycleState[] getLifecycleStates() {
 		return PortletLifecycleState.values();
 	}

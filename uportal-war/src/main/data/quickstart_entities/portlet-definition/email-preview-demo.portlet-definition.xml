@@ -37,6 +37,10 @@
         <value>false</value>
     </parameter>
     <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>

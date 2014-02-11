@@ -91,6 +91,7 @@ public class PortletDefinitionForm implements Serializable {
 	private boolean editable;
 	private boolean hasHelp;
 	private boolean hasAbout;
+	private boolean configurable;
 	
 	/**
 	 * Groups and categories
@@ -141,13 +142,16 @@ public class PortletDefinitionForm implements Serializable {
 		if (def.getParameter(IPortletDefinition.EDITABLE_PARAM) != null) {
 		    this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
 		}
-        if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
+        if (def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM) != null) {
+    		this.setConfigurable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM).getValue()));
+    	}
+		if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
             this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
         }
         if (def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM) != null) {
     		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
     	}
-		this.setLifecycleState(def.getLifecycleState());
+        this.setLifecycleState(def.getLifecycleState());
 		
 		int order = this.getLifecycleState().getOrder();
 		if (order < PortletLifecycleState.PUBLISHED.getOrder()) {
@@ -362,6 +366,14 @@ public class PortletDefinitionForm implements Serializable {
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public boolean isConfigurable() {
+		return configurable;
+	}
+
+	public void setConfigurable(boolean configurable) {
+		this.configurable = configurable;
 	}
 
 	public boolean isHasHelp() {

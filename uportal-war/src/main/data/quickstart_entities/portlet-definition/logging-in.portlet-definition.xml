@@ -32,6 +32,10 @@
     </portlet-descriptor>
     <group>Everyone</group>
     <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>

@@ -33,6 +33,10 @@
     <category>Academics</category>
     <group>Everyone</group>
     <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
         <name>mobileIconUrl</name>
         <value>/uPortal/media/skins/icons/mobile/courses.png</value>
     </parameter>

@@ -286,16 +286,20 @@
       help, remove, maximize, minimize, info, print, settings, ...
     -->
       <xsl:variable name="hasHelp">
-          <xsl:if test="parameter[@name='hasHelp'] and parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
+          <xsl:if test="parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="hasAbout">
-          <xsl:if test="parameter[@name='hasAbout'] and parameter[@name='hasAbout']/@value = 'true'">true</xsl:if>
+          <xsl:if test="parameter[@name='hasAbout']/@value = 'true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="editable">
-          <xsl:if test="parameter[@name='editable'] and parameter[@name='editable']/@value = 'true'">true</xsl:if>
+          <xsl:if test="parameter[@name='editable']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="canConfigure">
+          <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
+          <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', 'PORTLET_ID.@chanID')">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="printable">
-          <xsl:if test="parameter[@name='printable'] and parameter[@name='printable']/@value = 'true'">true</xsl:if>
+          <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
       </xsl:variable>
 
       <!-- Help Icon -->
@@ -443,6 +447,25 @@
         <li>
           <a href="{$portletEditUrl}#{@ID}" title="{upMsg:getMessage('edit.portlet', $USER_LANG)}" class="up-portlet-control edit"><xsl:value-of select="upMsg:getMessage('edit', $USER_LANG)"/></a>
         </li>
+      </xsl:if>
+
+      <!-- Configure Icon -->
+      <xsl:if test="@portletMode!='config' and @windowState!='minimized'">
+        <xsl:if test="$canConfigure='true'">
+          <xsl:variable name="portletConfigureUrl">
+            <xsl:call-template name="portalUrl">
+              <xsl:with-param name="url">
+                  <url:portal-url>
+                      <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                      <url:portlet-url mode="CONFIG" copyCurrentRenderParameters="true" />
+                  </url:portal-url>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:variable>
+          <li>
+            <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
+          </li>
+        </xsl:if>
       </xsl:if>
 
       <!-- Print Icon -->
