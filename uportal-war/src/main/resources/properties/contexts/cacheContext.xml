@@ -23,36 +23,40 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
+    xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd">
-    
+
     <!-- This bean CANNOT be autowired or it will not function correctly -->
     <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
         <property name="cacheManager" ref="cacheManager" />
     </bean>
-    
-    <!-- 
-     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml
+
+    <!--
+     | The per-cache settings are configured in /uportal-war/src/main/resources/properties/ehcache.xml.
+     | Note: In a Tomcat webapp environment, setting shared=true makes the CacheManager application-wide, not JVM-wide
+     | as Spring documentation suggests.  This allows all uPortal classes to look up the caches configured for uPortal.
      +-->
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" depends-on="systemPropertySetter, pingDao, authDao">
-        <property name="configLocation" value="classpath:/properties/ehcache.xml" />
-    </bean>
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+          depends-on="systemPropertySetter, pingDao, authDao"
+          p:shared="true"
+          p:configLocation="classpath:/properties/ehcache.xml" />
     <bean id="cacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
         <property name="cacheManager" ref="cacheManager"></property>
     </bean>
-    
+
     <bean id="pingDao" class="org.jasig.portal.jgroups.protocols.JdbcPingDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
     <bean id="authDao" class="org.jasig.portal.jgroups.auth.JdbcAuthDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
-    
+
     <!-- 
      | Annotation based caching support
      +-->
     <ehcache:annotation-driven default-cache-key-generator="portalCacheKeyGenerator" cache-manager="cacheManager" />
-    
+
     <bean id="portalCacheKeyGenerator" class="org.jasig.portal.utils.cache.PortalCacheKeyGenerator"/>
 
     <bean class="org.jasig.portal.utils.ResourceLoader">
@@ -69,7 +73,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="pageCachingFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.cache.ConfigurablePageCachingFilter">
@@ -78,7 +82,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <bean id="CacheExpiresFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
@@ -98,5 +102,5 @@
             </bean>
         </property>
     </bean>
-    
+
 </beans>
