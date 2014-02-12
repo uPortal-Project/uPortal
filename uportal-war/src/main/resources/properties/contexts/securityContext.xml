@@ -58,7 +58,7 @@
             <bean class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
 
                 <!-- Before using the string encryption service you must first set a password.  The default
-                     password works and logs a warning, but is not secure.  You must also set the encryption key
+                     password works but is not secure.  You must also set the encryption key
                      to the same value in any portlets that obtain and decrypt the user's password.
                 -->
                 <property name="password" value="${org.jasig.portal.portlets.passwordEncryptionKey}"/>
