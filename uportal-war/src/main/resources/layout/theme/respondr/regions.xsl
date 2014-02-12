@@ -218,8 +218,72 @@
     -->
     <xsl:template name="regions.portlet.decorator">
         <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname}">
+            <xsl:if test="@portletMode!='edit' and @portletMode!='config' and @windowState!='minimized'">
+                <xsl:call-template name="regions.hover-menu"/>
+            </xsl:if>
             <xsl:copy-of select="."/> <!-- Write in the contents of the portlet. -->
         </section>
+    </xsl:template>
+
+
+    <!-- ========== TEMPLATE: REGIONS HOVER MENU ========== -->
+    <!-- ========================================================= -->
+    <!--
+     | For portlets in regions, the markup in this template provides access to 
+     | some functions that normally appear in portlet chrome (e.g. EDIT and CONFIG).
+    -->
+    <xsl:template name="regions.hover-menu">
+        <xsl:variable name="editable">
+            <xsl:if test="parameter[@name='editable']/@value = 'true'">true</xsl:if>
+        </xsl:variable>
+        <xsl:variable name="canConfigure">
+            <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
+            <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', 'PORTLET_ID.@chanID')">true</xsl:if>
+        </xsl:variable>
+        <xsl:if test="$editable='true' or $canConfigure='true'">
+            <ul class="hover-chrome">
+                <xsl:if test="$editable='true'">
+                    <xsl:variable name="portletEditUrl">
+                        <xsl:call-template name="portalUrl">
+                            <xsl:with-param name="url">
+                                <url:portal-url>
+                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                                    <url:portlet-url mode="EDIT" copyCurrentRenderParameters="true" />
+                                </url:portal-url>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:variable>
+                    <li class="hover-option">
+                        <a href="{$portletEditUrl}#{@ID}" title="{upMsg:getMessage('edit.portlet', $USER_LANG)}" class="up-portlet-control edit"><i class="fa fa-edit"></i></a>
+                    </li>
+                </xsl:if>
+                <xsl:if test="$canConfigure='true'">
+                    <xsl:variable name="portletConfigureUrl">
+                        <xsl:call-template name="portalUrl">
+                            <xsl:with-param name="url">
+                                <url:portal-url>
+                                    <url:fname><xsl:value-of select="@fname"/></url:fname>
+                                    <url:portlet-url mode="CONFIG" copyCurrentRenderParameters="true" />
+                                </url:portal-url>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:variable>
+                    <li class="hover-option">
+                        <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><i class="fa fa-gears"></i></a>
+                    </li>
+                </xsl:if>
+            </ul>
+            <script type="text/javascript">
+                up.jQuery(document).ready(function() {
+                    $('section.<xsl:value-of select="@fname" />').hover(function() {
+                        $(this).find('.hover-chrome').stop(true, true).slideDown('medium');
+                    }, 
+                    function() {
+                        $(this).find('.hover-chrome').stop(true,true).slideUp('medium');
+                    });
+                });
+            </script>
+        </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>

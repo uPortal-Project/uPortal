@@ -30,6 +30,36 @@
 .portal {
 
     /* ==========================================================================
+       General-purpose styles that apply to all regions
+       ========================================================================== */
+
+    [id^="region-"] {
+
+        [id^="portlet_"] {
+            position: relative;
+        }
+
+        .hover-chrome {
+            display:none;
+            position: absolute;
+            opacity: .5;
+            list-style:none;
+            padding: 0 4px;
+            top: -1em;
+            background-color: @grayscale2;
+
+            .hover-option {
+                display: inline-block;
+
+                a {
+                    color: @grayscale9;
+                }
+            }
+        }
+
+    }
+
+    /* ==========================================================================
        Namespace: .region-pre-header
        ========================================================================== */
 

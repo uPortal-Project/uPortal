@@ -27,17 +27,21 @@
     <type>Portlet</type>
     <timeout>5000</timeout>
     <portlet-descriptor>
-        <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>JspInvoker</ns2:portletName>
+        <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName>
+        <ns2:portletName>cms</ns2:portletName>
     </portlet-descriptor>
     <group>Everyone</group>
+    <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>
     <portlet-preference>
-        <name>JspInvokerPortletController.viewLocation</name>
+        <name>content</name>
         <readOnly>false</readOnly>
-        <value>/jsp/Invoker/logo</value>
+        <value>&lt;h1 class="portal-logo"&gt;uPortal&lt;/h1&gt;</value>
     </portlet-preference>
 </portlet-definition>
