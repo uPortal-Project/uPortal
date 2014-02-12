@@ -14,16 +14,6 @@
     <name>CAS Server</name>
     <description>Overlay on the CAS Server WAR.</description>
     
-    <dependencyManagement>
-    	<dependencies>
-    		<dependency>
-    			<groupId>org.slf4j</groupId>
-    			<artifactId>slf4j-api</artifactId>
-    			<version>1.5.8</version>
-    		</dependency>
-    	</dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>
@@ -58,8 +48,13 @@
         <dependency> 
             <groupId>org.jasypt</groupId> 
             <artifactId>jasypt</artifactId>  
-        </dependency> 
-        
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <!-- ===== Provided Dependencies ============================== -->
         <dependency>
             <groupId>org.jasig.cas</groupId>
@@ -107,7 +102,14 @@
             <scope>runtime</scope>
             <type>war</type>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-extension-clearpass</artifactId>
+            <version>${cas-server.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
@@ -120,21 +122,7 @@
             	</exclusion>
             </exclusions>
         </dependency>
-        
-        <dependency>
-           <groupId>org.jasig.cas3.extensions</groupId>
-           <artifactId>clearpass-webapp</artifactId>
-           <version>${cas-clearpass.version}</version>
-           <exclusions>
-            <exclusion>
-              <groupId>org.jasig.cas</groupId>
-              <artifactId>cas-server-core</artifactId>
-            </exclusion>
-           </exclusions>
-           <scope>runtime</scope>
-           <type>war</type>
-        </dependency>
-        
+
         <!-- ===== Test Dependencies ============================== -->
         <dependency>
             <groupId>org.easymock</groupId>
@@ -184,31 +172,6 @@
                             <artifactId>cas-server-webapp</artifactId>
                             <excludes>
                                 <exclude>WEB-INF/lib/cas-client-core-3.1.10.jar</exclude>
-                                <exclude>WEB-INF/lib/xml-apis-1.0.b2.jar</exclude>
-                            </excludes>
-                        </overlay>
-                        <overlay>
-                            <groupId>org.jasig.cas3.extensions</groupId>
-                            <artifactId>clearpass-webapp</artifactId>
-                            <excludes>
-                                <exclude>WEB-INF/lib/cas-client-core-3.1.11.jar</exclude>
-                                <exclude>WEB-INF/lib/cas-server-core-3.4.2.jar</exclude>
-                                <exclude>WEB-INF/lib/commons-lang-2.4.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-aop-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-asm-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-beans-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-binding-2.0.8.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-context-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-context-support-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-core-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-expression-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-jdbc-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-js-2.0.8.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-orm-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-tx-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-web-3.0.1.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-webflow-2.0.8.RELEASE.jar</exclude>
-                                <exclude>WEB-INF/lib/spring-webmvc-3.0.1.RELEASE.jar</exclude>
                                 <exclude>WEB-INF/lib/xml-apis-1.0.b2.jar</exclude>
                             </excludes>
                         </overlay>

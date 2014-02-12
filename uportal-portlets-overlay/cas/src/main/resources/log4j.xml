@@ -19,22 +19,50 @@
     under the License.
 
 -->
-
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="cas" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${environment.build.log.logfileDirectory}/cas.log" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="3" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %p [%c] - %m%n"/>
+        </layout>
+    </appender>
 
+    <!-- Perf4J appenders -->
     <!--
-      Log file variables, such as "{environment.build.log.rootLevel}" are defined
-      by properties in the uPortal/filters directory.  See the Building
-      and Deploying uPortal section of the uPortal manual
+       This AsyncCoalescingStatisticsAppender groups StopWatch log messages
+       into GroupedTimingStatistics messages which it sends on the
+       file appender defined below
     -->
+    <appender name="CoalescingStatistics" class="org.perf4j.log4j.AsyncCoalescingStatisticsAppender">
+        <param name="TimeSlice" value="60000"/>
+        <appender-ref ref="fileAppender"/>
+        <appender-ref ref="graphExecutionTimes"/>
+        <appender-ref ref="graphExecutionTPS"/>
+    </appender>
 
-    <!--
-      This default ConsoleAppender is used to log all NON perf4j messages
-      to System.out
-    -->
-    <appender name="null" class="org.apache.log4j.varia.NullAppender" />
+    <!-- This file appender is used to output aggregated performance statistics -->
+    <appender name="fileAppender" class="org.apache.log4j.FileAppender">
+        <param name="File" value="${environment.build.log.logfileDirectory}/perfStats.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="graphExecutionTimes" class="org.perf4j.log4j.GraphingStatisticsAppender">
+        <!-- Possible GraphTypes are Mean, Min, Max, StdDev, Count and TPS -->
+        <param name="GraphType" value="Mean"/>
+        <!-- The tags of the timed execution blocks to graph are specified here -->
+        <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET,AUTHENTICATE" />
+    </appender>
+
+    <appender name="graphExecutionTPS" class="org.perf4j.log4j.GraphingStatisticsAppender">
+        <param name="GraphType" value="TPS" />
+        <param name="TagNamesToGraph" value="DESTROY_TICKET_GRANTING_TICKET,GRANT_SERVICE_TICKET,GRANT_PROXY_GRANTING_TICKET,VALIDATE_SERVICE_TICKET,CREATE_TICKET_GRANTING_TICKET,AUTHENTICATE" />
+    </appender>
 
     <!-- Loggers -->
     <!--
@@ -45,8 +73,8 @@
       upstream loggers.
     -->
     <logger name="org.perf4j.TimingLogger" additivity="false">
-        <level value="INFO"/>
-        <appender-ref ref="null"/>
+        <level value="INFO" />
+        <appender-ref ref="CoalescingStatistics" />
     </logger>
 
     <!--
@@ -64,8 +92,13 @@
     </logger>
 
     <logger name="org.jasig" additivity="true">
-        <level value="DEBUG" />
-        <appender-ref ref="null" />
+        <level value="INFO" />
+        <appender-ref ref="cas" />
+    </logger>
+
+    <logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager">
+        <level value="INFO" />
+        <appender-ref ref="cas" />
     </logger>
 
     <!--
@@ -75,7 +108,7 @@
     -->
     <logger name="org.jasig.cas.web.flow" additivity="true">
         <level value="INFO" />
-        <appender-ref ref="null" />
+        <appender-ref ref="cas" />
     </logger>
 
     <!--
@@ -83,7 +116,7 @@
       logger to System.out.
     -->
     <root>
-        <level value="${environment.build.log.rootLevel}"/>
-        <appender-ref ref="null"/>
+        <level value="${environment.build.log.rootLevel}" />
+        <appender-ref ref="cas" />
     </root>
 </log4j:configuration>
