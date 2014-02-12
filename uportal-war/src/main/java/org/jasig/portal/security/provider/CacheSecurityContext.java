@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
  * principalToken.root=userName
  * credentialToken.root=password
  *
- * To ensure that both contexts are exercized the portal property
+ * To ensure that both contexts are exercised the portal property
  * org.jasig.portal.security.provider.ChainingSecurityContext.stopWhenAuthenticated
  * must be set to false (by default it is set to true).
 
