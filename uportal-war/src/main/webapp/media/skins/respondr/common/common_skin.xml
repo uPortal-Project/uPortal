@@ -26,7 +26,7 @@
 
     <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
-
+    
     <!--
     | NOTE:  The following order is important!
     +-->
@@ -62,6 +62,22 @@
 
     <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
     <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+
+    <!-- Data Table Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.min.js</js>
+
+    <!-- Data Table Bootstrap Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
+    <css included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+
+    <!-- Data Table ColumnFilterWidgets Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
+    <css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
 
     <js import="true">../../common/common_skin.xml</js>
 
