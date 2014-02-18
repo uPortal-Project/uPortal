@@ -303,7 +303,7 @@ tr.even {
 			<c:forEach var="portlet" items="${channelBeanList}">
 				<tr>
 					<td class="essential" style="white-space: nowrap; border:none;">
-						${portlet.title}
+						<a href="${renderRequest.contextPath}/p/${portlet.fname}">${portlet.title}</a>
 					</td>
 					<td class="optional" style="border:none;">
 						${portlet.description}
