@@ -37,6 +37,11 @@
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png</value>
     </parameter>
     <portlet-preference>
+    	<name>screen_shot2_caption</name>
+    	<readOnly>true</readOnly>
+    	<value>One Stop Shopping</value>
+    </portlet-preference>
+    <portlet-preference>
     	<name>screen_shot1</name>
     	<readOnly>true</readOnly>
     	<value>http://image.shutterstock.com/display_pic_with_logo/427597/141533524/stock-photo-marketplace-road-sign-141533524.jpg</value>
@@ -45,5 +50,25 @@
     	<name>screen_shot1_caption</name>
     	<readOnly>true</readOnly>
     	<value>The really cool marketplace</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>Release_Date</name>
+    	<readOnly>true</readOnly>
+    	<value>Feb 5, 2014</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>screen_shot2</name>
+    	<readOnly>true</readOnly>
+    	<value>http://thumb7.shutterstock.com/display_pic_with_logo/248635/135897425/stock-photo-a-vending-machine-with-the-words-buy-apps-here-and-many-app-tiles-and-icons-ready-to-be-bought-and-135897425.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>Release_Notes</name>
+    	<readOnly>true</readOnly>
+    	<value>Responsive Design!</value>
+    	<value>Doesn't Break</value>
+    	<value>Adds the ability to have Screenshots</value>
+    	<value>Adds the ability for version notes</value>
+    	<value>Search works</value>
+    	<value>See your favorite apps</value>
     </portlet-preference>
 </portlet-definition>
