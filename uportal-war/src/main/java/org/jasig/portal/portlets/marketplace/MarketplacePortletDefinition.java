@@ -40,6 +40,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	private IPortletDefinition portletDefinition;
 	private List<ScreenShot> screenShots;
 	public static final String MARKETPLACE_FNAME = "portletmarketplace";
+	private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
+	private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
+	private PortletReleaseNotes releaseNotes;
 
 	/**
 	 * 
@@ -48,11 +51,30 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	 */
 	public MarketplacePortletDefinition(IPortletDefinition portletDefinition){
 		this.portletDefinition = portletDefinition;
+		this.setUpDefinitions(portletDefinition);
+	}
+	
+	private void setUpDefinitions(IPortletDefinition portletDefinition){
 		this.setScreenShots(portletDefinition);
+		this.setPortletReleaseNotes(portletDefinition);
+	}
+	
+	private void setPortletReleaseNotes(IPortletDefinition portlet){
+		if(releaseNotes == null) 
+			releaseNotes = new PortletReleaseNotes();
+		for(IPortletPreference portletPreference: portlet.getPortletPreferences()){
+			if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+				releaseNotes.setReleaseDate(portletPreference.getValues()[0]);
+				continue;
+			}
+			if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+				releaseNotes.setReleaseNotes(Arrays.asList(portletPreference.getValues()));
+				continue;
+			}
+		}
 	}
 	
 	private void setScreenShots(IPortletDefinition portlet){
-		
 		List<IPortletPreference> portletPreferences = portlet.getPortletPreferences();
 		List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
 		List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
@@ -91,6 +113,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	 */
 	public List<ScreenShot> getScreenShots() {
 		return screenShots;
+	}
+	
+	/**
+	 * @return the releaseNotes
+	 */
+	public PortletReleaseNotes getPortletReleaseNotes() {
+		return releaseNotes;
 	}
 
 	@Override
