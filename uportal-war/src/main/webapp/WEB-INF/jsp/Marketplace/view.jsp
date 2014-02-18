@@ -23,6 +23,7 @@
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript"></script>
 <style>
+/*TODO : namespace these so that they only effect this page */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables display
  */
@@ -289,10 +290,10 @@ tr.even {
 		<thead>
 			<tr>
 				<th class="essential" style="border:none;">
-					Title
+					<spring:message code="label.title" text="Title" />
 				</th>
 				<th class="optional" style="border:none;">
-					Description
+					<spring:message code="label.description" text="Description" />
 				</th>
 				<th class="essential" style="border:none;">
 				</th>
@@ -312,7 +313,7 @@ tr.even {
 						<portlet:param name="name" value="${portlet.name}"/>
 					</portlet:renderURL>
 					<td class="essential" style="border:none;">
-						<a href="${entryURL}">get</a>
+						<a href="${entryURL}"><spring:message code="label.details" text="Details" /></a>
 					</td>
 				</tr>
 			</c:forEach>
