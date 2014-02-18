@@ -26,7 +26,8 @@
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
     <folder ID="s4" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
-      <channel fname="login-launcher" unremovable="false" hidden="false" immutable="false" ID="n19"/>
+      <channel fname="skin-manager" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+      <channel fname="login-launcher" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
   </folder>
 </layout>

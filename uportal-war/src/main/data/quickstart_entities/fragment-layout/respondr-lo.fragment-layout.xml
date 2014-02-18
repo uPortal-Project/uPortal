@@ -25,8 +25,11 @@
     <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="page-top" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
-    <folder ID="s4" hidden="false" immutable="true" name="Header Left folder" type="header-left" unremovable="true">
-      <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+    <folder ID="s4" hidden="true" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
+        <channel fname="skin-manager" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+    </folder>
+    <folder ID="s6" hidden="false" immutable="true" name="Header Left folder" type="header-left" unremovable="true">
+      <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n7"/>
     </folder>
   </folder>
 </layout>
