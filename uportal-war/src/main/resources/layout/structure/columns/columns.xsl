@@ -92,6 +92,62 @@
         </content>
       </layout_fragment>
     </xsl:when>
+
+    <xsl:when test="$focusedFragmentId != 'none'">
+
+
+        <layout>
+            <xsl:call-template name="debug-info"/>
+
+            <xsl:if test="/layout/@dlm:fragmentName">
+                <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
+            </xsl:if>
+
+            <header>
+                        <!-- BEGIN display channel-headers for each channel visible on the page -->
+                        <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+                            <channel-header ID="{@ID}"/>
+                        </xsl:for-each>
+                        <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+                            <channel-header ID="{@ID}"/>
+                        </xsl:for-each>
+                        <!-- END display channel-headers for each channel visible on the page -->
+
+
+                <!-- Allows header portlets to appear in the output, even in focused mode -->
+                <xsl:for-each select="child::folder[@type='header']">
+                    <xsl:copy-of select=".//channel"/>
+                </xsl:for-each>
+
+            </header>
+
+            <!-- TODO: add navigation for return -->
+
+            <content>
+
+                        <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
+
+            </content>
+
+            <xsl:call-template name="sidebarList"/>
+
+            <footer>
+                <xsl:for-each select="child::folder[attribute::type='footer']">
+                    <xsl:copy-of select=".//channel"/>
+                </xsl:for-each>
+            </footer>
+
+        </layout>
+
+
+    </xsl:when>
+
+
+
+
+
+
+
     <xsl:otherwise>
 
   <layout>
@@ -309,7 +365,8 @@
 </xsl:template>
 
 <xsl:template match="folder[@hidden='false']">
-  <xsl:if test="$activeTabID = @ID">
+    <xsl:attribute name="type">regular</xsl:attribute>
+  <xsl:if test="$activeTabID = @ID or $focusedFragmentId = @ID">
     <xsl:if test="child::folder">
       <xsl:for-each select="folder">
         <column>
