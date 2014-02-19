@@ -26,6 +26,7 @@
 
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="focusedTabID">none</xsl:param>
+    <xsl:param name="focusedFragmentId">none</xsl:param>
 <xsl:param name="defaultTab">1</xsl:param>
 <xsl:param name="detached">false</xsl:param>
 <xsl:param name="userImpersonating">false</xsl:param>
