@@ -18,11 +18,10 @@
  */
 
 .portal-header {
-    background: @color1;
-    color: @white;
+    background: @header-background-color;
+    color: @header-text-color;
 
     .portal-nav {
-
         .container {
             padding: 0;
         }
@@ -33,6 +32,12 @@
     position: absolute;
     top: 10px;
     right: 0;
+
+    .logout-launcher {
+        a.portal-logout {
+            // color: @user-portal-logout-btn-text-color;
+        }
+    }
 }
 
 .portal-editing {
@@ -54,8 +59,14 @@ h1.portal-logo {
     margin: 10px 0 20px 0;
 }
 
-#webSearchSubmit span {
-    display: none;
+#webSearchSubmit {
+    // background: @search-button-background-color;
+    // .gradient (@search-button-background-color, darken(@search-button-background-color, 10%));
+    // color: @search-button-text-color;
+
+    span {
+        display: none;
+    }
 }
 
 
@@ -71,8 +82,8 @@ h1.portal-logo {
         position: relative;
         top: 0;
         left: 0;
-        .gradient (@color1-dark, @color1);
-        border-bottom: 1px solid @color1-light;
+        .gradient(@portal-global-background-color, @portal-global-background-gradient);
+        border-bottom: 1px solid @portal-global-border-color;
         .drop-shadow;
         text-align: right;
         padding: 4px 0;
@@ -84,8 +95,15 @@ h1.portal-logo {
 
              .portal-user {
                 a {
-                    color: @color2;
+                    color: @user-portal-link-color;
                     margin-left: 10px;
+                }
+                .notification-icon {
+                    margin-right: 10px;
+                    a {
+                        color: #fff;
+                        text-decoration: none;
+                    }
                 }
              }
          }
