@@ -133,15 +133,17 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                         ("focusedFragmentId");
 
                 if (null == focusedFragmentIdParamValues || focusedFragmentIdParamValues.isEmpty() ) {
-                    // focusedFragmentId is not present, so do nothing about it
+                    logger.trace("focusedFragmentId is not present, so do nothing about it.");
+
                 } else if (focusedFragmentIdParamValues.size() > 1) {
-                    // multiple values??? weird
                     logger.error("Encountered multiple values of portal-scoped focusedFragmentId request parameter " +
                             "but expected zero or one; values were [" + focusedFragmentIdParamValues + "]");
                 } else {
                     // there's exactly one value for the focusedFragmentId parameter
 
-                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "focusedFragmentId", focusedFragmentIdParamValues.get(0));
+                    String focusedFragmentId = focusedFragmentIdParamValues.get(0);
+                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "focusedFragmentId", focusedFragmentId);
+                    logger.trace("Set focusedFragmentId structure stylesheet parameter to {}", focusedFragmentId);
 
                 }
 
