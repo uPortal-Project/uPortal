@@ -68,6 +68,7 @@
     <debug>
         <userLayoutRoot><xsl:value-of select="$userLayoutRoot"></xsl:value-of></userLayoutRoot>
         <focusedTabID><xsl:value-of select="$focusedTabID"></xsl:value-of></focusedTabID>
+        <focusedFragmentId><xsl:value-of select="$focusedFragmentId"/></focusedFragmentId>
         <defaultTab><xsl:value-of select="$defaultTab"></xsl:value-of></defaultTab>
         <detached><xsl:value-of select="$detached"></xsl:value-of></detached>
         <activeTabIdx><xsl:value-of select="$activeTabIdx"></xsl:value-of></activeTabIdx>
