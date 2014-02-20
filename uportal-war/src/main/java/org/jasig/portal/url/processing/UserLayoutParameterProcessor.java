@@ -143,7 +143,10 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
 
                     String focusedFragmentId = focusedFragmentIdParamValues.get(0);
                     this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "focusedFragmentId", focusedFragmentId);
-                    logger.trace("Set focusedFragmentId structure stylesheet parameter to {}", focusedFragmentId);
+                    this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME,
+                            "focusedFragmentId", focusedFragmentId);
+                    logger.trace("Set focusedFragmentId structure and theme stylesheet parameter to {}",
+                            focusedFragmentId);
 
                 }
 
