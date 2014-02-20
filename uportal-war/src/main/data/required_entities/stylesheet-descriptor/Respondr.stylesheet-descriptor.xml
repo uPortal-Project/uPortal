@@ -29,4 +29,10 @@
         <scope>PERSISTENT</scope>
         <description>Skin name</description>
     </stylesheet-parameter>
+    <stylesheet-parameter>
+        <name>focusedFragmentId</name>
+        <default-value>none</default-value>
+        <scope>REQUEST</scope>
+        <description>Id of focused-on fragment, or none</description>
+    </stylesheet-parameter>
 </stylesheet-descriptor>
