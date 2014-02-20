@@ -224,7 +224,7 @@
 </div>
 <div id="${n}copy-model" title="Link to This">
     <p>
-    Link : <input type="text" value="${serverAddress}${renderRequest.contextPath}/p/${Portlet.FName}"></input>
+    Link : <input type="text" value="${deepLink}"></input>
     </p>
 </div>
 <script type="text/javascript">
