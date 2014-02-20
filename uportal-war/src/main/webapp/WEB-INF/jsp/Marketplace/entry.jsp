@@ -19,8 +19,6 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
-
 <style>
 	.marketplace_wrapper{
 		min-height:250px;
@@ -131,7 +129,7 @@
 						<li class="divider"></li>
 						<li><a href="#">Share on Twitter</a></li>
 						<li><a href="#">Share on Facebook</a></li>
-						<li><a href="#">Copy link</a></li>
+						<li><a href="#" id="${n}linkto">Link to ...</a></li>
 					</ul>
 				</div>
 			</div>
@@ -211,7 +209,7 @@
 	 	<br>
 	 	<br>
 	 	<div class="row col-xs-12" style="clear:both;">
-	 		<portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
+	 		<portlet:renderURL var="entryURL" windowState="MAXIMIZED"  >
 	 		</portlet:renderURL>
 	 		<div class="col-xs-4">
 	 		</div>
@@ -223,12 +221,30 @@
 	 	</div>
 	</div>						
 </div>
+<div id="${n}copy-model" title="Link to This">
+    <p>
+    Link : <input type="text" value="${serverAddress}${renderRequest.contextPath}/p/${Portlet.FName}"></input>
+    </p>
+</div>
 <script type="text/javascript">
+up.jQuery(function() {
+    var $ = up.jQuery;
 	$(document).ready( function () {
 		$(".marketplace_screen_shots:first").addClass("active");
 		$(".marketplace_carousel_indicators>li:first-child").addClass("active");
 		$(".marketplace_release_notes>li:nth-child(-n+3)").addClass("marketplace_show");
-		$('carousel').carousel();
+		$('#${n}copy-model').dialog({
+		      autoOpen: false,
+		      modal: true,
+		      buttons: {
+		        Ok: function() {
+		          $( this ).dialog( "close" );
+		        }
+		      }
+		    });
+		$("#${n}linkto").click(function() {
+		   $("#${n}copy-model").dialog("open");
+	    });
 	});
 	var lengthLink = document.getElementById('marketplace_show_more_less_link');
 	lengthLink.onclick = toggleNotesDisplayLength;
@@ -242,4 +258,5 @@
 			lengthLink.innerHTML="More";
 		}
 	}
+});
 </script>
