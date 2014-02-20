@@ -130,6 +130,14 @@
 
             </header>
 
+            <regions>
+                <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
+                    <region name="{@type}">
+                        <xsl:copy-of select="channel"/>
+                    </region>
+                </xsl:for-each>
+            </regions>
+
             <!-- TODO: add navigation for return -->
 
             <content>
