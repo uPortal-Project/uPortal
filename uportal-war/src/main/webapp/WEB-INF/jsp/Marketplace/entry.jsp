@@ -107,6 +107,7 @@
 		font-size: 14px;
 		color: #26507D;
 		float: right;
+        cursor: pointer;
 	}
 	
 </style>
@@ -245,18 +246,22 @@ up.jQuery(function() {
 		$("#${n}linkto").click(function() {
 		   $("#${n}copy-model").dialog("open");
 	    });
-	});
-	var lengthLink = document.getElementById('marketplace_show_more_less_link');
-	lengthLink.onclick = toggleNotesDisplayLength;
-	function toggleNotesDisplayLength(){
-		var currentText = lengthLink.innerHTML;
-		if($.trim(currentText) == 'More'){
-			$(".marketplace_release_notes>li").addClass("marketplace_show");
-			lengthLink.innerHTML="Less";
-		}else{
-			$(".marketplace_release_notes>li:not(:nth-child(-n+3))").removeClass("marketplace_show");
-			lengthLink.innerHTML="More";
+		var lengthLink = $('#marketplace_show_more_less_link');
+		if(lengthLink != undefined) {
+		    lengthLink = lengthLink[0];
+		    lengthLink.onclick = toggleNotesDisplayLength;
+		    function toggleNotesDisplayLength(){
+		        var currentText = lengthLink.innerHTML;
+		        if($.trim(currentText) == 'More'){
+		            $(".marketplace_release_notes>li").addClass("marketplace_show");
+		            lengthLink.innerHTML="Less";
+		        }else{
+		            $(".marketplace_release_notes>li:not(:nth-child(-n+3))").removeClass("marketplace_show");
+		            lengthLink.innerHTML="More";
+		        }
+		    }
 		}
-	}
+	});
+	
 });
 </script>
