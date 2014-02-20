@@ -26,7 +26,7 @@
   <c:forEach var="collection" items="${collections}">
     <li class="list-group-item">
       <span class="glyphicon glyphicon-chevron-right pull-right"></span>
-      <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">${collection.name}</a>
+      <a href="${renderRequest.contextPath}/render.uP?u_focusedFragmentId=${collection.id}">${collection.name}</a>
     </li>
   </c:forEach>
 
