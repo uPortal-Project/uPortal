@@ -81,8 +81,12 @@ public class ChannelListController {
 	private ILocaleStore localeStore;
 	private MessageSource messageSource;
 	private static final String TYPE_SUBSCRIBE = "subscribe";
-	private static final String TYPE_MANAGE = "manage";
-	
+
+    /**
+     * @deprecated Moved to PortletRESTController under /api/portlets.json
+     */
+    private static final String TYPE_MANAGE = "manage";
+
 	/**
 	 * 
 	 * @param request
@@ -92,10 +96,11 @@ public class ChannelListController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView listChannels(WebRequest webRequest, HttpServletRequest request, @RequestParam(value="type",required=false) String type) {
-		if(type == null || (!type.equals(TYPE_MANAGE))) {
-			type = TYPE_SUBSCRIBE;
-		}
-		IPerson user = personManager.getPerson(request);
+        type = type != null ? type : TYPE_SUBSCRIBE;
+        if(TYPE_MANAGE.equals(type)) {
+            throw new UnsupportedOperationException("Moved to PortletRESTController under /api/portlets.json");
+        }
+        IPerson user = personManager.getPerson(request);
 
 		Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, type);
 
