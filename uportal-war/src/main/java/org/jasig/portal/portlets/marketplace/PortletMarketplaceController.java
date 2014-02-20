@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.commons.fileupload.portlet.PortletRequestContext;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -54,6 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.portlet.bind.PortletRequestUtils;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
@@ -75,6 +79,7 @@ public class PortletMarketplaceController {
 	private IPortletCategoryRegistry portletCategoryRegistry;
 	private MessageSource messageSource;
 	private IPortalSpELService spELService;
+
 	
 	@Autowired
     public void setSpELService(IPortalSpELService spELService) {
@@ -137,7 +142,15 @@ public class PortletMarketplaceController {
 		}
 		MarketplacePortletDefinition mpPortlet = new MarketplacePortletDefinition(result);
 		model.addAttribute("Portlet", mpPortlet);
+		model.addAttribute("serverAddress",getServerAddress(portalRequestUtils.getPortletHttpRequest(portletRequest)));
+		
 		return "jsp/Marketplace/entry";
+	}
+	
+	private String getServerAddress(HttpServletRequest request) {
+		final String requestURL = request.getRequestURL().toString();
+		final String requestURI = request.getRequestURI();
+		return requestURL != null ? requestURL.substring(0,requestURL.indexOf(requestURI)) : null;
 	}
 	
 	private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model){
@@ -150,7 +163,7 @@ public class PortletMarketplaceController {
 	/**
 	 * @author vertein
 	 * @param name - the name of the portlet you want
-	 * @return the portlet desired
+	 * @return the porlet desired
 	 * 
 	 * Uses name rather than fname because name is customer facing
 	 * Returns null if no matching portlet can be found
