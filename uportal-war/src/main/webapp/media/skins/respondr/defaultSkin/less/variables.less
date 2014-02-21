@@ -21,7 +21,6 @@
 /* ==========================================================================
    Variables
    ========================================================================== */
-
 @white: #FFFFFF;
 @black: #000000;
 
@@ -43,26 +42,24 @@
 /*
  * Primary color with 3 lightened shades and 3 darkened shades.
  */
-
 @color1: #4065B0; // medium blue
-@color1-light: lighten(@color1, 10%); // #5e80c5
-@color1-lighter: lighten(@color1, 25%); // #97acd9
-@color1-lightest: lighten(@color1, 50%); // #f4f6fb
-@color1-dark: darken(@color1, 10%); // #32508b
-@color1-darker: darken(@color1, 25%); // #1e2f53
-@color1-darkest: darken(@color1, 50%); // #000000
+@color1-light: lighten(@color1, 10%);
+@color1-lighter: lighten(@color1, 25%);
+@color1-lightest: lighten(@color1, 50%);
+@color1-dark: darken(@color1, 10%);
+@color1-darker: darken(@color1, 25%);
+@color1-darkest: darken(@color1, 50%);
 
 /*
  * Secondary color with 3 lightened shades and 3 darkened shades.
  */
-
 @color2: #8AA9D8;  // light blue
-@color2-light: lighten(@color2, 10%); // #b0c5e5
-@color2-lighter: lighten(@color2, 25%);  // #eaeff8
-@color2-lightest: lighten(@color2, 50%); // #ffffff
-@color2-dark: darken(@color2, 10%); // #648dcb
-@color2-darker: darken(@color2, 25%); // #3966aa
-@color2-darkest: darken(@color2, 50%);  // #192c4a
+@color2-light: lighten(@color2, 10%);
+@color2-lighter: lighten(@color2, 25%);
+@color2-lightest: lighten(@color2, 50%);
+@color2-dark: darken(@color2, 10%);
+@color2-darker: darken(@color2, 25%);
+@color2-darkest: darken(@color2, 50%);
 
 /*
  * Tertiary color with 3 lightened shades and 3 darkened shades.
@@ -79,53 +76,93 @@
 
 @border: 1px solid @grayscale3;
 
-//== Form states and alerts
-//
-//## Define colors for form feedback states and, by default, alerts.
-//## These are Bootstrap VARs using default colors
+@body-background-color: #fff;
+@body-background-image: url(./common/images/furley_bg.png);
+/* Using the furley pattern from http://subtlepatterns.com */
 
-@state-success-text:            #3c763d;
-@state-success-bg:              #dff0d8;
-@state-success-border:       darken(spin(@state-success-bg, -10), 5%);
+/**
+ * Link colors
+ */
+@link-color: #f00;
 
-@state-info-text:                 #31708f;
-@state-info-bg:                   #d9edf7;
-@state-info-border:            darken(spin(@state-info-bg, -10), 7%);
-
-@state-warning-text:          #8a6d3b;
-@state-warning-bg:            #fcf8e3;
-@state-warning-border:     darken(spin(@state-warning-bg, -10), 5%);
-
-@state-danger-text:           #a94442;
-@state-danger-bg:             #f2dede;
-@state-danger-border:      darken(spin(@state-danger-bg, -10), 5%);
+/**
+ * Region Styles
+ */
+@header-background-color: @color1;
+@header-text-color: #FFFFFF;
 
 
-//== Alerts
-//
-//## Define alert colors, border radius, and padding.
-////## These are Bootstrap VARs using default colors
+/**
+ * User bar styles
+ */
+@portal-global-background-color: @color1;
+@portal-global-background-gradient: false;
+@portal-global-border-color: @color1-light;
 
-@alert-padding:                 15px;
-@alert-border-radius:        5px;
-@alert-link-font-weight:    bold;
+@user-portal-link-color: @link-color;
 
-@alert-success-bg:            @state-success-bg;
-@alert-success-text:          @state-success-text;
-@alert-success-border:      @state-success-border;
+@btn-skin-color:              #fff;
+@btn-skin-bg:                 @color2;
+@btn-skin-border:             darken(@btn-skin-bg, 5%);
 
-@alert-info-bg:               @state-info-bg;
-@alert-info-text:             @state-info-text;
-@alert-info-border:           @state-info-border;
+@btn-skin-alt-color:              #grayscale10;
+@btn-skin-alt-bg:                 @color3;
+@btn-skin-alt-border:             darken(@color3, 5%);
+// @user-portal-background-color: #fff;
 
-@alert-warning-bg:            @state-warning-bg;
-@alert-warning-text:          @state-warning-text;
-@alert-warning-border:        @state-warning-border;
 
-@alert-danger-bg:             @state-danger-bg;
-@alert-danger-text:           @state-danger-text;
-@alert-danger-border:         @state-danger-border;
+/**
+ * Header
+ */
+@notification-icon-color: #fff;
+/**
+ * Nav
+ */
+@navbar-background-color: @color1-dark;
+@navbar-border-color: transparent;
+@navbar-border-size: 0;
 
+@navbar-item-background-color: transparent;
+@navbar-item-text-color: @grayscale3;
+
+@navbar-item-font-weight: bold;
+
+@navbar-item-hover-text-color: lighten(@navbar-item-text-color, 50%);
+@navbar-item-hover-background-color: @color1-light;
+
+@navbar-item-active-background-color: @color1-darker;
+// @navbar-item-active-hover-background-color: darken(@color1, 20%);
+@navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 5%);
+
+@navbar-item-active-text-color: #fff;
+@navbar-item-active-hover-text-color: inherit;
+
+@navbar-controls-color: @grayscale10;
+@navbar-controls-hover-color: #fff;
+
+@menu-toggle-background-color: @color2;
+@menu-toggle-text-color: @white;
+
+@menu-toggle-hover-background-color: @color3;
+@menu-toggle-hover-text-color: @white;
+
+/**
+ * Search field
+ */
+@search-button-text-color: #fff;
+@search-button-background-color: rgb(30, 77, 43);
+/**
+ * Portlet Chrome Settings
+ */
+@portlet-border-color: @grayscale2;
+@portlet-border-radius: 5px;
+@portlet-header-border-color: @grayscale2;
+
+@portlet-titlebar-link-color: @grayscale10;
+@portlet-titlebar-background-color: @grayscale2;
+
+@portlet-options-link-color: @grayscale10;
+@portlet-options-link-hover-color: darken(@portlet-options-link-color, 20%);
 /*
   * Custom Mixins
   */

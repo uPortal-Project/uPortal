@@ -100,7 +100,9 @@
     opacity:         @opacity;
 }
 
-.gradient (@startColor: #eee, @endColor: white) {
+
+
+.vertical-gradient (@startColor: #eee, @endColor: white) {
     background-color: @startColor;
     background: -webkit-gradient(linear, left top, left bottom, from(@startColor), to(@endColor));
     background: -webkit-linear-gradient(top, @startColor, @endColor);
@@ -109,13 +111,34 @@
     background: -o-linear-gradient(top, @startColor, @endColor);
 }
 .horizontal-gradient (@startColor: #eee, @endColor: white) {
-     background-color: @startColor;
+    background-color: @startColor;
     background-image: -webkit-gradient(linear, left top, right top, from(@startColor), to(@endColor));
     background-image: -webkit-linear-gradient(left, @startColor, @endColor);
     background-image: -moz-linear-gradient(left, @startColor, @endColor);
     background-image: -ms-linear-gradient(left, @startColor, @endColor);
     background-image: -o-linear-gradient(left, @startColor, @endColor);
 }
+
+// .gradient-alt(@background) {
+//     background-color: @background;
+//     #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
+// }
+// .gradient-alt(@background, @solid) when (@solid = true) { // Only applies solid background
+//     background: @background;
+// }
+// @color1: #fff;
+// @gradient: true;
+
+
+.gradient(@background, @_) {
+    background-color: @background;
+}
+.gradient(@background, @gradient) when (@gradient = true) { // Only applies solid background
+  #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
+}
+
+
+
 
 .animation (@name, @duration: 300ms, @delay: 0, @ease: ease) {
     -webkit-animation: @name @duration @delay @ease;
@@ -176,4 +199,35 @@
     -moz-transform-origin:    @x @y;
     -ms-transform-origin:     @x @y;
     -o-transform-origin:      @x @y;
+}
+
+.pretty-buttons(@color, @background, @text-shadow: none) {
+    color: @color;
+    #gradient > .vertical(lighten(@background, 5%), darken(@background, 10%), 0%, 100%);
+    border-color: darken(@background, 10%);
+    border-bottom-color: darken(@background, 20%);
+    text-shadow: @text-shadow;
+    .box-shadow(inset 0 1px 0 rgba(255, 255, 255, .1));
+
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+        #gradient > .vertical(darken(@background, 0), darken(@background, 10%), 0%, 100%);
+        border-color: darken(@background, 20%);
+        color: @color;
+    }
+
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &:focus,
+        &:active,
+        &.active {
+            background-color: @background;
+            border-color: darken(@background, 5%);
+        }
+    }
 }
