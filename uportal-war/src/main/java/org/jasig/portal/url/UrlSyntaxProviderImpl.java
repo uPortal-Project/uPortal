@@ -636,7 +636,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
             request.setAttribute(PORTAL_REQUEST_INFO_ATTR, portalRequestInfo);
             
-            logger.debug("Finished building requestInfo: " + portalRequestInfo);
+            logger.debug("Finished building requestInfo: {}", portalRequestInfo);
 
             
             return portalRequestInfo;
