@@ -128,7 +128,6 @@ public class UserLayoutParameterProcessor implements IRequestParameterProcessor 
                 
             case NORMAL:
             default: {
-
                 this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.STRUCTURE, "userLayoutRoot", IUserLayout.ROOT_NODE_NAME);
                 break;
             }
