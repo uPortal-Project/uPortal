@@ -174,6 +174,15 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     @RequestCache(keyMask={false, true})
     @Override
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId) {
+        /*
+         * Implementation note:
+         * While the API allows one or more folder names, this implementation will only ever return
+         * a List with zero or one element.  It's not entirely clear that a List with zero members
+         * was allowed by the interface definition, but this implementation will return an empty
+         * list if the layoutNodeId cannot be found in the layout.
+         */
+
+
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
