@@ -125,12 +125,13 @@
 @navbar-item-background-color: transparent;
 @navbar-item-text-color: @grayscale3;
 
-@navbar-item-font-weight: normal;
+@navbar-item-font-weight: bold;
 
-@navbar-item-hover-text-color: darken(@navbar-item-text-color, 50%);
-@navbar-item-hover-background-color: inherit;
+@navbar-item-hover-text-color: lighten(@navbar-item-text-color, 50%);
+@navbar-item-hover-background-color: @color1-light;
 
 @navbar-item-active-background-color: @color1-darker;
+// @navbar-item-active-hover-background-color: darken(@color1, 20%);
 @navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 5%);
 
 @navbar-item-active-text-color: #fff;
