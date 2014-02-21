@@ -26,7 +26,6 @@
 
 <xsl:param name="userLayoutRoot">root</xsl:param>
 <xsl:param name="focusedTabID">none</xsl:param>
-<xsl:param name="focusedFragmentId">none</xsl:param>
 <xsl:param name="defaultTab">1</xsl:param>
 <xsl:param name="detached">false</xsl:param>
 <xsl:param name="userImpersonating">false</xsl:param>
@@ -52,6 +51,20 @@
   </xsl:variable>
 
   <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+
+  <!-- focusedFragmentId is the focusedTabID param when that's not a regular tab :) -->
+
+
+    <xsl:variable name="focusedFragmentId">
+        <!-- if the focusedTabID is the id of a non-regular folder, then that ID is the focusedFragmentID,
+         otherwise none -->
+        <xsl:choose>
+            <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type!='regular']">
+                <xsl:value-of select="/layout/folder/folder[@ID=$focusedTabID and @type!='regular']/@ID"/>
+            </xsl:when>
+            <xsl:otherwise>none</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
 
   <!-- Evaluate the 'activeTabGroup' (optional feature) -->
   <xsl:variable name="activeTabGroup">
@@ -139,6 +152,8 @@
             </regions>
 
             <navigation>
+                <!-- signals that add-tab prompt is not appropriate in the context of this navigation -->
+                <xsl:attribute name="allowAddTab">false</xsl:attribute>
 
                 <!-- just the one focused-on tab -->
                 <xsl:for-each select="/layout/folder/folder[@ID = $focusedFragmentId]">
@@ -147,6 +162,7 @@
                         <xsl:for-each select="attribute::*">
                             <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
                         </xsl:for-each>
+                        <xsl:attribute name="focusedFragment" value="true" />
                         <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
                             <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
                         </xsl:if>
@@ -340,6 +356,9 @@
 
 <xsl:template name="tabList">
   <navigation>
+    <!-- signals that add-tab prompt is appropriate in the context of this navigation
+    user might or might not actually have permission to add a tab, which is evaluated later (in the theme) -->
+    <xsl:attribute name="allowAddTab">true</xsl:attribute>
     <!-- The tabGroups (optional feature) -->
     <tabGroupsList>
       <xsl:attribute name="activeTabGroup">

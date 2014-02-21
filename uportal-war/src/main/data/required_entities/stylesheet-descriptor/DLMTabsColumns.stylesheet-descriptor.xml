@@ -40,13 +40,6 @@
         <scope>REQUEST</scope>
         <description>The number of the DLM tab that is currently active</description>
     </stylesheet-parameter>
-
-    <stylesheet-parameter>
-        <name>focusedFragmentId</name>
-        <scope>REQUEST</scope>
-        <description>The id of the fragment that is currently focused, or none</description>
-    </stylesheet-parameter>
-
     <stylesheet-parameter>
         <name>detached</name>
         <default-value>false</default-value>
