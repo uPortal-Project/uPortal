@@ -57,7 +57,6 @@
 <xsl:param name="subscriptionsSupported">true</xsl:param>
 <xsl:param name="USE_FLYOUT_MENUS" select="'false'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
 <xsl:param name="useTabGroups">false</xsl:param>
-<xsl:param name="focusedFragmentId">none</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
     <xsl:when test="//layout_fragment">detached</xsl:when>
@@ -118,7 +117,7 @@
 
                 <!-- invite the user to add a tab if permission to do so
                 and not in focused-on-just-one-fragment mode -->
-                 <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and $focusedFragmentId = 'none'">
+                 <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
