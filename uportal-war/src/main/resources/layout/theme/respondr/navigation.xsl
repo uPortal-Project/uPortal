@@ -243,14 +243,14 @@
         <i class="fa fa-chevron-right visible-xs"></i>
       </a> <!-- Navigation item link. -->
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
-        <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+        <a href="javascript:;" class="nav-tab-controls portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
           <i class="fa fa-align-justify"></i>
           <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
         </a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:deleteAllowed='false')">
-          <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
+          <a href="javascript:;" class="nav-tab-controls portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
             <i class="fa fa-times"></i>
             <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
           </a><!-- Remove tab icon. -->

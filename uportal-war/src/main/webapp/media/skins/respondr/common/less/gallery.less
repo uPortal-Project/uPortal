@@ -139,22 +139,22 @@
     .border-radiuses(@galleryRIUtilityRound,@galleryRIUtilityRound,0,0);
 }
 .gallery-ri-link-gradient(@galleryRILinkGradient1) when (@galleryRILinkGradient1) {
-    .gradient(@galleryRILinkGradient1,@galleryRILinkGradient2);
+    .vertical-gradient(@galleryRILinkGradient1,@galleryRILinkGradient2);
 }
 .gallery-ri-link-round(@galleryRILinkRound) when (@galleryRILinkRound) {
     .border-radiuses(0,@galleryRILinkRound,0,0);
 }
 .gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover) when (@galleryRILinkGradient1Hover) {
-    .gradient(@galleryRILinkGradient1Hover,@galleryRILinkGradient2Hover);
+    .vertical-gradient(@galleryRILinkGradient1Hover,@galleryRILinkGradient2Hover);
 }
 .gallery-pager-button-gradient(@galleryPagerButtonGradient1) when (@galleryPagerButtonGradient1) {
-    .gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+    .vertical-gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
 }
 .gallery-pager-button-round(@galleryPagerButtonRound) when (@galleryPagerButtonRound) {
     .border-radius(@galleryPagerButtonRound);
 }
 .gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover) when (@galleryPagerBtnGradient1Hover) {
-    .gradient(@galleryPagerBtnGradient1Hover,@galleryPagerBtnGradient2Hover);
+    .vertical-gradient(@galleryPagerBtnGradient1Hover,@galleryPagerBtnGradient2Hover);
 }
 
 .portal {
@@ -411,13 +411,13 @@
                      &:active {
                          background: @galleryRIBackgroundHover;
                          border: @galleryRIBorderHover;
-                         .gradient(@galleryRIGradient1Hover, @galleryRIGradient2Hover);
+                         .vertical-gradient(@galleryRIGradient1Hover, @galleryRIGradient2Hover);
                      }
                  }
                  .layout-wrapper, .skins-wrapper {
                      .ri-link {
                         .border-radiuses(5px, 0, 0, 0);
-                        .gradient(darkgrey, @grayscale8);
+                        .vertical-gradient(darkgrey, @grayscale8);
                      }
                  }
                  .results-item.disabled {
@@ -477,7 +477,7 @@
                         color: @galleryRILink;
                         // background: @galleryRIBackground;
                         .border-radiuses(5px, 0, 0, 0);
-                        .gradient(darkgrey, @grayscale8);
+                        .vertical-gradient(darkgrey, @grayscale8);
                         display: none;
                     }
                 }
@@ -488,7 +488,7 @@
                     .ri-link {
                         background: @galleryRILinkBackgroundHover;
                         // .gallery-ri-link-gradient-hover(@galleryRILinkGradient1Hover);
-                        .gradient(#699bc4, #38678f);
+                        .vertical-gradient(#699bc4, #38678f);
 
                         display: block;
                     }
@@ -501,7 +501,7 @@
                     .pager-button-up, .pager-button-down {
                         background: @galleryPagerButtonBackground;
                         border: @galleryPagerButtonBorder;
-                        .gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
+                        .vertical-gradient(@galleryPagerButtonGradient1,@galleryPagerButtonGradient2);
                         .border-radius();
                         // .gallery-pager-button-gradient(@galleryPagerButtonGradient1);
                         // .gallery-pager-button-round(@galleryPagerButtonRound);
@@ -509,7 +509,7 @@
                     .pager-button-up:hover, .pager-button-up:focus, .pager-button-down:hover, .pager-button-down:focus {
                         background: @galleryPagerBtnBackgroundHover;
                         .border(steelblue);
-                        .gradient(#4d4d4d, #0d0d0d);
+                        .vertical-gradient(#4d4d4d, #0d0d0d);
                         // .gallery-pager-button-gradient-hover(@galleryPagerBtnGradient1Hover);
 
                     }

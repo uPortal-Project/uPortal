@@ -18,21 +18,25 @@
  */
 
 .portal-nav {
-    background: @color1-dark;
+    background: @navbar-background-color;
+    border-top: @navbar-border-size solid @navbar-border-color;
+    border-bottom: @navbar-border-size solid @navbar-border-color;
+    font-weight: @navbar-item-font-weight;
 
     .menu-toggle {
         position: absolute;
         top: 40px;
         right: 20px;
         padding: 0.5rem 1rem;
-        background: @color2;
+        background: @menu-toggle-background-color;
         .border-radius;
-        font-weight: bold;
-        color: @white;
+        font-weight: inherit;
+        color: @menu-toggle-text-color;
         text-decoration: none;
 
         &:hover, &:focus {
-            background: @color3;
+            background: @menu-toggle-hover-background-color;
+            color: @menu-toggle-hover-text-color;
         }
 
         i {
@@ -50,16 +54,17 @@
 
             a {
                 display: block;
-                color: @grayscale3;
-                font-weight: bold;
+                color: @navbar-item-text-color;
+                background: @navbar-item-background-color;
+                font-weight: inherit;
                 text-decoration: none;
                 padding: 8px 14px;
 
                 
 
                 &:hover, &:focus {
-                    background: @color1-light;
-                    color: @white;
+                    background: @navbar-item-hover-background-color;
+                    color: @navbar-item-hover-text-color;
 
                     i {
                         opacity: 1;
@@ -91,17 +96,20 @@
         }
 
         .active {
+            .nav-tab-controls {
+            }
 
             a {
-                background: @color1-darker;
-                color: @white;
+                background: @navbar-item-active-background-color;
+                color: @navbar-item-active-text-color;
 
                 i {
                     opacity: 1;
                 }
 
                 &:hover {
-                    background: darken(@color1, 20%);
+                    background: @navbar-item-active-hover-background-color;
+                    color: @navbar-item-active-hover-text-color;
                 }
             }
 
@@ -112,13 +120,13 @@
                 left: 2px;
                 font-size: 6pt;
                 padding: 2px;
-                color: @grayscale8;
+                color: @navbar-controls-color;
                 cursor: move;
                 line-height: normal;
                 display: inline;
 
                 &:hover {
-                    color: @white;
+                    color: @navbar-controls-hover-color;
                 }
 
                 span {
@@ -136,11 +144,13 @@
                 font-size: 8pt;
                 line-height: normal;
                 margin-top: -3px;
-                color: @grayscale8;
+                color: @navbar-controls-color;
                 display: inline;
+                opacity: .2;
 
                 &:hover {
-                    color: @white;
+                    color: @navbar-controls-hover-color;
+                    opacity: .9;
                 }
 
                 span {
