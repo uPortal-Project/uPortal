@@ -48,7 +48,29 @@
     <portlet:param name="target" value="TARGET"/>
     <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
 </portlet:actionURL>
-
+<style>
+#${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
+    display: none;
+}
+#${n}permissionBrowser .dataTables-inline, #${n}permissionBrowser .column-filter-widget, #${n}permissionBrowser .column-filter-widget {
+    display: inline-block;
+}
+#${n}permissionBrowser .dataTables_wrapper {
+    width: 100%;
+}
+#${n}permissionBrowser .dataTables_paginate .paginate_button {
+    margin: 2px;
+    cursor: pointer;
+    *cursor: hand;
+}
+#${n}permissionBrowser .dataTables_paginate .paginate_active {
+    margin: 2px;
+    color:#000;
+}
+#${n}permissionBrowser .dataTables-right {
+    float:right;
+}
+</style>
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -72,7 +94,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-titlebar -->
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content portlet-content" role="main">
+    <div id="${n}permissionBrowser" class="fl-widget-content portlet-content" role="main">
 
         <!-- Portlet Section -->
         <div id="${n}permissionAddingTabs" class="portlet-section view-permissions" role="region">
@@ -90,191 +112,155 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </li>
                 </ul>
 
-                <c:forTokens items="principal,target" delims="," var="token">
-
-                    <div id="${n}${fn:escapeXml(token)}Tab" class="pager-container-${fn:escapeXml(token)} ui-tabs-panel ui-widget-content ui-corner-bottom${ token == 'target' ? ' ui-tabs-hide' : '' }">
-                        <div class="fl-col-mixed-200 options">
-                            <div class="fl-col-fixed fl-force-left view-filter">
-                                <!-- This space left blank for future filtering options... -->
-                            </div>
-                            <div class="fl-col-flex view-pager flc-pager-top">
-                                <ul id="pager-top" class="fl-pager-ui">
-                                    <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
-                                    <li>
-                                        <ul class="fl-pager-links flc-pager-links">
-                                            <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                                            <li class="flc-pager-pageLink-skip">...</li>
-                                            <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
-                                </ul>
-                                <div>
-                                    <span class="flc-pager-summary"><spring:message code="show"/></span>
-                                        <span> <select class="pager-page-size flc-pager-page-size">
-                                            <option value="5">5</option>
-                                            <option value="10">10</option>
-                                            <option value="20">20</option>
-                                            <option value="50">50</option>
-                                        </select></span> <spring:message code="per.page"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="content">
-
-                            <div class="permissions-loading-message portlet-msg-info portlet-msg info" role="status">
-                                <div class="titlebar">
-                                    <h3 class="title"><spring:message code="loading"/> . . .</h3>
-                                </div>
-                                <div class="content">
-                                    <p><spring:message code="please.wait.while.the.system.finishes.loading.permissions"/></p>
-                                </div>
-                            </div>
-
-                            <p class="no-permissions-message" style="display:none"><spring:message code="no.user.permissions"/></p>
-
-                            <table class="portlet-table table table-hover" id="${n}permissionsTable" summary="" xmlns:rsf="http://ponder.org.uk">
-                                <thead>
-                                <tr rsf:id="header:">
-                                    <th id="${n}permissionOwner" class="flc-pager-sort-header"><a rsf:id="permissionOwner" title="Click to sort" href="javascript:;"><spring:message code="owner"/></a></th>
-                                    <th id="${n}permissionPrincipal" class="flc-pager-sort-header"><a rsf:id="permissionPrincipal" title="Click to sort" href="javascript:;"><spring:message code="principal"/></a></th>
-                                    <th id="${n}permissionActivity" class="flc-pager-sort-header"><a rsf:id="permissionActivity" title="Click to sort" href="javascript:;"><spring:message code="activity"/></a></th>
-                                    <th id="${n}permissionTarget" class="flc-pager-sort-header"><a rsf:id="permissionTarget" title="Click to sort" href="javascript:;"><spring:message code="target"/></a></th>
-                                    <%--th id="${n}permissionType" class="flc-pager-sort-header"><a rsf:id="permissionType" title="Click to sort" href="javascript:;"><spring:message code="grant.deny"/></a></th--%>
-									<th id="${n}permissionEdit"><span rsf:id="permissionEdit"><spring:message code="edit"/></span></th>
-                                    <%--th id="${n}permissionDelete" rsf:id="permissionDelete"><spring:message code="delete"/></th--%>				
-                                </tr>
-                                </thead>
-                                <tbody id="${n}permissionsBody">
-                                <tr rsf:id="row:">
-                                    <td headers="${n}permissionOwner"><span rsf:id="permissionOwner"></span></td>
-                                    <td headers="${n}permissionPrincipal"><span rsf:id="permissionPrincipal"></span></td>
-                                    <td headers="${n}permissionActivity"><span rsf:id="permissionActivity"></span></td>
-                                    <td headers="${n}permissionTarget"><span rsf:id="permissionTarget"></span></td>
-                                    <%--td headers="${n}permissionType"><span rsf:id="permissionType"></span></td--%>
-                                    <td headers="${n}permissionEdit"><a href="" rsf:id="permissionEdit"></a></td>
-                                    <%--td headers="${n}permissionDelete"><a href="" rsf:id="permissionDelete"></a></td--%>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
+            <c:forTokens items="principal,target" delims="," var="token">
+                <div id="${n}${fn:escapeXml(token)}Tab">
+                    <div class="content">
+                        <table class="portlet-table table table-bordered table-hover" id="${n}${fn:escapeXml(token)}permissionsTable">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="owner"/></th>
+                                <th><spring:message code="principal"/></th>
+                                <th><spring:message code="activity"/></th>
+                                <th><spring:message code="target"/></th>
+                                <th><spring:message code="edit"/></th>
+                            </tr>
+                            </thead>
+                        </table>
                     </div>
-
-                </c:forTokens>
+                </div>
+            </c:forTokens>
             </div>
-
-
-        </div> <!-- end: portlet-section -->
-
-    </div> <!-- end: portlet-content -->
-
-</div> <!-- end: portlet -->
-
+        </div> 
+    </div>
+</div>
 
 <script type="text/javascript">
-    up.jQuery(function() {
-        var $ = up.jQuery;
+up.jQuery(function() {
+    var $ = up.jQuery;
 
-        var pager;
-        var targetUrl = "<c:url value="/api/assignments/target/${ personEntity.principalString }.json?includeInherited=true"/>";
-        var principalUrl = "<c:url value="/api/assignments/principal/${ personEntity.principalString }.json?includeInherited=true"/>";
-        var editUrl = "${editUrl}";
-        var deleteUrl = "${deleteUrl}";
+    var principalList_configuration = {
+        column: {
+            owner: 0,
+            principal: 1,
+            activity: 2,
+            target: 3,
+            placeHolderForEditLink: 4
+        },
+        main: {
+            table : null,
+            pageSize: 10
+        },
+        url: "<c:url value="/api/assignments/principal/${ personEntity.principalString }.json?includeInherited=true"/>",
+        searchExclude: 1 //Exclude principal
+    };
+    var targetList_configuration = {
+        column: {
+            owner: 0,
+            principal: 1,
+            activity: 2,
+            target: 3,
+            placeHolderForEditLink: 4
+        },
+        main: {
+            table : null,
+            pageSize: 10
+        },
+        url: "<c:url value="/api/assignments/target/${ personEntity.principalString }.json?includeInherited=true"/>",
+        searchExclude: 3 //Exclude target
+    };
 
-        var getPermissionAssignments = function(url) {
-            var rslt;
-            $.ajax({
-                url: url,
-                async: false,
-                dataType: "json",
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert(textStatus + " : " + errorThrown);
-                },
-                success: function(data) {
-                    rslt = data.assignments;
+    // Url generating helper function
+    var getEditURL = function(owner, activity, target) {
+        var url = "${editUrl}".replace("OWNER", owner).
+                                      replace("ACTIVITY", activity).
+                                      replace("TARGET", target);
+        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/></a>';
+    };
+
+
+    // Created as its own 
+    var initializeTable = function(tableName) {
+        var config = null;
+        if (tableName == "principal") {
+            config = principalList_configuration;
+        } else {
+            config = targetList_configuration;
+        }
+        config.main.table = $("#${n}" + tableName + "permissionsTable").dataTable({
+            iDisplayLength: config.main.pageSize,
+            aLengthMenu: [5, 10, 20, 50],
+            bServerSide: false,
+            sAjaxSource: config.url,
+            sAjaxDataProp: "assignments",
+            bDeferRender: false,
+            bProcessing: true,
+            bAutoWidth:false,
+            sPaginationType: 'full_numbers',
+            oLanguage: {
+                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                oPaginate: {
+                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
-            });
-            return rslt;
-        };
-
-        // Initialize the pager
-        var options = {
-            annotateColumnRange: 'permissionOwner',
-            columnDefs: [
-                { key: "permissionOwner", valuebinding: "*.ownerName", sortable: true },
-                {
-                    key: "permissionActivity",
-                    valuebinding: "*.activityName",
-                    sortable: true,
-                    components: function (row, index) {
-                        var markup = '<span>${"${*.activityName}"}</span>';
-                        if (row.inherited) {
-                            markup += ' <span class="inherited-permission">Inherited</span>';
-                        }
-                        return { markup: markup };
-                    }
-                },
-                { key: "permissionPrincipal", valuebinding: "*.principalName", sortable: true },
-                { key: "permissionTarget", valuebinding: "*.targetName", sortable: true },
-                { key: "permissionEdit", valuebinding: "*.ownerKey",
-                    components: {
-                        target: editUrl.replace("OWNER", '${"${*.ownerKey}"}')
-                            .replace("ACTIVITY", '${"${*.activityKey}"}')
-                            .replace("TARGET", '${"${*.targetKey}"}'),
-                        linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
-                    }
-                }
-            ],
-            bodyRenderer: {
-                type: "fluid.pager.selfRender",
-                options: {
-                    selectors: {
-                        root: "#${n}permissionsTable"
-                    },
-                    row: "row:"
-                }
-
             },
-            pagerBar: {type: "fluid.pager.pagerBar", options: {
-                pageList: {type: "fluid.pager.renderedPageList",
-                    options: {
-                        linkBody: "a"
+            aoColumns: [
+                { mData: 'ownerName', sType: 'html', sWidth: '25%' },  // Owner
+                { mData: 'principalName', sType: 'html', sWidth: '25%' },  // Principal 
+                { mData: 'activityName', sType: 'html', sWidth: '25%' },  // Activity
+                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '15%' },  // Target
+                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '10%' }  // Edit Link
+            ],
+            fnInitComplete: function (oSettings) {
+                config.main.table.fnDraw();
+            },
+            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = $.ajax({
+                    url: sUrl,
+                    data: aoData,
+                    dataType: "json",
+                    cache: false,
+                    type: oSettings.sServerMethod,
+                    success: function (json) {
+                        if (json.sError) {
+                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
+                        }
+
+                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
+                        fnCallback(json);
+                    },
+                    error: function (xhr, error, thrown) {
+                        lib.handleError(xhr, error, thrown);
                     }
-                }
-            }}
-        };
-
-        $(document).ready(function(){
-            var principalOptions, targetOptions, principalPager, targetPager, targetPermissions, principalPermissions;
-            $("#${n}assignmentTabs").tabs();
-
-            principalPermissions = getPermissionAssignments(principalUrl);
-            if ($(principalPermissions).size() > 0) {
-                principalOptions = options;
-                principalOptions.dataModel = principalPermissions;
-                principalPager = up.fluid.pager(".pager-container-principal", principalOptions);
-                $("#${n}principalTab .view-pager").show();
-                $("#${n}principalTab .portlet-table").show();
-            } else {
-                $("#${n}principalTab .no-permissions-message").show();
+                });
+            },
+            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                infoMessage = infoMessage.replace(/_START_/g, iStart).
+                                      replace(/_END_/g, iEnd).
+                                      replace(/_TOTAL_/g, iTotal).
+                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                return infoMessage;
+            },
+            // Add links to the proper columns after we get the data
+            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                // Create edit link
+                $('td:eq(4)', nRow).html( getEditURL(aData.ownerKey, aData.activityKey, aData.targetKey) );
+            },
+            // Setting the top and bottom controls
+            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',
+            // Filtering
+            oColumnFilterWidgets: {
+                sSeparator: ',', // Used for multivalue column Categories
+                aiExclude: [config.column.placeHolderForEditLink,
+                            config.searchExclude]
             }
-            $("#${n}principalTab .permissions-loading-message").hide();
-
-            targetPermissions = getPermissionAssignments(targetUrl);
-            if ($(targetPermissions).size() > 0) {
-                targetOptions = options;
-                targetOptions.dataModel = targetPermissions;
-                targetPager = up.fluid.pager(".pager-container-target", targetOptions);
-                $("#${n}targetTab .view-pager").show();
-                $("#${n}targetTab .portlet-table").show();
-            } else {
-                $("#${n}targetTab .no-permissions-message").show();
-            }
-            $("#${n}targetTab .permissions-loading-message").hide();
-
         });
+    };
 
-    });
+    initializeTable('principal');
+    initializeTable('target');
+
+});
 </script>
+
