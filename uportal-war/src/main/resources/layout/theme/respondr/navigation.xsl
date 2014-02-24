@@ -114,7 +114,10 @@
                  <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
                    <xsl:with-param name="CONTEXT">header</xsl:with-param>
                  </xsl:apply-templates>
-                 <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
+
+                <!-- invite the user to add a tab if permission to do so
+                and navigation element is flagged as allowing tab-adding -->
+                 <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
