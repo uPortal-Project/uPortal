@@ -157,71 +157,9 @@
 
                 <!-- just the one focused-on tab -->
                 <xsl:for-each select="/layout/folder/folder[@ID = $focusedFragmentId]">
-                    <tab>
-                        <!-- Copy folder attributes verbatim -->
-                        <xsl:for-each select="attribute::*">
-                            <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
-                        </xsl:for-each>
-                        <xsl:attribute name="focusedFragment" value="true" />
-                        <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
-                            <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
-                        </xsl:if>
-                                <xsl:attribute name="activeTab">true</xsl:attribute>
-                                <xsl:attribute name="activeTabPosition">1</xsl:attribute>
 
-                        <xsl:for-each select="./descendant::channel">
-                            <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
-                                <xsl:choose>
-                                    <xsl:when test="parameter[@name='PORTLET.quicklink']">
-                                        <xsl:attribute name="quicklink">
-                                            <xsl:value-of select="parameter[@name='PORTLET.quicklink']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="parameter[@name='quicklink']">
-                                        <xsl:attribute name="quicklink">
-                                            <xsl:value-of select="parameter[@name='quicklink']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                </xsl:choose>
-                                <xsl:choose>
-                                    <xsl:when test="parameter[@name='PORTLET.qID']">
-                                        <xsl:attribute name="qID">
-                                            <xsl:value-of select="parameter[@name='PORTLET.qID']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="parameter[@name='qID']">
-                                        <xsl:attribute name="qID">
-                                            <xsl:value-of select="parameter[@name='qID']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                </xsl:choose>
-                                <xsl:choose>
-                                    <xsl:when test="parameter[@name='PORTLET.removeFromLayout']">
-                                        <xsl:attribute name="removeFromLayout">
-                                            <xsl:value-of select="parameter[@name='PORTLET.removeFromLayout']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="parameter[@name='removeFromLayout']">
-                                        <xsl:attribute name="removeFromLayout">
-                                            <xsl:value-of select="parameter[@name='removeFromLayout']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                </xsl:choose>
-                                <xsl:choose>
-                                    <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
-                                        <xsl:attribute name="alternativeMaximixedLink">
-                                            <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                    <xsl:when test="parameter[@name='alternativeMaximixedLink']">
-                                        <xsl:attribute name="alternativeMaximixedLink">
-                                            <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
-                                        </xsl:attribute>
-                                    </xsl:when>
-                                </xsl:choose>
-                            </tabChannel>
-                        </xsl:for-each>
-                    </tab>
+                    <xsl:call-template name="tab"/>
+
                 </xsl:for-each>
             </navigation>
 
@@ -233,11 +171,7 @@
 
             <xsl:call-template name="sidebarList"/>
 
-            <footer>
-                <xsl:for-each select="child::folder[attribute::type='footer']">
-                    <xsl:copy-of select=".//channel"/>
-                </xsl:for-each>
-            </footer>
+            <xsl:call-template name="footer" />
 
         </layout>
 
@@ -313,11 +247,7 @@
 
     <xsl:call-template name="sidebarList"/>
 
-    <footer>
-      <xsl:for-each select="child::folder[attribute::type='footer']">
-	      <xsl:copy-of select=".//channel"/>
-      </xsl:for-each>
-    </footer>
+    <xsl:call-template name="footer" />
 
   </layout>
 
@@ -375,77 +305,7 @@
     </tabGroupsList>
     <!-- The tabs -->
     <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
-      <tab>
-        <!-- Copy folder attributes verbatim -->
-        <xsl:for-each select="attribute::*">
-          <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
-        </xsl:for-each>
-        <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
-          <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
-        </xsl:if>
-        <!-- Add 'activeTab' and 'activeTabPosition' attributes as appropriate -->
-        <xsl:choose>
-          <xsl:when test="$activeTabID = @ID">
-            <xsl:attribute name="activeTab">true</xsl:attribute>
-            <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:attribute name="activeTab">false</xsl:attribute>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:for-each select="./descendant::channel">
-          <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
-            <xsl:choose>
-              <xsl:when test="parameter[@name='PORTLET.quicklink']">
-                <xsl:attribute name="quicklink">
-                  <xsl:value-of select="parameter[@name='PORTLET.quicklink']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:when test="parameter[@name='quicklink']">
-                <xsl:attribute name="quicklink">
-                  <xsl:value-of select="parameter[@name='quicklink']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-            </xsl:choose>
-            <xsl:choose>
-              <xsl:when test="parameter[@name='PORTLET.qID']">
-                <xsl:attribute name="qID">
-                  <xsl:value-of select="parameter[@name='PORTLET.qID']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:when test="parameter[@name='qID']">
-                <xsl:attribute name="qID">
-                  <xsl:value-of select="parameter[@name='qID']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-            </xsl:choose>
-            <xsl:choose>
-              <xsl:when test="parameter[@name='PORTLET.removeFromLayout']">
-                <xsl:attribute name="removeFromLayout">
-                  <xsl:value-of select="parameter[@name='PORTLET.removeFromLayout']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:when test="parameter[@name='removeFromLayout']">
-                <xsl:attribute name="removeFromLayout">
-                  <xsl:value-of select="parameter[@name='removeFromLayout']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-            </xsl:choose>
-            <xsl:choose>
-              <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
-                <xsl:attribute name="alternativeMaximixedLink">
-                  <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-              <xsl:when test="parameter[@name='alternativeMaximixedLink']">
-                <xsl:attribute name="alternativeMaximixedLink">
-                  <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
-                </xsl:attribute>
-              </xsl:when>
-            </xsl:choose>
-          </tabChannel>
-        </xsl:for-each>
-      </tab>
+      <xsl:call-template name="tab" />
     </xsl:for-each>
   </navigation>
 </xsl:template>
@@ -525,6 +385,92 @@
   </xsl:if>
 </xsl:template>
 
+  <xsl:template name="tab">
+      <tab>
+          <!-- Copy folder attributes verbatim -->
+          <xsl:for-each select="attribute::*">
+              <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
+          </xsl:for-each>
+          <xsl:if test="@ID = $focusedFragmentId">
+              <xsl:attribute name="focusedFragment">true</xsl:attribute>
+          </xsl:if>
+          <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
+              <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
+          </xsl:if>
+
+          <!-- Add 'activeTab' and 'activeTabPosition' attributes as appropriate -->
+          <xsl:choose>
+              <xsl:when test="$activeTabID = @ID">
+                  <xsl:attribute name="activeTab">true</xsl:attribute>
+                  <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
+              </xsl:when>
+              <xsl:when test="$focusedFragmentId = @ID">
+                  <xsl:attribute name="activeTab">true</xsl:attribute>
+                  <!-- the focused fragment will be the only tab, so index 1 is the position of the active tab -->
+                  <xsl:attribute name="activeTabPosition">1</xsl:attribute>
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:attribute name="activeTab">false</xsl:attribute>
+              </xsl:otherwise>
+          </xsl:choose>
+
+
+
+          <xsl:for-each select="./descendant::channel">
+              <tabChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
+                  <xsl:choose>
+                      <xsl:when test="parameter[@name='PORTLET.quicklink']">
+                          <xsl:attribute name="quicklink">
+                              <xsl:value-of select="parameter[@name='PORTLET.quicklink']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                      <xsl:when test="parameter[@name='quicklink']">
+                          <xsl:attribute name="quicklink">
+                              <xsl:value-of select="parameter[@name='quicklink']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                  </xsl:choose>
+                  <xsl:choose>
+                      <xsl:when test="parameter[@name='PORTLET.qID']">
+                          <xsl:attribute name="qID">
+                              <xsl:value-of select="parameter[@name='PORTLET.qID']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                      <xsl:when test="parameter[@name='qID']">
+                          <xsl:attribute name="qID">
+                              <xsl:value-of select="parameter[@name='qID']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                  </xsl:choose>
+                  <xsl:choose>
+                      <xsl:when test="parameter[@name='PORTLET.removeFromLayout']">
+                          <xsl:attribute name="removeFromLayout">
+                              <xsl:value-of select="parameter[@name='PORTLET.removeFromLayout']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                      <xsl:when test="parameter[@name='removeFromLayout']">
+                          <xsl:attribute name="removeFromLayout">
+                              <xsl:value-of select="parameter[@name='removeFromLayout']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                  </xsl:choose>
+                  <xsl:choose>
+                      <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
+                          <xsl:attribute name="alternativeMaximixedLink">
+                              <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                      <xsl:when test="parameter[@name='alternativeMaximixedLink']">
+                          <xsl:attribute name="alternativeMaximixedLink">
+                              <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
+                          </xsl:attribute>
+                      </xsl:when>
+                  </xsl:choose>
+              </tabChannel>
+          </xsl:for-each>
+      </tab>
+  </xsl:template>
+
 <xsl:template match="channel">
   <xsl:choose>
     <xsl:when test="$userImpersonating = 'true' and parameter[@name='blockImpersonation']/@value = 'true'">
@@ -542,6 +488,14 @@
 <xsl:template match="parameter">
   <xsl:copy-of select="."/>
 </xsl:template>
+
+  <xsl:template name="footer">
+      <footer>
+          <xsl:for-each select="child::folder[attribute::type='footer']">
+              <xsl:copy-of select=".//channel"/>
+          </xsl:for-each>
+      </footer>
+  </xsl:template>
 
 </xsl:stylesheet>
 <!-- Stylesheet edited using Stylus Studio - (c)1998-2001 eXcelon Corp. --><!-- Stylesheet edited using Stylus Studio - (c)1998-2002 eXcelon Corp. -->
