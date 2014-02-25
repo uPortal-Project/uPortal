@@ -1204,6 +1204,28 @@
                 replicateRemovals=true "/>
     </cache>
     
+    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+    
+    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+    
 
     
     <!-- ********************************************************** -->

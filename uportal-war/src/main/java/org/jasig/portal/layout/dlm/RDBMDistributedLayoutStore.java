@@ -1967,6 +1967,24 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         @Override
         public void setResourceTimeout(Integer resourceTimeout) {
         }
+        
+        @Override
+        public Double getRating() {
+            return null;
+        }
+
+        @Override
+        public void setRating(Double rating) {			
+        }
+
+        @Override
+        public Long getUsersRated() {
+            return null;
+        }
+
+        @Override
+        public void setUsersRated(Long usersRated) {			
+        }
 
         public void addLocalizedDescription(String locale, String chanDesc) {
         }
