@@ -562,8 +562,9 @@
 	        </a>
         </li>
       </xsl:if>
-      <!-- Add to Favorites Icon -->
-      <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
+      <!-- Favorites -->
+      <xsl:choose>
+      <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
         <li>
 	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{//focused/channel/@chanID}">
 	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
@@ -580,7 +581,26 @@
 	            </script>
 	        </a>
         </li>
-      </xsl:if>
+      </xsl:when>
+      <xsl:otherwise><!-- Remove From favorites. -->
+        <li>
+            <a href="javascript:;" title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}" class="removeFromFavoriteLink{//focused/channel/@chanID}">
+                <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
+                    <span class="icon"></span>
+                </xsl:if>
+                <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
+                <!-- used for the ajax call to remove from favorites in up-favorite.js-->
+                <script type="text/javascript">
+                    (function($) {
+                        $( document ).ready(function() {
+                            $('.removeFromFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="@ID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                        });
+                    })(up.jQuery);
+                </script>
+            </a>
+        </li>
+      </xsl:otherwise>
+      </xsl:choose>
         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
           <li>
             <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>

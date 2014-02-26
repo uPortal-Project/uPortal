@@ -555,6 +555,33 @@ public class UpdatePreferencesServlet {
     		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.finding.favorite.tab", "Can''t find favorite tab", locale)));
     	}
     }
+    
+    @RequestMapping(method= RequestMethod.POST , params = "action=removeFavorite")
+    public ModelAndView removeFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	//setup
+        UserPreferencesManager upm = (UserPreferencesManager) userInstanceManager.getUserInstance(request).getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final Locale locale = RequestContextUtils.getLocale(request);
+        
+        try {
+			if (!ulm.deleteNode(channelId)) {
+				log.warn("Error deleting the node" + channelId + "from favorites for user " + upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
+				response.setStatus(HttpServletResponse.SC_ACCEPTED);
+				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+			}
+			// save the user's layout
+		    ulm.saveUserLayout();
+		} catch (Exception e) {
+			log.warn("Error saving layout", e);
+			response.setStatus(HttpServletResponse.SC_ACCEPTED);
+			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+		}
+		
+		//document success for notifications
+		Map<String, String> model = new HashMap<String, String>();
+		model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
+		return new ModelAndView("jsonView", model);
+    }
 
 	/**
 	 * Add a new channel.
