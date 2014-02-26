@@ -732,16 +732,8 @@
         </xsl:if>
         <xsl:call-template name="page.js" />
     </head>
-    <!-- <xsl:choose>
-        <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'"> -->
         <body class="up dashboard portal fl-theme-mist detachedHeader">
-        <!-- </xsl:when> -->
-        <!-- Don't Show Sticky Header -->
-<!--         <xsl:otherwise>
-            <body class="up dashboard portal fl-theme-mist">
-        </xsl:otherwise>
-    </xsl:choose>
- -->        <div id="wrapper">
+        <div id="wrapper">
             <xsl:choose>
                 <!-- Show Sticky Header -->
                 <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'">
