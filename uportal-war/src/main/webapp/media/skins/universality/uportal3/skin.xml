@@ -27,12 +27,16 @@
   <parameter name="fss-theme">fl-theme-mist</parameter>
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.min.css</css>
+  <!--<css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.css</css>-->
+  <!--<css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.min.css</css>-->
+    <!-- UP-3922 Temporarily using uPortal for fluid 1.5 until we get all bugs worked out and put it on resource server -->
+    <css>/uPortal/rs/fluid/pre1.5.0/fss/css/fss-framework-1.5.0.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-mist.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-mist.min.css</css>
+  <!--<css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-mist.css</css>-->
+  <!--<css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-mist.min.css</css>-->
+    <!-- UP-3922 Temporarily using uPortal for fluid 1.5 until we get all bugs worked out and put it on resource server -->
+    <css>/uPortal/rs/fluid/pre1.5.0/fss/css/fss-theme-mist.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>

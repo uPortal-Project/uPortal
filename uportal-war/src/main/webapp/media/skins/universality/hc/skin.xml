@@ -27,9 +27,11 @@
   <!--parameter name="fss-theme">fl-theme-hc</parameter-->
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/fss/css/fss-framework-1.4-00b5b5e.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/fss/css/fss-framework-1.4-00b5b5e.min.css</css>
-  
+  <!--<css included="plain">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/fss/css/fss-framework-1.4-00b5b5e.css</css>-->
+  <!--<css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4-00b5b5e/fss/css/fss-framework-1.4-00b5b5e.min.css</css>-->
+    <!-- UP-3922 Temporarily using uPortal for fluid 1.5 until we get all bugs worked out and put it on resource server -->
+    <css>/uPortal/rs/fluid/pre1.5.0/fss/css/fss-framework-1.5.0.css</css>
+
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css>jquery-ui-1.7.2.custom/css/custom-theme/jquery-ui-1.7.2.custom.css</css>
 
