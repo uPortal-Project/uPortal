@@ -10249,10 +10249,11 @@ var fluid_1_5 = fluid_1_5 || {};
             onDestroy: "fluid.tooltip.doDestroy"
         },
         modelListeners: {
-            "": {
-                funcName: "fluid.tooltip.updateContentImpl", // TODO: better scheme when FLUID-3674 is merged
-                args: "{that}"
-            }
+// commenting out due to bootstrap tooltip issue
+//            "": {
+//                funcName: "fluid.tooltip.updateContentImpl", // TODO: better scheme when FLUID-3674 is merged
+//                args: "{that}"
+//            }
         },
         position: {
             my: "left top",
@@ -25284,7 +25285,7 @@ var swfobject = function() {
  *
  * mmSWFUpload 1.0: Flash upload dialog - http://profandesign.se/swfupload/,  http://www.vinterwebb.se/
  *
- * SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilz�n and Mammon Media and is released under the MIT License:
+ * SWFUpload is (c) 2006-2007 Lars Huring, Olov Nilzï¿½n and Mammon Media and is released under the MIT License:
  * http://www.opensource.org/licenses/mit-license.php
  *
  * SWFUpload 2 is (c) 2007-2008 Jake Roberts and is released under the MIT License:
