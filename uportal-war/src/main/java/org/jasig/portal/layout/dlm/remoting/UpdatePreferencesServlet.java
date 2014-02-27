@@ -284,6 +284,7 @@ public class UpdatePreferencesServlet {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
         IPerson per = getPerson(ui, response);
+        final Locale locale = RequestContextUtils.getLocale(request);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -348,9 +349,10 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
+			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.tab", "There was an issue moving the tab, please refresh the page and try again.", locale)));
 		}
 
-        return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.portlet", "Portlet moved successfully", locale)));
 
 	}
 
@@ -487,6 +489,7 @@ public class UpdatePreferencesServlet {
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final Locale locale = RequestContextUtils.getLocale(request);
 
 		// gather the parameters we need to move a channel
 		String destinationId = request.getParameter("elementID");
@@ -497,21 +500,20 @@ public class UpdatePreferencesServlet {
 		// to know what the target is. If there's no target, just
 		// assume we're moving it to the very end of the list.
 		String siblingId = null;
-		if (method.equals("insertBefore"))
+		if ("insertBefore".equals(method))
 			siblingId = destinationId;
 
-		// move the node as requested and save the layout
-		ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
-
 		try {
+		    // move the node as requested and save the layout
+	        ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Failed to move tab in user layout", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return null;
+			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.tab", "There was an issue moving the tab, please refresh the page and try again.", locale)));
 		}
 
-		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.tab", "Tab moved successfully", locale)));
 
 	}
     

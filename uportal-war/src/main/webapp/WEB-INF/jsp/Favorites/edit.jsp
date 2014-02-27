@@ -21,7 +21,7 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
-<div>
+<div id="${n}fav_edit">
 
   <%-- Flag whether a not-un-favorite-able item is encountered.
   Used to condition display of help text about locked items.
@@ -48,16 +48,17 @@
       </div>
     </c:if>
 
-
-      
-    <ul class="list-group">
+    <ul class="list-group sortable-collections">
 
       <c:forEach var="collection" items="${collections}">
         <portlet:actionURL var="unFavoriteCollectionUrl">
           <portlet:param name="action" value="delete" />
           <portlet:param name="nodeId" value="${collection.id}" />
         </portlet:actionURL>
-        <li class="list-group-item">
+        <li class="list-group-item ${collection.moveAllowed ? '' : 'sort-disabled'}" sourceID="${collection.id}">
+          <c:if test="${collection.moveAllowed}">
+            <span class="glyphicon glyphicon-sort pull-left" style='padding-right: 1em; cursor: move;'></span>
+          </c:if>
           <c:choose>
             <c:when test="${collection.deleteAllowed}">
               <a href="${unFavoriteCollectionUrl}">
@@ -75,13 +76,17 @@
           </c:choose>
         </li>
       </c:forEach>
-
+    </ul>
+    <ul class="list-group sortable-portlet">
       <c:forEach var="favorite" items="${favorites}">
         <portlet:actionURL var="unFavoritePortletUrl">
           <portlet:param name="action" value="delete" />
           <portlet:param name="nodeId" value="${favorite.id}" />
         </portlet:actionURL>
-        <li class="list-group-item">
+        <li class="list-group-item ${favorite.moveAllowed ? '' : 'sort-disabled'}" sourceID="${favorite.id}">
+          <c:if test="${favorite.moveAllowed}">
+            <span class="glyphicon glyphicon-sort pull-left" style='padding-right: 1em; cursor: move;'></span>
+          </c:if>
           <c:choose>
             <c:when test="${favorite.deleteAllowed}">
               <a href="${unFavoritePortletUrl}">
@@ -126,3 +131,22 @@
     </span>
   </c:if>
 </div>
+
+<script type="text/javascript">
+up.jQuery(function() {
+    var $ = up.jQuery;
+    $(document).ready( function () {
+        $('#${n}fav_edit .sortable-collections').sortable({
+        	deactivate: function(event, ui) {
+                up.moveStuff('Tab', ui.item[0], '${renderRequest.contextPath}');
+        	}
+        });
+        $('#${n}fav_edit .sortable-portlet').sortable({
+            deactivate: function(event, ui) {
+                up.moveStuff('Portlet',ui.item[0], '${renderRequest.contextPath}');
+            }
+        });
+        $('#${n}fav_edit li').disableSelection();
+    });
+});
+</script>
