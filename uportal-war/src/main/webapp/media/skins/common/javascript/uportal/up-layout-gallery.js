@@ -209,7 +209,7 @@ var up = up || {};
                         key: "portletIcon",
                         valuebinding: "*.id",
                         components: function (row) {
-                            return {
+                              return {
                                 decorators: [
                                     {
                                         type: "attrs",
@@ -219,7 +219,7 @@ var up = up || {};
                                         }
                                     }
                                 ]
-                            };
+                              };
                         }
                     }
                 ];
@@ -229,26 +229,27 @@ var up = up || {};
                     dataModel: portlets,
                     annotateColumnRange: 'portletTitle',
                     columnDefs: columnDefs,
-                    bodyRenderer: {
-                        type: "fluid.pager.selfRender",
-                        options: {
-                            selectors: {
-                                root: ".portlet-list"
-                            },
-                            row: "portlet:",
-                            renderOptions: {
-                                cutpoints: cutpoints
-                            }
-                        }
-
-                    },
-                    pagerBar: {
-                        type: "fluid.pager.pagerBar",
-                        options: {
-                            pageList: {
-                                type: "fluid.pager.renderedPageList",
+                    components: {
+                        bodyRenderer: {
+                            type: "fluid.table.selfRender",
                                 options: {
-                                    linkBody: "a"
+                                    selectors: {
+                                        root: ".portlet-list"
+                                    },
+                                    row: "portlet:",
+                                    rendererOptions: {
+                                        cutpoints: cutpoints
+                                    }
+                                }
+                        },
+                        pagerBar: {
+                            type: "fluid.pager.pagerBar",
+                            options: {
+                                pageList: {
+                                    type: "fluid.pager.renderedPageList",
+                                    options: {
+                                        linkBody: "a"
+                                    }
                                 }
                             }
                         }
@@ -256,7 +257,7 @@ var up = up || {};
                 };
 
                 // initialize the pager and set it to 6 items per page.
-                that.state.pager = fluid.pager($(container).find(".portlet-results"), pagerOptions);
+                that.state.pager = fluid.pagedTable($(container).find(".portlet-results"), pagerOptions);
                 that.state.pager.events.onModelChange.addListener(that.dragManager.initDragAndDrop);
                 that.state.pager.events.initiatePageSizeChange.fire(that.options.pageSize);
             }//end:if.

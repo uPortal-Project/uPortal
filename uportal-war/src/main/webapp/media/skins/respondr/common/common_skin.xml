@@ -79,6 +79,9 @@
     <css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
     <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
 
+    <js included="plain" resource="true">/rs/conflict-resolution/js/resolve-conflicts.js</js>
+    <js included="aggregated" resource="true">/rs/conflict-resolution/js/resolve-conflicts.min.js</js>
+    
     <js import="true">../../common/common_skin.xml</js>
 
 </resources>
