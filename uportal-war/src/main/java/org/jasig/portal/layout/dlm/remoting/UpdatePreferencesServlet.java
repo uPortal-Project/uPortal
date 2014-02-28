@@ -349,7 +349,7 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
-			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.tab", "There was an issue moving the tab, please refresh the page and try again.", locale)));
+			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.portlet", "There was an issue moving this portlet, please refresh the page and try again.", locale)));
 		}
 
 		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.portlet", "Portlet moved successfully", locale)));
