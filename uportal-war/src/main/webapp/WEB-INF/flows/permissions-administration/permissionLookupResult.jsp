@@ -82,19 +82,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <div class="fl-widget-content portlet-content" role="main">
       <div class="titlebar">
           <h3 class="title" role="heading"><spring:message code="assignments"/></h3>
-          <div class="content">
-              <table class="portlet-table table table-bordered table-hover" id="${n}permissionsTable">
-                  <thead>
-                      <tr>
-                          <th><spring:message code="owner"/></th>
-                          <th><spring:message code="activity"/></th>
-                          <th><spring:message code="target"/></th>
-                          <th><spring:message code="edit"/></th>
-                      </tr>
-                  </thead>
-              </table>
-          </div>
       </div>
+      <div class="content">
+          <table class="portlet-table table table-bordered table-hover" id="${n}permissionsTable">
+              <thead>
+                  <tr>
+                      <th><spring:message code="owner"/></th>
+                      <th><spring:message code="activity"/></th>
+                      <th><spring:message code="target"/></th>
+                      <th><spring:message code="edit"/></th>
+                  </tr>
+              </thead>
+          </table>
+      </div>
+
       <a href="${ ownersUrl }">Back to permission owners</a> 
   </div> <!-- end: portlet-content -->
 </div> <!-- end: portlet -->
