@@ -124,7 +124,7 @@ up.jQuery(function() {
         }
     };
     // Url generating helper functions
-    var getSelectPersonURL = function(displayName, userName) {
+    var getSelectPersonAnchorTag = function(displayName, userName) {
         var url = '${selectPersonUrl}'.replace("USERNAME", userName);
         return '<a href="' + url + '">' + displayName + '</a>';
     };
@@ -185,8 +185,8 @@ up.jQuery(function() {
             // Add links to the proper columns after we get the data
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 // Create links to user
-                $('td:eq(0)', nRow).html( getSelectPersonURL(aData.attributes.displayName, aData.attributes.username) );
-                $('td:eq(1)', nRow).html( getSelectPersonURL(aData.attributes.username, aData.attributes.username) );
+                $('td:eq(0)', nRow).html( getSelectPersonAnchorTag(aData.attributes.displayName, aData.attributes.username) );
+                $('td:eq(1)', nRow).html( getSelectPersonAnchorTag(aData.attributes.username, aData.attributes.username) );
             },
             // Setting the top and bottom controls
             sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>'
