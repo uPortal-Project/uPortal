@@ -22,61 +22,46 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
+<style>
+#${n}resultBrowser .dataTables_filter, #${n}resultBrowser .first.paginate_button, #${n}resultBrowser .last.paginate_button{
+    display: none;
+}
+#${n}resultBrowser .dataTables-inline, #${n}resultBrowser .column-filter-widget, #${n}resultBrowser .column-filter-widget {
+    display: inline-block;
+}
+#${n}resultBrowser .dataTables_wrapper {
+    width: 100%;
+}
+#${n}resultBrowser .dataTables_paginate .paginate_button {
+    margin: 2px;
+    cursor: pointer;
+    *cursor: hand;
+}
+#${n}resultBrowser .dataTables_paginate .paginate_active {
+    margin: 2px;
+    color:#000;
+}
+#${n}resultBrowser .dataTables-right {
+    float:right;
+}
+</style>
+
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
   
   <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div id="${n}resultBrowser" class="fl-widget-content portlet-body" role="main">
   
-    <!-- Portlet Section -->
-    <div id="${n}sqlPager" class="portlet-section fl-pager" role="region">
-
-	    <div class="portlet-section-options fl-text-align-right">
-	        <div class="view-pager flc-pager-top">
-	          <ul id="pager-top" class="fl-pager-ui">
-	            <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
-                <li>
-                     <ul class="flc-pager-links demo-pager-links" style="margin:0; display:inline">
-                         <li class="flc-pager-pageLink"><a href="#">1</a></li>
-                         <li class="flc-pager-pageLink-skip">...</li>
-                         <li class="flc-pager-pageLink"><a href="#">2</a></li>
-                     </ul>
-                </li>
-	            <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
-	            <li>
-	              <span class="flc-pager-summary"><spring:message code="show"/></span>
-	              <span> <select class="pager-page-size flc-pager-page-size">
-	              <option value="5">5</option>
-	              <option value="10">10</option>
-	              <option value="20">20</option>
-	              <option value="50">50</option>
-	              </select></span> <spring:message code="per.page"/>
-	            </li>
-	          </ul>
-	        </div>
-        </div>
-
-      <div class="portlet-section-body">
-		<table id="${n}sqlResults" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
-		    <thead rsf:id="header:">
-		        <tr style="text-transform:capitalize">
-			        <c:forEach items="${ results[0] }" var="cell" varStatus="status">
-			            <th id="${n}column${ status.index }" class="flc-pager-sort-header">
-			                <a rsf:id="column${ status.index }" href="javascript:;">${ fn:escapeXml(cell.key) }</a></th>
-			        </c:forEach>
-		        </tr>
-		    </thead>
-		    <tbody>
-		        <tr rsf:id="row:">
-		            <c:forEach items="${ results[0] }" var="cell" varStatus="status">
-		                <td headers="${n}column${ status.index }" rsf:id="column${ status.index }"></td>
-		            </c:forEach>
-		        </tr>
-		    </tbody>
-		</table>
-      </div>  
-
-    </div>
+        <table id="${n}sqlResults" style="width:100%;">
+            <thead>
+                <tr style="text-transform:capitalize">
+                  <!-- Dynamically create number of columns -->
+                    <c:forEach items="${ results[0] }" var="cell" varStatus="status">
+                        <th>${ fn:escapeXml(cell.key) }</th>
+                    </c:forEach>
+                </tr>
+            </thead>
+        </table>
     
   </div>
 
@@ -85,37 +70,60 @@
 <script type="text/javascript">
  up.jQuery(function() {
     var $ = up.jQuery;
-    var fluid = up.fluid;
+    // create data set from model
     var results = [<c:forEach items="${ results }" var="row" varStatus="status">{<c:forEach items="${ row }" var="cell" varStatus="cellStatus">'column${ cellStatus.index }': '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ cell.value }</spring:escapeBody>'${ cellStatus.last ? '' : ','}</c:forEach>}${ status.last ? '' : ','}</c:forEach>];
 
-    $(document).ready(function() {
-        var options = {
-          dataModel: results,
-          annotateColumnRange: 'column0',
-          columnDefs: [
-              <c:forEach items="${ results[0] }" var="row" varStatus="status">
-              { key: "column${ status.index }", valuebinding: "*.column${ status.index }", sortable: true}${ status.last ? "" : "," }
-              </c:forEach>
-          ],
-          bodyRenderer: {
-            type: "fluid.pager.selfRender",
-            options: {
-                selectors: {
-                   root: "#${n}sqlResults"
-                },
-                row: "row:"
-              }
-              
-          },
-          pagerBar: {type: "fluid.pager.pagerBar", options: {
-            pageList: {type: "fluid.pager.renderedPageList",
-              options: { 
-                linkBody: "a"
-              }
-            }
-          }}
-      };
-      pager = fluid.pager("#${n}sqlPager", options);
-    });
+    var resultList_configuration = {
+        column: {
+            <c:forEach items="${ results[0] }" var="row" varStatus="status">
+                column${ status.index } : ${ status.index }${ status.last ? "" : ","}
+            </c:forEach>
+        },
+        main: {
+            table : null,
+            pageSize: 10
+        }
+    };
+    var initializeTable = function() {
+        resultList_configuration.main.table = $("#${n}sqlResults").dataTable({
+            iDisplayLength: resultList_configuration.main.pageSize,
+            aLengthMenu: [5, 10, 20, 50],
+            sPaginationType: 'full_numbers',
+            bDeferRender: false,
+            bProcessing: true,
+            oLanguage: {
+                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                oPaginate: {
+                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+                }
+            },
+            // use results right from the model instead of pulling from server via ajax
+            aaData: results,
+            // dynamically create columns
+            aoColumns: [
+                <c:forEach items="${ results[0] }" var="row" varStatus="status">
+                { mData: 'column${ status.index }', sType: 'string' }${ status.last ? "" : ","}
+                </c:forEach>
+            ],
+            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                infoMessage = infoMessage.replace(/_START_/g, iStart).
+                                      replace(/_END_/g, iEnd).
+                                      replace(/_TOTAL_/g, iTotal).
+                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                return infoMessage;
+            },
+            // Add links to the proper columns after we get the data
+            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            },
+            // Setting the top and bottom controls
+            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',
+            // Filtering
+            oColumnFilterWidgets: { }
+        });
+    };
+    initializeTable();
  });
 </script>
