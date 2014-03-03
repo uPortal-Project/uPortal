@@ -99,10 +99,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </li>
                 </ul>
 
-            <c:forTokens items="principal,target" delims="," var="token">
-                <div id="${n}${fn:escapeXml(token)}Tab">
+                <div id="${n}principalTab">
                     <div class="content">
-                        <table class="portlet-table table table-bordered table-hover" id="${n}${fn:escapeXml(token)}permissionsTable">
+                        <table class="portlet-table table table-bordered table-hover" id="${n}principalpermissionsTable">
                             <thead>
                             <tr>
                                 <th><spring:message code="owner"/></th>
@@ -115,7 +114,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         </table>
                     </div>
                 </div>
-            </c:forTokens>
+                <div id="${n}targetTab">
+                    <div class="content">
+                        <table class="portlet-table table table-bordered table-hover" id="${n}targetpermissionsTable">
+                            <thead>
+                            <tr>
+                                <th><spring:message code="owner"/></th>
+                                <th><spring:message code="principal"/></th>
+                                <th><spring:message code="activity"/></th>
+                                <th><spring:message code="target"/></th>
+                                <th><spring:message code="edit"/></th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div> 
     </div>
@@ -161,7 +174,7 @@ up.jQuery(function() {
     };
 
     // Url generating helper function
-    var getEditURL = function(owner, activity, target) {
+    var getEditAnchorTag = function(owner, activity, target) {
         var url = "${editUrl}".replace("OWNER", owner).
                                       replace("ACTIVITY", activity).
                                       replace("TARGET", target);
@@ -172,7 +185,7 @@ up.jQuery(function() {
         // Add Inherited if applicable
         var markup = '<span>${"' + activity + '"}</span>';
         if (inherited) {
-            markup += ' <span class="inherited-permission">Inherited</span>';
+            markup += ' <span class="inherited-permission"><spring:message code="Inherited" htmlEscape="false" javaScriptEscape="true"/></span>';
         }
         return markup;
     }
@@ -245,7 +258,7 @@ up.jQuery(function() {
             // Add links to the proper columns after we get the data
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 // Create edit link
-                $('td:eq(3)', nRow).html( getEditURL(aData.ownerKey, aData.activityKey, aData.targetKey) );
+                $('td:eq(3)', nRow).html( getEditAnchorTag(aData.ownerKey, aData.activityKey, aData.targetKey) );
 
                 // Get Activity markup
                 if (config.showPrincipal) {
@@ -267,6 +280,5 @@ up.jQuery(function() {
 
     initializeTable('principal');
     initializeTable('target');
-
 });
 </script>
