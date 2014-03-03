@@ -20,6 +20,20 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
+
+<portlet:actionURL var="selectPersonUrl" escapeXml="false">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="select"/>
+    <portlet:param name="username" value="USERNAME"/>
+</portlet:actionURL>
+
+<portlet:renderURL var="cancelUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}"/>
+    <portlet:param name="_eventId" value="cancel"/>
+</portlet:renderURL>
+
+<c:set var="n"><portlet:namespace/></c:set>
+
 <style>
 #${n}personBrowser .dataTables_filter, #${n}personBrowser .first.paginate_button, #${n}personBrowser .last.paginate_button{
     display: none;
@@ -43,21 +57,9 @@
     float:right;
 }
 </style>
-<portlet:actionURL var="selectPersonUrl" escapeXml="false">
-    <portlet:param name="execution" value="${flowExecutionKey}" />
-    <portlet:param name="_eventId" value="select"/>
-    <portlet:param name="username" value="USERNAME"/>
-</portlet:actionURL>
-
-<portlet:renderURL var="cancelUrl">
-    <portlet:param name="execution" value="${flowExecutionKey}"/>
-    <portlet:param name="_eventId" value="cancel"/>
-</portlet:renderURL>
-
-<c:set var="n"><portlet:namespace/></c:set>
 
 <!-- Portlet -->
-<div id="${n}portletBrowser" class="fl-widget portlet prs-lkp view-lookup" role="section">
+<div id="${n}personBrowser" class="fl-widget portlet prs-lkp view-lookup" role="section">
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
