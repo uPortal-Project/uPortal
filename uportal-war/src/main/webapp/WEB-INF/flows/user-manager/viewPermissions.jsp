@@ -174,7 +174,7 @@ up.jQuery(function() {
     };
 
     // Url generating helper function
-    var getEditURL = function(owner, activity, target) {
+    var getEditAnchorTag = function(owner, activity, target) {
         var url = "${editUrl}".replace("OWNER", owner).
                                       replace("ACTIVITY", activity).
                                       replace("TARGET", target);
@@ -257,7 +257,7 @@ up.jQuery(function() {
             // Add links to the proper columns after we get the data
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 // Create edit link
-                $('td:eq(3)', nRow).html( getEditURL(aData.ownerKey, aData.activityKey, aData.targetKey) );
+                $('td:eq(3)', nRow).html( getEditAnchorTag(aData.ownerKey, aData.activityKey, aData.targetKey) );
                 // Set activity inherited markup
                 if (config.showPrincipal) {
                     $('td:eq(2)', nRow).html( getActivityValue(aData.activityName, aData.inherited) );
