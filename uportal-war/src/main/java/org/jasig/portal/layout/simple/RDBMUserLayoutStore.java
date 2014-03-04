@@ -35,8 +35,6 @@ import java.util.Vector;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
@@ -59,6 +57,8 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -94,7 +94,7 @@ import com.google.common.cache.Cache;
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";

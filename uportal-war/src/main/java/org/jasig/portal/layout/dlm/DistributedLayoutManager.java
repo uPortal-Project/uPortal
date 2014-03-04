@@ -19,18 +19,8 @@
 
 package org.jasig.portal.layout.dlm;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-import java.util.Vector;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -40,8 +30,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
@@ -70,6 +58,8 @@ import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
@@ -88,7 +78,7 @@ import org.w3c.dom.NodeList;
 public class DistributedLayoutManager implements IUserLayoutManager, IFolderLocalNameResolver, InitializingBean
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private XmlUtilities xmlUtilities;
     private ILayoutCachingService layoutCachingService;
@@ -106,6 +96,23 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
     
+    /**
+     * Documents what folder types are gracefully degraded.
+     * This is private because it's an implementation detail of DLM, but it's called out here because
+     * it matters if you, say, invent a new folder type.
+     */
+    private static final String[] FOLDER_TYPES_GRACEFULLY_DEGRADED = {
+            IUserLayoutFolderDescription.HEADER_TYPE,
+            IUserLayoutFolderDescription.FOOTER_TYPE,
+            IUserLayoutFolderDescription.SIDEBAR_TYPE };
+
+
+    /**
+     * Converts the folder types gracefully degraded documented immediately previously to a useful Set.
+     */
+    private static final Set<String> FOLDER_TYPES_GRACEFULLY_DEGRADED_SET =
+            new HashSet<String>(Arrays.asList( FOLDER_TYPES_GRACEFULLY_DEGRADED));
+
     protected final static Random rnd=new Random();
     protected String cacheKey="initialKey";
     protected String rootNodeId = null;
@@ -170,10 +177,22 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // Ensure a new layout gets loaded whenever a user logs in exceot for guest users
+
+
+
+        // Ensure a new layout gets loaded whenever a user logs in except for guest users
         if (!owner.isGuest()) {
+            // logs the full owner, profile objects just once per user session at DLM init
+            // subsequent log messages reference by ID
+            logger.trace("Initting DLM for non-guest user {} with profile {}, clearing cached layout.",
+                    owner, profile);
+
             this.layoutCachingService.removeCachedLayout(owner, profile);
+        } else {
+            logger.trace("Initting DLM for guest user {} with profile {}, *not* clearing cached layout.",
+                    owner, profile);
         }
+
         
         this.loadUserLayout();
         
@@ -223,11 +242,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         DistributedUserLayout userLayout = this.layoutCachingService.getCachedLayout(owner, profile);
         if ( null == userLayout )
         {
-            if (LOG.isDebugEnabled())
-            {
-                LOG.debug("Load from store for " +
-                    owner.getAttribute(IPerson.USERNAME));
-            }
+            logger.debug("Loading layout from store for owner user id {}.", owner.getID());
+
             userLayout = this.distributedLayoutStore.getUserLayout(this.owner,this.profile);
             
             final Document userLayoutDocument = userLayout.getLayout();
@@ -240,15 +256,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             for (int i=0; i < nodes.getLength(); i++) {
           	  Element fd = (Element) nodes.item(i);
           	  String type = fd.getAttribute("type");
-          	  if (type != null && (type.equals("header") || type.equals("footer") || type.equals("sidebar"))) {
+          	  if (type != null && FOLDER_TYPES_GRACEFULLY_DEGRADED_SET.contains(type)) {
           		  // Here's where we do the work...
-          		  if (LOG.isDebugEnabled()) {
-          			  LOG.debug("RDBMUserLayoutStore examining the '" 
-        					  	+ type 
-        					  	+ "' folder of user '" 
-        					  	+ owner.getUserName() 
-        					  	+ "' for non-authorized channels.");
-          		  }
+
+          		logger.trace("Examining folder of type {} of user {} for non-authorized channels.",
+                        type, owner.getID() );
+
+
           		  NodeList channels = fd.getElementsByTagName("channel");
           		  for (int j=0; j < channels.getLength(); j++) {
           			  Element ch = (Element) channels.item(j);
@@ -256,21 +270,20 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
           				  String chanId = ch.getAttribute("chanID");
           				  if (!principal.canRender(chanId)) {
           					  fd.removeChild(ch);
-          					  if (LOG.isDebugEnabled()) {
-          						  LOG.debug("RDBMUserLayoutStore removing channel '" 
-            							  	+ ch.getAttribute("fname") 
-            							  	+ "' from the header or footer of user '" 
-            							  	+ owner.getUserName() 
-            							  	+ "' because he/she isn't authorized to render it.");
-          					  }
+          					  logger.debug("Removing channel {} from folder of type {} of user {} " +
+                                      "because user not authorized to render it.",
+                                      ch, type, owner.getID());
+
           				  }
           			  } catch (Throwable t) {
           				  // Log this...
-          				  LOG.warn("RDBMUserLayoutStore was unable to analyze channel element with Id=" 
-          						  									+ch.getAttribute("chanID"), t);
+          				  logger.warn("Unable to analyze channel element {}.", ch, t);
           			  }
           		  }
-          	  }
+          	  } else {
+                  logger.trace("Not cleaning up folder of type {} because its type is not among {}", type,
+                          FOLDER_TYPES_GRACEFULLY_DEGRADED_SET);
+              }
             }
             
             setUserLayoutDOM( userLayout );
@@ -343,6 +356,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     }
 
     public synchronized void saveUserLayout() throws PortalException{
+
+        logger.trace("Saving user layout for owner {}, profile {}", owner.getID(), profile.getProfileId());
+
         Document uld=this.getUserLayoutDOM();
         
         if(uld==null) {
@@ -384,6 +400,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     public IUserLayoutNodeDescription getNode( String nodeId )
         throws PortalException
     {
+        logger.trace("Getting node {} in layout for user {} in profile {}",
+                nodeId, owner.getID(), profile.getProfileId());
+
         if (nodeId == null)
             return null;
         
@@ -397,6 +416,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         Element element = uld.getElementById( nodeId );
         if( element == null )
         {
+            logger.debug("Could not find layout node with id {} in user {}'s profile {}",
+                    nodeId, owner.getID(), profile.getProfileId());
             throw new PortalException("Element with ID=\"" + nodeId +
                                       "\" doesn't exist for " 
                     + owner.getAttribute(IPerson.USERNAME) + "." );
@@ -408,7 +429,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         {
             FragmentChannelInfo info = this.distributedLayoutStore.getFragmentChannelInfo(nodeId);
             ((ChannelDescription)desc).setFragmentChannelInfo(info);
+            logger.trace("nodeId {} started with {} so applied fragment channel info {}.", nodeId,
+                    Constants.FRAGMENT_ID_USER_PREFIX, info);
         }
+
+        logger.trace("Got node [{}] for nodeId {} for user {} in profile {}",
+                desc, nodeId, owner.getID(), profile.getProfileId());
         return desc;
     }
 
@@ -417,6 +443,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                                               String nextSiblingId )
         throws PortalException
     {
+
+        logger.trace("Adding node {} with parentId {} and nextSiblingId {} for {} in {}.",
+                node, parentId, nextSiblingId, owner.getID(), profile.getProfileId());
+
         boolean isChannel=false;
         IUserLayoutNodeDescription parent=this.getNode(parentId);
         if( canAddNode( node, parent, nextSiblingId ) )
@@ -463,8 +493,14 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             else {
                 this.portalEventFactory.publishFolderAddedToLayoutPortalEvent(this, this.owner, layoutId, node.getId());
             }
+
+            logger.trace("Added {} with parentId {} and nextSiblingId {}.", node, parentId, nextSiblingId);
             
             return node;
+
+        } else {
+            logger.debug("Can't add node {} w/ proposed parent {} and nextSibling {} for user {} in profile {}.",
+                    node, parentId, nextSiblingId, owner.getID(), profile.getProfileId());
         }
         return null;
     }
@@ -474,6 +510,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                              String nextSiblingId )
         throws PortalException
     {
+
+        logger.trace("Attempting to move user {}'s nodeId {} " +
+                "to have parentId {} and nextSiblingId {} in profile {}",
+                owner.getID(), nodeId, parentId, nextSiblingId, profile.getProfileId());
+
         IUserLayoutNodeDescription parent=this.getNode(parentId);
         IUserLayoutNodeDescription node=this.getNode(nodeId);
         String oldParentNodeId=getParentId(nodeId);
@@ -505,13 +546,25 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             else {
                 this.portalEventFactory.publishFolderMovedInLayoutPortalEvent(this, this.owner, layoutId, oldParentNodeId, parent.getId());
             }
+
+            logger.trace("Moved user {}'s node {} to new parentId {} and nextSiblingId {}. " +
+                    "From parentId {} in profile {}.",
+                    owner.getID(), node, parentId, nextSiblingId, oldParentNodeId, profile.getProfileId());
+
             return true;
+        } else {
+            logger.debug("Can't move node {} to have parentId {} and nextSiblingId {} in profile {} for user {}.",
+                    node, parentId, nextSiblingId, profile.getProfileId(), owner.getID());
         }
         return false;
     }
 
     public boolean deleteNode( String nodeId )
         throws PortalException {
+
+        logger.trace("Attempting to delete node {} in context of user {} and profile {}.",
+                nodeId, owner.getID(), profile.getProfileId());
+
         if(canDeleteNode(nodeId)) {
             IUserLayoutNodeDescription nodeDescription=this.getNode(nodeId);
             String parentNodeId=this.getParentId(nodeId);
@@ -541,8 +594,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 this.portalEventFactory.publishFolderDeletedFromLayoutPortalEvent(this, this.owner, layoutId, parentNodeId, nodeDescription.getId(), nodeDescription.getName());
             }
 
+            logger.trace("Successfully deleted node {} in context of user {} and profile {}.",
+                    nodeId, owner.getID(), profile.getProfileId());
             return true;
         }
+
+        logger.debug("Requested delete of node {} for owner {} and profile {} but delete not allowed.",
+                nodeId, owner.getID(), profile.getProfileId());
         return false;
     }
     
@@ -556,10 +614,15 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     public synchronized boolean updateNode( IUserLayoutNodeDescription node )
         throws PortalException
     {
+        // no trace log here because would be redundant with contextualized trace logging below.
+
         if( canUpdateNode( node ) )
         {
             String nodeId = node.getId();
             IUserLayoutNodeDescription oldNode = getNode( nodeId );
+
+            logger.trace("Attempting to updateNode {} from old node {} for user {} in profile {}.",
+                    node, oldNode, owner.getID(), profile.getProfileId());
 
             if( oldNode instanceof IUserLayoutChannelDescription )
             {
@@ -586,10 +649,19 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 {
                     IUserLayoutFolderDescription newFolderDesc=(IUserLayoutFolderDescription) node;
                     updateFolderNode(nodeId, newFolderDesc, oldFolderDesc);
+                } else {
+                    logger.warn("Existing node with id {} is a folder {} " +
+                            "but proposed new node {} is a channel so doing nothing.",
+                            nodeId, oldFolderDesc, node);
+                    // TODO: really ought to return false here to reflect doing nothing.
+                    // NOT returning false to stay true to existing (bugged?) behavior.
                 }
             }
             this.updateCacheKey();
             return true;
+        } else {
+            logger.debug("Cannot update node {} for user {} in profile {}.",
+                    node, owner.getID(), profile.getProfileId());
         }
         return false;
     }
@@ -612,6 +684,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             IUserLayoutFolderDescription oldFolderDesc)
     throws PortalException
     {
+
+        logger.trace("entering updateFolderNode with id {} from {} to {}.",
+                nodeId, oldFolderDesc, newFolderDesc);
+
         Element ilfNode = (Element) getUserLayoutDOM().getElementById(nodeId);
         List<ILayoutProcessingAction> pendingActions 
             = new ArrayList<ILayoutProcessingAction>();
@@ -638,17 +714,27 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                  || newFolderDesc.isMoveAllowed() != 
                     oldFolderDesc.isMoveAllowed()))
         {
-            pendingActions.add(new LPAEditRestriction(owner, ilfNode,
-                    newFolderDesc.isMoveAllowed(), 
-                    newFolderDesc.isDeleteAllowed(), 
-                    newFolderDesc.isEditAllowed(), 
-                    newFolderDesc.isAddChildAllowed()));
+            LPAEditRestriction newEditRestriction = new LPAEditRestriction(owner, ilfNode,
+                    newFolderDesc.isMoveAllowed(),
+                    newFolderDesc.isDeleteAllowed(),
+                    newFolderDesc.isEditAllowed(),
+                    newFolderDesc.isAddChildAllowed());
+
+            pendingActions.add(newEditRestriction);
+
+            logger.trace("Owner {} is a fragment owner and delete, edit, add, or move " +
+                    "restrictions are changing in updating node {} from {} to {} " +
+                    "so added edit restrictions {} to pendingActions.",
+                    owner.getID(), nodeId, oldFolderDesc, newFolderDesc, newEditRestriction);
         }
         
         // ATT: Name
         updateNodeAttribute(ilfNode, nodeId, Constants.ATT_NAME, newFolderDesc
                 .getName(), oldFolderDesc.getName(), pendingActions);
-        
+
+        logger.trace("Performing {} in updating folder node {} from {} to {}",
+                pendingActions, nodeId, oldFolderDesc, newFolderDesc);
+
         /*
          * if we make it to this point then all edits made are allowed so
          * process the actions to push the edits into the layout
@@ -678,6 +764,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             List<ILayoutProcessingAction> pendingActions) 
     throws PortalException
     {
+        // no trace logging here because would be redundant with guaranteed at least one contextualized log statement
+        // below
+
         if (newVal == null && oldVal != null ||
                 newVal != null && oldVal == null ||
                 (newVal != null && oldVal != null &&
@@ -693,16 +782,32 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 FragmentNodeInfo fragNodeInf = this.distributedLayoutStore.getFragmentNodeInfo(nodeId);
                 if (fragNodeInf == null )
                 {
+                    LPAChangeAttribute attributeChangeAction = new LPAChangeAttribute(nodeId, attName,
+                            newVal, owner, ilfNode, isFragmentOwner);
+
+                    logger.warn("Node with id {} (incorporated since started with {}) is " +
+                            "not present in the layout store.  Deleted in the fragment owner layout " +
+                            "but user was logged in and so is editing a " +
+                            "no-longer-in-underlying-fragment incorporated node? " +
+                            "Anyway, added {} to pending actions," +
+                            " to change attribute named {} from value {} to value {}.",
+                            nodeId, Constants.FRAGMENT_ID_USER_PREFIX, attributeChangeAction, attName,
+                            oldVal, newVal);
+
                     /*
                      * null should only happen if a node was deleted in the
                      * fragment and a user happened to already be logged in and
                      * edited an attribute on that node.
                      */ 
-                    pendingActions.add(new LPAChangeAttribute(nodeId, attName,
-                            newVal, owner, ilfNode, isFragmentOwner));
+                    pendingActions.add(attributeChangeAction);
                 }
                 else if (! fragNodeInf.canOverrideAttributes())
                 {
+                    logger.warn("User {} in profile {} attempted updating node attribute {} " +
+                            "on node {} from value {} to value {} " +
+                            "but is not permitted to override attributes.",
+                            owner.getID(), profile.getProfileId(), attName, nodeId, oldVal, newVal );
+
                     /*
                      * It isn't overrideable.
                      */
@@ -714,33 +819,59 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 else if (! fragNodeInf.getAttributeValue(attName)
                         .equals(newVal))
                 {
+                    LPAChangeAttribute attributeChange = new LPAChangeAttribute(nodeId, attName,
+                            newVal, owner, ilfNode, isFragmentOwner);
+
                     /*
                      * If we get here we can override and the value is 
                      * different than that in the fragment so make the change.
                      */
-                    pendingActions.add(new LPAChangeAttribute(nodeId, attName,
-                            newVal, owner, ilfNode, isFragmentOwner));
+
+                    logger.trace("User {} in profile {} is permitted to change " +
+                            "attribute named {} of nodeId {} " +
+                            "from value {} to value {} so queued change {}.",
+                            owner.getID(), profile.getProfileId(), attName, nodeId,
+                            oldVal, newVal, attributeChange);
+
+                    pendingActions.add(attributeChange);
                 }
                 else 
                 {
+                    LPAResetAttribute attributeResetRequest = new LPAResetAttribute(nodeId, attName,
+                            fragNodeInf.getAttributeValue(attName), owner, ilfNode);
+
+                    logger.trace("User {} in profile {} is changing attribute named {} on nodeId {} " +
+                            "from value {} to value {} " +
+                            "which happens to match the value in the underlying fragment, " +
+                            "so translated request to an attribute reset request {}.",
+                            owner.getID(), profile.getProfileId(), attName, nodeId,
+                            oldVal, newVal, attributeResetRequest);
                     /*
                      * The new value matches that in the fragment. 
                      */
-                    pendingActions.add(new LPAResetAttribute(nodeId, attName,
-                            fragNodeInf.getAttributeValue(attName), owner,
-                            ilfNode));
+                    pendingActions.add(attributeResetRequest);
                 }
             }
             else
             {
+                LPAChangeAttribute changeAttribute = new LPAChangeAttribute(nodeId, attName,
+                        newVal, owner, ilfNode, isFragmentOwner);
+
+                logger.trace("nodeId {} did not start with {} (owned by user {}) " +
+                        "so authorizing change request {}.",
+                        nodeId, Constants.FRAGMENT_ID_USER_PREFIX, owner.getID(), changeAttribute);
+
                 /*
                  * Node owned by user so no checking needed. Just change it.
                  */
-                pendingActions.add(new LPAChangeAttribute(nodeId, attName,
-                        newVal, owner, ilfNode, isFragmentOwner));
+                pendingActions.add(changeAttribute);
             }
+        } else {
+            logger.trace("updateNodeAttribute: {} already has attribute {} with desired value {} so do nothing.",
+                    nodeId, attName, newVal);
         }
     }
+
     /**
      * Compares the new channel description object with the old channel
      * description object to determine what items were changed and if those
@@ -927,6 +1058,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             action.perform();
         }
     }
+
     /**
      * Return a map parameter names to channel parameter objects representing
      * the parameters specified at publish time for the channel with the
@@ -943,7 +1075,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         {
         	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
             IPortletDefinition def = registry.getPortletDefinition(channelPublishId);
-            return def.getParametersAsUnmodifiableMap();
+
+            Map publishedChannelParametersMap = def.getParametersAsUnmodifiableMap();
+
+            logger.trace("getPublishedParametersMap( chanPubId {} ) returning {}.",
+                    channelPublishId, publishedChannelParametersMap);
+
+            return publishedChannelParametersMap;
         } catch (Exception e)
         {
             throw new PortalException("Unable to acquire channel definition.",
@@ -956,7 +1094,14 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                                String nextSiblingId )
         throws PortalException
     {
-        return this.canAddNode(node,this.getNode(parentId),nextSiblingId);
+
+        boolean canAddNode = canAddNode(node,this.getNode(parentId),nextSiblingId);
+
+        logger.trace("canAddNode(node {}, parentId {}, nextSiblingId {}) returning {}.",
+                node, parentId, nextSiblingId, canAddNode);
+
+        return canAddNode;
+
     }
 
     protected boolean canAddNode( IUserLayoutNodeDescription node,
@@ -964,16 +1109,32 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                                   String nextSiblingId )
         throws PortalException
     {
+        if (parent == null) {
+            logger.warn("canAddNode( node {} parent {} nextSiblingId {}) returning false because parent null.",
+                    node, parent, nextSiblingId);
+            return false;
+        }
+
         // make sure sibling exists and is a child of nodeId
         if(nextSiblingId!=null && ! nextSiblingId.equals("")) {
             IUserLayoutNodeDescription sibling=getNode(nextSiblingId);
             if(sibling==null) {
+
+                logger.error("Error determining whether can add node {} to parent {} with nextSiblingId {}: " +
+                        "Could not find node id matching that nextSiblingId.",
+                        node, parent, nextSiblingId);
+
                 throw new PortalException("Unable to find a sibling node " +
                         "with id=\""+nextSiblingId+"\".  Occurred " +
                             "in layout for " 
                             + owner.getAttribute(IPerson.USERNAME) + ".");
             }
             if(!parent.getId().equals(getParentId(nextSiblingId))) {
+
+                logger.error("Error determining whether can add node {} to parent {} with nextSiblingId {}: " +
+                        "desired next sibling doesn't share this parent.",
+                        node, parent, nextSiblingId);
+
                 throw new PortalException("Given sibling (\""+nextSiblingId
                         +"\") is not a child of a given parentId (\""
                         +parent.getId()+"\"). Occurred " +
@@ -982,16 +1143,27 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             }
         }
 
-        if ( parent == null ||
-             ! node.isMoveAllowed() )
+        if ( ! node.isMoveAllowed() ) {
+            logger.trace("canAddNode( {}, parent {}, nextSiblingId {}) returning false: move disallowed on node.",
+                    node, parent, nextSiblingId);
             return false;
+        }
 
         if ( parent instanceof IUserLayoutFolderDescription &&
-             ! ( (IUserLayoutFolderDescription) parent).isAddChildAllowed() )
+             ! ( (IUserLayoutFolderDescription) parent).isAddChildAllowed() ) {
+            logger.trace("canAddNode( {}, parent {}, nextSiblingId {}) returning false: " +
+                    "addChild disallowed on proposed parent.",
+                    node, parent, nextSiblingId);
             return false;
+        }
 
-        if ( nextSiblingId == null || nextSiblingId.equals("")) // end of list targeted
+        if ( nextSiblingId == null || nextSiblingId.equals("")) { // end of list targeted
+
+            logger.trace("canAddNode( {}, parent {}, nextSiblingId {}) returning true: (no competing siblings).",
+                    node, parent, nextSiblingId);
+
             return true;
+        }
 
         // so lets see if we can place it at the end of the sibling list and
         // hop left until we get into the correct position.
@@ -999,8 +1171,14 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         Enumeration sibIds = getVisibleChildIds( parent.getId() );
         List sibs = Collections.list(sibIds);
 
-        if ( sibs.size() == 0 ) // last node in list so should be ok
+        if ( sibs.size() == 0 ) { // last node in list so should be ok
+
+            logger.trace("canAddNode( {}, parent {}, nextSiblingId {}) returning true: " +
+                    "(no *visible* competing sublings).",
+                    node, parent, nextSiblingId);
+
             return true;
+        }
 
         // reverse scan so that as changes are made the order of the, as yet,
         // unprocessed nodes is not altered.
@@ -1010,11 +1188,27 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         {
             IUserLayoutNodeDescription prev = getNode((String) sibs.get(idx));
 
-            if ( ! MovementRules.canHopLeft( node, prev ) )
+            if ( ! MovementRules.canHopLeft( node, prev ) ) {
+
+                logger.debug("canAddNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                        "(can't have that nextSiblingId because node cannot hop left over {}.",
+                        node, parent, nextSiblingId, prev);
+
                 return false;
-            if ( prev.getId().equals( nextSiblingId ) )
+            }
+            if ( prev.getId().equals( nextSiblingId ) ) {
+
+                logger.trace("canAddNode( {}, parent {}, nextSiblingId {}) returning true: " +
+                        "(leftward hop permissable across all hopped siblings among {}.",
+                        node, parent, nextSiblingId, sibs);
+
                 return true;
+            }
         }
+
+        logger.warn("canAddNode( {}, parent {}, nextSiblingId {}) returning false: " +
+               "Did not find the desired next sibling for {} in {}.",
+                node, parent, nextSiblingId, owner, profile);
         return false; // oops never found the sib
     }
 
@@ -1023,9 +1217,17 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                                 String nextSiblingId )
         throws PortalException
     {
-        return this.canMoveNode( this.getNode( nodeId ),
-                                 this.getNode( parentId ),
-                                 nextSiblingId );
+
+        boolean canMoveNode = canMoveNode( this.getNode( nodeId ),
+                this.getNode( parentId ),
+                nextSiblingId );
+
+        logger.trace("canMoveNode(nodeId {}, parentId {}, nextSiblingId {}) returning {}.",
+                nodeId, parentId, nextSiblingId, canMoveNode);
+
+        return canMoveNode;
+
+
     }
 
     protected boolean canMoveNode( IUserLayoutNodeDescription node,
@@ -1034,9 +1236,29 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         throws PortalException
     {
         // are we moving to a new parent?
-        if ( ! getParentId( node.getId() ).equals( parent.getId() ) )
-            return node.isMoveAllowed() &&
-                canAddNode( node, parent, nextSiblingId );
+        if ( ! getParentId( node.getId() ).equals( parent.getId() ) ) {
+
+            if (! node.isMoveAllowed()) {
+                logger.trace("canMoveNode (node {}, parent {}, nextSiblingId {}) returning false: " +
+                        "Node does not allow moves but move to a new parent is proposed.",
+                        node, parent, nextSiblingId);
+                return false;
+            }
+
+            if ( canAddNode( node, parent, nextSiblingId)) {
+
+                logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning true: " +
+                    "Node allows move and proposed new parent allows add.",
+                        node, parent, nextSiblingId);
+                return true;
+            }
+
+            logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                "Node allows move but proposed new parent does not allow add.",
+                    node, parent, nextSiblingId);
+
+            return false;
+        }
 
         // same parent. which direction are we moving?
         Document uld = this.getUserLayoutDOM();
@@ -1056,15 +1278,69 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             idx++;
             child = (Element) child.getNextSibling();
         }
-        if ( nodeIdx == -1 ||     // couldn't find node
-             ( nextSiblingId != null &&
-               sibIdx == -1 ) )   // couldn't find sibling
-            return false;
 
-        if ( nodeIdx < sibIdx || // moving right
-             sibIdx == -1 )      // appending to end
-            return canMoveRight( node.getId(), nextSiblingId );
-        return canMoveLeft( node.getId(), nextSiblingId );
+        if (nodeIdx == -1) { // could not find node to move
+            logger.debug("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                "Could not find node in user {} 's layout under parent.",
+                    node, parent, nextSiblingId, owner.getID());
+            return false;
+        }
+
+        if ( nextSiblingId != null &&
+                sibIdx == -1 ) { // could not find sibling
+
+            logger.debug("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                    "Could not find sibling in user {} 's layout under parent.",
+                    node, parent, nextSiblingId, owner.getID());
+            return false;
+        }
+
+        if (nodeIdx < sibIdx) { // move right
+
+            boolean canMoveRight = canMoveRight( node.getId(), nextSiblingId );
+
+            if (canMoveRight) {
+                logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning true: " +
+                   "User {} is allowed this rightward move.",
+                        node, parent, nextSiblingId, owner.getID());
+                return true;
+            } else {
+                logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                   "User {} is not allowed this rightward move.",
+                        node, parent, nextSiblingId, owner.getID());
+                return false;
+            }
+
+        }
+
+        if (sibIdx == -1) { // append to end of siblings
+            boolean canMoveRight = canMoveRight( node.getId(), nextSiblingId );
+
+            if (canMoveRight) {
+                logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning true: " +
+                        "{} is allowed this append to end.",
+                        node, parent, nextSiblingId, owner);
+                return true;
+            } else {
+                logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                        "User {} is not allowed this append to end.",
+                        node, parent, nextSiblingId, owner.getID());
+                return false;
+            }
+        }
+
+        if (canMoveLeft( node.getId(), nextSiblingId )) {
+            logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning true: " +
+                    "{} is allowed this leftward move.",
+                    node, parent, nextSiblingId, owner);
+            return true;
+        } else {
+            logger.trace("canMoveNode( node {}, parent {}, nextSiblingId {}) returning false: " +
+                    "User {} is not allowed this leftward move.",
+                    node, parent, nextSiblingId, owner.getID());
+            return false;
+        }
+
     }
 
     private boolean canMoveRight( String nodeId, String targetNextSibId )
@@ -1082,15 +1358,29 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             IUserLayoutNodeDescription next = getNode( nextSibId );
 
             if ( nextSibId != null &&
-                 next.getId().equals( targetNextSibId ) )
+                 next.getId().equals( targetNextSibId ) ) {
+                logger.trace("canMoveRight( nodeId {}, targetNextSibId {}) returning true");
                 return true;
-            else if ( ! MovementRules.canHopRight( node, next ) )
+            }
+            else if ( ! MovementRules.canHopRight( node, next ) ) {
+                logger.trace("canMoveRight( nodeId {}, targetNextSibId {}) returning false bc movement rule.",
+                        nodeId, targetNextSibId);
                 return false;
+            }
         }
 
-        if ( targetNextSibId == null ) // made it to end of sib list and
-            return true;               // that is the desired location
-        return false; // oops never found the sib. Should never happen.
+        if ( targetNextSibId == null ) {
+            logger.trace("canMoveRight(nodeId {}, targetNextSibId {}) returning true because " +
+                "made it to the end of the sibling list and that is the desired location.",
+                    nodeId, targetNextSibId);
+
+            return true;
+        }
+
+        logger.error("Something went wrong in canMoveRight(nodeId {}, targetNextSibId {}): " +
+            "Never found the sibling.  This should never happen.",
+                nodeId, targetNextSibId);
+        return false;
     }
 
     private boolean canMoveLeft( String nodeId, String targetNextSibId )
@@ -1107,17 +1397,32 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             String prevSibId = (String) sibs.get( idx );
             IUserLayoutNodeDescription prev = getNode( prevSibId );
 
-            if ( ! MovementRules.canHopLeft( node, prev ) )
+            if ( ! MovementRules.canHopLeft( node, prev ) ) {
+                logger.trace("canMoveLeft( nodeId {}, targetNextSibId {}) returning false per movement rule.",
+                        nodeId, targetNextSibId);
                 return false;
+            }
             if ( targetNextSibId != null &&
-                 prev.getId().equals( targetNextSibId ) )
+                 prev.getId().equals( targetNextSibId ) ) {
+
+                logger.trace("canMoveLeft( nodeId {}, targetNextSibId {}) returning true.");
                 return true;
+            }
         }
+
+        logger.debug("canMoveLeft( nodeId {}, targetNextSibId {}) returning false because next sib not found.",
+                nodeId, targetNextSibId);
         return false; // oops never found the sib
     }
 
     public boolean canDeleteNode(String nodeId) throws PortalException {
-        return canDeleteNode(this.getNode(nodeId));
+
+        boolean canDeleteNode = canDeleteNode(this.getNode(nodeId));
+
+        logger.trace("canDeleteNode( nodeId {} ) returning {}.",
+                nodeId, canDeleteNode);
+
+        return canDeleteNode;
     }
 
     /**
@@ -1128,16 +1433,28 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     protected boolean canDeleteNode( IUserLayoutNodeDescription node )
         throws PortalException
     {
-        if ( node == null )
+        if ( node == null ) {
+            logger.debug("canDeleteNode() returning false on a null node.");
             return false;
+        }
 
-        return node.isDeleteAllowed();
+        boolean canDeleteNode = node.isDeleteAllowed();
+
+        logger.trace("canDeleteNode( node {} ) returning {}.",
+                node, canDeleteNode);
+
+        return canDeleteNode;
     }
 
     public boolean canUpdateNode( String nodeId )
         throws PortalException
     {
-        return canUpdateNode( this.getNode( nodeId ) );
+        boolean canUpdateNode = canUpdateNode( this.getNode( nodeId ) );
+
+        logger.trace("canUpdateNode( nodeId {} ) returning {}.",
+                nodeId, canUpdateNode);
+
+        return canUpdateNode;
     }
 
     /**
@@ -1147,11 +1464,34 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      */
     public boolean canUpdateNode( IUserLayoutNodeDescription node )
     {
-        if ( node == null )
+        if ( node == null ) {
+            logger.debug("User {} cannot update a null node (in profile {}).",
+                    owner.getID(), profile.getProfileId());
             return false;
+        }
 
-        return isFragmentOwner || node.isEditAllowed()
-                || node instanceof IUserLayoutChannelDescription;
+        if (isFragmentOwner) {
+            logger.trace("User {} can update node {} under profile {} because isFragmentOwner.",
+                    owner.getID(), node, profile.getProfileId());
+            return true;
+        }
+
+        if (node.isEditAllowed()) {
+            logger.trace("{} can update node {} under profile {} because that node reports isEditAllowed true.",
+                    owner, node, profile);
+            return true;
+        }
+
+        if (node instanceof IUserLayoutChannelDescription) {
+            logger.trace("User {} can update node {} under profile {} because tha node is a channel.",
+                    owner.getID(), node, profile.getProfileId());
+            return true;
+        }
+
+        logger.trace("User {} cannot update node {} under profile {}.",
+                owner.getID(), node, profile.getProfileId());
+
+        return false;
     }
 
     /**
@@ -1180,13 +1520,24 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             Node parent=nelement.getParentNode();
             if(parent!=null) {
                 if(parent.getNodeType()!=Node.ELEMENT_NODE) {
-                    throw new PortalException("Node with id=\""+nodeId+"\" is attached to something other then an element node.");
+                    logger.error("Failed to getParentId( nodeId {} ) because nodeId identifies a non-element.",
+                            nodeId);
+                    throw new PortalException("Node with id=\""+nodeId+"\" is attached to something other than an element node.");
                 }
                 Element e=(Element) parent;
-                return e.getAttribute("ID");
+                String parentId = e.getAttribute("ID");
+                logger.trace("getParentId( nodeId {} ) returning {}.",
+                        nodeId, parentId);
+                return parentId;
             }
+
+            logger.warn("getParentId( nodeId {}) returning null because that node has no parent.",
+                    nodeId);
             return null;
         }
+
+        logger.error("Failing to getParentId( nodeId {}) because no node with that node ID exists.",
+                nodeId);
         throw new PortalException("Node with id=\""+nodeId+
                 "\" doesn't exist. Occurred in layout for " 
                 + owner.getAttribute(IPerson.USERNAME) + ".");
@@ -1203,10 +1554,18 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             }
             if(nsibling!=null) {
                 Element e=(Element) nsibling;
-                return e.getAttribute("ID");
+                String nextSiblingId = e.getAttribute("ID");
+                logger.trace("getNextSiblingId( nodeId {} ) returning {}.",
+                        nodeId, nextSiblingId);
+                return nextSiblingId;
             }
+            logger.trace("getNextSiblingId( nodeId {} ) returning null because no next sibling.",
+                    nodeId);
             return null;
         }
+
+        logger.error("Failed to getNextSiblingId( nodeId {} ) because that node does not exist.",
+                nodeId);
         throw new PortalException("Node with id=\""+nodeId+
                 "\" doesn't exist. Occurred " +
                 "in layout for " 
@@ -1224,10 +1583,18 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             }
             if(nsibling!=null) {
                 Element e=(Element) nsibling;
-                return e.getAttribute("ID");
+                String previousSiblingId = e.getAttribute("ID");
+                logger.trace("getPreviousSibling( nodeId {} ) returning {}.",
+                        nodeId, previousSiblingId);
+                return previousSiblingId;
             }
+            logger.trace("getPreviousSibling( nodeId {} ) returning null because no previous sibling.",
+                    nodeId);
             return null;
         }
+
+        logger.error("Failed to getPreviousSibling{ nodeId {} ) because that nodeId doesn't exist.",
+                nodeId);
         throw new PortalException("Node with id=\""+nodeId+
                 "\" doesn't exist. Occurred in layout for " 
                 + owner.getAttribute(IPerson.USERNAME) + ".");
@@ -1267,6 +1634,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 }
             }
         }
+
+        logger.trace("getChildIds( nodeId {}, visibleOnly {}) returning {}.",
+                nodeId, visibleOnly, v.elements());
+
         return v.elements();
     }
 
@@ -1307,9 +1678,20 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     	
     	final Document userLayout = this.getUserLayoutDOM();
     	final Element fnameNode = this.xpathOperations.evaluate("//folder[@ID=$parentFolderId]/descendant::channel[@fname=$fname]", variables, userLayout, XPathConstants.NODE);
-		if (fnameNode != null) {
-			return fnameNode.getAttribute("ID");
-		}
+
+        if (fnameNode != null) {
+
+            String subscribeId = fnameNode.getAttribute("ID");
+
+            logger.trace("getSubscribeId( parentFolderId {}, fname {}) returning {} for user {} in profile {}.",
+                    parentFolderId, fname, subscribeId, owner.getID(), profile.getProfileId());
+
+			return subscribeId;
+
+		} else {
+            logger.trace("Could not find a subscribeId for fname {} within parent folder {}.",
+                    fname, parentFolderId);
+        }
     	
     	return null;
     }
@@ -1338,7 +1720,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             
             Element rootNode = this.xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
             if (rootNode == null || !rootNode.getAttribute(Constants.ATT_TYPE).equals(Constants.ROOT_FOLDER_ID)) {
-                LOG.error("Unable to locate root node in layout of " + owner.getAttribute(IPerson.USERNAME) + ". Resetting corrupted layout.");
+                logger.error("Unable to locate root node in layout of {}. Resetting corrupted layout.",
+                        owner.getAttribute(IPerson.USERNAME));
+
                 resetLayout((String) null);
                 
                 rootNode = this.xpathOperations.evaluate("//layout/folder", layout, XPathConstants.NODE);
@@ -1349,6 +1733,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             }
             rootNodeId = rootNode.getAttribute("ID");
         }
+
+        logger.trace("getRootFolderId() returning {} for user {} in profile {}.",
+                rootNodeId, owner.getID(), profile.getProfileId());
+
         return rootNodeId;
     }
 
@@ -1395,13 +1783,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         boolean resetCurrentUserLayout = (null == loginId);
         
         if (resetCurrentUserLayout || 
-                (! resetCurrentUserLayout && AdminEvaluator.isAdmin(owner)))
+                AdminEvaluator.isAdmin(owner))
         {
-            if (LOG.isDebugEnabled())
-            {
-                LOG.debug("Reset layout requested for user with id " + loginId
-                                + ".");
-            }
+            logger.debug("resetLayout() for {} 's layout requested by user {}.",
+                    loginId, owner.getID());
+
             int portalID = IPerson.UNDEFINED_ID;
             IPerson person = null;
             
@@ -1435,8 +1821,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         } 
         else
         {
-            LOG.error("Layout reset requested for user " + loginId + " by "
-                    + owner.getID() + " who is not an administrative user.");
+            logger.error("Non-administrator user {} requested layout reset for user {}. No-op.",
+                    owner, loginId);
         }
         return resetSuccess;
     }
@@ -1450,7 +1836,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         if (PersonFactory.GUEST_USERNAME.equals(userName)) {
             throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER: " + person);
         }
-        LOG.warn("Resetting user layout for: " + userName, new Throwable());
+        logger.warn("Resetting user layout for: {}.", userName, new Throwable());
         
         boolean layoutWasReset = false;
         
@@ -1491,8 +1877,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         }
         catch( Exception e )
         {
-            LOG.error("Unable to reset layout for " +
-                    person.getAttribute(IPerson.USERNAME) + ".", e);
+            logger.error("Unable to reset layout for {}.",
+                    person.getAttribute(IPerson.USERNAME), e);
         }
         return layoutWasReset;
     }
@@ -1510,7 +1896,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         }
         else
         {
-            throw new PortalException("Given XML Element is not a channel!");
+            throw new PortalException("Given XML Element is neither a folder nor a channel!");
         }
     }
 
@@ -1544,6 +1930,10 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                 map.put(id, fname);
             }
         }
+
+        logger.trace("getChannelFunctionalNameMap() returning {} for user {} in profile {}.",
+                map, owner.getID(), profile.getProfileId());
+
         return map;
     }
     
@@ -1576,8 +1966,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     public String getFolderLabel(String nodeId)
     {
         IUserLayoutNodeDescription ndesc = getNode(nodeId);
-        if (!(ndesc instanceof IUserLayoutFolderDescription))
+        if (!(ndesc instanceof IUserLayoutFolderDescription)) {
+            logger.warn("nodeId {} identifies a folder ({}) so can't getFolderLabel().",
+                    nodeId, ndesc);
             return null;
+        }
         
         IUserLayoutFolderDescription desc 
             = (IUserLayoutFolderDescription) ndesc; 
@@ -1596,6 +1989,9 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             else
                 plfId = null; // no user mods exist for this node
         }
+
+        logger.trace("getFolderLabel( nodeId {} ) returning {} for user id {} in profile {}.",
+                nodeId, label, owner.getID(), profile.getProfileId());
     
         return label;
     }

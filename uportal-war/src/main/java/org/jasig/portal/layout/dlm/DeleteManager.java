@@ -19,16 +19,19 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /** 
  * Looks for, applies against the ilf, and updates accordingly the delete
@@ -40,7 +43,7 @@ import org.w3c.dom.NodeList;
 public class DeleteManager
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log LOG = LogFactory.getLog(DeleteManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DeleteManager.class);
 
     private static IUserLayoutStore dls = null;
 
@@ -70,6 +73,10 @@ public class DeleteManager
                                          Document ilf,
                      IntegrationResult result )
     {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Attempting to apply and update delete set for plf {} and ilf {} with IntegrationResult {}.",
+                    XmlUtilitiesImpl.toString(plf), XmlUtilitiesImpl.toString(ilf), result);
+        }
 
         Element dSet = null;
         try
@@ -78,32 +85,54 @@ public class DeleteManager
         }
         catch( Exception e )
         {
-            LOG.error("Exception occurred while getting user's DLM delete-set.", 
-                    e);
+            LOG.error("In applyAndUpdateDeleteSet: exception getting DLM delete-set for plf {} so doing nothing.",
+                    XmlUtilitiesImpl.toString(plf), e);
         }
 
-        if ( dSet == null )
+        if ( dSet == null ) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("applyAndUpdateDeleteset: DeleteSet for plf {} null so no delete set to apply. " +
+                    "Doing nothing.",
+                    XmlUtilitiesImpl.toString(plf) );
+            }
             return;
+        }
 
         NodeList deletes = dSet.getChildNodes();
 
         for( int i=deletes.getLength()-1; i>=0; i-- )
         {
-            if ( applyDelete( (Element) deletes.item(i), ilf ) == false )
+            Element deleteElement = (Element) deletes.item(i);
+            if ( applyDelete( deleteElement, ilf ) == false )
             {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Failed to apply delete {}, removing it from delete set.",
+                        XmlUtilitiesImpl.toString(deleteElement) );
+                }
                 dSet.removeChild( deletes.item(i) );
                 result.changedPLF = true;
             }
             else
             {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Successfully applied delete {}. NOT removing it from delete set.",
+                        XmlUtilitiesImpl.toString(deleteElement) );
+                }
                 result.changedILF = true;
             }
         }
 
         if ( dSet.getChildNodes().getLength() == 0 )
         {
+            LOG.debug("Delete set {} is now empty.  removing the delete set from plf {}.",
+                    dSet, plf);
             plf.getDocumentElement().removeChild( dSet );
             result.changedPLF = true;
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("applyAndUpdateDeleteSet(plf {} ilf {} IntegrationResult {}) returning.",
+                XmlUtilitiesImpl.toString(plf), XmlUtilitiesImpl.toString(ilf), result);
         }
     }
 
@@ -115,44 +144,72 @@ public class DeleteManager
     */
     private static boolean applyDelete( Element delete, Document ilf )
     {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("applyDelete( delete command {} in document {}).",
+                    XmlUtilitiesImpl.toString(delete), XmlUtilitiesImpl.toString(ilf) );
+        }
+
         String nodeID = delete.getAttribute( Constants.ATT_NAME );
 
         Element e = ilf.getElementById( nodeID );
 
-        if ( e == null )
+        if ( e == null ) {
+            LOG.warn("In applying delete {} could not find target node with ID {} in ilf {} so doing nothing.",
+                    XmlUtilitiesImpl.toString(delete), nodeID, XmlUtilitiesImpl.toString(ilf));
             return false;
+        }
 
         String deleteAllowed = e.getAttribute( Constants.ATT_DELETE_ALLOWED );
-        if ( deleteAllowed.equals( "false" ) )
+        if ( deleteAllowed.equals( "false" ) ) {
+            LOG.info("In applying delete {} target node {} had attribute {} with value 'false' so doing nothing",
+                    XmlUtilitiesImpl.toString(delete), XmlUtilitiesImpl.toString(e), Constants.ATT_DELETE_ALLOWED);
             return false;
+        }
 
         Element p = (Element) e.getParentNode();
         e.setIdAttribute(Constants.ATT_ID, false);
         p.removeChild( e );
+
+        LOG.debug("Removed child node {} per delete {}; undeclared attribute {} on {} as an ID attribute",
+                XmlUtilitiesImpl.toString(e), XmlUtilitiesImpl.toString(delete), Constants.ATT_ID, e);
         return true;
     }
 
     /**
        Get the delete set if any stored in the root of the document or create
-       it is passed in create flag is true.
+       it if passed in create flag is true.
     */
     private static Element getDeleteSet( Document plf,
                                          IPerson person,
                                          boolean create )
         throws PortalException
     {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("entering getDeleteSet() from layout document {} with create flag {})",
+                XmlUtilitiesImpl.toString(plf), create);
+        }
+
         Node root = plf.getDocumentElement();
         Node child = root.getFirstChild();
 
         while( child != null )
         {
-            if ( child.getNodeName().equals( Constants.ELM_DELETE_SET ) )
-            return (Element) child;
+            if ( child.getNodeName().equals( Constants.ELM_DELETE_SET ) ) {
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found and returning delete set {}.",
+                        XmlUtilitiesImpl.toString(child));
+                }
+                return (Element) child;
+            }
             child = child.getNextSibling();
         }
 
-        if ( create == false )
+        if ( create == false ) {
+            LOG.trace("getDeleteSet did not find node named {} in plf and create flag is false; returning null",
+                    Constants.ELM_DELETE_SET);
             return null;
+        }
 
         String ID = null;
 
@@ -164,13 +221,14 @@ public class DeleteManager
         {
             throw new PortalException( "Exception encountered while " +
                                        "generating new delete set node " +
-                                       "Id for userId=" + person.getID(), e );
+                                       "Id for user [" + person + "].", e );
         }
         Element delSet = plf.createElement( Constants.ELM_DELETE_SET );
         delSet.setAttribute( Constants.ATT_TYPE,
                      Constants.ELM_DELETE_SET );
         delSet.setAttribute( Constants.ATT_ID, ID );
         root.appendChild( delSet );
+        LOG.debug("Added new empty delete set {} to plf {}.", delSet, plf);
         return delSet;
     }
 
@@ -191,13 +249,17 @@ public class DeleteManager
                                            IPerson person )
         throws PortalException
     {
+        LOG.trace("addDeleteDirective to delete element id {} for person {} with compViewNode {}",
+                elementID, person, XmlUtilitiesImpl.toString(compViewNode));
+
         Document plf = (Document) person.getAttribute( Constants.PLF );
         Element delSet = getDeleteSet( plf, person, true );
         addDeleteDirective( compViewNode, elementID, person, plf, delSet );
     }
+
     /**
        This method does the actual work of adding a delete directive and then
-       recursively calling itself for any incoporated children that need to be
+       recursively calling itself for any incorporated children that need to be
        deleted as well.
     */
     private static void addDeleteDirective( Element compViewNode,
@@ -207,6 +269,11 @@ public class DeleteManager
                                             Element delSet )
         throws PortalException
     {
+        LOG.trace("addDeleteDirective to delete {} for user {} with plf {} " +
+                "amending delete set {} with comp view {}.",
+                elementID, person.getID(), XmlUtilitiesImpl.toString(plf),
+                XmlUtilitiesImpl.toString(delSet), XmlUtilitiesImpl.toString(compViewNode));
+
         String ID = null;
 
         try
@@ -226,6 +293,9 @@ public class DeleteManager
                        Constants.ATT_NAME, elementID );
         delSet.appendChild( delete );
 
+        LOG.trace("Appended {} to delete set {}",
+                XmlUtilitiesImpl.toString(delete), XmlUtilitiesImpl.toString(delSet) );
+
         // now pass through children and add delete directives for those with
         // IDs indicating that they were incorporated
         Element child = (Element) compViewNode.getFirstChild();
@@ -233,9 +303,16 @@ public class DeleteManager
         while( child != null )
         {
             String childID = child.getAttribute( "ID" );
-            if ( childID.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
-                addDeleteDirective( child, childID, person, plf, delSet );
+            if ( childID.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) ) {
+                LOG.trace("Because child of deleted node {} has id {} starting with {}, " +
+                        "adding delete directive for it.",
+                        XmlUtilitiesImpl.toString(child), childID, Constants.FRAGMENT_ID_USER_PREFIX);
+                addDeleteDirective(child, childID, person, plf, delSet);
+            }
             child = (Element) child.getNextSibling();
         }
+
+        LOG.trace("Finished adding delete directive to delete {} for user {} with plf {}",
+                elementID, person, plf);
     }
 }

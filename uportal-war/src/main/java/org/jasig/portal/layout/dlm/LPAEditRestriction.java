@@ -19,8 +19,11 @@
 
 package org.jasig.portal.layout.dlm;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.IPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -31,6 +34,8 @@ import org.w3c.dom.Element;
  */
 public class LPAEditRestriction implements ILayoutProcessingAction
 {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private IPerson person = null;
     private Element ilfNode = null;
     private boolean moveAllowed = false;
@@ -58,8 +63,12 @@ public class LPAEditRestriction implements ILayoutProcessingAction
     {
         Element plfNode = HandlerUtils.getPLFNode(ilfNode, person, false, false);
 
-        if (plfNode == null)
+        if (plfNode == null) {
+            logger.warn("In attempting to perform {} failed to get PLFNode so doing nothing.", this);
             return;
+        }
+
+        logger.trace("Performing {}.", this);
         
         changeRestriction(Constants.ATT_MOVE_ALLOWED, plfNode, moveAllowed);
         changeRestriction(Constants.ATT_MOVE_ALLOWED, ilfNode, moveAllowed);
@@ -92,5 +101,17 @@ public class LPAEditRestriction implements ILayoutProcessingAction
             element.setAttributeNS(Constants.NS_URI, name, "false");
         else
             element.removeAttribute(name);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("person", person).
+                append("ilfNode", ilfNode).
+                append("moveAllowed", moveAllowed).
+                append("deleteAllowed", deleteAllowed).
+                append("editAllowed", editAllowed).
+                append("addChildAllowed", addChildAllowed).
+                toString();
     }
 }
