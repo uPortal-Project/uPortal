@@ -22,6 +22,8 @@ package org.jasig.portal.layout.dlm;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
+import org.jasig.portal.xml.XmlUtilitiesImpl;
+
 /**
  * This class wraps folder layout elements in cached fragment definitions to
  * enable the layout manager to make informed descisions on attributes should be
