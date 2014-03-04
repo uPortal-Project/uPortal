@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
@@ -398,6 +399,13 @@ public class FragmentDefinition extends EvaluatorGroup
     public String getSummary() {
         // This method is for audience evaluators...
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("name", name)
+                .toString();
     }
 
 }

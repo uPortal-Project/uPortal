@@ -23,8 +23,6 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.QName;
@@ -34,6 +32,8 @@ import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.security.IPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$ $Date$
@@ -51,7 +51,7 @@ public class Paren extends EvaluatorGroup {
     
     // Static Members.
     public static final String RCS_ID = "@(#) $Header$";
-    private static Log LOG = LogFactory.getLog(Paren.class);
+    private static Logger LOG = LoggerFactory.getLogger(Paren.class);
 
     // Instance Members.
     @Column(name = "PAREN_TYPE")
@@ -67,9 +67,6 @@ public class Paren extends EvaluatorGroup {
     public boolean isApplicable( IPerson toPerson )
     {
         boolean rslt = false;
-        if (LOG.isDebugEnabled())
-            LOG.debug(" >>>> calling paren[" + this + ", op=" + type + 
-                    "].isApplicable()");
         
         switch (this.type) {
             case OR: {
@@ -106,10 +103,10 @@ public class Paren extends EvaluatorGroup {
                 rslt = !rslt;
             } break;
         }
-        
-        if (LOG.isDebugEnabled())
-            LOG.debug(" ---- paren[" + this + ", op=" + type
-                    + "].isApplicable()=" + rslt);
+
+        LOG.trace("Paren {} isApplicable( user {} ) returning {}.",
+                this, toPerson, rslt);
+
         return rslt;
     }
 
@@ -190,6 +187,12 @@ public class Paren extends EvaluatorGroup {
         }
         
         return rslt.toString();
+    }
+
+    @Override
+    public String toString() {
+        // TODO: ought this to use getSummary???
+        return this.type.toString();
     }
 
 

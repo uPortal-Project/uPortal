@@ -22,22 +22,26 @@ package org.jasig.portal.layout.dlm;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
- * Provides API for layout caching service
+ * Provides API for layout caching service.
+ *
+ * Logging implementation detail:
+ * Logs at DEBUG level all writes to the cache and cache misses.
+ * Logs at TRACE level all cache hits.
  */
 @Service("layoutCachingService")
 public class LayoutCachingService implements ILayoutCachingService {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private Ehcache layoutCache;
     
@@ -50,6 +54,9 @@ public class LayoutCachingService implements ILayoutCachingService {
     public void cacheLayout(IPerson owner, IUserProfile profile, DistributedUserLayout layout) {
         final CacheKey cacheKey = this.getCacheKey(owner, profile);
         this.layoutCache.put(new Element(cacheKey, layout));
+
+        logger.debug("Cached layout for user {} in profile {}.",
+                owner.getID(), profile.getProfileId());
     }
     
     @Override
@@ -57,13 +64,22 @@ public class LayoutCachingService implements ILayoutCachingService {
         final CacheKey cacheKey = this.getCacheKey(owner, profile);
         final Element element = this.layoutCache.get(cacheKey);
         if (element != null) {
+            logger.trace("DLM layout cache hit for user {} in profile {}.",
+                    owner.getID(), profile.getProfileId() );
             return (DistributedUserLayout)element.getObjectValue();
+        } else {
+            logger.debug("DLM layout cache miss for user {} in profile {}.",
+                    owner.getID(), profile.getProfileId());
         }
         return null;
     }
     
     @Override
     public void removeCachedLayout(IPerson owner, IUserProfile profile) {
+
+        logger.debug("DLM layout cache removal for user {} under profile {}.",
+                owner.getID(), profile.getProfileId());
+
         final CacheKey cacheKey = this.getCacheKey(owner, profile);
         this.layoutCache.remove(cacheKey);
     }
