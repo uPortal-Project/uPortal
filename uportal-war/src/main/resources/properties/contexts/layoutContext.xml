@@ -45,7 +45,14 @@
     
     <bean id="userLayoutStore" class="org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore">
     </bean>
-    
+
+    <!--
+     | This `userLayoutManager` bean declaration will not work as-is because the constructor args are required.
+     | Rather, DLM is being Spring-wired to pick up a bunch of autowired dependencies and
+     | UserLayoutManagerFactory grabs this bean by name **overriding the constructor arguments** with
+     | real, runtime values.  If you grab this bean without overriding the missing constructor values,
+     | DLM constructor will fail.
+    -->
     <bean id="userLayoutManager" class="org.jasig.portal.layout.dlm.DistributedLayoutManager" scope="prototype">
         <constructor-arg value="" />
         <constructor-arg value="" />

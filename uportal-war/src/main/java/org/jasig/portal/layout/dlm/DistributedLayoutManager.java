@@ -1276,7 +1276,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     /**
      * This is outright cheating ! We're supposed to analyze the user layout tree
-     * and return a key that corresponds uniqly to the composition and the sturcture of the tree.
+     * and return a key that corresponds uniqly to the composition and the stucture of the tree.
      * Here we just return a different key wheneever anything changes. So if one was to move a
      * node back and forth, the key would always never (almost) come back to the original value,
      * even though the changes to the user layout are cyclic.
