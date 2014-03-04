@@ -250,7 +250,7 @@ public class DeleteManager
         throws PortalException
     {
         LOG.trace("addDeleteDirective to delete element id {} for person {} with compViewNode {}",
-                elementID, person, XmlUtilitiesImpl.toString(compViewNode));
+                elementID, person.getID(), XmlUtilitiesImpl.toString(compViewNode));
 
         Document plf = (Document) person.getAttribute( Constants.PLF );
         Element delSet = getDeleteSet( plf, person, true );
