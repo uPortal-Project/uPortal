@@ -26,7 +26,7 @@
 #${n}resultBrowser .dataTables_filter, #${n}resultBrowser .first.paginate_button, #${n}resultBrowser .last.paginate_button{
     display: none;
 }
-#${n}resultBrowser .dataTables-inline, #${n}resultBrowser .column-filter-widget, #${n}resultBrowser .column-filter-widget {
+#${n}resultBrowser .dataTables-inline, #${n}resultBrowser .column-filter-widgets {
     display: inline-block;
 }
 #${n}resultBrowser .dataTables_wrapper {
@@ -41,8 +41,28 @@
     margin: 2px;
     color:#000;
 }
-#${n}resultBrowser .dataTables-right {
-    float:right;
+
+#${n}resultBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}resultBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}resultBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}resultBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}resultBrowser .datatable-search-view {
+    text-align:right;
 }
 </style>
 
@@ -119,11 +139,14 @@
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: { }
         });
     };
     initializeTable();
+    // Adding formatting to sDom
+    $("div.toolbar-br").html('<BR>');
+    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
  });
 </script>
