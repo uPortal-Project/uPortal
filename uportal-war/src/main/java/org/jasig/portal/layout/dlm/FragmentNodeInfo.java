@@ -71,4 +71,11 @@ public class FragmentNodeInfo
             return true;
         return att.getNodeValue().equals("true");
     }
+
+    public String toString() {
+        return new StringBuilder("FragmentNodeInfo wrapping element [")
+                .append( XmlUtilitiesImpl.toString(this.node) )
+                .append("]")
+                .toString();
+    }
 }

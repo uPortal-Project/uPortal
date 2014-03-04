@@ -19,6 +19,9 @@
 package org.jasig.portal.layout;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,6 +31,9 @@ import org.w3c.dom.NodeList;
  * the layout.
  */
 public class PortletSubscribeIdResolver implements INodeIdResolver {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
 	private final String fname;
 
 	/**
@@ -44,9 +50,29 @@ public class PortletSubscribeIdResolver implements INodeIdResolver {
 			final Element e = (Element) channels.item(i);
 			if (fname.equals(e.getAttribute("fname"))) {
 				String ID = e.getAttribute("ID");
-				return StringUtils.isEmpty(ID) ? null : ID;
+
+                if (StringUtils.isEmpty(ID)) {
+                    logger.warn("Found channel element with @fname {} it had an empty ID attribute {} (in {}).",
+                            fname, ID, document);
+                    return null;
+                }
+
+                logger.trace("Found channel element ID {} matching fname {}.",
+                        ID, fname);
+
+				return ID;
 			}
 		}
+
+        logger.trace("Did not find a channel element with fname {} in {}.",
+                fname, document);
 		return null;
 	}
+
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("fname", fname).
+                toString();
+    }
+
 }

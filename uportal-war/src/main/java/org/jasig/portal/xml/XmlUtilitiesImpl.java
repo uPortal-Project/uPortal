@@ -248,6 +248,11 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     
     public static String toString(Node node) {
         final Transformer identityTransformer;
+
+        if (node == null) {
+            return "null";
+        }
+
         try {
             identityTransformer = transformerFactory.newTransformer();
         }
