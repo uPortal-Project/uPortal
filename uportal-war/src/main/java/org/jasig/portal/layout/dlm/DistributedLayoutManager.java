@@ -101,7 +101,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      * This is private because it's an implementation detail of DLM, but it's called out here because
      * it matters if you, say, invent a new folder type.
      */
-    private static final String[] FOLDER_TYPES_GRACEFULLY_DEGRADED = {
+    private static final Integer[] FOLDER_TYPES_GRACEFULLY_DEGRADED = {
             IUserLayoutFolderDescription.HEADER_TYPE,
             IUserLayoutFolderDescription.FOOTER_TYPE,
             IUserLayoutFolderDescription.SIDEBAR_TYPE };
@@ -110,8 +110,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     /**
      * Converts the folder types gracefully degraded documented immediately previously to a useful Set.
      */
-    private static final Set<String> FOLDER_TYPES_GRACEFULLY_DEGRADED_SET =
-            new HashSet<String>(Arrays.asList( FOLDER_TYPES_GRACEFULLY_DEGRADED));
+    private static final Set<Integer> FOLDER_TYPES_GRACEFULLY_DEGRADED_SET =
+            new HashSet<Integer>(Arrays.asList( FOLDER_TYPES_GRACEFULLY_DEGRADED));
 
     protected final static Random rnd=new Random();
     protected String cacheKey="initialKey";
