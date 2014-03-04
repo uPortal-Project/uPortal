@@ -33,10 +33,6 @@
     <!-- Support for the JSR-168 portlet specification. Common to all skins using the universality theme. -->
     <css>css/jsr168.css</css>
 
-    <!-- uPortal portlet CSS contributed to the Fluid Project. Now importing from Fluid Infusion. Local overrides can be made in portlet.css.
-    <css resource="true">/rs/fluid/1.4-bea0041/fss/css/fss-layout-portlet.css</css>
-    <css resource="true">/rs/fluid/1.4-bea0041/fss/css/fss-theme-portlet.css</css> -->
-
     <!-- For layout of portlet content. Common to all skins using the universality theme. -->
     <css>css/layout-portlet.css</css>
 
@@ -85,8 +81,8 @@
     <js included="plain" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.js</js>
     <js included="aggregated" resource="true">/rs/backbone/1.0.0/backbone-1.0.0.min.js</js>
 
-    <js included="plain" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.js</js>
-    <js included="aggregated" resource="true">/rs/fluid/1.4.0-upmc/js/fluid-all-1.4.0.min.js</js>
+    <js included="plain" resource="true">/rs/fluid/pre1.5.0-6cb52a5083/js/fluid-custom.js</js>
+    <js included="aggregated" resource="true">/rs/fluid/pre1.5.0-6cb52a5083/js/fluid-custom.min.js</js>
 
     <!-- Data Table Includes -->
     <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>

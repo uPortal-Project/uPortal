@@ -27,12 +27,12 @@
   <parameter name="fss-theme">fl-theme-coal</parameter>
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-framework-1.4.0.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-framework.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-framework.min.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-coal.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.4.0/fss/css/fss-theme-coal.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-theme-coal.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-theme-coal.min.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/ui-darkness/jquery-ui-1.10.3-ui-darkness.css</css>
