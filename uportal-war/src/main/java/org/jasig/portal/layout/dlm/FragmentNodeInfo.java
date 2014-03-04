@@ -59,9 +59,8 @@ public class FragmentNodeInfo
      * on a single dlm:editAllowed attribute for nodes in fragments. If not
      * included then edits to node attributes are allowed. If included with a
      * value other than true then edits are prevented.
-     * 
-     * @param name
-     * @return
+     *
+     * @return true if no dlm:editAllowed specifying a value other than true.
      */
     public boolean canOverrideAttributes()
     {
