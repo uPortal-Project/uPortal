@@ -45,7 +45,7 @@ public class TabColumnPrefsHandler
        has already been moved from its old parent to its new in the ILF. We can
        get at the new parent via the compViewNode moved but need a separate
        handle of the parent from whence it came. The goal of this method is to
-       make the appropriate change in the PLF to persist this action take by
+       make the appropriate change in the PLF to persist this action taken by
        the user. For ILF nodes this generally means adding an entry to the
        position set for the new parent and removing any entry if it existed in
        the position set in the old parent. For nodes that are owned by the
