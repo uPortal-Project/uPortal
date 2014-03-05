@@ -77,6 +77,7 @@ var up = up || {};
                                 { type: "jQuery", func: "click",
                                     args: function () {
                                         overallThat.events.onCategorySelect.fire(overallThat, category);
+                                        $(".pager-button-up-inner").click();
                                     }
                                 }
                             ]
