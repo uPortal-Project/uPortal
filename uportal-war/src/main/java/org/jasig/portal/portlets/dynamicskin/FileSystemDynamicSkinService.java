@@ -233,7 +233,7 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         LessCompiler compiler = new LessCompiler();
         compiler.setLessJs(lessCssJavascriptUrl);
         compiler.setCompress(true);
-        File tempOutputFile = new File("tmp"+outputFilepath);
+        File tempOutputFile = new File(outputFilepath+"tmp");
         compiler.compile(lessSource, tempOutputFile);
         tempOutputFile.renameTo(new File(outputFilepath));
     }
