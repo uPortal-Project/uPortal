@@ -74,6 +74,25 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ========== TEMPLATE: HIDDEN-TOP ========== -->
+    <!-- ======================================== -->
+    <!--
+     | This template renders portlets at the very top of the page, across the entire width.
+    -->
+    <xsl:template name="region.hidden-top">
+        <xsl:if test="//region[@name='hidden-top']/channel">
+            <div id="region-page-top-hidden" class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <xsl:for-each select="//region[@name='hidden-top']/channel">
+                            <xsl:call-template name="regions.portlet.decorator" />
+                        </xsl:for-each>
+                    </div>
+                </div>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
     <!-- ========== TEMPLATE: PRE-HEADER ========== -->
     <!-- ========================================== -->
     <!--
@@ -180,6 +199,25 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='page-bottom']/channel">
+                            <xsl:call-template name="regions.portlet.decorator" />
+                        </xsl:for-each>
+                    </div>
+                </div>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- ========== TEMPLATE: HIDDEN-BOTTOM ========== -->
+    <!-- =========================================== -->
+    <!--
+     | This template renders portlets at the very top of the page, across the entire width.
+    -->
+    <xsl:template name="region.hidden-bottom">
+        <xsl:if test="//region[@name='hidden-bottom']/channel">
+            <div id="region-page-bottom-hidden" class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <xsl:for-each select="//region[@name='hidden-bottom']/channel">
                             <xsl:call-template name="regions.portlet.decorator" />
                         </xsl:for-each>
                     </div>
