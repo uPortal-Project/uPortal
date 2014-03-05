@@ -29,7 +29,7 @@
 #${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
     display: none;
 }
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widget, #${n}portletBrowser .column-filter-widget {
+#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
     display: inline-block;
 }
 #${n}portletBrowser .dataTables_wrapper {
@@ -44,10 +44,31 @@
     margin: 2px;
     color:#000;
 }
-#${n}portletBrowser .dataTables-right {
-    float:right;
+
+#${n}portletBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}portletBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}portletBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}portletBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}portletBrowser .datatable-search-view {
+    text-align:right;
 }
 </style>
+
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -202,7 +223,7 @@ up.jQuery(function() {
                 $('td:eq(0)', nRow).html( getDeepLinkAnchorTag(aData.portletFName, aData.portletDescription, aData.portletTitle) );
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',//'<"top row-fluid"W<"pull-right pagination"l><"pull-right pagination"p>>rt<"bottom"i><"clear">',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: { }
         });
@@ -210,6 +231,8 @@ up.jQuery(function() {
 
     initializeTable();
     $("#${n}days").change(initializeTable);
-
+    // Adding formatting to sDom
+    $("div.toolbar-br").html('<BR>');
+    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>
