@@ -194,6 +194,22 @@
         }
     }
 
+    #portalTip,
+    #region-customize {
+        display: none;
+    }
+
+    section.emergency-alert {
+        background-color: @emergency-alert-background-color;
+        margin-bottom: 1em;
+        border-radius: 5px;
+
+        .view-alert {
+            padding-top: 15px !important;
+            padding-bottom: 30px !important;
+        }
+    }
+
 /* ==========================================================================
    Responsive Design
    ========================================================================== */
@@ -208,6 +224,10 @@
  */
 
 @media only screen and (min-width: 769px) {
+    #portalTip,
+    #region-customize {
+        display: block;
+    }
     .portal-content {
         padding: 0 0 0 20px;
     }
