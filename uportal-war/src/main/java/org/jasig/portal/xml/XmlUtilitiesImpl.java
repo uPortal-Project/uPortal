@@ -245,7 +245,21 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         }
         return val.toString();
     }
-    
+
+    /**
+     * Returns a human-readable String representation of an XML node.
+     * Returns the literal String "null" for a null node.
+     *
+     * The current implementation generates the not-whitespace-formatted XML String representation,
+     * omitting the XML declaration boilerplate.
+     *
+     * This is nicely compact for logging without introducing linebreaks, but it is of course hard to read.
+     *
+     * @param node an XML node
+     * @return a non-null human-readable String representing the node
+     * @throws RuntimeException on failure to get a Transformer from the TransformerFactory.
+     * @throws RuntimeException on failure to transform the Node to String using the Transformer
+     */
     public static String toString(Node node) {
         final Transformer identityTransformer;
 
