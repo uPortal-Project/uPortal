@@ -92,6 +92,7 @@ var up = up || {};
                                 // the portlet search event on the parent
                                 // component
                                 portletBrowser.events.onPortletSearch.fire(portletBrowser, $(this).val(), false);
+                                $(".pager-button-up-inner").click();
                             }
                         },
                         { type: "jQuery", func: "focus", args:
