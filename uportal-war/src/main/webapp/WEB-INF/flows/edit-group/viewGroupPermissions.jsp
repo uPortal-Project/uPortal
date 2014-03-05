@@ -57,6 +57,10 @@
 #${n}permissionBrowser .dataTables-right {
     float:right;
 }
+#${n}permissionBrowser .row {
+    margin-left:0px;
+    margin-right:0px;
+}
 </style>
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
