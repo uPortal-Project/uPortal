@@ -52,11 +52,12 @@
   <portlet:param name="target" value="TARGET"/>
   <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
 </portlet:actionURL>
+
 <style>
 #${n}activityBrowser .dataTables_filter, #${n}activityBrowser .first.paginate_button, #${n}activityBrowser .last.paginate_button{
     display: none;
 }
-#${n}activityBrowser .dataTables-inline, #${n}activityBrowser .column-filter-widget, #${n}activityBrowser .column-filter-widget {
+#${n}activityBrowser .dataTables-inline, #${n}activityBrowser .column-filter-widgets {
     display: inline-block;
 }
 #${n}activityBrowser .dataTables_wrapper {
@@ -71,10 +72,31 @@
     margin: 2px;
     color:#000;
 }
-#${n}activityBrowser .dataTables-right {
-    float:right;
+
+#${n}activityBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}activityBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}activityBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}activityBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}activityBrowser .datatable-search-view {
+    text-align:right;
 }
 </style>
+
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -241,7 +263,7 @@ up.jQuery(function() {
 
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
@@ -252,6 +274,8 @@ up.jQuery(function() {
     };
 
     initializeTable();
-    
+    // Adding formatting to sDom
+    $("div.toolbar-br").html('<BR>');
+    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>

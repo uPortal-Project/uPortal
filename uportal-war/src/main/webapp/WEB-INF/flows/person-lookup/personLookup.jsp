@@ -38,7 +38,7 @@
 #${n}personBrowser .dataTables_filter, #${n}personBrowser .first.paginate_button, #${n}personBrowser .last.paginate_button{
     display: none;
 }
-#${n}personBrowser .dataTables-inline, #${n}personBrowser .column-filter-widget, #${n}personBrowser .column-filter-widget {
+#${n}personBrowser .dataTables-inline, #${n}personBrowser .column-filter-widgets {
     display: inline-block;
 }
 #${n}personBrowser .dataTables_wrapper {
@@ -53,8 +53,28 @@
     margin: 2px;
     color:#000;
 }
-#${n}personBrowser .dataTables-right {
-    float:right;
+
+#${n}personBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}personBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}personBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}personBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}personBrowser .datatable-search-view {
+    text-align:right;
 }
 </style>
 
@@ -191,9 +211,12 @@ up.jQuery(function() {
                 $('td:eq(1)', nRow).html( getSelectPersonAnchorTag(aData.attributes.username, aData.attributes.username) );
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>'
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>'
         });
         $("#${n}searchResults").show();
+        // Adding formatting to sDom
+        $("div.toolbar-br").html('<BR>');
+        $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
     };
 
     $(document).ready(function(){

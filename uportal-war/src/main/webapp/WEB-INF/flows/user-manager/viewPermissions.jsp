@@ -52,7 +52,7 @@
 #${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
     display: none;
 }
-#${n}permissionBrowser .dataTables-inline, #${n}permissionBrowser .column-filter-widget, #${n}permissionBrowser .column-filter-widget {
+#${n}permissionBrowser .dataTables-inline, #${n}permissionBrowser .column-filter-widgets {
     display: inline-block;
 }
 #${n}permissionBrowser .dataTables_wrapper {
@@ -67,14 +67,35 @@
     margin: 2px;
     color:#000;
 }
-#${n}permissionBrowser .dataTables-right {
-    float:right;
+
+#${n}permissionBrowser .dataTables-left {
+    float:left;
 }
 #${n}permissionBrowser .row {
     margin-left:0px;
     margin-right:0px;
 }
+
+#${n}permissionBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}permissionBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}permissionBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}permissionBrowser .datatable-search-view {
+    text-align:right;
+}
 </style>
+
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -270,7 +291,7 @@ up.jQuery(function() {
                 }
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"dataTables-inline"W><"dataTables-inline dataTables-right"l><"dataTables-inline dataTables-right"i><"dataTables-inline dataTables-right"p>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
@@ -283,6 +304,9 @@ up.jQuery(function() {
     initializeTable('principal');
     initializeTable('target');
     $("#${n}assignmentTabs").tabs({ active: 0 });
+    // Adding formatting to sDom
+    $("div.toolbar-br").html('<BR>');
+    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>
 
