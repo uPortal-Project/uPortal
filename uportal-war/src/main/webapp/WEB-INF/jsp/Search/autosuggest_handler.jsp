@@ -64,6 +64,8 @@ var initSearchAuto = initSearchAuto || function($, searchFieldSelector) {
     }
 
     searchField.autocomplete({
+        position: { collision: "flip" },
+        
         minLength: 3,
         source: function(request, response) {
             $.get( actionUrl, { query: request.term, ajax: "true" } )
