@@ -525,6 +525,45 @@
     </portlet>
 
     <portlet>
+        <portlet-name>DynamicRespondrSkin</portlet-name>
+        <display-name xml:lang="en">Dynamic Respondr Skin</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/DynamicRespondrSkin-portlet.xml</value>
+        </init-param>
+        <!-- TODO look into expiration-cache mapping.  An ActionRequest to update the preferences should invalidate
+             the portal's render cache, but it does not appear to be doing that at least in CONFIG mode.
+             Expiration cache is currently disabled so preference changes will take effect immediately. However
+             this results in unnecessary processing of each render request.  UP-3986 -->
+        <expiration-cache>0</expiration-cache>
+        <cache-scope>private</cache-scope>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+            <portlet-mode>config</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Dynamic Respondr Skin</title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>color1</name>
+                <value>#4065B0</value>
+            </preference>
+            <preference>
+                <name>color2</name>
+                <value>#8AA9D8</value>
+            </preference>
+            <preference>
+                <name>color3</name>
+                <value>#F68923</value>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+
+    <portlet>
         <portlet-name>Search</portlet-name>
         <display-name xml:lang="en">Search</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>

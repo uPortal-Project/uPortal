@@ -21,7 +21,23 @@
 -->
 
 <skins>
-  
+
+    <!-- 
+        NOTE:  The default skin for Respondr is available in two flavors:  dynamic and static.
+
+          - 'dynamic' (enabled by default) requires the RespondrDynamicSkin portlet and 
+            relies on it to link compiled LESS (i.e. CSS) into the page.
+          - 'static' links compiled LESS (i.e. CSS) into the page automatically, in
+            the traditional way, and MUST NOT be used with the RespondrDynamicSkin portlet.
+
+        Both flavors use exactly the same LESS files.  The dynamic strategy supports
+        changing a few settings (i.e. color choices) using an admin UI.  You can 
+        switch from one strategy to the other in the defaultSkin/skin.xml file.
+
+        BE SURE TO ADD/REMOVE THE 'dynamic-respondr-skin' PORTLET FROM THE 'respondr-lo'
+        FRAGMENT LAYOUT (and re-import) AS APPROPRIATE.
+    -->
+
   <skin>
     <skin-key>defaultSkin</skin-key>
     <skin-name>defaultSkin</skin-name>

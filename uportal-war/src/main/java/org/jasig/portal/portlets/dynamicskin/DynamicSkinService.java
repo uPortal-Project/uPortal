@@ -17,20 +17,18 @@
  * under the License.
  */
 
-/**
- * Default Skin file.  The default skin is available in two flavors:  dynamic and 
- * static.  See skinList.xml for more information.
- */
+package org.jasig.portal.portlets.dynamicskin;
+
+import javax.portlet.PortletRequest;
 
 /**
- * Import order:
- * 1. defaultSkin/less/variables.less
- * 2. common/less/common.less  - see comments in common.less file for more information
- * 3. defaultSkin/less/skin.less
+ * Services for the DynamicRespondrSkin portlet.
+ *
+ * @since 4.1.0
+ * @author James Wennmacher, jwennmacher@unicon.net
  */
-
-@import "defaultSkin/less/variables.less";
-
-@import "common/common.less";
-
-@import "defaultSkin/less/skin.less";
+public interface DynamicSkinService {
+    boolean skinFileExists(String filePathname);
+    void generateSkinCssFile(PortletRequest request, String filePathname, String skinToken);
+    String calculateTokenForCurrentSkin(PortletRequest request);
+}

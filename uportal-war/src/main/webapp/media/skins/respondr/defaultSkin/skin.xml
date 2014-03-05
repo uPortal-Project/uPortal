@@ -39,7 +39,14 @@
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
 
+  <!-- 
+   | Uncomment the following element to convert the defaultSkin from the 'dynamic' 
+   | to the 'static' strategy.  SEE 'skinList.xml' FOR MORE INFO AND IMPORTANT 
+   | ADDITIONAL STEPS.
+   +-->
+  <!--
   <css>../defaultSkin.css</css>
+  -->
 
   <js import="true">../common/common_skin.xml</js>
 

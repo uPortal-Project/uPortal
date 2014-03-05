@@ -1727,4 +1727,9 @@
                 replicateRemovals=true "/>
     </cache-->
 
+
+    <!-- Caches failures with skin manager less CSS compilations. -->
+    <cache name="org.jasig.portal.skinManager.failureCache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 </ehcache>
