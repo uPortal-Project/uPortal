@@ -282,7 +282,7 @@ up.jQuery(function() {
 
     initializeTable('principal');
     initializeTable('target');
-
+    $("#${n}assignmentTabs").tabs({ active: 0 });
 });
 </script>
 
