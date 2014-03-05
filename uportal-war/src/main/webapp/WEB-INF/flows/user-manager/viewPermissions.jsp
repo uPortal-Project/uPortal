@@ -185,7 +185,7 @@ up.jQuery(function() {
         // Add Inherited if applicable
         var markup = '<span>${"' + activity + '"}</span>';
         if (inherited) {
-            markup += ' <span class="inherited-permission">Inherited</span>';
+            markup += ' <span class="inherited-permission"><spring:message code="inherited" htmlEscape="false" javaScriptEscape="true"/></span>';
         }
         return markup;
     }
