@@ -56,10 +56,15 @@
 
 
     <xsl:variable name="focusedFragmentId">
-        <!-- if the focusedTabID is the id of a non-regular folder, then that ID is the focusedFragmentID,
+        <!-- If the user is *not* focusing on a particular portlet,
+        and the user is *not* focusing on a regular-type tab,
+        and if the focusedTabID is the id of a non-regular folder,
+        then that ID is the focusedFragmentID,
          otherwise none -->
         <xsl:choose>
-            <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type!='regular']">
+            <xsl:when test="not(//folder/channel[@ID = $userLayoutRoot])
+                            and $focusedTabID!='none'
+                            and /layout/folder/folder[@ID=$focusedTabID and @type!='regular']">
                 <xsl:value-of select="/layout/folder/folder[@ID=$focusedTabID and @type!='regular']/@ID"/>
             </xsl:when>
             <xsl:otherwise>none</xsl:otherwise>
