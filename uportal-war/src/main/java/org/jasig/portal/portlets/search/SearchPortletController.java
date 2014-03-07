@@ -255,6 +255,7 @@ public class SearchPortletController {
             
             //Too many searches in the last minute, fail the search
             if (searchCounterCache.size() > this.maximumSearchesPerMinute) {
+                logger.debug("Rejecting search for '{}', exceeded max queries per minute for user", query);
 
                 if (!ajax) {
                     response.setRenderParameter("hitMaxQueries", Boolean.TRUE.toString());
@@ -310,7 +311,7 @@ public class SearchPortletController {
         // send a search query event
         response.setEvent(SearchConstants.SEARCH_REQUEST_QNAME, queryObj);
 
-        logger.debug("Displaying query results for queryId {}, query {}", queryId, query);
+        logger.debug("Query initiated for queryId {}, query {}", queryId, query);
         response.setRenderParameter("queryId", queryId);
         response.setRenderParameter("query", query);
 
@@ -323,6 +324,19 @@ public class SearchPortletController {
      */
     @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
     public void handleSearchRequest(EventRequest request, EventResponse response) {
+        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet instance receive
+        // searchRequest and searchResult events because they are in the same portlet code base (to share
+        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the ajax call)
+        // and share the portlet.xml which defines the event handling behavior.
+        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted to the search
+        // portlet instance.
+        final String searchLaunchFname = request.getPreferences().getValue(SEARCH_LAUNCH_FNAME, null);
+        if (searchLaunchFname != null) {
+            // Noisy in debug mode so commented out log statement
+            // logger.debug("SearchLauncher does not participate in SearchRequest events so discarding message");
+            return;
+        }
+
         final Event event = request.getEvent();
         final SearchRequest searchQuery = (SearchRequest)event.getValue();
         
@@ -352,7 +366,11 @@ public class SearchPortletController {
         //Run the search for each service appending the results
         for (IPortalSearchService searchService : searchServices) {
             try {
+                logger.debug("For queryId {}, query '{}', searching search service {}", queryId,
+                        searchQuery.getSearchTerms(), searchService.getClass().toString());
                 final SearchResults serviceResults = searchService.getSearchResults(request, searchQuery);
+                logger.debug("For queryId {}, obtained {} results from search service {}", queryId,
+                        serviceResults.getSearchResult().size(), searchService.getClass().toString());
                 searchResultList.addAll(serviceResults.getSearchResult());
             }
             catch (Exception e) {
@@ -371,6 +389,20 @@ public class SearchPortletController {
      */
     @EventMapping(SearchConstants.SEARCH_RESULTS_QNAME_STRING)
     public void handleSearchResult(EventRequest request) {
+
+        // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet instance receive
+        // searchRequest and searchResult events because they are in the same portlet code base (to share
+        // autosuggest_handler.jsp and because we have to calculate the search portlet url for the ajax call)
+        // and share the portlet.xml which defines the event handling behavior.
+        // If this instance is the searchLauncher, ignore the searchResult. The search was submitted to the search
+        // portlet instance.
+        final String searchLaunchFname = request.getPreferences().getValue(SEARCH_LAUNCH_FNAME, null);
+        if (searchLaunchFname != null) {
+            // Noisy in debug mode so commenting out debug message
+            // logger.debug("SearchLauncher does not process SearchResponse events so discarding message");
+            return;
+        }
+
         final Event event = request.getEvent();
         final SearchResults portletSearchResults = (SearchResults) event.getValue();
 
@@ -379,8 +411,14 @@ public class SearchPortletController {
         final String queryId = portletSearchResults.getQueryId();
         final PortalSearchResults results = this.getPortalSearchResults(request, queryId);
         if (results == null) {
-            this.logger.warn("No PortalSearchResults found for queryId " + queryId + ", ignoring search results: " + event);
+            this.logger.warn("No PortalSearchResults found for queryId {}, ignoring search results from {}",
+                    queryId, getSearchResultsSource(portletSearchResults));
             return;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("For queryId {}, adding {} search results from {}", queryId,
+                    portletSearchResults.getSearchResult().size(), getSearchResultsSource(portletSearchResults));
         }
         
         final String windowId = portletSearchResults.getWindowId();
@@ -390,7 +428,24 @@ public class SearchPortletController {
         //Add the other portlet's results to the main search results object
         this.addSearchResults(portletSearchResults, results, httpServletRequest, portletWindowId);
     }
-    
+
+    /**
+     * Return the first search source (type string) in the result, else the string 'unknown'.
+     * @param portletSearchResults Search results
+     * @return String identifying the search result source if it was populated, else 'unknown'
+     */
+    private String getSearchResultsSource(SearchResults portletSearchResults) {
+        // Return the first source in the result.
+        List<SearchResult> portletResults = portletSearchResults.getSearchResult();
+        String source = "unknown";
+        if (portletResults.size() > 0
+                && portletResults.get(0).getType() != null
+                && !portletResults.get(0).getType().isEmpty()) {
+            source = portletResults.get(0).getType().get(0);
+        }
+        return source;
+    }
+
     /**
      * Display a search form
      */
