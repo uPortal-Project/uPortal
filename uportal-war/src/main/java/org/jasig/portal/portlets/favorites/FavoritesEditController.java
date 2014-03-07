@@ -24,12 +24,7 @@ import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +34,6 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -49,30 +43,47 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("EDIT")
-public class FavoritesEditController {
+public class FavoritesEditController
+    extends AbstractFavoritesController {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private IUserInstanceManager userInstanceManager;
-    private IPortalRequestUtils portalRequestUtils;
-
-    @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
-    }
-
-    @Autowired
-    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        this.portalRequestUtils = portalRequestUtils;
-    }
-
+    /**
+     * Handles all Favorites portlet EDIT mode renders.
+     * Populates model with user's favorites and selects a view to display those favorites.
+     *
+     * View selection:
+     *
+     * Returns "jsp/Favorites/edit" in the normal case where the user has
+     * at least one favorited portlet or favorited collection.
+     *
+     * Returns ""jsp/Favorites/view_zero" in the edge case where the user has
+     * zero favorited portlets AND zero favorited collections.
+     *
+     * Model:
+     * marketPlaceFname --> String functional name of Marketplace portlet, or null if not available.
+     * collections      --> List of favorited collections (IUserLayoutNodeDescription s)
+     * favorites        --> List of favorited individual portlets (IUserLayoutNodeDescription s)
+     * successMessage   --> String success message, or null if none
+     * errorMessage     --> String error message, or null if none
+     *
+     * @param model . Spring model.  This method adds five model attributes.
+     * @return jsp/Favorites/edit[_zero]
+     */
     @RenderMapping
     public String initializeView(Model model, RenderRequest renderRequest) {
+
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
         IUserLayout userLayout = ulm.getUserLayout();
+
+        // TODO: the portlet could predicate including a non-null marketplace portlet fname
+        // on the accessing user having permission to render the portlet referenced by that fname
+        // so that portlet would gracefully degrade when configured with bad marketplace portlet fname
+        // and also gracefully degrade when the accessing user doesn't have permission to access an otherwise
+        // viable configured marketplace.  This complexity may not be worth it.  Anyway it is not yet implemented.
+
+        model.addAttribute("marketplaceFname", this.marketplaceFName);
 
         List<IUserLayoutNodeDescription> collections = FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
@@ -84,7 +95,18 @@ public class FavoritesEditController {
 
         model.addAttribute("errorMessage", renderRequest.getParameter("errorMessage"));
 
-        return "jsp/Favorites/edit";
+        // default to the regular old edit view
+        String viewName = "jsp/Favorites/edit";
+
+        if (collections.isEmpty() && favorites.isEmpty()) {
+            // use the special case view
+            viewName = "jsp/Favorites/edit_zero";
+        }
+
+        logger.trace("Favorites Portlet EDIT mode built model [{}] and selected view {}.",
+                model, viewName);
+
+        return viewName;
     }
 
 

@@ -28,8 +28,11 @@
   If the user has no locked favorites, no need to bother the user about the complexities that do not apply. --%>
   <c:set var="lockedItemListed" value="false" />
 
-  <%-- TODO: label should come from message bundle --%>
-  <p>Edit your favorites:</p>
+  <c:if test="${not empty marketplaceFname}">
+    <c:set var="marketplaceUrl">${renderRequest.contextPath}/p/${marketplaceFname}/max/render.uP</c:set>
+  </c:if>
+
+  <p><spring:message code="favorites.edit" text="Edit your favorites:"/></p>
 
     <c:if test="${not empty errorMessage}">
       <div class="alert alert-warning alert-dismissable">
@@ -62,8 +65,9 @@
               </a>
             </c:when>
             <c:otherwise>
-              <%-- TODO: get the tooltip text from a message bundle. --%>
-              <div data-toggle="tooltip" title="You lack permission to un-favorite this collection.">
+              <div data-toggle="tooltip" title="<spring:message
+                  code="favorites.lack.permission.to.unfavorite.collection"
+                  text="You lack permission to un-favorite this collection."/>">
                 <span class="glyphicon glyphicon-lock pull-right"></span>${collection.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
@@ -85,8 +89,9 @@
               </a>
             </c:when>
             <c:otherwise>
-              <%-- TODO: get the tooltip text from a message bundle. --%>
-              <div data-toggle="tooltip" title="You lack permission to un-favorite this portlet.">
+              <div data-toggle="tooltip" title="<spring:message
+                  code="favorites.lack.permission.to.unfavorite.portlet"
+                  text="You lack permission to un-favorite this portlet."/>" >
                 <span class="glyphicon glyphicon-lock pull-right"></span>${favorite.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
@@ -98,18 +103,26 @@
 
 
     <c:if test="${lockedItemListed}">
-      <%-- TODO: use a message bundle for this message --%>
-      <span class="help-block">Favorites with the lock icon cannot be un-favorited.</span>
+      <span class="help-block"><spring:message
+              code="favorites.lock.icon.legend"
+              text="Favorites with the lock icon cannot be un-favorited."/>
+      </span>
     </c:if>
 
   <span>
     <portlet:renderURL portletMode="VIEW" var="returnToViewModeUrl" />
     <%-- TODO: Use a message bundle for this label --%>
-    <a href="${returnToViewModeUrl}">Stop editing</a>
+    <a href="${returnToViewModeUrl}"><spring:message
+            code="favorites.stop.editing"
+            text="Stop editing"/></a>
   </span>
 
-  <span class="pull-right">
-    <!-- TODO : Link to marketplace -->
-    <a href="#">Browse for Resources</a>
-  </span>
+  <%-- Display short link to Marketplace if available, suppress otherwise --%>
+  <c:if test="${not empty marketplaceUrl}">
+    <span class="pull-right">
+	  <a href="${marketplaceUrl}">
+        <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
+      </a>
+    </span>
+  </c:if>
 </div>

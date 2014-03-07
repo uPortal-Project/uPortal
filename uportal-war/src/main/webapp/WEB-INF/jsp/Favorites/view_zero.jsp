@@ -28,29 +28,25 @@
 </c:if>
 
 <div>
-<ul class="list-group">
-  <c:forEach var="collection" items="${collections}">
-    <li class="list-group-item">
-      <span class="glyphicon glyphicon-chevron-right pull-right"></span>
-      <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">${collection.name}</a>
-    </li>
-  </c:forEach>
+  <p><spring:message code="favorites.have.none" text="You have no favorites."/></p>
 
-  <c:forEach var="favorite" items="${favorites}">
-    <li class="list-group-item">
-      <span class="glyphicon glyphicon-star pull-right"></span>
-      <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">${favorite.name}</a>
-    </li>
-  </c:forEach>
-
-</ul>
-
-  <%-- Display link to Marketplace if available, suppress otherwise --%>
+  <%-- Display invitation to go favorite some portlets in marketplace if available, suppress otherwise --%>
   <c:if test="${not empty marketplaceUrl}">
-  <span class="pull-right">
-	<a href="${marketplaceUrl}">
-      <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
-    </a>
-  </span>
+    <p><spring:message code="favorites.invitation.to.marketplace" arguments="${marketplaceUrl}" htmlEscape="false"
+          text="You can <a href=`${marketplaceUrl}`>visit the Marketplace</a> to find some new favorites." /></p>
   </c:if>
+
+  <p><spring:message code="favorites.instruction.add.via.contextual.menu"
+       text="Favorite any portlet via the contextual options menu accessed from its title bar."/></p>
+
+  <%-- Display short link to Marketplace if available, suppress otherwise --%>
+  <%-- Included even though redundant with link above, for consistency with UI when user has favorites. --%>
+  <c:if test="${not empty marketplaceUrl}">
+    <span class="pull-right">
+	  <a href="${marketplaceUrl}">
+        <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
+      </a>
+    </span>
+  </c:if>
+
 </div>

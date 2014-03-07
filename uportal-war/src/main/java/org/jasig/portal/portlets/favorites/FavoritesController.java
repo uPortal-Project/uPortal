@@ -24,36 +24,52 @@ import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * View controller for Favorites portlet.
+ *
+ * Requires an IUserInstanceManager and an IPortalRequestUtils, both auto-wired in, with those
+ * dependencies declared and that auto-wiring happening in the AbstractFavoritesController super-class.
+ *
+ * Supports but does not require a Marketplace portlet.
+ * Configure with a functional name referencing a Marketplace if you'd the portlet to include convenient
+ * links for the user to readily access Marketplace to add favorites.
+ *
+ * Does not currently support the Marketplace link invoking the Customize Drawer rather than referencing a
+ * Portlet.  Sorry.  Implement the Marketplace portlet when it's available.  You'll thank me later.
+ */
 @Controller
 @RequestMapping("VIEW")
-public class FavoritesController {
+public class FavoritesController
+       extends AbstractFavoritesController {
 
-	private IUserInstanceManager userInstanceManager;
-    private IPortalRequestUtils portalRequestUtils;
-
-    @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
-    }
-	
-	@Autowired
-    public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
-        this.portalRequestUtils = portalRequestUtils;
-    }
-
+    /**
+     * Handles all Favorites portlet VIEW mode renders.
+     * Populates model with user's favorites and selects a view to display those favorites.
+     *
+     * View selection:
+     *
+     * Returns "jsp/Favorites/view" in the normal case where the user has
+     * at least one favorited portlet or favorited collection.
+     *
+     * Returns ""jsp/Favorites/view_zero" in the edge case where the user has
+     * zero favorited portlets AND zero favorited collections.
+     *
+     * Model:
+     * marketPlaceFname --> String functional name of Marketplace portlet, or null if not available.
+     * collections      --> List of favorited collections (IUserLayoutNodeDescription s)
+     * favorites        --> List of favorited individual portlets (IUserLayoutNodeDescription s)
+     *
+     * @param model . Spring model.  This method adds three model attributes.
+     * @return jsp/Favorites/view[_zero]
+     */
     @RenderMapping
     public String initializeView(Model model) {
         IUserInstance ui = userInstanceManager.getUserInstance(portalRequestUtils.getCurrentPortalRequest());
@@ -62,13 +78,30 @@ public class FavoritesController {
 
         IUserLayout userLayout = ulm.getUserLayout();
 
+        // TODO: the portlet could predicate including a non-null marketplace portlet fname
+        // on the accessing user having permission to render the portlet referenced by that fname
+        // so that portlet would gracefully degrade when configured with bad marketplace portlet fname
+        // and also gracefully degrade when the accessing user doesn't have permission to access an otherwise
+        // viable configured marketplace.  This complexity may not be worth it.  Anyway it is not yet implemented.
+        model.addAttribute("marketplaceFname", this.marketplaceFName);
+
         List<IUserLayoutNodeDescription> collections = FavoritesUtils.getFavoriteCollections(userLayout);
         model.addAttribute("collections", collections);
 
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
         model.addAttribute("favorites", favorites);
 
-        return "jsp/Favorites/view";
+        // default to the regular old view
+        String viewName = "jsp/Favorites/view";
+
+        if (collections.isEmpty() && favorites.isEmpty()) {
+            // special edge case of zero favorites, switch to special view
+            viewName = "jsp/Favorites/view_zero";
+        }
+
+        logger.trace("Favorites Portlet VIEW mode render populated model [{}] for render by view {}.",
+                model, viewName);
+        return viewName;
     }
 
 }
