@@ -101,10 +101,10 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     }
     
     protected boolean matches(String query, IPortletDefinition portlet) {
-        return portlet.getTitle().contains(query) ||
-                portlet.getName().contains(query) ||
-                (portlet.getDescription() != null && portlet.getDescription().contains(query)) ||
-                portlet.getFName().contains(query);
+        return portlet.getTitle().toLowerCase().contains(query) ||
+                portlet.getName().toLowerCase().contains(query) ||
+                (portlet.getDescription() != null && portlet.getDescription().toLowerCase().contains(query)) ||
+                portlet.getFName().toLowerCase().contains(query);
     }
 
 }
