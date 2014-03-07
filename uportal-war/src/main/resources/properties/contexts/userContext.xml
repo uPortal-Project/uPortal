@@ -97,13 +97,16 @@
     </bean>
 
     <!-- The following attribute names are used in searching for users through
-       person-directory, such as from within the Directory framework portlet. These should correspond to
-       the internal names (keys, not the ldap attribute names) of the queryAttributeMapping property of
-       bean uPortalLdapAttributeSource in personDirectoryContext.xml. -->
+       person-directory, such as from within the Directory framework portlet. If using LDAP User Attribute sources,
+       these should correspond to the internal names (keys, not the ldap attribute names) of the
+       queryAttributeMapping property of bean uPortalLdapAttributeSource in personDirectoryContext.xml (see
+       https://wiki.jasig.org/display/UPM40/LDAP+User+Attribute+Sources).
+
+       For the search to work, users must also have permission to view the attributes (see
+       src/main/data/default/Everyone__VIEW_USER_ATTRIBUTE__UP_USERS.permission-set.xml -->
     <util:list id="directoryQueryAttributes">
         <value>givenName</value>
         <value>sn</value>
-        <value>cn</value>
     </util:list>
 
     <util:map id="directoryDisplayAttributes">
