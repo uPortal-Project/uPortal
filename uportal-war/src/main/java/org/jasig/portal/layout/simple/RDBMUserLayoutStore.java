@@ -27,9 +27,11 @@ import java.sql.Statement;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 import javax.annotation.Resource;
@@ -221,12 +223,14 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      */
     public UserProfile addUserProfile (final IPerson person, final IUserProfile profile) {
         final int userId = person.getID();
+        final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
         // generate an id for this profile
 
         return this.jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
             @Override
             public UserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
                 String sQuery = null;
+                int defaultLayoutId = profile.getLayoutId();
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO UP_USER_PROFILE " +
                         "(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID," +
                         "DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
@@ -238,7 +242,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 pstmt.setInt(5, profile.getStructureStylesheetId());
                 pstmt.setInt(6, profile.getThemeStylesheetId());
                 pstmt.setString(7, profile.getProfileDescription());
-                pstmt.setInt(8, profile.getLayoutId());
+                if (profiles.isEmpty()) {
+                    pstmt.setInt(8, profile.getLayoutId());
+                } else {
+                    // set layout id to the first non-zero layout id
+                    Iterator<Entry<Integer, UserProfile>> profilesIterator = profiles.entrySet().iterator();
+                    while (profilesIterator.hasNext()) {
+                        Entry<Integer, UserProfile> entryProfile = profilesIterator.next();
+                        int userProfileLayoutId = entryProfile.getValue().getLayoutId();
+                        if (userProfileLayoutId != 0) {
+                            defaultLayoutId= userProfileLayoutId;
+                            break;
+                        }
+                    }
+                    pstmt.setInt(8, defaultLayoutId);
+                }
                 sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
                         + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
                         + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
@@ -249,7 +267,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                     UserProfile newProfile = new UserProfile();
                     newProfile.setProfileId(profileId);
-                    newProfile.setLayoutId(profile.getLayoutId());
+                    newProfile.setLayoutId(defaultLayoutId);
                     newProfile.setLocaleManager(profile.getLocaleManager());
                     newProfile.setProfileDescription(profile.getProfileDescription());
                     newProfile.setProfileFname(profile.getProfileFname());
@@ -1682,54 +1700,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 } finally {
                     pstmt.close();
                 }
-
-                // find the layout used by the default profile for this user
-                int intendedLayoutId = 0;
-                try {
-                    query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE " +
-                            "WHERE USER_ID=? AND PROFILE_FNAME='" + DEFAULT_LAYOUT_FNAME + "'";
-                    pstmt = con.prepareStatement(query);
-                    pstmt.setInt(1, userId);
-                    ResultSet rs = pstmt.executeQuery();
-                    if (rs.next()) {
-                        intendedLayoutId = rs.getInt("LAYOUT_ID");
-                        if (rs.wasNull()) {
-                            intendedLayoutId = 0;
-                        }
-                    }
-                } finally {
-                    pstmt.close();
-                }
-
-                // check to see if this profile for the current user has already used the requested layout
-                try {
-                    query = "SELECT LAYOUT_ID FROM UP_USER_PROFILE WHERE " +
-                            "USER_ID=? AND LAYOUT_ID=? AND PROFILE_ID=?";
-                    pstmt = con.prepareStatement(query);
-                    pstmt.setInt(1, userId);
-                    pstmt.setInt(2, intendedLayoutId);
-                    pstmt.setInt(3, profileId);
-                    ResultSet rs = pstmt.executeQuery();
-                    if (!rs.next()) {
-                        // if the layout's not already been used, update the profile to point to that layout
-                        String update = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=? WHERE " +
-                                "USER_ID=? AND PROFILE_ID=?";
-
-                        PreparedStatement updateStmt = con.prepareStatement(update);
-                        updateStmt.setInt(1, intendedLayoutId);
-                        updateStmt.setInt(2, userId);
-                        updateStmt.setInt(3, profileId);
-                        try {
-                            updateStmt.execute();
-                        } finally {
-                            updateStmt.close();
-                        }
-                        layoutId = intendedLayoutId;
-                    }
-                } finally {
-                    pstmt.close();
-                }
-
                 return layoutId;
             }
         });
