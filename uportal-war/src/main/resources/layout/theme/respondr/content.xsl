@@ -279,7 +279,7 @@
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
     <div class="btn-group">
-      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu">
     <!--
       Porlet Controls Display Order:
@@ -520,5 +520,31 @@
         </ul>
     </div>
   </xsl:template>
+  
+  <xsl:template name="focused-fragment-header">
+    <xsl:if test="//tab[@focusedFragment='true']">
+        <div id="focused-fragment-header" class="container">
+            <div class="row">
+                <h3>
+                    <xsl:value-of select="//tab[@focusedFragment='true']/@name"></xsl:value-of>
+                    <xsl:variable select="//tab[@focusedFragment='true']/@ID" name="FOCUSED_FRAGMENT_ID"></xsl:variable>
+                    <div class="dropdown pull-right">
+                    <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu' data-toggle="dropdown" style="background: inherit;">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby='{$FOCUSED_FRAGMENT_ID}dropdownMenu'>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Favorite This Collection</a></li>
+                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Link to ...</a></li>
+                        </ul>
+                    </div>
+                </h3>
+            </div>
+            <div class="row">
+                <hr style='border-style: dotted; border-color: grey; border-width: 1px;' />
+            </div>
+        </div>
+      </xsl:if>
+  </xsl:template>
+  <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
 
 </xsl:stylesheet>
