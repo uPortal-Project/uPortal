@@ -129,7 +129,7 @@ searchjQ["${n}"].jQuery(document).ready(function() {
     searchjQ["${n}"].jQuery("#${n}searchResults").tabs();
     <%-- If not configured for multiple tabs, don't display the tabs header --%>
     <c:if test="${empty tabKeys}">
-        searchjQ["${n}"].jQuery("#${n}searchResults searchTabsContainer").addClass("hidden");
+        searchjQ["${n}"].jQuery("#${n}searchResults .searchTabsContainer").addClass("hidden");
     </c:if>
     searchjQ["${n}"].jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
 });
