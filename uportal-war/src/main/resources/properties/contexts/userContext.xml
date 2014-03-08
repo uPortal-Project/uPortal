@@ -46,6 +46,7 @@
     <util:map id="profileKeyMappings">
         <entry key="desktop" value="default"/>
         <entry key="mobile" value="mobileDefault"/>
+        <entry key="universality" value="universality"/>
         <entry key="respondr" value="respondr" />
     </util:map>
 
