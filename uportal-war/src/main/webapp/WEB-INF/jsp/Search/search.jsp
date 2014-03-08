@@ -60,13 +60,13 @@
           
                 <div class="content">
                     <div id="${n}searchResults" class="hidden">
-                        <ul>
+                        <ul class="searchTabsContainer">
                             <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
                             <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
                                 <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span></a></li>
                             </c:forEach>
                         </ul>
-                        
+
                         <%--
                          | result.first is the SearchResult object
                          | result.second is the calculated URL
@@ -127,6 +127,10 @@ searchjQ["${n}"].jQuery = jQuery.noConflict(true);
 searchjQ["${n}"].jQuery(document).ready(function() {
     initSearchAuto(searchjQ["${n}"].jQuery, "#${n}searchInput");
     searchjQ["${n}"].jQuery("#${n}searchResults").tabs();
+    <%-- If not configured for multiple tabs, don't display the tabs header --%>
+    <c:if test="${empty tabKeys}">
+        searchjQ["${n}"].jQuery("#${n}searchResults searchTabsContainer").addClass("hidden");
+    </c:if>
     searchjQ["${n}"].jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
 });
 
