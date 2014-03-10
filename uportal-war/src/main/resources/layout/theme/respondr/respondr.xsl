@@ -517,6 +517,7 @@
                 }
             });
             </xsl:if>
+            <xsl:if test="$AUTHENTICATED='true'">
             var layoutPreferences = up.LayoutPreferences("body", {
                 tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
                 numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
@@ -553,6 +554,7 @@
         if(layoutPreferences.components.gallery) {
             layoutPreferences.components.gallery.openGallery();
         }
+    </xsl:if>
     });
     </script>
 
