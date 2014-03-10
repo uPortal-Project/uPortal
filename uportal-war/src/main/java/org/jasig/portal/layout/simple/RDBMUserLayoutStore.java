@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -100,6 +101,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";
+    private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND = "Name:%s ID:%s User's profiles contain more than one non-zero layout id.  This is currently not supported.";
 
     //This class is instantiated ONCE so NO class variables can be used to keep state between calls
     protected static final String channelPrefix = "n";
@@ -223,14 +225,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
      */
     public UserProfile addUserProfile (final IPerson person, final IUserProfile profile) {
         final int userId = person.getID();
-        final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
+        final int layoutId = getLayoutId(person, profile);
         // generate an id for this profile
 
         return this.jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
             @Override
             public UserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
                 String sQuery = null;
-                int defaultLayoutId = profile.getLayoutId();
                 PreparedStatement pstmt = con.prepareStatement("INSERT INTO UP_USER_PROFILE " +
                         "(USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID," +
                         "DESCRIPTION, LAYOUT_ID) VALUES (?,?,?,?,?,?,?,?)");
@@ -242,21 +243,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 pstmt.setInt(5, profile.getStructureStylesheetId());
                 pstmt.setInt(6, profile.getThemeStylesheetId());
                 pstmt.setString(7, profile.getProfileDescription());
-                if (profiles.isEmpty()) {
-                    pstmt.setInt(8, profile.getLayoutId());
-                } else {
-                    // set layout id to the first non-zero layout id
-                    Iterator<Entry<Integer, UserProfile>> profilesIterator = profiles.entrySet().iterator();
-                    while (profilesIterator.hasNext()) {
-                        Entry<Integer, UserProfile> entryProfile = profilesIterator.next();
-                        int userProfileLayoutId = entryProfile.getValue().getLayoutId();
-                        if (userProfileLayoutId != 0) {
-                            defaultLayoutId= userProfileLayoutId;
-                            break;
-                        }
-                    }
-                    pstmt.setInt(8, defaultLayoutId);
-                }
+                pstmt.setInt(8, layoutId);
                 sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
                         + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
                         + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
@@ -267,7 +254,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                     UserProfile newProfile = new UserProfile();
                     newProfile.setProfileId(profileId);
-                    newProfile.setLayoutId(defaultLayoutId);
+                    newProfile.setLayoutId(layoutId);
                     newProfile.setLocaleManager(profile.getLocaleManager());
                     newProfile.setProfileDescription(profile.getProfileDescription());
                     newProfile.setProfileFname(profile.getProfileFname());
@@ -285,6 +272,44 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         });
     }
 
+    /*
+     * The code currently only supports one instantiated/saved layout for a user's set
+     * of profiles.  If the layout hasn't been instantiated/saved for a user the layout id
+     * will be zero for all the profiles and if it has been saved it will be one.  
+     * When more than one layout becomes supported, this logic will need to be reworked to 
+     * support multiple layouts.  It currently just checks if the layout for the user has
+     * been instantiated/saved and sets the new profile to the saved layout id (currently hardcoded
+     * elsewhere to always be one) 
+     */
+    private int getLayoutId(final IPerson person, final IUserProfile profile) {
+        final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
+        int layoutId = profile.getLayoutId();
+        List<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles);
+        if (layoutIds.size() > 0) {
+            layoutId = layoutIds.get(0);
+        }
+        if (layoutIds.size() > 1) {
+            // log that only one non-zero layout id assumption has been broken
+            log.warn(String.format(UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND, person.getID(), person.getID()));
+        }
+        return layoutId;
+    }
+
+    private List<Integer> getAllNonZeroLayoutIdsFromProfiles(final Hashtable<Integer, UserProfile> profiles) {
+        List<Integer> layoutIds = new ArrayList<Integer>();
+        Iterator<Entry<Integer, UserProfile>> profilesIterator = profiles.entrySet().iterator();
+        while (profilesIterator.hasNext()) {
+            Entry<Integer, UserProfile> entryProfile = profilesIterator.next();
+            int userProfileLayoutId = entryProfile.getValue().getLayoutId();
+            if (userProfileLayoutId != 0) {
+                if (!layoutIds.contains(userProfileLayoutId)) {
+                    layoutIds.add(userProfileLayoutId);
+                }
+            }
+        }
+        return layoutIds;
+    }
+    
     private int getNextKey()
     {
         return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
@@ -1135,12 +1160,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         return userProfile;
     }
 
-    public Hashtable getUserProfileList (final IPerson person) {
+    public Hashtable<Integer, UserProfile> getUserProfileList (final IPerson person) {
         final int userId = person.getID();
 
-        return jdbcOperations.execute(new ConnectionCallback<Hashtable>() {
+        return jdbcOperations.execute(new ConnectionCallback<Hashtable<Integer, UserProfile>>() {
             @Override
-            public Hashtable doInConnection(Connection con) throws SQLException, DataAccessException {
+            public Hashtable<Integer, UserProfile> doInConnection(Connection con) throws SQLException, DataAccessException {
 
                 Hashtable<Integer,UserProfile> pv = new Hashtable<Integer,UserProfile>();
                 Statement stmt = con.createStatement();
