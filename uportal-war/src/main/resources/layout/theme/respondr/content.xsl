@@ -361,6 +361,9 @@
       <xsl:variable name="printable">
           <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
       </xsl:variable>
+      <xsl:variable name="hasFavorites">
+        <xsl:if test="//content/@hasFavorites = 'true'">true</xsl:if>
+      </xsl:variable>
         
       <li>
           <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">

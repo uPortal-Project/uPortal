@@ -30,6 +30,15 @@
 <xsl:param name="detached">false</xsl:param>
 <xsl:param name="userImpersonating">false</xsl:param>
 
+
+<!-- check if we have favorites or not -->
+<xsl:variable name="hasFavorites">
+    <xsl:choose>
+        <xsl:when test="layout/folder/folder[@type='favorites']">true</xsl:when>
+        <xsl:otherwise>false</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+
 <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
 <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
 <!-- Used to build the sidebarGroupsList:  discover sidebar groups, add each to the list ONLY ONCE -->
@@ -87,6 +96,7 @@
         <userLayoutRoot><xsl:value-of select="$userLayoutRoot"></xsl:value-of></userLayoutRoot>
         <focusedTabID><xsl:value-of select="$focusedTabID"></xsl:value-of></focusedTabID>
         <focusedFragmentId><xsl:value-of select="$focusedFragmentId"/></focusedFragmentId>
+        <hasFavorites><xsl:value-of select="$hasFavorites"/></hasFavorites>
         <defaultTab><xsl:value-of select="$defaultTab"></xsl:value-of></defaultTab>
         <detached><xsl:value-of select="$detached"></xsl:value-of></detached>
         <activeTabIdx><xsl:value-of select="$activeTabIdx"></xsl:value-of></activeTabIdx>
@@ -114,6 +124,7 @@
           </regions>
         </xsl:if>
         <content>
+          <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
           <!-- Detect whether a detached channel is present in the user's layout ? -->
           <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
         </content>
@@ -169,9 +180,8 @@
             </navigation>
 
             <content>
-
-                        <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
-
+                <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
+                <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
             </content>
 
             <xsl:call-template name="sidebarList"/>
@@ -231,6 +241,7 @@
     <xsl:call-template name="tabList"/>
 
     <content>
+      <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
       <xsl:choose>
         <xsl:when test="$userLayoutRoot = 'root'">
           <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
