@@ -34,6 +34,11 @@ import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MarketplacePortletDefinition implements IPortletDefinition{
 	
@@ -42,7 +47,11 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	public static final String MARKETPLACE_FNAME = "portletmarketplace";
 	private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
 	private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
+	private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
 	private PortletReleaseNotes releaseNotes;
+	
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * 
@@ -64,7 +73,12 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 			releaseNotes = new PortletReleaseNotes();
 		for(IPortletPreference portletPreference: portlet.getPortletPreferences()){
 			if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
-				releaseNotes.setReleaseDate(portletPreference.getValues()[0]);
+				try { 
+					DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
+					releaseNotes.setReleaseDate(dt);
+				} catch (Exception e){
+					logger.warn("Issue with parsing "+ RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
+				}
 				continue;
 			}
 			if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){

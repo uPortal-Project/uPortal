@@ -54,7 +54,7 @@
     <portlet-preference>
     	<name>Release_Date</name>
     	<readOnly>true</readOnly>
-    	<value>Feb 5, 2014</value>
+    	<value>2014-09-13 12:00:00</value>
     </portlet-preference>
     <portlet-preference>
     	<name>screen_shot2</name>
