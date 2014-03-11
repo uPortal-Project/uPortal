@@ -36,6 +36,7 @@ import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
@@ -59,6 +60,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.portlet.bind.annotation.ResourceMapping;
@@ -129,7 +131,6 @@ public class PortletMarketplaceController {
 	
 	
 	/**
-	 * @author vertein
 	 * @param webRequest
 	 * @param portletRequest
 	 * @param model
@@ -160,12 +161,35 @@ public class PortletMarketplaceController {
 		return "jsp/Marketplace/entry";
 	}
 	
-	@ResourceMapping("saveRating")
-	public void saveRating(ResourceRequest request, ResourceResponse response, PortletRequest portletRequest){
-		marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(request.getParameter("rating")), 
-		        portletRequest.getRemoteUser(), 
-		        portletDefinitionDao.getPortletDefinitionByFname(request.getParameter("portletFName")));
-	}
+	/**
+	 * Use to save the rating of portlet
+	 * @param request
+	 * @param response
+	 * @param portletRequest
+	 * 
+	 */
+    @ResourceMapping("saveRating")
+    public void saveRating(ResourceRequest request, ResourceResponse response, PortletRequest portletRequest, @RequestParam String portletFName, @RequestParam String rating){
+        Validate.notNull(rating, "Please supply a rating - should not be null");
+        Validate.notNull(portletFName, "Please supply a portlet to rate - should not be null");
+        marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
+            portletRequest.getRemoteUser(), 
+            portletDefinitionDao.getPortletDefinitionByFname(portletFName));
+    }
+	
+    /**
+     * @param request
+     * @param response
+     * @param portletRequest
+     * @return 'rating' as a JSON object.  Can be null if rating doesn't exist.
+     */
+     @ResourceMapping("getRating")
+         public String getRating(ResourceRequest request, ResourceResponse response, @RequestParam String portletFName,  PortletRequest portletRequest, Model model){
+         Validate.notNull(portletFName, "Please supply a portlet to get rating for - should not be null");
+         IMarketplaceRating tempRating = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(), portletDefinitionDao.getPortletDefinitionByFname(portletFName));
+         model.addAttribute("rating",tempRating==null? null:tempRating.getRating());
+         return "json";
+     }
 	
 	/**
 	 * Given a portlet and a servlet request, you get a deeplink to this portlet
@@ -191,7 +215,6 @@ public class PortletMarketplaceController {
 	}
 	
 	/**
-	 * @author vertein
 	 * @param name - the name of the portlet you want
 	 * @return the portlet desired
 	 * 
@@ -215,7 +238,6 @@ public class PortletMarketplaceController {
 
 	
 	/**
-	 * @author vertein
 	 * @param request 
 	 * @param user - the user to limit results by
 	 * @param seeManage - true if would like portlet listing managed by user.
@@ -233,7 +255,6 @@ public class PortletMarketplaceController {
 	
 	
 	/**
-	 * @author vertein
 	 * @param request 
 	 * @param seeManage - true if would like portlet listing managed by user.
 	 * @return a list of ChannelBeans representing portlets

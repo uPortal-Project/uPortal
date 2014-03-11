@@ -312,14 +312,14 @@ up.jQuery(function() {
            type: 'POST',
            success: function(){
                $('#up-notification').noty({
-                   text: 'Your Rating is much appreciated!',
+                   text: '<spring:message code="rating.saved.successfully" text="Success"/>',
                    layout: 'TopCenter',
                    type: 'success'
                });
            },
            error: function(){
                $('#up-notification').noty({
-                   text: 'Your Rating did not save.  Please try again!',
+                   text: '<spring:message code="rating.retrieved.unsuccessfully" text="Failure"/>',
                    layout: 'TopCenter',
                    type: 'error'
                });

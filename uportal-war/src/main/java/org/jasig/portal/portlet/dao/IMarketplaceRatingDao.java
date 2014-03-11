@@ -2,7 +2,6 @@ package org.jasig.portal.portlet.dao;
 
 import java.util.Set;
 
-import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
 
@@ -38,6 +37,12 @@ public interface IMarketplaceRatingDao{
     public IMarketplaceRating createOrUpdateRating(int rating, String userName,
             IPortletDefinition portletDefinition);
 
+    /**
+     * Returns a rating if found.  Can return null if no rating exists.
+     * @param userName
+     * @param portletDefinition
+     * @return - can be null
+     */
     public IMarketplaceRating getRating(String userName,
             IPortletDefinition portletDefinition);
 }
