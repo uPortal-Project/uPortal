@@ -66,7 +66,7 @@ import org.springframework.util.Assert;
     )
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
+class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     private static final long serialVersionUID = 1L;
 
     @Id
