@@ -185,8 +185,8 @@
             </content>
 
             <xsl:call-template name="sidebarList"/>
-
             <xsl:call-template name="footer" />
+            <xsl:call-template name="favorites" />
 
         </layout>
 
@@ -264,6 +264,8 @@
     <xsl:call-template name="sidebarList"/>
 
     <xsl:call-template name="footer" />
+    
+    <xsl:call-template name="favorites" />
 
   </layout>
 
@@ -485,6 +487,22 @@
               </tabChannel>
           </xsl:for-each>
       </tab>
+  </xsl:template>
+  
+  <!-- List of Favorites
+   |   =================
+   |   A list of favorited channels. 
+   |   To be utilized to establish if "add to favorites" 
+   |   or "remove from favorites" shows in the options menu -->
+  <xsl:template name="favorites">
+    <favorites>
+        <xsl:for-each select="/layout/folder/folder[@type='favorites']/folder/channel">
+            <favorite fname='{@fname}'/>
+        </xsl:for-each>
+        <xsl:for-each select="/layout/folder/folder[@type='favorite_collection']/folder/channel">
+            <favorite fname='{@fname}'/>
+        </xsl:for-each>
+    </favorites>
   </xsl:template>
 
 <xsl:template match="channel">
