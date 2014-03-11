@@ -232,7 +232,7 @@
      | This template renders portlets in the top-left logo area.
     -->
     <xsl:template name="region.customize">
-        <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
+        <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL') and $PORTAL_VIEW!='focused'">
             <xsl:if test="//region[@name='customize']/channel">
                 <div id="region-customize" class="container">
                     <div id="customizeOptionsWrapper">
