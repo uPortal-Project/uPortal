@@ -41,7 +41,6 @@ import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
-import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -82,7 +81,6 @@ public class PortletMarketplaceController {
 	private IPortalSpELService spELService;
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
-	private ILocalAccountDao localAccountDao;
 	
 	@Autowired
 	public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
@@ -93,12 +91,6 @@ public class PortletMarketplaceController {
 	public void setMarketplaceRatingDAO(IMarketplaceRatingDao marketplaceRatingDAO) {
         this.marketplaceRatingDAO = marketplaceRatingDAO;
     }
-
-	@Autowired
-	public void setLocalAccountDao(ILocalAccountDao localAccountDao) {
-        this.localAccountDao = localAccountDao;
-    }
-
 	
 	@Autowired
     public void setSpELService(IPortalSpELService spELService) {
@@ -160,7 +152,7 @@ public class PortletMarketplaceController {
 			return "jsp/Marketplace/view";
 		}
 		MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result);
-		IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(localAccountDao.getPerson(portletRequest.getRemoteUser()),
+		IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
 		model.addAttribute("rating", tempRatingImpl==null ? null:tempRatingImpl.getRating());
  		model.addAttribute("portlet", mpDefinition);
@@ -171,7 +163,7 @@ public class PortletMarketplaceController {
 	@ResourceMapping("saveRating")
 	public void saveRating(ResourceRequest request, ResourceResponse response, PortletRequest portletRequest){
 		marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(request.getParameter("rating")), 
-		        localAccountDao.getPerson(portletRequest.getRemoteUser()), 
+		        portletRequest.getRemoteUser(), 
 		        portletDefinitionDao.getPortletDefinitionByFname(request.getParameter("portletFName")));
 	}
 	

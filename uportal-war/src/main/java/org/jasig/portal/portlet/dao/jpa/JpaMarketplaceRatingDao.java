@@ -14,7 +14,6 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
-import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
@@ -70,13 +69,13 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     
     @Override
     @PortalTransactional
-    public IMarketplaceRating createOrUpdateRating(int rating, ILocalAccountPerson person,
+    public IMarketplaceRating createOrUpdateRating(int rating, String userName,
             IPortletDefinition portletDefinition) {
         MarketplaceRatingImpl temp = new MarketplaceRatingImpl();
         PortletDefinitionImpl tempPortlet = new PortletDefinitionImpl(portletDefinition.getType(), portletDefinition.getFName(), portletDefinition.getName(), 
                 portletDefinition.getTitle(), portletDefinition.getPortletDescriptorKey().getWebAppName(), portletDefinition.getPortletDescriptorKey().getPortletName(), 
                 portletDefinition.getPortletDescriptorKey().isFrameworkPortlet(), portletDefinition.getPortletDefinitionId());
-        MarketplaceRatingPK tempPK = new MarketplaceRatingPK(person.getName(), tempPortlet);
+        MarketplaceRatingPK tempPK = new MarketplaceRatingPK(userName, tempPortlet);
         temp.setMarketplaceRatingPK(tempPK);
         temp.setRating(rating);
         return this.createOrUpdateRating(temp);
@@ -96,11 +95,11 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     
     @Override
     @PortalTransactional
-    public IMarketplaceRating getRating(ILocalAccountPerson person, IPortletDefinition portletDefinition) {
+    public IMarketplaceRating getRating(String userName, IPortletDefinition portletDefinition) {
         PortletDefinitionImpl tempPortlet = new PortletDefinitionImpl(portletDefinition.getType(), portletDefinition.getFName(), portletDefinition.getName(), 
                 portletDefinition.getTitle(), portletDefinition.getPortletDescriptorKey().getWebAppName(), portletDefinition.getPortletDescriptorKey().getPortletName(), 
                 portletDefinition.getPortletDescriptorKey().isFrameworkPortlet(), portletDefinition.getPortletDefinitionId());
-        MarketplaceRatingPK tempPK = new MarketplaceRatingPK(person.getName(), tempPortlet);
+        MarketplaceRatingPK tempPK = new MarketplaceRatingPK(userName, tempPortlet);
         return this.getRating(tempPK);
     }
 
