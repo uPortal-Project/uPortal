@@ -312,6 +312,7 @@
                 </xsl:if>
             </ul>
             <script type="text/javascript">
+                $ = up.jQuery;
                 up.jQuery(document).ready(function() {
                     $('section.<xsl:value-of select="@fname" />').hover(function() {
                         $(this).find('.hover-chrome').stop(true, true).slideDown('medium');

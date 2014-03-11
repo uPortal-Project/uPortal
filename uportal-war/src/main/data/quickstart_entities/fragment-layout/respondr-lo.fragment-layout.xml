@@ -25,8 +25,11 @@
     <folder ID="s2" hidden="true" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
     </folder>
-    <folder ID="s4" hidden="false" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
-        <channel fname="dynamic-respondr-skin" unremovable="false" hidden="false" immutable="false" ID="n5"/>
+    <folder ID="s17" hidden="false" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
+        <channel fname="dynamic-respondr-skin" unremovable="false" hidden="false" immutable="false" ID="n18"/>
+    </folder>
+    <folder ID="s19" hidden="true" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n20"/>
     </folder>
     <folder ID="s6" hidden="false" immutable="true" name="Header Left folder" type="header-left" unremovable="true">
       <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n7"/>
