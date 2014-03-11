@@ -11,7 +11,6 @@ import java.util.concurrent.Callable;
 
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
