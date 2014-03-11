@@ -113,7 +113,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
 						rating.setRating(starRating);
 						MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
 						ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
-						ratingPK.setUser((LocalAccountPersonImpl) person);
+						ratingPK.setUserName(person.getName());
 						rating.setMarketplaceRatingPK(ratingPK);
 						marketplaceRatingDao.createOrUpdateRating(rating);
 					}
@@ -153,7 +153,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
 						rating.setRating(starRating);
 						MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
 						ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
-						ratingPK.setUser((LocalAccountPersonImpl) person);
+						ratingPK.setUserName(person.getName());
 						rating.setMarketplaceRatingPK(ratingPK);
 						marketplaceRatingDao.createOrUpdateRating(rating);
 					}
@@ -176,7 +176,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
 						rating.setRating(starRating);
 						org.jasig.portal.portlet.dao.jpa.MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
 						ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
-						ratingPK.setUser((LocalAccountPersonImpl) person);
+						ratingPK.setUserName(person.getName());
 						rating.setMarketplaceRatingPK(ratingPK);
 						marketplaceRatingDao.createOrUpdateRating(rating);
 					}

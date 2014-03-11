@@ -2,6 +2,7 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -12,7 +13,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl;
 
 @SecondaryTables({
 		@SecondaryTable(name="UP_PORTLET_DEF"),
@@ -23,10 +23,8 @@ public class MarketplaceRatingPK implements Serializable{
 
 	private static final long serialVersionUID = -1294203685313115404L;
 
-	@ManyToOne
-	@Cascade({CascadeType.PERSIST})
-	@JoinColumn(name="USER_ID", referencedColumnName="USER_DIR_ID", unique=false, nullable=true, insertable=true, updatable=true)
-	protected LocalAccountPersonImpl user;
+	@Column(name="USER_NAME", unique=false, nullable=true, insertable=true, updatable=true)
+	protected String userName;
 
 	@ManyToOne
 	@Cascade({CascadeType.PERSIST})
@@ -39,17 +37,17 @@ public class MarketplaceRatingPK implements Serializable{
 	public MarketplaceRatingPK(){
 	};
 
-    public MarketplaceRatingPK(LocalAccountPersonImpl user, PortletDefinitionImpl portletDefinition) {
-        this.user = user;
+    public MarketplaceRatingPK(String userName, PortletDefinitionImpl portletDefinition) {
+        this.userName = userName;
         this.portletDefinition = portletDefinition;
     }
 
-    public LocalAccountPersonImpl getUser() {
-		return user;
+    public String getUserName() {
+		return userName;
 	}
 
-	public void setUser(LocalAccountPersonImpl userID) {
-		this.user = userID;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public PortletDefinitionImpl getPortletDefinition() {
@@ -69,7 +67,7 @@ public class MarketplaceRatingPK implements Serializable{
     	}
         MarketplaceRatingPK tempRating = (MarketplaceRatingPK)obj;
         return new EqualsBuilder().
-            append(user, tempRating.user).
+            append(userName, tempRating.userName).
             append(portletDefinition, tempRating.portletDefinition).
             isEquals();
     }
@@ -77,7 +75,7 @@ public class MarketplaceRatingPK implements Serializable{
 	@Override
 	public int hashCode(){
 		return new HashCodeBuilder(17, 31). // two randomly chosen prime numbers
-	            append(user).
+	            append(userName).
 	            append(portletDefinition).
 	            toHashCode();
 	}
@@ -86,7 +84,7 @@ public class MarketplaceRatingPK implements Serializable{
 	public String toString(){
 		StringBuilder builder = new StringBuilder();
 		builder.append("User: ");
-		builder.append(this.user);
+		builder.append(this.userName);
 		builder.append("\n");
 		builder.append("Portlet: ");
 		builder.append(this.portletDefinition);
