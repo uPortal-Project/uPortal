@@ -1,32 +1,41 @@
-(function ($) {
+(function ($) {   
+    
+    //Defaults for rounding
+  var defaults = {
+      round : {down: .25, up: .75}
+  };
+   
+  $.fn.redraw = function(value){
+      // A private function to highlight a star corresponding to a given value
+      function _paintValue(ratingInput, value) {
+          var decimalValue = (value-Math.floor(value)).toFixed(2);
+          var whichStar = Math.ceil(value);
+          if(decimalValue!=0){
+              whichStar = whichStar-1;
+          }else{
+              $(ratingInput).find('[data-value]').removeClass('fa-star').addClass('fa-star-o');
+          }
+          var selectedStar = $(ratingInput).find('[data-value='+whichStar+']');
+          selectedStar.removeClass('fa-star-o').addClass('fa-star');
+          selectedStar.prevAll('[data-value]').removeClass('fa-star-o').addClass('fa-star');
+          selectedStar.nextAll('[data-value]').removeClass('fa-star').addClass('fa-star-o');
+          var nextStar = selectedStar.next('[data-value]');
+          var icon = 'fa-star-o';
+          if(decimalValue>defaults.round.down){
+              icon = 'fa-star-half-o';
+              if(decimalValue>defaults.round.up){
+                  icon='fa-star';
+              }
+          }
+          nextStar.removeClass('fa-star-o').addClass(icon);
+      } 
+      
+      var self = this;
+      _paintValue(self.closest('.rating-input'), value);
+  };
+    
   $.fn.rating = function () {
     var element;   
-    //Defaults for rounding
-    var defaults = {
-    		round : {down: .25, up: .75}
-    }
-
-    // A private function to highlight a star corresponding to a given value
-    function _paintValue(ratingInput, value) {
-    	var decimalValue = (value-Math.floor(value)).toFixed(2);
-    	var whichStar = Math.ceil(value);
-    	if(decimalValue!=0){
-    		whichStar = whichStar-1;
-    	}
-    	var selectedStar = $(ratingInput).find('[data-value='+whichStar+']');
-      selectedStar.removeClass('fa-star-o').addClass('fa-star');
-      selectedStar.prevAll('[data-value]').removeClass('fa-star-o').addClass('fa-star');
-      selectedStar.nextAll('[data-value]').removeClass('fa-star').addClass('fa-star-o');
-      var nextStar = selectedStar.next('[data-value]');
-      var icon = 'fa-star-o';
-      if(decimalValue>defaults.round.down){
-    	  icon = 'fa-star-half-o';
-    	  if(decimalValue>defaults.round.up){
-    		  icon='fa-star';
-    	  }
-      }
-      nextStar.removeClass('fa-star-o').addClass(icon);
-    }
 
     // A private function to remove the highlight for a selected rating
     function _clearValue(ratingInput) {
@@ -36,7 +45,9 @@
 
     // A private function to change the actual value to the hidden field
     function _updateValue(input, val) {
-      input.val(val).trigger('change');
+      if(input.val()!=val){
+          input.val(val).trigger('change');
+      }
       if (val === input.data('empty-value')) {
         input.siblings('.rating-clear').hide();
       }
@@ -88,12 +99,12 @@
     $('.rating-input')
       // Highlight stars on hovering
       .on('mouseenter', '[data-value]', function () {
-    	  var rating_system = $(this).closest('.rating-input').find(".rating");
+          var rating_system = $(this).closest('.rating-input').find(".rating");
           var rating_readOnly = rating_system.data('readonly');
-    	  if(!rating_readOnly){
-    		  var self = $(this);
-    		  _paintValue(self.closest('.rating-input'), self.data('value'));
-    	  }
+          if(!rating_readOnly){
+              var self = $(this);
+              self.redraw(self.data('value'));
+          }
       })
       // View current value while mouse is out
       .on('mouseleave', '[data-value]', function () {
@@ -103,26 +114,23 @@
           min = input.data('min'),
           max = input.data('max');
         if (val >= min && val <= max) {
-          _paintValue(self.closest('.rating-input'), val);
+            self.redraw(val);
         } else {
           _clearValue(self.closest('.rating-input'));
         }
       })
       // Set the selected value to the hidden field
       .on('click', '[data-value]', function (e) {
-    	  var rating_system = $(this).closest('.rating-input').find(".rating");
+          var rating_system = $(this).closest('.rating-input').find(".rating");
           var rating_readOnly = rating_system.data('readonly');
-    	  if(!rating_readOnly){
-    		  var self = $(this),
-    		  val = self.data('value'),
-    		  input = self.siblings('input');
-    		  _updateValue(input,val);
-    		  e.preventDefault();
-    		  $.ajax({
-    			  
-    		  });
-    		  return false;
-    	 }
+          if(!rating_readOnly){
+              var self = $(this),
+              val = self.data('value'),
+              input = self.siblings('input');
+              _updateValue(input,val);
+              e.preventDefault();
+              return false;
+         }
       })
       // Remove value on clear
       .on('click', '.rating-clear', function (e) {
@@ -140,7 +148,7 @@
           min = input.data('min'),
           max = input.data('max');
         if (val !== "" && +val >= min && +val <= max) {
-          _paintValue(this, val);
+          $(this).redraw(val);
           $(this).find('.rating-clear').show();
         }
         else {

@@ -52,7 +52,7 @@
                     </xsl:for-each>
                     
                     <xsl:for-each select="url:portlet-url">
-                        <xsl:variable name="portletUrlBuilder" select="java:getPortletUrlBuilder($urlProvider, $request, $portalUrlBuilder, url:fname, url:layoutId, @state, @mode, @copyCurrentRenderParameters)" />
+                        <xsl:variable name="portletUrlBuilder" select="java:getPortletUrlBuilder($urlProvider, $request, $portalUrlBuilder, url:fname, url:layoutId, @state, @mode, @copyCurrentRenderParameters, url:resourceId)" />
                         
                         <xsl:for-each select="url:param">
                             <xsl:value-of select="urlGen:addParameter($portletUrlBuilder, @name, @value)" />
