@@ -187,7 +187,7 @@
 		 			<p>
 		 				<span class="marketplace_section_header">What's New</span>
                         <c:if test="${not empty Portlet.portletReleaseNotes.releaseDate}">
-                            <span class="marketplace_release_date">&nbsp;(Released ${Portlet.portletReleaseNotes.releaseDate})</span>
+                            <span class="marketplace_release_date">&nbsp;(Released <joda:format value="${Portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
                         
 		 			</p>

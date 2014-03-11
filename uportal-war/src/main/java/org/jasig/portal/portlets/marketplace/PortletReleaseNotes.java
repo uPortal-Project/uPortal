@@ -21,8 +21,10 @@ package org.jasig.portal.portlets.marketplace;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 public class PortletReleaseNotes {
-	private String releaseDate;
+	private DateTime releaseDate;
 	private List<String> releaseNotes;
 	
 	public PortletReleaseNotes(){
@@ -33,11 +35,11 @@ public class PortletReleaseNotes {
 	 * 
 	 * @return releaseDate as String. Can be null if not set via portlet preference.
 	 */
-	public String getReleaseDate() {
+	public DateTime getReleaseDate() {
 		return releaseDate;
 	}
 	
-	public void setReleaseDate(String releaseDate) {
+	public void setReleaseDate(DateTime releaseDate) {
 		this.releaseDate = releaseDate;
 	}
 	

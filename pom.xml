@@ -168,6 +168,7 @@
         <jgroups.version>3.2.7.Final</jgroups.version>
         <jline.version>1.0</jline.version>
         <joda-time.version>2.2</joda-time.version>
+        <joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
         <json-lib-ext-spring.version>1.0.2</json-lib-ext-spring.version>
         <jsp-api.version>2.2</jsp-api.version>
         <jstl.version>1.2</jstl.version>
@@ -511,6 +512,11 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time-jsptags</artifactId>
+                <version>${joda-time-jsptags.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
