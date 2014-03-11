@@ -722,78 +722,94 @@
  | parameter showHeaderWhenDetached.
  -->
 <xsl:template name="document.detached">
-    <html lang="{$USER_LANG}" class="respondr">
-        <head>
-            <xsl:call-template name="page.title" />
-            <xsl:call-template name="page.meta" />
-            <xsl:call-template name="skinResources">
-                <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-            </xsl:call-template>
-            <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
-                <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
-            </xsl:if>
-            <xsl:call-template name="page.js" />
-        </head>
-        <body class="up dashboard portal fl-theme-mist">
-            <div id="wrapper">
-                <xsl:choose>
-                    <!-- Show Sticky Header -->
-                    <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'">
-                        <div class="portal-sticky-header">
-                            <header class="portal-header" role="banner">
-                                <div class="portal-global">
+  <html lang="{$USER_LANG}" class="respondr">
+    <head>
+        <xsl:call-template name="page.title" />
+        <xsl:call-template name="page.meta" />
+        <xsl:call-template name="skinResources">
+            <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+        </xsl:call-template>
+        <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
+            <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
+        </xsl:if>
+        <xsl:call-template name="page.js" />
+    </head>
+    <body class="up dashboard portal fl-theme-mist detachedHeader">
+        <div id="wrapper">
+            <xsl:call-template name="region.hidden-top" />
+            <xsl:call-template name="region.page-top" />
+            <xsl:choose>
+                <!-- Show Sticky Header -->
+                <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'">
+                    <div class="portal-sticky-header" id="portal-sticky-header">
+                        <header class="portal-header" role="banner">
+                            <div class="portal-global">
+                                <div class="navbar navbar-fixed-top" role="navigation">
                                     <div class="container">
                                         <div class="portal-user">
-                                            <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
-                                            <xsl:choose>
-                                                <xsl:when test="$userImpersonating = 'true'">
-                                                    <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                            &#160;<span class="user-name"><xsl:value-of select="$USER_NAME"/></span>
-                                            -<a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content portal-logout"><xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/></a>
-                                      </div>
-                                  </div>
-                              </div>
-                          </header>
-                      </div>
-                      <div class="portal-sticky-content" role="main">
-                          <div class="portal-sticky-container">
-                              <div class="row">
-                                  <div id="portalPageBodyMessage" class="col-md-12"></div>
-                              </div>
-                              <xsl:copy-of select="/layout_fragment/content"/>
-                          </div>
-                      </div>
-                  </xsl:when>
-                  <!-- Don't Show Sticky Header -->
-                  <xsl:otherwise>
-                      <div class="portal-sticky-content" role="main">
-                          <div class="portal-container">
-                              <div class="row">
-                                      <div id="portalPageBodyMessage" class="col-md-12"></div>
-                              </div>
-                              <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top">
-                                  <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>
-                              </div>
-                              <xsl:copy-of select="/layout_fragment/content"/>
-                          </div>
-                      </div>
-                  </xsl:otherwise>
-              </xsl:choose>
-
-              </div>
-              <script type="text/javascript">
-                  up.analytics = up.analytics || {};
-                  up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
-                  up.analytics.portletData = <portlet-analytics-data/>;
-                  up.analytics.pageData = <page-analytics-data/>;
-              </script>
-          </body>
-    </html>
+                                            <div class="navbar-header">
+                                                <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
+                                            </div>
+                                            <div class="navbar-collapse collapse">
+                                                <xsl:choose>
+                                                    <xsl:when test="$userImpersonating = 'true'">
+                                                        <xsl:value-of select="upMsg:getMessage('you.are.idswapped.as', $USER_LANG)"/>
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                                <span class="user-name">
+                                                    <xsl:value-of select="$USER_NAME"/>
+                                                </span>
+                                                -
+                                                <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content portal-logout">
+                                                    <xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- end navbar -->
+                            </div>
+                        </header>
+                    </div>
+                    <div class="portal-sticky-content" role="main">
+                        <div class="portal-sticky-container container">
+                            <div class="row">
+                                <div id="portalPageBodyMessage" class="col-md-12"></div>
+                            </div>
+                            <xsl:copy-of select="/layout_fragment/content"/>
+                        </div>
+                    </div>
+                </xsl:when>
+                <!-- Don't Show Sticky Header -->
+                <xsl:otherwise>
+                    <div class="portal-sticky-content" role="main">
+                        <div class="portal-container">
+                            <div class="row">
+                                <div id="portalPageBodyMessage" class="col-md-12"></div>
+                            </div>
+                            <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top">
+                                <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
+                                    <xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/>
+                                </a>
+                            </div>
+                            <xsl:copy-of select="/layout_fragment/content"/>
+                        </div>
+                    </div>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:call-template name="region.page-bottom" />
+            <xsl:call-template name="region.hidden-bottom" />
+        </div>
+        <script type="text/javascript">
+        up.analytics = up.analytics || {};
+        up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
+        up.analytics.portletData = <portlet-analytics-data/>;
+        up.analytics.pageData = <page-analytics-data/>;
+        </script>
+    </body>
+  </html>
 </xsl:template>
 
 <!-- ========================================================================= -->

@@ -74,7 +74,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         
     public PortletExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, long timeout /*IPortletWindowId portletWindowId, String portletFname*/) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, long timeout) {
 
         this.executorService = executorService;
         this.interceptors = interceptors;

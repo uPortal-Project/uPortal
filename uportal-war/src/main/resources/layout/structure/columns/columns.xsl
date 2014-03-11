@@ -85,6 +85,14 @@
       <layout_fragment>
         <xsl:call-template name="debug-info"/>
         <xsl:call-template name="tabList"/>
+        <!-- Only include hidden-top, page-top, page-bottom, hidden-bottom, and only when showHeaderWhenDetached is enabled -->
+        <xsl:if test="//*[@ID = $userLayoutRoot]/parameter[@name='showHeaderWhenDetached' and @value='true']">
+          <regions>
+            <xsl:for-each select="child::folder[@type='hidden-top' or @type='page-top' or @type='page-bottom' or @type='hidden-bottom']">
+              <xsl:call-template name="region"/>
+            </xsl:for-each> 
+          </regions>
+        </xsl:if>
         <content>
           <!-- Detect whether a detached channel is present in the user's layout ? -->
           <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
@@ -123,25 +131,10 @@
 
     </header>
 
-    <!-- 
-     | Regions and Roles
-     | =================
-     | This section allows non-regular, non-sidebar portlets to appear in the output page,
-     | even in focused mode.  In Universality this is done with a 'role' attribute on the
-     | portlet publication record.
-     |
-     | In Respondr, this is done through regions: folders with a type attribute _other than_
-     | 'root', 'regular', or 'sidebar' (for legacy support).  Any folder type beyond these 
-     | three automatically becomes a region.  Respondr is responsible for recognizing 
-     | region-based portlets and placing them appropriately on the page.  Note that a region 
-     | name can appear multiple times in the output;  this approach allows multiple 
-     | fragments to place portlets in the same region.
-     +-->
+    <!-- Always include all regions when in DASHBOARD (normal) mode-->
     <regions>
       <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
-        <region name="{@type}">
-          <xsl:copy-of select="channel"/>
-        </region>
+        <xsl:call-template name="region"/>
       </xsl:for-each> 
     </regions>
 
@@ -181,6 +174,33 @@
   </xsl:choose>
 
   </xsl:for-each>
+</xsl:template>
+
+    <!-- 
+     | Regions and Roles
+     | =================
+     | The <regions> section allows non-regular, non-sidebar portlets to appear in the
+     | output page, even in focused mode.  In Universality this is done with a 'role' 
+     | attribute on the portlet publication record.
+     |
+     | In Respondr, this is done through regions: folders with a type attribute _other than_
+     | 'root', 'regular', or 'sidebar' (for legacy support).  Any folder type beyond these
+     | three automatically becomes a region.  Respondr is responsible for recognizing
+     | region-based portlets and placing them appropriately on the page.  Note that a region
+     | name can appear multiple times in the output;  this approach allows multiple
+     | fragments to place portlets in the same region.
+     |
+     | Regions behave normally in dashboard (normal) and focused (maximized) mode;  in
+     | DETACHED window state, only a few regions are processed, and then ONLY IF THE STICKY
+     | HEADER option is in effect.  The list of regions included with a sticky-header is:
+     | hidden-top, page-top, page-bottom, hidden-bottom.  The remaining regions are not
+     | present in the DOM and therefore their portlets MUST NOT be added to the rendering
+     | queue. 
+     +-->
+<xsl:template name="region">
+    <region name="{@type}">
+        <xsl:copy-of select="channel"/>
+    </region>
 </xsl:template>
 
 <xsl:template name="tabList">

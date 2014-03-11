@@ -171,6 +171,29 @@
             color: #fff;
         }
     }
+
+    #portal-sticky-header {
+        margin-top: @detached-header-height;
+
+        .navbar {
+            background: @detached-header-backbround-color;
+            min-height: @detached-header-height;
+            max-height: @detached-header-height;
+            padding-top: 5px;
+        
+            a {
+                color: @detached-header-link-color;
+            }
+
+            .navbar-header {
+                font-size: 16pt;
+            }
+        }
+        .portal-global {
+            padding: 0;
+        }
+    }
+
 /* ==========================================================================
    Responsive Design
    ========================================================================== */

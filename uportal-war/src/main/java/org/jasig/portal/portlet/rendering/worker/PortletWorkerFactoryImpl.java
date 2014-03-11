@@ -126,6 +126,9 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
 	@Override
     public IPortletRenderExecutionWorker createRenderWorker(HttpServletRequest request, HttpServletResponse response, IPortletWindowId portletWindowId) {
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        if (portletWindow == null) {
+            throw new RuntimeException("Failed to retrieve the specified PortletWindow:  " + portletWindowId);
+        }
         return new PortletRenderExecutionWorker(portletThreadPool, executionInterceptors, portletRenderer, request, response, portletWindow);
     }
 

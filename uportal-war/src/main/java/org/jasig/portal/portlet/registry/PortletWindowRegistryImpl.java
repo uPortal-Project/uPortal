@@ -264,7 +264,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         if (portletWindowData == null) {
-            logger.trace("No IPortletWindow {} exists, returning null");
+            logger.trace("No IPortletWindow {} exists, returning null", portletWindowId);
             return null;
         }
         
@@ -367,10 +367,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
             portletWindows.add(portletWindow);
         }
-            
+
         return portletWindows;
     }
-    
+
     @Override
     public Tuple<IPortletWindow, StartElement> getPortletWindow(HttpServletRequest request, StartElement element) {
         //Check if the layout node explicitly specifies the window id
@@ -394,20 +394,31 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         if (portalRequestInfo.getUrlState() == UrlState.DETACHED) {
-            //Handle detached portlets explicitly
-            //TODO Can we ever have non-targeted portlets render in a detached request? If so should they all be stateless windows anyways? 
-            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-            portletWindow = this.getOrCreateStatelessPortletWindow(request, portletWindowId);
+            /*
+             * We want to handle DETACHED portlet windows differently/explicitly,
+             * but we need to be aware there may be other portlets on the page
+             * besides the targeted one.  These would be portlets in regions
+             * (Respondr theme) -- such as DynamicRespondrSkin -- when the 
+             * 'showHeaderWhenDetached' has been enabled in the portlet-definition.
+             *
+             * We need to confirm, therefore, that this is actually the portlet
+             * in DETACHED.  If it is, we'll send back a 'stateless' PortletWindow.
+             */
+            if (portalRequestInfo.getTargetedPortletWindowId().toString().contains("_" + layoutNodeId + "_")) {
+                final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+                portletWindow = this.getOrCreateStatelessPortletWindow(request, portletWindowId);
+            }
+
         }
-        
+
         element = this.addPortletWindowId(element, portletWindow.getPortletWindowId());
-        
+
         return new Tuple<IPortletWindow, StartElement>(portletWindow, element);
     }
-    
+
     protected StartElement addPortletWindowId(StartElement element, IPortletWindowId portletWindowId) {
         final Attribute windowIdAttribute = xmlEventFactory.createAttribute(PORTLET_WINDOW_ID_ATTR_NAME, portletWindowId.getStringId());
-        
+
         //Clone the start element to add the new attribute
         final QName name = element.getName();
         final String prefix = name.getPrefix();
