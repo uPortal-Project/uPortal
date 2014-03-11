@@ -222,19 +222,19 @@
            </div>
             <br><br>
         </div>
-        <c:if test="${not empty Portlet.portletReleaseNotes}">
+        <c:if test="${not empty portlet.portletReleaseNotes}">
             <div class="row">
                 <div class = "col-xs-12 col-md-4">
+                    <br>
                     <p>
                         <span class="marketplace_section_header">What's New</span>
-                        <c:if test="${not empty Portlet.portletReleaseNotes.releaseDate}">
+                        <c:if test="${not empty portlet.portletReleaseNotes.releaseDate}">
                             <span class="marketplace_release_date">&nbsp;(Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
                         
                     </p>
                     <p>
-                        <br>
-                        <c:if test="${not empty Portlet.portletReleaseNotes.releaseNotes}">
+                        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
                             <ul class="marketplace_release_notes">
                                 <c:forEach var="releaseNote" items="${portlet.portletReleaseNotes.releaseNotes}">
                                     <li class="marketplace_release_note">- &nbsp;${releaseNote}</li>
@@ -242,7 +242,7 @@
                             </ul>
                         </c:if>
                     </p>
-                    <c:if test="${fn:length(Portlet.portletReleaseNotes.releaseNotes) gt 3}">
+                    <c:if test="${fn:length(portlet.portletReleaseNotes.releaseNotes) gt 3}">
                         <span><a id="marketplace_show_more_less_link">More</a></span>
                     </c:if>
                 </div>
