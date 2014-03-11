@@ -21,7 +21,6 @@ package org.jasig.portal.portlets.marketplace;
 
 import java.util.List;
 
-
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,7 +33,6 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlets.search.IPortalSearchService;
 import org.jasig.portal.portlets.marketplace.ScreenShot;
 import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.portlets.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -97,17 +95,16 @@ public class MarketplaceSearchService implements IPortalSearchService {
         
         final SearchResults results =  new SearchResults();
         for (IPortletDefinition portlet : portlets) {
-        	MarketplacePortletDefinition mpPortletDefinition = new MarketplacePortletDefinition(portlet);
-            if (this.matches(queryString, mpPortletDefinition)) {
+            if (this.matches(queryString, new MarketplacePortletDefinition(portlet))) {
                 final SearchResult result = new SearchResult();
-                result.setTitle(mpPortletDefinition.getTitle());
-                result.setSummary(mpPortletDefinition.getDescription());
+                result.setTitle(portlet.getTitle());
+                result.setSummary(portlet.getDescription());
                 result.getType().add("marketplace");
 
-                final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, mpPortletDefinition.getFName());
+                final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, portlet.getFName());
                 if (portletWindow != null) {
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-                    final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpServletRequest, mpPortletDefinition.getFName(), UrlType.RENDER);
+                    final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpServletRequest, portlet.getFName(), UrlType.RENDER);
                     final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
                     portletUrlBuilder.setWindowState(PortletUtils.getWindowState("maximized"));
                     result.setExternalUrl(portalUrlBuilder.getUrlString());                    
@@ -123,7 +120,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
                 url.getParam().add(actionParam);
                 PortletUrlParameter nameParam = new PortletUrlParameter();
                 nameParam.setName("name");
-                nameParam.getValue().add(mpPortletDefinition.getName());
+                nameParam.getValue().add(portlet.getName());
                 url.getParam().add(nameParam);
                 result.setPortletUrl(url);
                 //Add the result to list to return

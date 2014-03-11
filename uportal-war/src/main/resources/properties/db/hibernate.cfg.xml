@@ -69,6 +69,7 @@
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
+        <mapping class="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>

@@ -959,5 +959,19 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         @Override
         public void addLocalizedDescription(String locale, String chanDesc) {
         }
+        @Override
+        public Double getRating() {
+            return null;
+        }
+        @Override
+        public void setRating(Double rating) {
+        }
+        @Override
+        public Long getUsersRated() {
+            return null;
+        }
+        @Override
+        public void setUsersRated(Long usersRated) {
+        }
     };
 }

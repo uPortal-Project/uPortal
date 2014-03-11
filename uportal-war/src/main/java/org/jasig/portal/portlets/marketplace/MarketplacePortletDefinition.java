@@ -34,6 +34,7 @@ import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -60,25 +61,25 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	 */
 	public MarketplacePortletDefinition(IPortletDefinition portletDefinition){
 		this.portletDefinition = portletDefinition;
-		this.setUpDefinitions(portletDefinition);
+		this.setUpDefinitions();
+	}
+
+	private void setUpDefinitions(){
+		this.setScreenShots();
+		this.setPortletReleaseNotes();
 	}
 	
-	private void setUpDefinitions(IPortletDefinition portletDefinition){
-		this.setScreenShots(portletDefinition);
-		this.setPortletReleaseNotes(portletDefinition);
-	}
-	
-	private void setPortletReleaseNotes(IPortletDefinition portlet){
+	private void setPortletReleaseNotes(){
 		if(releaseNotes == null) 
 			releaseNotes = new PortletReleaseNotes();
-		for(IPortletPreference portletPreference: portlet.getPortletPreferences()){
+		for(IPortletPreference portletPreference:this.portletDefinition.getPortletPreferences()){
 			if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
-				try { 
-					DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
-					releaseNotes.setReleaseDate(dt);
-				} catch (Exception e){
-					logger.warn("Issue with parsing "+ RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
-				}
+			    try {
+			        DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
+			        releaseNotes.setReleaseDate(dt);
+			    } catch (Exception e){
+			        logger.warn("Issue with parsing "+ RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
+			    }
 				continue;
 			}
 			if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
@@ -88,8 +89,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 		}
 	}
 	
-	private void setScreenShots(IPortletDefinition portlet){
-		List<IPortletPreference> portletPreferences = portlet.getPortletPreferences();
+	private void setScreenShots(){
+		List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
 		List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
 		List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
 		List<ScreenShot> screenshots = new ArrayList<ScreenShot>();
@@ -123,16 +124,22 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	}
 	
 	/**
-	 * @return the screenShotList
+	 * @return the screenShotList. Will not be null.
 	 */
 	public List<ScreenShot> getScreenShots() {
+		if(screenShots==null){
+			this.setScreenShots();
+		}
 		return screenShots;
 	}
 	
 	/**
-	 * @return the releaseNotes
+	 * @return the releaseNotes. Will not be null.
 	 */
 	public PortletReleaseNotes getPortletReleaseNotes() {
+		if(releaseNotes==null){
+			this.setPortletReleaseNotes();
+		}
 		return releaseNotes;
 	}
 
@@ -294,7 +301,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	@Override
 	public void setName(String name) {
 		this.portletDefinition.setName(name);
-		
 	}
 
 	@Override
@@ -410,5 +416,29 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	@Override
 	public void removeParameter(String name) {
 		this.portletDefinition.removeParameter(name);
+	}
+
+
+	@Override
+	public Double getRating() {
+		return this.portletDefinition.getRating();
+	}
+
+
+	@Override
+	public void setRating(Double rating) {
+		this.portletDefinition.setRating(rating);
+	}
+
+
+	@Override
+	public Long getUsersRated() {
+		return this.portletDefinition.getUsersRated();
+	}
+
+
+	@Override
+	public void setUsersRated(Long usersRated) {
+		this.portletDefinition.setUsersRated(usersRated);
 	}
 }
