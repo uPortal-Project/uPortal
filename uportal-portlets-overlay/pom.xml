@@ -19,7 +19,6 @@
         <module>AnnouncementsPortlet</module>
         <module>basiclti-portlet</module>
         <module>BookmarksPortlet</module>
-        <module>CalendarPortlet</module>
         <module>cas</module>
         <module>cas-proxy-test-portlet</module>
         <module>email-preview</module>

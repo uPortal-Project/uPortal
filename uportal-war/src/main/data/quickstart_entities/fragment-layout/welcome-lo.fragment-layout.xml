@@ -44,7 +44,7 @@
           <name>width</name>
           <value>40%</value>
         </structure-attribute>
-        <channel fname="calendar" unremovable="false" hidden="false" immutable="false" ID="n11"/>
+        <channel fname="campus-news" unremovable="false" hidden="false" immutable="false" ID="n12" dlm:moveAllowed="false" dlm:deleteAllowed="false"/>
       </folder>
     </folder>
   </folder>
