@@ -20,7 +20,7 @@ var up = up || {};
         var saveButton = ['<button type="button" class="btn btn-primary ratingModalSaveButton disabled">', $(this).data('save.button.label') , '</button>'].join('');
             var modalFooter = ['<div class="modal-footer">', closeButton, saveButton, '</div>'].join('');
         var modalContent = ['<div class="modal-content" style="display:inline-block">', modalHeader, modalBody, modalFooter, '</div>'].join('');
-        var modalDialog = ['<div class="modal-dialog ratePortletModal-dialog{@ID}" style="text-align:center">', modalContent, '</div>'].join('');
+        var modalDialog = ['<div class="modal-dialog ratePortletModal-dialog{@ID}" style="text-align:center; position:static">', modalContent, '</div>'].join('');
         $(this).append(modalDialog);
         $(this).modal('hide');
         $(this).find('.ratingModalSaveButton').click(
