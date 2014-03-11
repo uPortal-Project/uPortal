@@ -174,6 +174,26 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	public void addLocalizedDescription(String locale, String chanDesc);
 	
 	/**
+	 * @return a portlet rating
+	 */
+	public Double getRating();
+
+	/**
+	 * @param rating sets portlet rating
+	 */
+	public void setRating(Double rating);
+
+	/**
+	 * @return Number of users that rated this portlet
+	 */
+	public Long getUsersRated();
+
+	/**
+	 * @param usersRated sets number of users that rated this portlet
+	 */
+	public void setUsersRated(Long usersRated);
+	
+	/**
 	 * Implementation required by IBasicEntity interface.
 	 * 
 	 * @return EntityIdentifier

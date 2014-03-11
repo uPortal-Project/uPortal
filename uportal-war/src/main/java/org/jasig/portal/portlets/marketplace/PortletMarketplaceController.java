@@ -21,43 +21,48 @@ package org.jasig.portal.portlets.marketplace;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
-import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.i18n.ILocaleStore;
-import org.jasig.portal.portlet.om.PortletCategory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.spring.spel.IPortalSpELService;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.ResourceRequest;
+import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.i18n.ILocaleStore;
+import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
+import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
+import org.jasig.portal.persondir.ILocalAccountDao;
+import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
+import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.portlet.bind.annotation.RenderMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.context.MessageSource;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 
 /**
  * 
@@ -75,6 +80,24 @@ public class PortletMarketplaceController {
 	private IPortletCategoryRegistry portletCategoryRegistry;
 	private MessageSource messageSource;
 	private IPortalSpELService spELService;
+	private IPortletDefinitionDao portletDefinitionDao;
+	private IMarketplaceRatingDao marketplaceRatingDAO;
+	private ILocalAccountDao localAccountDao;
+	
+	@Autowired
+	public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
+        this.portletDefinitionDao = portletDefinitionDao;
+    }
+
+	@Autowired
+	public void setMarketplaceRatingDAO(IMarketplaceRatingDao marketplaceRatingDAO) {
+        this.marketplaceRatingDAO = marketplaceRatingDAO;
+    }
+
+	@Autowired
+	public void setLocalAccountDao(ILocalAccountDao localAccountDao) {
+        this.localAccountDao = localAccountDao;
+    }
 
 	
 	@Autowired
@@ -136,11 +159,20 @@ public class PortletMarketplaceController {
 			this.setUpInitialView(webRequest, portletRequest, model);
 			return "jsp/Marketplace/view";
 		}
-		MarketplacePortletDefinition mpPortlet = new MarketplacePortletDefinition(result);
-		model.addAttribute("Portlet", mpPortlet);
-		model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest),mpPortlet));
-		
+		MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result);
+		IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(localAccountDao.getPerson(portletRequest.getRemoteUser()),
+                portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
+		model.addAttribute("rating", tempRatingImpl==null ? null:tempRatingImpl.getRating());
+ 		model.addAttribute("portlet", mpDefinition);
+		model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
 		return "jsp/Marketplace/entry";
+	}
+	
+	@ResourceMapping("saveRating")
+	public void saveRating(ResourceRequest request, ResourceResponse response, PortletRequest portletRequest){
+		marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(request.getParameter("rating")), 
+		        localAccountDao.getPerson(portletRequest.getRemoteUser()), 
+		        portletDefinitionDao.getPortletDefinitionByFname(request.getParameter("portletFName")));
 	}
 	
 	/**

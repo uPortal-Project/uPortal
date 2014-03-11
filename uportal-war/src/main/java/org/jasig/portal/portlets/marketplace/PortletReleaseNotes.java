@@ -24,6 +24,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 
 public class PortletReleaseNotes {
+
 	private DateTime releaseDate;
 	private List<String> releaseNotes;
 	
