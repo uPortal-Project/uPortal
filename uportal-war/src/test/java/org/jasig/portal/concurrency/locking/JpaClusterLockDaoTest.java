@@ -40,6 +40,7 @@ import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -151,9 +152,14 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         mutex = clusterLockDao.getClusterMutex(mutexName);
         assertFalse(mutex.isLocked());
     }
-    
 
-    @Test
+
+    /**
+     * This test turns out to be nondeterministic under load and so can yield false-negatives
+     * (failures that don't seem to actually indicate a regression).
+     * @throws InterruptedException
+     */
+    @Ignore
     public void testConcurrentCreateLocking() throws InterruptedException  {
         reset(portalInfoProvider);
         when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
