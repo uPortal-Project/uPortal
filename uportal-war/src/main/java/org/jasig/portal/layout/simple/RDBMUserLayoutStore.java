@@ -291,7 +291,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         }
         if (layoutIds.size() > 1) {
             // log that only one non-zero layout id assumption has been broken
-            logger.warn(UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND, person.getID() );
+            logger.error(UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND, person.getID() );
         }
         return layoutId;
     }
