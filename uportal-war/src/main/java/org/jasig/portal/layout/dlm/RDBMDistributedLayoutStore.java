@@ -46,8 +46,6 @@ import javax.xml.xpath.XPathFactory;
 import net.sf.ehcache.Ehcache;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Namespace;
 import org.dom4j.io.DOMReader;
 import org.dom4j.io.DOMWriter;
@@ -90,6 +88,8 @@ import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,8 +119,7 @@ import com.google.common.cache.Cache;
  */
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
-
+    protected final Logger logger = LoggerFactory.getLogger(RDBMDistributedLayoutStore.class);
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
 
@@ -235,8 +234,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final Document layout = DocumentFactory.getThreadDocument();
             final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
             if (userView == null) {
-                this.log.warn("No UserView found for FragmentDefinition " + fragmentDefinition.getName()
-                        + ", it will be skipped.");
+                logger.warn("No UserView found for FragmentDefinition {}, it will be skipped.", fragmentDefinition.getName());
                 continue;
             }
             final Node copy = layout.importNode(userView.layout.getDocumentElement(), true);
@@ -283,8 +281,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             //UserView may be missing if the fragment isn't defined correctly
             final UserView userView = fragmentActivator.getUserView(fragmentDefinition, locale);
             if (userView == null) {
-                this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
-                        + " it will be skipped when loading distributed stylesheet user preferences");
+                logger.warn("No UserView is present for fragment {} it will be skipped when loading distributed stylesheet user preferences",
+                            fragmentDefinition.getName());
                 continue;
             }
 
@@ -413,8 +411,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 final String layoutNodeId = portletEntity.getLayoutNodeId();
                 final Pathref dlmPathref = nodeReferenceFactory.getPathrefFromNoderef(userName, layoutNodeId, layout);
                 if (dlmPathref == null) {
-                    log.warn(portletEntity + " in user " + userName
-                            + "'s layout has no corresponding layout or portlet information and will be ignored");
+                    logger.warn("{} in user {}'s layout has no corresponding layout or portlet information and will be ignored", portletEntity, userName);
                     continue;
                 }
 
@@ -466,7 +463,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             throw new RuntimeException(msg, t);
         }
 
-        if (this.log.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             // Write out this version of the layout to the log for dev purposes...
             final StringWriter str = new StringWriter();
             final XMLWriter xml = new XMLWriter(str, new OutputFormat("  ", true));
@@ -478,7 +475,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 throw new RuntimeException("Failed to write the layout for user '" + person.getUserName()
                         + "' to the DEBUG log", t);
             }
-            this.log.debug("Layout for user:  " + person.getUserName() + "\n" + str.getBuffer().toString());
+            logger.debug("Layout for user: {}\n{}", person.getUserName(), str.getBuffer().toString());
         }
 
         /*
@@ -486,10 +483,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
          */
 
         if (isLayoutCorrupt(layoutDoc)) {
-            if (log.isWarnEnabled()) {
-                log.warn("Layout for user:  " + person.getUserName() + " is corrupt;  "
-                        + "layout structures will not be exported.");
-            }
+            logger.warn("Layout for user: {} is corrupt; layout structures will not be exported.",  person.getUserName());
             return null;
         }
 
@@ -550,10 +544,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 org.setValue(dlmPathref.toString());
             }
             else {
-                if (this.log.isWarnEnabled()) {
-                    this.log.warn("Layout element '" + org.getUniquePath() + "' from user '"
-                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + org.getValue()
-                            + "'");
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Layout element '{}' from user '{}' failed to match noderef '{}'",
+                                org.getUniquePath(),
+                                person.getAttribute(IPerson.USERNAME),
+                                org.getValue());
                 }
             }
         }
@@ -567,10 +562,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 target.setValue(dlmPathref.toString());
             }
             else {
-                if (this.log.isWarnEnabled()) {
-                    this.log.warn("Layout element '" + target.getUniquePath() + "' from user '"
-                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + target.getValue()
-                            + "'");
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Layout element '{}' from user '{}' failed to match noderef '{}'",
+                                target.getUniquePath(), person.getAttribute(IPerson.USERNAME), target.getValue());
                 }
             }
         }
@@ -594,10 +588,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 }
             }
             else {
-                if (this.log.isWarnEnabled()) {
-                    this.log.warn("Layout element '" + n.getUniquePath() + "' from user '"
-                            + person.getAttribute(IPerson.USERNAME) + "' failed to match noderef '" + n.getValue()
-                            + "'");
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Layout element '{}' from user '{}' failed to match noderef '{}'",
+                                n.getUniquePath(), person.getAttribute(IPerson.USERNAME), n.getValue());
                 }
             }
         }
@@ -641,9 +634,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         for (FormOfLayoutCorruption form : KNOWN_FORMS_OF_LAYOUT_CORRUPTION) {
             if (form.detect(layoutDoc)) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Corrupt layout detected: " + form.getMessage());
-                }
+                logger.warn("Corrupt layout detected: {}", form.getMessage());
                 rslt = true;
                 break;
             }
@@ -671,8 +662,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                 final org.dom4j.Element element = layoutDoc.elementByID(nodeId);
                 if (element == null) {
-                    this.log.warn("No node with id '" + nodeId + "' found in layout for: " + person.getUserName()
-                            + ". Stylesheet user preference layout attributes will be ignored: " + layoutAttributes);
+                    logger.warn("No node with id '{}' found in layout for: {}. Stylesheet user preference layout attributes will be ignored: {}", nodeId, person.getUserName(), layoutAttributes);
                     continue;
                 }
 
@@ -680,9 +670,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     final String name = attributeEntry.getKey();
                     final String value = attributeEntry.getValue();
 
-                    if (this.log.isDebugEnabled()) {
-                        this.log.debug("Adding structure folder attribute:  name=" + name + ", value=" + value);
-                    }
+                    logger.debug("Adding structure folder attribute:  name={}, value={}", name, value);
+
                     final org.dom4j.Element structAttrElement = this.fac.createElement(attributeType + "-attribute");
                     final org.dom4j.Element nameAttribute = structAttrElement.addElement("name");
                     nameAttribute.setText(name);
@@ -693,7 +682,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
         }
         else {
-            LOG.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
+            logger.debug("no StylesheetUserPreferences found for {}, {}", person, profile);
         }
     }
 
@@ -722,14 +711,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         //Get a ref to the profile element and then remove it from the layout
         final org.dom4j.Node profileElement = layout.selectSingleNode("profile");
         if (profileElement != null) {
-        	profileElement.getParent().remove(profileElement);
-        	
-        	final org.dom4j.Document profileDocument = new org.dom4j.DocumentFactory().createDocument();
-        	profileDocument.setRootElement((org.dom4j.Element)profileElement);
-        	profileDocument.setName(ownerUsername + ".profile");
-        	
-        	final DocumentSource profileSource = new DocumentSource(profileElement);
-			this.portalDataHandlerService.importData(profileSource);
+            profileElement.getParent().remove(profileElement);
+            
+            final org.dom4j.Document profileDocument = new org.dom4j.DocumentFactory().createDocument();
+            profileDocument.setRootElement((org.dom4j.Element)profileElement);
+            profileDocument.setName(ownerUsername + ".profile");
+            
+            final DocumentSource profileSource = new DocumentSource(profileElement);
+            this.portalDataHandlerService.importData(profileSource);
         }
        
 
@@ -757,8 +746,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         IUserProfile profile = null;
         try {
-	        person.setSecurityContext(new BrokenSecurityContext());
-	        profile = this.getUserProfileByFname(person, "default");
+            person.setSecurityContext(new BrokenSecurityContext());
+            profile = this.getUserProfileByFname(person, "default");
         }
         catch (final Throwable t) {
             throw new RuntimeException("Failed to load profile for " + person.getUserName()
@@ -835,7 +824,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     throw new IllegalArgumentException(msg);
                 }
                 else {
-                    log.warn(msg);
+                    logger.warn(msg);
                     //Remove the bad channel node
                     c.getParent().remove(c);
                 }
@@ -889,12 +878,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         
         if (preferencesElement != null) {
-        	final int ownerUserId = this.userIdentityStore.getPortalUserId(ownerUsername);
-        	//TODO this assumes a single layout, when multi-layout support exists portlet entities will need to be re-worked to allow for a layout id to be associated with the entity
+            final int ownerUserId = this.userIdentityStore.getPortalUserId(ownerUsername);
+            //TODO this assumes a single layout, when multi-layout support exists portlet entities will need to be re-worked to allow for a layout id to be associated with the entity
 
-        	//track which entities from the user's pre-existing set are touched (all non-touched entities will be removed)
-        	final Set<IPortletEntity> oldPortletEntities = new LinkedHashSet<IPortletEntity>(this.portletEntityDao.getPortletEntitiesForUser(ownerUserId));
-        	
+            //track which entities from the user's pre-existing set are touched (all non-touched entities will be removed)
+            final Set<IPortletEntity> oldPortletEntities = new LinkedHashSet<IPortletEntity>(this.portletEntityDao.getPortletEntitiesForUser(ownerUserId));
+            
             final List<org.dom4j.Element> entries = preferencesElement.selectNodes("entry");
             for (final org.dom4j.Element entry : entries) {
                 final String dlmPathRef = entry.attributeValue("entity");
@@ -904,21 +893,21 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 final Noderef dlmNoderef = nodeReferenceFactory.getNoderefFromPathref(person.getUserName(), dlmPathRef, fname, false, layout);
                 
                 if (dlmNoderef != null && !"".equals(dlmNoderef) && fname != null && !"null".equals(fname)) {
-                	final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef.toString(), ownerUserId);
-                	oldPortletEntities.remove(portletEntity);
-                	
-                	final List<IPortletPreference> portletPreferences = portletEntity.getPortletPreferences();
-                	
-                	final List<org.dom4j.Element> valueElements = entry.selectNodes("value");
-                	final List<String> values = new ArrayList<String>(valueElements.size());
-                	for (final org.dom4j.Element valueElement : valueElements) {
-                		values.add(valueElement.getText());
-                	}
-                	
-                	portletPreferences.add(new PortletPreferenceImpl(prefName, false, values.toArray(new String[values.size()])));
-                	
-                	
-                	this.portletEntityDao.updatePortletEntity(portletEntity);
+                    final IPortletEntity portletEntity = this.getPortletEntity(fname, dlmNoderef.toString(), ownerUserId);
+                    oldPortletEntities.remove(portletEntity);
+                    
+                    final List<IPortletPreference> portletPreferences = portletEntity.getPortletPreferences();
+                    
+                    final List<org.dom4j.Element> valueElements = entry.selectNodes("value");
+                    final List<String> values = new ArrayList<String>(valueElements.size());
+                    for (final org.dom4j.Element valueElement : valueElements) {
+                        values.add(valueElement.getText());
+                    }
+                    
+                    portletPreferences.add(new PortletPreferenceImpl(prefName, false, values.toArray(new String[values.size()])));
+                    
+                    
+                    this.portletEntityDao.updatePortletEntity(portletEntity);
                 }
             }
             
@@ -994,21 +983,18 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 final org.dom4j.Element layoutElement = structureAttribute.getParent();
                 final String nodeId = layoutElement.valueOf("@ID");
                 if (StringUtils.isEmpty(nodeId)) {
-                    log.warn("@ID is empty for layout element, the attribute will be ignored: "
-                            + structureAttribute.asXML());
+                    logger.warn("@ID is empty for layout element, the attribute will be ignored: {}", structureAttribute.asXML());
                 }
 
                 final String name = structureAttribute.valueOf("name");
                 if (StringUtils.isEmpty(nodeId)) {
-                    log.warn("name is empty for layout element, the attribute will be ignored: "
-                            + structureAttribute.asXML());
+                    logger.warn("name is empty for layout element, the attribute will be ignored: {}", structureAttribute.asXML());
                     continue;
                 }
 
                 final String value = structureAttribute.valueOf("value");
                 if (StringUtils.isEmpty(nodeId)) {
-                    log.warn("value is empty for layout element, the attribute will be ignored: "
-                            + structureAttribute.asXML());
+                    logger.warn("value is empty for layout element, the attribute will be ignored: {}", structureAttribute.asXML());
                     continue;
                 }
                 
@@ -1042,10 +1028,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         int idAfterThisOne = nextId; // default...
         final org.dom4j.Node idAttribute = e.selectSingleNode("@ID | @dlm:plfID");
         if (idAttribute == null) {
-            if (this.log.isDebugEnabled()) {
-                this.log.debug("No ID or dlm:plfID attribute for the following node "
-                        + "(one will be generated and added):  element" + e.getName() + ", name=" + e.valueOf("@name")
-                        + ", fname=" + e.valueOf("@fname"));
+            if (logger.isDebugEnabled()) {
+                logger.debug("No ID or dlm:plfID attribute for the following node (one will be generated and added):  element{}, name={}, fname={}",
+                             e.getName(), e.valueOf("@name"), e.valueOf("@fname"));
             }
 
             // We need to add an ID to this node...
@@ -1084,8 +1069,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 idAfterThisOne = Integer.parseInt(id.substring(1)) + 1;
             }
             catch (final NumberFormatException nfe) {
-                this.log.warn("Could not parse int value from id: " + id + " The next layout id will be: "
-                        + idAfterThisOne, nfe);
+                logger.warn("Could not parse int value from id: {} The next layout id will be: {}", id, idAfterThisOne, nfe);
             }
         }
 
@@ -1183,9 +1167,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             if (ownedFragment != null) {
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_FRAGMENT_NAME, ownedFragment.getName());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("User '" + userName + "' is owner of '" + ownedFragment.getName() + "' fragment.");
-                }
+                logger.debug("User '{}' is owner of '{}' fragment.", userName, ownedFragment.getName());
+
             }
             else if (isLayoutOwnerDefault) {
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
@@ -1247,7 +1230,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             activator.getUserView(fragment, locale);
         }
         catch (final Exception e) {
-            LOG.error("An exception occurred attempting to update a layout.", e);
+            logger.error("An exception occurred attempting to update a layout.", e);
         }
     }
 
@@ -1278,7 +1261,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 this.systemDefaultUser = PropertiesManager.getProperty(TEMPLATE_USER_NAME);
             }
             catch (final RuntimeException re) {
-                LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.", re);
+                logger.error("Property '{}' not defined.", TEMPLATE_USER_NAME, re);
             }
             if (this.systemDefaultUser != null && this.systemDefaultUser.equals(userName)) {
                 return true;
@@ -1337,18 +1320,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
 
-        if (this.log.isDebugEnabled()) {
-            this.log.debug("About to check applicability of " + definitions.size() + " fragments");
-        }
+        logger.debug("About to check applicability of {} fragments", definitions.size());
 
         final FragmentActivator activator = this.getFragmentActivator();
 
         if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
-
-                if (this.log.isDebugEnabled()) {
-                    this.log.debug("Checking applicability of the following fragment:  " + fragmentDefinition.getName());
-                }
+                logger.debug("Checking applicability of the following fragment: {}", fragmentDefinition.getName());
 
                 if (fragmentDefinition.isApplicable(person)) {
                     final UserView userView = activator.getUserView(fragmentDefinition, locale);
@@ -1365,25 +1343,22 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         if (null == PLF) {
             PLF = this._safeGetUserLayout(person, profile);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " immediately after loading\n"
-                    + XmlUtilitiesImpl.toString(PLF));
+        if (logger.isDebugEnabled()) {
+            logger.debug("PLF for {} immediately after loading\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
         }
 
         final Document ILF = ILFBuilder.constructILF(PLF, applicables, person);
         person.setAttribute(Constants.PLF, PLF);
         final IntegrationResult result = new IntegrationResult();
         PLFIntegrator.mergePLFintoILF(PLF, ILF, result);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
-                    + XmlUtilitiesImpl.toString(PLF));
-            LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
-                    + XmlUtilitiesImpl.toString(ILF));
+        if (logger.isDebugEnabled()) {
+            logger.debug("PLF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
+            logger.debug("ILF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(ILF));
         }
         // push optimizations made during merge back into db.
         if (result.changedPLF) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Saving PLF for " + person.getAttribute(IPerson.USERNAME) + " due to changes during merge.");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Saving PLF for {} due to changes during merge.", person.getAttribute(IPerson.USERNAME));
             }
             super.setUserLayout(person, profile, PLF, false);
         }
@@ -1425,8 +1400,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     {
         final Document plf = (Document) person.getAttribute(Constants.PLF);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + "\n" + XmlUtilitiesImpl.toString(plf));
+        if (logger.isDebugEnabled()) {
+            logger.debug("PLF for {}\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(plf));
         }
         super.setUserLayout(person, profile, plf, channelsAdded);
 
@@ -1464,8 +1439,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final FragmentDefinition fragmentDefinition : fragments) {
                 final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
                 if (userView == null) {
-                    this.log.warn("No UserView is present for fragment " + fragmentDefinition.getName()
-                            + " it will be skipped when fragment node information");
+                    logger.warn("No UserView is present for fragment {} it will be skipped when fragment node information",
+                                fragmentDefinition.getName());
                     continue;
                 }
 
@@ -1507,7 +1482,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             throw new RuntimeException(xpee);
         }
         if (element == null) {
-            this.log.warn("The specified folderId was not found in the user's PLF:  " + incdId);
+            logger.warn("The specified folderId was not found in the user's PLF: {}", incdId);
             return null;
         }
         final Attr attr = element.getAttributeNode(Constants.ATT_PLF_ID);
@@ -1673,9 +1648,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
         }
         else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding identifier " + folderPrefix + ls.getStructId());
-            }
+            logger.debug("Adding identifier {}{}", folderPrefix, ls.getStructId());
             structure.setAttribute("ID", channelPrefix + ls.getStructId());
         }
         structure.setIdAttribute(Constants.ATT_ID, true);
@@ -1698,8 +1671,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final Element structure = (Element) node;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("saveStructure XML content: " + XmlUtilitiesImpl.toString(node));
+        if (logger.isDebugEnabled()) {
+            logger.debug("saveStructure XML content: {}", XmlUtilitiesImpl.toString(node));
         }
 
         // determine the struct_id for storing in the db. For incorporated nodes in
@@ -1762,9 +1735,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         structStmt.setString(8, RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
         structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
         structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(structStmt.toString());
-        }
+        logger.debug(structStmt.toString());
         structStmt.executeUpdate();
 
         // code to persist extension attributes for dlm
@@ -1780,9 +1751,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 parmStmt.setInt(1, saveStructId);
                 parmStmt.setString(2, name);
                 parmStmt.setString(3, attrib.getNodeValue());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(parmStmt.toString());
-                }
+                logger.debug(parmStmt.toString());
                 parmStmt.executeUpdate();
             }
         }
@@ -1808,9 +1777,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                             parmStmt.setInt(1, saveStructId);
                             parmStmt.setString(2, parmName);
                             parmStmt.setString(3, parmValue);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug(parmStmt);
-                            }
+                            logger.debug(parmStmt.toString());
                             parmStmt.executeUpdate();
                         }
                     }

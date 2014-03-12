@@ -27,19 +27,21 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
@@ -97,11 +99,11 @@ import com.google.common.cache.Cache;
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(RDBMUserLayoutStore.class);
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";
-    private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND = "Name:%s ID:%s User's profiles contain more than one non-zero layout id.  This is currently not supported.";
+    private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND = "User ID {}'s profiles contain more than one non-zero layout id.  This is currently not supported.";
 
     //This class is instantiated ONCE so NO class variables can be used to keep state between calls
     protected static final String channelPrefix = "n";
@@ -207,7 +209,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             // be sure we only do this once...
             // Load the "system" user id from the database
             final int systemUserId = jdbcOperations.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
-            log.info("Found user id " + systemUserId + " for the 'system' user.");
+            logger.info("Found user id {} for the 'system' user.", systemUserId);
             return new SystemUser(systemUserId);
         }
     };
@@ -247,8 +249,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 sQuery = "INSERT INTO UP_USER_PROFILE (USER_ID,PROFILE_ID,PROFILE_FNAME,PROFILE_NAME,STRUCTURE_SS_ID,THEME_SS_ID,DESCRIPTION, LAYOUT_ID) VALUES ("
                         + userId + ",'" + profileId + ",'" + profile.getProfileFname() + "','" + profile.getProfileName() + "'," + profile.getStructureStylesheetId()
                         + "," + profile.getThemeStylesheetId() + ",'" + profile.getProfileDescription() + "', "+profile.getLayoutId()+")";
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::addUserProfile(): " + sQuery);
+                logger.debug("addUserProfile(): {}", sQuery);
                 try {
                     pstmt.executeUpdate();
 
@@ -284,27 +285,25 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     private int getLayoutId(final IPerson person, final IUserProfile profile) {
         final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
         int layoutId = profile.getLayoutId();
-        List<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles);
-        if (layoutIds.size() > 0) {
-            layoutId = layoutIds.get(0);
+        Set<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles);
+        if (!layoutIds.isEmpty()) {
+            layoutId = layoutIds.iterator().next();
         }
         if (layoutIds.size() > 1) {
             // log that only one non-zero layout id assumption has been broken
-            log.warn(String.format(UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND, person.getID(), person.getID()));
+            logger.warn(UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND, person.getID() );
         }
         return layoutId;
     }
 
-    private List<Integer> getAllNonZeroLayoutIdsFromProfiles(final Hashtable<Integer, UserProfile> profiles) {
-        List<Integer> layoutIds = new ArrayList<Integer>();
+    private Set<Integer> getAllNonZeroLayoutIdsFromProfiles(final Hashtable<Integer, UserProfile> profiles) {
+        Set<Integer> layoutIds = new HashSet<Integer>();
         Iterator<Entry<Integer, UserProfile>> profilesIterator = profiles.entrySet().iterator();
         while (profilesIterator.hasNext()) {
             Entry<Integer, UserProfile> entryProfile = profilesIterator.next();
             int userProfileLayoutId = entryProfile.getValue().getLayoutId();
             if (userProfileLayoutId != 0) {
-                if (!layoutIds.contains(userProfileLayoutId)) {
-                    layoutIds.add(userProfileLayoutId);
-                }
+                layoutIds.add(userProfileLayoutId);
             }
         }
         return layoutIds;
@@ -374,25 +373,21 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 Statement stmt = con.createStatement();
                 try {
                     String sQuery = "DELETE FROM UP_USER_PROFILE WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+                    logger.debug("deleteUserProfile() : {}", sQuery);
                     stmt.executeUpdate(sQuery);
 
                     // remove profile mappings
                     sQuery= "DELETE FROM UP_USER_UA_MAP WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+                    logger.debug("deleteUserProfile() : {}", sQuery);
                     stmt.executeUpdate(sQuery);
 
                     // remove parameter information
                     sQuery= "DELETE FROM UP_SS_USER_PARM WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+                    logger.debug("deleteUserProfile() : {}", sQuery);
                     stmt.executeUpdate(sQuery);
 
                     sQuery= "DELETE FROM UP_SS_USER_ATTS WHERE USER_ID=" + userId + " AND PROFILE_ID=" + Integer.toString(profileId);
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::deleteUserProfile() : " + sQuery);
+                    logger.debug("deleteUserProfile() : {}", sQuery);
                     stmt.executeUpdate(sQuery);
 
                 } finally {
@@ -474,8 +469,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         Statement stmt = con.createStatement();
                         try {
                             String sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + userId;
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sQuery);
+                            logger.debug("getNextStructId(): {}", sQuery);
                             ResultSet rs = stmt.executeQuery(sQuery);
                             int currentStructId;
                             try {
@@ -492,8 +486,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             int nextStructId = currentStructId + 1;
                             String sUpdate = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID="
                                     + userId + " AND NEXT_STRUCT_ID=" + currentStructId;
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::getNextStructId(): " + sUpdate);
+                            logger.debug("getNextStructId(): {}", sUpdate);
                             stmt.executeUpdate(sUpdate);
                             return prefix + nextStructId;
                         }
@@ -535,8 +528,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return  this.getTextChildNodeValue(name);
         }
         else {
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
+            logger.debug("getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
             return  null;
         }
     }
@@ -556,8 +548,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return  this.getTextChildNodeValue(name);
         }
         else {
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getRootElementTextValue() : no \"" + elementName + "\" element was found under the \"stylesheetdescription\" node!");
+            logger.debug("getRootElementTextValue() : no \"{}\" element was found under the \"stylesheetdescription\" node!", elementName);
             return  null;
         }
     }
@@ -576,8 +567,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return  this.getTextChildNodeValue(description);
         }
         else {
-            if (log.isDebugEnabled())
-                log.debug("RDBMUserLayoutStore::getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
+            logger.debug("getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
             return  null;
         }
     }
@@ -587,7 +577,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         // find "stylesheetdescription" node, take the first one
         Element stylesheetdescriptionElement = (Element)(descr.getElementsByTagName("stylesheetdescription")).item(0);
         if (stylesheetdescriptionElement == null) {
-            log.error( "Could not obtain <stylesheetdescription> element");
+            logger.error( "Could not obtain <stylesheetdescription> element");
             return  null;
         }
         NodeList elements = stylesheetdescriptionElement.getElementsByTagName(elementName);
@@ -620,7 +610,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 final String userAgent;
                 if (userAgentArg.length() > 255){
                     userAgent = userAgentArg.substring(0,254);
-                    log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgentArg);
+                    logger.debug("userAgent trimmed to 255 characters. userAgent: {}", userAgentArg);
                 }
                 else {
                     userAgent = userAgentArg;
@@ -636,9 +626,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     pstmt.setInt(1, userId);
                     pstmt.setString(2, userAgent);
 
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::getUserBrowserMapping(): '" + sQuery + "' userId: "
-                                + userId + " userAgent: " + userAgent);
+
+                    logger.debug("getUserBrowserMapping(): '{}' userId: {} userAgent: {}", sQuery, userId, userAgent);
                     ResultSet rs = pstmt.executeQuery();
                     try {
                         if (rs.next()) {
@@ -691,8 +680,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                         int newUserId;
 
                                         String sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + realUserId;
-                                        if (log.isDebugEnabled())
-                                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                                        logger.debug("getUserLayout(): {}", sQuery);
                                         ResultSet rs = stmt.executeQuery(sQuery);
                                         try {
                                             boolean hasRow = rs.next();
@@ -704,8 +692,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                                         // Make sure the next struct id is set in case the user adds a channel
                                         sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + newUserId;
-                                        if (log.isDebugEnabled())
-                                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                                        logger.debug("getUserLayout(): {}", sQuery);
                                         int nextStructId;
                                         rs = stmt.executeQuery(sQuery);
                                         try {
@@ -721,8 +708,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             // But never make the existing value SMALLER, change it only to make it LARGER
                                             // (so, get existing value)
                                             sQuery = "SELECT NEXT_STRUCT_ID FROM UP_USER WHERE USER_ID=" + realUserId;
-                                            if (log.isDebugEnabled())
-                                                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                                            logger.debug("getUserLayout(): {}", sQuery);
                                             rs = stmt.executeQuery(sQuery);
                                             try {
                                                 boolean hasRow = rs.next();
@@ -734,8 +720,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                                         if (nextStructId > realNextStructId) {
                                             sQuery = "UPDATE UP_USER SET NEXT_STRUCT_ID=" + nextStructId + " WHERE USER_ID=" + realUserId;
-                                            if (log.isDebugEnabled())
-                                                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                                            logger.debug("getUserLayout(): {}", sQuery);
                                             stmt.executeUpdate(sQuery);
                                         }
 
@@ -762,14 +747,13 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                     //the layout is searched for again. This loop should only ever loop once.
                     do {
                         String sQuery = "SELECT INIT_STRUCT_ID FROM UP_USER_LAYOUT WHERE USER_ID=" + userId + " AND LAYOUT_ID = " + layoutId;
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                        logger.debug("getUserLayout(): {}", sQuery);
                         rs = stmt.executeQuery(sQuery);
                         try {
                             if (rs.next()) {
                                 firstStructId = rs.getInt(1);
                             } else {
-                                throw new RuntimeException("RDBMUserLayoutStore::getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for USER_ID: " + userId + " and LAYOUT_ID: " + layoutId);
+                                throw new RuntimeException("getUserLayout(): No INIT_STRUCT_ID in UP_USER_LAYOUT for USER_ID: " + userId + " and LAYOUT_ID: " + layoutId);
                             }
                         } finally {
                             rs.close();
@@ -790,8 +774,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             sql += " FROM UP_LAYOUT_STRUCT ULS WHERE ";
                         }
                         sql += " ULS.USER_ID=" + userId + " AND ULS.LAYOUT_ID=" + layoutId + " ORDER BY ULS.STRUCT_ID";
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+                        logger.debug("getUserLayout(): {}", sql);
                         rs = stmt.executeQuery(sql);
 
                         //check for rows in the result set
@@ -804,8 +787,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                             //Get the default user ID and layout ID
                             sQuery = "SELECT USER_DFLT_USR_ID, USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=" + userId;
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::getUserLayout(): " + sQuery);
+                            logger.debug("getUserLayout(): {}", sQuery);
                             rs = stmt.executeQuery(sQuery);
                             try {
                                 rs.next();
@@ -914,8 +896,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 " AND LAYOUT_ID=" + layoutId +
                                 " AND CHAN_ID IN (" + structChanIds.toString() + ") ORDER BY STRUCT_ID";
 
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+                        logger.debug("getUserLayout(): {}", sql);
                         StringBuffer structIdsSB = new StringBuffer( "" );
                         String sep = "";
                         rs = stmt.executeQuery(sql);
@@ -932,8 +913,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                         sql = "SELECT STRUCT_ID, STRUCT_PARM_NM,STRUCT_PARM_VAL FROM UP_LAYOUT_PARAM WHERE USER_ID=" + userId + " AND LAYOUT_ID=" + layoutId +
                                 " AND STRUCT_ID IN (" + structIdsSB.toString() + ") ORDER BY STRUCT_ID";
-                        if (log.isDebugEnabled())
-                            log.debug("RDBMUserLayoutStore::getUserLayout(): " + sql);
+                        logger.debug("getUserLayout(): {}", sql);
                         rs = stmt.executeQuery(sql);
                         try {
                             if (rs.next()) {
@@ -958,10 +938,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         createLayout(layoutStructure, doc, root, firstStructId);
                         layoutStructure.clear();
 
-                        if (log.isDebugEnabled()) {
+                        if (logger.isDebugEnabled()) {
                             long stopTime = System.currentTimeMillis();
-                            log.debug("RDBMUserLayoutStore::getUserLayout(): Layout document for user " + userId + " took " +
-                                    (stopTime - startTime) + " milliseconds to create");
+                            long timeTook = stopTime - startTime;
+                            logger.debug("getUserLayout(): Layout document for user {} took {} milliseconds to create", userId, timeTook);
                         }
 
                         doc.appendChild(root);
@@ -985,8 +965,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 try {
                     String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
                             + userId + " AND PROFILE_ID=" + profileId;
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::getUserProfileById(): " + sQuery);
+                    logger.debug("getUserProfileById(): {}", sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
                     try {
                         if (rs.next()) {
@@ -1063,7 +1042,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             }
         }
 
-        log.debug("Getting profile " + profileFname + " for user " + person.getID());
+        logger.debug("Getting profile {} for user {}", profileFname, person.getID());
         final int userId = person.getID();
         final UserProfile userProfile = jdbcOperations.execute(new ConnectionCallback<UserProfile>() {
             @Override
@@ -1076,9 +1055,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 pstmt.setInt(1, userId);
                 pstmt.setString(2, profileFname);
                 try {
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::getUserProfileByFname(): " + query +
-                                " userId: " + userId + " profileFname: " + profileFname);
+                    logger.debug("getUserProfileByFname(): {} userId: {} profileFname: {}", query, userId, profileFname);
                     ResultSet rs = pstmt.executeQuery();
                     try {
                         if (rs.next()) {
@@ -1115,8 +1092,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             return userProfile;
                         }
 
-            /* Try to copy the template profile. */
-                        log.debug("Copying template profile " + profileFname + " to user " + person.getID());
+                        /* Try to copy the template profile. */
+                        logger.debug("Copying template profile {} to user {}", profileFname, person.getID());
                         rs.close();
                         pstmt.close();
                         pstmt = con.prepareStatement("SELECT USER_DFLT_USR_ID FROM UP_USER WHERE USER_ID=?");
@@ -1172,8 +1149,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 try {
                     String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
                             + userId;
-                    if (log.isDebugEnabled())
-                        log.debug("RDBMUserLayoutStore::getUserProfileList(): " + sQuery);
+                    logger.debug("getUserProfileList(): {}", sQuery);
                     ResultSet rs = stmt.executeQuery(sQuery);
                     try {
                         while (rs.next()) {
@@ -1222,7 +1198,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         final String userAgent;
                         if (userAgentArg.length() > 255){
                             userAgent = userAgentArg.substring(0,254);
-                            log.debug("userAgent trimmed to 255 characters. userAgent: "+userAgentArg);
+                            logger.debug("userAgent trimmed to 255 characters. userAgent: {}", userAgentArg);
                         }
                         else {
                             userAgent = userAgentArg;
@@ -1243,7 +1219,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             }
                         }
                         try{
-                            log.debug("writing to UP_USER_UA_MAP: userId: "+userId+", userAgent: "+userAgent+", profileId: "+profileId);
+                            logger.debug("writing to UP_USER_UA_MAP: userId: {}, userAgent: {}, profileId: {}", userId, userAgent, profileId);
                             ps = con.prepareStatement("INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (?,?,?)");
                             ps.setInt(1,userId);
                             ps.setString(2,userAgent);
@@ -1303,8 +1279,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             pstmt.clearParameters();
                             pstmt.setInt(1, userId);
                             pstmt.setInt(2, layoutId);
-                            if (log.isDebugEnabled())
-                                log.debug(sql);
+                                logger.debug(sql);
                             pstmt.executeUpdate();
                         } finally {
                             pstmt.close();
@@ -1316,8 +1291,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             pstmt.clearParameters();
                             pstmt.setInt(1, userId);
                             pstmt.setInt(2, layoutId);
-                            if (log.isDebugEnabled())
-                                log.debug(sql);
+                            logger.debug(sql);
                             pstmt.executeUpdate();
                         } finally {
                             pstmt.close();
@@ -1345,8 +1319,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             pstmt.clearParameters();
                             pstmt.setInt(1, userId);
                             pstmt.setInt(2, layoutId);
-                            if (log.isDebugEnabled())
-                                log.debug(sql);
+                            logger.debug(sql);
                             rs = pstmt.executeQuery();
 
                             try {
@@ -1359,8 +1332,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                     try {
                                         pstmt2.clearParameters();
                                         pstmt2.setInt(1, userId);
-                                        if (log.isDebugEnabled())
-                                            log.debug(sql);
+                                        logger.debug(sql);
                                         ResultSet rs2 = null;
                                         try {
                                             rs2 = pstmt2.executeQuery();
@@ -1379,8 +1351,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                     try {
                                         pstmt2.clearParameters();
                                         pstmt2.setInt(1, defaultUserId);
-                                        if (log.isDebugEnabled())
-                                            log.debug(sql);
+                                        logger.debug(sql);
                                         ResultSet rs2 = pstmt2.executeQuery();
                                         try {
                                             if (rs2.next()) {
@@ -1393,8 +1364,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                     pstmt3.setInt(2, rs2.getInt("LAYOUT_ID"));
                                                     pstmt3.setString(3, rs2.getString("LAYOUT_TITLE"));
                                                     pstmt3.setInt(4, rs2.getInt("INIT_STRUCT_ID"));
-                                                    if (log.isDebugEnabled())
-                                                        log.debug(sql);
+                                                    logger.debug(sql);
                                                     pstmt3.executeUpdate();
                                                 } finally {
                                                     pstmt3.close();
@@ -1409,8 +1379,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                                     pstmt3.setInt(2, layoutId);
                                                     pstmt3.setString(3, "default layout");
                                                     pstmt3.setInt(4, 1);
-                                                    if (log.isDebugEnabled())
-                                                        log.debug(sql);
+                                                    logger.debug(sql);
                                                     pstmt3.executeUpdate();
                                                 } finally {
                                                     pstmt3.close();
@@ -1439,8 +1408,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             pstmt.setInt(1, firstStructId);
                             pstmt.setInt(2, userId);
                             pstmt.setInt(3, layoutId);
-                            if (log.isDebugEnabled())
-                                log.debug(sql);
+                            logger.debug(sql);
                             pstmt.executeUpdate();
                         } finally {
                             pstmt.close();
@@ -1454,7 +1422,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 pstmt.clearParameters();
                                 pstmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
                                 pstmt.setInt(2, userId);
-                                log.debug(sql);
+                                logger.debug(sql);
                                 pstmt.executeUpdate();
                             } finally {
                                 pstmt.close();
@@ -1470,7 +1438,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                             try {
                                 pstmt.clearParameters();
                                 pstmt.setInt(1, userId);
-                                log.debug(sql);
+                                logger.debug(sql);
                                 rs = pstmt.executeQuery();
                                 try {
                                     rs.next();
@@ -1489,7 +1457,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                 pstmt.clearParameters();
                                 pstmt.setInt(1, userId);
                                 pstmt.setInt(2, profileId);
-                                log.debug(sql);
+                                logger.debug(sql);
                                 pstmt.executeUpdate();
                             } finally {
                                 pstmt.close();
@@ -1501,9 +1469,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 });
             }
         });
-        if (log.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             long stopTime = System.currentTimeMillis();
-            log.debug("RDBMUserLayoutStore::setUserLayout(): Layout document for user " + userId + " took " + (stopTime - startTime) + " milliseconds to save");
+            long timeTook = stopTime - startTime;
+            logger.debug("setUserLayout(): Layout document for user {} took {} milliseconds to save", userId, timeTook);
         }
     }
 
@@ -1528,12 +1497,16 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         pstmt.setInt(7, userId);
                         pstmt.setInt(8, profile.getProfileId());
                         try {
-                            if (log.isDebugEnabled())
-                                log.debug("RDBMUserLayoutStore::updateUserProfile() : " + query +
-                                        " layout_id: " + profile.getLayoutId() + " theme_ss_id: " + profile.getThemeStylesheetId() +
-                                        " structure_ss_id: " + profile.getStructureStylesheetId() + " description: " +
-                                        profile.getProfileDescription() + " name: " + profile.getProfileName() +
-                                        " user_id: " + userId + " fname: " + profile.getProfileFname());
+                            if (logger.isDebugEnabled())
+                                logger.debug("updateUserProfile() : {} layout_id: {} theme_ss_id: {} structure_ss_id: {} description: {} name: {} user_id: {} fname: {}", 
+                                             query,
+                                             profile.getLayoutId(),
+                                             profile.getThemeStylesheetId(),
+                                             profile.getStructureStylesheetId(),
+                                             profile.getProfileDescription(),
+                                             profile.getProfileName(),
+                                             userId,
+                                             profile.getProfileFname());
                             pstmt.execute();
                         } finally {
                             pstmt.close();
@@ -1708,8 +1681,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
                 final int u = userId;
                 final int p = profileId;
-                if (log.isDebugEnabled())
-                    log.debug("RDBMUserLayoutStore::getLayoutID(userId=" + u + ", profileId=" + p + " ): " + query);
+
+                logger.debug("getLayoutID(userId={}, profileId={} ): {}", u, p, query);
 
                 pstmt.setInt(1, u);
                 pstmt.setInt(2, p);
