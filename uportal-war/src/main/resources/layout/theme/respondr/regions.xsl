@@ -313,6 +313,7 @@
             </ul>
             <script type="text/javascript">
                 up.jQuery(document).ready(function() {
+                    var $ = up.jQuery;
                     $('section.<xsl:value-of select="@fname" />').hover(function() {
                         $(this).find('.hover-chrome').stop(true, true).slideDown('medium');
                     }, 

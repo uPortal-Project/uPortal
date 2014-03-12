@@ -30,7 +30,7 @@
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>JspInvoker</ns2:portletName>
     </portlet-descriptor>
-    <group>Authenticated Users</group>
+    <group>Respondr Theme Users</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

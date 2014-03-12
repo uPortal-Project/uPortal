@@ -415,14 +415,19 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="header.guest.block">
-  	<!-- Skip Navigation -->
+    <!-- Skip Navigation -->
     <xsl:call-template name="skip.nav"/>
 
-  	<!-- Logo -->
+    <!-- Logo -->
     <xsl:call-template name="logo"/>
 
     <!-- Login -->
-  	<xsl:call-template name="login"/>
+    <xsl:call-template name="login"/>
+
+    <!-- Emergency Alert -->
+    <div id="portalHeaderBlock">
+      <xsl:copy-of select="//channel/parameter[@name = 'role' and @value = 'alert']/parent::*"/>
+    </div>
   </xsl:template>
   <!-- ================================================== -->
 

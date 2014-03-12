@@ -30,7 +30,7 @@
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>DynamicRespondrSkin</ns2:portletName>
     </portlet-descriptor>
-    <group>Everyone</group>
+    <group>Respondr Theme Users</group>
     <parameter>
         <name>configurable</name>
         <value>true</value>

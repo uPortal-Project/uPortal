@@ -508,7 +508,7 @@
     </div>
 
     <script type="text/javascript">
-        up.jQuery(document).ready(function(){
+        up.jQuery(document).ready(function() {
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
             up.FragmentPermissionsManager("body", {
                 savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
@@ -517,7 +517,8 @@
                 }
             });
             </xsl:if>
-            var layoutPreferences = up.LayoutPreferences("body", {
+            <xsl:if test="$AUTHENTICATED='true'">
+            var options = {
                 tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
                 numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
                 portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
@@ -546,14 +547,15 @@
                     allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
                     persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
                 }
+            };
+            var layoutPreferences = up.LayoutPreferences("body", options);
+            // For the portlet/Respondr version of the gallery control, 
+            // we must open it ourselves (if present) when the page loads.
+            if (layoutPreferences.components.gallery) {
+                layoutPreferences.components.gallery.openGallery();
             }
-        );
-        // For the portlet/Respondr version of the gallery control, 
-        // we must open it ourselves (if present) when the page loads.
-        if(layoutPreferences.components.gallery) {
-            layoutPreferences.components.gallery.openGallery();
-        }
-    });
+            </xsl:if>
+        });
     </script>
 
 </xsl:template>

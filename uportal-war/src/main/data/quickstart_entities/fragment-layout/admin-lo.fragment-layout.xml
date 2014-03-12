@@ -22,8 +22,18 @@
 <layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" 
   username="admin-lo" >
   <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
-    <folder ID="s2" hidden="true" immutable="true" name="Header folder" type="page-top" unremovable="true">
-      <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n3"/>
+    <!--
+     | Hidden folders do not propagate to regular users, and fragment owner 
+     | accounts don't receive (other) fragments at all;  Fragment owners must
+     | have their own copies of the minimal portlets required to view and manage
+     | their own layouts.
+     +-->
+    <folder ID="s2" hidden="true" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
+      <channel fname="dynamic-respondr-skin" unremovable="false" hidden="false" immutable="false" ID="n3"/>
+      <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n4"/>
+    </folder>
+    <folder ID="s5" hidden="true" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n6"/>
     </folder>
     <folder ID="s7" hidden="false" immutable="false" name="Admin Tools" type="regular" unremovable="false">
       <structure-attribute>
