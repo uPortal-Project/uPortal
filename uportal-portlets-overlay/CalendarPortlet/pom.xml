@@ -30,6 +30,12 @@
             <classifier>classes</classifier>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>serializer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -127,6 +133,12 @@
                         <classifier>classes</classifier>
                         <type>jar</type>
                         <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>xalan</groupId>
+                                <artifactId>serializer</artifactId>
+                            </exclusion>
+                        </exclusions>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -154,6 +166,12 @@
                         <classifier>classes</classifier>
                         <type>jar</type>
                         <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>xalan</groupId>
+                                <artifactId>serializer</artifactId>
+                            </exclusion>
+                        </exclusions>
                     </dependency>
                 </dependencies>
                 <configuration>
