@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathConstants;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
@@ -46,22 +47,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /**
- * Spring controller that returns a JSON or XML representation of DLM fragments.  For
- * non-admins, this will only display the channels the user is allowed to
- * manage or subscribe to.  Admins have a choice of viewing manageable,
- * subscribable, or all channels by the "type" request parameter.</p>
- * <p>Request parameters:</p>
+ * Spring controller that returns a JSON representation of DLM fragments
+ * in response to requests by portal administrators.</p>
+ * <p>Optional Request parameter:</p>
  * <ul>
- *   <li>xml: if "true", return an XML view of the channels rather than a
- *   JSON view</li>
- *   <li>type: "subscribe", "manage", or "all".  Displays subscribable,
- *   manageable, or all channels (admin only).  Default is subscribable.
+ *   <li>sort : PRECEDENCE or NAME.  Defaults to PRECEDENCE. Sort by precedence or name of fragment.</li>
  * </ul>
+ *
+ * Implementation note: currently the UI client for this JSON service,
+ * in fragment-audit.jsp, does not implement support for user selection of sort order.
  *
  * @author Drew Wills, drew@unicon.net
  */
@@ -103,9 +103,24 @@ public class FragmentListController {
     public void setPortletRegistry(IPortletDefinitionRegistry portletRegistry) {
         this.portletRegistry = portletRegistry;
     }
-        
+
+    /**
+     * Returns a model of
+     * fragments --> List<FragmentBean> ,
+     * sorted by precedence (default) or by fragment name depending on sort parameter,
+     * to be rendered by the jsonView.
+     *
+     * @param req the servlet request, bound via SpringWebMVC to GET method invocations of this controller.
+     * @param sortParam PRECEDENCE, NAME, or null.
+     * @return ModelAndView with a List of FragmentBeans to be rendered by the jsonView.
+     * @throws ServletException on Exception in underlying attempt to get at the fragments
+     * @throws AuthorizationException if request is for any user other than a Portal Administrator.
+     * @throws IllegalArgumentException if sort parameter has an unrecognized value
+     */
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listFragments(HttpServletRequest req) throws ServletException {
+    public ModelAndView listFragments(HttpServletRequest req,
+                                      @RequestParam(value="sort",required=false) String sortParam)
+            throws ServletException {
 
         // Verify that the user is allowed to use this service
         IPerson user = personManager.getPerson(req);
@@ -147,8 +162,7 @@ public class FragmentListController {
         }
         
         // Determine & follow sorting preference...
-        Sort sort = DEFAULT_SORT; 
-        String sortParam = req.getParameter("sort");
+        Sort sort = DEFAULT_SORT;
         if (sortParam != null) {
             sort = Sort.valueOf(sortParam);
         }
@@ -206,12 +220,8 @@ public class FragmentListController {
         private final List<String> portlets;
         
         public static FragmentBean create(FragmentDefinition frag, List<String> portlets) {
-            
-            // Assertions.
-            if (frag == null) {
-                String msg = "Argument 'frag' cannot be null";
-                throw new IllegalArgumentException(msg);
-            }
+
+            Validate.notNull(frag, "Cannot create a FragmentBean for a null fragment.");
             
             // NB:  'portlets' may be null
             
