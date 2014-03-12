@@ -27,7 +27,7 @@
 
 <config xmlns="urn:org:jgroups"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.1.xsd">
+        xsi:schemaLocation="urn:org:jgroups http://www.jgroups.org/schema/JGroups-3.2.xsd">
     <UDP
          mcast_addr="${uPortal.cacheManager.jgroups.udp.mcast_addr}"
          mcast_port="${uPortal.cacheManager.jgroups.udp.mcast_port:45588}"

@@ -25,7 +25,7 @@
     <fname>ssp</fname>
     <desc>Main Student Success Plan interface for coaches</desc>
     <type>Portlet</type>
-    <timeout>20000</timeout>
+    <timeout>120</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/ssp</ns2:webAppName>
         <ns2:portletName>SSP</ns2:portletName>
