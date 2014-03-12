@@ -24,24 +24,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
@@ -64,6 +60,8 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -285,7 +283,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     private int getLayoutId(final IPerson person, final IUserProfile profile) {
         final Hashtable<Integer, UserProfile> profiles = this.getUserProfileList(person);
         int layoutId = profile.getLayoutId();
-        Set<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles);
+        Set<Integer> layoutIds = getAllNonZeroLayoutIdsFromProfiles(profiles.values());
         if (!layoutIds.isEmpty()) {
             layoutId = layoutIds.iterator().next();
         }
@@ -296,12 +294,10 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         return layoutId;
     }
 
-    private Set<Integer> getAllNonZeroLayoutIdsFromProfiles(final Hashtable<Integer, UserProfile> profiles) {
+    private Set<Integer> getAllNonZeroLayoutIdsFromProfiles(final Collection<UserProfile> profiles) {
         Set<Integer> layoutIds = new HashSet<Integer>();
-        Iterator<Entry<Integer, UserProfile>> profilesIterator = profiles.entrySet().iterator();
-        while (profilesIterator.hasNext()) {
-            Entry<Integer, UserProfile> entryProfile = profilesIterator.next();
-            int userProfileLayoutId = entryProfile.getValue().getLayoutId();
+        for (UserProfile profile: profiles) {
+            int userProfileLayoutId = profile.getLayoutId();
             if (userProfileLayoutId != 0) {
                 layoutIds.add(userProfileLayoutId);
             }
