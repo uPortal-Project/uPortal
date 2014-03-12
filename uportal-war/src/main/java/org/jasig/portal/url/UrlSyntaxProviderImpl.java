@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -829,6 +830,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
+        
+        boolean isRedirectionToDefaultUrl = false;
+        
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final String cachedCanonicalUrl = (String)request.getAttribute(PORTAL_CANONICAL_URL);
         if (cachedCanonicalUrl != null) {
@@ -855,11 +859,20 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
         else {
             portalUrlBuilder = this.portalUrlProvider.getDefaultUrl(request);
+            isRedirectionToDefaultUrl = request.getPathInfo() != null;
         }
         
         //Copy over portal parameters
-        final Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
-        portalUrlBuilder.setParameters(portalParameters);
+        Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
+        
+        if(isRedirectionToDefaultUrl) {//add in redirect parameter so we know that we were redirected
+            Map<String, List<String>> portalParamsWithRedirect = new HashMap<String, List<String>>(portalParameters);
+            
+            portalParamsWithRedirect.put("redirectToDefault", Collections.singletonList( "true" ));
+            portalUrlBuilder.setParameters(portalParamsWithRedirect);
+        } else {
+            portalUrlBuilder.setParameters(portalParameters);
+        }
         
         //Copy data for each portlet
         for (final IPortletRequestInfo portletRequestInfo : portalRequestInfo.getPortletRequestInfoMap().values()) {
