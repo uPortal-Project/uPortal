@@ -280,7 +280,7 @@
   <xsl:template name="controls">
     <div class="btn-group">
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
-      <ul class="dropdown-menu">
+      <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--
       Porlet Controls Display Order:
       help, remove, maximize, minimize, info, print, settings, ...
