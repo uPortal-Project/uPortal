@@ -21,7 +21,9 @@ package org.jasig.portal.portlets.marketplace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +35,9 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
-
+import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -42,116 +45,199 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MarketplacePortletDefinition implements IPortletDefinition{
-	
-	private IPortletDefinition portletDefinition;
-	private List<ScreenShot> screenShots;
-	public static final String MARKETPLACE_FNAME = "portletmarketplace";
-	private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
-	private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
-	private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
-	private PortletReleaseNotes releaseNotes;
-	
-	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	/**
-	 * 
-	 * @param portletDefinition the portlet definition to make this MarketplacePD
-	 * Benefit: screenshot property is set if any are available.  This includes URL and caption
-	 */
-	public MarketplacePortletDefinition(IPortletDefinition portletDefinition){
-		this.portletDefinition = portletDefinition;
-		this.setUpDefinitions();
-	}
+    public static final String MARKETPLACE_FNAME = "portletmarketplace";
+    public static final int QUANTITY_RELATED_PORTLETS_TO_SHOW = 5;
+    private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
+    private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
+    private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    private IPortletDefinition portletDefinition;
+    private List<ScreenShot> screenShots;
+    private PortletReleaseNotes releaseNotes;
+    private Set<PortletCategory> categories;
+    private Set<IPortletDefinition> relatedPortlets;
 
-	private void setUpDefinitions(){
-		this.setScreenShots();
-		this.setPortletReleaseNotes();
-	}
-	
-	private void setPortletReleaseNotes(){
-		if(releaseNotes == null) 
-			releaseNotes = new PortletReleaseNotes();
-		for(IPortletPreference portletPreference:this.portletDefinition.getPortletPreferences()){
-			if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
-			    try {
-			        DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
-			        releaseNotes.setReleaseDate(dt);
-			    } catch (Exception e){
-			        logger.warn("Issue with parsing "+ RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
-			    }
-				continue;
-			}
-			if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
-				releaseNotes.setReleaseNotes(Arrays.asList(portletPreference.getValues()));
-				continue;
-			}
-		}
-	}
-	
-	private void setScreenShots(){
-		List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
-		List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
-		List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
-		List<ScreenShot> screenshots = new ArrayList<ScreenShot>();
-		
-		//Creates a list of captions and list of urls
-		for(int i=0; i<portletPreferences.size(); i++){
-			//Most screenshots possible is i
-			urls.add(null);
-			captions.add(null);
-			for(int j=0; j<portletPreferences.size(); j++){
-				if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1))){
-					urls.set(i, portletPreferences.get(j));
-				}
-				if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1)+"_caption")){
-					captions.set(i, portletPreferences.get(j));
-				}
-			}			
-		}
-		
-		//
-		for(int i=0; i<urls.size(); i++){
-			if(urls.get(i)!=null){
-				if(captions.size()>i && captions.get(i)!=null){
-					screenshots.add(new ScreenShot(urls.get(i).getValues()[0], Arrays.asList(captions.get(i).getValues())));
-				}else{
-					screenshots.add(new ScreenShot(urls.get(i).getValues()[0]));
-				}
-			}
-		}
-		this.screenShots = screenshots;
-	}
-	
-	/**
-	 * @return the screenShotList. Will not be null.
-	 */
-	public List<ScreenShot> getScreenShots() {
-		if(screenShots==null){
-			this.setScreenShots();
-		}
-		return screenShots;
-	}
-	
-	/**
-	 * @return the releaseNotes. Will not be null.
-	 */
-	public PortletReleaseNotes getPortletReleaseNotes() {
-		if(releaseNotes==null){
-			this.setPortletReleaseNotes();
-		}
-		return releaseNotes;
-	}
+    /**
+     * 
+     * @param portletDefinition the portlet definition to make this MarketplacePD
+     * @param registry the registry you want to use for categories and related apps
+     * Benefit: screenshot property is set if any are available.  This includes URL and caption
+     */
+    public MarketplacePortletDefinition(IPortletDefinition portletDefinition, IPortletCategoryRegistry registry){
+        this.portletCategoryRegistry = registry;
+        this.portletDefinition = portletDefinition;
+        this.initDefinitions();
+    }
 
-	@Override
-	public String getDataId() {
-		return this.portletDefinition.getDataId();
-	}
+    private void initDefinitions(){
+        this.initScreenShots();
+        this.initPortletReleaseNotes();
+        this.initCategories();
+        this.initRelatedPortlets();
+    }
 
-	@Override
-	public String getDataTitle() {
-		return this.portletDefinition.getDataTitle();
-	}
+    private void initScreenShots(){
+        List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
+        List<IPortletPreference> urls =  new ArrayList<IPortletPreference>(portletPreferences.size());
+        List<IPortletPreference> captions = new ArrayList<IPortletPreference>(portletPreferences.size());
+        List<ScreenShot> screenShots = new ArrayList<ScreenShot>();
+
+        //Creates a list of captions and list of urls
+        for(int i=0; i<portletPreferences.size(); i++){
+            //Most screenshots possible is i
+            urls.add(null);
+            captions.add(null);
+            for(int j=0; j<portletPreferences.size(); j++){
+                if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1))){
+                    urls.set(i, portletPreferences.get(j));
+                }
+                if(portletPreferences.get(j).getName().equalsIgnoreCase("screen_shot"+Integer.toString(i+1)+"_caption")){
+                    captions.set(i, portletPreferences.get(j));
+                }
+            }
+        }
+        for(int i=0; i<urls.size(); i++){
+            if(urls.get(i)!=null){
+                if(captions.size()>i && captions.get(i)!=null){
+                    screenShots.add(new ScreenShot(urls.get(i).getValues()[0], Arrays.asList(captions.get(i).getValues())));
+                }else{
+                    screenShots.add(new ScreenShot(urls.get(i).getValues()[0]));
+                }
+            }
+        }
+        this.setScreenShots(screenShots);
+    }
+
+    private void initPortletReleaseNotes(){
+        PortletReleaseNotes temp = new PortletReleaseNotes();
+        for(IPortletPreference portletPreference:this.portletDefinition.getPortletPreferences()){
+            if(MarketplacePortletDefinition.RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+                try {
+                    DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
+                    temp.setReleaseDate(dt);
+                } catch (Exception e){
+                    logger.warn("Issue with parsing "+ RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
+                }
+                continue;
+            }
+            if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+                temp.setReleaseNotes(Arrays.asList(portletPreference.getValues()));
+                continue;
+            }
+        }
+        this.setPortletReleaseNotes(temp);
+    }
+
+    private void initCategories(){
+        Set<PortletCategory> allCategories = new HashSet<PortletCategory>();
+        for(PortletCategory childCategory:this.portletCategoryRegistry.getParentCategories(this)){
+            allCategories.add(childCategory);
+            allCategories.addAll(this.portletCategoryRegistry.getAllParentCategories(childCategory));
+        }
+        this.setCategories(allCategories);
+    }
+
+    private void initRelatedPortlets(){
+        Set<IPortletDefinition> allPortlets = new HashSet<IPortletDefinition>();
+        for(PortletCategory parentCategory: this.portletCategoryRegistry.getParentCategories(this)){
+            allPortlets.addAll(this.portletCategoryRegistry.getAllChildPortlets(parentCategory));
+        }
+        allPortlets.remove(this.portletDefinition);
+        this.setRelatedPortlets(new HashSet<IPortletDefinition>(allPortlets));
+    }
+
+    private void setScreenShots(List<ScreenShot> screenShots){
+        this.screenShots = screenShots;
+    }
+
+    /**
+     * @return the screenShotList. Will not be null.
+     */
+    public List<ScreenShot> getScreenShots() {
+        if(screenShots==null){
+            this.initScreenShots();
+        }
+        return screenShots;
+    }
+
+    private void setPortletReleaseNotes(PortletReleaseNotes portletReleaseNotes){
+        this.releaseNotes = portletReleaseNotes;
+    }
+
+    /**
+     * @return the releaseNotes. Will not be null.
+     */
+    public PortletReleaseNotes getPortletReleaseNotes() {
+        if(releaseNotes==null){
+            this.initPortletReleaseNotes();
+        }
+        return releaseNotes;
+    }
+
+    private void setCategories(Set<PortletCategory> categories){
+        this.categories = categories;
+    }
+
+    /**
+     * 
+     * @return a set of categories that includes all the categories that this definition is in
+     * and all parent categories of the portlet's category.  Will not return null.  Might return
+     * empty set.
+     */
+    public Set<PortletCategory> getCategories() {
+        if(this.categories == null){
+            this.initCategories();
+        }
+        return this.categories;
+    }
+
+    private void setRelatedPortlets(Set<IPortletDefinition> relatedPortlets){
+        this.relatedPortlets = relatedPortlets;
+    }
+
+    /**
+     * 
+     * @return a set of portlets that include all portlets in this portlets immediate categories and children categories
+     * Will not return null. Will not include self in list.  Might return an empty set.
+     */
+    public Set<IPortletDefinition> getRelatedPortlets() {
+        if(this.relatedPortlets==null){
+            this.initRelatedPortlets();
+        }
+        return this.relatedPortlets;
+    }
+
+    /**
+     * Use to return a set of random related portlets
+     * if the number of related portlets is less than 
+     * QUANTITY_RELATED_PORTLETS_TO_SHOW,
+     * all related portlets will be returned
+     * @return a subset of related portlets
+     */
+    public Set<IPortletDefinition> getRandomSamplingRelatedPortlets(){
+        if(this.relatedPortlets==null){
+            this.initRelatedPortlets();
+        }
+        if(this.relatedPortlets.isEmpty()){
+            return this.relatedPortlets;
+        }
+        List<IPortletDefinition> tempList = new ArrayList<IPortletDefinition>(this.relatedPortlets);
+        Collections.shuffle(tempList);
+        return new HashSet<IPortletDefinition>(tempList.subList(0, tempList.size()<QUANTITY_RELATED_PORTLETS_TO_SHOW ? tempList.size(): QUANTITY_RELATED_PORTLETS_TO_SHOW));
+    }
+
+    @Override
+    public String getDataId() {
+        return this.portletDefinition.getDataId();
+    }
+
+    @Override
+    public String getDataTitle() {
+        return this.portletDefinition.getDataTitle();
+    }
 
 	@Override
 	public String getDataDescription(){
