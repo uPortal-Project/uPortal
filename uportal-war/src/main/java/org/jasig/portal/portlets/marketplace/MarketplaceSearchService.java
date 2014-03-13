@@ -28,6 +28,7 @@ import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlets.search.IPortalSearchService;
@@ -56,6 +57,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IPortletCategoryRegistry portletCategoryRegistry;
 
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
@@ -76,7 +78,11 @@ public class MarketplaceSearchService implements IPortalSearchService {
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-
+    
+    @Autowired
+    public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
+        this.portletCategoryRegistry = portletCategoryRegistry;
+    }
     
     /**
      * @author vertein
@@ -95,7 +101,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
         
         final SearchResults results =  new SearchResults();
         for (IPortletDefinition portlet : portlets) {
-            if (this.matches(queryString, new MarketplacePortletDefinition(portlet))) {
+            if (this.matches(queryString, new MarketplacePortletDefinition(portlet, this.portletCategoryRegistry))) {
                 final SearchResult result = new SearchResult();
                 result.setTitle(portlet.getTitle());
                 result.setSummary(portlet.getDescription());
@@ -118,10 +124,10 @@ public class MarketplaceSearchService implements IPortalSearchService {
                 actionParam.setName("action");
                 actionParam.getValue().add("view");
                 url.getParam().add(actionParam);
-                PortletUrlParameter nameParam = new PortletUrlParameter();
-                nameParam.setName("name");
-                nameParam.getValue().add(portlet.getName());
-                url.getParam().add(nameParam);
+                PortletUrlParameter fNameParam = new PortletUrlParameter();
+                fNameParam.setName("fName");
+                fNameParam.getValue().add(portlet.getFName());
+                url.getParam().add(fNameParam);
                 result.setPortletUrl(url);
                 //Add the result to list to return
                 results.getSearchResult().add(result);

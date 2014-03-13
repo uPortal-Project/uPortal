@@ -37,6 +37,10 @@ import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author vertein
+ *
+ */
 @Service("portletCategoryRegistry")
 public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 	
@@ -85,6 +89,20 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
             rslt.addAll(getAllChildCategories(child));
         }
 
+        return rslt;
+    }
+	
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllParentCategories(org.jasig.portal.portlet.om.PortletCategory)
+     */
+    @Override
+    public Set<PortletCategory> getAllParentCategories(PortletCategory child) {
+        Set<PortletCategory> rslt = new HashSet<PortletCategory>();
+        for (PortletCategory parent : getParentCategories(child)) {
+            // recurse
+            rslt.add(parent);
+            rslt.addAll(getAllParentCategories(parent));
+        }
         return rslt;
     }
 

@@ -81,12 +81,17 @@
         color: #000000;
         text-align:left;
         font-style:normal;
+        padding-left:5px;
     }
     .marketplace_release_notes{
-        padding-left:20px;
+        padding-left:0px;
     }
 
     .marketplace_release_note{
+        display:none;
+    }
+
+    .marketplace_wrapper li{
         font-family:'Arial';
         font-weight:400;
         font-size:14px;
@@ -94,7 +99,7 @@
         text-align:left;
         font-style:normal;
         list-style:none;
-        display:none;
+        padding-left:20px;
     }
 
     .marketplace_show{
@@ -220,16 +225,16 @@
                 </form>
                 <br><br>            
            </div>
-            <br><br>
+            <br>
         </div>
-        <c:if test="${not empty portlet.portletReleaseNotes}">
+        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
             <div class="row">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
                         <span class="marketplace_section_header">What's New</span>
                         <c:if test="${not empty portlet.portletReleaseNotes.releaseDate}">
-                            <span class="marketplace_release_date">&nbsp;(Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
+                            <span class="marketplace_release_date"> (Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
                         
                     </p>
@@ -237,7 +242,7 @@
                         <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
                             <ul class="marketplace_release_notes">
                                 <c:forEach var="releaseNote" items="${portlet.portletReleaseNotes.releaseNotes}">
-                                    <li class="marketplace_release_note">- &nbsp;${releaseNote}</li>
+                                    <li class="marketplace_release_note">- ${releaseNote}</li>
                                 </c:forEach>
                             </ul>
                         </c:if>
@@ -249,16 +254,28 @@
             </div>
         </c:if>
         <br>
-        <br>
+        <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
+        <c:if test="${not empty relatedPortlets}">
+            <div class = "row col-xs-12 col-md-4">
+                <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
+                <c:forEach var="relatedPortlet" items="${relatedPortlets}">
+                    <portlet:renderURL var="mktplaceEntryURL" windowState="MAXIMIZED">
+                        <portlet:param name="action" value="view"/>
+                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                    </portlet:renderURL>
+                    <li>- <a href="${mktplaceEntryURL}">${relatedPortlet.name}</a></li>
+                </c:forEach>
+            </div>
+        </c:if>
         <div class="row col-xs-12" style="clear:both;">
-            <portlet:renderURL var="entryURL" windowState="MAXIMIZED"  >
+            <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"  >
             </portlet:renderURL>
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" style="float:left">
-                <a href="${entryURL}">Back to List</a>
+                <a href="${initialViewURL}">Back to List</a>
             </div>
         </div>
     </div>                      
