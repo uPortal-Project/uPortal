@@ -574,7 +574,7 @@
           <xsl:choose>
           <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
             <li>
-    	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{//focused/channel/@chanID}">
+    	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{@chanID}">
     	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
     	                <span class="icon"></span>
     	            </xsl:if>
@@ -583,7 +583,7 @@
     	            <script type="text/javascript">
     	            	(function($) {
       						$( document ).ready(function() {
-    	            			$('.addToFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="//focused/channel/@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
+    	            			$('.addToFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
     	            		});
     					})(up.jQuery);
     	            </script>
@@ -592,7 +592,7 @@
           </xsl:when>
           <xsl:otherwise><!-- Remove From favorites. -->
             <li>
-                <a href="javascript:;" title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}" class="removeFromFavoriteLink{//focused/channel/@chanID}">
+                <a href="javascript:;" title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}" class="removeFromFavoriteLink{@chanID}">
                     <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
                         <span class="icon"></span>
                     </xsl:if>
@@ -601,7 +601,7 @@
                     <script type="text/javascript">
                         (function($) {
                             $( document ).ready(function() {
-                                $('.removeFromFavoriteLink<xsl:value-of select="//focused/channel/@chanID"/>').click({portletId : '<xsl:value-of select="@ID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                                $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@ID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
                             });
                         })(up.jQuery);
                     </script>
