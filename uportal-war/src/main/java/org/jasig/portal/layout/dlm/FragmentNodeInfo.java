@@ -22,6 +22,8 @@ package org.jasig.portal.layout.dlm;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 
+import org.jasig.portal.xml.XmlUtilitiesImpl;
+
 /**
  * This class wraps folder layout elements in cached fragment definitions to
  * enable the layout manager to make informed descisions on attributes should be
@@ -59,9 +61,8 @@ public class FragmentNodeInfo
      * on a single dlm:editAllowed attribute for nodes in fragments. If not
      * included then edits to node attributes are allowed. If included with a
      * value other than true then edits are prevented.
-     * 
-     * @param name
-     * @return
+     *
+     * @return true if no dlm:editAllowed specifying a value other than true.
      */
     public boolean canOverrideAttributes()
     {
@@ -70,5 +71,12 @@ public class FragmentNodeInfo
         if (att == null)
             return true;
         return att.getNodeValue().equals("true");
+    }
+
+    public String toString() {
+        return new StringBuilder("FragmentNodeInfo wrapping element [")
+                .append( XmlUtilitiesImpl.toString(this.node) )
+                .append("]")
+                .toString();
     }
 }

@@ -119,7 +119,6 @@ import com.google.common.cache.Cache;
  */
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String RCS_ID = "@(#) $Header$";
-    private static final Log LOG = LogFactory.getLog(RDBMDistributedLayoutStore.class);
 
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
@@ -693,7 +692,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
         }
         else {
-            LOG.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
+            log.debug("no StylesheetUserPreferences found for " + person + ", " + profile);
         }
     }
 
@@ -1183,9 +1182,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             if (ownedFragment != null) {
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_FRAGMENT_NAME, ownedFragment.getName());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("User '" + userName + "' is owner of '" + ownedFragment.getName() + "' fragment.");
-                }
+
+                log.debug("User '{}' is owner of fragment '{}'.",
+                        userName, ownedFragment.getName() );
+
             }
             else if (isLayoutOwnerDefault) {
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
@@ -1247,7 +1247,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             activator.getUserView(fragment, locale);
         }
         catch (final Exception e) {
-            LOG.error("An exception occurred attempting to update a layout.", e);
+            log.error("An exception occurred attempting to update a layout.", e);
         }
     }
 
@@ -1278,7 +1278,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 this.systemDefaultUser = PropertiesManager.getProperty(TEMPLATE_USER_NAME);
             }
             catch (final RuntimeException re) {
-                LOG.error("Property '" + TEMPLATE_USER_NAME + "' not defined.", re);
+                log.error("Property '" + TEMPLATE_USER_NAME + "' not defined.", re);
             }
             if (this.systemDefaultUser != null && this.systemDefaultUser.equals(userName)) {
                 return true;
@@ -1337,54 +1337,63 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
 
-        if (this.log.isDebugEnabled()) {
-            this.log.debug("About to check applicability of " + definitions.size() + " fragments");
-        }
+        log.debug("Checking availability of fragment definitions {} for user {} under profile {}.",
+                definitions, person.getID(), profile.getProfileId());
+
 
         final FragmentActivator activator = this.getFragmentActivator();
 
         if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
 
-                if (this.log.isDebugEnabled()) {
-                    this.log.debug("Checking applicability of the following fragment:  " + fragmentDefinition.getName());
-                }
-
                 if (fragmentDefinition.isApplicable(person)) {
                     final UserView userView = activator.getUserView(fragmentDefinition, locale);
                     if (userView != null) {
                         applicables.add(userView.layout);
+                        log.trace("Fragment {} is applicable to user {}.",
+                                fragmentDefinition, person.getID());
+                    } else {
+                        log.info("Though fragment {} is applicable to user {}, " +
+                                "no user view on that fragment for locale {}, " +
+                                "so not adding to applicable documents.",
+                                fragmentDefinition, person.getID(), locale);
                     }
                     fragmentNames.add(fragmentDefinition.getName());
                 }
             }
         }
 
+        log.debug("Fragments {} among all possible fragments {} were applicable for user {}.",
+                fragmentNames, definitions, person.getID());
+
         Document PLF = (Document) person.getAttribute(Constants.PLF);
 
         if (null == PLF) {
             PLF = this._safeGetUserLayout(person, profile);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " immediately after loading\n"
-                    + XmlUtilitiesImpl.toString(PLF));
+
+        if (log.isDebugEnabled()) {
+            log.debug("PLF for user {} immediately after loading is\n{}",
+                person.getID(), XmlUtilitiesImpl.toString(PLF));
         }
 
         final Document ILF = ILFBuilder.constructILF(PLF, applicables, person);
         person.setAttribute(Constants.PLF, PLF);
         final IntegrationResult result = new IntegrationResult();
         PLFIntegrator.mergePLFintoILF(PLF, ILF, result);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
-                    + XmlUtilitiesImpl.toString(PLF));
-            LOG.debug("ILF for " + person.getAttribute(IPerson.USERNAME) + " after MERGING\n"
-                    + XmlUtilitiesImpl.toString(ILF));
+
+        if (log.isDebugEnabled()) {
+            log.debug("PLF for user {} after MERGING\n{}",
+                person.getID(), XmlUtilitiesImpl.toString(PLF));
+            log.debug("ILF for user {} after MERGING\n{}",
+                person.getID(), XmlUtilitiesImpl.toString(ILF));
         }
+
         // push optimizations made during merge back into db.
         if (result.changedPLF) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Saving PLF for " + person.getAttribute(IPerson.USERNAME) + " due to changes during merge.");
-            }
+
+            log.debug("Saving PLF for user {} under profile {} due to changes during merge.",
+                    person.getID(), profile.getProfileId());
             super.setUserLayout(person, profile, PLF, false);
         }
 
@@ -1425,9 +1434,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     {
         final Document plf = (Document) person.getAttribute(Constants.PLF);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("PLF for " + person.getAttribute(IPerson.USERNAME) + "\n" + XmlUtilitiesImpl.toString(plf));
+
+        if (log.isDebugEnabled()) {
+            log.debug("PLF for user {}\n{}",
+                person.getID(), XmlUtilitiesImpl.toString(plf));
         }
+
         super.setUserLayout(person, profile, plf, channelsAdded);
 
         if (updateFragmentCache) {
@@ -1673,9 +1685,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
         }
         else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding identifier " + folderPrefix + ls.getStructId());
-            }
+
+            log.debug("Adding identifier {}{}.", folderPrefix, ls.getStructId());
+
             structure.setAttribute("ID", channelPrefix + ls.getStructId());
         }
         structure.setIdAttribute(Constants.ATT_ID, true);
@@ -1698,8 +1710,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final Element structure = (Element) node;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("saveStructure XML content: " + XmlUtilitiesImpl.toString(node));
+        if (log.isDebugEnabled()) {
+            log.debug("saveStructure XML content: {}",
+                    XmlUtilitiesImpl.toString(node));
         }
 
         // determine the struct_id for storing in the db. For incorporated nodes in
@@ -1762,9 +1775,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         structStmt.setString(8, RDBMServices.dbFlag(xmlBool(structure.getAttribute("hidden"))));
         structStmt.setString(9, RDBMServices.dbFlag(xmlBool(structure.getAttribute("immutable"))));
         structStmt.setString(10, RDBMServices.dbFlag(xmlBool(structure.getAttribute("unremovable"))));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(structStmt.toString());
-        }
+
+        log.debug("{}", structStmt);
+
         structStmt.executeUpdate();
 
         // code to persist extension attributes for dlm
@@ -1780,9 +1793,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 parmStmt.setInt(1, saveStructId);
                 parmStmt.setString(2, name);
                 parmStmt.setString(3, attrib.getNodeValue());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(parmStmt.toString());
-                }
+
+                log.debug("{}", parmStmt);
+
                 parmStmt.executeUpdate();
             }
         }
@@ -1808,9 +1821,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                             parmStmt.setInt(1, saveStructId);
                             parmStmt.setString(2, parmName);
                             parmStmt.setString(3, parmValue);
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug(parmStmt);
-                            }
+
+                            log.debug("{}", parmStmt);
+
                             parmStmt.executeUpdate();
                         }
                     }

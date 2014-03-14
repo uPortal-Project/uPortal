@@ -41,6 +41,21 @@ import org.xml.sax.SAXException;
  * @version $Revision$
  */
 public class XmlUtilitiesImplTest {
+
+    /**
+     * Test that the XmlUtilitiesImpl.toString(Node) method,
+     * on argument null,
+     * returns "null".
+     */
+    @Test
+    public void testToStringNullNodeReturnsLiteralNull() {
+
+        Node nullNode = null;
+
+        assertEquals("null", XmlUtilitiesImpl.toString(nullNode));
+
+    }
+
     @Test
     public void testGetUniqueXPath() throws Exception {
         final Document testDoc = loadTestDocument();

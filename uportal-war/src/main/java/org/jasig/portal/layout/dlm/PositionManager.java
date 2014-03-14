@@ -29,15 +29,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * Applies and updates position specifiers for child nodes in the
@@ -49,7 +51,7 @@ import org.w3c.dom.Node;
 public class PositionManager
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static Log LOG = LogFactory.getLog(PositionManager.class);
+    private static Logger LOG = LoggerFactory.getLogger(PositionManager.class);
 
     private static IUserLayoutStore dls = null;
     /**
@@ -131,9 +133,22 @@ public class PositionManager
                                 IntegrationResult result )
         throws PortalException
     {
-        if ( positionSet == null ||
-             positionSet.getFirstChild() == null )
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("applyPositions applying positionSet {} to parent {}.",
+                    XmlUtilitiesImpl.toString(positionSet),
+                    XmlUtilitiesImpl.toString(compViewParent) );
+        }
+
+        if (positionSet == null) {
+            LOG.trace("Cannot apply a null position set, doing nothing.");
             return;
+        }
+
+        if (positionSet.getFirstChild() == null) {
+            LOG.trace("Position set was empty so nothing to apply, doing nothing.");
+            return;
+        }
 
         List<NodeInfo> order = new ArrayList<NodeInfo>();
 
@@ -142,6 +157,9 @@ public class PositionManager
         applyNoHopping       ( order, compViewParent, positionSet );
         applyLowerPrecedence ( order, compViewParent, positionSet );
         evaluateAndApply     ( order, compViewParent, positionSet, result );
+
+        LOG.trace("Completed applying positionSet {} to parent {} with result {}",
+                positionSet, compViewParent, result);
     }
 
     /**
@@ -157,12 +175,29 @@ public class PositionManager
                                   IntegrationResult result )
         throws PortalException
     {
-        adjustPositionSet( order, positionSet, result );
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("evaluateAndApply order {}, positionSet {}, parent {}, result {}",
+                    order,
+                    XmlUtilitiesImpl.toString(positionSet),
+                    XmlUtilitiesImpl.toString(compViewParent),
+                    result);
+        }
+
+        adjustPositionSet(order, positionSet, result);
 
         if ( hasAffectOnCVP( order, compViewParent ) )
         {
             applyToNodes( order, compViewParent );
             result.changedILF = true;
+        }
+
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finished evalauteAndApply positionSet {} with order {} on {} with result {}",
+                XmlUtilitiesImpl.toString(positionSet),
+                order,
+                XmlUtilitiesImpl.toString(compViewParent),
+                result);
         }
     }
 
@@ -177,6 +212,11 @@ public class PositionManager
                                    Element positionSet,
                                    IntegrationResult result )
     {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("adjustPositionSet adjusting set {} given order {}.",
+                    XmlUtilitiesImpl.toString(positionSet), order);
+        }
+
         Node nodeToMatch = positionSet.getFirstChild();
         Element nodeToInsertBefore = positionSet.getOwnerDocument()
         .createElement( "INSERT_POINT" );
@@ -189,30 +229,65 @@ public class PositionManager
 
             if ( ni.positionDirective != null )
             {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Considering position directive {} in NodeInfo {}",
+                        XmlUtilitiesImpl.toString(ni.positionDirective), ni);
+                }
+
                 // found one check it against the current one in the position
                 // set to see if it is different. If so then indicate that
                 // something (the position set) has changed in the plf
-                if ( ni.positionDirective != nodeToMatch )
+                if ( ni.positionDirective != nodeToMatch ) {
                     result.changedPLF = true;
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Position directive {} did not match {} so result {} marked PLF changed.",
+                            XmlUtilitiesImpl.toString(ni.positionDirective),
+                            XmlUtilitiesImpl.toString(nodeToMatch),
+                            result);
+                    }
+                }
 
                 // now bump the insertion point forward prior to
                 // moving on to the next position node to be evaluated
-                if ( nodeToMatch != null )
+                if ( nodeToMatch != null ) {
                     nodeToMatch = nodeToMatch.getNextSibling();
+
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Node to match is now {}, the next sibling of the previous node to match.",
+                            XmlUtilitiesImpl.toString(nodeToMatch) );
+                    }
+                }
 
                 // now insert it prior to insertion point
                 positionSet.insertBefore( ni.positionDirective,
                                           nodeToInsertBefore );
+            } else {
+                LOG.trace("{} had no position directive so ignoring it.", ni);
             }
         }
 
         // now for any left over after the insert point remove them.
 
-        while ( nodeToInsertBefore.getNextSibling() != null )
-            positionSet.removeChild( nodeToInsertBefore.getNextSibling() );
+        while ( nodeToInsertBefore.getNextSibling() != null ) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Removing leftover-after-the-insertion-point node {} from positionSet {}.",
+                   XmlUtilitiesImpl.toString(nodeToInsertBefore.getNextSibling()),
+                   XmlUtilitiesImpl.toString(positionSet) );
+            }
+            positionSet.removeChild(nodeToInsertBefore.getNextSibling());
+        }
 
-        // now remove the insertion point
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Removing the insertion point {} from position set {}",
+                XmlUtilitiesImpl.toString(nodeToInsertBefore),
+                XmlUtilitiesImpl.toString(positionSet) );
+        }
         positionSet.removeChild( nodeToInsertBefore );
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("completed adjustPositionSet {} given order {} with result {}.",
+                XmlUtilitiesImpl.toString(positionSet), order, result);
+        }
     }
 
     /**
@@ -223,16 +298,25 @@ public class PositionManager
     static boolean hasAffectOnCVP( List<NodeInfo> order,
                                    Element compViewParent )
     {
-        if ( order.size() == 0 )
+
+        if ( order.size() == 0 ) {
+            LOG.trace("Empty order {} has no effect on {}",
+                    order, compViewParent);
             return false;
+        }
         
         
         int idx = 0;
         Element child = (Element) compViewParent.getFirstChild();
         NodeInfo ni = (NodeInfo) order.get( idx );
 
-        if ( child == null && ni != null ) // most likely nodes to be pulled in
+        if ( child == null && ni != null ) { // most likely nodes to be pulled in
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Order {} has effect on {} because that node has no child but order is not empty.",
+                    order, XmlUtilitiesImpl.toString(compViewParent) );
+            }
             return true;
+        }
         
         while ( child != null )
         {
@@ -242,18 +326,51 @@ public class PositionManager
             {
                 if ( ni.id.equals( child.getAttribute( Constants.ATT_ID ) ) )
                 {
-                    if ( idx >= order.size()-1 ) // at end of order list
+                    if ( idx >= order.size()-1 ) {// at end of order list
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Order {} has no effect on {} " +
+                                "because all order elements matched corresponding children of the parent.",
+                                order, XmlUtilitiesImpl.toString(compViewParent) );
+                        }
                         return false;
+                    }
 
                     ni = (NodeInfo) order.get( ++idx );
                 }
-                else // if not equal then return true
+                else {// if not equal then return true
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Order {} has effect on {} because an order element {} id " +
+                            "didn't match the {} attribute " +
+                            "of the corresponding child {} of the parent element.",
+                            order,
+                            XmlUtilitiesImpl.toString(compViewParent),
+                            ni,
+                            Constants.ATT_ID,
+                            XmlUtilitiesImpl.toString(child) );
+                    }
                     return true;
+                }
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Ignoring child {} because either it is hidden or " +
+                        "it is a folder of a type other than regular.",
+                        XmlUtilitiesImpl.toString(child) );
+                }
             }
             child = (Element) child.getNextSibling();
         }
-        if ( idx < order.size() )
+        if ( idx < order.size() ) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Order {} affects {}; there are nodes to be pulled in.",
+                    order, XmlUtilitiesImpl.toString(compViewParent) );
+            }
             return true; // represents nodes to be pulled in
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Order {} does not affect {}",
+                order, XmlUtilitiesImpl.toString(compViewParent) );
+        }
         return false;
     }
 
@@ -265,6 +382,7 @@ public class PositionManager
     static void applyToNodes( List<NodeInfo> order,
                               Element compViewParent )
     {
+        LOG.trace("Applying order {} to the children of {}", order, compViewParent);
         // first set up a bogus node to assist with inserting
         Node insertPoint = compViewParent.getOwnerDocument()
         .createElement( "bogus" );
@@ -281,6 +399,8 @@ public class PositionManager
                                          insertPoint );
 
         compViewParent.removeChild( insertPoint );
+
+        LOG.trace("Applied order {} to the children of {}", order, compViewParent);
     }                                 
 
     /**
@@ -292,6 +412,8 @@ public class PositionManager
                                       Element compViewParent,
                                       Element positionSet )
     {
+        LOG.trace("Apply lower precendence for order {} and positionSet {} on parent {}",
+                order, positionSet, compViewParent);
         for ( int i = 0; i<order.size(); i++ )
         {
             NodeInfo ni = (NodeInfo) order.get( i );
@@ -310,6 +432,9 @@ public class PositionManager
                 }
             }
         }
+
+        LOG.trace("Applied lower precendence for order {} and positionSet {} on parent {}",
+                order, positionSet, compViewParent);
     }                                 
 
     /**
@@ -327,8 +452,14 @@ public class PositionManager
                                 Element compViewParent,
                                 Element positionSet )
     {
+        // no trace log here because would be redundant with the more contextualized logging below.
+
         if ( isIllegalHoppingSpecified( order ) == true )
         {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("applyNoHopping: Bad hop specified for order {} and positionSet {} on {} so enforcing.",
+                    order, XmlUtilitiesImpl.toString(positionSet), XmlUtilitiesImpl.toString(compViewParent));
+            }
             ArrayList cvpNodeInfos = new ArrayList();
 
             // pull those out of the position list from the CVP
@@ -343,7 +474,18 @@ public class PositionManager
             Arrays.sort( nodeInfos, new NodeInfoComparator() );
             List list = Arrays.asList( nodeInfos );
             order.addAll( 0, list );
-        }                            
+
+            if (LOG.isInfoEnabled()) {
+                LOG.info("applyNoHopping: After enforcing, bad-hop-free order {} and positionSet {} on {}.",
+                    order, XmlUtilitiesImpl.toString(positionSet), XmlUtilitiesImpl.toString(compViewParent) );
+            }
+        } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("applyNoHopping: No bad hop specified for order {} and positionSet {} on {} " +
+                        "so did nothing.",
+                    order, XmlUtilitiesImpl.toString(positionSet), XmlUtilitiesImpl.toString(compViewParent));
+            }
+        }
     }
 
     /**
@@ -382,8 +524,15 @@ public class PositionManager
 
                 if ( niSib.precedence.isEqualTo( ni.precedence ) && 
                      ( niSib.indexInCVP == -1 || // from another parent
-                     ni.indexInCVP < niSib.indexInCVP ) ) // niSib hopping left
+                     ni.indexInCVP < niSib.indexInCVP ) )  { // niSib hopping left
+
+
+                    LOG.info("Order {} specifies illegal hopping because {} hops left of {}" +
+                            " but relative precedence does not allow this.",
+                            order, niSib, ni);
+
                     return true;
+                }
             }
 
             // now check upper positioned nodes to see if they "hopped"
@@ -398,10 +547,19 @@ public class PositionManager
                     continue;
                 
                 if ( ni.indexInCVP > niSib.indexInCVP && // niSib hopped right
-                     niSib.precedence.isEqualTo( ni.precedence ) )
+                     niSib.precedence.isEqualTo( ni.precedence ) ) {
+
+                    LOG.info("Order {} specifies illegal hopping because {} hopped right of {}.",
+                            order, niSib, ni);
+
                     return true;
+                }
             }
         }
+
+        LOG.trace("Order {} does not specify illegal hopping.",
+                order);
+
         return false;
     }
 
@@ -417,6 +575,11 @@ public class PositionManager
                                     Element compViewParent,
                                     Element positionSet )
     {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Applying no-reparenting rules to order {} and positionSet {} for parent {}.",
+                order, XmlUtilitiesImpl.toString(positionSet), XmlUtilitiesImpl.toString(compViewParent));
+        }
+
         int i = 0;
         while ( i<order.size() )
         {
@@ -426,6 +589,10 @@ public class PositionManager
                 ni.differentParent = true;
                 if ( isNotReparentable( ni ) )
                 {
+
+                    LOG.trace("{} should not be reparented. Zapping its position directive and removing from order.",
+                            ni);
+
                     // this node should not be reparented. If it was placed
                     // here by way of a position directive then delete that
                     // directive out of the ni and posSet will be updated later
@@ -435,10 +602,18 @@ public class PositionManager
                     // skip incrementing i, deleted ni now filled by next ni
                     order.remove( i );
                     continue; 
+                } else {
+                    LOG.trace("{} is re-parent-able and so complies with re-parenting rules.", ni);
                 }
+            } else {
+                LOG.trace("Node {} already has {} as parent so no re-parenting for this node to worry about.",
+                        ni, compViewParent);
             }
             i++;
         }
+
+        LOG.trace("Applied no-parenting rules resulting in order {} and positionSet {} for parent {}.",
+                order, positionSet, compViewParent);
     }
 
     /**
@@ -447,9 +622,14 @@ public class PositionManager
      */
     private static boolean isNotReparentable( NodeInfo ni )
     {
+        // no trace logging here because would be redundant with contextualized logging below
+
         if ( ni.node.getAttribute( Constants.ATT_MOVE_ALLOWED )
-             .equals( "false" ) )
+             .equals( "false" ) ) {
+            LOG.trace("{} isNotReparentable because the node has value 'false' for attribute {}.",
+                    ni, Constants.ATT_MOVE_ALLOWED);
             return true;
+        }
         
         Precedence nodePrec = ni.precedence;
         Element node = (Element) ni.node.getNextSibling();
@@ -461,11 +641,16 @@ public class PositionManager
             {
                 Precedence p = Precedence
                 .newInstance( node.getAttribute( Constants.ATT_FRAGMENT ) );
-                if ( nodePrec.isEqualTo( p ) )
+                if ( nodePrec.isEqualTo( p ) ) {
+                    LOG.trace("{} isNotReparentable because its precedence {} is equal to that of sibling {}.",
+                            ni, p, node);
                     return true;
+                }
             }
             node = (Element) node.getNextSibling();
         }
+
+        LOG.trace("{} is re-parent-able.", ni);
         return false;
     }
 
@@ -479,6 +664,9 @@ public class PositionManager
                                Element compViewParent,
                                Element positionSet )
     {
+        LOG.trace("applyOrdering order {} with positionSet {} on parent {}.",
+                order, positionSet, compViewParent);
+
         // first pull out all visible channel or visible folder children and
         // put their id's in a list of available children and record their
         // relative order in the CVP.
@@ -503,9 +691,14 @@ public class PositionManager
                 if (prevNode != null) {
                     throw new IllegalStateException("Infinite loop detected in layout. Triggered by " + nodeInfo.id + " with already visited node ids: " + available.keySet());
                 }
+            } else {
+                LOG.trace("Ignoring {} because either hidden or a folder of a type other than regular.", child);
             }
             child = next;
         }
+
+        LOG.trace("Computed visible channel and folder children of {}  as {}.",
+                compViewParent, available);
 
         // now fill the order list using id's from the position set if nodes
         // having those ids exist in the composite view. Otherwise discard
@@ -539,6 +732,11 @@ public class PositionManager
                 
                 ni.positionDirective = directive;
                 order.add( ni );
+
+                LOG.trace("Computed order {} for node {}", ni, child);
+            } else {
+                LOG.debug("Ignoring directive {} regarding nodeID {} because could not find element with that ID.",
+                        directive, id);
             }
             directive = next;
         }
@@ -547,6 +745,9 @@ public class PositionManager
         // the order that they have there.
 
         order.addAll(available.values());
+
+        LOG.trace("after applyOrdering order {} with positionSet {} on parent {}.",
+                order, positionSet, compViewParent);
     }
 
     /**
@@ -563,17 +764,21 @@ public class PositionManager
                                           IPerson person )
         throws PortalException
     {
-        if (LOG.isDebugEnabled())
-            LOG.debug("Updating Position Set");
+        LOG.debug("Updating Position Set for element {} given plfParent {} for {}",
+                compViewParent, plfParent, person);
 
         if ( compViewParent.getChildNodes().getLength() == 0 )
         {
             // no nodes to position. if set exists reclaim the space.
-            if (LOG.isDebugEnabled())
-                LOG.debug("No Nodes to position");
             Element positions = getPositionSet( plfParent, person, false );
-            if ( positions != null )
-            plfParent.removeChild( positions );
+            if ( positions != null ) {
+                LOG.debug("No nodes to position.  Reclaiming positionSet {} from PLF {} for user {}",
+                        positions, plfParent, person);
+                plfParent.removeChild( positions );
+            } else {
+                LOG.debug("No nodes to position.  No existing positionSet in PLF {} to reclaim for user {}.",
+                        plfParent, person);
+            }
             return;
         }
         Element posSet = (Element) getPositionSet( plfParent, person, true );
@@ -595,22 +800,34 @@ public class PositionManager
              ( type.equals("regular") &&  // a regular, visible folder
                hidden.equals("false") ) )
             {
-            if ( position != null )
-                position.setAttribute( Constants.ATT_NAME, ID );
-            else
-                position = createAndAppendPosition( ID, posSet, person );
-            position = (Element) position.getNextSibling();
+                if ( position != null ) {
+                    position.setAttribute( Constants.ATT_NAME, ID );
+                    LOG.trace("{} is a channel or a not-hidden, regular folder.  Targeted {} at it.",
+                            viewNode, position);
+                } else {
+                    position = createAndAppendPosition( ID, posSet, person );
+                    LOG.trace("{} is a channel or a not-hidden, regular folder.  Created and targeted {} at it.",
+                            viewNode, position);
+                }
+                position = (Element) position.getNextSibling();
+            } else {
+                LOG.trace("updatePositionSet: {} is a hidden or non-type-regular folder.  Ignoring it.", viewNode);
             }
+
             viewNode = (Element) viewNode.getNextSibling();
         }
 
-        if ( ilfNodesFound == false ) // only plf nodes, no pos set needed
+        if ( ilfNodesFound == false ) { // only plf nodes, no pos set needed
             plfParent.removeChild( posSet );
-        else
+            LOG.debug("updatePositionSet: No ilf nodes found, so no position set needed.  Removed {} from {}.",
+                    posSet, plfParent);
+        } else
         {
+            LOG.trace("updatePositionSet: ILF nodes were found, so reclaiming any leftover positions.");
             // reclaim any leftover positions
             while( position != null )
             {
+                LOG.trace("Reclaiming leftover position {}.", position);
                 Element nextPos = (Element) position.getNextSibling();
                 posSet.removeChild( position );
                 position = nextPos;
@@ -632,13 +849,18 @@ public class PositionManager
 
         while( child != null )
         {
-            if ( child.getNodeName().equals( Constants.ELM_POSITION_SET ) )
+            if ( child.getNodeName().equals( Constants.ELM_POSITION_SET ) ) {
+                LOG.trace("getPositionSet: got {} from {} for {}.",
+                        child, plfParent, person);
                 return (Element) child;
+            }
             child = child.getNextSibling();
         }
-        if ( create == false )
+        if ( create == false ) {
+            LOG.trace("getPositionSet: No existing position set in plf {} for user {}; create flag is false.",
+                    plfParent, person);
             return null;
-
+        }
         
         String ID = null;
 
@@ -658,6 +880,10 @@ public class PositionManager
                                 Constants.ELM_POSITION_SET );
         positions.setAttribute( Constants.ATT_ID, ID );
         plfParent.appendChild( positions );
+
+        LOG.trace("getPositionSet found no existing position set in plf {} so for user {} so added one.",
+                plfParent, person);
+
         return positions;
     }
 
@@ -670,8 +896,6 @@ public class PositionManager
                                                     IPerson person )
         throws PortalException
     {
-        if (LOG.isDebugEnabled())
-            LOG.debug("Adding Position Set entry " + elementID + ".");
 
         String ID = null;
 
@@ -688,10 +912,14 @@ public class PositionManager
         Document plf = positions.getOwnerDocument();
         Element position = plf.createElement( Constants.ELM_POSITION );
         position.setAttribute( Constants.ATT_TYPE, Constants.ELM_POSITION );
-        position.setAttribute( Constants.ATT_ID, ID );
+        position.setAttribute(Constants.ATT_ID, ID);
         position.setAttributeNS( Constants.NS_URI,
                                  Constants.ATT_NAME, elementID );
         positions.appendChild( position );
+
+        LOG.debug("Added Position Set entry {} referencing {}, resulting in position set {} for {}.",
+                position, elementID, positions, person);
+
         return position;
     }
 

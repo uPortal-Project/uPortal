@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.properties.PropertiesManager;
@@ -318,41 +319,15 @@ public class LocaleManager implements Serializable {
     }
     
     public String toString() {
-        StringBuffer sb = new StringBuffer(1024);
-        sb.append("LocaleManager's locales").append("\n");
-        sb.append("-----------------------").append("\n");
-        sb.append("Session locales: ");
-        if (sessionLocales != null) {
-            sb.append(stringValueOf(sessionLocales));
-        }
-        sb.append("\n");
-        sb.append("User locales: ");
-        if (userLocales != null) {
-            sb.append(stringValueOf(userLocales));
-        }
-        sb.append("\n");
-        sb.append("Browser locales: ");
-        if (browserLocales != null) {
-            sb.append(stringValueOf(browserLocales));
-        }
-        sb.append("\n");
-        sb.append("Portal locales: ");
-        if (portalLocales != null) {
-            sb.append(stringValueOf(portalLocales));
-        }
-        sb.append("\n");
-        sb.append("JVM locale: ");
-        if (jvmLocale != null) {
-            sb.append(jvmLocale.toString());
-        }
-        sb.append("\n");
-        sb.append("Sorted locales: ");
-        Locale[] sortedLocales = getLocales();
-        if (sortedLocales != null) {
-            sb.append(stringValueOf(sortedLocales));
-        }
-        sb.append("\n");
-        return sb.toString();
+
+        return new ToStringBuilder(this).
+                append("Session locales", sessionLocales).
+                append("User locales", userLocales).
+                append("Browser locales", browserLocales).
+                append("Portal locales", portalLocales).
+                append("JVM locale", jvmLocale).
+                append("Sorted locales", getLocales()).
+                toString();
     }
 
 }

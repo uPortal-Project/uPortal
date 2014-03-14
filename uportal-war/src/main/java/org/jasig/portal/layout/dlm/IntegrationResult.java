@@ -33,4 +33,11 @@ public class IntegrationResult
 
     public boolean changedPLF = false;
     public boolean changedILF = false;
+
+    public String toString() {
+        return new StringBuilder()
+                .append("changedPLF: ").append(changedPLF)
+                .append(", changedILF: ").append(changedILF)
+                .toString();
+    }
 }

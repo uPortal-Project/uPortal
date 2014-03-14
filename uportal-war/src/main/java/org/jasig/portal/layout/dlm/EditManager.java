@@ -25,6 +25,9 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,7 +44,7 @@ public class EditManager
     public static final String RCS_ID = "@(#) $Header$";
 
     private static IUserLayoutStore dls = null;
-    private static final Log LOG = LogFactory.getLog(EditManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EditManager.class);
 
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is
@@ -303,10 +306,18 @@ public class EditManager
                                          String type,
                                          IPerson person )
     {
+        // no trace log here because would be redundant with contextualized logging below
+
         Document plf = (Document) person.getAttribute( Constants.PLF );
         Element node = plf.getElementById( elementId );
-        if ( node == null )
+        if ( node == null ) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Cannot remove directive of type {} on element {} " +
+                    "because could not find element with that id in PLF {}.",
+                    type, elementId, XmlUtilitiesImpl.toString(plf) );
+            }
             return;
+        }
         
         Element editSet = null;
     
@@ -323,16 +334,22 @@ public class EditManager
              * runtime exception somehow occurs we will log it so that we don't
              * lose the information.
              */
-            LOG.error(e, e);
+            LOG.error("Failed to remove directive of type {} on element {} for user {} because of exception.",
+                    type, elementId, person.getID(), e);
             return; 
         }
     
         // if no edit set then the edit can't be there either
-        if ( editSet == null )
+        if ( editSet == null ) {
+            LOG.debug("Cannot remove directive of type {} on element {} because {} has no edit set for this node.",
+                    type, elementId, person);
             return;
+        }
         
         Node child = editSet.getFirstChild();
-    
+
+        boolean foundAndRemoved = false;
+
         while( child != null )
         {
             if ( child.getNodeName().equals( type ) )
@@ -341,15 +358,26 @@ public class EditManager
                 .getAttributeNode( Constants.ATT_NAME );
                 if ( attr != null && attr.getValue().equals( attributeName ) )
                 {
+                    LOG.trace("Removed {} in removing directive of type {} on {} for user {}.",
+                            child, type, elementId, person);
                     // we found it, remove it
                     editSet.removeChild( child );
+                    foundAndRemoved = true;
                     break;
                 }
             }
             child = child.getNextSibling();
         }
-        // if that was the last on in the edit set then delete it
-        if ( editSet.getFirstChild() == null )
+
+        if (! foundAndRemoved) {
+            LOG.debug("Found no command of type {} with attribute name {} for user {} among editSet {} so no-op.",
+                    type, attributeName, person, editSet);
+        }
+
+        // if that was the last one in the edit set then delete it
+        if ( editSet.getFirstChild() == null ) {
             node.removeChild( editSet );
+            LOG.trace("Removed last edit directive so removing the now-empty edit set for user {}.", person);
+        }
     }
 }

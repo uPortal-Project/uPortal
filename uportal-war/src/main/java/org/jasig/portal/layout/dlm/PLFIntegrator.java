@@ -19,9 +19,10 @@
 
 package org.jasig.portal.layout.dlm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -33,7 +34,7 @@ import org.w3c.dom.NodeList;
 public class PLFIntegrator
 {
     public static final String RCS_ID = "@(#) $Header$";
-    private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
+    private static Logger LOG = LoggerFactory.getLogger(PLFIntegrator.class);
 
     /**
      */
@@ -87,15 +88,20 @@ public class PLFIntegrator
         if ( positions != null )
         {
             IntegrationResult posResult = new IntegrationResult();
-            if (LOG.isInfoEnabled())
-                LOG.info( "applying positions" );
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Applying positions {}.",
+                    XmlUtilitiesImpl.toString(positions) );
+            }
             PositionManager.applyPositions( ilfParent,
                                             positions,
                                             posResult );
             if( posResult.changedILF == false )
             {
-                if (LOG.isInfoEnabled())
-                    LOG.info("removing positionSet");
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Removing positionSet {}.",
+                        XmlUtilitiesImpl.toString(positions) );
+                }
                 plfParent.removeChild( positions );
                 result.changedPLF = true;
             }
@@ -197,6 +203,11 @@ public class PLFIntegrator
 
             if ( original == null )
             {
+                 LOG.debug("Node {} is an incorporated folder because its id starts with {}, " +
+                        "but is no longer in the integrated layout fragment. " +
+                        "Dropping from personal layout fragment.",
+                        id, Constants.FRAGMENT_ID_USER_PREFIX);
+
                 // not there anymore, discard from plf
                 plfParent.removeChild( plfChild );
                 result.changedPLF = true;
@@ -213,6 +224,11 @@ public class PLFIntegrator
             if ( attributeChanged == false &&
                  childChanges.changedILF == false )
             {
+                LOG.debug("Node {} is an incorporated folder because its id starts with {}, " +
+                        "but the changes in the PLF were a no-op, " +
+                        "so dropping from personal layout fragment.",
+                        id, Constants.FRAGMENT_ID_USER_PREFIX);
+
                 // no changes were used so remove this guy from plf.
                 plfParent.removeChild( plfChild );
                 result.changedPLF = true;
@@ -234,8 +250,11 @@ public class PLFIntegrator
                  .equals( "false" ) )
             {
                 // nope, delete directive from plf
-                if (LOG.isInfoEnabled())
-                    LOG.info("removing folder from plf " + id);
+
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Removing plf folder {} because the ILF parent node {} disallows adding children.",
+                        id, XmlUtilitiesImpl.toString(ilfParent) );
+                }
                 plfParent.removeChild( plfChild );
                 result.changedPLF = true;
                 return;
