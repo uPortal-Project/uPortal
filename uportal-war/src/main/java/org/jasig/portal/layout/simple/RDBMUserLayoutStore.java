@@ -97,7 +97,7 @@ import com.google.common.cache.Cache;
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
-    protected final Logger logger = LoggerFactory.getLogger(RDBMUserLayoutStore.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
     protected static final String DEFAULT_LAYOUT_FNAME = "default";

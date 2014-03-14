@@ -88,8 +88,6 @@ import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.xpath.XPathOperations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,7 +117,7 @@ import com.google.common.cache.Cache;
  */
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public static final String RCS_ID = "@(#) $Header$";
-    protected final Logger logger = LoggerFactory.getLogger(RDBMDistributedLayoutStore.class);
+
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";
 
