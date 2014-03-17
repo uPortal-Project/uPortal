@@ -15,8 +15,34 @@ Node ID uniqueness constraints
 * XML node `ID` attribute uniqueness must be observed within a given `*-fragment-layout.xml` file.
 * Furthermore, **the integer portion of** node `ID`s must be unique within a given `*-fragment-layout.xml` file.
 
-Considerations in re-using node IDs
------------------------------------
+### Examples
+
+This example illustrates non-unique integer IDs that will result in an error because the integer portion of the ID of both folder node and channel node are '6':
+
+```
+    <folder ID="s6" hidden="false" immutable="true" name="Footer Second"
+type="footer-second" unremovable="true">
+      <channel fname="page-bottom" unremovable="true" hidden="false"
+immutable="false" ID="n6"/>
+    </folder>
+```
+
+Tweaking that so that the integer portion of the `ID`s differ solves the ID collision problem:
+
+```
+    <folder ID="s6" hidden="false" immutable="true" name="Footer Second"
+type="footer-second" unremovable="true">
+      <channel fname="page-bottom" unremovable="true" hidden="false"
+immutable="false" ID="n8"/>
+    </folder>
+```
+
+Note that while these examples just show little snippets of what might be in fragment-layout.xml files, the identifier uniqueness constraints must be respected throughout each of those files individually, regardless of parent-child relationships of nodes within the file.
+
+However, before you get too excited about changing node IDs to resolve conflicts, be sure to read the rest of this README. :)
+
+Considerations in changing and re-using node IDs
+------------------------------------------------
 
 * End users may have stored directives describing their changes to their experience of fragment layouts, referencing fragment layout nodes by `ID`.
 * If you re-use a node `ID` in a changed version of a fragment-layout, prior directives will try to apply to the changed node.
