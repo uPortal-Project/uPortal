@@ -130,35 +130,64 @@
         </content>
       </layout_fragment>
     </xsl:when>
-
-    <xsl:when test="$focusedFragmentId != 'none'">
-
-
+    <xsl:otherwise>
         <layout>
             <xsl:call-template name="debug-info"/>
 
             <xsl:if test="/layout/@dlm:fragmentName">
                 <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
             </xsl:if>
-
+            
             <header>
-                        <!-- BEGIN display channel-headers for each channel visible on the page -->
-                        <xsl:for-each select="child::folder[@type='header']/descendant::channel">
-                            <channel-header ID="{@ID}"/>
-                        </xsl:for-each>
-                        <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-                            <channel-header ID="{@ID}"/>
-                        </xsl:for-each>
-                        <!-- END display channel-headers for each channel visible on the page -->
-
-
-                <!-- Allows header portlets to appear in the output, even in focused mode -->
-                <xsl:for-each select="child::folder[@type='header']">
-                    <xsl:copy-of select=".//channel"/>
-                </xsl:for-each>
-
+              <xsl:choose>
+                <xsl:when test="$focusedFragmentId != 'none'">
+                    <!-- BEGIN display channel-headers for each channel visible on the page -->
+                    <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+                        <channel-header ID="{@ID}"/>
+                    </xsl:for-each>
+                    <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+                        <channel-header ID="{@ID}"/>
+                    </xsl:for-each>
+                    <!-- END display channel-headers for each channel visible on the page -->
+                    <!-- Allows header portlets to appear in the output, even in focused mode -->
+                    <xsl:for-each select="child::folder[@type='header']">
+                        <xsl:copy-of select=".//channel"/>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$userLayoutRoot = 'root'">
+                  <!-- BEGIN display channel-headers for each channel visible on the page -->
+                  <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+                    <channel-header ID="{@ID}"/>
+                  </xsl:for-each>
+                  <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+                    <channel-header ID="{@ID}"/>
+                  </xsl:for-each>
+                  <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
+                    <channel-header ID="{@ID}"/>
+                  </xsl:for-each>
+                  <!-- END display channel-headers for each channel visible on the page -->  
+                </xsl:when>
+                <xsl:otherwise>
+                <!-- display only focused channel-header -->
+                <channel-header ID="{$userLayoutRoot}"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </header>
-
+            
+            <!-- 
+             | Regions and Roles
+             | =================
+             | This section allows non-regular, non-sidebar portlets to appear in the output page,
+             | even in focused mode.  In Universality this is done with a 'role' attribute on the
+             | portlet publication record.
+             |
+             | In Respondr, this is done through regions: folders with a type attribute _other than_
+             | 'root', 'regular', or 'sidebar' (for legacy support).  Any folder type beyond these 
+             | three automatically becomes a region.  Respondr is responsible for recognizing 
+             | region-based portlets and placing them appropriately on the page.  Note that a region 
+             | name can appear multiple times in the output;  this approach allows multiple 
+             | fragments to place portlets in the same region.
+             +-->
             <regions>
                 <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
                     <region name="{@type}">
@@ -166,109 +195,41 @@
                     </region>
                 </xsl:for-each>
             </regions>
-
-            <navigation>
-                <!-- signals that add-tab prompt is not appropriate in the context of this navigation -->
-                <xsl:attribute name="allowAddTab">false</xsl:attribute>
-
-                <!-- just the one focused-on tab -->
-                <xsl:for-each select="/layout/folder/folder[@ID = $focusedFragmentId]">
-
-                    <xsl:call-template name="tab"/>
-
-                </xsl:for-each>
-            </navigation>
-
+            
+            <xsl:choose>
+                <xsl:when test="$focusedFragmentId != 'none'"><xsl:call-template name="tabListFocusedFragment"/></xsl:when>
+                <xsl:otherwise><xsl:call-template name="tabList"/></xsl:otherwise>
+            </xsl:choose>
+            
             <content>
-                <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
-                <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
+              <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
+              <xsl:choose>
+                <xsl:when test="$focusedFragmentId != 'none'">
+                    <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
+                </xsl:when>
+                <xsl:when test="$userLayoutRoot = 'root'">
+                  <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <focused>
+                    <!-- Detect whether a focused channel is present in the user's layout -->
+                    <xsl:attribute name="in-user-layout">
+                        <xsl:choose>
+                            <xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
+                            <xsl:otherwise>no</xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                    <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
+                  </focused>
+                </xsl:otherwise>
+              </xsl:choose>
             </content>
-
+            
             <xsl:call-template name="sidebarList"/>
             <xsl:call-template name="footer" />
             <xsl:call-template name="favorites" />
-
+            
         </layout>
-
-
-    </xsl:when>
-
-
-
-
-
-
-
-    <xsl:otherwise>
-
-  <layout>
-    <xsl:call-template name="debug-info"/>
-
-    <xsl:if test="/layout/@dlm:fragmentName">
-        <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
-    </xsl:if>
-
-    <header>
-      <xsl:choose>
-        <xsl:when test="$userLayoutRoot = 'root'">
-          <!-- BEGIN display channel-headers for each channel visible on the page -->
-          <xsl:for-each select="child::folder[@type='header']/descendant::channel">
-            <channel-header ID="{@ID}"/>
-          </xsl:for-each>
-          <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
-            <channel-header ID="{@ID}"/>
-          </xsl:for-each>
-          <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-            <channel-header ID="{@ID}"/>
-          </xsl:for-each>
-          <!-- END display channel-headers for each channel visible on the page -->  
-        </xsl:when>
-        <xsl:otherwise>
-        <!-- display only focused channel-header -->
-        <channel-header ID="{$userLayoutRoot}"/>
-        </xsl:otherwise>
-      </xsl:choose>
-
-    </header>
-
-    <!-- Always include all regions when in DASHBOARD (normal) mode-->
-    <regions>
-      <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
-        <xsl:call-template name="region"/>
-      </xsl:for-each> 
-    </regions>
-
-    <xsl:call-template name="tabList"/>
-
-    <content>
-      <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
-      <xsl:choose>
-        <xsl:when test="$userLayoutRoot = 'root'">
-          <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
-        </xsl:when>
-        <xsl:otherwise>
-          <focused>
-          	<!-- Detect whether a focused channel is present in the user's layout -->
-          	<xsl:attribute name="in-user-layout">
-          		<xsl:choose>
-          			<xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
-          			<xsl:otherwise>no</xsl:otherwise>
-          		</xsl:choose>
-          	</xsl:attribute>
-            <xsl:apply-templates select="//*[@ID = $userLayoutRoot]"/>
-          </focused>
-        </xsl:otherwise>
-      </xsl:choose>
-    </content>
-
-    <xsl:call-template name="sidebarList"/>
-
-    <xsl:call-template name="footer" />
-    
-    <xsl:call-template name="favorites" />
-
-  </layout>
-
     </xsl:otherwise>
   </xsl:choose>
 
@@ -326,6 +287,20 @@
       <xsl:call-template name="tab" />
     </xsl:for-each>
   </navigation>
+</xsl:template>
+
+<xsl:template name="tabListFocusedFragment">
+    <navigation>
+        <!-- signals that add-tab prompt is not appropriate in the context of this navigation -->
+        <xsl:attribute name="allowAddTab">false</xsl:attribute>
+    
+        <!-- just the one focused-on tab -->
+        <xsl:for-each select="/layout/folder/folder[@ID = $focusedFragmentId]">
+    
+            <xsl:call-template name="tab"/>
+    
+        </xsl:for-each>
+    </navigation>
 </xsl:template>
 
 <xsl:template name="sidebarList">
