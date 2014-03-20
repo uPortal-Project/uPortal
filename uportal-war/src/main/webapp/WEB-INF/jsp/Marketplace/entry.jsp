@@ -132,25 +132,24 @@
 <div id="${n}" class="marketplace_wrapper">
     <div>
         <div class="row">
-            <div class="col-md-3 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
-            <div class="col-md-3 col-xs-6 col-md-push-3" class="${n}go_button">
+            <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
+            <div class="col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${renderRequest.contextPath}/p/${portlet.FName}/render.uP" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button">Go</a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only"></span>
                     </button>
-                    <ul class="dropdown-menu marketplace_dropdown_menu" role="menu">
+                    <ul class="dropdown-menu marketplace_dropdown_menu" role="menu"  style="right: 0; left: auto;">
                         <li><a href="${renderRequest.contextPath}/p/${portlet.FName}/render.uP">Go</a></li>
                         <li><a href="#">Add to Favorites</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Share on Twitter</a></li>
                         <li><a href="#">Share on Facebook</a></li>
-                        <li><a href="#" id="${n}linkto">Link to ...</a></li>
+                        <li><a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto"><spring:message code="link.to" text="Link to ..." /></a></li>
                     </ul>
                 </div>
             </div>
-            <div class="col-md-3 col-xs-6 col-md-pull-3" id="${n}portlet_rating">Place Holder for Rating</div>
         </div>
         <div class="row">
             <div class="col-sm-12 marketplace_description_title"><h2>${portlet.title}</h2></div>
@@ -164,7 +163,7 @@
             <div class="row">
                 <div class="col-xs-12 col-md-4">
                     <p>
-                        <span class="marketplace_section_header">SCREENSHOTS/VIDEOS</span>
+                        <span class="marketplace_section_header"><spring:message code="screenshots.cap" text="SCREENSHOTS/VIDEOS"/></span>
                     </p>
                     <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
                         <c:set var="validUrlCount" value="0"/>
@@ -206,7 +205,7 @@
         <br>
         <div class="row col-xs-12" style="clear:both;">
             <p>
-                <span class="marketplace_section_header">RATINGS & REVIEWS</span>
+                <span class="marketplace_section_header"><spring:message code="rating.and.review.cap" text="RATINGS & REVIEWS"/></span>
             </p>
                 <div class="marketplace_average_rating col-xs-3 col-sm-2">
                 <div><input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/></div>
@@ -216,7 +215,7 @@
            <br>
            <div class="marketplace_user_rating row col-xs-12">
                 <br>
-                <span class="marketplace_user_rating_prompt">Rate this application</span>
+                <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
                 <br>
                 <div class="col-xs-4">
                     <input type="number" data-max="5" data-min="1" value="${rating}" name="marketplace_rate_this_portlet" class="rating marketplace_user_rating_star_system"/>
@@ -227,7 +226,7 @@
                         <textarea class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-default" style="float:right" >Submit</button>
+                        <button type="submit" class="btn btn-default" style="float:right" ><spring:message code="submit" text="Submit"/></button>
                     </div>
                 </form>
                 <br><br>            
@@ -239,7 +238,7 @@
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
-                        <span class="marketplace_section_header">What's New</span>
+                        <span class="marketplace_section_header"><spring:message code="whats.new" text="What's New"/></span>
                         <c:if test="${not empty portlet.portletReleaseNotes.releaseDate}">
                             <span class="marketplace_release_date"> (Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
@@ -255,7 +254,7 @@
                         </c:if>
                     </p>
                     <c:if test="${fn:length(portlet.portletReleaseNotes.releaseNotes) gt 3}">
-                        <span><a id="marketplace_show_more_less_link">More</a></span>
+                        <span><a id="marketplace_show_more_less_link"><spring:message code="more" text="More"/></a></span>
                     </c:if>
                 </div>
             </div>
@@ -282,15 +281,42 @@
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" style="float:left">
-                <a href="${initialViewURL}">Back to List</a>
+                <a href="${initialViewURL}"><spring:message code="back.to.list" text="Back to List"/></a>
             </div>
         </div>
     </div>                      
 </div>
-<div id="${n}copy-model" title="Link to This">
-    <p>
-    Link : <input type="text" value="${deepLink}"></input>
-    </p>
+<div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-hidden="true">
+    <div class="modal-dialog" style="text-align:center">
+        <div class="modal-content" style="white-space: nowrap">
+            <h4 class="modal-title">
+                <strong>
+                    <spring:message code="link.to.this" text="Link to This"/>
+                </strong>
+            </h4>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputDeep" value="${deepLink}"></input>
+                    </div>
+                </div>
+                <c:if test="${not empty shortURL }">
+                    <div class="form-group">
+                        <label for="smallLink" class="col-sm-2 control-label"><spring:message code="shortLink" text="Short Link"/></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="smallLink" value="${shortURL}"></input>
+                        </div>
+                    </div>
+                </c:if>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="close" text="Close"/></button>
+            </div>
+        </div>
+    </div>
 </div>
 <portlet:resourceURL id="saveRating" var="saveRatingUrl" />
 <script type="text/javascript">
@@ -300,18 +326,7 @@ up.jQuery(function() {
         $(".marketplace_screen_shots:first").addClass("active");
         $(".marketplace_carousel_indicators>li:first-child").addClass("active");
         $(".marketplace_release_notes>li:nth-child(-n+3)").addClass("marketplace_show");
-        $('#${n}copy-model').dialog({
-              autoOpen: false,
-              modal: true,
-              buttons: {
-                Ok: function() {
-                  $( this ).dialog( "close" );
-                }
-              }
-            });
-        $("#${n}linkto").click(function() {
-           $("#${n}copy-model").dialog("open");
-        });
+        $('#${n}copy-modal').modal('hide');
         var lengthLink = $('#marketplace_show_more_less_link');
         if(lengthLink != undefined) {
             lengthLink = lengthLink[0];
