@@ -62,6 +62,11 @@
     	<value>http://thumb7.shutterstock.com/display_pic_with_logo/248635/135897425/stock-photo-a-vending-machine-with-the-words-buy-apps-here-and-many-app-tiles-and-icons-ready-to-be-bought-and-135897425.jpg</value>
     </portlet-preference>
     <portlet-preference>
+        <name>short_link</name>
+        <readOnly>true</readOnly>
+        <value>http://go.wisc.edu/6jduk6</value>
+    </portlet-preference>
+    <portlet-preference>
     	<name>Release_Notes</name>
     	<readOnly>true</readOnly>
     	<value>Responsive Design!</value>

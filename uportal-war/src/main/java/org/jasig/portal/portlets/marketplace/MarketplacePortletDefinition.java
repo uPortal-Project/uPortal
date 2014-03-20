@@ -51,6 +51,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
     private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
     private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String MARKETPLACE_SHORT_LINK_PREF = "short_link";
     private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private IPortletCategoryRegistry portletCategoryRegistry;
@@ -59,6 +60,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private PortletReleaseNotes releaseNotes;
     private Set<PortletCategory> categories;
     private Set<IPortletDefinition> relatedPortlets;
+    private String shortURL = null;
 
     /**
      * 
@@ -77,6 +79,18 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.initPortletReleaseNotes();
         this.initCategories();
         this.initRelatedPortlets();
+        this.initShortURL();
+    }
+
+    private void initShortURL() {
+        List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
+        for(IPortletPreference pref : portletPreferences) {
+            if(MARKETPLACE_SHORT_LINK_PREF.equalsIgnoreCase(pref.getName())
+                    && pref.getValues().length == 1) {
+                setShortURL(pref.getValues()[0]);
+                break;
+            }
+        }
     }
 
     private void initScreenShots(){
@@ -527,4 +541,12 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 	public void setUsersRated(Long usersRated) {
 		this.portletDefinition.setUsersRated(usersRated);
 	}
+
+    public String getShortURL() {
+        return shortURL;
+    }
+
+    public void setShortURL(String shortURL) {
+        this.shortURL = shortURL;
+    }
 }

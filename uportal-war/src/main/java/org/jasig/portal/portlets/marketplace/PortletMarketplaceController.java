@@ -151,6 +151,7 @@ public class PortletMarketplaceController {
         model.addAttribute("rating", tempRatingImpl==null ? null:tempRatingImpl.getRating());
         model.addAttribute("portlet", mpDefinition);
         model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
+        model.addAttribute("shortURL",mpDefinition.getShortURL());
         return "jsp/Marketplace/entry";
     }
 	
