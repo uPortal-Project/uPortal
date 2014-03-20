@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.1.0-M1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -177,7 +177,7 @@
                 <configuration>
                     <tasks>
                         <!-- Set default value of data location if it is not set -->
-                        <property name="dir" value="${basedir}/src/main/data"/>
+                        <property name="dir" value="${basedir}/src/main/data" />
 
                         <property name="runtime_classpath" refid="maven.runtime.classpath" />
                         <property name="plugin_classpath" refid="maven.plugin.classpath" />
@@ -185,7 +185,7 @@
                         <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
                             <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                             <classpath>
-                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
+                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF" />
                                 <pathelement path="${runtime_classpath}" />
                                 <pathelement path="${plugin_classpath}" />
                                 <pathelement location="${servlet.jar}" />
