@@ -20,11 +20,11 @@
 package org.jasig.portal.security.xslt;
 
 /**
- * Interface for retrievieng localized messages with parameters that can be used in messages (in
+ * Interface for retrieving localized messages with parameters that can be used in messages (in
  * format '{0}' or '{1,name}'). Unfortunately, since JAXP is used, we lose some of the Xalan API for
- * extention functions, hence it's hard to create acutal multi-argument extention functions,
- * therefore we're using seperate methods for functions with different arities. Currently up to 3
- * parameters are supported.
+ * extension functions, hence it's hard to create actual multi-argument extension functions,
+ * therefore we're using separate methods for functions with different quantities of placeholders.
+ * Currently up to 3 parameters are supported.
  * 
  * @author Eric Dalquist
  * @author Arvids Grabovskis
