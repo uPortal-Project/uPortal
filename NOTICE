@@ -41,6 +41,7 @@ This project includes:
   Apache Pluto Portlet Container under The Apache Software License, Version 2.0
   Apache Pluto Portlet Tag Library under The Apache Software License, Version 2.0
   Apache Pluto Utilities under The Apache Software License, Version 2.0
+  Apache Tika core under The Apache Software License, Version 2.0
   ASM Analysis under BSD
   ASM Commons under BSD
   ASM Core under BSD
@@ -54,6 +55,7 @@ This project includes:
   Commons CLI under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons Collections under The Apache Software License, Version 2.0
+  Commons Compress under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons FileUpload under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
@@ -62,7 +64,6 @@ This project includes:
   Commons Math under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils under Apache License, Version 2.0
-  Data Mapper for Jackson under The Apache Software License, Version 2.0
   dom4j under BSD License
   Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
   EasyMock under Apache 2
@@ -81,7 +82,10 @@ This project includes:
   HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
   ICU4J under ICU License
-  Jackson under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-module-JAXB-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jansi under The Apache Software License, Version 2.0
   Jasig CAS ClearPass Extension under Apache 2
   Jasig CAS Client for Java - Core under Apache License Version 2.0
@@ -114,9 +118,11 @@ This project includes:
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Metrics Core Library under Apache License 2.0
   Mockito under The MIT License
+  Mozilla Rhino under Mozilla Public License, Version 2.0
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Neko HTML under The Apache Software License, Version 2.0
   Objenesis under Apache 2
+  Official LESS CSS Compiler for Java under The Apache Software License, Version 2.0
   oro under Apache License, Version 2.0
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
@@ -158,16 +164,18 @@ This project includes:
   tomcat-jdbc under Apache License, Version 2.0
   tomcat-juli under Apache License, Version 2.0
   Transaction 1.1 API under lgpl
+  uPortal DB under Apache License Version 2.0
   uPortal Parent under Apache License Version 2.0
+  uPortal Platform API under Apache License Version 2.0
   uPortal Search API under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
   Usertype Core (supporting Joda Time and Joda Money with Hibernate) under Apache 2
   Usertype SPI Classes for Hibernate under Apache 2
   Woodstox under The Apache Software License, Version 2.0
-  Xml Compatibility extensions for Jackson under The Apache Software License, Version 2.0 or GNU Lesser General Public License (LGPL), Version 2.1
   XML Pull Parsing API under Public Domain
   XMLUnit for Java under BSD License
   XStream Core under BSD style
+  XZ for Java under Public Domain
 
  
 This project also includes code under copywrite of the following institutions:
