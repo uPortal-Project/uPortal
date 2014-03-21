@@ -72,7 +72,7 @@ border: thin solid #b1c6f2;
 
 .up .skip-link:focus, .up .skip-link:active { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto; }
 
-.up #portalPageBodyInner { /* Page body. */ padding: 2.5em 12px; }
+.up #portalPageBodyInner { /* Page body. */ padding: 0.5em; }
 
 /*====================================*/
 /* Header */
@@ -380,8 +380,11 @@ border: thin solid #b1c6f2;
 
 /* header */
 .up #portalPageHeader { border-top: 1px solid #6198d1; background: #436cb1; background: -moz-linear-gradient(top, #436cb1 0%, #274085 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #436cb1), color-stop(100%, #274085)); background: -webkit-linear-gradient(top, #436cb1 0%, #274085 100%); background: -o-linear-gradient(top, #436cb1 0%, #274085 100%); background: -ms-linear-gradient(top, #436cb1 0%, #274085 100%); background: linear-gradient(top, #436cb1 0%, #274085 100%); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#436cb1', endColorstr='#274085',GradientType=0 ); }
-.up #portalPageHeader #portalLogo { padding: 25px; }
-.up #portalPageHeader #portalPageBar { position: absolute; right: 25px; top: 35px; color: white; font-weight: bold; font-size: 11px; line-height: 28px; }
+
+/* place change here */
+.up #portalPageHeader #portalLogo { padding: 5px 5px 5px 20px; }
+
+.up #portalPageHeader #portalPageBar { position: absolute; right: 25px; top: 10px; color: white; font-weight: bold; font-size: 11px; line-height: 28px; }
 .up #portalPageHeader #portalPageBar #portalPageBarLinks { position: relative; }
 .up #portalPageHeader #portalPageBar #portalPageBarLinks .icon-user { display: block; width: 28px; height: 28px; background: url(images/icon-user.png) no-repeat; float: right; }
 .up #portalPageHeader #portalPageBar #portalPageBarLinks .icon-user:hover { cursor: pointer; }
@@ -398,7 +401,7 @@ border: thin solid #b1c6f2;
 .up #portalPageHeader #webSearchContainer .fl-widget-inner #webSearchForm #webSearchSubmit { position: absolute; top: 8px; right: 6px; background: url(images/search_field_button.gif) no-repeat; width: 14px; height: 16px; text-indent: -999em; border: none; }
 
 /* navigation */
-.up #portalNavigation { position: absolute; width: auto; top: 35px; margin-left: 240px; background: none; }
+.up #portalNavigation { position: absolute; width: auto; top: 10px; margin-left: 240px; background: none; }
 .up #portalNavigation #portalNavigationList { margin: 0; }
 .up #portalNavigation #portalNavigationList .portal-navigation { background: none; border: none; margin-right: 1em; }
 .up #portalNavigation #portalNavigationList .portal-navigation:first-child { border-left: none; }
@@ -469,11 +472,11 @@ border: thin solid #b1c6f2;
 .up #portalPageFooter .copyright { text-align: center; font-weight: bold; font-size: 12px; color: white; padding-bottom: 300px; }
 
 /* guest */
-.up .not-logged-in #portalPageHeader #portalLogo { padding: 25px; }
+.up .not-logged-in #portalPageHeader #portalLogo { padding: 5px 5px 5px 20px; }
 .up .not-logged-in #portalPageHeader #portalLogin { width: auto; }
 .up .not-logged-in #portalPageHeader #portalLogin p { display: none; }
 .up .not-logged-in #portalPageHeader #portalLogin #portalCASLoginLink { margin-bottom: 1em; }
-.up .not-logged-in #portalNavigation { top: 35px; }
+.up .not-logged-in #portalNavigation { top: 10px; }
 .up .not-logged-in #portalPageBody { background-position: 0px -2px; }
 .up .not-logged-in #portalPageBody .login { width: auto; margin: 0 auto; }
 .up .not-logged-in #portalPageBody .login form > div { margin-bottom: 0.5em; overflow: hidden; }
