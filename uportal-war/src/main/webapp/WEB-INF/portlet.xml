@@ -343,6 +343,10 @@
                 <name>PortalActivity.ActivityController.uniqueLogins</name>
                 <value>true</value>
             </preference>
+            <preference>
+                <name>PortalActivity.ActivityController.showSearches</name>
+                <value>true</value>
+            </preference>
         </portlet-preferences>
     </portlet>
 

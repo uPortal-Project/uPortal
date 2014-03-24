@@ -255,15 +255,17 @@ http://www.ja-sig.org/wiki/x/cQ
                             </div>
                         </div>
                     </div><%-- /collapsible --%>
-                    <div class="popular-search" data-role="collapsible" data-collapsed="false" data-theme="a" data-content-theme="a"><%-- Second collapsible --%>
-                        <h3 class="title"><spring:message code="portal.activity.searching"/></h3>
-                        <div class="results">
-                            <c:forEach items="${popularSearchTerms}" var="searchInfo" varStatus="status">
-                                <c:if test="${status.index > 0}"><bold>|</bold></c:if>
-                                <a href="${renderRequest.contextPath}/p/search/max/action.uP?pP_query=${searchInfo.searchTerm}">${searchInfo.searchTerm}</a>
-                            </c:forEach>
-                        </div>
-                    </div><%-- /collapsible --%>
+                    <c:if test="${showSearches}">
+                        <div class="popular-search" data-role="collapsible" data-collapsed="false" data-theme="a" data-content-theme="a"><%-- Second collapsible --%>
+                            <h3 class="title"><spring:message code="portal.activity.searching"/></h3>
+                            <div class="results">
+                                <c:forEach items="${popularSearchTerms}" var="searchInfo" varStatus="status">
+                                    <c:if test="${status.index > 0}"><bold>|</bold></c:if>
+                                    <a href="${renderRequest.contextPath}/p/search/max/action.uP?pP_query=${searchInfo.searchTerm}">${searchInfo.searchTerm}</a>
+                                </c:forEach>
+                            </div>
+                        </div><%-- /collapsible --%>
+                    </c:if>
                 </div>
             </div>
         </div>
