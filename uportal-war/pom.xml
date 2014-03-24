@@ -729,6 +729,7 @@
                         <include>io/permission-owner/*.xsd</include>
                         <include>io/subscribed-fragment/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
+                        <include>io/pag/*.xsd</include>
                     </schemaIncludes>
                 </configuration>
             </plugin>

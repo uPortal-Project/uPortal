@@ -21,6 +21,7 @@ package org.jasig.portal.io.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -124,6 +125,12 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
         if (portalDataType == null) {
+            Iterator<PortalDataKey> iter = dataKeyTypes.keySet().iterator();
+            logger.warn("---------------- Keys:-------------------");
+            while(iter.hasNext()) {
+                PortalDataKey key = iter.next();
+                logger.warn("{}",key);
+            }
             logger.warn("No IPortalDataType configured for {}, the resource will be ignored: {}", portalDataKey, input);
             return null;
         }
