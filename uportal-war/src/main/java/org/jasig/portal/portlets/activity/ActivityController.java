@@ -64,10 +64,12 @@ public class ActivityController {
     private static final String PREFERENCE_DISPLAY_GROUPS = PREFERENCE_PREFIX + "displayGroups";
     private static final String PREFERENCE_DISPLAY_OTHER = PREFERENCE_PREFIX + "displayOther";
     private static final String PREFERENCE_UNIQUE_LOGINS = PREFERENCE_PREFIX + "uniqueLogins";
+    private static final String PREFERENCE_SHOW_SEACHES = PREFERENCE_PREFIX + "showSearches";
     private static final String DEFAULT_PREFERENCE_MASTER_GROUP = "Everyone";
     private static final String[] DEFAULT_PREFERENCE_DISPLAY_GROUPS = new String[]{ };
     private static final String DEFAULT_PREFERENCE_DISPLAY_OTHER = "true";
     private static final String DEFAULT_PREFERENCE_UNIQUE_LOGINS = "true";
+    private static final String DEFAULT_PREFERENCE_SHOW_SEARCHES = "true";
 
     private static final int NOW = 1;
     private static final int TODAY = 2;
@@ -104,16 +106,23 @@ public class ActivityController {
 
     @RenderMapping
     public ModelAndView summary(PortletRequest request) throws TypeMismatchException {
-        Map<String, Object> model = new HashMap<String, Object>();
-        PortalActivity now = buildPortalActivity(request,NOW);
-        PortalActivity today = buildPortalActivity(request,TODAY);
-        PortalActivity yesterday = buildPortalActivity(request,YESTERDAY);
-        List<SearchInfo> popularSearchTerms = getPopularSearchTerms();
+        final Map<String, Object> model = new HashMap<String, Object>();
+        final PortalActivity now = buildPortalActivity(request, NOW);
+        final PortalActivity today = buildPortalActivity(request, TODAY);
+        final PortalActivity yesterday = buildPortalActivity(request, YESTERDAY);
+        model.put("usageNow", now);
+        model.put("usageToday", today);
+        model.put("usageYesterday", yesterday);
 
-        model.put("popularSearchTerms",popularSearchTerms);
-        model.put("usageNow",now);
-        model.put("usageToday",today);
-        model.put("usageYesterday",yesterday);
+        // Searches
+        List<SearchInfo> popularSearchTerms = Collections.emptyList();  // default
+        final PortletPreferences prefs = request.getPreferences();
+        final Boolean showSearches = Boolean.valueOf(prefs.getValue(PREFERENCE_SHOW_SEACHES, DEFAULT_PREFERENCE_SHOW_SEARCHES));
+        if (showSearches) {
+            popularSearchTerms = getPopularSearchTerms();
+        }
+        model.put("showSearches", showSearches);
+        model.put("popularSearchTerms", popularSearchTerms);
 
         return new ModelAndView("jsp/Activity/activity", model);
     }
