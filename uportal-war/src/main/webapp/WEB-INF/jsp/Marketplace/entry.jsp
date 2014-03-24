@@ -159,7 +159,7 @@
         <br>
         <%-- Now let's add some Preferences --%>
         <%-- Start with Screen shots and what not --%>
-        
+        <%--TODO replace carousel with more accessibility friendly element --%>
         <c:if test="${not empty portlet.screenShots}">
             <div class="row">
                 <div class="col-xs-12 col-md-4">
@@ -167,31 +167,38 @@
                         <span class="marketplace_section_header">SCREENSHOTS/VIDEOS</span>
                     </p>
                     <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
+                        <c:set var="validUrlCount" value="0"/>
+                        <c:forEach var="screenShot" items="${portlet.screenShots}">
+                            <c:set var="imageUrl" value="${screenShot.url}" />
+                            <c:if test="${up:isValidUrl(imageUrl)}">
+                                <div class="carousel-inner marketplace_carousel_inner">
+                                    <div class="item marketplace_screen_shots">
+                                       <img src="${imageUrl}" alt="screenshot for portlet">
+                                        <c:if test="${not empty screenShot.captions}">
+                                            <div class="carousel-caption">
+                                                <c:forEach var="portletCaption" items="${screenShot.captions}">
+                                                    <h3>${portletCaption}</h3>
+                                                </c:forEach>
+                                            </div>
+                                        </c:if>
+                                        <c:set var="validUrlCount" value="${validUrlCount + 1}" />
+                                    </div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
                         <ol class="carousel-indicators marketplace_carousel_indicators">
-                            <c:forEach var="screenShot" items="${portlet.screenShots}" varStatus="loopStatus">
-                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${loopStatus.index}"></li>
+                            <c:forEach var="i" begin="1" end="${validUrlCount}">
+                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
                             </c:forEach>
                         </ol>
-                        <div class="carousel-inner marketplace_carousel_inner">
-                            <c:forEach var="screenShot" items="${portlet.screenShots}">
-                                <div class="item marketplace_screen_shots">
-                                    <img src="${screenShot.url}" alt="screenshot for portlet">
-                                    <c:if test="${not empty screenShot.captions}">
-                                        <div class="carousel-caption">
-                                            <c:forEach var="portletCaption" items="${screenShot.captions}">
-                                                <h3>${portletCaption}</h3>
-                                            </c:forEach>
-                                        </div>
-                                    </c:if>
-                                </div>
-                            </c:forEach>
-                        </div>
-                        <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
-                            <span class="glyphicon glyphicon-chevron-left"></span>
-                        </a>
-                        <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
-                            <span class="glyphicon glyphicon-chevron-right"></span>
-                        </a>
+                        <c:if test="${validUrlCount gt 1}">
+                            <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </c:if>
                     </div>
                 </div>
             </div>

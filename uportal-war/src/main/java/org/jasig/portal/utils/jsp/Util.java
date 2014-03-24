@@ -20,10 +20,15 @@
 package org.jasig.portal.utils.jsp;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
 import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -36,6 +41,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @version $Revision$
  */
 public class Util {
+    
+    final static Logger logger = LoggerFactory.getLogger(Util.class);
+    
     private static final ObjectMapper OBJECT_MAPPER;
     static {
         ObjectMapper mapper;
@@ -73,5 +81,36 @@ public class Util {
 
     public static String json(Object obj) throws JsonGenerationException, JsonMappingException, IOException {
         return OBJECT_MAPPER.writeValueAsString(obj);
+    }
+    
+    /**
+     * Tests if a string is a valid URL
+     * Will open a connection and make sure that it can connect to the URL
+     * it looks for an HTTP status code of 200 on a GET.  This is a valid URL.
+     * @param url - A string representing a url
+     * @return True if URL is valid according to included definition
+     */
+    public static boolean isValidUrl(String url){
+        HttpURLConnection huc = null;
+        boolean isValid = false;
+        try {
+            URL u = new URL(url);
+            huc = ( HttpURLConnection )u.openConnection();
+            huc.setRequestMethod("GET");
+            huc.connect();
+            int response = huc.getResponseCode();
+            if(response != HttpURLConnection.HTTP_OK){
+                throw new IOException(String.format("URL %s did not return a valid response code while attempting to connect.  Expected: %d. Received: %d", 
+                        url, HttpURLConnection.HTTP_OK, response));
+            }
+            isValid=true;
+        } catch (IOException e) {
+                logger.warn("A problem happened while trying to verify url: {} Error Message: {}", url, e.getMessage());
+        } finally {
+            if(huc!=null){
+                huc.disconnect();
+            };
+        }
+        return isValid;
     }
 }
