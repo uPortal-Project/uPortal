@@ -249,7 +249,7 @@ public class PersonImpl implements IPerson {
     public boolean isGuest() {
         boolean isGuest = false;  // default
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (PersonFactory.GUEST_USERNAME.equals(userName) && 
+        if (PersonFactory.GUEST_USERNAME.equalsIgnoreCase(userName) && 
                 (m_securityContext == null || !m_securityContext.isAuthenticated())) {
             isGuest = true;
         }
