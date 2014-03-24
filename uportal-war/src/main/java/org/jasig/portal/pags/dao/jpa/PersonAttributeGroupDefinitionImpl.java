@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,6 +41,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
@@ -93,11 +96,13 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     @JoinColumn(name = "PAG_STORE_DEF_ID", nullable = false)
     private PersonAttributeGroupStoreDefinitionImpl store;
     
-    @ManyToMany
+    @ManyToMany(cascade=CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAG_MEMBERS_DEF", joinColumns = {@JoinColumn(name="PAG_DEF_ID")}, inverseJoinColumns={@JoinColumn(name="PAG_DEF_MEMBER_ID")})  
     private List<PersonAttributeGroupDefinitionImpl> members = new ArrayList<PersonAttributeGroupDefinitionImpl>(0);
     
-    @OneToMany(mappedBy="group")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="group")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups = new ArrayList<PersonAttributeGroupTestGroupDefinitionImpl>(0);
 
     @Override

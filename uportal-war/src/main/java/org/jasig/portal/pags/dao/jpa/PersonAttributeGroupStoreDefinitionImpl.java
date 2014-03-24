@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -84,7 +86,7 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     private String description;
     
     
-    @OneToMany(mappedBy="store")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL)
     private List<PersonAttributeGroupDefinitionImpl> personAttributeGroupDefinitions = new ArrayList<PersonAttributeGroupDefinitionImpl>(0);
 
     @Override

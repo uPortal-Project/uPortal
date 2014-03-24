@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -92,7 +93,7 @@ public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttri
     @JoinColumn(name = "PAG_DEF_ID", nullable = false)
     private PersonAttributeGroupDefinitionImpl group;
 
-    @OneToMany(mappedBy="testGroup")
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup")
     private List<PersonAttributeGroupTestDefinitionImpl> tests = new ArrayList<PersonAttributeGroupTestDefinitionImpl>(0);
     
     @Override
