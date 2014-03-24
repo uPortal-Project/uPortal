@@ -150,17 +150,18 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </div>
                         </div>
                     </div>
-                    <br/>
-                    <a id="portalSearchActivityToggle" class="button btn"><spring:message code="portal.activity.searching"/></a>
-                    <div id="portalSearchActivity" class="popular-search">
-                        <div class="results">
-                            <c:forEach items="${popularSearchTerms}" var="searchInfo" varStatus="status">
-                                <c:if test="${status.index > 0}"><bold>|</bold></c:if>
-                                <a href="${renderRequest.contextPath}/p/search/max/action.uP?pP_query=${searchInfo.searchTerm}">${searchInfo.searchTerm}</a>
-                            </c:forEach>
+                    <c:if test="${showSearches}">
+                        <br/>
+                        <a id="portalSearchActivityToggle" class="button btn"><spring:message code="portal.activity.searching"/></a>
+                        <div id="portalSearchActivity" class="popular-search">
+                            <div class="results">
+                                <c:forEach items="${popularSearchTerms}" var="searchInfo" varStatus="status">
+                                    <c:if test="${status.index > 0}"><bold>|</bold></c:if>
+                                    <a href="${renderRequest.contextPath}/p/search/max/action.uP?pP_query=${searchInfo.searchTerm}">${searchInfo.searchTerm}</a>
+                                </c:forEach>
+                            </div>
                         </div>
-                    </div>
-                    </a>
+                    </c:if>
                 </div>
             </div>
         </div>
