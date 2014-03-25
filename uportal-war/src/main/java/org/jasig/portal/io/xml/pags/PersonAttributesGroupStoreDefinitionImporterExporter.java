@@ -46,8 +46,6 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 import org.jasig.portal.utils.SafeFilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +63,6 @@ public class PersonAttributesGroupStoreDefinitionImporterExporter
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
     private IPersonAttributesGroupTestDefinitionDao personAttributesGroupTestDefinitionDao;
     private IPersonAttributesGroupTestGroupDefinitionDao personAttributesGroupTestGroupDefinitionDao;
-    private Logger logger = LoggerFactory.getLogger(PersonAttributesGroupStoreDefinitionImporterExporter.class);
 
     @Autowired
     public void setpersonAttributesGroupStorePortalDataType(PersonAttributesGroupStorePortalDataType personAttributesGroupStorePortalDataType) {

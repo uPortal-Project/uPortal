@@ -17,9 +17,6 @@
  * under the License.
  */
 
-/**
- * 
- */
 package org.jasig.portal.io.xml.pags;
 
 import java.util.Arrays;

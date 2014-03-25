@@ -45,7 +45,7 @@ import org.springframework.context.ApplicationContext;
 public class EntityPersonAttributesConfiguration implements IPersonAttributesConfiguration {
 
     private IPersonAttributesGroupStoreDefinitionDao personAttributesGroupStoreDefinitionDao;
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     private final ApplicationContext applicationContext;
 
     public EntityPersonAttributesConfiguration() {
