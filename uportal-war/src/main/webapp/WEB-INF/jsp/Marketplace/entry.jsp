@@ -126,6 +126,11 @@
        outline-width: thin;
     }
     
+    .marketplace_carousel_inner img {
+        max-height : 20em;
+    }
+
+    
 </style>
 
 <c:set var="n"><portlet:namespace/></c:set>
