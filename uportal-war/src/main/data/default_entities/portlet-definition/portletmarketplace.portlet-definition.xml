@@ -64,7 +64,7 @@
     <portlet-preference>
         <name>short_link</name>
         <readOnly>true</readOnly>
-        <value>http://go.wisc.edu/6jduk6</value>
+        <value>http://goo.gl/ALBYpJ</value>
     </portlet-preference>
     <portlet-preference>
     	<name>Release_Notes</name>
