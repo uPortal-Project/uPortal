@@ -29,37 +29,36 @@
     xmlns:io="https://source.jasig.org/schemas/uportal/io"
     elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
 
-  <xs:element name="person-attribute-group-store">
+  <xs:element name="pags-store">
     <xs:complexType>
       <xs:sequence>
-        <xs:element type="xs:string" name="store-name"/>
-        <xs:element type="xs:string" name="store-description"/>
-        <xs:element name="person-attribute-group" maxOccurs="unbounded" minOccurs="0">
+        <xs:element type="xs:string" name="name"/>
+        <xs:element type="xs:string" name="description"/>
+        <xs:element name="pags-group" maxOccurs="unbounded" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
-              <xs:element type="xs:string" name="group-key"/>
-              <xs:element type="xs:string" name="group-name"/>
-              <xs:element type="xs:string" name="group-description"/>
-              <xs:element name="person-attribute-group-members" minOccurs="0">
+              <xs:element type="xs:string" name="name"/>
+              <xs:element type="xs:string" name="description"/>
+              <xs:element name="members" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
                     <xs:element type="xs:string" name="member-key" maxOccurs="unbounded" minOccurs="0"/>
                   </xs:sequence>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="person-attribute-group-test-groups" minOccurs="0">
+              <xs:element name="selection-test" minOccurs="0">
                 <xs:complexType>
                   <xs:sequence>
-                    <xs:element name="person-attribute-group-test-group" maxOccurs="unbounded" minOccurs="1">
+                    <xs:element name="test-group" maxOccurs="unbounded" minOccurs="1">
                       <xs:complexType>
                         <xs:sequence>
-                          <xs:element type="xs:string" name="test-group-name"/>
-                          <xs:element type="xs:string" name="test-group-description"/>
-                          <xs:element name="person-attribute-group-test" maxOccurs="unbounded" minOccurs="1">
+                          <xs:element type="xs:string" name="name"/>
+                          <xs:element type="xs:string" name="description"/>
+                          <xs:element name="test" maxOccurs="unbounded" minOccurs="1">
                             <xs:complexType>
                               <xs:sequence>
-                                <xs:element type="xs:string" name="test-name"/>
-                                <xs:element type="xs:string" name="test-description"/>
+                                <xs:element type="xs:string" name="name"/>
+                                <xs:element type="xs:string" name="description"/>
                                 <xs:element type="xs:string" name="attribute-name"/>
                                 <xs:element type="xs:string" name="tester-class"/>
                                 <xs:element type="xs:string" name="test-value"/>

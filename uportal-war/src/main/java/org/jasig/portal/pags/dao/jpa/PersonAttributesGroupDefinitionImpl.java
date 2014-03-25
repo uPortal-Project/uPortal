@@ -45,9 +45,9 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -67,11 +67,11 @@ import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroupDefinition {
-    public PersonAttributeGroupDefinitionImpl() {
+public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition {
+    public PersonAttributesGroupDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupDefinitionImpl(IPersonAttributeGroupStoreDefinition store, String name, String description) {
+    public PersonAttributesGroupDefinitionImpl(IPersonAttributesGroupStoreDefinition store, String name, String description) {
         super();
         this.store = store;
         this.name = name;
@@ -81,7 +81,7 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     @Id
     @GeneratedValue(generator = "UP_PAG_DEF_GEN")
     @Column(name = "PAG_DEF_ID")
-    private long internalPersonAttributeGroupDefinitionId;
+    private long internalPersonAttributesGroupDefinitionId;
     
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -93,27 +93,27 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonAttributeGroupStoreDefinitionImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonAttributesGroupStoreDefinitionImpl.class)
     @JoinColumn(name = "PAG_STORE_DEF_ID", nullable = false)
-    private IPersonAttributeGroupStoreDefinition store;
+    private IPersonAttributesGroupStoreDefinition store;
     
-    @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributeGroupDefinitionImpl.class)
+    @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAG_MEMBERS_DEF", joinColumns = {@JoinColumn(name="PAG_DEF_ID")}, inverseJoinColumns={@JoinColumn(name="PAG_DEF_MEMBER_ID")})  
-    private List<IPersonAttributeGroupDefinition> members = new ArrayList<IPersonAttributeGroupDefinition>(0);
+    private List<IPersonAttributesGroupDefinition> members = new ArrayList<IPersonAttributesGroupDefinition>(0);
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributeGroupTestGroupDefinitionImpl.class)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<IPersonAttributeGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributeGroupTestGroupDefinition>(0);
+    private List<IPersonAttributesGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributesGroupTestGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupDefinitionId), PersonAttributeGroupDefinitionImpl.class);
+        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupDefinitionId), PersonAttributesGroupDefinitionImpl.class);
     }
 
     @Override
     public long getId() {
-        return internalPersonAttributeGroupDefinitionId;
+        return internalPersonAttributesGroupDefinitionId;
     }
     
     @Override
@@ -152,30 +152,30 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     }
 
     @Override
-    public List<IPersonAttributeGroupDefinition> getMembers() {
+    public List<IPersonAttributesGroupDefinition> getMembers() {
         return members;
     }
 
     @Override
-    public void setMembers(List<IPersonAttributeGroupDefinition> members) {
+    public void setMembers(List<IPersonAttributesGroupDefinition> members) {
         this.members = members;
     }
 
     @Override
-    public List<IPersonAttributeGroupTestGroupDefinition> getTestGroups() {
+    public List<IPersonAttributesGroupTestGroupDefinition> getTestGroups() {
         return testGroups;
     }
 
     @Override
-    public void setTestGroups(List<IPersonAttributeGroupTestGroupDefinition> testGroups) {
+    public void setTestGroups(List<IPersonAttributesGroupTestGroupDefinition> testGroups) {
         this.testGroups = testGroups;
     }
 
-    public IPersonAttributeGroupStoreDefinition getStore() {
+    public IPersonAttributesGroupStoreDefinition getStore() {
         return this.store;
     }
  
-    public void setStore(IPersonAttributeGroupStoreDefinition store) {
+    public void setStore(IPersonAttributesGroupStoreDefinition store) {
         this.store = store;
     }
 

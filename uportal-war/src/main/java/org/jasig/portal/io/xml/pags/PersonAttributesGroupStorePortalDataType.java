@@ -33,8 +33,8 @@ import org.jasig.portal.io.xml.PortalDataKey;
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public class PersonAttributeGroupStorePortalDataType extends AbstractPortalDataType {
-    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("https://source.jasig.org/schemas/uportal/io/pags","person-attribute-group-store");
+public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType {
+    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("https://source.jasig.org/schemas/uportal/io/pags","pags-store");
 
     public static final PortalDataKey IMPORT_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
@@ -43,7 +43,7 @@ public class PersonAttributeGroupStorePortalDataType extends AbstractPortalDataT
 
     private static final List<PortalDataKey> PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS = Arrays.asList(IMPORT_41_DATA_KEY);
 
-    public PersonAttributeGroupStorePortalDataType() {
+    public PersonAttributesGroupStorePortalDataType() {
         super(PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME);
     }
 

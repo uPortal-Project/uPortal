@@ -105,7 +105,7 @@
     </jaxb:bindings>
 
     <jaxb:bindings schemaLocation="../resources/xsd/io/pags/pags-4.1.xsd">
-        <jaxb:bindings node="//xs:element[@name='person-attribute-group-store']">
+        <jaxb:bindings node="//xs:element[@name='pags-store']">
             <jaxb:class name="ExternalGroupStoreDefinition"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>

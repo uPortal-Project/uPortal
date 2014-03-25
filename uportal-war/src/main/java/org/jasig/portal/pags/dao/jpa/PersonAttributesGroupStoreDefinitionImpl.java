@@ -39,8 +39,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -60,11 +60,11 @@ import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttributeGroupStoreDefinition {
-    public PersonAttributeGroupStoreDefinitionImpl() {
+public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttributesGroupStoreDefinition {
+    public PersonAttributesGroupStoreDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupStoreDefinitionImpl(String name, String description) {
+    public PersonAttributesGroupStoreDefinitionImpl(String name, String description) {
         super();
         this.name = name;
         this.description = description;
@@ -73,7 +73,7 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     @Id
     @GeneratedValue(generator = "UP_PAG_STORE_DEF_GEN")
     @Column(name = "PAG_STORE_DEF_ID")
-    private long internalPersonAttributeGroupStoreDefinitionId;
+    private long internalPersonAttributesGroupStoreDefinitionId;
     
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -86,17 +86,17 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     private String description;
     
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributeGroupDefinitionImpl.class)
-    private List<IPersonAttributeGroupDefinition> personAttributeGroupDefinitions = new ArrayList<IPersonAttributeGroupDefinition>(0);
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
+    private List<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = new ArrayList<IPersonAttributesGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupStoreDefinitionId), PersonAttributeGroupStoreDefinitionImpl.class);
+        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupStoreDefinitionId), PersonAttributesGroupStoreDefinitionImpl.class);
     }
 
     @Override
     public long getId() {
-        return internalPersonAttributeGroupStoreDefinitionId;
+        return internalPersonAttributesGroupStoreDefinitionId;
     }
     
     @Override
@@ -137,13 +137,13 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     }
     
     @Override
-    public List<IPersonAttributeGroupDefinition> getGroups() {
-        return personAttributeGroupDefinitions;
+    public List<IPersonAttributesGroupDefinition> getGroups() {
+        return personAttributesGroupDefinitions;
     }
     
     @Override
-    public void setGroups(List<IPersonAttributeGroupDefinition> groups) {
-        this.personAttributeGroupDefinitions = groups;
+    public void setGroups(List<IPersonAttributesGroupDefinition> groups) {
+        this.personAttributesGroupDefinitions = groups;
     }
 
 }

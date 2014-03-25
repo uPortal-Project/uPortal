@@ -41,9 +41,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -63,11 +63,11 @@ import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttributeGroupTestGroupDefinition {
-    public PersonAttributeGroupTestGroupDefinitionImpl() {
+public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttributesGroupTestGroupDefinition {
+    public PersonAttributesGroupTestGroupDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupTestGroupDefinitionImpl(IPersonAttributeGroupDefinition group, String name, String description) {
+    public PersonAttributesGroupTestGroupDefinitionImpl(IPersonAttributesGroupDefinition group, String name, String description) {
         super();
         this.group = group;
         this.name = name;
@@ -77,7 +77,7 @@ public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttri
     @Id
     @GeneratedValue(generator = "UP_PAG_TEST_GROUP_DEF_GEN")
     @Column(name = "PAG_TEST_GROUP_DEF_ID")
-    private long internalPersonAttributeGroupTestGroupDefinitionId;
+    private long internalPersonAttributesGroupTestGroupDefinitionId;
     
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -89,16 +89,16 @@ public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttri
     @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributeGroupDefinitionImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @JoinColumn(name = "PAG_DEF_ID", nullable = false)
-    private IPersonAttributeGroupDefinition group;
+    private IPersonAttributesGroupDefinition group;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributeGroupTestDefinitionImpl.class)
-    private List<IPersonAttributeGroupTestDefinition> tests = new ArrayList<IPersonAttributeGroupTestDefinition>(0);
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class)
+    private List<IPersonAttributesGroupTestDefinition> tests = new ArrayList<IPersonAttributesGroupTestDefinition>(0);
     
     @Override
     public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupTestGroupDefinitionId), PersonAttributeGroupTestGroupDefinitionImpl.class);
+        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupTestGroupDefinitionId), PersonAttributesGroupTestGroupDefinitionImpl.class);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttri
 
     @Override
     public long getId() {
-        return internalPersonAttributeGroupTestGroupDefinitionId;
+        return internalPersonAttributesGroupTestGroupDefinitionId;
     }
     
     @Override
@@ -142,17 +142,17 @@ public class PersonAttributeGroupTestGroupDefinitionImpl implements IPersonAttri
     }
 
     @Override
-    public List<IPersonAttributeGroupTestDefinition> getTests() {
+    public List<IPersonAttributesGroupTestDefinition> getTests() {
         return tests;
     }
 
     @Override
-    public void setTests(List<IPersonAttributeGroupTestDefinition> tests) {
+    public void setTests(List<IPersonAttributesGroupTestDefinition> tests) {
         this.tests = tests;
     }
 
     @Override
-    public IPersonAttributeGroupDefinition getGroup() {
+    public IPersonAttributesGroupDefinition getGroup() {
         return group;
     }
 

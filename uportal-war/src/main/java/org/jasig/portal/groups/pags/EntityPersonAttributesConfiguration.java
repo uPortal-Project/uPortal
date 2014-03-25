@@ -26,60 +26,60 @@ import java.util.Map;
 
 import org.jasig.portal.groups.pags.PersonAttributesGroupStore.GroupDefinition;
 import org.jasig.portal.groups.pags.PersonAttributesGroupStore.TestGroup;
-import org.jasig.portal.pags.dao.IPersonAttributeGroupStoreDefinitionDao;
-import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
+import org.jasig.portal.pags.dao.IPersonAttributesGroupStoreDefinitionDao;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**
- * Get Store information from imported PAG Store
+ * Get Store information from imported PAGS Store
  * 
  * @since 4.1
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class EntityPersonAttributesConfiguration implements IPersonAttributesConfiguration {
 
-    private IPersonAttributeGroupStoreDefinitionDao personAttributeGroupStoreDefinitionDao;
+    private IPersonAttributesGroupStoreDefinitionDao personAttributesGroupStoreDefinitionDao;
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private final ApplicationContext applicationContext;
 
     public EntityPersonAttributesConfiguration() {
         super();
         this.applicationContext = ApplicationContextLocator.getApplicationContext();
-        this.personAttributeGroupStoreDefinitionDao = applicationContext.getBean(IPersonAttributeGroupStoreDefinitionDao.class);
+        this.personAttributesGroupStoreDefinitionDao = applicationContext.getBean(IPersonAttributesGroupStoreDefinitionDao.class);
     }
 
    public Map<String, GroupDefinition> getConfig() {
-      List<IPersonAttributeGroupStoreDefinition> stores = personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitions();
+      List<IPersonAttributesGroupStoreDefinition> stores = personAttributesGroupStoreDefinitionDao.getPersonAttributesGroupStoreDefinitions();
       Map<String, GroupDefinition> groupDefinitions = new HashMap<String, GroupDefinition>();
       if(stores == null || stores.size() != 1) {
-          throw new RuntimeException("PersonAttributesGroupStore: Unable to get imported PAG Store information");
+          throw new RuntimeException("PersonAttributesGroupStore: Unable to get imported PAGS Store information");
       }
-      IPersonAttributeGroupStoreDefinition store = stores.get(0);
-      List<IPersonAttributeGroupDefinition> groups = store.getGroups();
-      for (IPersonAttributeGroupDefinition group : groups) {
+      IPersonAttributesGroupStoreDefinition store = stores.get(0);
+      List<IPersonAttributesGroupDefinition> groups = store.getGroups();
+      for (IPersonAttributesGroupDefinition group : groups) {
           GroupDefinition groupDef = initGroupDef(group);
           groupDefinitions.put(groupDef.getKey(), groupDef);
       }
       return groupDefinitions;
    }
    
-   private GroupDefinition initGroupDef(IPersonAttributeGroupDefinition group) {
+   private GroupDefinition initGroupDef(IPersonAttributesGroupDefinition group) {
       GroupDefinition groupDef = new GroupDefinition();
       groupDef.setKey(group.getName());
       groupDef.setName(group.getName());
       groupDef.setDescription(group.getDescription());
       addMemberKeys(groupDef, group.getMembers());
-      List<IPersonAttributeGroupTestGroupDefinition> testGroups = group.getTestGroups();
-      for(IPersonAttributeGroupTestGroupDefinition testGroup : testGroups) {
+      List<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+      for(IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
           TestGroup tg = new TestGroup();
-          List<IPersonAttributeGroupTestDefinition> tests = testGroup.getTests();
-          for(IPersonAttributeGroupTestDefinition test : tests) {
+          List<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
+          for(IPersonAttributesGroupTestDefinition test : tests) {
               IPersonTester testerInst = initializeTester(test.getTesterClassName(), test.getAttributeName(), test.getTestValue());
               tg.addTest(testerInst);
           }
@@ -87,8 +87,8 @@ public class EntityPersonAttributesConfiguration implements IPersonAttributesCon
       }
       return groupDef;
    }
-   private void addMemberKeys(GroupDefinition groupDef, List<IPersonAttributeGroupDefinition> members) {
-       for(IPersonAttributeGroupDefinition member: members) {
+   private void addMemberKeys(GroupDefinition groupDef, List<IPersonAttributesGroupDefinition> members) {
+       for(IPersonAttributesGroupDefinition member: members) {
            groupDef.addMember(member.getName());
        }
    }

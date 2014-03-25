@@ -21,19 +21,19 @@ package org.jasig.portal.pags.dao;
 
 import java.util.List;
 
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 
 /**
- * Provides APIs for creating, storing and retrieving {@link IPersonAttributeGroupTestDefinition} objects.
+ * Provides APIs for creating, storing and retrieving {@link IPersonAttributesGroupStoreDefinition} objects.
  * 
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributeGroupTestDefinitionDao {
+public interface IPersonAttributesGroupStoreDefinitionDao {
 
-    public IPersonAttributeGroupTestDefinition updatePersonAttributeGroupTestDefinition(IPersonAttributeGroupTestDefinition personAttributeGroupTestDefinition);
-    public void deletePersonAttributeGroupTestDefinition(IPersonAttributeGroupTestDefinition definition);
-    public List<IPersonAttributeGroupTestDefinition> getPersonAttributeGroupTestDefinitions();
-    public IPersonAttributeGroupTestDefinition createPersonAttributeGroupTestDefinition(IPersonAttributeGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue);
+    public IPersonAttributesGroupStoreDefinition updatePersonAttributesGroupStoreDefinition(IPersonAttributesGroupStoreDefinition personAttributesGroupStoreDefinition);
+    public void deletePersonAttributesGroupStoreDefinition(IPersonAttributesGroupStoreDefinition definition);
+    public List<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitionByName(String name);
+    public List<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitions();
+    public IPersonAttributesGroupStoreDefinition createPersonAttributesGroupStoreDefinition(String name, String description);
 
 }

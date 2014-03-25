@@ -19,26 +19,23 @@
 
 package org.jasig.portal.pags.om;
 
+import java.util.List;
+
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.io.xml.IPortalData;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributeGroupTestDefinition extends IBasicEntity, IPortalData {
+public interface IPersonAttributesGroupStoreDefinition extends IBasicEntity, IPortalData {
 
     long getId();
     String getName();
     void setName(String name);
     String getDescription();
     void setDescription(String description);
-    
-    String getAttributeName();
-    void setAttributeName(String attributeName);
-    String getTesterClassName();
-    void setTesterClassName(String className);
-    String getTestValue();
-    void setTestValue(String testValue);
-    
-    IPersonAttributeGroupTestGroupDefinition getTestGroup();
+
+    List<IPersonAttributesGroupDefinition> getGroups();
+    void setGroups(List<IPersonAttributesGroupDefinition> groups);
+
 }

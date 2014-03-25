@@ -1,0 +1,226 @@
+<?xml version="1.0"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<!--
+    default.pags-store.xml is used to configure the person attributes group store.
+    See pags-4.1.xsd for xml grammar.  This file is available when pags.properties is toggled to Entity with:
+    org.jasig.portal.groups.pags.PersonAttributesGroupStore.configurationClass=org.jasig.portal.groups.pags.EntityPersonAttributesConfiguration.
+    The effect is that this configuration is saved to the database and leveraged from there instead of
+    reading an xml file.
+
+    To control the attributes that are available, see ../personDirectory.xml.
+
+    Author: Dan Ellentuck, de3@columbia.edu
+    Version $Revision$
+
+    This sample configuration sets up 4 groups in the following relationship:
+
+    All (0)
+     |- Users (1)
+     |- Short First Names (2)
+         |- Ds and Staff (3)
+
+    that is, Users (1) and Short First Names (2) are members of All (0), and Ds and Staff
+    is a member of Short First Names (2).  These declarations can be used to assess group
+    membership for the 6 users delivered in the base code (demo, student, etc.)
+
+-->
+
+
+<pags-store xmlns="https://source.jasig.org/schemas/uportal/io/pags">
+  <name>Default</name>
+  <description>Default Person Attribute Group Store</description>
+
+<!-- Group declarations: -->
+
+<!--
+  Group pags_root: "PAGS Root"
+  IMPORTANT: The PAGS Root group is REQUIRED for uPortal to function. It Must be a member of the Everyone group in the
+  local group store
+-->
+  <pags-group>
+    <name>PAGS Root</name>
+    <description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</description>
+    <members>
+      <member-key>All Users (PAGS)</member-key>
+      <member-key>Authenticated Users</member-key>
+      <member-key>Desktop Device Access</member-key>
+      <member-key>Mobile Device Access</member-key>
+      <member-key>Respondr Theme Users</member-key>
+    </members>
+  </pags-group>
+
+<!--
+  Group all_users: "All Users (PAGS)"
+  All IPersons are members of this group
+  IMPORTANT: The All Users group is REQUIRED for uPortal to function. It Must be a member of the PAGS Root group
+-->
+  <pags-group>
+    <name>All Users (PAGS)</name>
+    <description>All Portal Users</description>
+    <selection-test>
+      <test-group>
+        <name></name>
+        <description></description>
+        <test>
+          <name></name>
+          <description></description>
+          <attribute-name></attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
+          <test-value></test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+  
+  <pags-group>
+    <name>Authenticated Users</name>
+    <description>All Authenticated Portal Users</description>
+    <selection-test>
+      <test-group>
+        <name></name>
+        <description></description>
+        <test>
+          <name></name>
+          <description></description>
+          <attribute-name></attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
+          <test-value>false</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+
+  <pags-group>
+    <name>Mobile Device Access</name>
+    <description>User Access by a mobile device</description>
+    <selection-test>
+      <test-group>
+        <name></name>
+        <description></description>
+        <test>
+          <name></name>
+          <description></description>
+          <attribute-name>agentDevice</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+
+  <pags-group>
+    <name>Desktop Device Access</name>
+    <description>User Access by a non-mobile device (desktop)</description>
+    <selection-test>
+      <test-group>
+        <name></name>
+        <description></description>
+        <test>
+          <name></name>
+          <description></description>
+          <attribute-name>agentDevice</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
+          <test-value>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+
+  <pags-group>
+    <name>Respondr Theme Users</name>
+    <description>User Access by Theme</description>
+    <selection-test>
+      <test-group>
+        <name></name>
+        <description></description>
+        <test>
+          <name></name>
+          <description></description>
+          <attribute-name></attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
+          <test-value>respondr</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+
+<!--==================== Other Examples ====================-->
+
+
+<!--
+  Group 2: "Short First Names"
+  givenName has 5 or fewer characters
+-->
+<!-- 
+  <pags-group>
+    <name>Short First Names</name>
+    <description>Portal users whose first names are between 1 and 5 characters long</description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>givenName</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>^.{1,5}$</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+    <members>
+      <member-key>Ds and Students</member-key>
+    </members>
+  </pags-group>
+ -->
+
+<!--
+  Group 3: "Ds and Students"
+  givenName starts with D or equals "Student" since the results of the test-group elements are
+  OR-ed together.  HOWEVER, since this group is a member of group 2, members of this group must
+  also qualify as members of group 2, i.e., given name must have 5 or fewer characters.  As a
+  result, Student User should not show up as a member.
+-->
+<!-- 
+  <pags-group>
+    <name>Ds and Students</name>
+    <description>Portal users whose first names begin with D or equal Student</description>
+    <selection-test>
+      <test-group>
+        <test>
+          <attribute-name>givenName</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <test-value>^D.*$</test-value>
+        </test>
+      </test-group>
+      <test-group>
+        <test>
+          <attribute-name>givenName</attribute-name>
+          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <test-value>Student</test-value>
+        </test>
+      </test-group>
+    </selection-test>
+  </pags-group>
+ -->
+
+
+<!-- End Group declarations: -->
+
+</pags-store>

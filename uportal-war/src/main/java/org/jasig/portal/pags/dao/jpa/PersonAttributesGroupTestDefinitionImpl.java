@@ -36,8 +36,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
-import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -57,11 +57,11 @@ import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeGroupTestDefinition {
-    public PersonAttributeGroupTestDefinitionImpl() {
+public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition {
+    public PersonAttributesGroupTestDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupTestDefinitionImpl(IPersonAttributeGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
         super();
         this.testGroup = testGroup;
         this.attributeName = attributeName;
@@ -72,7 +72,7 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     @Id
     @GeneratedValue(generator = "UP_PAG_TEST_DEF_GEN")
     @Column(name = "PAG_TEST_DEF_ID")
-    private long internalPersonAttributeGroupTestDefinitionId;
+    private long internalPersonAttributesGroupTestDefinitionId;
     
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -93,18 +93,18 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     @Column(name = "TEST_VALUE", length=500, nullable = true, updatable = true)
     private String testValue;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributeGroupTestGroupDefinitionImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAG_TEST_GROUP_DEF_ID", nullable = false)
-    private IPersonAttributeGroupTestGroupDefinition testGroup;
+    private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupTestDefinitionId), PersonAttributeGroupTestDefinitionImpl.class);
+        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupTestDefinitionId), PersonAttributesGroupTestDefinitionImpl.class);
     }
 
     @Override
     public long getId() {
-        return internalPersonAttributeGroupTestDefinitionId;
+        return internalPersonAttributesGroupTestDefinitionId;
     }
     
     @Override
@@ -160,7 +160,7 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     }
 
     @Override
-    public IPersonAttributeGroupTestGroupDefinition getTestGroup() {
+    public IPersonAttributesGroupTestGroupDefinition getTestGroup() {
         return testGroup;
     }
 

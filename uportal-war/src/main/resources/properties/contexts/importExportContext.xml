@@ -50,13 +50,13 @@
     <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
     <bean id="eventAggregationConfigurationPortalDataType" class="org.jasig.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
     <bean id="subscribedFragmentPortalDataType" class="org.jasig.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
-    <bean id="personAttributeGroupStorePortalDataType" class="org.jasig.portal.io.xml.pags.PersonAttributeGroupStorePortalDataType" />
+    <bean id="personAttributesGroupStorePortalDataType" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType" />
     
     <!--
      | Import order for portal data types 
      +-->
     <util:list id="dataTypeImportOrder">
-        <ref bean="personAttributeGroupStorePortalDataType" />
+        <ref bean="personAttributesGroupStorePortalDataType" />
         <ref bean="entityTypePortalDataType" />
         <ref bean="stylesheetDescriptorPortalDataType" />
         <ref bean="templateUserPortalDataType" />
@@ -78,7 +78,7 @@
     </util:list>
     
     <util:set id="exportAllPortalDataTypes">
-        <ref bean="personAttributeGroupStorePortalDataType" />
+        <ref bean="personAttributesGroupStorePortalDataType" />
         <ref bean="entityTypePortalDataType" />
         <ref bean="fragmentDefinitionPortalDataType" />
         <ref bean="fragmentLayoutPortalDataType" />
@@ -99,7 +99,7 @@
      | File-name patterns that a candidate file must match one of when doing a bulk import
      +-->
     <util:set id="dataFileIncludes">
-        <value>**/*.person-attribute-group-store</value>
+        <value>**/*.pags-store</value>
         <value>**/*.xml</value>
         <value>**/*.entity-type</value>
         <value>**/*.template-user</value>
@@ -176,7 +176,7 @@
         <property name="schema" value="classpath:/xsd/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
     </bean>
-    <bean id="personAttributeGroupStoreDefinitionImporterExporter" class="org.jasig.portal.io.xml.pags.PersonAttributeGroupStoreDefinitionImporterExporter">
+    <bean id="personAttributesGroupStoreDefinitionImporterExporter" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStoreDefinitionImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.pags" />
         <property name="schema" value="classpath:/xsd/io/pags/pags-4.1.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/pags https://source.jasig.org/schemas/uportal/io/pags/pags-4.1.xsd" />
