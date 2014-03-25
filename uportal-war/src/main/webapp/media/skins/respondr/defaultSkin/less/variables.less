@@ -100,6 +100,8 @@
  * Link colors
  */
 @link-color: #f00;
+@portal-global-link-color: #fff;
+@footer-link-color: @link-color;
 
 /**
  * Region Styles
@@ -115,16 +117,17 @@
 @portal-global-background-gradient: false;
 @portal-global-border-color: @color1-light;
 
-@user-portal-link-color: @link-color;
+@logout-btn-link-text-color: #fff;
+@user-portal-link-color: #fff;
 
-@btn-skin-color:              #fff;
-@btn-skin-bg:                 @color2;
-@btn-skin-border:             darken(@btn-skin-bg, 5%);
+/**
+ * Theme based button styles
+ */
+@btn-skin-text-color:             #fff;
+@btn-skin-background-color:       @color2;
 
-@btn-skin-alt-color:              #grayscale10;
-@btn-skin-alt-bg:                 @color3;
-@btn-skin-alt-border:             darken(@color3, 5%);
-// @user-portal-background-color: #fff;
+@btn-skin-alt-text-color:         @grayscale10;
+@btn-skin-alt-background-color:   @color3;
 
 
 /**
@@ -196,11 +199,13 @@
 @detached-header-height: 30px;
 
 /*
- * Custom Mixins
+ * Custom Mixins Settings
  */
- .border (@color: @grayscale3, @size: 1px) {
-        border: @size solid @color;
-}
+@contrasted-dark-default: #232323;
+@contrasted-light-default: #efefef;
+@contrasted-lightness-threshold: 43%;
+
+
 
 /*
  * Simple float. Pass in the direction; default is left.

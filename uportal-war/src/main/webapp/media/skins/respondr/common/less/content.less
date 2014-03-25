@@ -159,16 +159,19 @@
       }
     }
 
-    .btn-skin {
-        .pretty-buttons(@btn-skin-color, @btn-skin-bg);
+    .btn-skin, a.btn-skin, button.btn-skin {
+        .pretty-buttons(@btn-skin-text-color, @btn-skin-background-color);
     }
 
-    .btn-skin-alt {
-        .pretty-buttons(@btn-skin-alt-color, @btn-skin-alt-bg);
+    .btn-skin-alt, a.btn-skin-alt, button.btn-skin-alt {
+        .pretty-buttons(@btn-skin-alt-text-color, @btn-skin-alt-background-color);
+        .btn-link {
+            color: @btn-skin-alt-text-color;
+        }
     }
     .notification-icon {
         a {
-            color: #fff;
+            color: @notification-icon-color;
         }
     }
 
