@@ -234,7 +234,7 @@
     <xsl:template name="region.customize">
         <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
             <xsl:if test="//region[@name='customize']/channel">
-                <div id="region-customize" class="container">
+                <div id="region-customize" class="container hidden-xs">
                     <div id="customizeOptionsWrapper">
                         <div id="customizeOptions" class="collapse">
                                 <xsl:for-each select="//region[@name='customize']/channel">
