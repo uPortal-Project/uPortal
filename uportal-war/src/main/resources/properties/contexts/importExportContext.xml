@@ -178,8 +178,8 @@
     </bean>
     <bean id="personAttributeGroupStoreDefinitionImporterExporter" class="org.jasig.portal.io.xml.pags.PersonAttributeGroupStoreDefinitionImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.pags" />
-        <property name="schema" value="classpath:/xsd/io/pag/pag-4.1.xsd" />
-        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/pag https://source.jasig.org/schemas/uportal/io/pag/pag-4.1.xsd" />
+        <property name="schema" value="classpath:/xsd/io/pags/pags-4.1.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/pags https://source.jasig.org/schemas/uportal/io/pags/pags-4.1.xsd" />
     </bean>
     
     <!-- 

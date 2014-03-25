@@ -27,6 +27,7 @@ import org.jasig.portal.io.xml.IPortalData;
  */
 public interface IPersonAttributeGroupTestDefinition extends IBasicEntity, IPortalData {
 
+    long getId();
     String getName();
     void setName(String name);
     String getDescription();

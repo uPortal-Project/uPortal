@@ -46,6 +46,8 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -69,14 +71,13 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     public PersonAttributeGroupDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupDefinitionImpl(PersonAttributeGroupStoreDefinitionImpl store, String name, String description) {
+    public PersonAttributeGroupDefinitionImpl(IPersonAttributeGroupStoreDefinition store, String name, String description) {
         super();
         this.store = store;
         this.name = name;
         this.description = description;
     }
 
-    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PAG_DEF_GEN")
     @Column(name = "PAG_DEF_ID")
@@ -92,24 +93,29 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonAttributeGroupStoreDefinitionImpl.class)
     @JoinColumn(name = "PAG_STORE_DEF_ID", nullable = false)
-    private PersonAttributeGroupStoreDefinitionImpl store;
+    private IPersonAttributeGroupStoreDefinition store;
     
-    @ManyToMany(cascade=CascadeType.ALL)
+    @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributeGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAG_MEMBERS_DEF", joinColumns = {@JoinColumn(name="PAG_DEF_ID")}, inverseJoinColumns={@JoinColumn(name="PAG_DEF_MEMBER_ID")})  
-    private List<PersonAttributeGroupDefinitionImpl> members = new ArrayList<PersonAttributeGroupDefinitionImpl>(0);
+    private List<IPersonAttributeGroupDefinition> members = new ArrayList<IPersonAttributeGroupDefinition>(0);
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="group")
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributeGroupTestGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups = new ArrayList<PersonAttributeGroupTestGroupDefinitionImpl>(0);
+    private List<IPersonAttributeGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributeGroupTestGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
         return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupDefinitionId), PersonAttributeGroupDefinitionImpl.class);
     }
 
+    @Override
+    public long getId() {
+        return internalPersonAttributeGroupDefinitionId;
+    }
+    
     @Override
     public String getName() {
         return name;
@@ -146,30 +152,30 @@ public class PersonAttributeGroupDefinitionImpl implements IPersonAttributeGroup
     }
 
     @Override
-    public List<PersonAttributeGroupDefinitionImpl> getMembers() {
+    public List<IPersonAttributeGroupDefinition> getMembers() {
         return members;
     }
 
     @Override
-    public void setMembers(List<PersonAttributeGroupDefinitionImpl> members) {
+    public void setMembers(List<IPersonAttributeGroupDefinition> members) {
         this.members = members;
     }
 
     @Override
-    public List<PersonAttributeGroupTestGroupDefinitionImpl> getTestGroups() {
+    public List<IPersonAttributeGroupTestGroupDefinition> getTestGroups() {
         return testGroups;
     }
 
     @Override
-    public void setTestGroups(List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups) {
+    public void setTestGroups(List<IPersonAttributeGroupTestGroupDefinition> testGroups) {
         this.testGroups = testGroups;
     }
 
-    public PersonAttributeGroupStoreDefinitionImpl getStore() {
+    public IPersonAttributeGroupStoreDefinition getStore() {
         return this.store;
     }
  
-    public void setStore(PersonAttributeGroupStoreDefinitionImpl store) {
+    public void setStore(IPersonAttributeGroupStoreDefinition store) {
         this.store = store;
     }
 

@@ -21,8 +21,11 @@
 -->
 
 <!--
-    PAGSGroupStoreConfig.xml is used to configure the person attributes group store.
-    See PAGSGroupStore.dtd for xml grammar.
+    default.person-attribute-group-store.xml is used to configure the person attributes group store.
+    See pags-4.1.xsd for xml grammar.  This file is available when pags.properties is toggled to Entity with:
+    org.jasig.portal.groups.pags.PersonAttributesGroupStore.configurationClass=org.jasig.portal.groups.pags.EntityPersonAttributesConfiguration.
+    The effect is that this configuration is saved to the database and leveraged from there instead of
+    reading an xml file.
 
     To control the attributes that are available, see ../personDirectory.xml.
 
@@ -43,7 +46,7 @@
 -->
 
 
-<personal-attribute-group-store xmlns="https://source.jasig.org/schemas/uportal/io/pag">
+<person-attribute-group-store xmlns="https://source.jasig.org/schemas/uportal/io/pags">
   <store-name>Default</store-name>
   <store-description>Default Person Attribute Group Store</store-description>
 
@@ -54,118 +57,118 @@
   IMPORTANT: The PAGS Root group is REQUIRED for uPortal to function. It Must be a member of the Everyone group in the
   local group store
 -->
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>pags_root</group-key>
     <group-name>PAGS Root</group-name>
     <group-description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</group-description>
-    <personal-attribute-group-members>
+    <person-attribute-group-members>
       <member-key>All Users (PAGS)</member-key>
       <member-key>Authenticated Users</member-key>
       <member-key>Desktop Device Access</member-key>
       <member-key>Mobile Device Access</member-key>
       <member-key>Respondr Theme Users</member-key>
-    </personal-attribute-group-members>
-  </personal-attribute-group>
+    </person-attribute-group-members>
+  </person-attribute-group>
 
 <!--
   Group all_users: "All Users (PAGS)"
-  All IPersons are memebers of this group
+  All IPersons are members of this group
   IMPORTANT: The All Users group is REQUIRED for uPortal to function. It Must be a member of the PAGS Root group
 -->
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>all_users</group-key>
     <group-name>All Users (PAGS)</group-name>
     <group-description>All Portal Users</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
         <test-group-name></test-group-name>
         <test-group-description></test-group-description>
-        <personal-attribute-group-test>
+        <person-attribute-group-test>
           <test-name></test-name>
           <test-description></test-description>
           <attribute-name></attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
           <test-value></test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
   
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>authenticated_users</group-key>
     <group-name>Authenticated Users</group-name>
     <group-description>All Authenticated Portal Users</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
         <test-group-name></test-group-name>
         <test-group-description></test-group-description>
-        <personal-attribute-group-test>
+        <person-attribute-group-test>
           <test-name></test-name>
           <test-description></test-description>
           <attribute-name></attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
           <test-value>false</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
 
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>mobile_device_access</group-key>
     <group-name>Mobile Device Access</group-name>
     <group-description>User Access by a mobile device</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
         <test-group-name></test-group-name>
         <test-group-description></test-group-description>
-        <personal-attribute-group-test>
+        <person-attribute-group-test>
           <test-name></test-name>
           <test-description></test-description>
           <attribute-name>agentDevice</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
 
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>desktop_device_access</group-key>
     <group-name>Desktop Device Access</group-name>
     <group-description>User Access by a non-mobile device (desktop)</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
         <test-group-name></test-group-name>
         <test-group-description></test-group-description>
-        <personal-attribute-group-test>
+        <person-attribute-group-test>
           <test-name></test-name>
           <test-description></test-description>
           <attribute-name>agentDevice</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
           <test-value>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
 
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>respondr_theme_users</group-key>
     <group-name>Respondr Theme Users</group-name>
     <group-description>User Access by Theme</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
         <test-group-name></test-group-name>
         <test-group-description></test-group-description>
-        <personal-attribute-group-test>
+        <person-attribute-group-test>
           <test-name></test-name>
           <test-description></test-description>
           <attribute-name></attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
           <test-value>respondr</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
 
 <!--==================== Other Examples ====================-->
 
@@ -175,23 +178,23 @@
   givenName has 5 or fewer characters
 -->
 <!-- 
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>2</group-key>
     <group-name>Short First Names</group-name>
     <group-description>Portal users whose first names are between 1 and 5 characters long</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
-        <personal-attribute-group-test>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
+        <person-attribute-group-test>
           <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>^.{1,5}$</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-    <personal-attribute-group-members>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+    <person-attribute-group-members>
       <member-key>Ds and Students</member-key>
-    </personal-attribute-group-members>
-  </personal-attribute-group>
+    </person-attribute-group-members>
+  </person-attribute-group>
  -->
 
 <!--
@@ -202,30 +205,30 @@
   result, Student User should not show up as a member.
 -->
 <!-- 
-  <personal-attribute-group>
+  <person-attribute-group>
     <group-key>3</group-key>
     <group-name>Ds and Students</group-name>
     <group-description>Portal users whose first names begin with D or equal Student</group-description>
-    <personal-attribute-group-test-groups>
-      <personal-attribute-group-test-group>
-        <personal-attribute-group-test>
+    <person-attribute-group-test-groups>
+      <person-attribute-group-test-group>
+        <person-attribute-group-test>
           <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>^D.*$</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-      <personal-attribute-group-test-group>
-        <personal-attribute-group-test>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+      <person-attribute-group-test-group>
+        <person-attribute-group-test>
           <attribute-name>givenName</attribute-name>
           <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>Student</test-value>
-        </personal-attribute-group-test>
-      </personal-attribute-group-test-group>
-    </personal-attribute-group-test-groups>
-  </personal-attribute-group>
+        </person-attribute-group-test>
+      </person-attribute-group-test-group>
+    </person-attribute-group-test-groups>
+  </person-attribute-group>
  -->
 
 
 <!-- End Group declarations: -->
 
-</personal-attribute-group-store>
+</person-attribute-group-store>

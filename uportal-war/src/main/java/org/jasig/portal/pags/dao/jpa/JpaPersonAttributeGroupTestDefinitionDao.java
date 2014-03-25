@@ -20,7 +20,6 @@
 package org.jasig.portal.pags.dao.jpa;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -32,6 +31,7 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupTestDefinitionDao;
 import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -80,15 +80,19 @@ public class JpaPersonAttributeGroupTestDefinitionDao extends BasePortalJpaDao i
     }
 
     @Override
-    public List<PersonAttributeGroupTestDefinitionImpl> getPersonAttributeGroupTestDefinitions() {
+    public List<IPersonAttributeGroupTestDefinition> getPersonAttributeGroupTestDefinitions() {
         final TypedQuery<PersonAttributeGroupTestDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        return query.getResultList();
+        List<IPersonAttributeGroupTestDefinition> tests = new ArrayList<IPersonAttributeGroupTestDefinition>();
+        for(IPersonAttributeGroupTestDefinition test : query.getResultList()) {
+            tests.add(test);
+        }
+        return tests;
     }
     
     @PortalTransactional
     @Override
-    public IPersonAttributeGroupTestDefinition createPersonAttributeGroupTestDefinition(PersonAttributeGroupTestGroupDefinitionImpl testGroup, String attributeName, String testerClass, String testValue) {
-        final IPersonAttributeGroupTestDefinition personAttributeGroupTestDefinition = new PersonAttributeGroupTestDefinitionImpl(testGroup, attributeName, testerClass, testValue);
+    public IPersonAttributeGroupTestDefinition createPersonAttributeGroupTestDefinition(IPersonAttributeGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+        final IPersonAttributeGroupTestDefinition personAttributeGroupTestDefinition = new PersonAttributeGroupTestDefinitionImpl((PersonAttributeGroupTestGroupDefinitionImpl)testGroup, attributeName, testerClass, testValue);
         this.getEntityManager().persist(personAttributeGroupTestDefinition);
         return personAttributeGroupTestDefinition;
     }

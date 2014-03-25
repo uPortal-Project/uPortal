@@ -23,20 +23,20 @@ import java.util.List;
 
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupTestDefinitionImpl;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributeGroupTestGroupDefinition extends IBasicEntity, IPortalData {
 
+    long getId();
     String getName();
     void setName(String name);
     String getDescription();
     void setDescription(String description);
 
-    List<PersonAttributeGroupTestDefinitionImpl> getTests();
-    void setTests(List<PersonAttributeGroupTestDefinitionImpl> tests);
+    List<IPersonAttributeGroupTestDefinition> getTests();
+    void setTests(List<IPersonAttributeGroupTestDefinition> tests);
 
     IPersonAttributeGroupDefinition getGroup();
 }

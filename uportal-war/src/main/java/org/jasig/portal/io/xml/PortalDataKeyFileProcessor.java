@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.io.IOUtils;
@@ -126,12 +125,13 @@ public final class PortalDataKeyFileProcessor implements Function<Resource, Obje
         final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
         if (portalDataType == null) {
             Iterator<PortalDataKey> iter = dataKeyTypes.keySet().iterator();
-            logger.warn("---------------- Keys:-------------------");
+            StringBuffer potentialKeys = new StringBuffer();
+            potentialKeys.append("---------------- Potential Keys To Match -------------------");
             while(iter.hasNext()) {
                 PortalDataKey key = iter.next();
-                logger.warn("{}",key);
+                potentialKeys.append(key + "\n");
             }
-            logger.warn("No IPortalDataType configured for {}, the resource will be ignored: {}", portalDataKey, input);
+            logger.warn("{}No IPortalDataType configured for {}, the resource will be ignored: {}", potentialKeys, portalDataKey, input);
             return null;
         }
         

@@ -34,7 +34,7 @@ import org.jasig.portal.io.xml.PortalDataKey;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributeGroupStorePortalDataType extends AbstractPortalDataType {
-    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("https://source.jasig.org/schemas/uportal/io/pag","personal-attribute-group-store");
+    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("https://source.jasig.org/schemas/uportal/io/pags","person-attribute-group-store");
 
     public static final PortalDataKey IMPORT_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 

@@ -21,8 +21,7 @@ package org.jasig.portal.pags.dao;
 
 import java.util.List;
 
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupDefinitionImpl;
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupTestGroupDefinitionImpl;
+import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 
 /**
@@ -32,11 +31,11 @@ import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
  */
 public interface IPersonAttributeGroupTestGroupDefinitionDao {
 
-    IPersonAttributeGroupTestGroupDefinition createPersonAttributeGroupTestGroupDefinition(PersonAttributeGroupDefinitionImpl group, String name, String description);
+    IPersonAttributeGroupTestGroupDefinition createPersonAttributeGroupTestGroupDefinition(IPersonAttributeGroupDefinition group, String name, String description);
     IPersonAttributeGroupTestGroupDefinition updatePersonAttributeGroupTestGroupDefinition(IPersonAttributeGroupTestGroupDefinition personAttributeGroupTestGroupDefinition);
     void deletePersonAttributeGroupTestGroupDefinition(IPersonAttributeGroupTestGroupDefinition definition);
 
-    List<PersonAttributeGroupTestGroupDefinitionImpl> getPersonAttributeGroupTestGroupDefinitions();
-    List<PersonAttributeGroupTestGroupDefinitionImpl> getPersonAttributeGroupTestGroupDefinitionByName(String name);
+    List<IPersonAttributeGroupTestGroupDefinition> getPersonAttributeGroupTestGroupDefinitions();
+    List<IPersonAttributeGroupTestGroupDefinition> getPersonAttributeGroupTestGroupDefinitionByName(String name);
 
 }

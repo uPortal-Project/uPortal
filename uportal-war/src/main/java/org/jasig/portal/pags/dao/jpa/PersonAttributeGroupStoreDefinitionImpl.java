@@ -39,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
 
 /**
@@ -69,7 +70,6 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
         this.description = description;
     }
 
-    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PAG_STORE_DEF_GEN")
     @Column(name = "PAG_STORE_DEF_ID")
@@ -86,14 +86,19 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     private String description;
     
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL)
-    private List<PersonAttributeGroupDefinitionImpl> personAttributeGroupDefinitions = new ArrayList<PersonAttributeGroupDefinitionImpl>(0);
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributeGroupDefinitionImpl.class)
+    private List<IPersonAttributeGroupDefinition> personAttributeGroupDefinitions = new ArrayList<IPersonAttributeGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
         return new EntityIdentifier(String.valueOf(this.internalPersonAttributeGroupStoreDefinitionId), PersonAttributeGroupStoreDefinitionImpl.class);
     }
 
+    @Override
+    public long getId() {
+        return internalPersonAttributeGroupStoreDefinitionId;
+    }
+    
     @Override
     public String getDataId() {
         return this.name;
@@ -132,12 +137,12 @@ public class PersonAttributeGroupStoreDefinitionImpl implements IPersonAttribute
     }
     
     @Override
-    public List<PersonAttributeGroupDefinitionImpl> getGroups() {
-        return this.personAttributeGroupDefinitions;
+    public List<IPersonAttributeGroupDefinition> getGroups() {
+        return personAttributeGroupDefinitions;
     }
     
     @Override
-    public void setGroups(List<PersonAttributeGroupDefinitionImpl> groups) {
+    public void setGroups(List<IPersonAttributeGroupDefinition> groups) {
         this.personAttributeGroupDefinitions = groups;
     }
 

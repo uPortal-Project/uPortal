@@ -20,7 +20,6 @@
 package org.jasig.portal.pags.dao.jpa;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -34,6 +33,7 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupTestGroupDefinitionDao;
+import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
 
@@ -84,7 +84,7 @@ public class JpaPersonAttributeGroupTestGroupDefinitionDao extends BasePortalJpa
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public List<PersonAttributeGroupTestGroupDefinitionImpl> getPersonAttributeGroupTestGroupDefinitionByName(String name) {
+    public List<IPersonAttributeGroupTestGroupDefinition> getPersonAttributeGroupTestGroupDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<PersonAttributeGroupTestGroupDefinitionImpl> criteriaQuery = 
                 criteriaBuilder.createQuery(PersonAttributeGroupTestGroupDefinitionImpl.class);
@@ -93,19 +93,27 @@ public class JpaPersonAttributeGroupTestGroupDefinitionDao extends BasePortalJpa
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
         TypedQuery<PersonAttributeGroupTestGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setParameter(nameParameter, name);
-        return query.getResultList();
+        List<IPersonAttributeGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributeGroupTestGroupDefinition>();
+        for (IPersonAttributeGroupTestGroupDefinition testGroup : query.getResultList()) {
+            testGroups.add(testGroup);
+        }
+        return testGroups;
     }
 
     @Override
-    public List<PersonAttributeGroupTestGroupDefinitionImpl> getPersonAttributeGroupTestGroupDefinitions() {
+    public List<IPersonAttributeGroupTestGroupDefinition> getPersonAttributeGroupTestGroupDefinitions() {
         final TypedQuery<PersonAttributeGroupTestGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        return query.getResultList();
+        List<IPersonAttributeGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributeGroupTestGroupDefinition>();
+        for (IPersonAttributeGroupTestGroupDefinition testGroup : query.getResultList()) {
+            testGroups.add(testGroup);
+        }
+        return testGroups;
     }
     
     @PortalTransactional
     @Override
-    public IPersonAttributeGroupTestGroupDefinition createPersonAttributeGroupTestGroupDefinition(PersonAttributeGroupDefinitionImpl group, String name, String description) {
-        final IPersonAttributeGroupTestGroupDefinition personAttributeGroupTestGroupDefinition = new PersonAttributeGroupTestGroupDefinitionImpl(group, name, description);
+    public IPersonAttributeGroupTestGroupDefinition createPersonAttributeGroupTestGroupDefinition(IPersonAttributeGroupDefinition group, String name, String description) {
+        final IPersonAttributeGroupTestGroupDefinition personAttributeGroupTestGroupDefinition = new PersonAttributeGroupTestGroupDefinitionImpl((PersonAttributeGroupDefinitionImpl)group, name, description);
         this.getEntityManager().persist(personAttributeGroupTestGroupDefinition);
         return personAttributeGroupTestGroupDefinition;
     }

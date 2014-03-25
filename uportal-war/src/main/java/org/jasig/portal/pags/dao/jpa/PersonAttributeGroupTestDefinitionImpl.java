@@ -61,7 +61,7 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     public PersonAttributeGroupTestDefinitionImpl() {
         super();
     }
-    public PersonAttributeGroupTestDefinitionImpl(PersonAttributeGroupTestGroupDefinitionImpl testGroup, String attributeName, String testerClass, String testValue) {
+    public PersonAttributeGroupTestDefinitionImpl(IPersonAttributeGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
         super();
         this.testGroup = testGroup;
         this.attributeName = attributeName;
@@ -69,7 +69,6 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
         this.testValue = testValue;
     }
 
-    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PAG_TEST_DEF_GEN")
     @Column(name = "PAG_TEST_DEF_ID")
@@ -94,9 +93,9 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     @Column(name = "TEST_VALUE", length=500, nullable = true, updatable = true)
     private String testValue;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributeGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAG_TEST_GROUP_DEF_ID", nullable = false)
-    private PersonAttributeGroupTestGroupDefinitionImpl testGroup;
+    private IPersonAttributeGroupTestGroupDefinition testGroup;
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
@@ -104,10 +103,14 @@ public class PersonAttributeGroupTestDefinitionImpl implements IPersonAttributeG
     }
 
     @Override
+    public long getId() {
+        return internalPersonAttributeGroupTestDefinitionId;
+    }
+    
+    @Override
     public String getDataId() {
         return this.attributeName;
     }
-
 
     @Override
     public String getDataTitle() {

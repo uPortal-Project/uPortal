@@ -20,23 +20,22 @@
 package org.jasig.portal.pags.om;
 
 import java.util.List;
-import java.util.Set;
 
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupDefinitionImpl;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributeGroupStoreDefinition extends IBasicEntity, IPortalData {
 
+    long getId();
     String getName();
     void setName(String name);
     String getDescription();
     void setDescription(String description);
 
-    List<PersonAttributeGroupDefinitionImpl> getGroups();
-    void setGroups(List<PersonAttributeGroupDefinitionImpl> groups);
+    List<IPersonAttributeGroupDefinition> getGroups();
+    void setGroups(List<IPersonAttributeGroupDefinition> groups);
 
 }

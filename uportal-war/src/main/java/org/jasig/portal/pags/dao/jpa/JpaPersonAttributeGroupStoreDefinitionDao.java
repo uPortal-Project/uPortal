@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -82,7 +83,7 @@ public class JpaPersonAttributeGroupStoreDefinitionDao extends BasePortalJpaDao 
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public List<PersonAttributeGroupStoreDefinitionImpl> getPersonAttributeGroupStoreDefinitionByName(String name) {
+    public List<IPersonAttributeGroupStoreDefinition> getPersonAttributeGroupStoreDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<PersonAttributeGroupStoreDefinitionImpl> criteriaQuery = 
                 criteriaBuilder.createQuery(PersonAttributeGroupStoreDefinitionImpl.class);
@@ -91,13 +92,21 @@ public class JpaPersonAttributeGroupStoreDefinitionDao extends BasePortalJpaDao 
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
         TypedQuery<PersonAttributeGroupStoreDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setParameter(nameParameter, name);
-        return query.getResultList();
+        List<IPersonAttributeGroupStoreDefinition> stores = new ArrayList<IPersonAttributeGroupStoreDefinition>();
+        for (IPersonAttributeGroupStoreDefinition store : query.getResultList()) {
+            stores.add(store);
+        }
+        return stores;
     }
 
     @Override
-    public List<PersonAttributeGroupStoreDefinitionImpl> getPersonAttributeGroupStoreDefinitions() {
+    public List<IPersonAttributeGroupStoreDefinition> getPersonAttributeGroupStoreDefinitions() {
         final TypedQuery<PersonAttributeGroupStoreDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        return query.getResultList();
+        List<IPersonAttributeGroupStoreDefinition> stores = new ArrayList<IPersonAttributeGroupStoreDefinition>();
+        for (IPersonAttributeGroupStoreDefinition store : query.getResultList()) {
+            stores.add(store);
+        }
+        return stores;
     }
 
     @PortalTransactional

@@ -21,9 +21,8 @@ package org.jasig.portal.pags.dao;
 
 import java.util.List;
 
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupDefinitionImpl;
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupStoreDefinitionImpl;
 import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPersonAttributeGroupDefinition} objects.
@@ -34,8 +33,8 @@ public interface IPersonAttributeGroupDefinitionDao {
 
     public IPersonAttributeGroupDefinition updatePersonAttributeGroupDefinition(IPersonAttributeGroupDefinition personAttributeGroupDefinition);
     public void deletePersonAttributeGroupDefinition(IPersonAttributeGroupDefinition definition);
-    public List<PersonAttributeGroupDefinitionImpl> getPersonAttributeGroupDefinitionByName(String groupKey);
-    public List<PersonAttributeGroupDefinitionImpl> getPersonAttributeGroupDefinitions();
-    public IPersonAttributeGroupDefinition createPersonAttributeGroupDefinition(PersonAttributeGroupStoreDefinitionImpl store, String name, String description);
+    public List<IPersonAttributeGroupDefinition> getPersonAttributeGroupDefinitionByName(String groupKey);
+    public List<IPersonAttributeGroupDefinition> getPersonAttributeGroupDefinitions();
+    public IPersonAttributeGroupDefinition createPersonAttributeGroupDefinition(IPersonAttributeGroupStoreDefinition store, String name, String description);
 
 }

@@ -29,27 +29,26 @@ import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.SimpleStringPortalData;
-import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonalAttributeGroup;
-import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonalAttributeGroup.PersonalAttributeGroupMembers;
-import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonalAttributeGroup.PersonalAttributeGroupTestGroups;
-import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonalAttributeGroup.PersonalAttributeGroupTestGroups.PersonalAttributeGroupTestGroup;
-import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonalAttributeGroup.PersonalAttributeGroupTestGroups.PersonalAttributeGroupTestGroup.PersonalAttributeGroupTest;
+import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonAttributeGroup;
+import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonAttributeGroup.PersonAttributeGroupMembers;
+import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonAttributeGroup.PersonAttributeGroupTestGroups;
+import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonAttributeGroup.PersonAttributeGroupTestGroups.PersonAttributeGroupTestGroup;
+import org.jasig.portal.io.xml.pags.ExternalGroupStoreDefinition.PersonAttributeGroup.PersonAttributeGroupTestGroups.PersonAttributeGroupTestGroup.PersonAttributeGroupTest;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupDefinitionDao;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupStoreDefinitionDao;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupTestDefinitionDao;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupTestGroupDefinitionDao;
 import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupDefinitionImpl;
 import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupStoreDefinitionImpl;
-import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupTestDefinitionImpl;
 import org.jasig.portal.pags.dao.jpa.PersonAttributeGroupTestGroupDefinitionImpl;
 import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributeGroupTestGroupDefinition;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
@@ -67,12 +66,6 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
     private IPersonAttributeGroupTestDefinitionDao personAttributeGroupTestDefinitionDao;
     private IPersonAttributeGroupTestGroupDefinitionDao personAttributeGroupTestGroupDefinitionDao;
     private Logger logger = LoggerFactory.getLogger(PersonAttributeGroupStoreDefinitionImporterExporter.class);
-    private boolean errorOnChannel = true;
-
-    @Value("${org.jasig.portal.io.errorOnChannel}")
-    public void setErrorOnChannel(boolean errorOnChannel) {
-        this.errorOnChannel = errorOnChannel;
-    }
 
     @Autowired
     public void setpersonAttributeGroupStorePortalDataType(PersonAttributeGroupStorePortalDataType personAttributeGroupStorePortalDataType) {
@@ -106,14 +99,14 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
 
     @Override
     public Iterable<? extends IPortalData> getPortalData() {
-        final List<PersonAttributeGroupStoreDefinitionImpl> pagStores = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitions();
+        final List<IPersonAttributeGroupStoreDefinition> pagStores = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitions();
         
-        return Lists.transform(pagStores, new Function<PersonAttributeGroupStoreDefinitionImpl, IPortalData>() {
+        return Lists.transform(pagStores, new Function<IPersonAttributeGroupStoreDefinition, IPortalData>() {
             /* (non-Javadoc)
              * @see com.google.common.base.Function#apply(java.lang.Object)
              */
             @Override
-            public IPortalData apply(PersonAttributeGroupStoreDefinitionImpl pagStores) {
+            public IPortalData apply(IPersonAttributeGroupStoreDefinition pagStores) {
                 return new SimpleStringPortalData(
                         pagStores.getName(),
                         pagStores.getName(),
@@ -128,8 +121,8 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
     @Transactional
     @Override
     public void importData(ExternalGroupStoreDefinition groupStoreRep) {
-        final List<PersonAttributeGroupStoreDefinitionImpl> pagStores = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitions();
-        for(PersonAttributeGroupStoreDefinitionImpl store : pagStores) {
+        final List<IPersonAttributeGroupStoreDefinition> pagStores = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitions();
+        for(IPersonAttributeGroupStoreDefinition store : pagStores) {
             personAttributeGroupStoreDefinitionDao.deletePersonAttributeGroupStoreDefinition(store);
         }
         String name = groupStoreRep.getStoreName();
@@ -137,14 +130,14 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         logStoreInfo(name, description);
         IPersonAttributeGroupStoreDefinition personAttributeGroupStoreDefinition = 
                 personAttributeGroupStoreDefinitionDao.createPersonAttributeGroupStoreDefinition(name, description);
-        List<PersonalAttributeGroup> groups = groupStoreRep.getPersonalAttributeGroups();
+        List<PersonAttributeGroup> groups = groupStoreRep.getPersonAttributeGroups();
         importGroups(personAttributeGroupStoreDefinition, groups);
         // Circle back and populate the members of groups, now that all the groups have been created
         importGroupMembers(groups);
     }
 
-    private void importGroups(IPersonAttributeGroupStoreDefinition personAttributeGroupStoreDefinition, List<PersonalAttributeGroup> groups) {
-        for(PersonalAttributeGroup group: groups) {
+    private void importGroups(IPersonAttributeGroupStoreDefinition personAttributeGroupStoreDefinition, List<PersonAttributeGroup> groups) {
+        for(PersonAttributeGroup group: groups) {
             String groupName = group.getGroupName();
             String groupDescription = group.getGroupDescription();
             logGroupsInfo(group, groupName);
@@ -152,7 +145,7 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
                     personAttributeGroupDefinitionDao.createPersonAttributeGroupDefinition((PersonAttributeGroupStoreDefinitionImpl)personAttributeGroupStoreDefinition, 
                                                                                             groupName, 
                                                                                             groupDescription);
-            PersonalAttributeGroupTestGroups selectionTest = group.getPersonalAttributeGroupTestGroups();
+            PersonAttributeGroupTestGroups selectionTest = group.getPersonAttributeGroupTestGroups();
             if (null != selectionTest) {
                 logger.trace("------- Test Groups -------");
                 importTestGroups(personAttributeGroupDefinition, selectionTest);
@@ -160,9 +153,9 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         }
     }
 
-    private void importTestGroups(IPersonAttributeGroupDefinition personAttributeGroupDefinition, PersonalAttributeGroupTestGroups personalAttributeGroupTestGroups) {
-        List<PersonalAttributeGroupTestGroup> testGroups = personalAttributeGroupTestGroups.getPersonalAttributeGroupTestGroups();
-        for(PersonalAttributeGroupTestGroup testGroup: testGroups) {
+    private void importTestGroups(IPersonAttributeGroupDefinition personAttributeGroupDefinition, PersonAttributeGroupTestGroups PersonAttributeGroupTestGroups) {
+        List<PersonAttributeGroupTestGroup> testGroups = PersonAttributeGroupTestGroups.getPersonAttributeGroupTestGroups();
+        for(PersonAttributeGroupTestGroup testGroup: testGroups) {
             String testGroupName = testGroup.getTestGroupName();
             String testGroupDescription = testGroup.getTestGroupDescription();
             logTestGroupsInfo(testGroupName, testGroupDescription);
@@ -170,13 +163,13 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
                     personAttributeGroupTestGroupDefinitionDao.createPersonAttributeGroupTestGroupDefinition((PersonAttributeGroupDefinitionImpl) personAttributeGroupDefinition,
                                                                                                              testGroupName,
                                                                                                              testGroupDescription);
-            List<PersonalAttributeGroupTest> tests = testGroup.getPersonalAttributeGroupTests();
+            List<PersonAttributeGroupTest> tests = testGroup.getPersonAttributeGroupTests();
             importTests(createdTestGroup, tests);
         }
     }
 
-    private void importTests(IPersonAttributeGroupTestGroupDefinition createdTestGroup, List<PersonalAttributeGroupTest> tests) {
-        for(PersonalAttributeGroupTest test: tests) {
+    private void importTests(IPersonAttributeGroupTestGroupDefinition createdTestGroup, List<PersonAttributeGroupTest> tests) {
+        for(PersonAttributeGroupTest test: tests) {
             String attributeName = test.getAttributeName();
             String testerClass = test.getTesterClass();
             String testValue = test.getTestValue();
@@ -188,18 +181,18 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         }
     }
     
-    private void importGroupMembers(List<PersonalAttributeGroup> groups) {
-        for(PersonalAttributeGroup group: groups) {
-            PersonalAttributeGroupMembers members = group.getPersonalAttributeGroupMembers();
+    private void importGroupMembers(List<PersonAttributeGroup> groups) {
+        for(PersonAttributeGroup group: groups) {
+            PersonAttributeGroupMembers members = group.getPersonAttributeGroupMembers();
             if (null != members) {
-                List<PersonAttributeGroupDefinitionImpl> parentPag =
+                List<IPersonAttributeGroupDefinition> parentPag =
                         personAttributeGroupDefinitionDao.getPersonAttributeGroupDefinitionByName(group.getGroupName());
-                List<PersonAttributeGroupDefinitionImpl> membersToSave = new ArrayList<PersonAttributeGroupDefinitionImpl>();
+                List<IPersonAttributeGroupDefinition> membersToSave = new ArrayList<IPersonAttributeGroupDefinition>();
                 List<String> memberKeys = members.getMemberKeies();
                 logger.trace("------ Members -------");
                 for(String memberKey: memberKeys) {
                     logger.trace("Member key: {}", memberKey);
-                    List<PersonAttributeGroupDefinitionImpl> memberPag =
+                    List<IPersonAttributeGroupDefinition> memberPag =
                             personAttributeGroupDefinitionDao.getPersonAttributeGroupDefinitionByName(memberKey);
                     membersToSave.add(memberPag.get(0));
                 }
@@ -215,7 +208,7 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         logger.trace("Store Description: {}", description);
     }
     
-    private void logGroupsInfo(PersonalAttributeGroup group, String groupKey) {
+    private void logGroupsInfo(PersonAttributeGroup group, String groupKey) {
         logger.trace("------ Group ------");
         logger.trace("Group Key: {}", groupKey);
         logger.trace("Group Name: {}", group.getGroupName());
@@ -240,9 +233,9 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
 
     @Override
     public ExternalGroupStoreDefinition exportData(String name) {
-        final List<PersonAttributeGroupStoreDefinitionImpl> personAttributeGroupStoreDefinitionImpl = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitionByName(name);
-        if (personAttributeGroupStoreDefinitionImpl != null && personAttributeGroupStoreDefinitionImpl.size() > 0) {
-            return convert(personAttributeGroupStoreDefinitionImpl.get(0));
+        final List<IPersonAttributeGroupStoreDefinition> personAttributeGroupStoreDefinition = this.personAttributeGroupStoreDefinitionDao.getPersonAttributeGroupStoreDefinitionByName(name);
+        if (personAttributeGroupStoreDefinition != null && personAttributeGroupStoreDefinition.size() > 0) {
+            return convert(personAttributeGroupStoreDefinition.get(0));
         } else {
             return null;
         }
@@ -258,7 +251,7 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         throw new UnsupportedOperationException();
     }
     
-    protected ExternalGroupStoreDefinition convert(final PersonAttributeGroupStoreDefinitionImpl pags) {
+    protected ExternalGroupStoreDefinition convert(final IPersonAttributeGroupStoreDefinition pags) {
         if (pags == null) {
             return null;
         }
@@ -271,22 +264,22 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         return externalGroupStoreDefinition;
     }
 
-    private void addExternalGroups(final PersonAttributeGroupStoreDefinitionImpl pags,
+    private void addExternalGroups(final IPersonAttributeGroupStoreDefinition pags,
                                    ExternalGroupStoreDefinition externalGroupStoreDefinition) {
-        List<PersonalAttributeGroup> externalPags = externalGroupStoreDefinition.getPersonalAttributeGroups();
-        List<PersonAttributeGroupDefinitionImpl> pagsGroups = pags.getGroups();
-        for(PersonAttributeGroupDefinitionImpl pag : pagsGroups) {
-            PersonalAttributeGroup externalPag = new PersonalAttributeGroup();
+        List<PersonAttributeGroup> externalPags = externalGroupStoreDefinition.getPersonAttributeGroups();
+        List<IPersonAttributeGroupDefinition> pagsGroups = pags.getGroups();
+        for(IPersonAttributeGroupDefinition pag : pagsGroups) {
+            PersonAttributeGroup externalPag = new PersonAttributeGroup();
             externalPag.setGroupName(pag.getName());
             externalPag.setGroupKey(pag.getName());
             externalPag.setGroupDescription(pag.getDescription());
             
-            List<PersonAttributeGroupDefinitionImpl> members = pag.getMembers();
+            List<IPersonAttributeGroupDefinition> members = pag.getMembers();
             if (members.size() > 0) {
                 addExternalGroupMembers(externalPag, members);
             }
             
-            List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups = pag.getTestGroups();
+            List<IPersonAttributeGroupTestGroupDefinition> testGroups = pag.getTestGroups();
             if (testGroups.size() > 0) {
                 addExternalTestGroupsWrapper(externalPag, testGroups);
             }
@@ -294,39 +287,39 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
         }
     }
 
-    private void addExternalGroupMembers(PersonalAttributeGroup externalPag, List<PersonAttributeGroupDefinitionImpl> members) {
-        PersonalAttributeGroupMembers pagMembers = new PersonalAttributeGroupMembers();
+    private void addExternalGroupMembers(PersonAttributeGroup externalPag, List<IPersonAttributeGroupDefinition> members) {
+        PersonAttributeGroupMembers pagMembers = new PersonAttributeGroupMembers();
         List<String> externalMembers = pagMembers.getMemberKeies();
-        for(PersonAttributeGroupDefinitionImpl member: members) {
+        for(IPersonAttributeGroupDefinition member: members) {
             externalMembers.add(member.getName());
         }
-        externalPag.setPersonalAttributeGroupMembers(pagMembers);
+        externalPag.setPersonAttributeGroupMembers(pagMembers);
     }
 
-    private void addExternalTestGroupsWrapper(PersonalAttributeGroup externalPag, List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups) {
-        PersonalAttributeGroupTestGroups externalPagTestGroups = new PersonalAttributeGroupTestGroups();
-        List<PersonalAttributeGroupTestGroup> externalPagTestGroupsHolder = externalPagTestGroups.getPersonalAttributeGroupTestGroups();
+    private void addExternalTestGroupsWrapper(PersonAttributeGroup externalPag, List<IPersonAttributeGroupTestGroupDefinition> testGroups) {
+        PersonAttributeGroupTestGroups externalPagTestGroups = new PersonAttributeGroupTestGroups();
+        List<PersonAttributeGroupTestGroup> externalPagTestGroupsHolder = externalPagTestGroups.getPersonAttributeGroupTestGroups();
         addExternalTestGroupObjects(testGroups, externalPagTestGroupsHolder);
-        externalPag.setPersonalAttributeGroupTestGroups(externalPagTestGroups);
+        externalPag.setPersonAttributeGroupTestGroups(externalPagTestGroups);
     }
 
-    private void addExternalTestGroupObjects(List<PersonAttributeGroupTestGroupDefinitionImpl> testGroups,
-                                             List<PersonalAttributeGroupTestGroup> externalPagTestGroupsHolder) {
-        for(PersonAttributeGroupTestGroupDefinitionImpl testGroup: testGroups) {
-            PersonalAttributeGroupTestGroup externalPagTestGroup = new PersonalAttributeGroupTestGroup();
+    private void addExternalTestGroupObjects(List<IPersonAttributeGroupTestGroupDefinition> testGroups,
+                                             List<PersonAttributeGroupTestGroup> externalPagTestGroupsHolder) {
+        for(IPersonAttributeGroupTestGroupDefinition testGroup: testGroups) {
+            PersonAttributeGroupTestGroup externalPagTestGroup = new PersonAttributeGroupTestGroup();
             externalPagTestGroup.setTestGroupName(testGroup.getName());
             externalPagTestGroup.setTestGroupDescription(testGroup.getDescription());
-            List<PersonAttributeGroupTestDefinitionImpl> pagTests = testGroup.getTests();
-            List<PersonalAttributeGroupTest> personalAttributeGroupTests = externalPagTestGroup.getPersonalAttributeGroupTests();
-            addExternalTestObjects(pagTests, personalAttributeGroupTests);
+            List<IPersonAttributeGroupTestDefinition> pagTests = testGroup.getTests();
+            List<PersonAttributeGroupTest> PersonAttributeGroupTests = externalPagTestGroup.getPersonAttributeGroupTests();
+            addExternalTestObjects(pagTests, PersonAttributeGroupTests);
             externalPagTestGroupsHolder.add(externalPagTestGroup);
         }
     }
 
-    private void addExternalTestObjects(List<PersonAttributeGroupTestDefinitionImpl> pagTests,
-                                        List<PersonalAttributeGroupTest> personalAttributeGroupTests) {
-        for(PersonAttributeGroupTestDefinitionImpl pagTest: pagTests) {
-            PersonalAttributeGroupTest externalPagTest = new PersonalAttributeGroupTest();
+    private void addExternalTestObjects(List<IPersonAttributeGroupTestDefinition> pagTests,
+                                        List<PersonAttributeGroupTest> PersonAttributeGroupTests) {
+        for(IPersonAttributeGroupTestDefinition pagTest: pagTests) {
+            PersonAttributeGroupTest externalPagTest = new PersonAttributeGroupTest();
             String testName = (pagTest.getName() == null) ? "" : pagTest.getName();
             String testDescription = (pagTest.getDescription() == null) ? "" : pagTest.getDescription();
             externalPagTest.setTestName(testName);
@@ -334,7 +327,7 @@ public class PersonAttributeGroupStoreDefinitionImporterExporter
             externalPagTest.setAttributeName(pagTest.getAttributeName());
             externalPagTest.setTesterClass(pagTest.getTesterClassName());
             externalPagTest.setTestValue(pagTest.getTestValue());
-            personalAttributeGroupTests.add(externalPagTest);
+            PersonAttributeGroupTests.add(externalPagTest);
         }
     }
 

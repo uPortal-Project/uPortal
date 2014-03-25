@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -33,6 +34,7 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributeGroupDefinitionDao;
 import org.jasig.portal.pags.om.IPersonAttributeGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributeGroupStoreDefinition;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -82,7 +84,7 @@ public class JpaPersonAttributeGroupDefinitionDao extends BasePortalJpaDao imple
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public List<PersonAttributeGroupDefinitionImpl> getPersonAttributeGroupDefinitionByName(String name) {
+    public List<IPersonAttributeGroupDefinition> getPersonAttributeGroupDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<PersonAttributeGroupDefinitionImpl> criteriaQuery = 
                 criteriaBuilder.createQuery(PersonAttributeGroupDefinitionImpl.class);
@@ -91,18 +93,26 @@ public class JpaPersonAttributeGroupDefinitionDao extends BasePortalJpaDao imple
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
         TypedQuery<PersonAttributeGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setParameter(nameParameter, name);
-        return query.getResultList();
+        List<IPersonAttributeGroupDefinition> groups = new ArrayList<IPersonAttributeGroupDefinition>();
+        for (IPersonAttributeGroupDefinition group: query.getResultList()) {
+            groups.add(group);
+        }
+        return groups;
     }
 
     @Override
-    public List<PersonAttributeGroupDefinitionImpl> getPersonAttributeGroupDefinitions() {
+    public List<IPersonAttributeGroupDefinition> getPersonAttributeGroupDefinitions() {
         final TypedQuery<PersonAttributeGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        return query.getResultList();
+        List<IPersonAttributeGroupDefinition> groups = new ArrayList<IPersonAttributeGroupDefinition>();
+        for (IPersonAttributeGroupDefinition group: query.getResultList()) {
+            groups.add(group);
+        }
+        return groups;
     }
     
     @PortalTransactional
     @Override
-    public IPersonAttributeGroupDefinition createPersonAttributeGroupDefinition(PersonAttributeGroupStoreDefinitionImpl store, String name, String description) {
+    public IPersonAttributeGroupDefinition createPersonAttributeGroupDefinition(IPersonAttributeGroupStoreDefinition store, String name, String description) {
         final IPersonAttributeGroupDefinition personAttributeGroupDefinition = new PersonAttributeGroupDefinitionImpl(store, name, description);
         this.getEntityManager().persist(personAttributeGroupDefinition);
         return personAttributeGroupDefinition;
