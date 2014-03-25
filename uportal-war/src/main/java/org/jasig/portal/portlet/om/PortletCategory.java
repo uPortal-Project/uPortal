@@ -19,6 +19,8 @@
 
 package org.jasig.portal.portlet.om;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
@@ -78,5 +80,31 @@ public class PortletCategory {
 				.append(id).append(name).append(descr).append(creatorId)
 				.toString();
 	}
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null || !(obj instanceof PortletCategory)){
+            return false;
+        }else if(obj==this){
+            return true;
+        }
+        PortletCategory tempCategory = (PortletCategory)obj;
+        return new EqualsBuilder().
+                append(id, tempCategory.id).
+                append(name, tempCategory.name).
+                append(descr, tempCategory.descr).
+                append(creatorId, tempCategory.creatorId).
+                isEquals();
+    }
+
+    @Override
+    public int hashCode(){
+        return new HashCodeBuilder(17, 31). // two randomly chosen prime numbers
+                append(id).
+                append(name).
+                append(descr).
+                append(creatorId).
+                toHashCode();
+    }
 
 }

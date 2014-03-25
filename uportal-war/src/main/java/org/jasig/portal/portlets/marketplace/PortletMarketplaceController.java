@@ -19,16 +19,13 @@
 
 package org.jasig.portal.portlets.marketplace;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -37,15 +34,11 @@ import javax.portlet.ResourceResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
+
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.i18n.ILocaleStore;
-import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
-import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -53,8 +46,11 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.url.IPortalRequestUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,13 +68,17 @@ import org.springframework.web.portlet.bind.annotation.ResourceMapping;
 @Controller
 @RequestMapping("VIEW")
 public class PortletMarketplaceController {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static String SHOW_ALL_PORTLETS_PREFERENCE_NAME = "showAllPortlets";
+    private static String SHOW_MANAGED_PORTLETS_PREFERENCE_NAME = "showManagedPortlets";
+    private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
 	
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IPersonManager personManager;
-	private ILocaleStore localeStore;
 	private IPortletCategoryRegistry portletCategoryRegistry;
-	private IPortalSpELService spELService;
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
 	
@@ -93,18 +93,8 @@ public class PortletMarketplaceController {
     }
 	
 	@Autowired
-    public void setSpELService(IPortalSpELService spELService) {
-        this.spELService = spELService;
-    }
-	
-	@Autowired
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
-    }
-	
-	@Autowired
-    public void setLocaleStore(ILocaleStore localeStore) {
-        this.localeStore = localeStore;
     }
 	
 	@Autowired
@@ -121,28 +111,26 @@ public class PortletMarketplaceController {
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
-	
-	
-	/**
-	 * @param webRequest
-	 * @param portletRequest
-	 * @param model
-	 * @return A string of the view.  Also sets the model attributes
-	 * 
-	 * Uses the user that is logged in.  Uses the public method getListOfChannelBeans to
-	 * initialize list.  Doesn't return list of portlets that user is not allowed to use, but is allowed to manage
-	 */
-	@RenderMapping
-	public String initializeView(WebRequest webRequest, PortletRequest portletRequest, Model model){
-		this.setUpInitialView(webRequest, portletRequest, model);
-		return "jsp/Marketplace/view";
-	}
-	
+
+    /**
+     * Returns a view of the marketplace landing page
+     * @param webRequest
+     * @param portletRequest
+     * @param model
+     * @param initialFilter - optional request paramter.  Use to init filter on initial view
+     * @return
+     */
+    @RenderMapping
+    public String initializeView(WebRequest webRequest, PortletRequest portletRequest, Model model, @RequestParam(required=false) String initialFilter){
+        this.setUpInitialView(webRequest, portletRequest, model, initialFilter);
+        return "jsp/Marketplace/view";
+    }
+
     @RenderMapping(params="action=view")
     public String entryView(RenderRequest renderRequest, RenderResponse renderResponse, WebRequest webRequest, PortletRequest portletRequest, Model model){
         IPortletDefinition result = this.portletDefinitionRegistry.getPortletDefinitionByFname(portletRequest.getParameter("fName"));
         if(result == null){
-            this.setUpInitialView(webRequest, portletRequest, model);
+            this.setUpInitialView(webRequest, portletRequest, model, null);
             return "jsp/Marketplace/view";
         }
         MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result, this.portletCategoryRegistry);
@@ -201,143 +189,94 @@ public class PortletMarketplaceController {
 		return deepLinkSB.toString();
 	}
 	
-	private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model){
-		final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
-		IPerson user = personManager.getPerson(servletRequest);
-		ArrayList<ChannelBean> portletList = (ArrayList<ChannelBean>) getListOfChannelBeans(webRequest, user, true);
-		model.addAttribute("channelBeanList", portletList);
-	}
-	
-	/**
-	 * @param request 
-	 * @param user - the user to limit results by
-	 * @param seeManage - true if would like portlet listing managed by user.
-	 * @return a list of ChannelBeans representing porlets
-	 */
-	public List<ChannelBean> getListOfChannelBeans(WebRequest request, IPerson user, Boolean seeManage){
-		Map<String,SortedSet<?>> registry = getRegistry(request, user, seeManage);
-		@SuppressWarnings("unchecked")
-		ArrayList<ChannelBean> channelList = (ArrayList<ChannelBean>) this.getListOfChannelBeansByChannelBean((SortedSet<ChannelBean>) registry.get("channels"));
-		@SuppressWarnings("unchecked")
-		ArrayList<ChannelBean> channelList2 = (ArrayList<ChannelBean>) this.getListOfChannelBeansByChannelCategoryBean((SortedSet<ChannelCategoryBean>) registry.get("categories"));
-		channelList.addAll(channelList2);
-		return channelList;
-    }
-	
-	/**
-	 * @param request 
-	 * @param seeManage - true if would like portlet listing managed by user.
-	 * @return a list of ChannelBeans representing portlets
-	 */
-	public List<ChannelBean> getListOfChannelBeans(WebRequest request){
-		Map<String,SortedSet<?>> registry = getRegistry(request);
-		@SuppressWarnings("unchecked")
-		ArrayList<ChannelBean> channelList = (ArrayList<ChannelBean>) this.getListOfChannelBeansByChannelBean((SortedSet<ChannelBean>) registry.get("channels"));
-		@SuppressWarnings("unchecked")
-		ArrayList<ChannelBean> channelList2 = (ArrayList<ChannelBean>) this.getListOfChannelBeansByChannelCategoryBean((SortedSet<ChannelCategoryBean>) registry.get("categories"));
-		channelList.addAll(channelList2);
-		return channelList;
-	}
-	
-	private List<ChannelBean> getListOfChannelBeansByChannelBean (SortedSet<ChannelBean> cbSet){
-		ArrayList<ChannelBean> channelList = new ArrayList<ChannelBean>();
-		Iterator<ChannelBean> it = cbSet.iterator();
-		while(it.hasNext()){
-			ChannelBean cb = it.next();
-			channelList.add(cb);
-		}
-		return channelList;
-	}
-	
-	private List<ChannelBean> getListOfChannelBeansByChannelCategoryBean (SortedSet<ChannelCategoryBean> ccbSet){
-		ArrayList<ChannelBean> categoryList = new ArrayList<ChannelBean>();
-		Iterator<ChannelCategoryBean> it = ccbSet.iterator();
-		while(it.hasNext()){
-			ChannelCategoryBean ccb = it.next();
-			categoryList.addAll(ccb.getChannels());
-			if(ccb.getCategories().size()>0){
-				categoryList.addAll(getListOfChannelBeansByChannelCategoryBean(ccb.getCategories()));
-			}
-		}
-		return categoryList;	
-	}
-	
-    private Map<String,SortedSet<?>> getRegistry(WebRequest request) {
-        // construct a new channel registry
-        Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
-        SortedSet<ChannelBean> channels = new TreeSet<ChannelBean>();
-        registry.put("channels", channels);
-        registry.put("categories", this.getAllCategories(request));
-        return registry;
+    private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
+        final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
+        final PortletPreferences preferences = portletRequest.getPreferences();
+        final boolean isLogLevelDebug = logger.isDebugEnabled();
+
+        //Determine if the marketplace is going to show all the portlets
+        //Default behavior is to show just the portlets a user can subscribe to
+        String showAllPortletsPreferenceValue = preferences.getValue(SHOW_ALL_PORTLETS_PREFERENCE_NAME, "false");
+        boolean showAllPortlets = Boolean.parseBoolean(showAllPortletsPreferenceValue);
+        IPerson user = null;
+        if(showAllPortlets == false){
+            user = personManager.getPerson(servletRequest);
+        }
+
+        //Determine if the marketplace is going to show portlets that a user can manage, but can't subscribe to.
+        //Note - if showing all portlets, this becomes moot.
+        //Default behavior is to show portlets that users manage
+        String showManagedPortletsPreferenceValue = preferences.getValue(SHOW_MANAGED_PORTLETS_PREFERENCE_NAME, "true");
+        boolean showManagedPortlets = Boolean.parseBoolean(showManagedPortletsPreferenceValue);
+
+        if(isLogLevelDebug){
+            logger.debug("Going to show all portlets?: {}", Boolean.toString(showAllPortlets));
+            logger.debug("Going to show managed portlets?: {}", Boolean.toString(showManagedPortlets));
+        }
+
+        Map<String,Set<?>> registry = getRegistry(webRequest, user, showManagedPortlets);
+        @SuppressWarnings("unchecked")
+        Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
+        model.addAttribute("channelBeanList", portletList);
+        @SuppressWarnings("unchecked")
+        Set<PortletCategory> categoryList = (Set<PortletCategory>) registry.get("categories");
+
+        //Determine if the marketplace is going to show the root category
+        String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE_NAME, "false");
+        boolean showRootCategory = Boolean.parseBoolean(showRootCategoryPreferenceValue);
+
+        if(isLogLevelDebug){
+            logger.debug("Going to show Root Category?: {}", Boolean.toString(showRootCategory));
+        }
+
+        if(showRootCategory == false){
+            categoryList.remove(this.portletCategoryRegistry.getTopLevelPortletCategory());
+        }
+
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("initialFilter", initialFilter);
     }
 
-    private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user, Boolean seeManage) {
+
+    /**
+     * Returns a set of MarketplacePortletDefinitions.  Supply a user to limit 
+     * the set to only portlets the user can use.  If user is null, this will
+     * return all portlets.  Setting user to null will superscede all other
+     * parameters.
+     *
+     * @param request
+     * @param user - the user to limit results by. This will filter results to 
+     *               only portlets that user can use. Null will return all portlets.
+     * @param seeManage - additive parameter that will add/not add portlets to returned set.
+     *                    true will add portlets to the returned set the user can manage.
+     *                    false will not add additional portlets that user can manage.
+     *                    If user is null, this parameter doesn't matter.
+     * @return a set of portlets filtered that user can use, and other parameters
+    */
+    public Map<String,Set<?>> getRegistry(WebRequest request, IPerson user, Boolean seeManage){
         // get a list of all channels 
         List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
-        // construct a new channel registry
-        Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
-        SortedSet<ChannelBean> channels = new TreeSet<ChannelBean>();
-        // get user locale
-        Locale[] locales = localeStore.getUserLocales(user);
-        LocaleManager localeManager = new LocaleManager(user, locales);
-        Locale locale = localeManager.getLocales()[0];
-	    
-        EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    
-        if(seeManage == true){	    
-            for (IPortletDefinition channel : allChannels) {
-                if (ap.canManage(channel.getPortletDefinitionId().getStringId())) {
-                    channels.add(getChannel(channel, request, locale));
-                }
+        // sets up permissions if user is not null
+        EntityIdentifier ei = null;
+        IAuthorizationPrincipal ap = null;
+        if(user !=null){
+            ei = user.getEntityIdentifier();
+            ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        }
+        Map<String,Set<?>> registry = new TreeMap<String,Set<?>>();
+        Set<MarketplacePortletDefinition> visiblePortlets = new HashSet<MarketplacePortletDefinition>();
+        Set<PortletCategory> visibleCategories = new HashSet<PortletCategory>();
+        for (IPortletDefinition channel : allChannels) {
+            String chanPubId = channel.getPortletDefinitionId().getStringId();
+            if(user==null                                   //if user is null, add portlet
+                || ap.canSubscribe(chanPubId)               //if can subscribe, add
+                || (seeManage && ap.canManage(chanPubId))){ //if can manage, add 
+                    visiblePortlets.add(new MarketplacePortletDefinition(channel, portletCategoryRegistry));
+                    visibleCategories.addAll(this.portletCategoryRegistry.getParentCategories(channel));
             }
         }
-    
-        registry.put("channels", channels);
-        registry.put("categories", this.getAllCategories(request));
+        registry.put("portlets", visiblePortlets);
+        registry.put("categories", visibleCategories);
         return registry;
-    }
-	
-	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, List<IPortletDefinition> allChannels) {
-		// construct a new channel category bean for this category
-		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
-		// add the direct child channels for this category
-		Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);		
-		for(IPortletDefinition channelDef : portlets) {
-			// remove the channel of the list of all channels
-			allChannels.remove(channelDef);
-		}
-		/* Now add child categories. */
-		for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
-			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels);
-			categoryBean.addCategory(childCategoryBean);
-		}
-		return categoryBean;
-	}
-
-	private ChannelBean getChannel(IPortletDefinition definition, WebRequest request, Locale locale) {
-	    ChannelBean channel = new ChannelBean();
-	    channel.setId(definition.getPortletDefinitionId().getStringId());
-	    channel.setDescription(definition.getDescription(locale.toString()));
-	    channel.setFname(definition.getFName());
-	    channel.setName(definition.getName(locale.toString()));
-	    channel.setState(definition.getLifecycleState().toString());
-	    channel.setTitle(definition.getTitle(locale.toString()));
-	    channel.setTypeId(definition.getType().getId());
-	    IPortletDefinitionParameter iconParameter = definition.getParameter("iconUrl");
-	    if (iconParameter != null) {
-	        String iconUrl = spELService.parseString(iconParameter.getValue(), request);
-	        channel.setIconUrl(iconUrl);
-	    }
-	    return channel;
-	}
-	
-    private SortedSet<ChannelCategoryBean> getAllCategories(WebRequest request){
-        // get a list of all channels 
-        List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
-        SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
-        PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
-        categories.add(addChildren(request, rootCategory, allChannels));
-        return categories;
     }
 }

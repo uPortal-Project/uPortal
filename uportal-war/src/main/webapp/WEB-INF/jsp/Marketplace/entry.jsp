@@ -73,6 +73,7 @@
         color:#000000;
         text-align:left;
         font-style: normal;
+        text-transform:uppercase;
     }
     .marketplace_release_date{
         font-family:'Arial';
@@ -284,16 +285,34 @@
         <br>
         <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
-            <div class = "row col-xs-12 col-md-4">
-                <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
-                <c:forEach var="relatedPortlet" items="${relatedPortlets}">
-                    <portlet:renderURL var="mktplaceEntryURL" windowState="MAXIMIZED">
-                        <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
-                    </portlet:renderURL>
-                    <li>- <a href="${mktplaceEntryURL}">${relatedPortlet.name}</a></li>
-                </c:forEach>
+            <div class="row">
+                <div class = "col-xs-12 col-md-4">
+                    <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
+                    <c:forEach var="relatedPortlet" items="${relatedPortlets}">
+                        <portlet:renderURL var="mktplaceEntryURL" windowState="MAXIMIZED">
+                            <portlet:param name="action" value="view"/>
+                            <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                        </portlet:renderURL>
+                        <li>- <a href="${mktplaceEntryURL}">${relatedPortlet.name}</a></li>
+                    </c:forEach>
+                </div>
             </div>
+            <br>
+        </c:if>
+        <c:set var="portletCategories" value="${portlet.parentCategories}"/>
+        <c:if test="${not empty portletCategories}">
+            <div class="row">
+            <div class = "col-xs-12 col-md-4">
+                <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
+                    <c:forEach var="portletCategory" items="${portletCategories}">
+                        <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
+                            <portlet:param name="initialFilter" value="${portletCategory.name}"/>
+                        </portlet:renderURL>
+                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory.name}</a></li>
+                    </c:forEach>
+                </div>
+            </div>
+            <br>
         </c:if>
         <div class="row col-xs-12" style="clear:both;">
             <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"  >

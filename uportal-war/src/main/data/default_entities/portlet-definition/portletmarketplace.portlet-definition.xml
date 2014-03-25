@@ -67,6 +67,21 @@
         <value>http://goo.gl/ALBYpJ</value>
     </portlet-preference>
     <portlet-preference>
+        <name>showAllPortlets</name>
+        <readOnly>true</readOnly>
+        <value>true</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>showManagedPortlets</name>
+        <readOnly>true</readOnly>
+        <value>true</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>showRootCategory</name>
+        <readOnly>true</readOnly>
+        <value>false</value>
+    </portlet-preference>
+    <portlet-preference>
     	<name>Release_Notes</name>
     	<readOnly>true</readOnly>
     	<value>Responsive Design!</value>

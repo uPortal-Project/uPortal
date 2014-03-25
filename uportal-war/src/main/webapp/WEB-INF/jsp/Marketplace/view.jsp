@@ -20,8 +20,8 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/jquery.dataTables.min.js" type="text/javascript"></script>
+<c:set var="n"><portlet:namespace/></c:set>
+
 <style>
 /*TODO : namespace these so that they only effect this page */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -49,31 +49,18 @@ table.display {
     margin-top: -15px;
     padding: 14px 0 2px 0;
     border: 1px solid #ddd;
-    text-align: center;
     color: #999;
     font-size: 14px;
     background-color: white;
 }
 
-.dataTables_length {
-    width: 40%;
-    float: left;
-}
-
 .dataTables_filter {
     width: 100%;
     float: right;
-    text-align: right;
 }
 
-.dataTables_info {
-    width: 40%;
-    float: left;
-}
-
-.dataTables_paginate {
-    float: right;
-    text-align: right;
+.dataTables_info, .dataTables_length, .dataTables_paginate{
+    white-space:nowrap;
 }
 
 /* Pagination nested */
@@ -127,8 +114,6 @@ table.display {
 .paginate_enabled_next:hover {
     background: url('/portal/media/org/jasig/portal/channels/marketplace/forward_enabled_hover.png') no-repeat top right;
 }
-
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables sorting
@@ -242,13 +227,16 @@ tr.even {
         width: 100%;
     }
     .popular-sort-button{
-        width: 33%;
+        width: 25%;
     }
     .alphabetical-sort-button{
-        width: 33%;
+        width: 25%;
     }
     .audience-sort-button{
-        width: 33%;
+        width: 25%;
+    }
+    .category-sort-button{
+        width: 25%;
     }
 }
  
@@ -274,17 +262,57 @@ tr.even {
     }
 }
 
-.btn_group_container{
-    text-align: center;
-}
 
-.sort_info{
+.sort_info, .dataTables_info{
     text-align: left;
 }
 
+.marketplace_center_text, .dataTables_paginate,
+.btn_group_container, .dataTables_processing{
+    text-align:center;
+}
+
+.dataTables_length, .dataTables_filter {
+    text-align:right;
+}
+
+a:hover {
+ cursor:pointer;
+}
+
+.${n}bottom{
+    border-top: thin solid black;
+    padding-top: 1em;
+}
+
+
 </style>
-<c:set var="n"><portlet:namespace/></c:set>
+
+
 <div id="${n}marketplace">
+
+<div id="${n}categoryListContainer" class="marketplace_center_text panel panel-default" style="display:none">
+    <div class="panel-body">
+        <c:set var="categoryCount" value="0"/>
+        <c:forEach var="category" items="${categoryList}">
+            <c:if test="${categoryCount mod 4 == 0}">
+                <div class="row">
+                <div class="col-xs-0 col-md-2"></div>
+            </c:if>
+            <div class="col-xs-6 col-sm-3 col-md-2">
+                <a class="${n}marketplace_category_link">${category.name}</a>
+            </div>
+            <c:if test="${(categoryCount+1) mod 4 == 0}">
+                </div>
+            </c:if>
+            <c:set var="categoryCount" value="${categoryCount + 1}" />
+        </c:forEach>
+        <c:if test="${(categoryCount) mod 4 !=0}">
+            </div>
+        </c:if>
+    </div>
+</div>
+
 <div id="unseen">
     <table id="${n}portletTable" class="display table">
         <thead>
@@ -303,17 +331,22 @@ tr.even {
             <c:forEach var="portlet" items="${channelBeanList}">
                 <tr>
                     <td class="essential" style="white-space: nowrap; border:none;">
-                        <a href="${renderRequest.contextPath}/p/${portlet.fname}">${portlet.title}</a>
+                        <a href="${renderRequest.contextPath}/p/${portlet.FName}">${portlet.title}</a>
                     </td>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
                     </td>
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${portlet.fname}"/>
+                        <portlet:param name="fName" value="${portlet.FName}"/>
                     </portlet:renderURL>
                     <td class="essential" style="border:none;">
                         <a href="${entryURL}"><spring:message code="label.details" text="Details" /></a>
+                    </td>
+                    <td>
+                        <c:forEach var="category" items="${portlet.parentCategories}">
+                            ${category.name}
+                        </c:forEach>
                     </td>
                 </tr>
             </c:forEach>
@@ -322,58 +355,97 @@ tr.even {
     </div>
 </div>
 
+<spring:message code="label.search" var="labelSearch" text="Search" />
+<spring:message code="label.mostPopular" var="mostPopular" text="Most Popular" />
+<spring:message code="label.azIndex" var="azIndex" text="A-Z index" />
+<spring:message code="label.audience" var="audience" text="Audience" />
+<spring:message code="label.browseby" var="browseBy" text="Browse by" />
+<spring:message code="category" var="categoryLabel" text="Category" />
+
 <script type="text/javascript">
+    var $ = up.jQuery;
+    (function($) {
+        up.jQuery(function() {
+        $(document).ready(function() {
 
-function trim11 (str) {
-    str = str.replace(/^\s+/, '');
-    for (var i = str.length - 1; i >= 0; i--) {
-        if (/\S/.test(str.charAt(i))) {
-            str = str.substring(0, i + 1);
-            break;
-        }
-    }
-    return str;
-}
+            var trim11 =function(str) {
+                str = str.replace(/^\s+/, '');
+                for (var i = str.length - 1; i >= 0; i--) {
+                    if (/\S/.test(str.charAt(i))) {
+                        str = str.substring(0, i + 1);
+                        break;
+                    }
+                }
+                return str;
+            };
 
-function applyEllipsis(nrow,col,txtlen){
-       var $cell = $('td:eq('+col+')', nrow);
-       $cell.text(ellipsis($cell.text(),txtlen)); // ellipsis() from 2. above
-       return nrow;
-    };
-    
-function ellipsis(text, n) {
-    text = trim11(text);
-    if(text.length > n){
-      return text.substring(0,n)+"...";
-    }
-    else       
-      return text;
-};
-      
-      var myDataTable;
-      
-function sortColumns(column){
-    myDataTable.fnSort([[column, 'asc']]);
-}
-        
-      
-$(document).ready( function () {
-    
-    myDataTable = $('#${n}portletTable').dataTable({
-        "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }],
-        "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
-               // *** NOTE *** applyEllipsis(nrow,col,txtlen) col is 0-based,
-               // however, don't include hidden columns in count
-               applyEllipsis(nRow,1,75);// using variable from 1. above
-               // In my app this was actually column 9 (10th col) but
-               // because column 0 was hidden "8" is used
-              },
-        "sDom": '<"top"f><"sort_info"><"${n}sort_buttons">rt<"bottom"ipl>',
-        "bStateSave": true
+            var applyEllipsis = function (nrow,col,txtlen){
+                   var $cell = $('td:eq('+col+')', nrow);
+                   $cell.text(ellipsis($cell.text(),txtlen)); // ellipsis() from 2. above
+                   return nrow;
+            };
+
+            var ellipsis = function(text, n) {
+                text = trim11(text);
+                if(text.length > n){
+                  return text.substring(0,n)+"...";
+                }
+                else{
+                  return text;
+                }
+            };
+
+            var myDataTable = $('#${n}portletTable').dataTable({
+                "aoColumnDefs": [{"bSortable": false, "aTargets": [ 2 ] }, { "bVisible": false, "aTargets": [ 3 ] }],
+                "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+                       // *** NOTE *** applyEllipsis(nrow,col,txtlen) col is 0-based,
+                       // however, don't include hidden columns in count
+                       applyEllipsis(nRow,1,75);
+                      },
+                "sDom": '<"top"f><"sort_info"><"${n}sort_buttons"><rt'+
+                    '<"row ${n}bottom" <"col-xs-6 col-md-3" i>'+
+                    '<"col-xs-6 col-md-push-6 col-md-3"l>'+
+                    '<"col-xs-12 col-md-pull-3 col-md-6"p>>',
+                "bStateSave": true,
+                "bAutoWidth":false
+            });
+
+            $("#${n}marketplace div.${n}sort_buttons")
+            .html("<div class=\"btn_group_container\">"+
+                "<div class=\"btn-group sort-btn-group\">"+
+                "<button type=\"button\" class=\"btn btn-default popular-sort-button\">${mostPopular}</button>"+
+                "<button type=\"button\" id=\"${n}alphabetical-sort-button\" class=\"btn btn-default alphabetical-sort-button\">${azIndex}</button>"+
+                "<button type=\"button\" class=\"btn btn-default audience-sort-button\">${audience}</button>"+
+                "<button type=\"button\" id=\"${n}category-sort-button\" class=\"btn btn-default category-sort-button\">${categoryLabel}</button>"+
+                "</div><br><br></div>");
+            $("#${n}categoryListContainer").insertAfter($(".${n}sort_buttons"));
+            $("#${n}marketplace div.sort_info").html("<div><BR><BR><span><strong>${browseBy}</strong><br><br></div>");
+            $("#${n}marketplace div.dataTables_filter").append("<form action='${entryURL}'><button>${labelSearch}</button></form>");
+
+            var setFilter = function(text){
+                myDataTable.fnFilter(text);
+            };
+
+            var sortColumns = function(column){
+                myDataTable.fnSort([[column, 'asc']]);
+            }
+
+            $(".${n}marketplace_category_link").click(function(){
+                setFilter(this.textContent);
+            });
+
+            $("#${n}alphabetical-sort-button").click(function(){
+                sortColumns(0);
+            });
+
+            $("#${n}category-sort-button").click(function(){
+                $("#${n}categoryListContainer").toggle();
+            });
+
+            if("${initialFilter}"){
+                setFilter("${initialFilter}");
+            };
+        });
     });
-    $("#${n}marketplace div.${n}sort_buttons").html("<div class=\"btn_group_container\"><div class=\"btn-group sort-btn-group\"><button type=\"button\" class=\"btn btn-default popular-sort-button\">${mostPopular}</button><button type=\"button\" onclick=\"sortColumns(0)\" class=\"btn btn-default alphabetical-sort-button\">${azIndex}</button>  <button type=\"button\" class=\"btn btn-default audience-sort-button\">${audience}</button></div><br><br></div>");
-    $("#${n}marketplace div.sort_info").html("<div><BR><BR><span><strong>${browseBy}</strong><br><br></div>");
-    $("#${n}marketplace div.dataTables_filter").append("<form action='${entryURL}'><button>${labelSearch}</button></form>");
-} );
+})(up.jQuery);
 </script>
-

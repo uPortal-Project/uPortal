@@ -60,6 +60,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private PortletReleaseNotes releaseNotes;
     private Set<PortletCategory> categories;
     private Set<IPortletDefinition> relatedPortlets;
+    private Set<PortletCategory> parentCategories;
     private String shortURL = null;
 
     /**
@@ -145,9 +146,16 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.setPortletReleaseNotes(temp);
     }
 
+    /**
+     * private method that sets the parentCategories field and the categories field
+     * This will ensure that the public methods {@link #getParentCategories() getParentCategories()}
+     * and {@link #getCategories() getCategories()} will not return null.
+     * Empty sets are allowed
+     */
     private void initCategories(){
         Set<PortletCategory> allCategories = new HashSet<PortletCategory>();
-        for(PortletCategory childCategory:this.portletCategoryRegistry.getParentCategories(this)){
+        this.setParentCategories(this.portletCategoryRegistry.getParentCategories(this));
+        for(PortletCategory childCategory:this.parentCategories){
             allCategories.add(childCategory);
             allCategories.addAll(this.portletCategoryRegistry.getAllParentCategories(childCategory));
         }
@@ -206,6 +214,22 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
             this.initCategories();
         }
         return this.categories;
+    }
+
+    private void setParentCategories(Set<PortletCategory> parentCategories) {
+        this.parentCategories = parentCategories;
+    }
+    
+    /**
+     * @return a set of categories that this portlet directly belongs too.  Will
+     * not traverse up the category tree and return grandparent categories and
+     * farther.  Will not return null.  Might return empty set.
+     */
+    public Set<PortletCategory> getParentCategories() {
+        if(this.parentCategories == null){
+            this.initCategories();
+        }
+        return this.parentCategories;
     }
 
     private void setRelatedPortlets(Set<IPortletDefinition> relatedPortlets){
