@@ -19,9 +19,6 @@
 
 .portal-nav {
     background: @navbar-background-color;
-    border-top: @navbar-border-size solid @navbar-border-color;
-    border-bottom: @navbar-border-size solid @navbar-border-color;
-    font-weight: @navbar-item-font-weight;
 
     .menu-toggle {
         position: absolute;
@@ -168,6 +165,10 @@
  * Convert navigation from toggled block menu to inline tabs.
  */
     .portal-nav {
+        background: @navbar-background-color;
+        border-top: @navbar-border-size solid @navbar-border-color;
+        border-bottom: @navbar-border-size solid @navbar-border-color;
+        font-weight: @navbar-item-font-weight;
 
         .menu-toggle {
             display: none;
