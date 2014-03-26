@@ -207,12 +207,24 @@
                 </xsl:with-param>
             </xsl:call-template>
         </xsl:variable>
-        
-        <div class="modal fade" id="ratePortletModal{@ID}" tabindex="-1" role="dialog" aria-labelledby="RatingModal" aria-hidden="true" data-title="{upMsg:getMessage('rate', $USER_LANG)} {@name}" 
-            data-close.button.label="{upMsg:getMessage('close', $USER_LANG)}" data-save.button.label="{upMsg:getMessage('save.and.close', $USER_LANG)}" 
-			data-geturl="{$getRatingPortletUrl}" data-saveurl="{$saveRatingPortletUrl}" data-get.rating.unsucessful="{upMsg:getMessage('rating.retrieved.unsuccessfully', $USER_LANG)}"
-			data-rating.save.successful = "{upMsg:getMessage('rating.saved.successfully', $USER_LANG)}" data-rating.save.unsuccessful = "{upMsg:getMessage('rating.saved.unsuccessfully', $USER_LANG)}">
-        </div>
+
+        <xsl:variable name="portletName" select="@name" />
+
+        <div class="modal fade" id="ratePortletModal{@ID}" tabindex="-1" role="dialog"
+             aria-labelledby="RatingModal" aria-hidden="true"
+             data-title="{upMsg:getMessage('rate.portlet.by.name', $USER_LANG, $portletName)}"
+             data-close.button.label="{upMsg:getMessage('close', $USER_LANG)}"
+             data-save.button.label="{upMsg:getMessage('save.and.close', $USER_LANG)}"
+             data-geturl="{$getRatingPortletUrl}"
+             data-saveurl="{$saveRatingPortletUrl}"
+             data-get.rating.unsucessful="{upMsg:getMessage('rating.retrieved.unsuccessfully', $USER_LANG)}"
+             data-rating.save.successful = "{upMsg:getMessage('rating.saved.successfully', $USER_LANG)}"
+             data-rating.save.unsuccessful = "{upMsg:getMessage('rating.saved.unsuccessfully', $USER_LANG)}"
+             data-rating.instructions.unrated =
+                     "{upMsg:getMessage('rating.instructions.unrated', $USER_LANG, $portletName)}"
+             data-rating.instructions.rated =
+                     "{upMsg:getMessage('rating.instructions.rated', $USER_LANG, $portletName)}"
+                />
         
         <script type="text/javascript">
             (function($) {
