@@ -222,6 +222,23 @@
                 <br>
                 <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
                 <br>
+               <p class="help-block marketplace_rating_instructions">
+                   <c:choose>
+                       <c:when test="${rating == null || rating == 0}"> <%-- zero rating means unrated --%>
+                           <spring:message code="rating.instructions.unrated"
+                                           text='You have not yet rated "{0}".'
+                                           arguments="${portlet.title}"
+                                           htmlEscape="true" />
+                       </c:when>
+                       <c:otherwise>
+                           <spring:message code="rating.instructions.rated"
+                                           text='You have already rated "{0}"; adjust your rating if you wish.'
+                                           arguments="${portlet.title}"
+                                           htmlEscape="true" />
+                       </c:otherwise>
+                   </c:choose>
+               </p>
+
                 <div class="col-xs-4">
                     <input type="number" data-max="5" data-min="1" value="${rating}" name="marketplace_rate_this_portlet" class="rating marketplace_user_rating_star_system"/>
                 </div>
@@ -360,6 +377,12 @@ up.jQuery(function() {
                    layout: 'TopCenter',
                    type: 'success'
                });
+               $(".marketplace_rating_instructions").text(
+                       '<spring:message code="rating.instructions.rated.now"
+                                        text='You have now rated "{0}"; update your rating if you wish.'
+                                        arguments="${portlet.title}"
+                                        htmlEscape="false"
+                        />'); <%-- htmlEscape is false to avoid double-escaping, since .text() escapes. --%>
            },
            error: function(){
                $('#up-notification').noty({
