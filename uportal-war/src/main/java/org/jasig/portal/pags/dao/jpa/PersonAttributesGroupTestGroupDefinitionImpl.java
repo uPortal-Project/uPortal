@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
@@ -49,21 +53,21 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Entity
-@Table(name = "UP_PAG_TEST_GROUP_DEF")
+@Table(name = "UP_PAGS_TEST_GROUP")
 @SequenceGenerator(
-        name="UP_PAG_TEST_GROUP_DEF_GEN",
-        sequenceName="UP_PAG_TEST_GROUP_DEF_SEQ",
+        name="UP_PAGS_TEST_GROUP_GEN",
+        sequenceName="UP_PAGS_TEST_GROUP_SEQ",
         allocationSize=5
     )
 @TableGenerator(
-        name="UP_PAG_TEST_GROUP_DEF_GEN",
-        pkColumnValue="UP_PAG_TEST_GROUP_DEF",
+        name="UP_PAGS_TEST_GROUP_GEN",
+        pkColumnValue="UP_PAGS_TEST_GROUP",
         allocationSize=5
     )
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttributesGroupTestGroupDefinition {
+public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttributesGroupTestGroupDefinition, Serializable {
     public PersonAttributesGroupTestGroupDefinitionImpl() {
         super();
     }
@@ -75,8 +79,8 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     }
 
     @Id
-    @GeneratedValue(generator = "UP_PAG_TEST_GROUP_DEF_GEN")
-    @Column(name = "PAG_TEST_GROUP_DEF_ID")
+    @GeneratedValue(generator = "UP_PAGS_TEST_GROUP_GEN")
+    @Column(name = "PAGS_TEST_GROUP_ID")
     private long internalPersonAttributesGroupTestGroupDefinitionId;
     
     @Version
@@ -89,8 +93,8 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAG_DEF_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
+    @JoinColumn(name = "PAGS_ID", nullable = false)
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class)
@@ -156,4 +160,18 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
         return group;
     }
 
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

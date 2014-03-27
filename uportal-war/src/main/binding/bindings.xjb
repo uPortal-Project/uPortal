@@ -104,13 +104,4 @@
         </jaxb:schemaBindings>
     </jaxb:bindings>
 
-    <jaxb:bindings schemaLocation="../resources/xsd/io/pags/pags-4.1.xsd">
-        <jaxb:bindings node="//xs:element[@name='pags-store']">
-            <jaxb:class name="ExternalGroupStoreDefinition"/>
-        </jaxb:bindings>
-        <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml.pags" />
-        </jaxb:schemaBindings>
-    </jaxb:bindings>
-
 </jaxb:bindings>

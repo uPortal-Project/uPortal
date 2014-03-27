@@ -34,6 +34,7 @@ import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
 
@@ -63,8 +64,16 @@ public class JpaPersonAttributesGroupTestGroupDefinitionDao extends BasePortalJp
     public IPersonAttributesGroupTestGroupDefinition updatePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition personAttributesGroupTestGroupDefinition) {
         Validate.notNull(personAttributesGroupTestGroupDefinition, "personAttributesGroupTestGroupDefinition can not be null");
         
-        this.getEntityManager().persist(personAttributesGroupTestGroupDefinition);
-        return personAttributesGroupTestGroupDefinition;
+        final IPersonAttributesGroupTestGroupDefinition persistentDefinition;
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(personAttributesGroupTestGroupDefinition)) {
+            persistentDefinition = personAttributesGroupTestGroupDefinition;
+        } else {
+            persistentDefinition = entityManager.merge(personAttributesGroupTestGroupDefinition);
+        }
+        
+        this.getEntityManager().persist(persistentDefinition);
+        return persistentDefinition;
     }
 
     @PortalTransactional

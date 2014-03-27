@@ -20,26 +20,52 @@
 package org.jasig.portal.io.xml.pags;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
 
 import org.jasig.portal.io.xml.AbstractPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType {
-    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("https://source.jasig.org/schemas/uportal/io/pags","pags-store");
+    public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("pags-group");
 
-    public static final PortalDataKey IMPORT_41_DATA_KEY = new PortalDataKey(
+    public static final PortalDataKey IMPORT_PAGS_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
-            null,
+            "classpath://org/jasig/portal/io/import-pags_store_v4-1.crn",
             null);
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     */
+    public static final PortalDataKey IMPORT_PAGS_GROUP_41_DATA_KEY = new PortalDataKey(
+            PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-pags_store_v4-1.crn",
+            "GROUP");
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     */
+    public static final PortalDataKey IMPORT_PAGS_MEMBERS_41_DATA_KEY = new PortalDataKey(
+            PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-pags_store_v4-1.crn",
+            "MEMBERS");
+    
+    private static final List<PortalDataKey> PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS = Arrays.asList(
+            IMPORT_PAGS_41_DATA_KEY,
+            IMPORT_PAGS_GROUP_41_DATA_KEY,
+            IMPORT_PAGS_MEMBERS_41_DATA_KEY);
 
-    private static final List<PortalDataKey> PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS = Arrays.asList(IMPORT_41_DATA_KEY);
-
+    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_42_KEYS = ImmutableSet.of(
+            IMPORT_PAGS_GROUP_41_DATA_KEY,
+            IMPORT_PAGS_MEMBERS_41_DATA_KEY);
+    
     public PersonAttributesGroupStorePortalDataType() {
         super(PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME);
     }
@@ -64,5 +90,17 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     public String getDescriptionCode() {
         return "Person Attribute Group Store";
     }
-
+    @Override
+    public String getTypeId() {
+        return "pags-store";
+    }
+    @Override
+    public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
+        if (IMPORT_PAGS_41_DATA_KEY.equals(portalDataKey)) {
+            //Split the import into two phases
+            return PAGS_GROUP_MEMBERS_42_KEYS;
+        }
+        
+        return Collections.singleton(portalDataKey);
+    }
 }

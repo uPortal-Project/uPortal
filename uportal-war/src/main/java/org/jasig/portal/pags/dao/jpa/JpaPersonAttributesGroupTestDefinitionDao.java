@@ -26,10 +26,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupTestDefinitionDao;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
@@ -60,8 +64,16 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
     public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition) {
         Validate.notNull(personAttributesGroupTestDefinition, "personAttributesGroupTestDefinition can not be null");
         
-        this.getEntityManager().persist(personAttributesGroupTestDefinition);
-        return personAttributesGroupTestDefinition;
+        final IPersonAttributesGroupTestDefinition persistentDefinition;
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(personAttributesGroupTestDefinition)) {
+            persistentDefinition = personAttributesGroupTestDefinition;
+        } else {
+            persistentDefinition = entityManager.merge(personAttributesGroupTestDefinition);
+        }
+        
+        this.getEntityManager().persist(persistentDefinition);
+        return persistentDefinition;
     }
 
     @PortalTransactional
@@ -91,10 +103,27 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
     
     @PortalTransactional
     @Override
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
-        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl((PersonAttributesGroupTestGroupDefinitionImpl)testGroup, attributeName, testerClass, testValue);
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String name, String description, String attributeName, String testerClass, String testValue) {
+        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl((PersonAttributesGroupTestGroupDefinitionImpl)testGroup, name, description, attributeName, testerClass, testValue);
         this.getEntityManager().persist(personAttributesGroupTestDefinition);
         return personAttributesGroupTestDefinition;
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @Override
+    public List<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitionByName(String name) {
+        CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<PersonAttributesGroupTestDefinitionImpl> criteriaQuery = 
+                criteriaBuilder.createQuery(PersonAttributesGroupTestDefinitionImpl.class);
+        Root<PersonAttributesGroupTestDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupTestDefinitionImpl.class);
+        ParameterExpression<String> nameParameter = criteriaBuilder.parameter(String.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
+        TypedQuery<PersonAttributesGroupTestDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
+        query.setParameter(nameParameter, name);
+        List<IPersonAttributesGroupTestDefinition> testGroups = new ArrayList<IPersonAttributesGroupTestDefinition>();
+        for (IPersonAttributesGroupTestDefinition testGroup : query.getResultList()) {
+            testGroups.add(testGroup);
+        }
+        return testGroups;
+    }
 }

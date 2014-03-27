@@ -34,6 +34,7 @@ public interface IPersonAttributesGroupTestDefinitionDao {
     public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition);
     public void deletePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition definition);
     public List<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitions();
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue);
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String name, String description, String attributeName, String testerClass, String testValue);
+    public List<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitionByName(String name);
 
 }

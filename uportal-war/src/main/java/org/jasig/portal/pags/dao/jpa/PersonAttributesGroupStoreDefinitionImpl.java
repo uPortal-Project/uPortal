@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
@@ -46,21 +50,21 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Entity
-@Table(name = "UP_PAG_STORE_DEF")
+@Table(name = "UP_PAGS_STORE")
 @SequenceGenerator(
-        name="UP_PAG_STORE_DEF_GEN",
-        sequenceName="UP_PAG_STORE_DEF_SEQ",
+        name="UP_PAGS_STORE_GEN",
+        sequenceName="UP_PAGS_STORE_SEQ",
         allocationSize=5
     )
 @TableGenerator(
-        name="UP_PAG_STORE_DEF_GEN",
-        pkColumnValue="UP_PAG_STORE_DEF",
+        name="UP_PAGS_STORE_GEN",
+        pkColumnValue="UP_PAGS_STORE",
         allocationSize=5
     )
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttributesGroupStoreDefinition {
+public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttributesGroupStoreDefinition, Serializable {
     public PersonAttributesGroupStoreDefinitionImpl() {
         super();
     }
@@ -71,8 +75,8 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
     }
 
     @Id
-    @GeneratedValue(generator = "UP_PAG_STORE_DEF_GEN")
-    @Column(name = "PAG_STORE_DEF_ID")
+    @GeneratedValue(generator = "UP_PAGS_STORE_GEN")
+    @Column(name = "PAGS_STORE_ID")
     private long internalPersonAttributesGroupStoreDefinitionId;
     
     @Version
@@ -146,4 +150,18 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
         this.personAttributesGroupDefinitions = groups;
     }
 
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

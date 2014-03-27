@@ -33,6 +33,7 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupStoreDefinitionDao;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 import org.springframework.stereotype.Repository;
 
@@ -62,8 +63,16 @@ public class JpaPersonAttributesGroupStoreDefinitionDao extends BasePortalJpaDao
     public IPersonAttributesGroupStoreDefinition updatePersonAttributesGroupStoreDefinition(IPersonAttributesGroupStoreDefinition personAttributesGroupStoreDefinition) {
         Validate.notNull(personAttributesGroupStoreDefinition, "personAttributesGroupStoreDefinition can not be null");
         
-        this.getEntityManager().persist(personAttributesGroupStoreDefinition);
-        return personAttributesGroupStoreDefinition;
+        final IPersonAttributesGroupStoreDefinition persistentDefinition;
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(personAttributesGroupStoreDefinition)) {
+            persistentDefinition = personAttributesGroupStoreDefinition;
+        } else {
+            persistentDefinition = entityManager.merge(personAttributesGroupStoreDefinition);
+        }
+        
+        this.getEntityManager().persist(persistentDefinition);
+        return persistentDefinition;
     }
 
     @PortalTransactional

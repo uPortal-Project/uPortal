@@ -51,7 +51,7 @@ public class EntityPersonAttributesConfiguration implements IPersonAttributesCon
     public EntityPersonAttributesConfiguration() {
         super();
         this.applicationContext = ApplicationContextLocator.getApplicationContext();
-        this.personAttributesGroupStoreDefinitionDao = applicationContext.getBean(IPersonAttributesGroupStoreDefinitionDao.class);
+        this.personAttributesGroupStoreDefinitionDao = applicationContext.getBean("personAttributesGroupStoreDefinitionDao", IPersonAttributesGroupStoreDefinitionDao.class);
     }
 
    public Map<String, GroupDefinition> getConfig() {

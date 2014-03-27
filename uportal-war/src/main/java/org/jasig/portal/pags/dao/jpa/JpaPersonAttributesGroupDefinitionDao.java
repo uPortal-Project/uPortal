@@ -63,8 +63,15 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
     public IPersonAttributesGroupDefinition updatePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition personAttributesGroupDefinition) {
         Validate.notNull(personAttributesGroupDefinition, "personAttributesGroupDefinition can not be null");
         
-        this.getEntityManager().persist(personAttributesGroupDefinition);
-        return personAttributesGroupDefinition;
+        final IPersonAttributesGroupDefinition persistentDefinition;
+        final EntityManager entityManager = this.getEntityManager();
+        if (entityManager.contains(personAttributesGroupDefinition)) {
+            persistentDefinition = personAttributesGroupDefinition;
+        } else {
+            persistentDefinition = entityManager.merge(personAttributesGroupDefinition);
+        }
+        this.getEntityManager().persist(persistentDefinition);
+        return persistentDefinition;
     }
 
     @PortalTransactional

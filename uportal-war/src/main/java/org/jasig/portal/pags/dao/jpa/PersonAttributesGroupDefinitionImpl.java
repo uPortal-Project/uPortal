@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.LazyCollection;
@@ -53,21 +57,21 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Entity
-@Table(name = "UP_PAG_DEF")
+@Table(name = "UP_PAGS_GROUP")
 @SequenceGenerator(
-        name="UP_PAG_DEF_GEN",
-        sequenceName="UP_PAG_DEF_SEQ",
+        name="UP_PAGS_GROUP_GEN",
+        sequenceName="UP_PAGS_GROUP_SEQ",
         allocationSize=5
     )
 @TableGenerator(
-        name="UP_PAG_DEF_GEN",
-        pkColumnValue="UP_PAG_DEF",
+        name="UP_PAGS_GROUP_GEN",
+        pkColumnValue="UP_PAGS_GROUP",
         allocationSize=5
     )
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition {
+public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition, Serializable {
     public PersonAttributesGroupDefinitionImpl() {
         super();
     }
@@ -79,8 +83,8 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     }
 
     @Id
-    @GeneratedValue(generator = "UP_PAG_DEF_GEN")
-    @Column(name = "PAG_DEF_ID")
+    @GeneratedValue(generator = "UP_PAGS_GROUP_GEN")
+    @Column(name = "PAGS_GROUP_ID")
     private long internalPersonAttributesGroupDefinitionId;
     
     @Version
@@ -93,13 +97,13 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = PersonAttributesGroupStoreDefinitionImpl.class)
-    @JoinColumn(name = "PAG_STORE_DEF_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonAttributesGroupStoreDefinitionImpl.class)
+    @JoinColumn(name = "PAGS_STORE_ID", nullable = false)
     private IPersonAttributesGroupStoreDefinition store;
     
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinTable(name="UP_PAG_MEMBERS_DEF", joinColumns = {@JoinColumn(name="PAG_DEF_ID")}, inverseJoinColumns={@JoinColumn(name="PAG_DEF_MEMBER_ID")})  
+    @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})  
     private List<IPersonAttributesGroupDefinition> members = new ArrayList<IPersonAttributesGroupDefinition>(0);
     
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
@@ -179,4 +183,18 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
         this.store = store;
     }
 
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }

@@ -19,6 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
+import java.io.Serializable;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +34,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
@@ -43,35 +48,37 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Entity
-@Table(name = "UP_PAG_TEST_DEF")
+@Table(name = "UP_PAGS_TEST")
 @SequenceGenerator(
-        name="UP_PAG_TEST_DEF_GEN",
-        sequenceName="UP_PAG_TEST_DEF_SEQ",
+        name="UP_PAGS_TEST_GEN",
+        sequenceName="UP_PAGS_TEST_SEQ",
         allocationSize=5
     )
 @TableGenerator(
-        name="UP_PAG_TEST_DEF_GEN",
-        pkColumnValue="UP_PAG_TEST_DEF",
+        name="UP_PAGS_TEST_GEN",
+        pkColumnValue="UP_PAGS_TEST",
         allocationSize=5
     )
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition {
+public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition, Serializable {
     public PersonAttributesGroupTestDefinitionImpl() {
         super();
     }
-    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String name, String description, String attributeName, String testerClass, String testValue) {
         super();
         this.testGroup = testGroup;
+        this.name = name;
+        this.description = description;
         this.attributeName = attributeName;
         this.testerClass = testerClass;
         this.testValue = testValue;
     }
 
     @Id
-    @GeneratedValue(generator = "UP_PAG_TEST_DEF_GEN")
-    @Column(name = "PAG_TEST_DEF_ID")
+    @GeneratedValue(generator = "UP_PAGS_TEST_GEN")
+    @Column(name = "PAGS_TEST_ID")
     private long internalPersonAttributesGroupTestDefinitionId;
     
     @Version
@@ -93,8 +100,8 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @Column(name = "TEST_VALUE", length=500, nullable = true, updatable = true)
     private String testValue;
     
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAG_TEST_GROUP_DEF_ID", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
+    @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
     private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
@@ -184,4 +191,18 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
         this.description = description;
     }
     
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+    
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that);
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
 }
