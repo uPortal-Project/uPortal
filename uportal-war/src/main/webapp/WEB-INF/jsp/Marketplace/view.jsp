@@ -23,23 +23,22 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-/*TODO : namespace these so that they only effect this page */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables display
  */
-table.display {
+#${n}marketplace table.display {
     margin: 0 auto;
     clear: both;
     width: 100%;
 }
 
-.dataTables_wrapper {
+#${n}marketplace .dataTables_wrapper {
     position: relative;
     clear: both;
     zoom: 1; /* Feeling sorry for IE */
 }
 
-.dataTables_processing {
+#${n}marketplace  .dataTables_processing {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -54,104 +53,53 @@ table.display {
     background-color: white;
 }
 
-.dataTables_filter {
+#${n}marketplace  .dataTables_filter {
     width: 100%;
     float: right;
 }
 
-.dataTables_info, .dataTables_length, .dataTables_paginate{
+#${n}marketplace  .dataTables_info, .dataTables_length, .dataTables_paginate{
     white-space:nowrap;
 }
 
-/* Pagination nested */
-.paginate_disabled_previous, .paginate_enabled_previous,
-.paginate_disabled_next, .paginate_enabled_next {
-    height: 19px;
-    float: left;
-    cursor: pointer;
-    *cursor: hand;
-    color: #111 !important;
-}
-.paginate_disabled_previous:hover, .paginate_enabled_previous:hover,
-.paginate_disabled_next:hover, .paginate_enabled_next:hover {
-    text-decoration: none !important;
-}
-.paginate_disabled_previous:active, .paginate_enabled_previous:active,
-.paginate_disabled_next:active, .paginate_enabled_next:active {
-    outline: none;
-}
-
-.paginate_disabled_previous,
-.paginate_disabled_next {
-    color: #666 !important;
-}
-.paginate_disabled_previous, .paginate_enabled_previous {
-    padding-left: 23px;
-}
-.paginate_disabled_next, .paginate_enabled_next {
-    padding-right: 23px;
-    margin-left: 10px;
-}
-
-.paginate_disabled_previous {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/back_disabled.png') no-repeat top left;
-}
-
-.paginate_enabled_previous {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/back_enabled.png') no-repeat top left;
-}
-.paginate_enabled_previous:hover {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/back_enabled_hover.png') no-repeat top left;
-}
-
-.paginate_disabled_next {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/forward_disabled.png') no-repeat top right;
-}
-
-.paginate_enabled_next {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/forward_enabled.png') no-repeat top right;
-}
-.paginate_enabled_next:hover {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/forward_enabled_hover.png') no-repeat top right;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables sorting
  */
 
-.sorting_asc {
+#${n}marketplace .sorting_asc {
     background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_asc.png') no-repeat center right;
 }
 
-.sorting_desc {
+#${n}marketplace .sorting_desc {
     background: url('portal/media/org/jasig/portal/channels/marketplace/sort_desc.png') no-repeat center right;
 }
 
-.sorting {
+#${n}marketplace .sorting {
     background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_both.png') no-repeat center right;
 }
 
-.sorting_asc_disabled {
+#${n}marketplace .sorting_asc_disabled {
     background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png') no-repeat center right;
 }
 
-.sorting_desc_disabled {
+#${n}marketplace .sorting_desc_disabled {
     background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
 }
  
-table.display thead th:active,
-table.display thead td:active {
+#${n}marketplace table.display thead th:active,
+#${n}marketplace table.display thead td:active {
     outline: none;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables row classes
  */
-tr.odd {
+#${n}marketplace tr.odd {
     background-color: #eee;
 }
 
-tr.even {
+#${n}marketplace tr.even {
     background-color: #fff;
 }
 
@@ -159,45 +107,45 @@ tr.even {
  * Misc
  */
  
- .top{
+#${n}marketplace .top{
     background-color: #F5F5F5;
  }
- 
- label>input{
+
+#${n}marketplace label>input{
     width:90%;
  }
- 
-.top .dataTables_info {
+
+#${n}marketplace.top .dataTables_info {
     float: none;
 }
 
-.clear {
+#${n}marketplace .clear {
     clear: both;
 }
 
-.dataTables_empty {
+#${n}marketplace .dataTables_empty {
     text-align: center;
 }
 
-.example_alt_pagination div.dataTables_info {
+#${n}marketplace .example_alt_pagination div.dataTables_info {
     width: 40%;
 }
 
-.paging_full_numbers {
+#${n}marketplace .paging_full_numbers {
     width: 400px;
     height: 22px;
     line-height: 22px;
 }
 
-.paging_full_numbers a:active {
+#${n}marketplace .paging_full_numbers a:active {
     outline: none
 }
 
-.paging_full_numbers a:hover {
+#${n}marketplace .paging_full_numbers a:hover {
     text-decoration: none;
 }
 
-.paging_full_numbers a.paginate_button,
+#${n}marketplace .paging_full_numbers a.paginate_button,
     .paging_full_numbers a.paginate_active {
     border: 1px solid #aaa;
     -webkit-border-radius: 5px;
@@ -209,78 +157,78 @@ tr.even {
     color: #333 !important;
 }
 
-.paging_full_numbers a.paginate_button {
+#${n}marketplace .paging_full_numbers a.paginate_button {
     background-color: #ddd;
 }
 
-.paging_full_numbers a.paginate_button:hover {
+#${n}marketplace .paging_full_numbers a.paginate_button:hover {
     background-color: #ccc;
     text-decoration: none !important;
 }
 
-.paging_full_numbers a.paginate_active {
+#${n}marketplace .paging_full_numbers a.paginate_active {
     background-color: #99B3FF;
 }
 
 @media only screen and (max-width: 992px){
-    .sort-btn-group{
+    #${n}marketplace .sort-btn-group{
         width: 100%;
     }
-    .popular-sort-button{
+    #${n}marketplace .popular-sort-button{
         width: 25%;
     }
-    .alphabetical-sort-button{
+    #${n}marketplace .alphabetical-sort-button{
         width: 25%;
     }
-    .audience-sort-button{
+    #${n}marketplace .audience-sort-button{
         width: 25%;
     }
-    .category-sort-button{
+    #${n}marketplace .category-sort-button{
         width: 25%;
     }
 }
  
 @media only screen and (max-width: 768px) {
-    #unseen table th:nth-child(1),
+    #${n}marketplace #unseen table th:nth-child(1),
     #unseen table th:nth-child(3),
     #unseen table td:nth-child(2),
     #unseen table th:nth-child(2){display: none;}
-    .dataTables_filter{
+    #${n}marketplace .dataTables_filter{
         text-align: left;
     }
-    .dataTables_filter>label{
+    #${n}marketplace .dataTables_filter>label{
         width: 100%;
         float: left;
     }
-    .dataTables_filter>label>input{
+    #${n}marketplace .dataTables_filter>label>input{
         width: 90%;
         float: right:
     }
     
-    tr.odd {
+    #${n}marketplacem tr.odd {
         background-color: #fff;
     }
 }
 
 
-.sort_info, .dataTables_info{
+#${n}marketplace .sort_info, .dataTables_info{
     text-align: left;
 }
 
-.marketplace_center_text, .dataTables_paginate,
+#${n}marketplace .marketplace_center_text, .dataTables_paginate,
 .btn_group_container, .dataTables_processing{
     text-align:center;
 }
 
-.dataTables_length, .dataTables_filter {
+#${n}marketplace .dataTables_length, .dataTables_filter {
     text-align:right;
 }
 
-a:hover {
+#${n}marketplace a:hover {
  cursor:pointer;
 }
 
-.${n}bottom{
+#${n}marketplace .${n}bottom{
     border-top: thin solid black;
     padding-top: 1em;
 }
@@ -323,7 +271,7 @@ a:hover {
                 <th class="optional" style="border:none;">
                     <spring:message code="label.description" text="Description" />
                 </th>
-                <th class="essential" style="border:none;">
+                    <th class="essential" style="border:none;">
                 </th>
             </tr>
         </thead>
