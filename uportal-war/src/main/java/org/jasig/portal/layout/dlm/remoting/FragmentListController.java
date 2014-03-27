@@ -153,7 +153,10 @@ public class FragmentListController {
                 for (int i=0; i < channelFNames.getLength(); i++) {
                     String fname = channelFNames.item(i).getTextContent();
                     IPortletDefinition pDef = portletRegistry.getPortletDefinitionByFname(fname);
-                    portlets.add(pDef.getTitle());
+
+                    if (null != pDef) {
+                        portlets.add(pDef.getTitle());
+                    }
                 }
             }
             
