@@ -53,8 +53,8 @@ var up = up || {};
 	        data: null,
 	        dataType: "json",
 	        async: true,
-	        success: function (request, text){
-	            $('#up-notification').noty({text: request.response, type: 'success'});
+	        success: function (){
+                console.debug("layout move successful. URL: " + theURL);
 	        },
 	        error: function(request, text, error) {
 	            $('#up-notification').noty({text: request.response, type: 'error'});
