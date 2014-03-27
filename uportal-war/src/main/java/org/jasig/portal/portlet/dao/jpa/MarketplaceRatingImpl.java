@@ -8,7 +8,7 @@ import javax.persistence.EmbeddedId;
 import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
 
 @Entity
-@Table(name = "MKTPLACE_RATINGS")
+@Table(name = "UP_PORTLET_RATING")
 class MarketplaceRatingImpl implements IMarketplaceRating{
 
 
