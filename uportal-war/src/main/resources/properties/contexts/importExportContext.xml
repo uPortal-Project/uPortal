@@ -385,6 +385,11 @@
             </bean>
         </property>
     </bean>
+    <bean id="personAttributesGroupStoreDataFunction" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStoreDataFunction"/>
+    <bean id="personAttributesGroupStoreExporter" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStoreExporter">
+        <property name="portalDataType" ref="personAttributesGroupStorePortalDataType"/>
+        <property name="portalDataRetriever" ref="personAttributesGroupStoreDataFunction" />
+    </bean>
     <bean id="permissionSetExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
         <property name="idAttributeName" value="SET_KEY"/>
         <property name="portalDataType" ref="permissionSetPortalDataType"/>
@@ -599,6 +604,21 @@
         </property>
     </bean>
 
+    <bean id="export-pags-store" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/export-pags-store.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupStoreDefinitionDao" value-ref="jpaPersonAttributesGroupStoreDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+
     <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/export-entity-type.crn" />
         <property name="requestAttributes">
@@ -633,8 +653,7 @@
             </util:map>
         </property>
     </bean>
-    
-    
+
     <!-- 
      | Nested Tasks
      +-->

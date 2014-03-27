@@ -41,6 +41,8 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.dom4j.DocumentHelper;
+import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
@@ -94,7 +96,7 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     private String description;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_GROUP_ID", nullable = true)
+    @JoinColumn(name = "PAGS_GROUP_ID", nullable = false)
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
@@ -178,5 +180,20 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+    
+    @Override
+    public void toElement(org.dom4j.Element parent) {
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        org.dom4j.Element elementTestGroup = DocumentHelper.createElement(new QName("test-group"));
+        elementTestGroup.addElement("name").addText(this.getName());
+        elementTestGroup.addElement("description").addText(this.getDescription());
+        for (IPersonAttributesGroupTestDefinition test : tests) {
+            test.toElement(elementTestGroup);
+        }
+        parent.add(elementTestGroup);
     }
 }

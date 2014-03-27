@@ -43,12 +43,16 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.dom4j.DocumentHelper;
+import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.layout.dlm.Evaluator;
+import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
@@ -98,7 +102,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     private String description;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonAttributesGroupStoreDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_STORE_ID", nullable = true)
+    @JoinColumn(name = "PAGS_STORE_ID", nullable = false)
     private IPersonAttributesGroupStoreDefinition store;
     
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
@@ -196,5 +200,31 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+    @Override
+    public void toElement(org.dom4j.Element parent) {
+        
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        parent.addElement("name").addText(this.getName());
+        parent.addElement("description").addText(this.getDescription());
+        if (!members.isEmpty()) {
+            org.dom4j.Element elementMembers = DocumentHelper.createElement(new QName("members"));
+            for (IPersonAttributesGroupDefinition member : members) {
+                elementMembers.addElement("member-key").addText(member.getName());
+            }
+            parent.add(elementMembers);
+        }
+        
+        if (!testGroups.isEmpty()) {
+            org.dom4j.Element elementSelectionTest = DocumentHelper.createElement(new QName("selection-test"));
+            for (IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
+                testGroup.toElement(elementSelectionTest);
+            }
+            parent.add(elementSelectionTest);
+        }
     }
 }

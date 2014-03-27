@@ -37,10 +37,13 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.dom4j.DocumentHelper;
+import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
@@ -101,7 +104,7 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     private String testValue;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = true)
+    @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
     private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
@@ -209,5 +212,21 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @Override
     public void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup) {
         this.testGroup = testGroup;
+    }
+    @Override
+    public void toElement(org.dom4j.Element parent) {
+        
+        if (parent == null) {
+            String msg = "Argument 'parent' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        
+        org.dom4j.Element elementTest = DocumentHelper.createElement(new QName("test"));
+        elementTest.addElement("name").addText(this.getName());
+        elementTest.addElement("description").addText(this.getDescription());
+        elementTest.addElement("attribute-name").addText(this.getAttributeName());
+        elementTest.addElement("tester-class").addText(this.getTesterClassName());
+        elementTest.addElement("test-value").addText(this.getTestValue());
+        parent.add(elementTest);
     }
 }

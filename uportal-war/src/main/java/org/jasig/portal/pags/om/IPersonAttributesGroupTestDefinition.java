@@ -19,6 +19,7 @@
 
 package org.jasig.portal.pags.om;
 
+import org.dom4j.Element;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.io.xml.IPortalData;
 
@@ -42,4 +43,5 @@ public interface IPersonAttributesGroupTestDefinition extends IBasicEntity, IPor
     
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
     void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
+    void toElement(Element parent);
 }
