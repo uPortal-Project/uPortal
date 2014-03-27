@@ -19,6 +19,7 @@
 
 package org.jasig.portal.io.xml.pags;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jasig.portal.pags.dao.IPersonAttributesGroupDefinitionDao;
@@ -124,11 +125,29 @@ public class PersonAttributesGroupImportHelper {
                     return;
                 }
             }
-            if (!groupMembers.contains(attemptingToAddMember)) {
-                groupMembers.add(attemptingToAddMember);
-                group.setMembers(groupMembers);
-                personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
-            }
+            groupMembers.add(attemptingToAddMember);
+            group.setMembers(groupMembers);
+            personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
+        }
+    }
+    
+    public void dropGroupMembers(String groupName) {
+        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        IPersonAttributesGroupDefinition group = groups.get(0);
+        group.setMembers(new ArrayList<IPersonAttributesGroupDefinition>(0));
+        personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
+    }
+    
+    public void dropTestGroupsAndTests(String groupName) {
+        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        IPersonAttributesGroupDefinition group = groups.get(0);
+        List<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+        // Disconnect the test groups
+        group.setTestGroups(new ArrayList<IPersonAttributesGroupTestGroupDefinition>());
+        personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
+        // Cascade the test group delete to the tests
+        for (IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
+            personAttributesGroupTestGroupDefinitionDao.deletePersonAttributesGroupTestGroupDefinition(testGroup);
         }
     }
 }

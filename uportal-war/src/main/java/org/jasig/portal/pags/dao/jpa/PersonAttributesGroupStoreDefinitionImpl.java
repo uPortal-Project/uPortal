@@ -90,7 +90,7 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
     private String description;
     
     
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class, orphanRemoval=true)
     private List<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = new ArrayList<IPersonAttributesGroupDefinition>(0);
 
     @Override

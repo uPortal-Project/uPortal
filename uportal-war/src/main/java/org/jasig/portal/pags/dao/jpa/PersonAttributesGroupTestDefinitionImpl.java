@@ -101,7 +101,7 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     private String testValue;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
+    @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = true)
     private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
@@ -204,5 +204,10 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+    
+    @Override
+    public void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup) {
+        this.testGroup = testGroup;
     }
 }

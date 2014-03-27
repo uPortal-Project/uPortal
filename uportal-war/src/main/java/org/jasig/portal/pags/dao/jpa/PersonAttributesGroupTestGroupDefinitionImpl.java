@@ -94,10 +94,10 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     private String description;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_ID", nullable = false)
+    @JoinColumn(name = "PAGS_GROUP_ID", nullable = true)
     private IPersonAttributesGroupDefinition group;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class)
+    @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
     private List<IPersonAttributesGroupTestDefinition> tests = new ArrayList<IPersonAttributesGroupTestDefinition>(0);
     
     @Override
@@ -158,6 +158,11 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @Override
     public IPersonAttributesGroupDefinition getGroup() {
         return group;
+    }
+    
+    @Override
+    public void setGroup(IPersonAttributesGroupDefinition group) {
+        this.group = group;
     }
 
     @Override

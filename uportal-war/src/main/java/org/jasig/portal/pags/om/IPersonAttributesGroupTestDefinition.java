@@ -41,4 +41,5 @@ public interface IPersonAttributesGroupTestDefinition extends IBasicEntity, IPor
     void setTestValue(String testValue);
     
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
+    void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
 }

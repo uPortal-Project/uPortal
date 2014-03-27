@@ -98,7 +98,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     private String description;
     
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = PersonAttributesGroupStoreDefinitionImpl.class)
-    @JoinColumn(name = "PAGS_STORE_ID", nullable = false)
+    @JoinColumn(name = "PAGS_STORE_ID", nullable = true)
     private IPersonAttributesGroupStoreDefinition store;
     
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
@@ -106,7 +106,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})  
     private List<IPersonAttributesGroupDefinition> members = new ArrayList<IPersonAttributesGroupDefinition>(0);
     
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
+    @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<IPersonAttributesGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributesGroupTestGroupDefinition>(0);
 

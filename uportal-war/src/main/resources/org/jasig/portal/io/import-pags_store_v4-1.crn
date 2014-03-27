@@ -51,6 +51,13 @@ under the License.
       <subtasks>
         <with-attribute key="GROUP_NAME" value="${valueOf(name)}">
           <with-attribute key="MEMBER_COUNT" value="${valueOf(count(selection-test/test-group/*))}">
+            <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+              <groovy>
+                <script>
+                  personAttributesGroupImportHelper.dropTestGroupsAndTests(GROUP_NAME);
+                </script>
+              </groovy>
+            </with-attribute>
             <if test="${jexl(MEMBER_COUNT > 0)}">
               <node-iterator xpath="selection-test/test-group">
                 <with-attribute key="TEST_GROUP_NAME" value="${valueOf(name)}">
@@ -92,6 +99,13 @@ under the License.
   <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
     <with-attribute key="GROUP_NAME" value="${valueOf(name)}">
       <with-attribute key="MEMBER_COUNT" value="${valueOf(count(members/*))}">
+        <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+          <groovy>
+            <script>
+              personAttributesGroupImportHelper.dropGroupMembers(GROUP_NAME);
+            </script>
+          </groovy>
+        </with-attribute>
         <if test="${jexl(MEMBER_COUNT > 0)}">
           <node-iterator xpath="members/member-key">
             <with-attribute key="MEMBER" value="${valueOf(.)}">

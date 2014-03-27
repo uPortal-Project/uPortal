@@ -39,4 +39,5 @@ public interface IPersonAttributesGroupTestGroupDefinition extends IBasicEntity,
     void setTests(List<IPersonAttributesGroupTestDefinition> tests);
 
     IPersonAttributesGroupDefinition getGroup();
+    void setGroup(IPersonAttributesGroupDefinition group);
 }
