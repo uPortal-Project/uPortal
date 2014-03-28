@@ -177,22 +177,25 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             return Collections.emptyList();
         }
 
+        List<IPersonAttributes> list = new ArrayList<IPersonAttributes>(people);
+
+        // (Temporarily?) Commenting out this loop to see what the perf impact is (SSP-2050)
         // for each returned match, check to see if the current user has 
         // permissions to view this user
-        List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();
-        for (IPersonAttributes person : people) {
-            // if the current user has permission to view this person, construct
-            // a new representation of the person limited to attributes the
-            // searcher has permissions to view
-            final IPersonAttributes visiblePerson = getVisiblePerson(principal, person, permittedAttributes);
-            if (visiblePerson != null) {
-                list.add(visiblePerson);
-            }
-        }
+//        List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();
+//        for (IPersonAttributes person : people) {
+//            // if the current user has permission to view this person, construct
+//            // a new representation of the person limited to attributes the
+//            // searcher has permissions to view
+//            final IPersonAttributes visiblePerson = getVisiblePerson(principal, person, permittedAttributes);
+//            if (visiblePerson != null) {
+//                list.add(visiblePerson);
+//            }
+//        }
         
         // sort the list by display name
         Collections.sort(list, new DisplayNameComparator());
-        
+
         return list;
     }
 
