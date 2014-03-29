@@ -38,6 +38,8 @@ public interface IPersonAttributesGroupDefinition extends IBasicEntity, IPortalD
 
     List<IPersonAttributesGroupDefinition> getMembers();
     void setMembers(List<IPersonAttributesGroupDefinition> members);
+    List<IPersonAttributesGroupDefinition> getParents();
+    public void setParents(List<IPersonAttributesGroupDefinition> parents);
     List<IPersonAttributesGroupTestGroupDefinition> getTestGroups();
     void setTestGroups(List<IPersonAttributesGroupTestGroupDefinition> testGroups);
 

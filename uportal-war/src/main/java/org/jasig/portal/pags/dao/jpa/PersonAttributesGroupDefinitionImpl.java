@@ -110,6 +110,9 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})  
     private List<IPersonAttributesGroupDefinition> members = new ArrayList<IPersonAttributesGroupDefinition>(0);
     
+    @ManyToMany(mappedBy = "members", targetEntity=PersonAttributesGroupDefinitionImpl.class)
+    private List<IPersonAttributesGroupDefinition> parents;
+    
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<IPersonAttributesGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributesGroupTestGroupDefinition>(0);
@@ -170,6 +173,16 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     }
 
     @Override
+    public List<IPersonAttributesGroupDefinition> getParents() {
+        return parents;
+    }
+    
+    @Override
+    public void setParents(List<IPersonAttributesGroupDefinition> parents) {
+        this.parents = parents;
+    }
+    
+    @Override
     public List<IPersonAttributesGroupTestGroupDefinition> getTestGroups() {
         return testGroups;
     }
@@ -227,4 +240,5 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
             parent.add(elementSelectionTest);
         }
     }
+
 }
