@@ -31,7 +31,7 @@
         <description></description>
         <attribute-name>agentDevice</attribute-name>
         <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
-        <test-value>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</test-value>
+        <test-value>${mobile.user.agent.regex}</test-value>
       </test>
     </test-group>
   </selection-test>
