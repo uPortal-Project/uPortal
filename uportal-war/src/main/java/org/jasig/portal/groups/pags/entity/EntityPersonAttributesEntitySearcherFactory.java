@@ -24,7 +24,8 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntitySearcherFactory;
 
 /**
- * @author Al Wold
+ * @author Shawn Connolly, sconnolly@unicon.net
+ * @since 4.1
  */
 public class EntityPersonAttributesEntitySearcherFactory implements IEntitySearcherFactory {
    public IEntitySearcher newEntitySearcher() throws GroupsException {

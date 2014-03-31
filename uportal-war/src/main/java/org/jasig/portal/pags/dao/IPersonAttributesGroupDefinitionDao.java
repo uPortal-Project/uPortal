@@ -19,7 +19,7 @@
 
 package org.jasig.portal.pags.dao;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
@@ -33,8 +33,8 @@ public interface IPersonAttributesGroupDefinitionDao {
 
     public IPersonAttributesGroupDefinition updatePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition personAttributesGroupDefinition);
     public void deletePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition definition);
-    public List<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String groupKey);
-    public List<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions();
+    public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String groupKey);
+    public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions();
     public IPersonAttributesGroupDefinition createPersonAttributesGroupDefinition(IPersonAttributesGroupStoreDefinition store, String name, String description);
 
 }

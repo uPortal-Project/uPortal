@@ -19,9 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -39,7 +38,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
@@ -69,15 +67,13 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttributesGroupTestGroupDefinition, Serializable {
+public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttributesGroupTestGroupDefinition {
     public PersonAttributesGroupTestGroupDefinitionImpl() {
         super();
     }
-    public PersonAttributesGroupTestGroupDefinitionImpl(IPersonAttributesGroupDefinition group, String name, String description) {
+    public PersonAttributesGroupTestGroupDefinitionImpl(IPersonAttributesGroupDefinition group) {
         super();
         this.group = group;
-        this.name = name;
-        this.description = description;
     }
 
     @Id
@@ -89,18 +85,12 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
     
-    @Column(name = "NAME", length=500, nullable = false, updatable = false)
-    private String name;
-    
-    @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
-    private String description;
-    
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_GROUP_ID", nullable = false)
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
-    private List<IPersonAttributesGroupTestDefinition> tests = new ArrayList<IPersonAttributesGroupTestDefinition>(0);
+    private Set<IPersonAttributesGroupTestDefinition> tests = new HashSet<IPersonAttributesGroupTestDefinition>(0);
     
     @Override
     public EntityIdentifier getEntityIdentifier() {
@@ -108,52 +98,17 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     }
 
     @Override
-    public String getDataId() {
-        return this.name;
-    }
-
-    @Override
     public long getId() {
         return internalPersonAttributesGroupTestGroupDefinitionId;
     }
-    
-    @Override
-    public String getDataTitle() {
-        return this.name;
-    }
 
     @Override
-    public String getDataDescription() {
-        return this.description;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public List<IPersonAttributesGroupTestDefinition> getTests() {
+    public Set<IPersonAttributesGroupTestDefinition> getTests() {
         return tests;
     }
 
     @Override
-    public void setTests(List<IPersonAttributesGroupTestDefinition> tests) {
+    public void setTests(Set<IPersonAttributesGroupTestDefinition> tests) {
         this.tests = tests;
     }
 
@@ -167,11 +122,6 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
         this.group = group;
     }
 
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-    
     @Override
     public boolean equals(Object that) {
         return EqualsBuilder.reflectionEquals(this, that);
@@ -188,9 +138,7 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
             String msg = "Argument 'parent' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        org.dom4j.Element elementTestGroup = DocumentHelper.createElement(new QName("test-group"));
-        elementTestGroup.addElement("name").addText(this.getName());
-        elementTestGroup.addElement("description").addText(this.getDescription());
+        org.dom4j.Element elementTestGroup = DocumentHelper.createElement(new QName("test-set"));
         for (IPersonAttributesGroupTestDefinition test : tests) {
             test.toElement(elementTestGroup);
         }

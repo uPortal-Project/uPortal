@@ -19,7 +19,7 @@
 
 package org.jasig.portal.io.xml.pags;
 
-import java.util.List;
+import java.util.Set;
 
 import org.dom4j.Element;
 import org.jasig.portal.io.xml.crn.AbstractDom4jExporter;
@@ -42,7 +42,7 @@ public class PersonAttributesGroupStoreExporter extends AbstractDom4jExporter {
 
     @Override
     protected Element exportDataElement(String name) {
-        final List<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        final Set<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         
         if (personAttributesGroupDefinitions.isEmpty()) {
             return null;
@@ -51,7 +51,7 @@ public class PersonAttributesGroupStoreExporter extends AbstractDom4jExporter {
         final org.dom4j.Document pagsGroupDefDoc = new org.dom4j.DocumentFactory().createDocument();
         final Element pagsGroupDefElement = pagsGroupDefDoc.addElement("pags-group");
         pagsGroupDefElement.addAttribute("script", "classpath://org/jasig/portal/io/import-pags_store_v4-1.crn");
-        personAttributesGroupDefinitions.get(0).toElement(pagsGroupDefElement);
+        personAttributesGroupDefinitions.iterator().next().toElement(pagsGroupDefElement);
         
         return pagsGroupDefElement;
     }

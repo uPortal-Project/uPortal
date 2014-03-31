@@ -19,8 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -91,7 +91,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public List<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String name) {
+    public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery = 
                 criteriaBuilder.createQuery(PersonAttributesGroupDefinitionImpl.class);
@@ -100,17 +100,20 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
         TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setParameter(nameParameter, name);
-        List<IPersonAttributesGroupDefinition> groups = new ArrayList<IPersonAttributesGroupDefinition>();
+        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>();
         for (IPersonAttributesGroupDefinition group: query.getResultList()) {
             groups.add(group);
+        }
+        if(groups.size() > 1) {
+            logger.error("More than one PAGS Group found for name: {}", name);
         }
         return groups;
     }
 
     @Override
-    public List<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions() {
+    public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions() {
         final TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        List<IPersonAttributesGroupDefinition> groups = new ArrayList<IPersonAttributesGroupDefinition>();
+        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>();
         for (IPersonAttributesGroupDefinition group: query.getResultList()) {
             groups.add(group);
         }

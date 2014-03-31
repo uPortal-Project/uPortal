@@ -19,7 +19,9 @@
 
 package org.jasig.portal.io.xml.pags;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
@@ -46,9 +48,12 @@ public class PersonAttributesGroupStoreDataFunction implements Function<IPortalD
 
 	@Override
     public Iterable<? extends IPortalData> apply(IPortalDataType input) {
-		final List<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = this.personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
-        
-        final List<IPortalData> portalData = Lists.transform(personAttributesGroupDefinitions, new Function<IPersonAttributesGroupDefinition, IPortalData>() {
+		final Set<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = this.personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
+		List<IPersonAttributesGroupDefinition> pagsDefs = new ArrayList<IPersonAttributesGroupDefinition>();
+        for(IPersonAttributesGroupDefinition pagsDef : personAttributesGroupDefinitions) {
+            pagsDefs.add(pagsDef);
+        }
+        final List<IPortalData> portalData = Lists.transform(pagsDefs, new Function<IPersonAttributesGroupDefinition, IPortalData>() {
             @Override
             public IPortalData apply(IPersonAttributesGroupDefinition personAttributesGroup) {
                 return new SimpleStringPortalData(

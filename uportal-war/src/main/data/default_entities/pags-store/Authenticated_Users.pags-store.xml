@@ -23,17 +23,13 @@
   <name>Authenticated Users</name>
   <description>All Authenticated Portal Users</description>
   <selection-test>
-    <test-group>
-      <name>Authenticated Users - Test Group 1</name>
-      <description></description>
+    <test-set>
       <test>
-        <name>Authenticated Users - Test 1</name>
-        <description></description>
         <attribute-name></attribute-name>
         <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
         <test-value>false</test-value>
       </test>
-    </test-group>
+    </test-set>
   </selection-test>
 </pags-group>
 

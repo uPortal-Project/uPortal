@@ -19,9 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -41,7 +40,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
@@ -51,8 +49,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.layout.dlm.Evaluator;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
@@ -75,7 +71,7 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition, Serializable {
+public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGroupDefinition {
     public PersonAttributesGroupDefinitionImpl() {
         super();
     }
@@ -108,14 +104,14 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})  
-    private List<IPersonAttributesGroupDefinition> members = new ArrayList<IPersonAttributesGroupDefinition>(0);
+    private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
     
     @ManyToMany(mappedBy = "members", targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    private List<IPersonAttributesGroupDefinition> parents;
+    private Set<IPersonAttributesGroupDefinition> parents;
     
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<IPersonAttributesGroupTestGroupDefinition> testGroups = new ArrayList<IPersonAttributesGroupTestGroupDefinition>(0);
+    private Set<IPersonAttributesGroupTestGroupDefinition> testGroups = new HashSet<IPersonAttributesGroupTestGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
@@ -148,47 +144,32 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     }
 
     @Override
-    public String getDataId() {
-        return this.name;
-    }
-
-    @Override
-    public String getDataTitle() {
-        return this.name;
-    }
-
-    @Override
-    public String getDataDescription() {
-        return this.description;
-    }
-
-    @Override
-    public List<IPersonAttributesGroupDefinition> getMembers() {
+    public Set<IPersonAttributesGroupDefinition> getMembers() {
         return members;
     }
 
     @Override
-    public void setMembers(List<IPersonAttributesGroupDefinition> members) {
+    public void setMembers(Set<IPersonAttributesGroupDefinition> members) {
         this.members = members;
     }
 
     @Override
-    public List<IPersonAttributesGroupDefinition> getParents() {
+    public Set<IPersonAttributesGroupDefinition> getParents() {
         return parents;
     }
     
     @Override
-    public void setParents(List<IPersonAttributesGroupDefinition> parents) {
+    public void setParents(Set<IPersonAttributesGroupDefinition> parents) {
         this.parents = parents;
     }
     
     @Override
-    public List<IPersonAttributesGroupTestGroupDefinition> getTestGroups() {
+    public Set<IPersonAttributesGroupTestGroupDefinition> getTestGroups() {
         return testGroups;
     }
 
     @Override
-    public void setTestGroups(List<IPersonAttributesGroupTestGroupDefinition> testGroups) {
+    public void setTestGroups(Set<IPersonAttributesGroupTestGroupDefinition> testGroups) {
         this.testGroups = testGroups;
     }
 
@@ -198,11 +179,6 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
  
     public void setStore(IPersonAttributesGroupStoreDefinition store) {
         this.store = store;
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
     }
     
     @Override
@@ -227,7 +203,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
         if (!members.isEmpty()) {
             org.dom4j.Element elementMembers = DocumentHelper.createElement(new QName("members"));
             for (IPersonAttributesGroupDefinition member : members) {
-                elementMembers.addElement("member-key").addText(member.getName());
+                elementMembers.addElement("member-name").addText(member.getName());
             }
             parent.add(elementMembers);
         }

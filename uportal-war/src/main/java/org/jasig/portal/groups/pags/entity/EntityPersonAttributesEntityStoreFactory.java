@@ -24,7 +24,8 @@ import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IEntityStoreFactory;
 
 /**
- * @author Al Wold
+ * @author Shawn Connolly, sconnolly@unicon.net
+ * @since 4.1
  */
 public class EntityPersonAttributesEntityStoreFactory implements IEntityStoreFactory {
 

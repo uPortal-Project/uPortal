@@ -19,8 +19,6 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.io.Serializable;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +33,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
@@ -43,7 +40,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
@@ -65,15 +61,13 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition, Serializable {
+public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition {
     public PersonAttributesGroupTestDefinitionImpl() {
         super();
     }
-    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String name, String description, String attributeName, String testerClass, String testValue) {
+    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
         super();
         this.testGroup = testGroup;
-        this.name = name;
-        this.description = description;
         this.attributeName = attributeName;
         this.testerClass = testerClass;
         this.testValue = testValue;
@@ -87,12 +81,6 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @Version
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
-    
-    @Column(name = "NAME", length=500, nullable = true, updatable = true)
-    private String name;
-    
-    @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
-    private String description;
     
     @Column(name = "ATTRIBUTE_NAME", length=500, nullable = false, updatable = false)
     private String attributeName;
@@ -117,23 +105,6 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
         return internalPersonAttributesGroupTestDefinitionId;
     }
     
-    @Override
-    public String getDataId() {
-        return this.attributeName;
-    }
-
-    @Override
-    public String getDataTitle() {
-        return this.testerClass;
-    }
-
-
-    @Override
-    public String getDataDescription() {
-        return this.testerClass;
-    }
-
-
     @Override
     public String getAttributeName() {
         return this.attributeName;
@@ -173,31 +144,6 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     public IPersonAttributesGroupTestGroupDefinition getTestGroup() {
         return testGroup;
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
     
     @Override
     public boolean equals(Object that) {
@@ -222,8 +168,6 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
         }
         
         org.dom4j.Element elementTest = DocumentHelper.createElement(new QName("test"));
-        elementTest.addElement("name").addText(this.getName());
-        elementTest.addElement("description").addText(this.getDescription());
         elementTest.addElement("attribute-name").addText(this.getAttributeName());
         elementTest.addElement("tester-class").addText(this.getTesterClassName());
         elementTest.addElement("test-value").addText(this.getTestValue());

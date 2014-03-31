@@ -50,7 +50,7 @@ under the License.
       <!-- Add Test Groups and Tests -->
       <subtasks>
         <with-attribute key="GROUP_NAME" value="${valueOf(name)}">
-          <with-attribute key="MEMBER_COUNT" value="${valueOf(count(selection-test/test-group/*))}">
+          <with-attribute key="MEMBER_COUNT" value="${valueOf(count(selection-test/test-set/*))}">
             <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
               <groovy>
                 <script>
@@ -59,35 +59,25 @@ under the License.
               </groovy>
             </with-attribute>
             <if test="${jexl(MEMBER_COUNT > 0)}">
-              <node-iterator xpath="selection-test/test-group">
-                <with-attribute key="TEST_GROUP_NAME" value="${valueOf(name)}">
-                  <with-attribute key="TEST_GROUP_DESCRIPTION" value="${valueOf(description)}">
-                    <with-attribute key="TEST_GROUP_CONTENTS" value="${valueOf(.)}">
-                      <node-iterator xpath="test">
-                        <with-attribute key="TEST_NAME" value="${valueOf(name)}">
-                          <with-attribute key="TEST_DESCRIPTION" value="${valueOf(description)}">
-                            <with-attribute key="ATTRIBUTE_NAME" value="${valueOf(attribute-name)}">
-                              <with-attribute key="TESTER_CLASS" value="${valueOf(tester-class)}">
-                                <with-attribute key="TEST_VALUE" value="${valueOf(test-value)}">
-                                  <if test="${groovy(TEST_GROUP_CONTENTS.contains(TEST_NAME))}">
-                                    <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
-                                      <groovy>
-                                        <script>
-                                          import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
-                                          IPersonAttributesGroupTestGroupDefinition testGroup = personAttributesGroupImportHelper.addTestGroup(GROUP_NAME, TEST_GROUP_NAME, TEST_GROUP_DESCRIPTION);
-                                          personAttributesGroupImportHelper.addTest(testGroup, TEST_NAME, TEST_DESCRIPTION, ATTRIBUTE_NAME, TESTER_CLASS, TEST_VALUE);
-                                        </script>
-                                      </groovy>
-                                    </with-attribute>
-                                  </if>
-                                </with-attribute>
-                              </with-attribute>
-                            </with-attribute>
+              <node-iterator xpath="selection-test/test-set">
+                <with-attribute key="TEST_GROUP_CONTENTS" value="${valueOf(.)}">
+                  <node-iterator xpath="test">
+                    <with-attribute key="ATTRIBUTE_NAME" value="${valueOf(attribute-name)}">
+                      <with-attribute key="TESTER_CLASS" value="${valueOf(tester-class)}">
+                        <with-attribute key="TEST_VALUE" value="${valueOf(test-value)}">
+                          <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+                            <groovy>
+                              <script>
+                                import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
+                                IPersonAttributesGroupTestGroupDefinition testGroup = personAttributesGroupImportHelper.addTestGroup(GROUP_NAME);
+                                personAttributesGroupImportHelper.addTest(testGroup, ATTRIBUTE_NAME, TESTER_CLASS, TEST_VALUE);
+                              </script>
+                            </groovy>
                           </with-attribute>
                         </with-attribute>
-                      </node-iterator>
+                      </with-attribute>
                     </with-attribute>
-                  </with-attribute>
+                  </node-iterator>
                 </with-attribute>
               </node-iterator>
             </if>
@@ -107,7 +97,7 @@ under the License.
           </groovy>
         </with-attribute>
         <if test="${jexl(MEMBER_COUNT > 0)}">
-          <node-iterator xpath="members/member-key">
+          <node-iterator xpath="members/member-name">
             <with-attribute key="MEMBER" value="${valueOf(.)}">
               <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
                 <groovy>

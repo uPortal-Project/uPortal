@@ -19,8 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -33,7 +33,6 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupStoreDefinitionDao;
-import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 import org.springframework.stereotype.Repository;
 
@@ -92,7 +91,7 @@ public class JpaPersonAttributesGroupStoreDefinitionDao extends BasePortalJpaDao
 
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
-    public List<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitionByName(String name) {
+    public Set<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
         CriteriaQuery<PersonAttributesGroupStoreDefinitionImpl> criteriaQuery = 
                 criteriaBuilder.createQuery(PersonAttributesGroupStoreDefinitionImpl.class);
@@ -101,19 +100,25 @@ public class JpaPersonAttributesGroupStoreDefinitionDao extends BasePortalJpaDao
         criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
         TypedQuery<PersonAttributesGroupStoreDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
         query.setParameter(nameParameter, name);
-        List<IPersonAttributesGroupStoreDefinition> stores = new ArrayList<IPersonAttributesGroupStoreDefinition>();
+        Set<IPersonAttributesGroupStoreDefinition> stores = new HashSet<IPersonAttributesGroupStoreDefinition>();
         for (IPersonAttributesGroupStoreDefinition store : query.getResultList()) {
             stores.add(store);
+        }
+        if(stores.size() > 1) {
+            logger.error("More than one PAGS Store found for name: {}", name);
         }
         return stores;
     }
 
     @Override
-    public List<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitions() {
+    public Set<IPersonAttributesGroupStoreDefinition> getPersonAttributesGroupStoreDefinitions() {
         final TypedQuery<PersonAttributesGroupStoreDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        List<IPersonAttributesGroupStoreDefinition> stores = new ArrayList<IPersonAttributesGroupStoreDefinition>();
+        Set<IPersonAttributesGroupStoreDefinition> stores = new HashSet<IPersonAttributesGroupStoreDefinition>();
         for (IPersonAttributesGroupStoreDefinition store : query.getResultList()) {
             stores.add(store);
+        }
+        if(stores.size() > 1) {
+            logger.error("More than one PAGS Store found");
         }
         return stores;
     }

@@ -26,8 +26,8 @@ import org.jasig.portal.groups.IEntityGroupStoreFactory;
 
 /**
  * Factory class for Person Attributes Group Store
- * 
- * @author Al Wold
+ * @author Shawn Connolly, sconnolly@unicon.net
+ * @since 4.1
  */
 public class EntityPersonAttributesGroupStoreFactory implements IEntityGroupStoreFactory {
    private static IEntityGroupStore groupStore;

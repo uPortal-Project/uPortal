@@ -23,16 +23,12 @@
   <name>Respondr Theme Users</name>
   <description>User Access by Theme</description>
   <selection-test>
-    <test-group>
-      <name>Respondr Theme Users - Test Group 1</name>
-      <description></description>
+    <test-set>
       <test>
-        <name>Respondr Theme Users - Test 1</name>
-        <description></description>
         <attribute-name></attribute-name>
         <tester-class>org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
         <test-value>respondr</test-value>
       </test>
-    </test-group>
+    </test-set>
   </selection-test>
 </pags-group>

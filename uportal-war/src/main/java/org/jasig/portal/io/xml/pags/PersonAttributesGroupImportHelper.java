@@ -19,8 +19,8 @@
 
 package org.jasig.portal.io.xml.pags;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jasig.portal.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupStoreDefinitionDao;
@@ -28,7 +28,6 @@ import org.jasig.portal.pags.dao.IPersonAttributesGroupTestDefinitionDao;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
-import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
 
 /**
@@ -60,66 +59,46 @@ public class PersonAttributesGroupImportHelper {
     }
 
     private IPersonAttributesGroupStoreDefinition getOrCreateStore() {
-        List<IPersonAttributesGroupStoreDefinition> stores = personAttributesGroupStoreDefinitionDao.getPersonAttributesGroupStoreDefinitions();
+        Set<IPersonAttributesGroupStoreDefinition> stores = personAttributesGroupStoreDefinitionDao.getPersonAttributesGroupStoreDefinitions();
         if (stores.size() == 0) {
             return personAttributesGroupStoreDefinitionDao.createPersonAttributesGroupStoreDefinition("Default", "Default Person Attribute Group Store");
         } else {
-            return stores.get(0);
+            return stores.iterator().next();
         }
     }
     
     private IPersonAttributesGroupDefinition getOrCreateGroup(IPersonAttributesGroupStoreDefinition store, String name, String description) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (groups.size() == 0) {
             return personAttributesGroupDefinitionDao.createPersonAttributesGroupDefinition(store, name, description);
         } else {
-            groups.get(0).setDescription(description);
-            personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(groups.get(0));
-            return groups.get(0);
+            groups.iterator().next().setDescription(description);
+            personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(groups.iterator().next());
+            return groups.iterator().next();
         }
     }
     
-    public IPersonAttributesGroupTestGroupDefinition addTestGroup(String groupName, String name, String description) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
-        List<IPersonAttributesGroupTestGroupDefinition> testGroups = personAttributesGroupTestGroupDefinitionDao.getPersonAttributesGroupTestGroupDefinitionByName(name);
-        if (testGroups.size() == 0) {
-            return personAttributesGroupTestGroupDefinitionDao.createPersonAttributesGroupTestGroupDefinition(groups.get(0), name, description);
-        } else {
-            testGroups.get(0).setDescription(description);
-            personAttributesGroupTestGroupDefinitionDao.updatePersonAttributesGroupTestGroupDefinition(testGroups.get(0));
-            return testGroups.get(0);
-        }
+    public IPersonAttributesGroupTestGroupDefinition addTestGroup(String groupName) {
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        return personAttributesGroupTestGroupDefinitionDao.createPersonAttributesGroupTestGroupDefinition(groups.iterator().next());
     }
     
     public void addTest(IPersonAttributesGroupTestGroupDefinition testGroup,
-                             String name,
-                             String description,
                              String attributeName,
                              String testerClass,
                              String testValue) {
-
-        List<IPersonAttributesGroupTestDefinition> tests = personAttributesGroupTestDefinitionDao.getPersonAttributesGroupTestDefinitionByName(name);
-        if (tests.size() == 0) {
-            personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, name, description, attributeName, testerClass, testValue);
-        } else {
-            IPersonAttributesGroupTestDefinition test = tests.get(0);
-            test.setDescription(description);
-            test.setAttributeName(attributeName);
-            test.setTesterClassName(testerClass);
-            test.setTestValue(testValue);
-            personAttributesGroupTestDefinitionDao.updatePersonAttributesGroupTestDefinition(test);
-        }
+        personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, attributeName, testerClass, testValue);
     }
     
     public void addGroupMember(String groupName, String member) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
-        List<IPersonAttributesGroupDefinition> attemptingToAddMembers = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(member);
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        Set<IPersonAttributesGroupDefinition> attemptingToAddMembers = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(member);
         if (groups.isEmpty() || attemptingToAddMembers.isEmpty()) {
             throw new RuntimeException("Group: " + groupName + " or member: " + member + " does not exist");
         } else {
-            IPersonAttributesGroupDefinition group = groups.get(0);
-            IPersonAttributesGroupDefinition attemptingToAddMember = attemptingToAddMembers.get(0);
-            List<IPersonAttributesGroupDefinition> groupMembers = group.getMembers();
+            IPersonAttributesGroupDefinition group = groups.iterator().next();
+            IPersonAttributesGroupDefinition attemptingToAddMember = attemptingToAddMembers.iterator().next();
+            Set<IPersonAttributesGroupDefinition> groupMembers = group.getMembers();
             for (IPersonAttributesGroupDefinition groupMember : groupMembers) {
                 if (groupMember.getName().equalsIgnoreCase(attemptingToAddMember.getName())) {
                     return;
@@ -132,18 +111,18 @@ public class PersonAttributesGroupImportHelper {
     }
     
     public void dropGroupMembers(String groupName) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
-        IPersonAttributesGroupDefinition group = groups.get(0);
-        group.setMembers(new ArrayList<IPersonAttributesGroupDefinition>(0));
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        IPersonAttributesGroupDefinition group = groups.iterator().next();
+        group.setMembers(new HashSet<IPersonAttributesGroupDefinition>(0));
         personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
     }
     
     public void dropTestGroupsAndTests(String groupName) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
-        IPersonAttributesGroupDefinition group = groups.get(0);
-        List<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
+        IPersonAttributesGroupDefinition group = groups.iterator().next();
+        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
         // Disconnect the test groups
-        group.setTestGroups(new ArrayList<IPersonAttributesGroupTestGroupDefinition>());
+        group.setTestGroups(new HashSet<IPersonAttributesGroupTestGroupDefinition>());
         personAttributesGroupDefinitionDao.updatePersonAttributesGroupDefinition(group);
         // Cascade the test group delete to the tests
         for (IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {

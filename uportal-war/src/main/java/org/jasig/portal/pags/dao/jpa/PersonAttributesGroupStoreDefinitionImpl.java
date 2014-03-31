@@ -19,9 +19,8 @@
 
 package org.jasig.portal.pags.dao.jpa;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -37,7 +36,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -64,7 +62,7 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupStoreDefinition;
 @NaturalIdCache
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttributesGroupStoreDefinition, Serializable {
+public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttributesGroupStoreDefinition {
     public PersonAttributesGroupStoreDefinitionImpl() {
         super();
     }
@@ -91,7 +89,7 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
     
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy="store", cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class, orphanRemoval=true)
-    private List<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = new ArrayList<IPersonAttributesGroupDefinition>(0);
+    private Set<IPersonAttributesGroupDefinition> personAttributesGroupDefinitions = new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @Override
     public EntityIdentifier getEntityIdentifier() {
@@ -103,23 +101,6 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
         return internalPersonAttributesGroupStoreDefinitionId;
     }
     
-    @Override
-    public String getDataId() {
-        return this.name;
-    }
-
-
-    @Override
-    public String getDataTitle() {
-        return this.name;
-    }
-
-
-    @Override
-    public String getDataDescription() {
-        return this.description;
-    }
-
     @Override
     public String getName() {
         return name;
@@ -141,18 +122,13 @@ public class PersonAttributesGroupStoreDefinitionImpl implements IPersonAttribut
     }
     
     @Override
-    public List<IPersonAttributesGroupDefinition> getGroups() {
+    public Set<IPersonAttributesGroupDefinition> getGroups() {
         return personAttributesGroupDefinitions;
     }
     
     @Override
-    public void setGroups(List<IPersonAttributesGroupDefinition> groups) {
+    public void setGroups(Set<IPersonAttributesGroupDefinition> groups) {
         this.personAttributesGroupDefinitions = groups;
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
     }
     
     @Override

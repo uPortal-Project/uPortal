@@ -19,7 +19,6 @@
 
 package org.jasig.portal.groups.pags;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,20 +108,6 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        cacheContainingGroupsForGroups();
    }
    
-
-   
-   private IPersonTester initializeTester(String tester, String attribute, String value) {
-      try {
-         Class testerClass = Class.forName(tester);
-         Constructor c = testerClass.getConstructor(new Class[]{String.class, String.class});
-         Object o = c.newInstance(new Object[]{attribute, value});
-         return (IPersonTester)o;
-      } catch (Exception e) {
-         e.printStackTrace();
-         return null;
-      }
-   }
-   
    private IEntityGroup cacheGet(String key) {
         return groups.get(key);
     }
@@ -180,7 +164,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        for (i=groupDefinitions.values().iterator(); i.hasNext();)
        {
            GroupDefinition groupDef = (GroupDefinition) i.next();
-           if (! groupDef.members.isEmpty())
+           if (! groupDef.getMembers().isEmpty())
                { parentGroupsList.add(cacheGet(groupDef.getKey())); }
        }
        IEntityGroup[] parentGroupsArray = parentGroupsList.toArray(new IEntityGroup[parentGroupsList.size()]);
@@ -285,7 +269,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       GroupDefinition groupDef = (GroupDefinition) groupDefinitions.get(group.getLocalKey());
       if (groupDef != null)
       {
-          for (Iterator<String> i = groupDef.members.iterator(); i.hasNext(); ) 
+          for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 
               { keys.add(i.next()); }
       }
       return keys.toArray(new String[]{});
@@ -355,88 +339,6 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
 
    public void updateMembers(IEntityGroup group) throws GroupsException {
       throw new UnsupportedOperationException("PersonAttributesGroupStore: Method updateMembers() not supported.");
-   }
-   
-   public static class GroupDefinition {
-      private String key;
-      private String name;
-      private String description;
-      private List<String> members;
-      private List<TestGroup> testGroups;
-      
-      public GroupDefinition() {
-         members = new Vector<String>();
-         testGroups = new Vector<TestGroup>();
-      }
-      
-      public void setKey(String key) {
-         this.key = key;
-      }
-      public String getKey() {
-         return key;
-      }
-      
-      public void setName(String name) {
-         this.name = name;
-      }
-      public String getName() {
-         return name;
-      }
-      
-      public void setDescription(String description) {
-         this.description = description;
-      }
-      public String getDescription() {
-         return description;
-      }
-      public void addMember(String key) {
-         members.add(key);
-      }
-      public boolean hasMember(String key) {
-         return members.contains(key);
-      }
-      public void addTestGroup(TestGroup testGroup) {
-         testGroups.add(testGroup);
-      }
-      public boolean contains(IPerson person) {
-         return ( testGroups.isEmpty() ) ? false : test(person);
-      }
-      public boolean test(IPerson person) {
-         if (testGroups.isEmpty())
-             return true;
-         for (Iterator<TestGroup> i = testGroups.iterator(); i.hasNext(); ) {
-            TestGroup testGroup = i.next();
-            if (testGroup.test(person)) {
-               return true;
-            }
-         }
-         return false;
-      }
-      public String toString() {
-          return "GroupDefinition " + key + " (" + name + ")";
-      }
-   }
-   
-   public static class TestGroup {
-      private List<IPersonTester> tests;
-      
-      public TestGroup() {
-         tests = new Vector<IPersonTester>();
-      }
-      
-      public void addTest(IPersonTester test) {
-         tests.add(test);
-      }
-      
-      public boolean test(IPerson person) {
-         for (Iterator<IPersonTester> i = tests.iterator(); i.hasNext(); ) {
-            IPersonTester tester = i.next();
-            if ((tester == null) || (!tester.test(person))) {
-               return false;
-            }
-         }
-         return true;
-      }
    }
 
    public IEntity newInstance(String key, Class type) throws GroupsException {

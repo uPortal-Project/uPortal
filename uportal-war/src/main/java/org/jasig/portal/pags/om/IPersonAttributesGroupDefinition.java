@@ -19,16 +19,15 @@
 
 package org.jasig.portal.pags.om;
 
-import java.util.List;
+import java.util.Set;
 
 import org.dom4j.Element;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.io.xml.IPortalData;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributesGroupDefinition extends IBasicEntity, IPortalData {
+public interface IPersonAttributesGroupDefinition extends IBasicEntity {
 
     long getId();
     String getName();
@@ -36,12 +35,12 @@ public interface IPersonAttributesGroupDefinition extends IBasicEntity, IPortalD
     String getDescription();
     void setDescription(String groupDescription);
 
-    List<IPersonAttributesGroupDefinition> getMembers();
-    void setMembers(List<IPersonAttributesGroupDefinition> members);
-    List<IPersonAttributesGroupDefinition> getParents();
-    public void setParents(List<IPersonAttributesGroupDefinition> parents);
-    List<IPersonAttributesGroupTestGroupDefinition> getTestGroups();
-    void setTestGroups(List<IPersonAttributesGroupTestGroupDefinition> testGroups);
+    Set<IPersonAttributesGroupDefinition> getMembers();
+    void setMembers(Set<IPersonAttributesGroupDefinition> members);
+    Set<IPersonAttributesGroupDefinition> getParents();
+    public void setParents(Set<IPersonAttributesGroupDefinition> parents);
+    Set<IPersonAttributesGroupTestGroupDefinition> getTestGroups();
+    void setTestGroups(Set<IPersonAttributesGroupTestGroupDefinition> testGroups);
 
     IPersonAttributesGroupStoreDefinition getStore();
 

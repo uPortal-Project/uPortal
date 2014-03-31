@@ -19,7 +19,7 @@
 
 package org.jasig.portal.pags.dao;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
@@ -31,11 +31,10 @@ import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
  */
 public interface IPersonAttributesGroupTestGroupDefinitionDao {
 
-    IPersonAttributesGroupTestGroupDefinition createPersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupDefinition group, String name, String description);
+    IPersonAttributesGroupTestGroupDefinition createPersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupDefinition group);
     IPersonAttributesGroupTestGroupDefinition updatePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition personAttributesGroupTestGroupDefinition);
     void deletePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition definition);
 
-    List<IPersonAttributesGroupTestGroupDefinition> getPersonAttributesGroupTestGroupDefinitions();
-    List<IPersonAttributesGroupTestGroupDefinition> getPersonAttributesGroupTestGroupDefinitionByName(String name);
+    Set<IPersonAttributesGroupTestGroupDefinition> getPersonAttributesGroupTestGroupDefinitions();
 
 }

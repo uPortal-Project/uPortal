@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
@@ -40,7 +39,9 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.groups.pags.GroupDefinition;
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.TestGroup;
 import org.jasig.portal.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
 import org.jasig.portal.pags.om.IPersonAttributesGroupTestDefinition;
@@ -65,7 +66,7 @@ import org.springframework.context.ApplicationContext;
  * @since 4.1
  */
 public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
-    private final Logger logger = LoggerFactory.getLogger(EntityPersonAttributesGroupStore.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
@@ -109,8 +110,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private GroupDefinition convertEntityToGroupDef(IEntityGroup group) {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
-        IPersonAttributesGroupDefinition pagsGroup = groups.get(0);
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
+        IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
         return initGroupDef(pagsGroup);
     }
     
@@ -126,8 +127,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     public IEntityGroup find(String name) throws GroupsException {
-        List<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
-        IPersonAttributesGroupDefinition pagsGroup = groups.get(0);
+        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
         GroupDefinition groupDef = initGroupDef(pagsGroup);
         IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
         group.setName(groupDef.getName());
@@ -190,21 +191,21 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     
     private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group)
     {
-         List<IEntityGroup> parents = getContainingGroups(group.getName(), new ArrayList<IEntityGroup>());
+         Set<IEntityGroup> parents = getContainingGroups(group.getName(), new HashSet<IEntityGroup>());
          return (parents !=null)
             ? parents.iterator()
             : Collections.EMPTY_LIST.iterator();
     }
     private Iterator<IEntityGroup> findContainingGroupsForEntity(IEntity member)
     throws GroupsException {
-        List<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
-         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
-         for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
-             IEntityGroup group = convertPagsGroupToEntity(pagsGroup);
-             if ( contains(group, member))
-                  { results.add(group); }
-         }
-         return results.iterator();
+        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
+        List<IEntityGroup> results = new ArrayList<IEntityGroup>();
+        for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
+            IEntityGroup group = convertPagsGroupToEntity(pagsGroup);
+            if ( contains(group, member))
+                { results.add(group); }
+        }
+        return results.iterator();
     }
 
     public Iterator<IEntityGroup> findEntitiesForGroup(IEntityGroup group) throws GroupsException {
@@ -221,15 +222,15 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         GroupDefinition groupDef = convertEntityToGroupDef(group);
         if (groupDef != null)
         {
-             for (Iterator<String> i = groupDef.members.iterator(); i.hasNext(); ) 
+             for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 
                   { keys.add(i.next()); }
         }
         return keys.toArray(new String[]{});
     }
 
     public Iterator<IEntityGroup> findMemberGroups(IEntityGroup group) throws GroupsException {
-        List<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
-        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.get(0);
+        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
+        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
         for (IPersonAttributesGroupDefinition member : pagsGroup.getMembers()) {
             results.add(convertPagsGroupToEntity(member));
@@ -244,7 +245,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
         if ( leaftype != IPERSON_CLASS )
              { return EMPTY_SEARCH_RESULTS; }
-        List<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
+        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<EntityIdentifier> results = new ArrayList<EntityIdentifier>();
         switch (method) {
             case IS:
@@ -291,87 +292,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
     }
     
-    public static class GroupDefinition {
-        private String key;
-        private String name;
-        private String description;
-        private List<String> members;
-        private List<TestGroup> testGroups;
-        
-        public GroupDefinition() {
-            members = new Vector<String>();
-            testGroups = new Vector<TestGroup>();
-        }
-        
-        public void setKey(String key) {
-            this.key = key;
-        }
-        public String getKey() {
-            return key;
-        }
-        
-        public void setName(String name) {
-            this.name = name;
-        }
-        public String getName() {
-            return name;
-        }
-        
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public void addMember(String key) {
-            members.add(key);
-        }
-        public boolean hasMember(String key) {
-            return members.contains(key);
-        }
-        public void addTestGroup(TestGroup testGroup) {
-            testGroups.add(testGroup);
-        }
-        public boolean contains(IPerson person) {
-            return ( testGroups.isEmpty() ) ? false : test(person);
-        }
-        public boolean test(IPerson person) {
-            if (testGroups.isEmpty())
-                 return true;
-            for (Iterator<TestGroup> i = testGroups.iterator(); i.hasNext(); ) {
-                TestGroup testGroup = i.next();
-                if (testGroup.test(person)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public String toString() {
-             return "GroupDefinition " + key + " (" + name + ")";
-        }
-    }
-    
-    public static class TestGroup {
-        private List<IPersonTester> tests;
-        
-        public TestGroup() {
-            tests = new Vector<IPersonTester>();
-        }
-        
-        public void addTest(IPersonTester test) {
-            tests.add(test);
-        }
-        
-        public boolean test(IPerson person) {
-            for (Iterator<IPersonTester> i = tests.iterator(); i.hasNext(); ) {
-                IPersonTester tester = i.next();
-                if ((tester == null) || (!tester.test(person))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
+
 
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypes.getEntityTypeID(type) == null) {
@@ -394,10 +315,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         groupDef.setName(group.getName());
         groupDef.setDescription(group.getDescription());
         addMemberKeys(groupDef, group.getMembers());
-        List<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
         for(IPersonAttributesGroupTestGroupDefinition testGroup : testGroups) {
             TestGroup tg = new TestGroup();
-            List<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
+            Set<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
             for(IPersonAttributesGroupTestDefinition test : tests) {
                 IPersonTester testerInst = initializeTester(test.getTesterClassName(), test.getAttributeName(), test.getTestValue());
                 tg.addTest(testerInst);
@@ -405,8 +326,9 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             groupDef.addTestGroup(tg);
         }
         return groupDef;
-     }
-    private void addMemberKeys(GroupDefinition groupDef, List<IPersonAttributesGroupDefinition> members) {
+    }
+
+    private void addMemberKeys(GroupDefinition groupDef, Set<IPersonAttributesGroupDefinition> members) {
         for(IPersonAttributesGroupDefinition member: members) {
             groupDef.addMember(member.getName());
         }
@@ -422,11 +344,11 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
              return null;
           }
        }
-    private List<IEntityGroup> getContainingGroups(String name, List<IEntityGroup> groups) throws GroupsException
+    private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
     {
-        List<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
-        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.get(0);
-        List<IPersonAttributesGroupDefinition> pagsParentGroups = pagsGroup.getParents();
+        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
+        Set<IPersonAttributesGroupDefinition> pagsParentGroups = pagsGroup.getParents();
         for (IPersonAttributesGroupDefinition parent : pagsParentGroups) {
             if (!groups.contains(parent)) {
                 groups.add(convertPagsGroupToEntity(parent));

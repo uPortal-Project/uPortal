@@ -17,24 +17,32 @@
  * under the License.
  */
 
-package org.jasig.portal.pags.om;
+package org.jasig.portal.groups.pags;
 
-import java.util.Set;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
-import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.security.IPerson;
 
-/**
- * @author Shawn Connolly, sconnolly@unicon.net
- */
-public interface IPersonAttributesGroupStoreDefinition extends IBasicEntity {
-
-    long getId();
-    String getName();
-    void setName(String name);
-    String getDescription();
-    void setDescription(String description);
-
-    Set<IPersonAttributesGroupDefinition> getGroups();
-    void setGroups(Set<IPersonAttributesGroupDefinition> groups);
-
+public class TestGroup {
+    private List<IPersonTester> tests;
+    
+    public TestGroup() {
+        tests = new Vector<IPersonTester>();
+    }
+    
+    public void addTest(IPersonTester test) {
+        tests.add(test);
+    }
+    
+    public boolean test(IPerson person) {
+        for (Iterator<IPersonTester> i = tests.iterator(); i.hasNext(); ) {
+            IPersonTester tester = i.next();
+            if ((tester == null) || (!tester.test(person))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

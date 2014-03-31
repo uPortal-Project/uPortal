@@ -23,16 +23,12 @@
   <name>Mobile Device Access</name>
   <description>User Access by a mobile device</description>
   <selection-test>
-    <test-group>
-      <name>Mobile Device Access - Test Group 1</name>
-      <description></description>
+    <test-set>
       <test>
-        <name>Mobile Device Access - Test 1</name>
-        <description></description>
         <attribute-name>agentDevice</attribute-name>
         <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
         <test-value>${mobile.user.agent.regex}</test-value>
       </test>
-    </test-group>
+    </test-set>
   </selection-test>
 </pags-group>

@@ -21,18 +21,13 @@ package org.jasig.portal.pags.om;
 
 import org.dom4j.Element;
 import org.jasig.portal.IBasicEntity;
-import org.jasig.portal.io.xml.IPortalData;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributesGroupTestDefinition extends IBasicEntity, IPortalData {
+public interface IPersonAttributesGroupTestDefinition extends IBasicEntity {
 
     long getId();
-    String getName();
-    void setName(String name);
-    String getDescription();
-    void setDescription(String description);
     
     String getAttributeName();
     void setAttributeName(String attributeName);
