@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public final class RemoteUserFilterBean implements Filter {
 
-    public static final String TICKET_PARAMETER = "ticket";
+    public static final String TICKET_PARAMETER = "upp_ticket";
 
     @Autowired
     private ISsoTicketDao ticketDao;
@@ -48,8 +48,9 @@ public final class RemoteUserFilterBean implements Filter {
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
+        String currentRemoteUser = ((HttpServletRequest) req).getRemoteUser();
         final String ticket = req.getParameter(TICKET_PARAMETER);
-        final String remoteUser = evaluateTemporarySsoTicket(ticket);
+        final String remoteUser = evaluateTemporarySsoTicket(ticket, currentRemoteUser);
         final ServletRequest wrapper = new HttpServletRequestWrapperImpl(
                 (HttpServletRequest) req,
                 remoteUser);
@@ -60,11 +61,21 @@ public final class RemoteUserFilterBean implements Filter {
      * Implementation
      */
 
-    private String evaluateTemporarySsoTicket(final String uuid) {
-        ISsoTicket ticket = this.ticketDao.getTicket(uuid);
-        return ticket != null
-                ? ticket.getUsername()
-                : null;
+    private String evaluateTemporarySsoTicket(final String uuid, final String currentRemoteUser) {
+        final ISsoTicket ticket = this.ticketDao.getTicket(uuid);
+        if ( ticket == null ) {
+            return currentRemoteUser;
+        }
+        final String ticketUsername = ticket.getUsername();
+        if ( currentRemoteUser == null ) {
+            return ticketUsername;
+        }
+        if ( !(ticketUsername.equals(currentRemoteUser)) ) {
+            throw new IllegalArgumentException("Mismatched ticket username ["
+                    + ticketUsername + "] and REMOTE_USER [" + currentRemoteUser
+                    + "]");
+        }
+        return ticketUsername;
     }
 
     /*
