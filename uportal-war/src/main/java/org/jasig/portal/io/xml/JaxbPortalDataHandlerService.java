@@ -271,17 +271,26 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
         for (final IDataExporter<?> dataExporter : dataExporters) {
-            final IPortalDataType portalDataType = dataExporter.getPortalDataType();
-            final String typeId = portalDataType.getTypeId();
-            
-            this.logger.debug("Registering IDataExporter for '{}' - {}", new Object[] {typeId, dataExporter});
-            final IDataExporter<Object> existing = dataExportersMap.put(typeId, (IDataExporter<Object>)dataExporter);
-            if (existing != null) {
-                this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}", 
-                        new Object[] {typeId, existing, dataExporter});
+
+            try {
+                final IPortalDataType portalDataType = dataExporter.getPortalDataType();
+                final String typeId = portalDataType.getTypeId();
+
+                this.logger.debug("Registering IDataExporter for '{}' - {}",
+                        new Object[]{typeId, dataExporter});
+                final IDataExporter<Object> existing =
+                        dataExportersMap.put(typeId, (IDataExporter<Object>) dataExporter);
+                if (existing != null) {
+                    this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}",
+                            new Object[]{typeId, existing, dataExporter});
+                }
+
+                portalDataTypes.add(portalDataType);
+            } catch (Exception exception) {
+                logger.error("Something bad happened provisioning exporter {} into JaxbPortalDataHandlerService;" +
+                        " ignoring that exporter.", dataExporter, exception);
             }
-            
-            portalDataTypes.add(portalDataType);
+
         }
         
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
