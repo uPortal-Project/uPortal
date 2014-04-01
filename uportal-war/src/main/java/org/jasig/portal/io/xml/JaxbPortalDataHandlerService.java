@@ -326,26 +326,26 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
-        for (final IDataDeleter<?> dataImporter : dataDeleters) {
+        for (final IDataDeleter<?> dataDeleter : dataDeleters) {
 
             try {
 
-                final IPortalDataType portalDataType = dataImporter.getPortalDataType();
+                final IPortalDataType portalDataType = dataDeleter.getPortalDataType();
                 final String typeId = portalDataType.getTypeId();
 
                 this.logger.debug("Registering IDataDeleter for '{}' - {}",
-                        new Object[]{typeId, dataImporter});
+                        new Object[]{typeId, dataDeleter});
                 final IDataDeleter<Object> existing =
-                        dataDeletersMap.put(typeId, (IDataDeleter<Object>) dataImporter);
+                        dataDeletersMap.put(typeId, (IDataDeleter<Object>) dataDeleter);
                 if (existing != null) {
                     this.logger.warn("Duplicate IDataDeleter typeId for {} Replacing {} with {}",
-                            new Object[]{typeId, existing, dataImporter});
+                            new Object[]{typeId, existing, dataDeleter});
                 }
 
                 portalDataTypes.add(portalDataType);
 
             } catch (Exception exception) {
-                logger.error("Failed to register data deleter {}.", dataImporter, exception);
+                logger.error("Failed to register data deleter {}.", dataDeleter, exception);
             }
         }
         
