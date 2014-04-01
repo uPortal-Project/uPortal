@@ -282,6 +282,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         for (final IDataExporter<?> dataExporter : dataExporters) {
 
             try {
+
                 final IPortalDataType portalDataType = dataExporter.getPortalDataType();
                 final String typeId = portalDataType.getTypeId();
 
@@ -295,9 +296,9 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 }
 
                 portalDataTypes.add(portalDataType);
+
             } catch (Exception exception) {
-                logger.error("Something bad happened provisioning exporter {} into JaxbPortalDataHandlerService;" +
-                        " ignoring that exporter.", dataExporter, exception);
+                logger.error("Failed to register data exporter ().", dataExporter, exception);
             }
 
         }
