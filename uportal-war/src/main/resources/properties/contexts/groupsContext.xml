@@ -19,7 +19,6 @@
     under the License.
 
 -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
@@ -28,4 +27,46 @@
     <bean id="compositeGroupService" class="org.jasig.portal.services.GroupService" factory-method="getCompositeGroupService" lazy-init="true">
         <aop:scoped-proxy/>
     </bean>
+    
+    <bean id="referenceCompositeGroupService" class="org.jasig.portal.groups.ReferenceCompositeGroupService">
+      <property name="componentServices">
+        <map>
+            <entry key="local" value-ref="localReferenceIndividualGroupService" />
+            <entry key="pags" value-ref="pagsReferenceIndividualGroupService" />
+        </map>
+      </property>
+      <property name="defaultService" ref="localReferenceIndividualGroupService" />
+    </bean>
+
+    <bean id="referenceIndividualGroupServiceFactory" class="org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory" lazy-init="true">
+    </bean>
+    <!-- Local Store Beans -->
+    <bean id="localReferenceIndividualGroupService" class="org.jasig.portal.groups.ReferenceIndividualGroupService">
+      <property name="name" value="local"/>
+      <property name="serviceFactory" ref="referenceIndividualGroupServiceFactory"/>
+      <property name="storeFactory" ref="referenceEntityStoreFactory"/>
+      <property name="groupFactory" ref="referenceEntityGroupStoreFactory"/>
+      <property name="entitySearcher" ref="referenceEntitySearcher"/>
+      <property name="cachingEnabled" value="true"/>
+      <property name="internallyManaged" value="true"/>
+      <property name="entityFactory" ref="referenceEntityStore" />
+    </bean>
+    <bean id="referenceEntityStoreFactory" class="org.jasig.portal.groups.ReferenceEntityStoreFactory" lazy-init="true"/>
+    <bean id="referenceEntityGroupStoreFactory" class="org.jasig.portal.groups.ReferenceEntityGroupStoreFactory" lazy-init="true"/>
+    <bean id="referenceEntitySearcherFactory" class="org.jasig.portal.groups.ReferenceEntitySearcherFactory" lazy-init="true"/>
+    <bean id="referenceEntityStore" class="org.jasig.portal.groups.RDBMEntityStore" />
+    
+    <!-- PAGS Store Beans -->
+    <bean id="pagsReferenceIndividualGroupService" class="org.jasig.portal.groups.ReferenceIndividualGroupService">
+      <property name="name" value="pags"/>
+      <property name="serviceFactory" ref="referenceIndividualGroupServiceFactory"/>
+      <property name="storeFactory" ref="entityPersonAttributesEntityStoreFactory"/>
+      <property name="groupStore" ref="personAttributesGroupStore"/>
+      <property name="entitySearcher" ref="personAttributesGroupStore"/>
+      <property name="cachingEnabled" value="true"/>
+      <property name="internallyManaged" value="false"/>
+      <property name="entityFactory" ref="personAttributesGroupStore" />
+    </bean>
+    <bean id="entityPersonAttributesEntityStoreFactory" class="org.jasig.portal.groups.pags.entity.EntityPersonAttributesEntityStoreFactory" lazy-init="true"/>
+    <bean id="personAttributesGroupStore" class="org.jasig.portal.groups.pags.entity.EntityPersonAttributesGroupStore" lazy-init="true"/>
 </beans>

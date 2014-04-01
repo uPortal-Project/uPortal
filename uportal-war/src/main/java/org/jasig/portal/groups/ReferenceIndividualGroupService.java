@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.jasig.portal.EntityIdentifier;
@@ -35,6 +36,7 @@ import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.services.GroupService;
+import org.springframework.beans.factory.InitializingBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,44 +47,46 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
-implements IIndividualGroupService, ILockableGroupService
+implements IIndividualGroupService, ILockableGroupService, InitializingBean
 {
-    
     private static final Log log = LogFactory.getLog(ReferenceIndividualGroupService.class);
-    
-    // Describes the attributes of this service.  See compositeGroupServices.xml.
-    protected ComponentGroupServiceDescriptor serviceDescriptor;
 
-    protected IEntityGroupStore groupFactory;
-
-    // Entity searcher
+    protected String name;
+    protected IComponentGroupServiceFactory serviceFactory;
+    protected IEntityStoreFactory storeFactory;
+    protected IEntityGroupStoreFactory groupFactory;
+    protected IEntityGroupStore groupStore;
+    protected IEntitySearcherFactory entitySearcherFactory;
     protected IEntitySearcher entitySearcher;
     
-/**
- * ReferenceGroupsService constructor.
- */
-public ReferenceIndividualGroupService() throws GroupsException
-{
-    this(new ComponentGroupServiceDescriptor());
-}
-
+    protected boolean cachingEnabled = false;
+    protected boolean internallyManaged = false;
+    
     /**
      * ReferenceGroupsService constructor.
      */
-    public ReferenceIndividualGroupService(ComponentGroupServiceDescriptor svcDescriptor)
+    public ReferenceIndividualGroupService()
     throws GroupsException
     {
         super();
-        serviceDescriptor = svcDescriptor;
-        initialize();
     }
     
+    @Override
+    public void afterPropertiesSet() throws InvalidNameException {
+        if (entitySearcher == null) {
+            entitySearcher = entitySearcherFactory.newEntitySearcher();
+        }
+        if (groupStore == null) {
+            groupStore = groupFactory.newGroupStore();
+        }
+        setServiceName(GroupService.parseServiceName(name));
+    }
     /**
      * Answers if <code>IGroupMembers</code> are being cached.
      */
   protected boolean cacheInUse()
     {
-        return getServiceDescriptor().isCachingEnabled();
+        return cachingEnabled;
     }
     
 /**
@@ -302,7 +306,7 @@ public ILockableEntityGroup findGroupWithLock(
                 ? EntityLockService.instance().newWriteLock(groupType, key, owner)
                 : EntityLockService.instance().newWriteLock(groupType, key, owner, secs);
 
-        ILockableEntityGroup group = groupFactory.findLockable(key);
+        ILockableEntityGroup group = groupStore.findLockable(key);
         if (group == null) {
             lock.release();
         } else {
@@ -480,108 +484,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
  */
 public IEntityGroupStore getGroupStore() throws GroupsException
 {
-    return groupFactory;
-}
-
-/**
- *
- */
-protected ComponentGroupServiceDescriptor getServiceDescriptor()
-{
-    return serviceDescriptor;
-}
-
-/**
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void initialize() throws GroupsException
-{
-    String eMsg = null;
-    String svcName = getServiceDescriptor().getName();
-    if (log.isDebugEnabled())
-        log.debug("Service descriptor attributes: " + svcName);
-
-    // print service descriptor attributes:
-    for (Iterator i=getServiceDescriptor().keySet().iterator(); i.hasNext();)
-    {
-        String descriptorKey = (String)i.next();
-        Object descriptorValue = getServiceDescriptor().get(descriptorKey);
-        if ( descriptorValue != null )
-            { if (log.isDebugEnabled())
-                    log.debug("  " + descriptorKey + " : " + descriptorValue); }
-    }
-
-    String groupStoreFactoryName = getServiceDescriptor().getGroupStoreFactoryName();
-    String entityStoreFactoryName = getServiceDescriptor().getEntityStoreFactoryName();
-    String entitySearcherFactoryName = getServiceDescriptor().getEntitySearcherFactoryName();
-
-    if ( groupStoreFactoryName == null )
-    {
-        if (log.isInfoEnabled()) {
-            log.info("ReferenceGroupService.initialize(): (" + svcName + 
-                    ") No Group Store factory specified in service descriptor.");
-        }
-    }
-
-    else
-    {
-        try
-        {
-            IEntityGroupStoreFactory groupStoreFactory = (IEntityGroupStoreFactory)Class.forName(groupStoreFactoryName).newInstance();
-            groupFactory = groupStoreFactory.newGroupStore(getServiceDescriptor());
-        }
-        catch (Exception e)
-        {
-            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate group store (" + svcName +"): " + e;
-            log.error( eMsg);
-            throw new GroupsException(eMsg, e);
-        }
-    }
-
-    if ( entityStoreFactoryName == null )
-    {
-        if (log.isInfoEnabled())
-            log.info("ReferenceIndividualGroupService.initialize(): " +
-                    "No Entity Store Factory specified in service descriptor (" + svcName + ")");
-    }
-
-    else
-    {
-        try
-        {
-            IEntityStoreFactory entityStoreFactory = (IEntityStoreFactory)Class.forName(entityStoreFactoryName).newInstance();
-            entityFactory = entityStoreFactory.newEntityStore();
-        }
-        catch (Exception e)
-        {
-            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity store " + e;
-            log.error( eMsg);
-            throw new GroupsException(eMsg, e);
-        }
-    }
-
-    if ( entitySearcherFactoryName == null )
-    {
-        if (log.isInfoEnabled())
-            log.info("ReferenceIndividualGroupService.initialize(): " +
-                    "No Entity Searcher Factory specified in service descriptor.");
-    }
-
-    else
-    {
-        try
-        {
-            IEntitySearcherFactory entitySearcherFactory = (IEntitySearcherFactory)Class.forName(entitySearcherFactoryName).newInstance();
-            entitySearcher = entitySearcherFactory.newEntitySearcher();
-        }
-        catch (Exception e)
-        {
-            eMsg = "ReferenceIndividualGroupService.initialize(): Failed to instantiate entity searcher " + e;
-            log.error( eMsg);
-            throw new GroupsException(eMsg, e);
-        }
-    }
-
+    return groupStore;
 }
 
 /**
@@ -598,7 +501,7 @@ public boolean isEditable(IEntityGroup group) throws GroupsException
  */
 protected boolean isInternallyManaged()
 {
-    return getServiceDescriptor().isInternallyManaged();
+    return internallyManaged;
 }
 
 /**
@@ -624,7 +527,7 @@ public boolean isEditable()
 public IEntityGroup newGroup(Class type) throws GroupsException
 {
     throwExceptionIfNotInternallyManaged();
-    IEntityGroup group = groupFactory.newInstance(type);
+    IEntityGroup group = groupStore.newInstance(type);
     group.setLocalGroupService(this);
     if ( cacheInUse() )
         { cacheAdd(group); }
@@ -637,7 +540,7 @@ public IEntityGroup newGroup(Class type) throws GroupsException
  */
 protected IEntityGroup primFindGroup(String localKey) throws GroupsException
 {
-    IEntityGroup group = groupFactory.find(localKey);
+    IEntityGroup group = groupStore.find(localKey);
     if ( group != null )
         { group.setLocalGroupService(this); }
     return group;
@@ -662,7 +565,7 @@ protected IEntityGroup primFindGroup(String localKey) throws GroupsException
   }
   
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
-    return removeDuplicates(groupFactory.searchForGroups(query,method,leaftype));
+    return removeDuplicates(groupStore.searchForGroups(query,method,leaftype));
   }
   
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException {
@@ -875,6 +778,71 @@ protected boolean isForeign(IGroupMember member)
         Name memberSvcName = ((IEntityGroup)member).getServiceName();
         return ( ! getServiceName().equals(memberSvcName) );
     }
+}
+
+public void setEntitySearcher(IEntitySearcher entitySearcher) {
+    this.entitySearcher = entitySearcher;
+}
+
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+
+public IEntityStoreFactory getStoreFactory() {
+    return storeFactory;
+}
+
+public void setStoreFactory(IEntityStoreFactory storeFactory) {
+    this.storeFactory = storeFactory;
+}
+
+public IEntityGroupStoreFactory getGroupFactory() {
+    return groupFactory;
+}
+
+public void setGroupFactory(IEntityGroupStoreFactory groupFactory) {
+    this.groupFactory = groupFactory;
+}
+
+public IEntitySearcherFactory getEntitySearcherFactory() {
+    return entitySearcherFactory;
+}
+
+public void setEntitySearcherFactory(
+        IEntitySearcherFactory entitySearcherFactory) {
+    this.entitySearcherFactory = entitySearcherFactory;
+}
+
+public boolean isCachingEnabled() {
+    return cachingEnabled;
+}
+
+public void setCachingEnabled(boolean cachingEnabled) {
+    this.cachingEnabled = cachingEnabled;
+}
+
+public void setInternallyManaged(boolean internallyManaged) {
+    this.internallyManaged = internallyManaged;
+}
+
+public void setDefaultService(IIndividualGroupService defaultService) {
+    this.defaultService = defaultService;
+}
+
+public IComponentGroupServiceFactory getServiceFactory() {
+    return serviceFactory;
+}
+
+public void setServiceFactory(IComponentGroupServiceFactory serviceFactory) {
+    this.serviceFactory = serviceFactory;
+}
+
+public void setGroupStore(IEntityGroupStore groupStore) {
+    this.groupStore = groupStore;
 }
 
 }

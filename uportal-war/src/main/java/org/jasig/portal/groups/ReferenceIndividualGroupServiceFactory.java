@@ -45,22 +45,7 @@ public ReferenceIndividualGroupServiceFactory() {
  */
 public IComponentGroupService newGroupService() throws GroupsException
 {
-    return newGroupService(new ComponentGroupServiceDescriptor());
+    return newGroupService();
 }
-/**
- * Return an instance of the service implementation.
- * @return IIndividualGroupService
- * @exception GroupsException
- */
-public IComponentGroupService newGroupService(ComponentGroupServiceDescriptor svcDescriptor) 
-throws GroupsException
-{
-    try
-        { return new ReferenceIndividualGroupService(svcDescriptor); }
-    catch ( GroupsException ge )
-    {
-        log.error(ge.getMessage(), ge);
-        throw new GroupsException(ge);
-    }
-}
+
 }

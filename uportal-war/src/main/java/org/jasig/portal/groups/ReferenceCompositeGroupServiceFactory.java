@@ -37,24 +37,11 @@ public class ReferenceCompositeGroupServiceFactory implements ICompositeGroupSer
 public ReferenceCompositeGroupServiceFactory() {
     super();
 }
-/**
- * Return an instance of the service implementation.
- * @return ICompositeGroupService
- * @exception GroupsException
- */
-public ICompositeGroupService newGroupService() 
-throws GroupsException
-{
-    try
-    { 
-	   ReferenceCompositeGroupService service =  new ReferenceCompositeGroupService();
-	   service.initializeComponentServices();
-	   return service; 
-    }
-    catch ( Exception ex )
-    {
-        log.error( "ReferenceCompositeGroupServiceFactory.newGroupService(): " + ex);
-        throw new GroupsException(ex);
-    }
+
+@Override
+public ICompositeGroupService newGroupService() throws GroupsException {
+    // TODO Auto-generated method stub
+    return null;
 }
+
 }

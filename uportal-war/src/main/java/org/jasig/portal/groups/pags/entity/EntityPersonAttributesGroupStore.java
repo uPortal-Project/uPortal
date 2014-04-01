@@ -55,6 +55,7 @@ import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -70,12 +71,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
-    private final ApplicationContext applicationContext;
+    
+    @Autowired
+    public void setPersonAttributesGroupDefinitionDao(IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao) {
+        this.personAttributesGroupDefinitionDao = personAttributesGroupDefinitionDao;
+    }
     
     public EntityPersonAttributesGroupStore() {
          super();
-         this.applicationContext = ApplicationContextLocator.getApplicationContext();
-         this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {

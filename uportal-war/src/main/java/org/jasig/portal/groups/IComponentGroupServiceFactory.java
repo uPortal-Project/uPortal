@@ -25,13 +25,7 @@ package org.jasig.portal.groups;
  * @version $Revision$
  */
 public interface IComponentGroupServiceFactory {
-/**
- * 
- */
+
 public IComponentGroupService newGroupService() throws GroupsException;
-/**
- * @param descriptor org.jasig.portal.groups.ComponentGroupServiceDescriptor
- */
-public IComponentGroupService newGroupService(ComponentGroupServiceDescriptor descriptor)
-throws GroupsException;
+
 }

@@ -76,7 +76,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
+     * @see org.jasig.portal.io.xml.IPortalDataType#getTitleCode()
      */
     @Override
     public String getTitleCode() {
