@@ -95,7 +95,16 @@ public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAwa
     public Expression parseExpression(String expressionString) throws ParseException {
         return this.parseCachedExpression(expressionString, null);
     }
-    
+
+    @Override
+    public Expression parseExpression(String expressionString, ParserContext parserContext) throws ParseException {
+        if (parserContext == null) {
+            return this.expressionParser.parseExpression(expressionString);
+        }
+
+        return this.expressionParser.parseExpression(expressionString, parserContext);
+    }
+
     protected Expression parseCachedExpression(String expressionString, ParserContext parserContext) throws ParseException {
         if (this.expressionCache == null) {
             return parseExpression(expressionString, parserContext);
@@ -112,14 +121,6 @@ public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAwa
         this.expressionCache.put(element);
         
         return expression;
-    }
-
-    protected Expression parseExpression(String expressionString, ParserContext parserContext) {
-        if (parserContext == null) {
-            return this.expressionParser.parseExpression(expressionString);
-        }
-
-        return this.expressionParser.parseExpression(expressionString, parserContext);
     }
 
     @Override
@@ -207,7 +208,7 @@ public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAwa
         }
     }
 
-    static class TemplateParserContext implements ParserContext {
+    public static class TemplateParserContext implements ParserContext {
         public static final TemplateParserContext INSTANCE = new TemplateParserContext();
     
         @Override

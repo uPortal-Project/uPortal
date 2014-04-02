@@ -22,6 +22,7 @@ package org.jasig.portal.spring.spel;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ParseException;
+import org.springframework.expression.ParserContext;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -40,6 +41,11 @@ public interface IPortalSpELService {
      * @see SpringELExpressionParser#parseExpression(String, org.springframework.binding.expression.ParserContext)
      */
     public Expression parseExpression(String expressionString) throws ParseException;
+
+    /**
+     * @see SpringELExpressionParser#parseExpression(String, org.springframework.binding.expression.ParserContext)
+     */
+    public Expression parseExpression(String expressionString, ParserContext context) throws ParseException;
 
     /**
      * Parse the supplied string by replacing any ${ } blocks with the 
