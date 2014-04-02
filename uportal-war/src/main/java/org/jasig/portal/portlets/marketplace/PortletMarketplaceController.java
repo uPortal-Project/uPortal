@@ -118,7 +118,7 @@ public class PortletMarketplaceController {
      * @param portletRequest
      * @param model
      * @param initialFilter - optional request paramter.  Use to init filter on initial view
-     * @return
+     * @return a string representing the initial view.
      */
     @RenderMapping
     public String initializeView(WebRequest webRequest, PortletRequest portletRequest, Model model, @RequestParam(required=false) String initialFilter){
@@ -136,7 +136,7 @@ public class PortletMarketplaceController {
         MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result, this.portletCategoryRegistry);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
-        model.addAttribute("rating", tempRatingImpl==null ? null:tempRatingImpl.getRating());
+        model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("portlet", mpDefinition);
         model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
         model.addAttribute("shortURL",mpDefinition.getShortURL());
@@ -147,15 +147,20 @@ public class PortletMarketplaceController {
 	 * Use to save the rating of portlet
 	 * @param request
 	 * @param response
-	 * @param portletRequest
-	 * 
+	 * @param portletFName fname of the portlet to rate
+	 * @param rating will be parsed to int
+	 * @param Review optional review to be saved along with rating
+	 * @throws NumberFormatException if rating cannot be parsed to an int
 	 */
     @ResourceMapping("saveRating")
-    public void saveRating(ResourceRequest request, ResourceResponse response, PortletRequest portletRequest, @RequestParam String portletFName, @RequestParam String rating){
+    public void saveRating(ResourceRequest request, ResourceResponse response,
+            PortletRequest portletRequest, @RequestParam String portletFName,
+            @RequestParam String rating, @RequestParam(required=false) String review){
         Validate.notNull(rating, "Please supply a rating - should not be null");
         Validate.notNull(portletFName, "Please supply a portlet to rate - should not be null");
         marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
-            portletRequest.getRemoteUser(), 
+            portletRequest.getRemoteUser(),
+            review==null? null:review.trim(),
             portletDefinitionDao.getPortletDefinitionByFname(portletFName));
     }
 	

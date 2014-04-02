@@ -14,4 +14,15 @@ public interface IMarketplaceRating{
 
     public void setMarketplaceRatingPK(MarketplaceRatingPK marketplaceRatingPK);
     
+    /**
+     * 
+     * @return a text Review of portlet
+     */
+    public String getReview();
+    
+    /**
+     * 
+     * @param review a text review of the portlet
+     */
+    public void setReview(String review);
 }

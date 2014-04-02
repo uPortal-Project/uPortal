@@ -80,7 +80,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     
     @Override
     @PortalTransactional
-    public IMarketplaceRating createOrUpdateRating(int rating, String userName,
+    public IMarketplaceRating createOrUpdateRating(int rating, String userName, String review,
             IPortletDefinition portletDefinition) {
         MarketplaceRatingImpl temp = new MarketplaceRatingImpl();
         PortletDefinitionImpl tempPortlet = new PortletDefinitionImpl(portletDefinition.getType(), portletDefinition.getFName(), portletDefinition.getName(), 
@@ -89,6 +89,7 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         MarketplaceRatingPK tempPK = new MarketplaceRatingPK(userName, tempPortlet);
         temp.setMarketplaceRatingPK(tempPK);
         temp.setRating(rating);
+        temp.setReview(review);
         return this.createOrUpdateRating(temp);
     }
 

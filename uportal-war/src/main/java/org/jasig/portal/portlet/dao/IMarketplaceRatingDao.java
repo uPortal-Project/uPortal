@@ -34,7 +34,7 @@ public interface IMarketplaceRatingDao{
 	 * @param person
 	 * @param portletDefinitionByFname
 	 */
-    public IMarketplaceRating createOrUpdateRating(int rating, String userName,
+    public IMarketplaceRating createOrUpdateRating(int rating, String userName, String review,
             IPortletDefinition portletDefinition);
 
     /**

@@ -19,54 +19,55 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
+<c:set var="n"><portlet:namespace/></c:set>
 <style>
-    .marketplace_wrapper{
+
+    #${n}{
         min-height:250px;
     }
-    .marketplace_description_title h2{
+    #${n} .marketplace_description_title h2{
         font-family:'Arial Bold', 'Arial';
         font-weight:700;
-        font-size:13px;
         color:#000000;
         text-align:left;
     }
-    .marketplace_portlet_title{
+    #${n} .marketplace_portlet_title{
         font-family: 'Arial Bold', 'Arial';
         font-weight:700;
         font-size:18px;
         color:#26507D;
         text-align:left;
     }
-    .marketplace_description_body{
+    #${n} .marketplace_description_body{
         font-family:'Arial';
         font-weight:400;
         font-size:12px;
         color:#000000;
         text-align:left;
     }
-    .marketplace_dropdown_menu li a{
+    #${n} .marketplace_dropdown_menu li a{
         font-size:14px;
         text-align:left;
         color:#000000;
     }
-    .marketplace_dropdown_button{
+    #${n} .marketplace_dropdown_button{
         background-color:#666666;
     }
-    .marketplace_dropdown_button:first-child{
+    #${n} .marketplace_dropdown_button:first-child{
         color:#FFFFFF
     }
-    .marketplace_button_group>.btn-group:last-child>.btn:first-child{
+    #${n} .marketplace_button_group>.btn-group:last-child>.btn:first-child{
         border-bottom-left-radius:5px;
         border-top-left-radius:5px;
     }
-    .marketplace_button_group>.btn-group:first-child>.dropdown-toggle{
+    #${n} .marketplace_button_group>.btn-group:first-child>.dropdown-toggle{
         border-top-right-radius:5px;
         border-bottom-right-radius:5px;
     }
-    .marketplace_carousel_inner div img{
+    #${n} .marketplace_carousel_inner div img{
         margin:auto;
     }
-    .marketplace_section_header{
+    #${n} .marketplace_section_header{
         font-family:'Arial Bold', 'Arial';
         font-weight:700;
         font-size: 16px;
@@ -75,7 +76,7 @@
         font-style: normal;
         text-transform:uppercase;
     }
-    .marketplace_release_date{
+    #${n} .marketplace_release_date{
         font-family:'Arial';
         font-weight:400;
         font-size:14px;
@@ -84,15 +85,15 @@
         font-style:normal;
         padding-left:5px;
     }
-    .marketplace_release_notes{
+    #${n} .marketplace_release_notes{
         padding-left:0px;
     }
 
-    .marketplace_release_note{
+    #${n} .marketplace_release_note{
         display:none;
     }
 
-    .marketplace_wrapper li{
+    #${n} li{
         font-family:'Arial';
         font-weight:400;
         font-size:14px;
@@ -103,11 +104,11 @@
         padding-left:20px;
     }
 
-    .marketplace_show{
+    #${n} .marketplace_show{
         display:block;
     }
     
-    #marketplace_show_more_less_link{
+    #${n} #marketplace_show_more_less_link{
         font-family: 'Arial';
         font-weight: 400;
         font-size: 14px;
@@ -116,26 +117,29 @@
         cursor: pointer;
     }
     
-    .marketplace_average_rating .rating-input{
+    #${n} .marketplace_average_rating .rating-input{
        padding: 0;
     }
     
-    .marketplace_user_rating{
+    #${n} .marketplace_user_rating{
        outline-style: solid;
        outline-color: grey;
        margin-left: 0px;
        outline-width: thin;
     }
     
-    .marketplace_carousel_inner img {
+    #${n} .marketplace_carousel_inner img {
         max-height : 20em;
     }
 
+    #${n} #${n}marketplace_user_review_input, #${n}marketplace_user_rating_submit_button{
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
     
 </style>
 
-<c:set var="n"><portlet:namespace/></c:set>
-<div id="${n}" class="marketplace_wrapper">
+<div id="${n}">
     <div>
         <div class="row">
             <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
@@ -220,38 +224,25 @@
                 <div id="marketplace_users_rated col-xs-3"><span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span></div>
            <br>
            <div class="marketplace_user_rating row col-xs-12">
-                <br>
-                <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
-                <br>
-               <p class="help-block marketplace_rating_instructions">
-                   <c:choose>
-                       <c:when test="${rating == null || rating == 0}"> <%-- zero rating means unrated --%>
-                           <spring:message code="rating.instructions.unrated"
-                                           text='You have not yet rated "{0}".'
-                                           arguments="${portlet.title}"
-                                           htmlEscape="true" />
-                       </c:when>
-                       <c:otherwise>
-                           <spring:message code="rating.instructions.rated"
-                                           text='You have already rated "{0}"; adjust your rating if you wish.'
-                                           arguments="${portlet.title}"
-                                           htmlEscape="true" />
-                       </c:otherwise>
-                   </c:choose>
+               <br>
+               <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
+               <br>
+               <p id="${n}marketplace_rating_instructions" class="help-block">
                </p>
-
-                <div class="col-xs-4">
-                    <input type="number" data-max="5" data-min="1" value="${rating}" name="marketplace_rate_this_portlet" class="rating marketplace_user_rating_star_system"/>
-                </div>
-                <br>
-                <form role="form">
-                    <div class="form-group">
-                        <textarea class="form-control col-xs-12 col-med-6" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-default" style="float:right" ><spring:message code="submit" text="Submit"/></button>
-                    </div>
-                </form>
+               <form id="${n}save_rating_form">
+                   <div class="col-xs-4">
+                       <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
+                   </div>
+                   <br>
+                   <div class="form-group">
+                       <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                       <div id="${n}input_chars_remaining"></div>
+                   </div>
+                   <div class="form-group">
+                       <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled" style="float:right" ><spring:message code="submit" text="Submit"/></button>
+                   </div>
+                   <br>
+               </form>
                 <br><br>            
            </div>
             <br>
@@ -287,13 +278,14 @@
         <c:if test="${not empty relatedPortlets}">
             <div class="row">
                 <div class = "col-xs-12 col-md-4">
+                    <br>
                     <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
                     <c:forEach var="relatedPortlet" items="${relatedPortlets}">
-                        <portlet:renderURL var="mktplaceEntryURL" windowState="MAXIMIZED">
+                        <portlet:renderURL var="marketplaceEntryURL" windowState="MAXIMIZED">
                             <portlet:param name="action" value="view"/>
                             <portlet:param name="fName" value="${relatedPortlet.FName}"/>
                         </portlet:renderURL>
-                        <li>- <a href="${mktplaceEntryURL}">${relatedPortlet.name}</a></li>
+                        <li>- <a href="${marketplaceEntryURL}">${relatedPortlet.name}</a></li>
                     </c:forEach>
                 </div>
             </div>
@@ -363,13 +355,37 @@
 <script type="text/javascript">
 up.jQuery(function() {
     var $ = up.jQuery;
+
     $(document).ready( function () {
+        var defaults = {
+            textReviewCharLimit : 160,
+            visibleReleaseNoteCount: 3
+        };
+        var remainingCharsAvailable = defaults.textReviewCharLimit;
+        
+        var updateCharactersRemaining = function(){
+            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit){
+                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
+            }
+            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
+            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
+            if(remainingCharsAvailable <= 10){
+                $("#${n}input_chars_remaining").css("color","red");
+            }
+            else{
+                $("#${n}input_chars_remaining").css("color","black");
+            }
+        }
+        var updateRatingInstructions = function(messageText){
+            $("#${n}marketplace_rating_instructions").text(messageText);
+        }
         $(".marketplace_screen_shots:first").addClass("active");
         $(".marketplace_carousel_indicators>li:first-child").addClass("active");
-        $(".marketplace_release_notes>li:nth-child(-n+3)").addClass("marketplace_show");
+        $(".marketplace_release_notes>li:nth-child(-n+"+
+            defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
         $('#${n}copy-modal').modal('hide');
         var lengthLink = $('#marketplace_show_more_less_link');
-        if(lengthLink != undefined) {
+        if(lengthLink.length>0) {
             lengthLink = lengthLink[0];
             lengthLink.onclick = toggleNotesDisplayLength;
             function toggleNotesDisplayLength(){
@@ -378,40 +394,61 @@ up.jQuery(function() {
                     $(".marketplace_release_notes>li").addClass("marketplace_show");
                     lengthLink.innerHTML="Less";
                 }else{
-                    $(".marketplace_release_notes>li:not(:nth-child(-n+3))").removeClass("marketplace_show");
+                    $(".marketplace_release_notes>li:not(:nth-child(-n+"+
+                        defaults.visibleReleaseNoteCount+"))").removeClass("marketplace_show");
                     lengthLink.innerHTML="More";
                 }
             }
-        }        
-    });
-    
-    $(".marketplace_user_rating_star_system" ).change(function() {
-        $.ajax({
-           url: '${saveRatingUrl}',
-           data: {rating: $(this).val(), portletFName: "${portlet.FName}"},
-           type: 'POST',
-           success: function(){
-               $('#up-notification').noty({
-                   text: '<spring:message code="rating.saved.successfully" text="Success"/>',
-                   layout: 'TopCenter',
-                   type: 'success'
-               });
-               $(".marketplace_rating_instructions").text(
-                       '<spring:message code="rating.instructions.rated.now"
-                                        text='You have now rated "{0}"; update your rating if you wish.'
-                                        arguments="${portlet.title}"
-                                        htmlEscape="false"
-                        />'); <%-- htmlEscape is false to avoid double-escaping, since .text() escapes. --%>
-           },
-           error: function(){
-               $('#up-notification').noty({
-                   text: '<spring:message code="rating.retrieved.unsuccessfully" text="Failure"/>',
-                   layout: 'TopCenter',
-                   type: 'error'
-               });
-           }
+        }
+        if($("#${n}marketplace_user_rating").val().length>0){
+            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
+            updateRatingInstructions('<spring:message code="rating.instructions.rated"
+                text='You have already rated "{0}"; adjust your rating if you wish.'
+                arguments="${portlet.title}"
+                htmlEscape="true" />');
+            $("#${n}marketplace_user_review_input").val("<c:out value="${marketplaceRating.review}"/>");
+        }else{
+            updateRatingInstructions('<spring:message code="rating.instructions.unrated"
+                text='You have not yet rated "{0}".'
+                arguments="${portlet.title}"
+                htmlEscape="true" />');
+        }
+        updateCharactersRemaining();
+        $("#${n}save_rating_form").submit(function (e) {
+            $.ajax({
+                url: '${saveRatingUrl}',
+                data: {rating: $("#${n}marketplace_user_rating").val(), portletFName: "${portlet.FName}",
+                          review: $("#${n}marketplace_user_review_input").val().trim()},
+                 type: 'POST',
+                 success: function(){
+                     $('#up-notification').noty({
+                         text: '<spring:message code="rating.saved.successfully" text="Success"/>',
+                         layout: 'TopCenter',
+                         type: 'success'
+                     });
+                     updateRatingInstructions('<spring:message code="rating.instructions.rated.now"
+                         text='You have now rated "{0}"; update your rating if you wish.'
+                         arguments="${portlet.title}"
+                         htmlEscape="false"
+                     />');
+                 },
+                 error: function(){
+                     $('#up-notification').noty({
+                        text: '<spring:message code="rating.saved.unsuccessfully" text="Failure"/>',
+                         layout: 'TopCenter',
+                         type: 'error'
+                     });
+                 }
+             });
+            e.preventDefault();
+         });
+         $("#${n}marketplace_user_rating").change(function() {
+             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
+         });
+         $("#${n}marketplace_user_review_input").keyup(function(){
+             updateCharactersRemaining();
         });
-      });
+    });
 });
 
 </script>

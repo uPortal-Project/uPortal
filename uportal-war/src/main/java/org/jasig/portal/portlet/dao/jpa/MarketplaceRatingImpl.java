@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.EmbeddedId;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
 
 @Entity
@@ -17,6 +19,9 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 
 	@Column(name="RATING")
 	private int rating;
+	
+	@Column(name="REVIEW")
+	private String review;
 
 	@Override
 	public MarketplaceRatingPK getMarketplaceRatingPK() {
@@ -27,6 +32,17 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 	public void setMarketplaceRatingPK(MarketplaceRatingPK marketplaceRatingPK) {
 		this.marketplaceRatingPK = marketplaceRatingPK;
 	}
+
+    @Override
+    public String getReview() {
+        return review;
+    }
+
+    @Override
+    public void setReview(String review) {
+        this.review = review;
+    }
+
 
 	/**
 	 * @return the rating
@@ -46,14 +62,13 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 		this.rating = rating;
 	}
 
-	@Override
-	public String toString(){
-		StringBuilder builder = new StringBuilder();
-		builder.append("RatingPK: \n");
-		builder.append(this.marketplaceRatingPK);
-		builder.append("Rating: ");
-		builder.append(this.rating);
-		return builder.toString();
-	}
+    @Override
+    public String toString(){
+        return new ToStringBuilder(this).
+            append("RatingPK: ", this.marketplaceRatingPK).
+            append("Rating: ", this.rating).
+            append("Review: ", this.review).
+            toString();
+    }
 
 }
