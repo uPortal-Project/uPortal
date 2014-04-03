@@ -20,7 +20,7 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 	@Column(name="RATING")
 	private int rating;
 	
-	@Column(name="REVIEW")
+	@Column(name="REVIEW", length= REVIEW_MAX_LENGTH)
 	private String review;
 
 	@Override
@@ -40,6 +40,10 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 
     @Override
     public void setReview(String review) {
+        if(review!=null){
+            review.trim();
+            review = review.substring(0, Math.min(review.length(), REVIEW_MAX_LENGTH));
+        }
         this.review = review;
     }
 

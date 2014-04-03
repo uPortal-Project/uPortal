@@ -227,8 +227,8 @@
                <br>
                <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
                <br>
-               <p id="${n}marketplace_rating_instructions" class="help-block">
-               </p>
+               <div id="${n}marketplace_rating_instructions" class="help-block">
+               </div>
                <form id="${n}save_rating_form">
                    <div class="col-xs-4">
                        <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>

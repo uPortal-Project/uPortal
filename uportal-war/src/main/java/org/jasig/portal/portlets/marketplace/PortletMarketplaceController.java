@@ -137,6 +137,7 @@ public class PortletMarketplaceController {
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
         model.addAttribute("marketplaceRating", tempRatingImpl);
+        model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("portlet", mpDefinition);
         model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
         model.addAttribute("shortURL",mpDefinition.getShortURL());
@@ -160,7 +161,7 @@ public class PortletMarketplaceController {
         Validate.notNull(portletFName, "Please supply a portlet to rate - should not be null");
         marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
             portletRequest.getRemoteUser(),
-            review==null? null:review.trim(),
+            review,
             portletDefinitionDao.getPortletDefinitionByFname(portletFName));
     }
 	
