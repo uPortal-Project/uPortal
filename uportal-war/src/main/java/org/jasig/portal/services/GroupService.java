@@ -20,6 +20,7 @@
 package org.jasig.portal.services;
 
 import java.util.Iterator;
+
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
@@ -40,9 +41,12 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.IGroupService;
 import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.springframework.context.ApplicationContext;
 
 /**
  *  Bootstrap class for the IGroupService implementation.
@@ -68,6 +72,7 @@ public class GroupService implements IGroupConstants
 
     // Switch for composite/simple service
     private static boolean composite;
+    private final ApplicationContext applicationContext;
 
     // The group service:
     private IGroupService groupService = null;
@@ -78,7 +83,8 @@ public class GroupService implements IGroupConstants
     private GroupService() throws GroupsException
     {
         super();
-        initializeCompositeService();
+        this.applicationContext = ApplicationContextLocator.getApplicationContext();
+        this.compositeGroupService = applicationContext.getBean("referenceCompositeGroupService", ICompositeGroupService.class);
     }
 
     /**
@@ -142,8 +148,7 @@ public class GroupService implements IGroupConstants
      * @return java.lang.String
      */
     protected String getDefaultServiceName() throws GroupsException {
-        return (String) getServiceConfiguration().getAttributes().get(
-                "defaultService");
+        return instance().compositeGroupService.getDefaultService().getName();
     }
     /**
      * Refers to the PropertiesManager to get the key for the group
@@ -233,17 +238,6 @@ public class GroupService implements IGroupConstants
       return instance().igetRootGroup(type);
     }
     
-/**
- * @return java.lang.String
- */
-protected GroupServiceConfiguration getServiceConfiguration() throws GroupsException
-{
-    try
-        { return GroupServiceConfiguration.getConfiguration(); }
-    catch (Exception ex)
-        { throw new GroupsException("Problem retrieving service configuration", ex);}
-}
-
     /**
      * Returns the groups that contain the <code>IGroupMember</code>.
      * @param gm IGroupMember
@@ -372,66 +366,7 @@ protected IEntityGroup igetDistinguishedGroup(String name) throws GroupsExceptio
         catch (InvalidNameException ine)
             { throw new GroupsException("GroupService.inewGroup(): invalid service name", ine);}
     }
-    /**
-     * @exception org.jasig.portal.groups.GroupsException
-     */
-    private void initialize() throws GroupsException
-    {
-      composite = false;
-      String eMsg = null;
-      String factoryName =
-        PropertiesManager.getProperty("org.jasig.portal.groups.GroupServiceFactory");
 
-      if ( factoryName == null )
-      {
-          eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-          log.error( eMsg);
-          throw new GroupsException(eMsg);
-      }
-
-      try
-      {
-          IGroupServiceFactory groupServiceFactory =
-              (IGroupServiceFactory)Class.forName(factoryName).newInstance();
-          groupService = groupServiceFactory.newGroupService();
-      }
-      catch (Exception e)
-      {
-          eMsg = "GroupService.initialize(): Problem creating groups service...";
-          log.error( eMsg, e);
-          throw new GroupsException(eMsg, e);
-      }
-    }
-/**
- * @exception org.jasig.portal.groups.GroupsException
- */
-private void initializeCompositeService() throws GroupsException
-{
-    composite = true;
-    String eMsg = null;
-    try
-    {
-        GroupServiceConfiguration cfg = getServiceConfiguration();
-        String factoryName = (String)cfg.getAttributes().get("compositeFactory");
-
-        if ( factoryName == null )
-        {
-            eMsg = "GroupService.initialize(): No entry for CompositeServiceFactory in configuration";
-            log.error( eMsg);
-            throw new GroupsException(eMsg);
-        }
-
-        ICompositeGroupServiceFactory serviceFactory =
-          (ICompositeGroupServiceFactory)Class.forName(factoryName).newInstance();
-        compositeGroupService = serviceFactory.newGroupService();
-    }
-    catch (Exception e)
-    {
-        eMsg = "GroupService.initialize(): Problem creating groups service... " + e.getMessage();
-        log.error( eMsg, e);
-        throw new GroupsException(eMsg, e);
-    }
-}
     public static GroupService instance() throws GroupsException {
         return instance.get();
     }

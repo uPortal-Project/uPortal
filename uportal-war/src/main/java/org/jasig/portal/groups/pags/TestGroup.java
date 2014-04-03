@@ -17,15 +17,32 @@
  * under the License.
  */
 
-package org.jasig.portal.groups;
+package org.jasig.portal.groups.pags;
 
-/**
- * Factory interface for creating an <code>IComponentGroupService</code>.
- * @author Dan Ellentuck
- * @version $Revision$
- */
-public interface IComponentGroupServiceFactory {
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
-public IComponentGroupService newGroupService() throws GroupsException;
+import org.jasig.portal.security.IPerson;
 
+public class TestGroup {
+    private List<IPersonTester> tests;
+    
+    public TestGroup() {
+        tests = new Vector<IPersonTester>();
+    }
+    
+    public void addTest(IPersonTester test) {
+        tests.add(test);
+    }
+    
+    public boolean test(IPerson person) {
+        for (Iterator<IPersonTester> i = tests.iterator(); i.hasNext(); ) {
+            IPersonTester tester = i.next();
+            if ((tester == null) || (!tester.test(person))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

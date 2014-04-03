@@ -40,6 +40,7 @@ import org.xml.sax.XMLReader;
  * @author Dan Ellentuck
  * @version $Revision$
  */
+@Deprecated
 public class GroupServiceConfiguration
 {
     private static final Log log = LogFactory.getLog(GroupServiceConfiguration.class);

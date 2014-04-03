@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.naming.InvalidNameException;
@@ -53,7 +54,6 @@ implements ICompositeGroupService
 public ReferenceCompositeGroupService() throws GroupsException
 {
     super();
-//	initializeComponentServices();
 }
 /**
  * Returns groups that contain the <code>IGroupMember</code>.  Delegates to the
@@ -110,7 +110,19 @@ throws GroupsException
  */
 protected IIndividualGroupService getComponentService(Name serviceName)
 {
-    return (IIndividualGroupService)getComponentServices().get(serviceName);
+    if (serviceName == null) {
+        return defaultService;
+    }
+    Iterator iter = getComponentServices().entrySet().iterator();
+    while(iter.hasNext())
+    {
+        Map.Entry entry = (Entry) iter.next();
+        if (entry.getKey().toString().equalsIgnoreCase(serviceName.toString())) {
+            return (IIndividualGroupService) entry.getValue();
+        }
+    }
+    IIndividualGroupService service = (IIndividualGroupService)getComponentServices().get(serviceName);
+    return service;
 }
 /**
  * @return IIndividualGroupService
@@ -123,7 +135,7 @@ protected IIndividualGroupService getComponentService(CompositeEntityIdentifier 
  * Returns the <code>IIndividualGroupService</code> designated as the default service
  * in the configuration document.
  */
-protected IIndividualGroupService getDefaultService()
+public IIndividualGroupService getDefaultService()
 {
     return defaultService;
 }
@@ -183,62 +195,7 @@ throws GroupsException
     return getGroupMember(underlyingEntityIdentifier.getKey(),
       underlyingEntityIdentifier.getType());
 }
-/**
- * Assembles the group services composite.  Once the leaf services have been
- * retrieved, they are held in a (one-dimensional) Map.  The composite
- * identity of a service is preserved in its Map key, a javax.naming.Name.
- * Each node of the Name is the name of a component service, starting with
- * the service closest to the composite service and ending with the name of
- * the leaf service.  The key is built up layer by layer.
- *
- * @exception GroupsException
- */
-protected void initializeComponentServices() throws GroupsException
-{
-    Name leafServiceName = null;
-    try
-    {
-        GroupServiceConfiguration cfg = GroupServiceConfiguration.getConfiguration();
-        List services = cfg.getServiceDescriptors();
-        for ( Iterator it=services.iterator(); it.hasNext(); )
-        {
-            ComponentGroupServiceDescriptor descriptor =
-              (ComponentGroupServiceDescriptor) it.next();
-            String factoryName = descriptor.getServiceFactoryName();
-            IComponentGroupServiceFactory factory =
-              (IComponentGroupServiceFactory)Class.forName(factoryName).newInstance();
-            IComponentGroupService service = factory.newGroupService(descriptor);
 
-            // If it's a leaf service, add it to the Map.
-            if ( service.isLeafService() )
-            {
-                leafServiceName = GroupService.parseServiceName(descriptor.getName());
-                service.setServiceName(leafServiceName);
-                getComponentServices().put(leafServiceName, service);
-            }
-
-            // Otherwise, get its leaf services and for each, push our node onto the service Name
-            // and add the service to the Map.
-            else
-            {
-                Map componentMap = service.getComponentServices();
-                for ( Iterator components=componentMap.values().iterator(); components.hasNext(); )
-                {
-                    IIndividualGroupService leafService = (IIndividualGroupService)components.next();
-                    leafServiceName = leafService.getServiceName();
-                    leafServiceName.add(0,descriptor.getName());
-                    getComponentServices().put(leafServiceName, leafService);
-                }
-            }
-        }
-
-        Name defaultServiceName = GroupService.parseServiceName(cfg.getDefaultService());
-        defaultService = (IIndividualGroupService)getComponentService(defaultServiceName);
-
-    }
-    catch (Exception ex)
-        { throw new GroupsException("Problem initializing component services", ex); }
-}
 /**
  * Returns a <code>CompositeEntityIdentifier</code> for the group identified
  * by <code>key</code>.
@@ -361,7 +318,7 @@ throws GroupsException
  * Creation date: (10/31/2002 10:58:53 AM)
  * @param newComponentServices java.util.Map
  */
-protected void setComponentServices(java.util.Map newComponentServices) {
+public void setComponentServices(java.util.Map newComponentServices) {
     componentServices = newComponentServices;
 }
 
@@ -404,5 +361,14 @@ protected void cacheUpdate(IGroupMember gm) throws GroupsException
 protected IEntity getEntityFromCache(String key) throws CachingException
 {
     return (IEntity) EntityCachingService.instance().get(org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE, key);
+}
+public void setDefaultService(IIndividualGroupService defaultService) {
+    this.defaultService = defaultService;
+}
+public IEntityStore getEntityFactory() {
+    return entityFactory;
+}
+public void setEntityFactory(IEntityStore entityFactory) {
+    this.entityFactory = entityFactory;
 }
 }

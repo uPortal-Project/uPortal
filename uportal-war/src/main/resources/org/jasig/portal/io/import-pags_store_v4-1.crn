@@ -1,0 +1,115 @@
+<!--
+
+Licensed to Jasig under one or more contributor license
+agreements. See the NOTICE file distributed with this work
+for additional information regarding copyright ownership.
+Jasig licenses this file to you under the Apache License,
+Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a
+copy of the License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+-->
+
+<!--
+| NOTICE:  This file represents a contractual API that is leveraged by more
+| than one caller.  Please do not refactor this file in a way that changes
+| the number or nature of arguments expected.
+|
+| These are:
+|   - ${Attributes.NODE}=XML Element that defines the entity to import
+|   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+|   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+|   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+|
++-->
+<choose>
+  <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
+    <with>
+      <!-- Add Groups -->
+      <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+      <attribute key="GROUP_DESCRIPTION">${valueOf(description)}</attribute>
+      <subtasks>
+        <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+          <groovy>
+            <script>
+              import org.jasig.portal.pags.om.IPersonAttributesGroupDefinition;
+              IPersonAttributesGroupDefinition group = personAttributesGroupImportHelper.addGroup(GROUP_NAME, GROUP_DESCRIPTION);
+            </script>
+          </groovy>
+        </with-attribute>
+      </subtasks>
+      <!-- Add Test Groups and Tests -->
+      <subtasks>
+        <with-attribute key="GROUP_NAME" value="${valueOf(name)}">
+          <with-attribute key="MEMBER_COUNT" value="${valueOf(count(selection-test/test-set/*))}">
+            <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+              <groovy>
+                <script>
+                  personAttributesGroupImportHelper.dropTestGroupsAndTests(GROUP_NAME);
+                </script>
+              </groovy>
+            </with-attribute>
+            <if test="${jexl(MEMBER_COUNT > 0)}">
+              <node-iterator xpath="selection-test/test-set">
+                <with-attribute key="TEST_GROUP_CONTENTS" value="${valueOf(.)}">
+                  <node-iterator xpath="test">
+                    <with-attribute key="ATTRIBUTE_NAME" value="${valueOf(attribute-name)}">
+                      <with-attribute key="TESTER_CLASS" value="${valueOf(tester-class)}">
+                        <with-attribute key="TEST_VALUE" value="${valueOf(test-value)}">
+                          <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+                            <groovy>
+                              <script>
+                                import org.jasig.portal.pags.om.IPersonAttributesGroupTestGroupDefinition;
+                                IPersonAttributesGroupTestGroupDefinition testGroup = personAttributesGroupImportHelper.addTestGroup(GROUP_NAME);
+                                personAttributesGroupImportHelper.addTest(testGroup, ATTRIBUTE_NAME, TESTER_CLASS, TEST_VALUE);
+                              </script>
+                            </groovy>
+                          </with-attribute>
+                        </with-attribute>
+                      </with-attribute>
+                    </with-attribute>
+                  </node-iterator>
+                </with-attribute>
+              </node-iterator>
+            </if>
+          </with-attribute>
+        </with-attribute>
+      </subtasks>
+    </with>
+  </when>
+  <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
+    <with-attribute key="GROUP_NAME" value="${valueOf(name)}">
+      <with-attribute key="MEMBER_COUNT" value="${valueOf(count(members/*))}">
+        <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+          <groovy>
+            <script>
+              personAttributesGroupImportHelper.dropGroupMembers(GROUP_NAME);
+            </script>
+          </groovy>
+        </with-attribute>
+        <if test="${jexl(MEMBER_COUNT > 0)}">
+          <node-iterator xpath="members/member-name">
+            <with-attribute key="MEMBER" value="${valueOf(.)}">
+              <with-attribute key="personAttributesGroupImportHelper" value="${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupStoreDefinitionDao, jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}">
+                <groovy>
+                  <script>
+                    personAttributesGroupImportHelper.addGroupMember(GROUP_NAME, MEMBER);
+                  </script>
+                </groovy>
+              </with-attribute>
+            </with-attribute>
+          </node-iterator>
+        </if>
+      </with-attribute>
+    </with-attribute>
+  </when>
+</choose>

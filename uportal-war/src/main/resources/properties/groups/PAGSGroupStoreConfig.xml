@@ -24,6 +24,9 @@
 
 <!--
     PAGSGroupStoreConfig.xml is used to configure the person attributes group store.
+    This xml implementation has been depricated in favor of the entity implementation.
+    The toggle to do this is in pags.properties.
+    
     See PAGSGroupStore.dtd for xml grammar.
 
     To control the attributes that are available, see ../personDirectory.xml.

@@ -106,4 +106,5 @@ public interface ICompositeGroupService extends IComponentGroupService {
    * descends from the specified group
    */
   public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype, IEntityGroup ancestor) throws GroupsException;
+  public IIndividualGroupService getDefaultService();
 }

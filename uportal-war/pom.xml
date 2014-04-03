@@ -729,6 +729,7 @@
                         <include>io/permission-owner/*.xsd</include>
                         <include>io/subscribed-fragment/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
+                        <include>io/pags/*.xsd</include>
                     </schemaIncludes>
                 </configuration>
             </plugin>
@@ -813,6 +814,32 @@
                     </filters>
                     <attachClasses>true</attachClasses>
                     <webXml>${project.build.directory}/pluto-resources/web.xml</webXml>
+                    <webResources>
+                      <resource>
+                          <directory>src/main/data/default_entities</directory>
+                          <targetPath>main/data/default_entities</targetPath>
+                          <filtering>true</filtering>
+                          <includes>
+                              <include>**/*.xml</include>
+                          </includes>
+                      </resource>
+                      <resource>
+                          <directory>src/main/data/quickstart_entities</directory>
+                          <targetPath>main/data/quickstart_entities</targetPath>
+                          <filtering>true</filtering>
+                          <includes>
+                              <include>**/*.xml</include>
+                          </includes>
+                      </resource>
+                      <resource>
+                          <directory>src/main/data/required_entities</directory>
+                          <targetPath>main/data/required_entities</targetPath>
+                          <filtering>true</filtering>
+                          <includes>
+                              <include>**/*.xml</include>
+                          </includes>
+                      </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>

@@ -76,4 +76,6 @@ public interface IIndividualGroupService extends ICompositeGroupService {
    * @param group IEntityGroup
    */
   public void updateGroupMembers(IEntityGroup group) throws GroupsException;
+  
+  public String getName();
 }

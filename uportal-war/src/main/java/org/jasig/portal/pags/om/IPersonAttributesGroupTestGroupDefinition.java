@@ -17,15 +17,24 @@
  * under the License.
  */
 
-package org.jasig.portal.groups;
+package org.jasig.portal.pags.om;
+
+import java.util.Set;
+
+import org.dom4j.Element;
+import org.jasig.portal.IBasicEntity;
 
 /**
- * Factory interface for creating an <code>IComponentGroupService</code>.
- * @author Dan Ellentuck
- * @version $Revision$
+ * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IComponentGroupServiceFactory {
+public interface IPersonAttributesGroupTestGroupDefinition extends IBasicEntity {
 
-public IComponentGroupService newGroupService() throws GroupsException;
+    long getId();
 
+    Set<IPersonAttributesGroupTestDefinition> getTests();
+    void setTests(Set<IPersonAttributesGroupTestDefinition> tests);
+
+    IPersonAttributesGroupDefinition getGroup();
+    void setGroup(IPersonAttributesGroupDefinition group);
+    void toElement(Element parent);
 }

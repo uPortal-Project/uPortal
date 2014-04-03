@@ -35,7 +35,7 @@ public class ReferenceComponentGroupService implements IComponentGroupService
    * The services contained by this component, keyed on the name of the service 
    * as it is known within this component.  Used to assemble the composite.
    */
-    protected Map componentServices = new HashMap();
+    protected Map<String, ReferenceIndividualGroupService> componentServices = new HashMap<String, ReferenceIndividualGroupService>();
 
   /**
    * The fully-qualified <code>Name</code> of the service, which may not be 
@@ -76,4 +76,9 @@ public void setServiceName(Name newServiceName)
 {
     serviceName = newServiceName;
 }
+
+public void setComponentServices(Map<String, ReferenceIndividualGroupService> componentServices) {
+    this.componentServices = componentServices;
+}
+
 }

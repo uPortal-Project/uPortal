@@ -17,15 +17,19 @@
  * under the License.
  */
 
-package org.jasig.portal.groups;
+package org.jasig.portal.groups.pags.entity;
+
+import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.IEntitySearcher;
+import org.jasig.portal.groups.IEntitySearcherFactory;
 
 /**
- * Factory interface for creating an <code>IComponentGroupService</code>.
- * @author Dan Ellentuck
- * @version $Revision$
+ * @author Shawn Connolly, sconnolly@unicon.net
+ * @since 4.1
  */
-public interface IComponentGroupServiceFactory {
-
-public IComponentGroupService newGroupService() throws GroupsException;
+public class EntityPersonAttributesEntitySearcherFactory implements IEntitySearcherFactory {
+   public IEntitySearcher newEntitySearcher() throws GroupsException {
+      return (IEntitySearcher)new EntityPersonAttributesGroupStoreFactory().newGroupStore();
+   }
 
 }

@@ -375,14 +375,14 @@
     <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
         <up-shell-batch>
             <antcall target="data-import">
-                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
+                <param name="dir" value="${basedir}/uportal-war/target/uPortal/main/data/required_entities" />
             </antcall>
         </up-shell-batch>
     </target>
 
     <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
         <!-- Use build.properties to override the entities.location setting -->
-        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
+        <property name="default_entities.location" value="uportal-war/target/uPortal/main/data/default_entities" />
 
         <up-shell-batch>
             <antcall target="data-import">
@@ -393,7 +393,7 @@
 
     <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
         <!-- Use build.properties to override the entities.location setting -->
-        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+        <property name="quickstart_entities.location" value="uportal-war/target/uPortal/main/data/quickstart_entities" />
 
         <up-shell-batch>
             <antcall target="data-import">
@@ -1245,7 +1245,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <uptodate property="@{project-name}.projectFilesUTD" targetfile="${@{project-name}.artifact}">
                 <srcfiles dir="@{project-path}" defaultexcludes="true">
                     <exclude name="${@{project-name}.build.directory}/" />
-                    <exclude name="src/main/data/" />
+                    <exclude name="target/uPortal/main/data/" />
                 </srcfiles>
             </uptodate>
             <if>
