@@ -3,6 +3,7 @@ package org.jasig.portal.portlet.dao.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 import java.util.Random;
@@ -197,4 +198,40 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
             }
         });
 	}
+	
+    @Test
+    public void testAggregatingRatings() {
+        this.execute(new Callable<Object>() {
+            @Override
+            public Object call() throws Exception {
+                //first create some ratings
+                List<IPortletDefinition> portletList = portletDefinitionDao.getPortletDefinitions();
+                List<ILocalAccountPerson> personList = localAccountDao.getAllAccounts();
+                assertNotEquals(portletList.size(), 0);
+                assertNotEquals(personList.size(), 0);
+                for(IPortletDefinition portlet : portletList){
+                    for(ILocalAccountPerson person: personList){
+                        MarketplaceRatingImpl rating = new MarketplaceRatingImpl();
+                        int starRating = random.nextInt(MarketplaceRatingImpl.MAX_RATING)+1;
+                        rating.setRating(starRating);
+                        MarketplaceRatingPK ratingPK = new MarketplaceRatingPK();
+                        ratingPK.setPortletDefinition((PortletDefinitionImpl) portlet);
+                        ratingPK.setUserName(person.getName());
+                        rating.setMarketplaceRatingPK(ratingPK);
+                        marketplaceRatingDao.createOrUpdateRating(rating);
+                    }
+                }
+                //now aggregate them
+                marketplaceRatingDao.aggregateMarketplaceRating();
+                
+                //now verified the portlet definitions are up-to-date with aggregated data
+                List<IPortletDefinition> updatedPortletList = portletDefinitionDao.getPortletDefinitions();
+                for(IPortletDefinition def : updatedPortletList) {
+                    assertNotNull(def.getRating());
+                    assertNotNull(def.getUsersRated());
+                }
+                return null;
+            }
+        });
+    }
 }

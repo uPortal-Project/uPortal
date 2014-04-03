@@ -45,4 +45,9 @@ public interface IMarketplaceRatingDao{
      */
     public IMarketplaceRating getRating(String userName,
             IPortletDefinition portletDefinition);
+    
+    /**
+     * Aggregates the IMarketplaceRating into IPortletDefinition
+     */
+    public void aggregateMarketplaceRating();
 }

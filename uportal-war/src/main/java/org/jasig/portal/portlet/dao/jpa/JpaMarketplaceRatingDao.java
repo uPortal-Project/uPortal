@@ -1,10 +1,12 @@
 package org.jasig.portal.portlet.dao.jpa;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,8 +17,10 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
+import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +29,13 @@ import com.google.common.base.Function;
 @Repository("marketplaceRatingDAO")
 @Qualifier("persistence")
 public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarketplaceRatingDao{
+    
+    private IPortletDefinitionDao portletDefinitionDao;
+    
+    @Autowired
+    public void getPortletDefinitionDao(IPortletDefinitionDao dao) {
+        this.portletDefinitionDao = dao;
+    }
 
     private CriteriaQuery<MarketplaceRatingImpl> findAllMarketPlaceRating;
 
@@ -157,5 +168,42 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
             persistantMarketplaceRatingImpl=entityManager.merge(marketplaceRatingImplementation);
         }
         entityManager.remove(persistantMarketplaceRatingImpl);
+    }
+
+    @Override
+    @PortalTransactional
+    public void aggregateMarketplaceRating() {
+        //setup
+        EntityManager em = this.getEntityManager();
+
+        //get list of average ratings
+        Query aggregatedQuery = em.createQuery("SELECT AVG(m.rating) as rating, "
+                                             + "       count(m.marketplaceRatingPK.portletDefinition.internalPortletDefinitionId) as theCount, "
+                                             + "       m.marketplaceRatingPK.portletDefinition.internalPortletDefinitionId as portletId "
+                                             + "  FROM MarketplaceRatingImpl m "
+                                             + " GROUP BY m.marketplaceRatingPK.portletDefinition.internalPortletDefinitionId");
+        
+        List<Object[]> aggregatedResults = aggregatedQuery.getResultList();
+        
+        //update the portlet definition with the average rating
+        for(Object[] result : aggregatedResults) {
+            if(result != null && result.length == 3) {
+                try {
+                    Double averageRating = (Double)result[0];
+                    Long usersRated = (Long)result[1];
+                    String portletId = ((Long)result[2]).toString();
+                    
+                    IPortletDefinition portletDefinition = portletDefinitionDao.getPortletDefinition(portletId);
+                    if(portletDefinition != null) {
+                        portletDefinition.setRating(averageRating);
+                        portletDefinition.setUsersRated(usersRated);
+                        em.persist(portletDefinition);
+                    }
+                } catch (Exception ex) {
+                    logger.warn("Issue aggregating portlet ratings, recoverable",ex);
+                }
+            }
+            
+        }
     }
 }
