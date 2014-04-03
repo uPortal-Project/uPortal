@@ -50,11 +50,13 @@
     <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType"/>
     <bean id="eventAggregationConfigurationPortalDataType" class="org.jasig.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
     <bean id="subscribedFragmentPortalDataType" class="org.jasig.portal.io.xml.subscribedfragment.SubscribedFragmentPortalDataType" />
+    <bean id="personAttributesGroupStorePortalDataType" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType" />
     
     <!--
      | Import order for portal data types 
      +-->
     <util:list id="dataTypeImportOrder">
+        <ref bean="personAttributesGroupStorePortalDataType" />
         <ref bean="entityTypePortalDataType" />
         <ref bean="stylesheetDescriptorPortalDataType" />
         <ref bean="templateUserPortalDataType" />
@@ -76,6 +78,7 @@
     </util:list>
     
     <util:set id="exportAllPortalDataTypes">
+        <ref bean="personAttributesGroupStorePortalDataType" />
         <ref bean="entityTypePortalDataType" />
         <ref bean="fragmentDefinitionPortalDataType" />
         <ref bean="fragmentLayoutPortalDataType" />
@@ -96,6 +99,7 @@
      | File-name patterns that a candidate file must match one of when doing a bulk import
      +-->
     <util:set id="dataFileIncludes">
+        <value>**/*.pags-group</value>
         <value>**/*.xml</value>
         <value>**/*.entity-type</value>
         <value>**/*.template-user</value>
@@ -173,7 +177,6 @@
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/subscribed-fragment https://source.jasig.org/schemas/uportal/io/subscribed-fragment/subscribed-fragment-4.0.xsd" />
     </bean>
     
-    
     <!-- 
      | Legacy Import classes for portal entities
      +-->
@@ -239,6 +242,21 @@
         </property>
         <property name="task" ref="import-group_membership_v3-2-MEMBERS" />
     </bean>
+    <bean id="pagsGroupMembershipGroup41Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_41_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-pags-group_v4-1-GROUP" />
+    </bean>
+    <bean id="pagsGroupMembershipMembers41Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
+        <property name="threadSafe" value="false" />
+        <property name="dataKeys">
+            <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_MEMBERS_41_DATA_KEY"/>
+        </property>
+        <property name="task" ref="import-pags-group_v4-1-MEMBERS" />
+    </bean>
+
     <bean id="membership26Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
@@ -259,7 +277,7 @@
         <property name="task" ref="import-permission_v2-6" />
     </bean>
     <bean id="fragmentDefinition31Importer" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionImporter" />
-
+    
     
     <!-- 
      | Data Upgrader classes for portal entities
@@ -367,6 +385,11 @@
             </bean>
         </property>
     </bean>
+    <bean id="personAttributesGroupStoreDataFunction" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStoreDataFunction"/>
+    <bean id="personAttributesGroupStoreExporter" class="org.jasig.portal.io.xml.pags.PersonAttributesGroupStoreExporter">
+        <property name="portalDataType" ref="personAttributesGroupStorePortalDataType"/>
+        <property name="portalDataRetriever" ref="personAttributesGroupStoreDataFunction" />
+    </bean>
     <bean id="permissionSetExporter" class="org.jasig.portal.io.xml.crn.CernunnosDataExporter">
         <property name="idAttributeName" value="SET_KEY"/>
         <property name="portalDataType" ref="permissionSetPortalDataType"/>
@@ -460,7 +483,35 @@
             </util:map>
         </property>
     </bean>
-
+    <bean id="import-pags-group_v4-1-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="GROUP" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="import-pags-group_v4-1-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="IMPORT_ACTION" value="MEMBERS" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+    <bean id="jpaPersonAttributesGroupDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupDefinitionDao"/>
+    <bean id="jpaPersonAttributesGroupTestDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestDefinitionDao"/>
+    <bean id="jpaPersonAttributesGroupTestGroupDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestGroupDefinitionDao"/>
     <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/import-group_v2-6.crn" />
         <property name="requestAttributes">
@@ -550,6 +601,20 @@
         </property>
     </bean>
 
+    <bean id="export-pags-group" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/export-pags-group.crn" />
+        <property name="requestAttributes">
+            <util:map>
+                <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
+                <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
+                <entry key="isUserIncluded" value-ref="isUserIncluded" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+            </util:map>
+        </property>
+    </bean>
+
     <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/export-entity-type.crn" />
         <property name="requestAttributes">
@@ -584,8 +649,7 @@
             </util:map>
         </property>
     </bean>
-    
-    
+
     <!-- 
      | Nested Tasks
      +-->

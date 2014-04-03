@@ -58,11 +58,19 @@ import java.util.regex.Pattern;
  * @see EagerRegexTester
  */
 public class RegexTester extends StringTester {
-    protected final Pattern pattern;
+    protected Pattern pattern;
 
     public RegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);
+    }
+
+    /**
+     * Sets the pattern string to use for the regex test.
+     * @param patternString regex pattern string
+     */
+    protected void setPattern(String patternString) {
+        pattern = Pattern.compile(patternString);
     }
 
     @Override

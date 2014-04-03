@@ -23,8 +23,6 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.portal.groups.pags.PersonAttributesGroupStore.GroupDefinition;
-import org.jasig.portal.groups.pags.PersonAttributesGroupStore.TestGroup;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

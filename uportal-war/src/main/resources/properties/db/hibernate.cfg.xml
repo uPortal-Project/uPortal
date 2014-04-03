@@ -59,6 +59,9 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory" />
         <mapping class="org.jasig.portal.layout.dlm.providers.EvaluatorGroup" />
         <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
+        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl" />
+        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl" />
+        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />

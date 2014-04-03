@@ -23,7 +23,9 @@
 <!DOCTYPE Group-Store PUBLIC "-//uPortal//PAGSGroupStore/EN" "PAGSGroupStore.dtd">
 
 <!--
-    PAGSGroupStoreConfig.xml is used to configure the person attributes group store.
+    PAGSGroupStoreConfig.xml is used to configure the person attributes group store when using the
+    XML PAGS implementation (configured in compositeGroupService.xml).
+    
     See PAGSGroupStore.dtd for xml grammar.
 
     To control the attributes that are available, see ../personDirectory.xml.

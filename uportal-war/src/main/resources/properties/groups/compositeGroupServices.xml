@@ -39,8 +39,30 @@ This list of component group services is processed by the composite, or "root" s
     <caching_enabled>true</caching_enabled>
   </service>
 
-  <!-- Configure your person attributes groups in PAGSGroupStoreConfig.xml. -->
-  <!-- IMPORTANT: The pags service is REQUIRED for uPortal to correctly function, do not comment this service out -->
+<!--
+ | Configure your person attributes groups for the entity implementation of PAGS.  PAGS data is defined in
+ | *.pags-group.xml files that are imported into the database.
+ |
+ | IMPORTANT: The pags service is REQUIRED for uPortal to correctly function.  Do not comment out
+ | this service unless you uncomment the XML PAGS implementation below
+ +-->
+<!--
+  <service>
+    <name>pags</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>true</caching_enabled>
+  </service>
+-->
+<!--
+ | Used for XML PAGS implementation. PAGS data is defined in PAGSGroupStoreConfig.xml.
+ |
+ | IMPORTANT: The pags service is REQUIRED for uPortal to correctly function.  Do not comment out this
+ | service unless you uncomment the entity PAGS implementation above.
+ +-->
   <service>
     <name>pags</name>
     <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
@@ -50,7 +72,6 @@ This list of component group services is processed by the composite, or "root" s
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
-
 <!--  Uncomment to configure an LDAP group service component.  Be sure to edit LDAPGroupStoreConfig.xml with your values. -->
 <!--
   <service>

@@ -56,11 +56,19 @@ import java.util.regex.Pattern;
  * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class InvertedRegexTester extends StringTester {
-    protected final Pattern pattern;
+    protected Pattern pattern;
 
     public InvertedRegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);
+    }
+
+    /**
+     * Sets the pattern string to use for the regex test.
+     * @param patternString regex pattern string
+     */
+    protected void setPattern(String patternString) {
+        pattern = Pattern.compile(patternString);
     }
 
     @Override
