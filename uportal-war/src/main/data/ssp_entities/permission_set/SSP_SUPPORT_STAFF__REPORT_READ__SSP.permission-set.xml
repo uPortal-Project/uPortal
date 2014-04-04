@@ -26,7 +26,7 @@
 		<group>SSP_SUPPORT_STAFF</group>
 	</principal>
 	<activity>REPORT_READ</activity>
-	<target permission-type="GRANT">
+	<target permission-type="DENY">
 		<literal>ALL</literal>
 	</target>
 </permission-set>
