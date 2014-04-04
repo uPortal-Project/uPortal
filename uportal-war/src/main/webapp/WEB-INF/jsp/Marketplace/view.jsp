@@ -68,23 +68,23 @@
  */
 
 #${n}marketplace .sorting_asc {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_asc.png') no-repeat center right;
+    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc.png') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc {
-    background: url('portal/media/org/jasig/portal/channels/marketplace/sort_desc.png') no-repeat center right;
+    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc.png') no-repeat center right;
 }
 
 #${n}marketplace .sorting {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_both.png') no-repeat center right;
+    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_both.png') no-repeat center right;
 }
 
 #${n}marketplace .sorting_asc_disabled {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png') no-repeat center right;
+    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc_disabled {
-    background: url('/portal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
+    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
 }
  
 #${n}marketplace table.display thead th:active,
@@ -174,17 +174,11 @@
     #${n}marketplace .sort-btn-group{
         width: 100%;
     }
-    #${n}marketplace .popular-sort-button{
-        width: 25%;
-    }
     #${n}marketplace .alphabetical-sort-button{
-        width: 25%;
-    }
-    #${n}marketplace .audience-sort-button{
-        width: 25%;
+        width: 50%;
     }
     #${n}marketplace .category-sort-button{
-        width: 25%;
+        width: 50%;
     }
 }
  
@@ -361,9 +355,7 @@
             $("#${n}marketplace div.${n}sort_buttons")
             .html("<div class=\"btn_group_container\">"+
                 "<div class=\"btn-group sort-btn-group\">"+
-                "<button type=\"button\" class=\"btn btn-default popular-sort-button\">${mostPopular}</button>"+
                 "<button type=\"button\" id=\"${n}alphabetical-sort-button\" class=\"btn btn-default alphabetical-sort-button\">${azIndex}</button>"+
-                "<button type=\"button\" class=\"btn btn-default audience-sort-button\">${audience}</button>"+
                 "<button type=\"button\" id=\"${n}category-sort-button\" class=\"btn btn-default category-sort-button\">${categoryLabel}</button>"+
                 "</div><br><br></div>");
             $("#${n}categoryListContainer").insertAfter($(".${n}sort_buttons"));

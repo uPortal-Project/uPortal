@@ -152,10 +152,7 @@
                     </button>
                     <ul class="dropdown-menu marketplace_dropdown_menu" role="menu"  style="right: 0; left: auto;">
                         <li><a href="${renderRequest.contextPath}/p/${portlet.FName}/render.uP">Go</a></li>
-                        <li><a href="#">Add to Favorites</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Share on Twitter</a></li>
-                        <li><a href="#">Share on Facebook</a></li>
                         <li><a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto"><spring:message code="link.to" text="Link to ..." /></a></li>
                     </ul>
                 </div>
