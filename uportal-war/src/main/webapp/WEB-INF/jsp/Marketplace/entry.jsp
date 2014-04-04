@@ -177,10 +177,10 @@
                     </p>
                     <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
                         <c:set var="validUrlCount" value="0"/>
+                        <div class="carousel-inner marketplace_carousel_inner">
                         <c:forEach var="screenShot" items="${portlet.screenShots}">
                             <c:set var="imageUrl" value="${screenShot.url}" />
                             <c:if test="${up:isValidUrl(imageUrl)}">
-                                <div class="carousel-inner marketplace_carousel_inner">
                                     <div class="item marketplace_screen_shots">
                                        <img src="${imageUrl}" alt="screenshot for portlet">
                                         <c:if test="${not empty screenShot.captions}">
@@ -192,11 +192,11 @@
                                         </c:if>
                                         <c:set var="validUrlCount" value="${validUrlCount + 1}" />
                                     </div>
-                                </div>
                             </c:if>
                         </c:forEach>
+                        </div>
                         <ol class="carousel-indicators marketplace_carousel_indicators">
-                            <c:forEach var="i" begin="1" end="${validUrlCount}">
+                            <c:forEach var="i" begin="0" end="${validUrlCount-1}">
                                 <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
                             </c:forEach>
                         </ol>
