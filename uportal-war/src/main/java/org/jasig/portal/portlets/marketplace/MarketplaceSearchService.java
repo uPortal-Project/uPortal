@@ -85,7 +85,6 @@ public class MarketplaceSearchService implements IPortalSearchService {
     }
     
     /**
-     * @author vertein
      * Returns a list of search results that pertain to the marketplace
      * query is the query to search
      * will search name, title, description, fname, and captions
@@ -137,7 +136,6 @@ public class MarketplaceSearchService implements IPortalSearchService {
     }
     
     /**
-     * @author vertein
      * @param query
      * @param portlet
      * @return boolean whether query matched criteria in the marketplace portlet definition
@@ -153,7 +151,6 @@ public class MarketplaceSearchService implements IPortalSearchService {
     }
     
     /**
-     * @author vertein
      * @param query
      * @param screenShots
      * @return boolean whether caption matches.  Used by matches method
@@ -170,7 +167,6 @@ public class MarketplaceSearchService implements IPortalSearchService {
     }
     
     /**
-     * @author vertein
      * @param query
      * @param portletReleaseNotes
      * @return boolean whether releaseNotes notes matches.  Used by matches method

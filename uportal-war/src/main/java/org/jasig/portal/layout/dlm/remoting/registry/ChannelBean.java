@@ -133,7 +133,6 @@ public class ChannelBean implements Comparable<ChannelBean>, Serializable {
     }
     
     /**
-     * @author vertein
      * @see java.lang.Object#toString()
      */
     @Override
