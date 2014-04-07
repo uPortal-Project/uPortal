@@ -49,19 +49,6 @@
     </rollingPolicy>
   </appender>
 
-    <appender name="LAYOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-        <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
-        <!--for further documentation-->
-        <File>${environment.build.log.logfileDirectory}/portal/layout.log</File>
-        <encoder>
-            <pattern>%-5level [%thread] %logger{36} %d{ISO8601} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${environment.build.log.logfileDirectory}/portal/layout.log.%d{${environment.build.log.rollingLogFileDatePattern}}</fileNamePattern>
-        </rollingPolicy>
-    </appender>
-  
   <appender name="EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
@@ -142,17 +129,17 @@
   </logger>
   -->
   
-  <!-- Logs the XML at various stages in the rendering pipeline -->
+  <!-- Uncomment to see the XML at various stages in the rendering pipeline
   <logger name="org.jasig.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
-    <appender-ref ref="LAYOUT"/>
+    <appender-ref ref="PORTAL"/>
   </logger>
+  -->
 
-  
-  <!-- Logs fragment activation errors -->
+  <!-- Uncomment to see fragment activation errors
   <logger name="org.jasig.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
-    <appender-ref ref="LAYOUT"/>
+    <appender-ref ref="PORTAL"/>
   </logger>
-
+  -->
   
   <!-- Uncomment to monitor portlet-spec caching behavior
   <logger name="org.jasig.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
