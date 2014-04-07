@@ -19,7 +19,7 @@
 
 package org.jasig.portal.layout.node;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
