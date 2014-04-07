@@ -26,13 +26,11 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -89,10 +87,10 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
 
-    @Column(name = "NAME", length=500, nullable = true, updatable = true)
+    @Column(name = "NAME", length=500, nullable = true)
     private String name;
 
-    @Column(name = "DESCRIPTION", length=500, nullable = true, updatable = true)
+    @Column(name = "DESCRIPTION", length=500, nullable = true)
     private String description;
 
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)

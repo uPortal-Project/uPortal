@@ -77,20 +77,20 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @GeneratedValue(generator = "UP_PAGS_TEST_GEN")
     @Column(name = "PAGS_TEST_ID")
     private long internalPersonAttributesGroupTestDefinitionId;
-    
+
     @Version
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
-    
-    @Column(name = "ATTRIBUTE_NAME", length=500, nullable = false, updatable = false)
+
+    @Column(name = "ATTRIBUTE_NAME", length=500, nullable = true)
     private String attributeName;
-    
-    @Column(name = "TESTER_CLASS", length=500, nullable = true, updatable = true)
+
+    @Column(name = "TESTER_CLASS", length=500, nullable = true)
     private String testerClass;
-    
-    @Column(name = "TEST_VALUE", length=500, nullable = true, updatable = true)
+
+    @Column(name = "TEST_VALUE", length=500, nullable = true)
     private String testValue;
-    
+
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
     private IPersonAttributesGroupTestGroupDefinition testGroup;
@@ -104,36 +104,31 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     public long getId() {
         return internalPersonAttributesGroupTestDefinitionId;
     }
-    
+
     @Override
     public String getAttributeName() {
         return this.attributeName;
     }
-
 
     @Override
     public void setAttributeName(String attributeName) {
         this.attributeName = attributeName;
     }
 
-
     @Override
     public String getTesterClassName() {
         return this.testerClass;
     }
-
 
     @Override
     public void setTesterClassName(String className) {
         this.testerClass = className;
     }
 
-
     @Override
     public String getTestValue() {
         return this.testValue;
     }
-
 
     @Override
     public void setTestValue(String testValue) {
@@ -144,33 +139,34 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     public IPersonAttributesGroupTestGroupDefinition getTestGroup() {
         return testGroup;
     }
-    
+
     @Override
     public boolean equals(Object that) {
         return EqualsBuilder.reflectionEquals(this, that);
     }
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
     @Override
     public void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup) {
         this.testGroup = testGroup;
     }
     @Override
     public void toElement(org.dom4j.Element parent) {
-        
+
         if (parent == null) {
             String msg = "Argument 'parent' cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        
+
         org.dom4j.Element elementTest = DocumentHelper.createElement(new QName("test"));
         elementTest.addElement("attribute-name").addText(this.getAttributeName());
         elementTest.addElement("tester-class").addText(this.getTesterClassName());
         elementTest.addElement("test-value").addText(this.getTestValue());
         parent.add(elementTest);
     }
+
 }

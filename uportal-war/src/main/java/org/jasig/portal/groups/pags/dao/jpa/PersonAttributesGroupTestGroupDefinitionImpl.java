@@ -80,18 +80,18 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @GeneratedValue(generator = "UP_PAGS_TEST_GROUP_GEN")
     @Column(name = "PAGS_TEST_GROUP_ID")
     private long internalPersonAttributesGroupTestGroupDefinitionId;
-    
+
     @Version
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
-    
+
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_GROUP_ID", nullable = false)
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
     private Set<IPersonAttributesGroupTestDefinition> tests = new HashSet<IPersonAttributesGroupTestDefinition>(0);
-    
+
     @Override
     public EntityIdentifier getEntityIdentifier() {
         return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupTestGroupDefinitionId), PersonAttributesGroupTestGroupDefinitionImpl.class);
@@ -120,7 +120,7 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     public IPersonAttributesGroupDefinition getGroup() {
         return group;
     }
-    
+
     @Override
     public void setGroup(IPersonAttributesGroupDefinition group) {
         this.group = group;
@@ -130,12 +130,12 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     public boolean equals(Object that) {
         return EqualsBuilder.reflectionEquals(this, that);
     }
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-    
+
     @Override
     public void toElement(org.dom4j.Element parent) {
         if (parent == null) {
