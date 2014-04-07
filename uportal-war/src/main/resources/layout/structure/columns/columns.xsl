@@ -172,27 +172,13 @@
                 <channel-header ID="{$userLayoutRoot}"/>
                 </xsl:otherwise>
               </xsl:choose>
+
             </header>
             
-            <!-- 
-             | Regions and Roles
-             | =================
-             | This section allows non-regular, non-sidebar portlets to appear in the output page,
-             | even in focused mode.  In Universality this is done with a 'role' attribute on the
-             | portlet publication record.
-             |
-             | In Respondr, this is done through regions: folders with a type attribute _other than_
-             | 'root', 'regular', or 'sidebar' (for legacy support).  Any folder type beyond these 
-             | three automatically becomes a region.  Respondr is responsible for recognizing 
-             | region-based portlets and placing them appropriately on the page.  Note that a region 
-             | name can appear multiple times in the output;  this approach allows multiple 
-             | fragments to place portlets in the same region.
-             +-->
+    <!-- Always include all regions when in DASHBOARD (normal) mode-->
             <regions>
                 <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
-                    <region name="{@type}">
-                        <xsl:copy-of select="channel"/>
-                    </region>
+        <xsl:call-template name="region"/>
                 </xsl:for-each>
             </regions>
             
@@ -230,6 +216,7 @@
             <xsl:call-template name="favorites" />
             
         </layout>
+
     </xsl:otherwise>
   </xsl:choose>
 
