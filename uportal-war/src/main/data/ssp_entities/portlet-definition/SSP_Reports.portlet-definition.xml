@@ -34,7 +34,6 @@
     <group>SSP_ADMINISTRATOR</group>
     <group>SSP_COACH</group>
     <group>SSP_DEVELOPER</group>
-    <group>SSP_MANAGER</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
