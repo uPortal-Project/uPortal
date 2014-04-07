@@ -1,0 +1,4 @@
+If you're upgrading to 2.4.0 from a previous version please rerun data import for the
+following files to limit default access to Manage Users to admins and developers:
+
+  <uportal-war>/src/main/data/ssp_entities/fragment-definition/manage-users-lo.fragment-definition.xml

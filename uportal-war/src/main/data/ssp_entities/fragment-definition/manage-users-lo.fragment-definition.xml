@@ -25,7 +25,6 @@
       <paren mode="OR">     
         <attribute mode="deepMemberOf" name="SSP_ADMINISTRATOR"/>
         <attribute mode="deepMemberOf" name="SSP_DEVELOPER"/>
-        <attribute mode="deepMemberOf" name="SSP_MANAGER"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
