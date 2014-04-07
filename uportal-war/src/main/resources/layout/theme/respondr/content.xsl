@@ -565,7 +565,7 @@
 	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
 	                <span class="icon"></span>
 	            </xsl:if>
-	            <span class="label"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
+	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
 	        </a>
         </li>
       </xsl:if>
