@@ -65,12 +65,21 @@
 }
 #${n}activityBrowser .dataTables_paginate .paginate_button {
     margin: 2px;
+    color: #428BCA;
     cursor: pointer;
     *cursor: hand;
 }
 #${n}activityBrowser .dataTables_paginate .paginate_active {
     margin: 2px;
     color:#000;
+}
+
+#${n}activityBrowser .dataTables_paginate .paginate_active:hover {
+    text-decoration: line-through;
+}
+
+#${n}activityBrowser table tr td a {
+    color: #428BCA;
 }
 
 #${n}activityBrowser .dataTables-left {

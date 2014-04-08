@@ -37,12 +37,21 @@
 }
 #${n}portletBrowser .dataTables_paginate .paginate_button {
     margin: 2px;
+    color: #428BCA;
     cursor: pointer;
     *cursor: hand;
 }
 #${n}portletBrowser .dataTables_paginate .paginate_active {
     margin: 2px;
     color:#000;
+}
+
+#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
+    text-decoration: line-through;
+}
+
+#${n}portletBrowser table tr td a {
+    color: #428BCA;
 }
 
 #${n}portletBrowser .dataTables-left {
