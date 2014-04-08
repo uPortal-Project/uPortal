@@ -69,6 +69,10 @@
     <!-- Data Table Includes -->
     <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>
     <js included="aggregated" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.min.js</js>
+    
+    <!-- Rating Includes -->
+    <js included="plain" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.min.js</js>
 
     <!-- Data Table Bootstrap Includes -->
     <js included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>

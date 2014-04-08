@@ -195,7 +195,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * Used to initialize fields after persistence actions.
      */
-	@SuppressWarnings("unused")
     @PostLoad
     @PostPersist
     @PostUpdate

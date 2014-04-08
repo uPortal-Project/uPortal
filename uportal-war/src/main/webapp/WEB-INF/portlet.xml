@@ -101,7 +101,7 @@
     	
     <portlet>
     	<portlet-name>PortletMarketplace</portlet-name>
-        <display-name xml:lang="en">Favorites</display-name>
+        <display-name xml:lang="en">Marketplace</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>

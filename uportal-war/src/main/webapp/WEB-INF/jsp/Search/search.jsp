@@ -95,11 +95,11 @@
                                   <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
                                 </div>
                                 <div class="result_excerpt">${ result.first.summary }</div>
-                                <!-- Start of display marketplace specific information -->
+                                <%-- Start of display marketplace specific information --%>
                                 <c:if test="${up:contains(result.first.type, 'marketplace')}">
                                 	<a class="marketplace_entry_link" href="${pURL:getStringFromPortletUrl(result.first.portletUrl, pageContext.request)}">About this app</a>                             	
                                 </c:if>
-                                <!-- End of display marketplace specific information -->
+                                <%-- End of display marketplace specific information --%>
                               </div>
                             </c:forEach>
                           </div>
