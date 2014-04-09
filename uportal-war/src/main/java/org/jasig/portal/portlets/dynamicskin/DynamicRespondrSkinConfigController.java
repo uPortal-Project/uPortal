@@ -29,13 +29,11 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.ReadOnlyException;
 import javax.portlet.ValidatorException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
@@ -57,21 +55,21 @@ public class DynamicRespondrSkinConfigController {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    @ActionMapping
-    public void updateSkinConfiguration(ActionResponse response, PortletPreferences prefs,
-                                SkinPreferencesDto form, @RequestParam(value="save", required=false) String save)
+    @ActionMapping(params = "action=update")
+    public void updateSkinConfiguration(ActionResponse response, PortletPreferences prefs, SkinPreferencesDto form)
             throws IOException, ReadOnlyException, ValidatorException, PortletModeException {
 
-        if (StringUtils.isNotBlank(save)) {
-            prefs.setValue(PRIMARY_COLOR_PREFERENCE, form.getColor1());
-            prefs.setValue(SECONDARY_COLOR_PREFERENCE, form.getColor2());
-            prefs.setValue(TERTIARY_COLOR_PREFERENCE, form.getColor3());
-            prefs.store();
-            log.debug("Saved updated configuration:  " + form.toString());
-        }
+        prefs.setValue(PRIMARY_COLOR_PREFERENCE, form.getColor1());
+        prefs.setValue(SECONDARY_COLOR_PREFERENCE, form.getColor2());
+        prefs.setValue(TERTIARY_COLOR_PREFERENCE, form.getColor3());
+        prefs.store();
+        log.debug("Saved updated configuration:  " + form.toString());
+    }
 
+    @ActionMapping(params = "action=cancel")
+    public void cancelUpdate(ActionResponse response)
+            throws IOException, ReadOnlyException, ValidatorException, PortletModeException {
         response.setPortletMode(PortletMode.VIEW);
-
     }
 
     /**
