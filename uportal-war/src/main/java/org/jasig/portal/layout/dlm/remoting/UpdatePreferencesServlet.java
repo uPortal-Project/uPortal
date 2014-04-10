@@ -36,8 +36,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferencesManager;
@@ -67,6 +65,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -96,7 +96,7 @@ public class UpdatePreferencesServlet {
     private static final String ADDTAB_PERMISSION_ACTIVITY = "ADD_TAB";
     private static final String ADDTAB_PERMISSION_TARGET = "ALL";
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IUserIdentityStore userIdentityStore;
@@ -519,7 +519,7 @@ public class UpdatePreferencesServlet {
     
     @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
     public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
-    	//setup
+        //setup
         IUserInstance ui = userInstanceManager.getUserInstance(request);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
@@ -529,60 +529,72 @@ public class UpdatePreferencesServlet {
         
         final Locale locale = RequestContextUtils.getLocale(request);
         
-    	//get favorite tab
+        //get favorite tab
         String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
-    	
-    	if(favoriteTabNodeId != null) {
-	        //add portlet to favorite tab
-	        IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
-	        
-	        if (node == null) {
-				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.add.portlet.in.tab", "Can''t add a new favorite", locale)));
-			}
-	
-			try {
-				// save the user's layout
-	            ulm.saveUserLayout();
-			} catch (Exception e) {
-				log.warn("Error saving layout", e);
-				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.persisting.layout.change", "Can''t add a new favorite", locale)));
-			}
-	
-			//document success for notifications
-			Map<String, String> model = new HashMap<String, String>();
-			model.put("response", getMessage("success.add.portlet", "Added a new favorite", locale));
-			model.put("newNodeId", node.getId());
-			return new ModelAndView("jsonView", model);
-    	} else {
-    		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.finding.favorite.tab", "Can''t find favorite tab", locale)));
-    	}
+
+        if(favoriteTabNodeId != null) {
+            //add portlet to favorite tab
+            IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
+
+            if (node == null) {
+                return new ModelAndView("jsonView",
+                        Collections.singletonMap("response",
+                                getMessage("error.add.portlet.in.tab", "Can''t add a new favorite", locale)));
+            }
+
+            try {
+                // save the user's layout
+                ulm.saveUserLayout();
+            } catch (Exception e) {
+                log.warn("Error saving layout", e);
+                return new ModelAndView("jsonView",
+                        Collections.singletonMap("response",
+                                getMessage("error.persisting.layout.change", "Can''t add a new favorite", locale)));
+            }
+
+            //document success for notifications
+            Map<String, String> model = new HashMap<String, String>();
+            final String channelTitle = channel.getTitle();
+            model.put("response",
+                    getMessage("favorites.added.favorite", channelTitle,
+                            "Added " + channelTitle + " as a favorite.", locale));
+            model.put("newNodeId", node.getId());
+            return new ModelAndView("jsonView", model);
+       } else {
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response",
+                            getMessage("error.finding.favorite.tab", "Can''t find favorite tab", locale)));
+       }
     }
     
     @RequestMapping(method= RequestMethod.POST , params = "action=removeFavorite")
     public ModelAndView removeFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	//setup
+        //setup
         UserPreferencesManager upm = (UserPreferencesManager) userInstanceManager.getUserInstance(request).getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
         final Locale locale = RequestContextUtils.getLocale(request);
         
         try {
-			if (!ulm.deleteNode(channelId)) {
-				log.warn("Error deleting the node" + channelId + "from favorites for user " + upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
-				response.setStatus(HttpServletResponse.SC_ACCEPTED);
-				return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
-			}
-			// save the user's layout
-		    ulm.saveUserLayout();
-		} catch (Exception e) {
-			log.warn("Error saving layout", e);
-			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
-		}
-		
-		//document success for notifications
-		Map<String, String> model = new HashMap<String, String>();
-		model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
-		return new ModelAndView("jsonView", model);
+            if (!ulm.deleteNode(channelId)) {
+                 log.warn("Error deleting the node {} from favorites for user {}.",
+                        channelId, upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
+                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                 return new ModelAndView("jsonView",
+                         Collections.singletonMap("response",
+                                 getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+            }
+            // save the user's layout
+            ulm.saveUserLayout();
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+        }
+
+        //document success for notifications
+        Map<String, String> model = new HashMap<String, String>();
+        model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
+        return new ModelAndView("jsonView", model);
     }
 
 	/**
@@ -962,9 +974,40 @@ public class UpdatePreferencesServlet {
 
 	}
 
-	protected String getMessage(String key, String defaultName, Locale locale) {
-		return messageSource.getMessage(key, new Object[] {}, defaultName, locale);
-	}
+    /**
+     * Syntactic sugar for safely resolving a no-args message from message bundle.
+     * @param key Message bundle key
+     * @param defaultMessage Ready-to-present message to fall back upon.
+     * @param locale desired locale
+     * @return Resolved interpolated message or defaultMessage.
+     */
+    protected String getMessage(String key, String defaultMessage, Locale locale) {
+        try {
+            return messageSource.getMessage(key, new Object[] {}, defaultMessage, locale);
+        } catch (Exception e) {
+            // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
+            log.error("Error resolving message with key {}.", key, e);
+            return defaultMessage;
+        }
+    }
+
+    /**
+     * Syntactic sugar for safely resolving a one-arg message from message bundle.
+     * @param key Message bundle key
+     * @param argument dynamic value to be interpolated
+     * @param defaultMessage Ready-to-present message to fall back upon.
+     * @param locale desired locale
+     * @return Resolved interpolated message or defaultMessage.
+     */
+    protected String getMessage(String key, String argument, String defaultMessage, Locale locale) {
+        try {
+            return messageSource.getMessage(key, new String[] {argument}, defaultMessage, locale);
+        } catch (Exception e) {
+            // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
+            log.error("Error resolving message with key {}.", key, e);
+            return defaultMessage;
+        }
+    }
 
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
         final IEntity user = GroupService.getEntity(userName, IPerson.class);
