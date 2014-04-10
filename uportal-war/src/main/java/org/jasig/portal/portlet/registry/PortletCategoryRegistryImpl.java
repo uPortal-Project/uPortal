@@ -87,6 +87,20 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 
         return rslt;
     }
+	
+    /* (non-Javadoc)
+     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllParentCategories(org.jasig.portal.portlet.om.PortletCategory)
+     */
+    @Override
+    public Set<PortletCategory> getAllParentCategories(PortletCategory child) {
+        Set<PortletCategory> rslt = new HashSet<PortletCategory>();
+        for (PortletCategory parent : getParentCategories(child)) {
+            // recurse
+            rslt.add(parent);
+            rslt.addAll(getAllParentCategories(parent));
+        }
+        return rslt;
+    }
 
     /* (non-Javadoc)
 	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllChildChannels(org.jasig.portal.portlet.om.PortletCategory)

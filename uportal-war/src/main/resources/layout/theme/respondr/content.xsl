@@ -177,6 +177,65 @@
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
     <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
 
+    <!-- Start of the Marketplace Modal Section -->
+        <xsl:variable name="saveRatingPortletUrl">
+            <xsl:call-template name="portalUrl">
+                <xsl:with-param name="url">
+                    <url:portal-url type='RESOURCE'>
+                        <url:fname>portletmarketplace</url:fname>
+                        <url:portlet-url>
+                            <url:fname>portletmarketplace</url:fname>
+                            <url:resourceId>saveRating</url:resourceId>
+                            <url:param name="portletFName" value="{@fname}"/>
+                        </url:portlet-url>
+                    </url:portal-url>
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:variable>
+        
+      <xsl:variable name="getRatingPortletUrl">
+            <xsl:call-template name="portalUrl">
+                <xsl:with-param name="url">
+                    <url:portal-url type='RESOURCE'>
+                        <url:fname>portletmarketplace</url:fname>
+                        <url:portlet-url>
+                            <url:fname>portletmarketplace</url:fname>
+                            <url:resourceId>getRating</url:resourceId>
+                            <url:param name="portletFName" value="{@fname}"/>
+                        </url:portlet-url>
+                    </url:portal-url>
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:variable>
+
+        <xsl:variable name="portletName" select="@name" />
+
+        <div class="modal fade" id="ratePortletModal{@ID}" tabindex="-1" role="dialog"
+             aria-labelledby="RatingModal" aria-hidden="true"
+             data-title="{upMsg:getMessage('rate.portlet.by.name', $USER_LANG, $portletName)}"
+             data-close.button.label="{upMsg:getMessage('close', $USER_LANG)}"
+             data-save.button.label="{upMsg:getMessage('save.and.close', $USER_LANG)}"
+             data-geturl="{$getRatingPortletUrl}"
+             data-saveurl="{$saveRatingPortletUrl}"
+             data-get.rating.unsucessful="{upMsg:getMessage('rating.retrieved.unsuccessfully', $USER_LANG)}"
+             data-rating.save.successful = "{upMsg:getMessage('rating.saved.successfully', $USER_LANG)}"
+             data-rating.save.unsuccessful = "{upMsg:getMessage('rating.saved.unsuccessfully', $USER_LANG)}"
+             data-rating.instructions.unrated =
+                     "{upMsg:getMessage('rating.instructions.unrated', $USER_LANG, $portletName)}"
+             data-rating.instructions.rated =
+                     "{upMsg:getMessage('rating.instructions.rated', $USER_LANG, $portletName)}"
+                />
+        
+        <script type="text/javascript">
+            (function($) {
+                $( document ).ready(function() {
+                    $('#ratePortletModal<xsl:value-of select="@ID"/>').createRatingModal();
+                    $('#ratePortletModal<xsl:value-of select="@ID"/>').find('input').rating();
+                });
+            })(up.jQuery);
+        </script>
+<!-- End of the Marketplace Modal Section -->
+
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
@@ -302,6 +361,12 @@
       <xsl:variable name="printable">
           <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
       </xsl:variable>
+        
+      <li>
+          <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
+              <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
+          </a>
+      </li>
 
       <!-- Help Icon -->
       <xsl:if test="$hasHelp='true'">

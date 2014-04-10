@@ -19,13 +19,27 @@
 
 package org.jasig.portal.portlet;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.portal.portlets.marketplace.MarketplacePortletDefinition;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.search.PortletUrl;
+import org.jasig.portal.search.PortletUrlParameter;
+import org.jasig.portal.search.PortletUrlType;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
@@ -36,7 +50,22 @@ import com.google.common.collect.ImmutableSortedMap;
  * @author Eric Dalquist
  * @version $Revision$
  */
+
+@Component
 public final class PortletUtils {
+	
+	  private static IPortletWindowRegistry portletWindowRegistry;
+	  private static IPortalUrlProvider portalUrlProvider;
+
+	  @Autowired(required = true)
+	  private void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+	        PortletUtils.portletWindowRegistry = portletWindowRegistry;
+	  }
+	  @Autowired(required = true)
+	  private void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
+		  PortletUtils.portalUrlProvider = urlProvider;
+	  }
+	
     private static final Map<String, PortletMode> PORTLET_MODES = 
             ImmutableSortedMap.<String, PortletMode>orderedBy(String.CASE_INSENSITIVE_ORDER)
                 .put(PortletMode.VIEW.toString(), PortletMode.VIEW)
@@ -107,4 +136,54 @@ public final class PortletUtils {
         
         return new WindowState(state);
     }
+    
+    /**
+     * A static EL function that is defined in portletUrl.tld
+     * Takes a portletUrl object and coverts it into an actual Url
+     * Example is in search, returns a marketplace entry Url
+     * 
+     * @param portletUrl
+     * @param request
+     * @return the Url represented by portletUrl
+     */
+    public static String getStringFromPortletUrl(PortletUrl portletUrl, HttpServletRequest request){
+    	if(portletUrl == null){
+    		return null;
+    	}
+    	//Default urlType
+    	UrlType urlType = UrlType.RENDER;
+    	final PortletUrlType type = portletUrl.getType();
+    	switch(type){
+    		case ACTION:
+    			urlType=UrlType.ACTION;
+    			break;
+    		case RESOURCE:
+    			urlType=UrlType.RESOURCE;
+    			break;
+    		default:
+    			urlType=UrlType.RENDER;
+    			break;
+    	}
+    	
+    	IPortletWindow marketplaceWindow = portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, MarketplacePortletDefinition.MARKETPLACE_FNAME);
+    	IPortalUrlBuilder portalUrlBuilder = portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, marketplaceWindow.getPortletWindowId(), urlType);
+    	IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getTargetedPortletUrlBuilder();
+    	
+        final String portletMode = portletUrl.getPortletMode();
+        if (portletMode != null) {
+            portletUrlBuilder.setPortletMode(PortletUtils.getPortletMode(portletMode));
+        }
+        final String windowState = portletUrl.getWindowState();
+        if (windowState != null) {
+            portletUrlBuilder.setWindowState(PortletUtils.getWindowState(windowState));
+        }
+        for (final PortletUrlParameter param : portletUrl.getParam()) {
+            final String name = param.getName();
+            final List<String> values = param.getValue();
+            portletUrlBuilder.addParameter(name, values.toArray(new String[values.size()]));
+        }
+        
+    	return portalUrlBuilder.getUrlString();
+    }
+    
 }

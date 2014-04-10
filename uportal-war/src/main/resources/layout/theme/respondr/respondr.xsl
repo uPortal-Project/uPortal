@@ -643,7 +643,7 @@
             <xsl:call-template name="page.js" />
         </head>
         <body class="up dashboard portal fl-theme-mist">
-
+            <div id="up-notification"></div>
             <div id="wrapper">
                 <xsl:call-template name="region.hidden-top" />
                 <xsl:call-template name="region.page-top" />

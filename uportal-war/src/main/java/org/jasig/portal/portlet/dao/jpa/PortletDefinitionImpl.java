@@ -63,6 +63,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -136,6 +137,12 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Column(name = "PORTLET_DESC", length = 255)
 	private String description;
 
+	@Column(name="AVG_RATING")
+	private Double rating;
+
+	@Column(name="AVG_RATING_USER_COUNT")
+	private Long usersRated;
+
 	@Column(name = "PORTLET_TIMEOUT", nullable = false)
 	private int timeout = 20000; //Default to a reasonable value
     @Column(name = "ACTION_TIMEOUT")
@@ -188,7 +195,6 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * Used to initialize fields after persistence actions.
      */
-    @SuppressWarnings("unused")
     @PostLoad
     @PostPersist
     @PostUpdate
@@ -234,6 +240,30 @@ class PortletDefinitionImpl implements IPortletDefinition {
         this.portletDescriptorKey.setFrameworkPortlet(isFramework);
     }
     
+    public PortletDefinitionImpl(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework,IPortletDefinitionId Id) {
+        Validate.notNull(portletType);
+        Validate.notNull(name);
+        Validate.notNull(fname);
+        Validate.notNull(title);
+        if (!isFramework) {
+            Validate.notNull(applicationId);
+        }
+        Validate.notNull(portletName);
+        
+        this.internalPortletDefinitionId = Id.getLongId();
+        this.entityVersion = -1;
+        this.portletPreferences = new PortletPreferencesImpl();
+        this.portletType = portletType;
+        this.name = name;
+        this.fname = fname;
+        this.title = title;
+        
+        this.portletDescriptorKey = new PortletDescriptorKeyImpl();
+        this.portletDescriptorKey.setWebAppName(applicationId);
+        this.portletDescriptorKey.setPortletName(portletName);
+        this.portletDescriptorKey.setFrameworkPortlet(isFramework);
+    }
+    
     //** APIs for import/export support **//
     @Override
     public String getDataId() {
@@ -251,6 +281,41 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     //** APIs for portlet definitions **//
+    
+    /**
+     * @return the rating
+     */
+    public Double getRating() {
+        return rating;
+    }
+    
+    /**
+     * @param rating the rating to set. Must be within marketplaceRating range (inclusive). Can not be null.
+     * @throws IllegalArgumentException
+     */
+    public void setRating(Double rating) {
+        Validate.notNull(rating, "Rating cannot be null.  Maybe you meant 0?");
+        if(rating > IMarketplaceRating.MAX_RATING || rating < IMarketplaceRating.MIN_RATING){
+            throw new IllegalArgumentException();
+        }
+        this.rating = rating;
+    }
+    
+    /**
+     * @return the count of users that rated this portlet.  Will not return null
+     */
+    public Long getUsersRated() {
+        return usersRated == null? 0:usersRated;
+    }
+    
+    
+    /**
+     * @param usersRated - Number of users that rated this portlet.
+     */
+    public void setUsersRated(Long usersRated) {
+        Validate.isTrue(usersRated> -1L, "Number of Users that rated shouldn't be under zero");
+        this.usersRated = usersRated;
+    }
     
     /* (non-Javadoc)
      * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()

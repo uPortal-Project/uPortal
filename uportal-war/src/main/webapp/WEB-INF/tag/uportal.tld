@@ -115,4 +115,17 @@
             ${up:json(obj)}
         </example>
     </function>
+    <function>
+        <description>
+            Tests if a string is a valid URL
+            Will open a connection and make sure that it can connect to the URL
+            it looks for an HTTP status code of 200 on a GET
+        </description>
+        <name>isValidUrl</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean isValidUrl(java.lang.String)</function-signature>
+        <example>
+            ${up:isValidUrl("www.example.com/image.png")}
+        </example>
+    </function>
 </taglib>

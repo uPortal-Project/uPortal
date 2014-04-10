@@ -109,6 +109,14 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         this.name = name;
     }
     
+    public LocalAccountPersonImpl(String name, Long Id) {
+        Assert.notNull(name);
+        Assert.notNull(Id);
+        this.id = Id;
+        this.entityVersion = -1;
+        this.name = name;
+    }
+    
     @Override
     public long getId() {
         return id;

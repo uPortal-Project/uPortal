@@ -51,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -229,6 +230,7 @@ public class SearchPortletController {
         this.portalRequestUtils = portalRequestUtils;
     }
 
+    @SuppressWarnings("unchecked")
     @ActionMapping
     public void performSearch(@RequestParam(value = "query") String query, 
             ActionRequest request, ActionResponse response,
@@ -322,6 +324,7 @@ public class SearchPortletController {
      * is done as an event handler so that it can run concurrently with the other portlets
      * handling the search request
      */
+    @SuppressWarnings("unchecked")
     @EventMapping(SearchConstants.SEARCH_REQUEST_QNAME_STRING)
     public void handleSearchRequest(EventRequest request, EventResponse response) {
         // UP-3887 Design flaw.  Both the searchLauncher portlet instance and the search portlet instance receive

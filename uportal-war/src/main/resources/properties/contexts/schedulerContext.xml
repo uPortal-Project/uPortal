@@ -66,9 +66,11 @@
         
         <!-- clustered tasks -->
         <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
+        <task:scheduled ref="portletRatingAggregator" method="aggregatePortletRatings" fixed-delay="${org.jasig.portal.aggr.PortletRatingAggregatorImpl.AggregatePortletRatingsPeriod}" />
         <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents" 	fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
+        
     </task:scheduled-tasks>
 </beans>

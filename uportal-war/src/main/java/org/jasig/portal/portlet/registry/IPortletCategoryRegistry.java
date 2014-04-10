@@ -50,6 +50,14 @@ public interface IPortletCategoryRegistry {
 	 */
 	public Set<PortletCategory> getAllChildCategories(
 			PortletCategory parent);
+	
+	/**
+	 * Gets all parent portlet categories for a child category
+	 * @param child
+	 * @return portletCategories the parentcategories
+	 * @throws org.jasig.portal.groups.GroupException
+	 */
+	public Set<PortletCategory> getAllParentCategories(PortletCategory child);
 
 	/**
 	 * Gets all child portlet definitions for a parent category.
