@@ -298,7 +298,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 portalDataTypes.add(portalDataType);
 
             } catch (Exception exception) {
-                logger.error("Failed to register data exporter ().", dataExporter, exception);
+                logger.error("Failed to register data exporter {}.", dataExporter, exception);
             }
 
         }
