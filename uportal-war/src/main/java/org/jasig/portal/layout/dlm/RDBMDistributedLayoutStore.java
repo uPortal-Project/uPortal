@@ -1327,11 +1327,19 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 logger.debug("Checking applicability of the following fragment: {}", fragmentDefinition.getName());
 
                 if (fragmentDefinition.isApplicable(person)) {
-                    final UserView userView = activator.getUserView(fragmentDefinition, locale);
-                    if (userView != null) {
-                        applicables.add(userView.layout);
+                    try {
+                        final UserView userView = activator.getUserView(fragmentDefinition, locale);
+                        if (userView != null) {
+                            applicables.add(userView.layout);
+                        }
+                        fragmentNames.add(fragmentDefinition.getName());
+                    } catch (Exception e) {
+                        // Unable to activate a fragment?  Drop that one fragment from the layout, but
+                        // don't fail to render other potentially unbroken potentially useful fragments.
+                        logger.error("Error activating fragment {} for user {}.", fragmentDefinition, person, e);
+                        // TODO: surface a not-totally-disabling error experience to the user
+                        // because something is very wrong.
                     }
-                    fragmentNames.add(fragmentDefinition.getName());
                 }
             }
         }
