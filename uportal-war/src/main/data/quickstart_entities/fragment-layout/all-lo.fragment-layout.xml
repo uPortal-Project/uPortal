@@ -29,7 +29,6 @@
      | their own layouts.
      +-->
     <folder ID="s2" hidden="true" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
-      <channel fname="dynamic-respondr-skin" unremovable="false" hidden="false" immutable="false" ID="n3"/>
       <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n4"/>
     </folder>
     <folder ID="s5" hidden="true" immutable="true" name="Customize folder" type="customize" unremovable="true">
