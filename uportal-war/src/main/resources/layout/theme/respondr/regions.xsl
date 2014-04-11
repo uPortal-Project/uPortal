@@ -169,6 +169,21 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ========== TEMPLATE: SIDEBAR-LEFT ========== -->
+    <!-- =========================================== -->
+    <!--
+     | This template renders portlets in the area left of the pre-content, content, and post-content regions.
+    -->
+    <xsl:template name="region.sidebar-left">
+        <xsl:if test="//region[@name='sidebar-left']/channel">
+            <div id="region-sidebar-left" class="col-sm-2">
+                <xsl:for-each select="//region[@name='sidebar-left']/channel">
+                    <xsl:call-template name="regions.portlet.decorator" />
+                </xsl:for-each>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
     <!-- ========== TEMPLATE: PRE-CONTENT ========== -->
     <!-- =========================================== -->
     <!--
@@ -176,14 +191,27 @@
     -->
     <xsl:template name="region.pre-content">
         <xsl:if test="//region[@name='pre-content']/channel">
-            <div id="region-pre-content" class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <xsl:for-each select="//region[@name='pre-content']/channel">
-                            <xsl:call-template name="regions.portlet.decorator" />
-                        </xsl:for-each>
-                    </div>
+            <div id="region-pre-content" class="row-fluid">
+                <div class="col-sm-12">
+                    <xsl:for-each select="//region[@name='pre-content']/channel">
+                        <xsl:call-template name="regions.portlet.decorator" />
+                    </xsl:for-each>
                 </div>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- ========== TEMPLATE: SIDEBAR-RIGHT ========== -->
+    <!-- =========================================== -->
+    <!--
+     | This template renders portlets in the area right of the pre-content, content, and post-content regions.
+    -->
+    <xsl:template name="region.sidebar-right">
+        <xsl:if test="//region[@name='sidebar-right']/channel">
+            <div id="region-sidebar-right" class="col-sm-2">
+                <xsl:for-each select="//region[@name='sidebar-right']/channel">
+                    <xsl:call-template name="regions.portlet.decorator" />
+                </xsl:for-each>
             </div>
         </xsl:if>
     </xsl:template>
