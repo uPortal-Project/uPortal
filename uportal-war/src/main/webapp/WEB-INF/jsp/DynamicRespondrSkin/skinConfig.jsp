@@ -45,17 +45,28 @@
             <div class="portlet-section-body">
 
                 <form id="${n}dynSkinForm" role="form" class="form-horizontal" action="${ saveUrl }" method="POST">
+
                     <div class="form-group">
-                        <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color1"/></label>
-                        <input type="color" class="colorPicker" name="color1" value="${color1}"/>
+                        <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.enabled"/></label>
+                        <input type="checkbox" class="dynamicSelection" name="dynamic" value="true" ${empty dynamic ? '' : 'checked'}/>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color2"/></label>
-                        <input type="color" class="colorPicker" name="color2" value="${color2}"/>
+                        <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.skinName"/></label>
+                        <input type="text" name="skinName" value="${skinName}"/>
                     </div>
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color3"/></label>
-                        <input type="color" class="colorPicker" name="color3" value="${color3}"/>
+                    <div class="dynamicItems">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color1"/></label>
+                            <input type="color" class="colorPicker dynamicItem" name="color1" value="${color1}"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color2"/></label>
+                            <input type="color" class="colorPicker dynamicItem" name="color2" value="${color2}"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color3"/></label>
+                            <input type="color" class="colorPicker dynamicItem" name="color3" value="${color3}"/>
+                        </div>
                     </div>
                     <div class="buttons">
                         <button type="submit" class="saveButton btn btn-default"><spring:message code="save"/></button>
@@ -104,16 +115,28 @@ var initDynSkin = initDynSkin || function($, settings, portletSelector, formSele
             type: "POST",
             data: $(settings.formSelector).serialize()
             })
-            // We don't capture error since there is no way the portal will return a different status code on an action url. If there is an
-            // error we'd get a web page with content that displayed an error message.
+            // We don't capture error since there is no way the portal will return a different status code on an
+            // action url. If there is an error we'd get a web page with content that displayed an error message.
             .success(function(data, textStatus, jqXHR) {
-                // Since it saved successfully, invoke cancelUrl to gracefully exit config mode and return to Portlet configuration
-                // without spring webflow errors. I'd have thought we could do a portletUrl that sets portletMode=View but it does not
-                // seem to work.
+                // Since it saved successfully, invoke cancelUrl to gracefully exit config mode and return to
+                // Portlet configuration without spring webflow errors. I'd have thought we could do a portletUrl
+                // that sets portletMode=View but it does not seem to work.
                 window.location.href=cancelUrl;
             });
         event.preventDefault();
     });
+
+    // Enable or disable the dynamic skins based on whether dynamic is checked. Also setup change event to handle
+    // changes.
+    var enableOrDisableDynamicFields = function() {
+        if ($(settings.formSelector).find(".dynamicSelection").is(':checked')) {
+            $(settings.formSelector).find(".dynamicItems").removeClass("hidden");
+        } else {
+            $(settings.formSelector).find(".dynamicItems").addClass("hidden");
+        }
+    };
+    enableOrDisableDynamicFields();
+    $(settings.formSelector).find(".dynamicSelection").change(enableOrDisableDynamicFields);
 };
 </rs:compressJs>
 </script>
