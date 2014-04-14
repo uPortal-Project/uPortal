@@ -212,7 +212,6 @@
  | Portlet Settings can be used to change aspects of the portlet chrome.
  -->
 <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
-<xsl:param name="USE_PORTLET_CONTROL_ICONS" select="'true'" /> <!-- Sets the use of icons in portlet chrome controls.  Values are 'true' or 'false'. -->
 
 
 <!-- ========================================================================= -->

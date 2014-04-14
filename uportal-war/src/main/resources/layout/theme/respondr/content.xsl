@@ -562,9 +562,6 @@
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <li>
 	        <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
-	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
-	                <span class="icon"></span>
-	            </xsl:if>
 	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
 	        </a>
         </li>
@@ -575,9 +572,6 @@
           <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
             <li>
     	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{@chanID}">
-    	            <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
-    	                <span class="icon"></span>
-    	            </xsl:if>
     	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
     	            <!-- used for the ajax call to add to favorites in up-favorite.js-->
     	            <script type="text/javascript">
@@ -593,9 +587,6 @@
           <xsl:otherwise><!-- Remove From favorites. -->
             <li>
                 <a href="javascript:;" title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}" class="removeFromFavoriteLink{@chanID}">
-                    <xsl:if test="$USE_PORTLET_CONTROL_ICONS='true'">
-                        <span class="icon"></span>
-                    </xsl:if>
                     <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
                     <!-- used for the ajax call to remove from favorites in up-favorite.js-->
                     <script type="text/javascript">
