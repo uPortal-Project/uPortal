@@ -30,7 +30,6 @@
         <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName>
         <ns2:portletName>attachments</ns2:portletName>
     </portlet-descriptor>
-    <category>uPortal</category>
     <group>Everyone</group>
     <parameter>
         <name>hasHelp</name>
