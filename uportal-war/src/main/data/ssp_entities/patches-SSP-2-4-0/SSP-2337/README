@@ -1,0 +1,5 @@
+If you're upgrading to 2.4.0 from a previous version please rerun data import for the
+following files to hide SSP reports from everyone except admins and developers by default:
+
+  <uportal-war>/src/main/data/ssp_entities/portlet-definition/SSP_Reports.portlet-definition.xml
+  <uportal-war>/src/main/data/ssp_entities/patches-SSP-2-0-0/SSP-1526/permission_set/SSP_COACH__REPORT_READ__SSP.permission-set.xml
