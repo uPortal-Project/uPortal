@@ -46,9 +46,10 @@
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+    xmlns:nr="xalan://com.newrelic.api.agent.NewRelic"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi" 
+    exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi nr"
     version="1.0">
   
   <!-- ========== TEMPLATE: PAGE ========== -->
@@ -105,6 +106,7 @@
         </xsl:if>
         <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
         <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
+        <xsl:value-of select="nr:getBrowserTimingHeader()" />
         <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
@@ -253,6 +255,7 @@
             </xsl:choose>
           </div> 
         </div>
+        <xsl:value-of select="nr:getBrowserTimingFooter()" />
       </body>
     </html>
   </xsl:template>
