@@ -936,7 +936,7 @@
         }
     </script>
     <div class="copyright">
-         <p>Student Success Plan   |   Copyright 2013, JA-SIG, Inc.   |   All rights reserved.</p>
+         <p>Student Success Plan   |   Copyright 2014, Apereo Foundation   |   All rights reserved.</p>
          <div style="cursor: pointer" id="InfoToggle"> </div>
     </div>
 
