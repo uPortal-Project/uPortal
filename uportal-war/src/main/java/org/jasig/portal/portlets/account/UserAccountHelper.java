@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -384,12 +383,23 @@ public class UserAccountHelper {
         return token;
     }
     
-    public boolean validateLoginToken(String username, String password) {
+    public boolean validateLoginToken(String username, String token) {
         ILocalAccountPerson person = accountDao.getPerson(username);
         if (person != null) {
             Object recordedToken = person.getAttributeValue("loginToken");
-            if (recordedToken != null && recordedToken.equals(password)) {
+            if (recordedToken != null && recordedToken.equals(token)) {
+                if (log.isInfoEnabled()) {
+                    log.info("Successfully validated security token for user:  " + username);
+                }
                 return true;
+            } else {
+                if (log.isInfoEnabled()) {
+                    log.info("Unable to validate security token;  recordedToken=" + recordedToken + ", submitted token=" + token);
+                }
+            }
+        } else {
+            if (log.isInfoEnabled()) {
+                log.info("Unable to validate security token;  person not found:  " + username);
             }
         }
         return false;
@@ -450,7 +460,36 @@ public class UserAccountHelper {
             log.error("Unable to send password reset email ", e);
         }
     }
-    
+
+    /**
+     * Similar to updateAccount, but narrowed to the password and re-tooled to 
+     * work as the guest user (which is what you are, when you have a valid 
+     * security token).
+     */
+    public void createPassword(PersonForm form, String token) {
+
+        // Re-validate the token to prevent URL hacking
+        if (!validateLoginToken(form.getUsername(), token)) {
+            throw new RuntimeException("Attempt to set a password for user '" 
+                    + form.getUsername() + "' without a valid security token");
+        }
+
+        if (StringUtils.isNotBlank(form.getPassword())) {
+            ILocalAccountPerson account = accountDao.getPerson(form.getId());
+            account.setPassword(passwordService.encryptPassword(form.getPassword()));
+            account.setLastPasswordChange(new Date());
+            account.removeAttribute("loginToken");
+            accountDao.updateAccount(account);
+            if (log.isInfoEnabled()) {
+                log.info("Password created for account:  " + account);
+            }
+        } else {
+            throw new RuntimeException("Attempt to set a password for user '" 
+                    + form.getUsername() + "' but the password was blank");
+        }
+
+    }
+
     protected Locale getCurrentUserLocale(final HttpServletRequest request) {
         final IPerson person = personManager.getPerson(request);
         final Locale[] userLocales = localeStore.getUserLocales(person);
@@ -458,5 +497,5 @@ public class UserAccountHelper {
         final Locale locale = localeManager.getLocales()[0];
         return locale;
     }
-    
+
 }
