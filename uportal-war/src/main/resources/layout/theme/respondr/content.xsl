@@ -631,6 +631,8 @@
                 <h3>
                     <xsl:value-of select="//tab[@focusedFragment='true']/@name"></xsl:value-of>
                     <xsl:variable select="//tab[@focusedFragment='true']/@ID" name="FOCUSED_FRAGMENT_ID"></xsl:variable>
+                    <!--
+                    Collection favoriting and link access not yet implemented.
                     <div class="dropdown pull-right">
                     <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu'
                             data-toggle="dropdown" style="background: inherit;">
@@ -643,6 +645,7 @@
                                 <a role="menuitem" tabindex="-1" href="#">Link to ...</a></li>
                         </ul>
                     </div>
+                    -->
                 </h3>
             </div>
             <div class="row">
