@@ -106,12 +106,12 @@
         </xsl:if>
         <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
         <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
-        <xsl:variable name="nrheader" select="nr:getBrowserTimingHeader()" />
-        <xsl:variable name="nrheader_ltrim" select="substring($nrheader,33)" />
-        <xsl:variable name="nrheader_rtrim" select="substring-before($nrheader_ltrim,'&lt;/script&gt;')" />
-        <script language="text/javascript">
-          <xsl:value-of select ="$nrheader_rtrim"/>
-        </script>
+        <!--<xsl:variable name="nrheader" select="nr:getBrowserTimingHeader()" />-->
+        <!--<xsl:variable name="nrheader_ltrim" select="substring($nrheader,33)" />-->
+        <!--<xsl:variable name="nrheader_rtrim" select="substring-before($nrheader_ltrim,'&lt;/script&gt;')" />-->
+        <!--<script type="text/javascript">-->
+          <!--<xsl:value-of select ="$nrheader_rtrim"/>-->
+        <!--</script>-->
         <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
         	<link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
@@ -260,12 +260,12 @@
             </xsl:choose>
           </div> 
         </div>
-        <xsl:variable name="nrfooter" select="nr:getBrowserTimingFooter()" />
-        <xsl:variable name="nrfooter_ltrim" select="substring($nrfooter,33)" />
-        <xsl:variable name="nrfooter_rtrim" select="substring-before($nrfooter_ltrim,'&lt;/script&gt;')" />
-        <script language="text/javascript">
-          <xsl:value-of select ="$nrfooter_rtrim"/>
-        </script>
+        <!--<xsl:variable name="nrfooter" select="nr:getBrowserTimingFooter()" />-->
+        <!--<xsl:variable name="nrfooter_ltrim" select="substring($nrfooter,33)" />-->
+        <!--<xsl:variable name="nrfooter_rtrim" select="substring-before($nrfooter_ltrim,'&lt;/script&gt;')" />-->
+        <!--<script type="text/javascript">-->
+          <!--<xsl:value-of select ="$nrfooter_rtrim"/>-->
+        <!--</script>-->
       </body>
     </html>
   </xsl:template>
