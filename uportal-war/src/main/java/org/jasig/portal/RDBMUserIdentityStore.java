@@ -326,8 +326,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                             updateUser(portalUser.getUserId(), person, templateUser);
                         }
                     }
-                }
-                else {
+                } else {
                     //User hasn't logged in before, some data needs to be created for them based on their template user
 
                     // Retrieve the information for the template user
@@ -344,21 +343,14 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                     portalUser = new PortalUser();
                     portalUser.setUserId(newPortalUID);
                 }
-            }
-            else if (portalUser == null) {
+            } else if (portalUser == null) {
                 //If this is a new user and we can't create them
                 throw new AuthorizationException("No portal information exists for user " + userName);
             }
 
-        }
-        catch (AuthorizationException e) {
-            throw e;
-        }
-        catch (RuntimeException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            final String msg = "Failed to obtain a portal user Id for the specified person:  " + person;
+            throw new RuntimeException(msg, e);
         }
 
         return portalUser.getUserId();
