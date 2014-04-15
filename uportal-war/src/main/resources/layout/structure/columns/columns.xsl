@@ -62,8 +62,6 @@
   <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
 
   <!-- focusedFragmentId is the focusedTabID param when that's not a regular tab :) -->
-
-
     <xsl:variable name="focusedFragmentId">
         <!-- If the user is *not* focusing on a particular portlet,
         and the user is *not* focusing on a regular-type tab,
@@ -178,7 +176,7 @@
     <!-- Always include all regions when in DASHBOARD (normal) mode-->
             <regions>
                 <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
-        <xsl:call-template name="region"/>
+                    <xsl:call-template name="region"/>
                 </xsl:for-each>
             </regions>
             
@@ -322,7 +320,7 @@
 </xsl:template>
 
 <xsl:template match="folder[@hidden='false']">
-    <xsl:attribute name="type">regular</xsl:attribute>
+  <xsl:attribute name="type">regular</xsl:attribute>
   <xsl:if test="$activeTabID = @ID or $focusedFragmentId = @ID">
     <xsl:if test="child::folder">
       <xsl:for-each select="folder">

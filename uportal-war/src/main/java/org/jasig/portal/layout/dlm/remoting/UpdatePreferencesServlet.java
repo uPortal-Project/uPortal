@@ -349,10 +349,14 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
-			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.portlet", "There was an issue moving this portlet, please refresh the page and try again.", locale)));
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response", getMessage("error.move.portlet",
+                    "There was an issue moving this portlet, please refresh the page and try again.", locale)));
 		}
 
-		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.portlet", "Portlet moved successfully", locale)));
+        return new ModelAndView("jsonView",
+                Collections.singletonMap("response", getMessage("success.move.portlet",
+                "Portlet moved successfully", locale)));
 
 	}
 
@@ -503,20 +507,24 @@ public class UpdatePreferencesServlet {
 		if ("insertBefore".equals(method))
 			siblingId = destinationId;
 
-		try {
-		    // move the node as requested and save the layout
-	        ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
+        try {
+            // move the node as requested and save the layout
+            ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Failed to move tab in user layout", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.tab", "There was an issue moving the tab, please refresh the page and try again.", locale)));
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response", getMessage("error.move.tab",
+                    "There was an issue moving the tab, please refresh the page and try again.", locale)));
 		}
 
-		return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.tab", "Tab moved successfully", locale)));
+        return new ModelAndView("jsonView",
+                Collections.singletonMap("response", getMessage("success.move.tab",
+                "Tab moved successfully", locale)));
 
 	}
-    
+
     @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
     public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
         //setup
@@ -627,7 +635,7 @@ public class UpdatePreferencesServlet {
 
 		IUserLayoutNodeDescription node = null;
 		if (isTab(ulm, destinationId)) {
-			node = addNodeToTab(ulm,channel, destinationId);
+            node = addNodeToTab(ulm,channel, destinationId);
 
 		} else if (isColumn(ulm, destinationId)) {
 			// move the channel into the column
@@ -667,39 +675,39 @@ public class UpdatePreferencesServlet {
 		return new ModelAndView("jsonView", model);
 
 	}
-    
+
     private IUserLayoutNodeDescription addNodeToTab(IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
-    	IUserLayoutNodeDescription node = null;
-    	
-    	@SuppressWarnings("unchecked")
-		Enumeration<String> columns = ulm.getChildIds(tabId);
-		if (columns.hasMoreElements()) {
-			while (columns.hasMoreElements()) {
-				// attempt to add this channel to the column
-				node = ulm.addNode(channel, columns.nextElement(), null);
-				// if it couldn't be added to this column, go on and try the next
-				// one.  otherwise, we're set.
-				if (node != null)
-					break;
-			}
-		} else {
+        IUserLayoutNodeDescription node = null;
 
-			IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
-			newColumn.setName("Column");
-			newColumn.setId("tbd");
-			newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-			newColumn.setHidden(false);
-			newColumn.setUnremovable(false);
-			newColumn.setImmutable(false);
+        @SuppressWarnings("unchecked")
+        Enumeration<String> columns = ulm.getChildIds(tabId);
+        if (columns.hasMoreElements()) {
+            while (columns.hasMoreElements()) {
+                // attempt to add this channel to the column
+                node = ulm.addNode(channel, columns.nextElement(), null);
+                // if it couldn't be added to this column, go on and try the next
+                // one.  otherwise, we're set.
+                if (node != null)
+                    break;
+             }
+        } else {
 
-			// add the column to our layout
-			IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
+            IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+            newColumn.setName("Column");
+            newColumn.setId("tbd");
+            newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+            newColumn.setHidden(false);
+            newColumn.setUnremovable(false);
+            newColumn.setImmutable(false);
 
-			// add the channel
-			node = ulm.addNode(channel, col.getId(), null);
-		}
-		
-		return node;
+            // add the column to our layout
+            IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
+
+            // add the channel
+            node = ulm.addNode(channel, col.getId(), null);
+        }
+
+        return node;
     }
 
 	/**

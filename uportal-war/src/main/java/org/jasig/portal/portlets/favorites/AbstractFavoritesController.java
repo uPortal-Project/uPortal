@@ -35,7 +35,6 @@ import org.springframework.util.StringUtils;
  */
 public abstract class AbstractFavoritesController {
 
-
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     protected IUserInstanceManager userInstanceManager;
     protected IPortalRequestUtils portalRequestUtils;

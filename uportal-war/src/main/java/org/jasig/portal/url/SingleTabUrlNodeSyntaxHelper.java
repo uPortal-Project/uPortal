@@ -241,7 +241,6 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             return null;
         }
 
-        
         //Check if the folder name is compound and parse it if it is
         String folderName = folderNames.get(0);
         String layoutNodeId = null;

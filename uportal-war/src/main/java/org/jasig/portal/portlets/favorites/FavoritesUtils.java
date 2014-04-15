@@ -116,11 +116,11 @@ public final class FavoritesUtils {
     }
     
     public static String getFavoriteTabNodeId(IUserLayout userLayout) {
-    	
+
         @SuppressWarnings("unchecked")
-		Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
+        Enumeration<String> childrenOfRoot = userLayout.getChildIds(userLayout.getRootId());
         
-    	while (childrenOfRoot.hasMoreElements()) { //loop over folders that might be the favorites folder
+        while (childrenOfRoot.hasMoreElements()) { //loop over folders that might be the favorites folder
             String nodeId = childrenOfRoot.nextElement();
 
             try {
@@ -139,10 +139,10 @@ public final class FavoritesUtils {
             } catch (Exception e) {
                 logger.error("Ignoring on error a node while examining for favorites: node ID is [{}]", nodeId, e);
             }
-    	}
-    	
-    	logger.warn("Favorite tab was searched for but not found");
-    	return null; //didn't find favorite tab
+        }
+
+        logger.warn("Favorite tab was searched for but not found");
+        return null; //didn't find favorite tab
     }
 
     /**

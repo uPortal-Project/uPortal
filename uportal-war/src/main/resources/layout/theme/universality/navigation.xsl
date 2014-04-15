@@ -176,140 +176,140 @@
    | This template renders the contents of the main navigation.
   -->
   <xsl:template match="tab">
-  	<xsl:if test="@name != '_favorite'">
-	  	<xsl:param name="CONTEXT"/>  <!-- Catches the context parameter. -->
-	
-	    <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
-	      <xsl:choose>
-	        <xsl:when test="last() = 1">single</xsl:when>
-	        <xsl:when test="position() = 1">first</xsl:when>
-	        <xsl:when test="position() = last()">last</xsl:when>
-	        <xsl:otherwise></xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
-	      <xsl:choose>
-	        <xsl:when test="@activeTab='true' and $CONTEXT='header'">active fl-tabs-active</xsl:when>
-	        <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">active fl-activemenu</xsl:when>
-	        <xsl:otherwise></xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
-	      <xsl:choose>
-	        <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
-	        <xsl:otherwise>locked</xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_DELETABLE">
-	      <xsl:choose>
-	        <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
-	        <xsl:otherwise></xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_EDITABLE">
-	      <xsl:choose>
-	        <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
-	        <xsl:otherwise></xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_CAN_ADD_CHILDREN">
-	      <xsl:choose>
-	        <xsl:when test="not(@dlm:addChildAllowed='false')">canAddChildren</xsl:when>
-	        <xsl:otherwise></xsl:otherwise>
-	      </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
-	        <xsl:choose>
-	            <xsl:when test="$AUTHENTICATED='true'">
-	                <xsl:choose>
-	                    <xsl:when test="not(@dlm:editAllowed='false')">
-	                        <xsl:choose>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='header'">flc-inlineEditable</xsl:when>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">flc-inlineEditable</xsl:when>
-	                            <xsl:otherwise></xsl:otherwise>
-	                        </xsl:choose>
-	                    </xsl:when>
-	                    <xsl:otherwise></xsl:otherwise>
-	                </xsl:choose>
-	            </xsl:when>
-	            <xsl:otherwise></xsl:otherwise>
-	        </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
-	        <xsl:choose>
-	            <xsl:when test="$AUTHENTICATED='true'">
-	                <xsl:choose>
-	                    <xsl:when test="not(@dlm:editAllowed='false')">
-	                        <xsl:choose>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='header'">flc-inlineEdit-text</xsl:when>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">flc-inlineEdit-text</xsl:when>
-	                            <xsl:otherwise></xsl:otherwise>
-	                        </xsl:choose>
-	                    </xsl:when>
-	                    <xsl:otherwise></xsl:otherwise>
-	                </xsl:choose>
-	            </xsl:when>
-	            <xsl:otherwise></xsl:otherwise>
-	        </xsl:choose>
-	    </xsl:variable>
-	    <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
-	        <xsl:choose>
-	            <xsl:when test="$AUTHENTICATED='true'">
-	                <xsl:choose>
-	                    <xsl:when test="not(@dlm:editAllowed='false')">
-	                        <xsl:choose>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='header'">Click to edit tab name</xsl:when>
-	                            <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">Click to edit tab name</xsl:when>
-	                            <xsl:otherwise></xsl:otherwise>
-	                        </xsl:choose>
-	                    </xsl:when>
-	                    <xsl:otherwise></xsl:otherwise>
-	                </xsl:choose>
-	            </xsl:when>
-	            <xsl:otherwise></xsl:otherwise>
-	        </xsl:choose>
-	    </xsl:variable>
-	    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-	      <xsl:variable name="tabLinkUrl">
-	        <xsl:call-template name="portalUrl">
-	          <xsl:with-param name="url">
-	            <url:portal-url>
-	                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-	            </url:portal-url>
-	          </xsl:with-param>
-	        </xsl:call-template>
-	      </xsl:variable>
-	      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
-	        <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
-	          <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
-	        </span>
-	      </a> <!-- Navigation item link. -->
-	      <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
-	        <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
-	          <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
-	        </a> <!-- Drag & drop gripper handle. -->
-	      </xsl:if>
-	      <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
-	        <xsl:if test="not(@dlm:deleteAllowed='false')">
-	          <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
-	            <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
-	          </a><!-- Remove tab icon. -->
-	        </xsl:if>
-	      </xsl:if>
-	      <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
-	        <xsl:call-template name="subnavigation">
-	          <xsl:with-param name="CONTEXT" select="'subnav'"/>
-	          <xsl:with-param name="TAB_POSITION" select="position()"/>
-	        </xsl:call-template>
-	      </xsl:if>
-	      <xsl:if test="$USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
-	        <xsl:call-template name="subnavigation">
-	          <xsl:with-param name="CONTEXT" select="'flyout'"/>
-	          <xsl:with-param name="TAB_POSITION" select="position()"/>
-	        </xsl:call-template>
-	      </xsl:if>
-	    </li>
-	</xsl:if>
+    <xsl:if test="@name != '_favorite'">
+        <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter. -->
+
+        <xsl:variable name="NAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+          <xsl:choose>
+            <xsl:when test="last() = 1">single</xsl:when>
+            <xsl:when test="position() = 1">first</xsl:when>
+            <xsl:when test="position() = last()">last</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_ACTIVE"> <!-- Determine which navigation option is the active (current selection) and add a css hook. -->
+          <xsl:choose>
+            <xsl:when test="@activeTab='true' and $CONTEXT='header'">active fl-tabs-active</xsl:when>
+            <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">active fl-activemenu</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_MOVABLE"> <!-- Determine whether the navigation tab is movable and add a css hook. -->
+          <xsl:choose>
+            <xsl:when test="not(@dlm:moveAllowed='false')">movable</xsl:when>
+            <xsl:otherwise>locked</xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_DELETABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:deleteAllowed='false')">deletable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_EDITABLE">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:editAllowed='false')">editable</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_CAN_ADD_CHILDREN">
+          <xsl:choose>
+            <xsl:when test="not(@dlm:addChildAllowed='false')">canAddChildren</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+            <xsl:choose>
+                <xsl:when test="$AUTHENTICATED='true'">
+                    <xsl:choose>
+                        <xsl:when test="not(@dlm:editAllowed='false')">
+                            <xsl:choose>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='header'">flc-inlineEditable</xsl:when>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">flc-inlineEditable</xsl:when>
+                                <xsl:otherwise></xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+            <xsl:choose>
+                <xsl:when test="$AUTHENTICATED='true'">
+                    <xsl:choose>
+                        <xsl:when test="not(@dlm:editAllowed='false')">
+                            <xsl:choose>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='header'">flc-inlineEdit-text</xsl:when>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">flc-inlineEdit-text</xsl:when>
+                                <xsl:otherwise></xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+            <xsl:choose>
+                <xsl:when test="$AUTHENTICATED='true'">
+                    <xsl:choose>
+                        <xsl:when test="not(@dlm:editAllowed='false')">
+                            <xsl:choose>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='header'">Click to edit tab name</xsl:when>
+                                <xsl:when test="@activeTab='true' and $CONTEXT='sidebar'">Click to edit tab name</xsl:when>
+                                <xsl:otherwise></xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+          <xsl:variable name="tabLinkUrl">
+            <xsl:call-template name="portalUrl">
+              <xsl:with-param name="url">
+                <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                </url:portal-url>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:variable>
+          <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
+            <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
+              <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
+            </span>
+          </a> <!-- Navigation item link. -->
+          <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
+            <a href="javascript:;" class="portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+              <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
+            </a> <!-- Drag & drop gripper handle. -->
+          </xsl:if>
+          <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
+            <xsl:if test="not(@dlm:deleteAllowed='false')">
+              <a href="javascript:;" class="portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
+                <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
+              </a><!-- Remove tab icon. -->
+            </xsl:if>
+          </xsl:if>
+          <xsl:if test="@activeTab='true' and $CONTEXT='sidebar'"> <!-- If navigation is being rendered in the sidebar rather than as tabs, call template for rendering active menu item's submenu. -->
+            <xsl:call-template name="subnavigation">
+              <xsl:with-param name="CONTEXT" select="'subnav'"/>
+              <xsl:with-param name="TAB_POSITION" select="position()"/>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:if test="$USE_FLYOUT_MENUS='true'"> <!-- If using flyout menus, call template for rendering submenus. -->
+            <xsl:call-template name="subnavigation">
+              <xsl:with-param name="CONTEXT" select="'flyout'"/>
+              <xsl:with-param name="TAB_POSITION" select="position()"/>
+            </xsl:call-template>
+          </xsl:if>
+        </li>
+    </xsl:if>
   </xsl:template>
   <!-- ========================================== -->
 

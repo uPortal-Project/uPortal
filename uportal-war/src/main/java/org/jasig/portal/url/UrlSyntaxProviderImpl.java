@@ -639,7 +639,6 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
             logger.debug("Finished building requestInfo: {}", portalRequestInfo);
 
-            
             return portalRequestInfo;
         }
         finally {

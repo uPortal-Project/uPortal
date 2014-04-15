@@ -67,12 +67,10 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
       return LayoutNodeType.FOLDER;
     }
 
-
     @Override
     public String getFolderType() {
         return this.folderType;
     }
-
 
     @Override
     public void setFolderType(String folderTypeArg) {
@@ -115,6 +113,5 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
                 append("editAllowed", this.editAllowed).
                 append("precedence", this.precedence).
                 toString();
-
     }
 }

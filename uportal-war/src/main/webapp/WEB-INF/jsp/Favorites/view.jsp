@@ -48,7 +48,7 @@
   <%-- Display link to Marketplace if available, suppress otherwise --%>
   <c:if test="${not empty marketplaceUrl}">
   <span class="pull-right">
-	<a href="${marketplaceUrl}">
+    <a href="${marketplaceUrl}">
       <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
     </a>
   </span>

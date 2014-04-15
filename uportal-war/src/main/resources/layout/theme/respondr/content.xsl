@@ -561,38 +561,49 @@
       <!-- Add to Layout Icon -->
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <li>
-	        <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
-	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
-	        </a>
+            <a id="focusedContentDialogLink" href="javascript:;"
+            title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
+                <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
+            </a>
         </li>
       </xsl:if>
       <!-- Favorites -->
       <xsl:if test="$hasFavorites='true'">
           <xsl:choose>
-          <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to favorite. -->
+            <xsl:when test="$isInFavorites!='true'"> <!-- Add to favorite. -->
             <li>
-    	        <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}" class="addToFavoriteLink{@chanID}">
-    	            <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
-    	            <!-- used for the ajax call to add to favorites in up-favorite.js-->
-    	            <script type="text/javascript">
-    	            	(function($) {
-      						$( document ).ready(function() {
-    	            			$('.addToFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
-    	            		});
-    					})(up.jQuery);
-    	            </script>
-    	        </a>
+                <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
+                class="addToFavoriteLink{@chanID}">
+                    <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
+                    <!-- used for the ajax call to add to favorites in up-favorite.js-->
+                    <script type="text/javascript">
+                        (function($) {
+                            $( document ).ready(function() {
+                                $('.addToFavoriteLink<xsl:value-of
+                                    select="@chanID"/>').click({
+                                        portletId : '<xsl:value-of select="@chanID"/>',
+                                        context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
+                             });
+                         })(up.jQuery);
+                    </script>
+                </a>
             </li>
           </xsl:when>
           <xsl:otherwise><!-- Remove From favorites. -->
             <li>
-                <a href="javascript:;" title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}" class="removeFromFavoriteLink{@chanID}">
+                <a href="javascript:;"
+                   title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
+                   class="removeFromFavoriteLink{@chanID}">
                     <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
                     <!-- used for the ajax call to remove from favorites in up-favorite.js-->
                     <script type="text/javascript">
                         (function($) {
                             $( document ).ready(function() {
-                                $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@ID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                                $('.removeFromFavoriteLink<xsl:value-of
+                                     select="@chanID"/>').click({
+                                         portletId : '<xsl:value-of select="@ID"/>',
+                                         context : '<xsl:value-of select="$CONTEXT_PATH"/>'},
+                                         up.removeFromFavorite);
                             });
                         })(up.jQuery);
                     </script>
@@ -604,7 +615,9 @@
       
         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
           <li>
-            <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
+            <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;"
+               title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}">
+                <xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
           </li>
         </xsl:if>
         </ul>
@@ -619,12 +632,15 @@
                     <xsl:value-of select="//tab[@focusedFragment='true']/@name"></xsl:value-of>
                     <xsl:variable select="//tab[@focusedFragment='true']/@ID" name="FOCUSED_FRAGMENT_ID"></xsl:variable>
                     <div class="dropdown pull-right">
-                    <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu' data-toggle="dropdown" style="background: inherit;">
+                    <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu'
+                            data-toggle="dropdown" style="background: inherit;">
                         <span class="glyphicon glyphicon-cog"></span>
                     </button>
                         <ul class="dropdown-menu" role="menu" aria-labelledby='{$FOCUSED_FRAGMENT_ID}dropdownMenu'>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Favorite This Collection</a></li>
-                            <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Link to ...</a></li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="#">Favorite This Collection</a></li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="#">Link to ...</a></li>
                         </ul>
                     </div>
                 </h3>
