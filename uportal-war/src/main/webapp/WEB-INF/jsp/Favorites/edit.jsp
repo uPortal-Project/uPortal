@@ -23,7 +23,7 @@
 <c:set var="n"><portlet:namespace/></c:set>
 <div id="${n}fav_edit">
 
-  <%-- Flag whether a not-un-favorite-able item is encountered.
+  <%-- Flag whether a not-unfavorite-able item is encountered.
   Used to condition display of help text about locked items.
   If the user has no locked favorites, no need to bother the user about the complexities that do not apply. --%>
   <c:set var="lockedItemListed" value="false" />
@@ -68,7 +68,7 @@
             <c:otherwise>
               <div data-toggle="tooltip" title="<spring:message
                   code="favorites.lack.permission.to.unfavorite.collection"
-                  text="You lack permission to un-favorite this collection."/>">
+                  text="You lack permission to unfavorite this collection."/>">
                 <span class="glyphicon glyphicon-lock pull-right"></span>${collection.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
@@ -96,7 +96,7 @@
             <c:otherwise>
               <div data-toggle="tooltip" title="<spring:message
                   code="favorites.lack.permission.to.unfavorite.portlet"
-                  text="You lack permission to un-favorite this portlet."/>" >
+                  text="You lack permission to unfavorite this portlet."/>" >
                 <span class="glyphicon glyphicon-lock pull-right"></span>${favorite.name}
               </div>
               <c:set var="lockedItemListed" value="true" />
@@ -110,7 +110,7 @@
     <c:if test="${lockedItemListed}">
       <span class="help-block"><spring:message
               code="favorites.lock.icon.legend"
-              text="Favorites with the lock icon cannot be un-favorited."/>
+              text="Favorites with the lock icon cannot be unfavorited."/>
       </span>
     </c:if>
 

@@ -134,27 +134,27 @@ public class FavoritesEditController
                     layoutManager.saveUserLayout();
 
                     // TODO: use a message bundle
-                    response.setRenderParameter("successMessage", "Successfully un-favorited \"" + userFacingNodeName +
+                    response.setRenderParameter("successMessage", "Successfully unfavorited \"" + userFacingNodeName +
                             "\".");
 
-                    logger.debug("Successfully un-favorited [{}]", nodeDescription);
+                    logger.debug("Successfully unfavorited [{}]", nodeDescription);
 
                 } else {
-                    logger.error("Failed to delete node [{}] on un-favorite request, but this should have succeeded?",
+                    logger.error("Failed to delete node [{}] on unfavorite request, but this should have succeeded?",
                             nodeDescription);
                     // TODO: use a message bundle
-                    response.setRenderParameter("errorMessage", "Failed to un-favorite \"" + userFacingNodeName
+                    response.setRenderParameter("errorMessage", "Failed to unfavorite \"" + userFacingNodeName
                             + "\"Please contact support if this problem persists.");
                 }
 
             } else {
 
                 logger.warn(
-                        "Attempt to un-favorite [{}] failed because user lacks permission to delete that layout node.",
+                        "Attempt to unfavorite [{}] failed because user lacks permission to delete that layout node.",
                         nodeDescription);
 
                 // TODO: use a message bundle
-                response.setRenderParameter("errorMessage", "You do not have sufficient privileges to un-favorite \"" +
+                response.setRenderParameter("errorMessage", "You do not have sufficient privileges to unfavorite \"" +
                         userFacingNodeName + "\".");
 
             }
