@@ -44,12 +44,12 @@ public class UserLayoutNodeDescriptionTest {
         UserLayoutNodeDescription copyFrom = new UserLayoutNodeDescription() {
             @Override
             public LayoutNodeType getType() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             @Override
             public Element getXML(Document root) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
         };
 
@@ -72,12 +72,12 @@ public class UserLayoutNodeDescriptionTest {
         UserLayoutNodeDescription copyTo = new UserLayoutNodeDescription(copyFrom) {
             @Override
             public LayoutNodeType getType() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             @Override
             public Element getXML(Document root) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
         };
 
@@ -110,12 +110,12 @@ public class UserLayoutNodeDescriptionTest {
         copyTo = new UserLayoutNodeDescription(copyFrom) {
             @Override
             public LayoutNodeType getType() {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             @Override
             public Element getXML(Document root) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
         };
 
