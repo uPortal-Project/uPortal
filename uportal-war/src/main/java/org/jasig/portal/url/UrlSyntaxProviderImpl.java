@@ -362,24 +362,26 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                                             "stepping back one path part to finish folder processing", pathPart);
                                     pathPartIndex--;
                                     break;
-                                } else
+                                } else {
 
 
-                                 if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
-                                    logger.trace("Found the end of the folder path with pathPart [{}];" +
-                                            " stepping back one, checking for state, " +
-                                            "and finishing folder parsing", pathPart);
-                                    pathPartIndex--;
-                                    pathPart = requestPathParts[pathPartIndex];
-                                    
-                                    //If a state was added to the folder list remove it and step back one so other code can handle it
-                                    if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
-                                        logger.trace("A state was added to the end of folder list {};" +
-                                                " removing it.", folders);
-                                        folders.removeLast();
+                                    if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
+                                        logger.trace("Found the end of the folder path with pathPart [{}];" +
+                                                " stepping back one, checking for state, " +
+                                                "and finishing folder parsing", pathPart);
                                         pathPartIndex--;
+                                        pathPart = requestPathParts[pathPartIndex];
+
+                                        // If a state was added to the folder list remove it and step back one so
+                                        // other code can handle it
+                                        if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
+                                            logger.trace("A state was added to the end of folder list {};" +
+                                                    " removing it.", folders);
+                                            folders.removeLast();
+                                            pathPartIndex--;
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
 
                                 logger.trace("Adding pathPart [{}] to folders.", pathPart);
