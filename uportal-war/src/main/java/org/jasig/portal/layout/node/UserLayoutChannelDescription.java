@@ -553,6 +553,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
       return LayoutNodeType.PORTLET;
     }
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this).
                 append("ID", this.id).

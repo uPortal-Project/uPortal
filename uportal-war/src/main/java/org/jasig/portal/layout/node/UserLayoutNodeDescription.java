@@ -307,6 +307,7 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         }
     }
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this).
                 append("ID", this.id).
