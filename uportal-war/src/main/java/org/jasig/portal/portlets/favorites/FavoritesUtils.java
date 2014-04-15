@@ -56,7 +56,7 @@ public final class FavoritesUtils {
             throw new IllegalArgumentException("Cannot get favorites collections from a null userLayout");
         }
 
-        logger.trace("Extracting favorites collections from layout [{}]", userLayout);
+        logger.trace("Extracting favorites collections from layout [{}].", userLayout);
 
         Enumeration<String> nodeIds = userLayout.getChildIds(userLayout.getRootId());
 

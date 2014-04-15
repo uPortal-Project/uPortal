@@ -95,7 +95,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public void setTargetedLayoutNodeId(String targetedLayoutNodeId) {
         this.checkReadOnly();
         this.targetedLayoutNodeId = targetedLayoutNodeId;
-        logger.trace("Set targetedLayoutNodeId to {}", targetedLayoutNodeId);
+        logger.trace("Set targetedLayoutNodeId to {}.", targetedLayoutNodeId);
     }
 
     @Override
@@ -105,7 +105,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public void setTargetedPortletWindowId(IPortletWindowId targetedPortletWindowId) {
         this.checkReadOnly();
         this.targetedPortletWindowId = targetedPortletWindowId;
-        logger.trace("Set targetedPortletWindowId to {}", targetedPortletWindowId);
+        logger.trace("Set targetedPortletWindowId to {}.", targetedPortletWindowId);
     }
     
     @Override

@@ -224,7 +224,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
 
         } else {
             logger.trace("Tab identified by {} had no externalId " +
-                    "so returning just {} as the sole folder name for node {}", layoutNodeId, tabId, layoutNodeId);
+                    "so returning just {} as the sole folder name for node {}.", layoutNodeId, tabId, layoutNodeId);
             return Arrays.asList(tabId);
         }
     }
@@ -252,7 +252,8 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         }
 
         if (folderNames.size() > 1) {
-            logger.warn("Asked to consider multiple folder names {}, but ignoring all but the first which has been parsed as {}", folderNames, folderName);
+            logger.warn("Asked to consider multiple folder names {}, " +
+                    "but ignoring all but the first which has been parsed as {}.", folderNames, folderName);
         }
         
         // Search the users layout attributes for a layout node with a matching externalId value
@@ -267,7 +268,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
                 if (nodeId.equals(layoutNodeId)) {
                     //ExternalId matched as well as the layoutNodeId, clear the firstMatchingNodeId since we found the nodeId here
 
-                    logger.trace("Parsed folder names {} to nodeId {}", folderNames, nodeId);
+                    logger.trace("Parsed folder names {} to nodeId {}.", folderNames, nodeId);
 
                     return nodeId;
                 }
@@ -314,7 +315,7 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
 
         String nodeId = node.getId();
 
-        logger.trace("Resolved node id {} for folder names {}", nodeId, folderNames);
+        logger.trace("Resolved node id {} for folder names {}.", nodeId, folderNames);
         return nodeId;
     }
 

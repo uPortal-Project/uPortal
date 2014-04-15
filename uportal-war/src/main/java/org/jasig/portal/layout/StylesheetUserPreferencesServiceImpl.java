@@ -489,7 +489,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Override
     public String setStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name, String value) {
 
-        logger.trace("Setting stylesheet parameter {} with scope {} to {}", name, prefScope, value);
+        logger.trace("Setting stylesheet parameter {} with scope {} to {}.", name, prefScope, value);
 
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;

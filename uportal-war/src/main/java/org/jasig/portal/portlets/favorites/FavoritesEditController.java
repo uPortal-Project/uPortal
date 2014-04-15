@@ -162,7 +162,7 @@ public class FavoritesEditController
         } catch (Exception e) {
 
             // TODO: this log message is kind of useless without the username to put the node in context
-            logger.error("Something went wrong un-favoriting nodeId [{}]", nodeId);
+            logger.error("Something went wrong un-favoriting nodeId [{}].", nodeId);
 
             // TODO: get error message from message bundle
             response.setRenderParameter("errorMessage", "Un-favoriting failed for an unknown reason.  This error has " +

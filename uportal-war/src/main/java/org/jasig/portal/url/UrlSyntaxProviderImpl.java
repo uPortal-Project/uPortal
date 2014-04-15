@@ -335,7 +335,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
                 String pathPart = requestPathParts[pathPartIndex];
 
-                logger.trace("In parseStep {} considering pathPart [{}]", parseStep, pathPart);
+                logger.trace("In parseStep {} considering pathPart [{}].", parseStep, pathPart);
 
                 if (StringUtils.isEmpty(pathPart)) {
                     continue;
