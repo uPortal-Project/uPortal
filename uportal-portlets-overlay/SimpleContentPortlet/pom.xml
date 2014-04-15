@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
         <artifactId>platform-portlets-overlay</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
