@@ -73,18 +73,18 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @GeneratedValue(generator = "UP_PERSON_DIR_GEN")
     @Column(name = "USER_DIR_ID")
     private final long id;
-    
+
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
-    
+
     @NaturalId
-    @Column(name = "USER_NAME", length = 35, nullable = false)
+    @Column(name = "USER_NAME", length = 100, nullable = false)
     private final String name;
-    
+
     @Column(name = "ENCRPTD_PSWD", length = 256)
     private String password;
-    
+
     @Column(name = "LST_PSWD_CGH_DT")
     private Date lastPasswordChange;
 
@@ -100,15 +100,15 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         this.entityVersion = -1;
         this.name = null;
     }
-    
+
     public LocalAccountPersonImpl(String name) {
         Assert.notNull(name);
-        
+
         this.id = -1;
         this.entityVersion = -1;
         this.name = name;
     }
-    
+
     public LocalAccountPersonImpl(String name, Long Id) {
         Assert.notNull(name);
         Assert.notNull(Id);
@@ -116,12 +116,12 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         this.entityVersion = -1;
         this.name = name;
     }
-    
+
     @Override
     public long getId() {
         return id;
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#getName()
      */
@@ -171,7 +171,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         if (values != null && values.size() > 0) {
             return values.get(0);
         }
-        
+
         return null;
     }
 
@@ -183,13 +183,13 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         if (name == null) {
             throw new IllegalArgumentException("name cannot be null");
         }
-        
+
         for (LocalAccountPersonAttributeImpl attribute : attributes) {
             if (name.equals(attribute.getName())) {
                 return this.getObjectValues(attribute);
             }
         }
-        
+
         return null;
     }
 
@@ -199,16 +199,15 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Override
     public Map<String, List<Object>> getAttributes() {
         final Map<String, List<Object>> attributeMap = new LinkedHashMap<String, List<Object>>();
-        
+
         for (final LocalAccountPersonAttributeImpl attribute : attributes) {
             final List<Object> objValues = this.getObjectValues(attribute);
             attributeMap.put(attribute.getName(), objValues);
         }
-        
+
         return Collections.unmodifiableMap(attributeMap);
     }
-    
-    
+
     @Override
     public void setAttribute(String name, String... values) {
         this.setAttribute(name, Arrays.asList(values));
@@ -225,7 +224,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
                 return;
             }
         }
-        
+
         attributes.add(new LocalAccountPersonAttributeImpl(name, values));
     }
 
@@ -236,10 +235,10 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
                 return;
             }
         }
-        
+
         attributes.add(new LocalAccountPersonAttributeImpl(name, Collections.singletonList(value)));
     }
-    
+
     @Override
     public boolean removeAttribute(String name) {
         for (final Iterator<LocalAccountPersonAttributeImpl> itr = attributes.iterator(); itr.hasNext(); ) {
@@ -250,7 +249,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         }
         return false;
     }
-    
+
     @Override
     public void clearAttributes() {
         this.attributes.clear();
@@ -262,13 +261,13 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
     @Override
     public void setAttributes(Map<String, List<String>> attributes) {
         //Tries to modify as many of the existing attributes in place to reduce DB churn in hibernate
-        
+
         //Make a local copy so we don't edit the original reference
         attributes = new LinkedHashMap<String, List<String>>(attributes);
-        
+
         for (final Iterator<LocalAccountPersonAttributeImpl> attributesItr = this.attributes.iterator(); attributesItr.hasNext(); ) {
             final LocalAccountPersonAttributeImpl attribute = attributesItr.next();
-            
+
             //Remove the new values for the attribute from the input map
             final String name = attribute.getName();
             final List<String> newValues = attributes.remove(name);
@@ -282,7 +281,7 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
                 attribute.setValues(new ArrayList<String>(newValues));
             }
         }
-        
+
         //Add any remaining new attributes to the list
         for (final Map.Entry<String, List<String>> attribute : attributes.entrySet()) {
             final String name = attribute.getKey();
@@ -290,14 +289,14 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
             this.attributes.add(new LocalAccountPersonAttributeImpl(name, values));
         }
     }
-    
+
     protected List<Object> getObjectValues(LocalAccountPersonAttributeImpl attribute) {
         final List<String> values = attribute.getValues();
         final List<Object> objValues = new ArrayList<Object>(values.size());
         objValues.addAll(values);
         return Collections.unmodifiableList(objValues);
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

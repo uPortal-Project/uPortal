@@ -32,7 +32,7 @@
       <column> <name>USER_ID</name>          <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
       </column>
-      <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>35</param>
+      <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>100</param>
         <desc>Authentication prinicipal - Foreign key to up_person_dir</desc>
       </column>
       <column> <name>USER_DFLT_USR_ID</name> <type>INTEGER</type>
