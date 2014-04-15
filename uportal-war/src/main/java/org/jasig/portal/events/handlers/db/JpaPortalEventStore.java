@@ -100,6 +100,7 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
                 "WHERE e." + PersistentPortalEvent_.timestamp.getName() + " >= :" + this.startTimeParameter.getName() + " " +
                      "AND e." + PersistentPortalEvent_.timestamp.getName() + " < :" + this.endTimeParameter.getName() + " " +
                      "AND (e." + PersistentPortalEvent_.aggregated.getName() + " is null OR e." + PersistentPortalEvent_.aggregated.getName() + " = false) " +
+                     "AND (e." + PersistentPortalEvent_.errorAggregating.getName() + " is null OR e." + PersistentPortalEvent_.errorAggregating.getName() + " = false) " +
                 "ORDER BY e." + PersistentPortalEvent_.timestamp.getName() + " ASC";
         
         this.deleteQuery = 
@@ -206,28 +207,37 @@ public class JpaPortalEventStore extends BaseRawEventsJpaDao implements IPortalE
             catch (RuntimeException e) {
                 this.logger.warn("Failed to convert PersistentPortalEvent to PortalEvent: " + persistentPortalEvent, e);
                 
-                //Mark the event as aggregated and store the mark to prevent trying to reprocess the broken event data
-                persistentPortalEvent.setAggregated(true);
+                //Mark the event as error and store the mark to prevent trying to reprocess the broken event data
+                persistentPortalEvent.setErrorAggregating(true);
                 session.persist(persistentPortalEvent);
                 
                 continue;
             }
             
-            final Boolean eventHandled = handler.apply(portalEvent);
-            if (!eventHandled) {
-                this.logger.debug("Aggregation stop requested before processing event {}", portalEvent);
-                return false;
-            }
+            try {
             
-            //Mark the event as aggregated and store the mark
-            persistentPortalEvent.setAggregated(true);
-            session.persist(persistentPortalEvent);
+                final Boolean eventHandled = handler.apply(portalEvent);
+                if (!eventHandled) {
+                    this.logger.debug("Aggregation stop requested before processing event {}", portalEvent);
+                    return false;
+                }
+                
+                //Mark the event as aggregated and store the mark
+                persistentPortalEvent.setAggregated(true);
+                session.persist(persistentPortalEvent);
+                
+                //periodic flush and clear of session to manage memory demands
+                if (++resultCount % this.flushPeriod == 0) {
+                    this.logger.debug("Aggregated {} events, flush and clear {} EntityManager.", resultCount, PERSISTENCE_UNIT_NAME);
+                    session.flush();
+                    session.clear();
+                }
             
-            //periodic flush and clear of session to manage memory demands
-            if (++resultCount % this.flushPeriod == 0) {
-                this.logger.debug("Aggregated {} events, flush and clear {} EntityManager.", resultCount, PERSISTENCE_UNIT_NAME);
-                session.flush();
-                session.clear();
+            } catch (Exception e) {
+                this.logger.warn("Failed to aggregate portal event: " + persistentPortalEvent, e);
+                //mark the event as erred and move on. This will not be picked up by processing again
+                persistentPortalEvent.setErrorAggregating(true);
+                session.persist(persistentPortalEvent);
             }
         }
         
