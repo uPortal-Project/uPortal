@@ -130,10 +130,10 @@ public final class FavoritesUtils {
 
                 if (FOLDER.equals(nodeType)
                         && nodeDescription instanceof IUserLayoutFolderDescription) {
-                	IUserLayoutFolderDescription folderDescription = (IUserLayoutFolderDescription) nodeDescription;
+                    IUserLayoutFolderDescription folderDescription = (IUserLayoutFolderDescription) nodeDescription;
 
                     if (FAVORITES_TYPE.equalsIgnoreCase(folderDescription.getFolderType())) {
-                    	return folderDescription.getId();
+                        return folderDescription.getId();
                     }
                 }
             } catch (Exception e) {

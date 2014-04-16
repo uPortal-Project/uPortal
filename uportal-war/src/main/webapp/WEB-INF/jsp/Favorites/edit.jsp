@@ -128,7 +128,7 @@
   <%-- Display short link to Marketplace if available, suppress otherwise --%>
   <c:if test="${not empty marketplaceUrl}">
     <span class="pull-right">
-	  <a href="${marketplaceUrl}">
+      <a href="${marketplaceUrl}">
         <spring:message code="favorites.invitation.to.marketplace.short" text="Visit Marketplace"/>
       </a>
     </span>
@@ -140,9 +140,9 @@ up.jQuery(function() {
     var $ = up.jQuery;
     $(document).ready( function () {
         $('#${n}fav_edit .sortable-collections').sortable({
-        	deactivate: function(event, ui) {
+            deactivate: function(event, ui) {
                 up.moveStuff('Tab', ui.item[0], '${renderRequest.contextPath}');
-        	}
+            }
         });
         $('#${n}fav_edit .sortable-portlet').sortable({
             deactivate: function(event, ui) {
