@@ -85,6 +85,9 @@
         </portlet:actionURL>
         <li class="list-group-item ${favorite.moveAllowed ? '' : 'sort-disabled'}" sourceID="${favorite.id}">
           <c:if test="${favorite.moveAllowed}">
+            <%-- That sort glyph may be shown when only one item and so nothing to re-order against is
+                 deliberate, meant to communicate to the user that if he or she had more items they would then
+                 be re-order-able, and meant to provide UI consistency in the one and more-than-one items cases. --%>
             <span class="glyphicon glyphicon-sort pull-left" style='padding-right: 1em; cursor: move;'></span>
           </c:if>
           <c:choose>
