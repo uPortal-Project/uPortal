@@ -1737,7 +1737,7 @@
      | - 1 x user logins
      | - CAS PGT replicated synchronously
      +-->
-    <!--cache name="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache"
+    <cache name="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
            memoryStoreEvictionPolicy="LRU" statistics="true">
@@ -1747,7 +1747,7 @@
                 replicatePuts=true,
                 replicateUpdates=true, replicateUpdatesViaCopy=true,
                 replicateRemovals=true "/>
-    </cache-->
+    </cache>
 
 
     <!-- Caches failures with skin manager less CSS compilations. -->

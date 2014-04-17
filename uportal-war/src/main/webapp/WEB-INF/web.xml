@@ -99,12 +99,13 @@
         <!--
          | For CAS PGT replication for CAS ClearPass in a clustered uPortal environment.
          | See "Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching" in
-         | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml
+         | https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml.
+         | If CAS ClearPass is not enabled in security.properties, this parameter has no effect.
          +-->
-        <!--init-param>
+        <init-param>
             <param-name>proxyGrantingTicketStorageClass</param-name>
             <param-value>org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl</param-value>
-        </init-param-->
+        </init-param>
     </filter>
     
     <filter>
