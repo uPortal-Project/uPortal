@@ -62,8 +62,9 @@ public class FavoritesEditController
      * marketPlaceFname --> String functional name of Marketplace portlet, or null if not available.
      * collections      --> List of favorited collections (IUserLayoutNodeDescription s)
      * favorites        --> List of favorited individual portlets (IUserLayoutNodeDescription s)
-     * successMessage   --> String success message, or null if none
-     * errorMessage     --> String error message, or null if none
+     * successMessageCode   --> String success message bundle key, or null if none
+     * errorMessageCode     --> String error message bundle key, or null if none
+     * nameOfFavoriteActedUpon --> Name of favorite acted upon, intended as parameter to success or error message
      *
      * @param model . Spring model.  This method adds five model attributes.
      * @return jsp/Favorites/edit[_zero]
@@ -91,9 +92,10 @@ public class FavoritesEditController
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(userLayout);
         model.addAttribute("favorites", favorites);
 
-        model.addAttribute("successMessage", renderRequest.getParameter("successMessage"));
+        model.addAttribute("successMessageCode", renderRequest.getParameter("successMessageCode"));
+        model.addAttribute("errorMessageCode", renderRequest.getParameter("errorMessageCode"));
 
-        model.addAttribute("errorMessage", renderRequest.getParameter("errorMessage"));
+        model.addAttribute("nameOfFavoriteActedUpon", renderRequest.getParameter("nameOfFavoriteActedUpon"));
 
         // default to the regular old edit view
         String viewName = "jsp/Favorites/edit";
@@ -110,7 +112,22 @@ public class FavoritesEditController
     }
 
 
-
+    /**
+     * Un-favorite a favorite node (portlet or collection) identified by node ID.
+     * Routed by the action=delete parameter.
+     *
+     * Sets render parameters:
+     * successMessageCode: message code of success message if applicable
+     * errorMessageCode: message code of error message if applicable
+     * nameOfFavoriteActedUpon: user-facing name of favorite acted upon.
+     * action: will be set to "list" to facilitate not repeatedly attempting delete.
+     *
+     * Exactly one of [successMessageCode|errorMessageCode] render parameters will be set.
+     * nameOfFavoriteActedUpon and action will always be set.
+     *
+     * @param nodeId identifier of target node
+     * @param response ActionResponse onto which render parameters will be set
+     */
     @ActionMapping(params = {"action=delete"})
     public void unFavoriteNode(@RequestParam("nodeId") String nodeId, ActionResponse response) {
 
@@ -125,6 +142,7 @@ public class FavoritesEditController
             IUserLayoutNodeDescription nodeDescription = layoutManager.getNode(nodeId);
 
             String userFacingNodeName = nodeDescription.getName();
+            response.setRenderParameter("nameOfFavoriteActedUpon", userFacingNodeName);
 
             if (nodeDescription.isDeleteAllowed()) {
 
@@ -133,40 +151,39 @@ public class FavoritesEditController
                 if (nodeSuccessfullyDeleted) {
                     layoutManager.saveUserLayout();
 
-                    // TODO: use a message bundle
-                    response.setRenderParameter("successMessage", "Successfully unfavorited \"" + userFacingNodeName +
-                            "\".");
+                    response.setRenderParameter("successMessageCode", "favorites.unfavorite.success.parameterized");
 
                     logger.debug("Successfully unfavorited [{}]", nodeDescription);
 
                 } else {
                     logger.error("Failed to delete node [{}] on unfavorite request, but this should have succeeded?",
                             nodeDescription);
-                    // TODO: use a message bundle
-                    response.setRenderParameter("errorMessage", "Failed to unfavorite \"" + userFacingNodeName
-                            + "\"Please contact support if this problem persists.");
+
+                    response.setRenderParameter("errorMessageCode", "favorites.unfavorite.fail.parameterized");
+
                 }
 
             } else {
-
                 logger.warn(
                         "Attempt to unfavorite [{}] failed because user lacks permission to delete that layout node.",
                         nodeDescription);
 
-                // TODO: use a message bundle
-                response.setRenderParameter("errorMessage", "You do not have sufficient privileges to unfavorite \"" +
-                        userFacingNodeName + "\".");
+                response.setRenderParameter("errorMessageCode",
+                        "favorites.unfavorite.fail.lack.permission.parameterized");
 
             }
 
         } catch (Exception e) {
 
             // TODO: this log message is kind of useless without the username to put the node in context
-            logger.error("Something went wrong un-favoriting nodeId [{}].", nodeId);
+            logger.error("Something went wrong unfavoriting nodeId [{}].", nodeId);
 
-            // TODO: get error message from message bundle
-            response.setRenderParameter("errorMessage", "Un-favoriting failed for an unknown reason.  This error has " +
-                    "been logged.  Please contact support for assistance if this problem persists for you.");
+            // may have failed to load node description, so fall back on describing by id
+            final String fallbackUserFacingNodeName = "node with id " + nodeId;
+
+            response.setRenderParameter("errorMessageCode", "favorites.unfavorite.fail.parameterized");
+            response.setRenderParameter("nameOfFavoriteActedUpon", fallbackUserFacingNodeName);
+
         }
 
         response.setRenderParameter("action", "list");

@@ -34,17 +34,23 @@
 
   <p><spring:message code="favorites.edit" text="Edit your favorites:"/></p>
 
-    <c:if test="${not empty errorMessage}">
+    <c:if test="${not empty errorMessageCode}">
       <div class="alert alert-warning alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <c:out value="${errorMessage}" escapeXml="true" />
+          <spring:message
+                  code="${errorMessageCode}"
+                  text="Un-defined error message."
+                  arguments="${nameOfFavoriteActedUpon}"/>
       </div>
     </c:if>
 
-    <c:if test="${not empty successMessage}">
+    <c:if test="${not empty successMessageCode}">
       <div class="alert alert-success alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        <c:out value="${successMessage}" escapeXml="true" />
+        <spring:message
+                code="${successMessageCode}"
+                text="Un-defined success message."
+                arguments="${nameOfFavoriteActedUpon}"/>
       </div>
     </c:if>
 

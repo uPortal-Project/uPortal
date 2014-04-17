@@ -31,18 +31,24 @@
 
   <%-- Display messages even though no favorites because we may have entered or remained in this
        got-no-favorites state through a user action that generated a message. --%>
-  <c:if test="${not empty errorMessage}">
-    <div class="alert alert-warning alert-dismissable">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <c:out value="${errorMessage}" escapeXml="true" />
-    </div>
+  <c:if test="${not empty errorMessageCode}">
+      <div class="alert alert-warning alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <spring:message
+                  code="${errorMessageCode}"
+                  text="Un-defined error message."
+                  arguments="${nameOfFavoriteActedUpon}"/>
+      </div>
   </c:if>
 
-  <c:if test="${not empty successMessage}">
-    <div class="alert alert-success alert-dismissable">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <c:out value="${successMessage}" escapeXml="true" />
-    </div>
+  <c:if test="${not empty successMessageCode}">
+      <div class="alert alert-success alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <spring:message
+                  code="${successMessageCode}"
+                  text="Un-defined success message."
+                  arguments="${nameOfFavoriteActedUpon}"/>
+      </div>
   </c:if>
 
   <p><spring:message code="favorites.have.none.to.edit" text="You have no favorites to edit."/></p>
