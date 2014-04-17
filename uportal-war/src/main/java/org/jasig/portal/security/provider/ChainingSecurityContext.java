@@ -31,8 +31,8 @@ import org.jasig.portal.security.IParentAwareSecurityContext;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>This is the basic abstract class for all security contexts that should
@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /**
    * Default value for stopWhenAuthenticated.
