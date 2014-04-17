@@ -212,8 +212,8 @@
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
         
-        <project.build.sourceVersion>1.6</project.build.sourceVersion>
-        <project.build.targetVersion>1.6</project.build.targetVersion>
+        <project.build.sourceVersion>1.7</project.build.sourceVersion>
+        <project.build.targetVersion>1.7</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -1308,6 +1308,7 @@
                                 <version>2.8</version>
                                 <configuration>
                                     <links>
+                                        <link>http://docs.oracle.com/javase/7/docs/api/</link>
                                         <link>http://java.sun.com/javase/6/docs/api/</link>
                                         <link>http://java.sun.com/javaee/5/docs/api/</link>
                                         <link>http://portals.apache.org/pluto/portlet-2.0-apidocs/</link>
