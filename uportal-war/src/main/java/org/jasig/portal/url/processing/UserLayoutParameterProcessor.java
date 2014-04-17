@@ -24,8 +24,8 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
@@ -55,7 +55,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("userLayoutRequestParameterProcessor")
 public class UserLayoutParameterProcessor implements IRequestParameterProcessor {
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private IUserInstanceManager userInstanceManager;
     private IUrlSyntaxProvider urlSyntaxProvider;

@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -333,6 +334,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             ParseStep parseStep = ParseStep.FOLDER;
             for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
                 String pathPart = requestPathParts[pathPartIndex];
+
+                logger.trace("In parseStep {} considering pathPart [{}].", parseStep, pathPart);
+
                 if (StringUtils.isEmpty(pathPart)) {
                     continue;
                 }
@@ -342,34 +346,49 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         parseStep = ParseStep.PORTLET;
                         
                         if (FOLDER_PATH_PREFIX.equals(pathPart)) {
-                            //Skip adding the prefix to the folders deque
+
+                            logger.trace("Skipping adding {} to the folders deque " +
+                                    "because it is simply the folder path prefix.", pathPart);
+
                             pathPartIndex++;
                             
                             final LinkedList<String> folders = new LinkedList<String>();
                             for (;pathPartIndex < requestPathParts.length; pathPartIndex++) {
                                 pathPart = requestPathParts[pathPartIndex];
-                                
-                                //Found the portlet part of the path, step back one and finish folder parsing
+
                                 if (PORTLET_PATH_PREFIX.equals(pathPart)) {
+                                    logger.trace("Found the portlet part of the path " +
+                                            "demarked by portlet path prefix [{}]; " +
+                                            "stepping back one path part to finish folder processing", pathPart);
                                     pathPartIndex--;
                                     break;
-                                }
-                                //Found the end of the path, step back one, check for state and finish folder parsing
-                                else if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
-                                    pathPartIndex--;
-                                    pathPart = requestPathParts[pathPartIndex];
-                                    
-                                    //If a state was added to the folder list remove it and step back one so other code can handle it
-                                    if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
-                                        folders.removeLast();
+                                } else {
+
+
+                                    if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
+                                        logger.trace("Found the end of the folder path with pathPart [{}];" +
+                                                " stepping back one, checking for state, " +
+                                                "and finishing folder parsing", pathPart);
                                         pathPartIndex--;
+                                        pathPart = requestPathParts[pathPartIndex];
+
+                                        // If a state was added to the folder list remove it and step back one so
+                                        // other code can handle it
+                                        if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
+                                            logger.trace("A state was added to the end of folder list {};" +
+                                                    " removing it.", folders);
+                                            folders.removeLast();
+                                            pathPartIndex--;
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
-    
+
+                                logger.trace("Adding pathPart [{}] to folders.", pathPart);
                                 folders.add(pathPart);
                             }
-                            
+
+                            logger.trace("Folders is [{}]", folders);
                             if (folders.size() > 0) {
                                 final String targetedLayoutNodeId = urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, folders);
                                 portalRequestInfo.setTargetedLayoutNodeId(targetedLayoutNodeId);
@@ -620,10 +639,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
             request.setAttribute(PORTAL_REQUEST_INFO_ATTR, portalRequestInfo);
             
-            if(logger.isDebugEnabled()) {
-                logger.debug("finished building requestInfo: " + portalRequestInfo);
-            }
-            
+            logger.debug("Finished building requestInfo: {}", portalRequestInfo);
+
             return portalRequestInfo;
         }
         finally {
@@ -814,6 +831,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
+        
+        boolean isRedirectionToDefaultUrl = false;
+        
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final String cachedCanonicalUrl = (String)request.getAttribute(PORTAL_CANONICAL_URL);
         if (cachedCanonicalUrl != null) {
@@ -840,11 +860,20 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
         else {
             portalUrlBuilder = this.portalUrlProvider.getDefaultUrl(request);
+            isRedirectionToDefaultUrl = request.getPathInfo() != null;
         }
         
         //Copy over portal parameters
-        final Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
-        portalUrlBuilder.setParameters(portalParameters);
+        Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
+        
+        if(isRedirectionToDefaultUrl) {//add in redirect parameter so we know that we were redirected
+            Map<String, List<String>> portalParamsWithRedirect = new HashMap<String, List<String>>(portalParameters);
+            
+            portalParamsWithRedirect.put("redirectToDefault", Collections.singletonList( "true" ));
+            portalUrlBuilder.setParameters(portalParamsWithRedirect);
+        } else {
+            portalUrlBuilder.setParameters(portalParameters);
+        }
         
         //Copy data for each portlet
         for (final IPortletRequestInfo portletRequestInfo : portalRequestInfo.getPortletRequestInfoMap().values()) {

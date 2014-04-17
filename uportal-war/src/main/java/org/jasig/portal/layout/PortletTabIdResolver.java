@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.layout;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,6 +34,9 @@ import org.w3c.dom.Node;
  * @author Arvīds Grabovskis
  */
 public class PortletTabIdResolver implements INodeIdResolver {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final String layoutNodeId;
 
     public PortletTabIdResolver(String layoutNodeId) {
@@ -47,11 +52,17 @@ public class PortletTabIdResolver implements INodeIdResolver {
                 // '/layout/folder/folder' - tabs
                 for (Node tab = rootFolder.getFirstChild(); tab != null; tab = tab.getNextSibling()) {
                     if (containsElmentWithId(tab, layoutNodeId)) {
-                        return ((Element) tab).getAttribute("ID");
+                        String foundId = ((Element) tab).getAttribute("ID");
+
+                        logger.trace("Found id {} after traversing document {} looking for layoutNodeId {}",
+                                foundId, document, layoutNodeId);
+                        return foundId;
                     }
                 }
             }
         }
+
+        logger.trace("Did not find layoutNodeId {} in Document {}", layoutNodeId, document);
         return null;
     }
 

@@ -36,8 +36,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.UserPreferencesManager;
@@ -58,6 +56,7 @@ import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
@@ -66,6 +65,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -95,7 +96,7 @@ public class UpdatePreferencesServlet {
     private static final String ADDTAB_PERMISSION_ACTIVITY = "ADD_TAB";
     private static final String ADDTAB_PERMISSION_TARGET = "ALL";
 
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IUserIdentityStore userIdentityStore;
@@ -283,6 +284,7 @@ public class UpdatePreferencesServlet {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
         IPerson per = getPerson(ui, response);
+        final Locale locale = RequestContextUtils.getLocale(request);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
@@ -347,9 +349,14 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Error saving layout", e);
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response", getMessage("error.move.portlet",
+                    "There was an issue moving this portlet, please refresh the page and try again.", locale)));
 		}
 
-        return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+        return new ModelAndView("jsonView",
+                Collections.singletonMap("response", getMessage("success.move.portlet",
+                "Portlet moved successfully", locale)));
 
 	}
 
@@ -486,6 +493,7 @@ public class UpdatePreferencesServlet {
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final Locale locale = RequestContextUtils.getLocale(request);
 
 		// gather the parameters we need to move a channel
 		String destinationId = request.getParameter("elementID");
@@ -496,23 +504,106 @@ public class UpdatePreferencesServlet {
 		// to know what the target is. If there's no target, just
 		// assume we're moving it to the very end of the list.
 		String siblingId = null;
-		if (method.equals("insertBefore"))
+		if ("insertBefore".equals(method))
 			siblingId = destinationId;
 
-		// move the node as requested and save the layout
-		ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
-
-		try {
+        try {
+            // move the node as requested and save the layout
+            ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
             ulm.saveUserLayout();
 		} catch (Exception e) {
 			log.warn("Failed to move tab in user layout", e);
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return null;
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response", getMessage("error.move.tab",
+                    "There was an issue moving the tab, please refresh the page and try again.", locale)));
 		}
 
-		return new ModelAndView("jsonView", Collections.EMPTY_MAP);
+        return new ModelAndView("jsonView",
+                Collections.singletonMap("response", getMessage("success.move.tab",
+                "Tab moved successfully", locale)));
 
 	}
+
+    @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
+    public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
+        //setup
+        IUserInstance ui = userInstanceManager.getUserInstance(request);
+
+        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        
+        IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(portletDefinitionRegistry.getPortletDefinition(channelId));
+        
+        final Locale locale = RequestContextUtils.getLocale(request);
+        
+        //get favorite tab
+        String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
+
+        if(favoriteTabNodeId != null) {
+            //add portlet to favorite tab
+            IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
+
+            if (node == null) {
+                return new ModelAndView("jsonView",
+                        Collections.singletonMap("response",
+                                getMessage("error.add.portlet.in.tab", "Can''t add a new favorite", locale)));
+            }
+
+            try {
+                // save the user's layout
+                ulm.saveUserLayout();
+            } catch (Exception e) {
+                log.warn("Error saving layout", e);
+                return new ModelAndView("jsonView",
+                        Collections.singletonMap("response",
+                                getMessage("error.persisting.layout.change", "Can''t add a new favorite", locale)));
+            }
+
+            //document success for notifications
+            Map<String, String> model = new HashMap<String, String>();
+            final String channelTitle = channel.getTitle();
+            model.put("response",
+                    getMessage("favorites.added.favorite", channelTitle,
+                            "Added " + channelTitle + " as a favorite.", locale));
+            model.put("newNodeId", node.getId());
+            return new ModelAndView("jsonView", model);
+       } else {
+            return new ModelAndView("jsonView",
+                    Collections.singletonMap("response",
+                            getMessage("error.finding.favorite.tab", "Can''t find favorite tab", locale)));
+       }
+    }
+    
+    @RequestMapping(method= RequestMethod.POST , params = "action=removeFavorite")
+    public ModelAndView removeFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //setup
+        UserPreferencesManager upm = (UserPreferencesManager) userInstanceManager.getUserInstance(request).getPreferencesManager();
+        IUserLayoutManager ulm = upm.getUserLayoutManager();
+        final Locale locale = RequestContextUtils.getLocale(request);
+        
+        try {
+            if (!ulm.deleteNode(channelId)) {
+                 log.warn("Error deleting the node {} from favorites for user {}.",
+                        channelId, upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
+                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                 return new ModelAndView("jsonView",
+                         Collections.singletonMap("response",
+                                 getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+            }
+            // save the user's layout
+            ulm.saveUserLayout();
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+        }
+
+        //document success for notifications
+        Map<String, String> model = new HashMap<String, String>();
+        model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
+        return new ModelAndView("jsonView", model);
+    }
 
 	/**
 	 * Add a new channel.
@@ -544,34 +635,7 @@ public class UpdatePreferencesServlet {
 
 		IUserLayoutNodeDescription node = null;
 		if (isTab(ulm, destinationId)) {
-            @SuppressWarnings("unchecked")
-			Enumeration<String> columns = ulm.getChildIds(destinationId);
-			if (columns.hasMoreElements()) {
-				while (columns.hasMoreElements()) {
-					// attempt to add this channel to the column
-					node = ulm.addNode(channel, columns.nextElement(), null);
-					// if it couldn't be added to this column, go on and try the next
-					// one.  otherwise, we're set.
-					if (node != null)
-						break;
-				}
-			} else {
-
-				IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
-				newColumn.setName("Column");
-				newColumn.setId("tbd");
-				newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-				newColumn.setHidden(false);
-				newColumn.setUnremovable(false);
-				newColumn.setImmutable(false);
-
-				// add the column to our layout
-				IUserLayoutNodeDescription col = ulm.addNode(newColumn,
-						destinationId, null);
-
-				// add the channel
-				node = ulm.addNode(channel, col.getId(), null);
-			}
+            node = addNodeToTab(ulm,channel, destinationId);
 
 		} else if (isColumn(ulm, destinationId)) {
 			// move the channel into the column
@@ -611,6 +675,40 @@ public class UpdatePreferencesServlet {
 		return new ModelAndView("jsonView", model);
 
 	}
+
+    private IUserLayoutNodeDescription addNodeToTab(IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
+        IUserLayoutNodeDescription node = null;
+
+        @SuppressWarnings("unchecked")
+        Enumeration<String> columns = ulm.getChildIds(tabId);
+        if (columns.hasMoreElements()) {
+            while (columns.hasMoreElements()) {
+                // attempt to add this channel to the column
+                node = ulm.addNode(channel, columns.nextElement(), null);
+                // if it couldn't be added to this column, go on and try the next
+                // one.  otherwise, we're set.
+                if (node != null)
+                    break;
+             }
+        } else {
+
+            IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
+            newColumn.setName("Column");
+            newColumn.setId("tbd");
+            newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+            newColumn.setHidden(false);
+            newColumn.setUnremovable(false);
+            newColumn.setImmutable(false);
+
+            // add the column to our layout
+            IUserLayoutNodeDescription col = ulm.addNode(newColumn, tabId, null);
+
+            // add the channel
+            node = ulm.addNode(channel, col.getId(), null);
+        }
+
+        return node;
+    }
 
 	/**
 	 * Update the user's preferred skin.
@@ -884,9 +982,40 @@ public class UpdatePreferencesServlet {
 
 	}
 
-	protected String getMessage(String key, String defaultName, Locale locale) {
-		return messageSource.getMessage(key, new Object[] {}, defaultName, locale);
-	}
+    /**
+     * Syntactic sugar for safely resolving a no-args message from message bundle.
+     * @param key Message bundle key
+     * @param defaultMessage Ready-to-present message to fall back upon.
+     * @param locale desired locale
+     * @return Resolved interpolated message or defaultMessage.
+     */
+    protected String getMessage(String key, String defaultMessage, Locale locale) {
+        try {
+            return messageSource.getMessage(key, new Object[] {}, defaultMessage, locale);
+        } catch (Exception e) {
+            // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
+            log.error("Error resolving message with key {}.", key, e);
+            return defaultMessage;
+        }
+    }
+
+    /**
+     * Syntactic sugar for safely resolving a one-arg message from message bundle.
+     * @param key Message bundle key
+     * @param argument dynamic value to be interpolated
+     * @param defaultMessage Ready-to-present message to fall back upon.
+     * @param locale desired locale
+     * @return Resolved interpolated message or defaultMessage.
+     */
+    protected String getMessage(String key, String argument, String defaultMessage, Locale locale) {
+        try {
+            return messageSource.getMessage(key, new String[] {argument}, defaultMessage, locale);
+        } catch (Exception e) {
+            // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
+            log.error("Error resolving message with key {}.", key, e);
+            return defaultMessage;
+        }
+    }
 
     protected IAuthorizationPrincipal getUserPrincipal(final String userName) {
         final IEntity user = GroupService.getEntity(userName, IPerson.class);

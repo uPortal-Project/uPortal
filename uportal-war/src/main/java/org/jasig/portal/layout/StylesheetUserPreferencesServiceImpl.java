@@ -488,6 +488,9 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Transactional
     @Override
     public String setStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name, String value) {
+
+        logger.trace("Setting stylesheet parameter {} with scope {} to {}.", name, prefScope, value);
+
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);

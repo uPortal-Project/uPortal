@@ -19,6 +19,7 @@
 
 package org.jasig.portal.layout.node;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,14 +31,8 @@ import org.w3c.dom.Element;
  * @version 1.0
  */
 public class UserLayoutFolderDescription extends UserLayoutNodeDescription implements IUserLayoutFolderDescription {
-    public static final int REGULAR_TYPE=0;
-    public static final int HEADER_TYPE=1;
-    public static final int FOOTER_TYPE=2;
-    public static final int SIDEBAR_TYPE=3;
- 
-    public static final String[] folderTypeNames= {"regular","header","footer","sidebar"};
 
-    protected int folderType=REGULAR_TYPE;
+    protected String folderType = "regular";
 
     /**
      * Reconstruct folder information from an xml <code>Element</code>
@@ -52,19 +47,7 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
             throw new PortalException("Given XML Element is not a folder!");
         }
 
-        // folder-specific attributes
-        String typeName=xmlNode.getAttribute("type");
-        // default to regular
-        int int_folderType=REGULAR_TYPE;
-        if(typeName!=null) {
-            // search for a match
-            for(int i=0;i<folderTypeNames.length;i++) {
-                if(typeName.equals(folderTypeNames[i])) {
-                    int_folderType=i;
-                }
-            }
-        }
-        this.setFolderType(int_folderType);
+        this.folderType = xmlNode.getAttribute("type");
     }
 
     public UserLayoutFolderDescription() {
@@ -84,24 +67,19 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
       return LayoutNodeType.FOLDER;
     }
 
-    /**
-     * Returns folder type.
-     *
-     * @return an <code>int</code> value corresponding
-     * to one of the valid folder types.
-     */
-    public int getFolderType() {
+    @Override
+    public String getFolderType() {
         return this.folderType;
     }
 
-    /**
-     * Assign a type to a folder.
-     *
-     * @param folderType an <code>int</code> value corresponding
-     * to one of the valid folder types.
-     */
-    public void setFolderType(int folderType) {
-        this.folderType=folderType;
+    @Override
+    public void setFolderType(String folderTypeArg) {
+
+        if (null == folderTypeArg) {
+            throw new IllegalArgumentException("Folder type cannot be set to null.");
+        }
+
+        this.folderType=folderTypeArg;
     }
 
     /**
@@ -118,6 +96,22 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
 
     public void addNodeAttributes(Element node) {
         super.addNodeAttributes(node);
-        node.setAttribute("type",folderTypeNames[this.getFolderType()]);
+        node.setAttribute("type", this.folderType);
+    }
+
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channel_or_folder?", this.getType()).
+                append("type", this.folderType).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
     }
 }

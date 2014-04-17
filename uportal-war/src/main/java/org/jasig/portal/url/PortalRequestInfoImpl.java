@@ -31,6 +31,8 @@ import java.util.Map.Entry;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -45,6 +47,9 @@ import com.google.common.base.Preconditions;
  *
  */
 class PortalRequestInfoImpl implements IPortalRequestInfo {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     private final Object readOnlySync = new Object();
     private boolean readOnly = false;
     
@@ -90,6 +95,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public void setTargetedLayoutNodeId(String targetedLayoutNodeId) {
         this.checkReadOnly();
         this.targetedLayoutNodeId = targetedLayoutNodeId;
+        logger.trace("Set targetedLayoutNodeId to {}.", targetedLayoutNodeId);
     }
 
     @Override
@@ -99,6 +105,7 @@ class PortalRequestInfoImpl implements IPortalRequestInfo {
     public void setTargetedPortletWindowId(IPortletWindowId targetedPortletWindowId) {
         this.checkReadOnly();
         this.targetedPortletWindowId = targetedPortletWindowId;
+        logger.trace("Set targetedPortletWindowId to {}.", targetedPortletWindowId);
     }
     
     @Override

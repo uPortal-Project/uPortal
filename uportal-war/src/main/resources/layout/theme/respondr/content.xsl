@@ -338,7 +338,7 @@
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
     <div class="btn-group">
-      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--
       Porlet Controls Display Order:
@@ -360,6 +360,13 @@
       </xsl:variable>
       <xsl:variable name="printable">
           <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="hasFavorites">
+        <xsl:if test="//content/@hasFavorites = 'true'">true</xsl:if>
+      </xsl:variable>
+      <xsl:variable name="isInFavorites">
+        <xsl:variable name="curFname" select="@fname" />
+        <xsl:if test="/layout/favorites/favorite[@fname = $curFname]">true</xsl:if>
       </xsl:variable>
         
       <li>
@@ -554,16 +561,99 @@
       <!-- Add to Layout Icon -->
       <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
         <li>
-          <a id="focusedContentDialogLink" href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add"><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></a>
+            <a id="focusedContentDialogLink" href="javascript:;"
+            title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
+                <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
+            </a>
         </li>
       </xsl:if>
+      <!-- Favorites -->
+      <xsl:if test="$hasFavorites='true'">
+          <xsl:choose>
+            <xsl:when test="$isInFavorites!='true'"> <!-- Add to favorite. -->
+            <li>
+                <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
+                class="addToFavoriteLink{@chanID}">
+                    <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
+                    <!-- used for the ajax call to add to favorites in up-favorite.js-->
+                    <script type="text/javascript">
+                        (function($) {
+                            $( document ).ready(function() {
+                                $('.addToFavoriteLink<xsl:value-of
+                                    select="@chanID"/>').click({
+                                        portletId : '<xsl:value-of select="@chanID"/>',
+                                        context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
+                             });
+                         })(up.jQuery);
+                    </script>
+                </a>
+            </li>
+          </xsl:when>
+          <xsl:otherwise><!-- Remove From favorites. -->
+            <li>
+                <a href="javascript:;"
+                   title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
+                   class="removeFromFavoriteLink{@chanID}">
+                    <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
+                    <!-- used for the ajax call to remove from favorites in up-favorite.js-->
+                    <script type="text/javascript">
+                        (function($) {
+                            $( document ).ready(function() {
+                                $('.removeFromFavoriteLink<xsl:value-of
+                                     select="@chanID"/>').click({
+                                         portletId : '<xsl:value-of select="@ID"/>',
+                                         context : '<xsl:value-of select="$CONTEXT_PATH"/>'},
+                                         up.removeFromFavorite);
+                            });
+                        })(up.jQuery);
+                    </script>
+                </a>
+            </li>
+          </xsl:otherwise>
+          </xsl:choose>
+      </xsl:if>
+      
         <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
           <li>
-            <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
+            <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;"
+               title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}">
+                <xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
           </li>
         </xsl:if>
         </ul>
     </div>
   </xsl:template>
+  
+  <xsl:template name="focused-fragment-header">
+    <xsl:if test="//tab[@focusedFragment='true']">
+        <div id="focused-fragment-header" class="container">
+            <div class="row">
+                <h3>
+                    <xsl:value-of select="//tab[@focusedFragment='true']/@name"></xsl:value-of>
+                    <xsl:variable select="//tab[@focusedFragment='true']/@ID" name="FOCUSED_FRAGMENT_ID"></xsl:variable>
+                    <!--
+                    Collection favoriting and link access not yet implemented.
+                    <div class="dropdown pull-right">
+                    <button class="btn dropdown-toggle" type="button" id='{$FOCUSED_FRAGMENT_ID}dropdownMenu'
+                            data-toggle="dropdown" style="background: inherit;">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby='{$FOCUSED_FRAGMENT_ID}dropdownMenu'>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="#">Favorite This Collection</a></li>
+                            <li role="presentation">
+                                <a role="menuitem" tabindex="-1" href="#">Link to ...</a></li>
+                        </ul>
+                    </div>
+                    -->
+                </h3>
+            </div>
+            <div class="row">
+                <hr style='border-style: dotted; border-color: grey; border-width: 1px;' />
+            </div>
+        </div>
+      </xsl:if>
+  </xsl:template>
+  <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
 
 </xsl:stylesheet>

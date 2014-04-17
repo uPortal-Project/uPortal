@@ -174,6 +174,15 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
     @RequestCache(keyMask={false, true})
     @Override
     public List<String> getFolderNamesForLayoutNode(HttpServletRequest request, String layoutNodeId) {
+        /*
+         * Implementation note:
+         * While the API allows one or more folder names, this implementation will only ever return
+         * a List with zero or one element.  It's not entirely clear that a List with zero members
+         * was allowed by the interface definition, but this implementation will return an empty
+         * list if the layoutNodeId cannot be found in the layout.
+         */
+
+
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
@@ -207,20 +216,31 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             if (appendNodeId) {
                 externalId = externalId + PORTLET_PATH_ELEMENT_SEPERATOR + layoutNodeId;
             }
+
+            logger.trace("Tab identified by {} resolved to externalId {} " +
+                    "so returning that externalId as the sole folder name for node.", layoutNodeId, externalId);
             
             return Arrays.asList(externalId);
-        }
-        else {
+
+        } else {
+            logger.trace("Tab identified by {} had no externalId " +
+                    "so returning just {} as the sole folder name for node {}.", layoutNodeId, tabId, layoutNodeId);
             return Arrays.asList(tabId);
         }
     }
 
     @Override
     public String getLayoutNodeForFolderNames(HttpServletRequest request, List<String> folderNames) {
+        /*
+         * Implementation note: while the API specifies a List of folderNames, this implementation
+         * only ever considers the first (presumably, only) value in the list.
+         */
+
         if (folderNames == null || folderNames.isEmpty()) {
+            logger.warn("Asked to get layout node for an empty or null folderNames ({}).", folderNames);
             return null;
         }
-        
+
         //Check if the folder name is compound and parse it if it is
         String folderName = folderNames.get(0);
         String layoutNodeId = null;
@@ -228,6 +248,11 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
         if (seperatorIndex > 0 && seperatorIndex < folderName.length() - 1) {
             layoutNodeId = folderName.substring(seperatorIndex + 1);
             folderName = folderName.substring(0, seperatorIndex);
+        }
+
+        if (folderNames.size() > 1) {
+            logger.warn("Asked to consider multiple folder names {}, " +
+                    "but ignoring all but the first which has been parsed as {}.", folderNames, folderName);
         }
         
         // Search the users layout attributes for a layout node with a matching externalId value
@@ -241,6 +266,9 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
                 
                 if (nodeId.equals(layoutNodeId)) {
                     //ExternalId matched as well as the layoutNodeId, clear the firstMatchingNodeId since we found the nodeId here
+
+                    logger.trace("Parsed folder names {} to nodeId {}.", folderNames, nodeId);
+
                     return nodeId;
                 }
                 else if (firstMatchingNodeId == null) {
@@ -269,15 +297,25 @@ public class SingleTabUrlNodeSyntaxHelper implements IUrlNodeSyntaxHelper {
             node = userLayoutManager.getNode(layoutNodeId);
         }
         catch (PortalException e) {
-            //No layout node exists for the id, return null
+
+            logger.warn("Parsed requested folder names {} to layoutNodeId {} " +
+                    "but did not match a node in the user layout.", folderNames, layoutNodeId, e);
+
             return null;
         }
         
         if (node == null) {
+
+            logger.warn("Parsed requested folder names to layoutNodeId {} " +
+                    "but did not match a node in the user layout.", folderNames, layoutNodeId);
+
             return null;
         }
-        
-        return node.getId();
+
+        String nodeId = node.getId();
+
+        logger.trace("Resolved node id {} for folder names {}.", nodeId, folderNames);
+        return nodeId;
     }
 
     @RequestCache(keyMask={false, true})
