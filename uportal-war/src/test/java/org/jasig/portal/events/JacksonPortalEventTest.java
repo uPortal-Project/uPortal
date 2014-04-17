@@ -19,7 +19,6 @@
 
 package org.jasig.portal.events;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,6 +41,7 @@ import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
@@ -162,7 +162,7 @@ public class JacksonPortalEventTest {
         actual = TIMESTAMP_SPLIT.matcher(actual).replaceAll(TEST_NOW);
         expected = TIMESTAMP_SPLIT.matcher(expected).replaceAll(TEST_NOW);
         
-        assertEquals(expected, actual);
+        JSONAssert.assertEquals(expected, actual, false);
         
         return actual;
     }
