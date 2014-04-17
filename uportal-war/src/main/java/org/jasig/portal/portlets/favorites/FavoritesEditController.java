@@ -55,7 +55,7 @@ public class FavoritesEditController
      * Returns "jsp/Favorites/edit" in the normal case where the user has
      * at least one favorited portlet or favorited collection.
      *
-     * Returns ""jsp/Favorites/view_zero" in the edge case where the user has
+     * Returns "jsp/Favorites/edit_zero" in the edge case where the user has
      * zero favorited portlets AND zero favorited collections.
      *
      * Model:
