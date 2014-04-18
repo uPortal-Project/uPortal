@@ -590,6 +590,24 @@
             <title>Dynamic Respondr Skin</title>
         </portlet-info>
         <portlet-preferences>
+            <!-- Set to true to enable dynamic skins, which will process {skinName}.less with LESS variables
+                 defined by portlet preferences to create a custom skin CSS file to embed into the page.
+                 Set to false to have the page load {skinName}.css. -->
+            <preference>
+                <name>dynamic</name>
+                <value>false</value>
+            </preference>
+            <!-- If dynamic=true, the Dynamic Skin Portlet will process {skinName}.less to create
+                 a custom skin CSS file to link into the page.  If dynamic=false, the Dynamic Skin Portlet
+                 will link in {skinName}.css. -->
+            <preference>
+                <name>skinName</name>
+                <value>defaultSkin</value>
+            </preference>
+
+            <!-- Preferences below this comment are name/value pairs that are dynamically injected as LESS
+                 variables into the LESS compilation processing. -->
+
             <preference>
                 <name>color1</name>
                 <value>#4065B0</value>

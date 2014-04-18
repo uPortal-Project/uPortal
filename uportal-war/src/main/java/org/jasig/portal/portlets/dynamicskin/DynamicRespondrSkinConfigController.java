@@ -22,6 +22,7 @@ package org.jasig.portal.portlets.dynamicskin;
 import java.io.IOException;
 import java.util.Enumeration;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
@@ -48,22 +49,22 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 @Controller
 @RequestMapping("CONFIG")
 public class DynamicRespondrSkinConfigController {
-
-    private static final String PRIMARY_COLOR_PREFERENCE = "color1";
-    private static final String SECONDARY_COLOR_PREFERENCE = "color2";
-    private static final String TERTIARY_COLOR_PREFERENCE = "color3";
-
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @ActionMapping(params = "action=update")
-    public void updateSkinConfiguration(ActionResponse response, PortletPreferences prefs, SkinPreferencesDto form)
+    public void updateSkinConfiguration(ActionRequest request, ActionResponse response, PortletPreferences prefs)
             throws IOException, ReadOnlyException, ValidatorException, PortletModeException {
 
-        prefs.setValue(PRIMARY_COLOR_PREFERENCE, form.getColor1());
-        prefs.setValue(SECONDARY_COLOR_PREFERENCE, form.getColor2());
-        prefs.setValue(TERTIARY_COLOR_PREFERENCE, form.getColor3());
+        // Get the list of preferences and pull them from the request and store into preferences
+        Enumeration<String> preferenceNames = prefs.getNames();
+        while (preferenceNames.hasMoreElements()) {
+            String name = preferenceNames.nextElement();
+            String formValue = request.getParameter(name);
+            prefs.setValue(name, formValue != null ? formValue : "");
+        }
+
         prefs.store();
-        log.debug("Saved updated configuration:  " + form.toString());
+        log.debug("Saved updated configuration");
     }
 
     @ActionMapping(params = "action=cancel")

@@ -58,7 +58,7 @@ import org.springframework.stereotype.Service;
 public class FileSystemDynamicSkinService implements DynamicSkinService {
 
     private static final String DYNASKIN_DEFAULT_ROOT_FOLDER = "/media/skins/respondr";
-    private static final String DYNASKIN_TEMPLATE_INCLUDE_FILE = "{0}/defaultSkin.less";
+    private static final String DYNASKIN_TEMPLATE_INCLUDE_FILE = "{0}/{1}.less";
     private static final String DYNASKIN_INCLUDE_FILE = "{0}/configuredSkin-{1}.less";
     private static final String LESS_CSS_JAVASCRIPT_URL = "/media/skins/common/javascript/less/less-1.6.2.js";
 
@@ -97,9 +97,9 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     /**
      * Return true if the filePathname already exists on the file system.  Check memory first in a concurrent manner
      * to allow multiple threads to check simultaneously.
-     * 
-     * @param filePathname
-     * @return
+     *
+     * @param filePathname Fully-qualified file path name of the .css file
+     * @return True if file exists on the file system.
      */
     @Override
     public boolean skinFileExists(String filePathname) {
@@ -116,21 +116,9 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         return exists;
     }
 
-    /**
-     * Create the skin css file in a thread-safe manner that allows multiple different skin files to be created
-     * simultaneously to handle large tenant situations where all the custom CSS files were cleared away after a
-     * uPortal deploy.  Since the less compilation phase is fairly slow (several seconds) and intensive,
-     * allow multiple threads to process different less compilations at the same time but insure the same
-     * output file will not be created multiple times. Also we should not let a consistent LESS compilation
-     * failure completely take down the portal due to trying repeatedly compile a bad LESS file.
-     * After a period of time, allow LESS compilation failures to retry to limit performance impacts.
-     * 
-     * @param req
-     * @param filePathname
-     * @param skinToken
-     */
     @Override
-    public void generateSkinCssFile(PortletRequest req, String filePathname, String skinToken) {
+    public void generateSkinCssFile(PortletRequest request, String filePathname, String skinToken,
+                                    String lessfileBaseName) {
 
         synchronized(filePathname) {
             if (compiledCssFilepaths.contains(filePathname)) {
@@ -146,15 +134,16 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
             }
             try {
                 if (!cssSkinFailureCache.getKeysWithExpiryCheck().contains(filePathname)) {
-                    PortletContext ctx = req.getPortletSession().getPortletContext();
+                    PortletContext ctx = request.getPortletSession().getPortletContext();
 
-                    String templateRelativePath = skinTemplateIncludeFile.format(new Object[] {rootFolder});
+                    String templateRelativePath =
+                            skinTemplateIncludeFile.format(new Object[] {rootFolder, lessfileBaseName});
                     String templateFilepath = ctx.getRealPath(templateRelativePath);
 
                     String includeRelativePath = skinIncludeFile.format(new Object[] {rootFolder, skinToken});
                     String includeFilepath = ctx.getRealPath(includeRelativePath);
 
-                    createLessIncludeFile(req.getPreferences(), includeFilepath, templateFilepath);
+                    createLessIncludeFile(request.getPreferences(), includeFilepath, templateFilepath);
 
                     URL lessCssJavascriptUrl = ctx.getResource(lessCssJavascriptUrlPath);
                     processLessFile(includeFilepath, filePathname, lessCssJavascriptUrl);
@@ -238,17 +227,6 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         tempOutputFile.renameTo(new File(outputFilepath));
     }
 
-    /**
-     * Return a String hashcode of the portlet preference values in a repeatable fashion by calculating them based
-     * on sorted portlet preference names.  Though hashcode does not guarantee uniqueness, from a practical
-     * perspective we'll have so few different values we can reasonably assume preference value
-     * combinations will be unique.
-     *
-     * This calculation process must duplicate computeDefaultHashcode.
-     *
-     * @param request Portlet request
-     * @return Hashcode of portlet preference configuration values.
-     */
     @Override
     public String calculateTokenForCurrentSkin(PortletRequest request) {
         int hash = 0;
