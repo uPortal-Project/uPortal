@@ -508,7 +508,13 @@
     </div>
 
     <script type="text/javascript">
+    
         up.jQuery(document).ready(function() {
+        
+            if(window.location.search.indexOf('redirectToDefault=true') > 0) {
+              up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessage('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
+            }
+
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
             up.FragmentPermissionsManager("body", {
                 savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
@@ -664,37 +670,60 @@
                 </header>
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
-                    <xsl:call-template name="focused-fragment-header" />
-                    <xsl:call-template name="region.pre-content" />
                     <div class="container">
-                        <!-- For editing page permissions in fragment-admin mode  -->
-                        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                            <div class="row">
-                                <div class="col-md-9"></div>
-                                <div class="col-md-3">
-                                    <div id="portalEditPagePermissions" class="fl-fix">
-                                        <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                                            <i class="fa fa-align-justify"></i>
-                                            <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                                        </a>
+                        <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
+                            <xsl:call-template name="region.sidebar-left" />
+                            <!-- The following div must know how many columns are taken by sidebar-left and sidebar-right, if any -->
+                            <xsl:variable name="SIDEBAR_LEFT_COLUMNS">
+                                <xsl:choose>
+                                    <xsl:when test="//region[@name='sidebar-left']/channel">2</xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="SIDEBAR_RIGHT_COLUMNS">
+                                <xsl:choose>
+                                    <xsl:when test="//region[@name='sidebar-right']/channel">2</xsl:when>
+                                    <xsl:otherwise>0</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="12 - $SIDEBAR_LEFT_COLUMNS - $SIDEBAR_RIGHT_COLUMNS" /></xsl:variable>
+                            <div class="{$WIDTH_CSS_CLASS}">
+                                <!-- USE FLUID ROWS WITHIN HERE -->
+                                <xsl:call-template name="focused-fragment-header" />
+                                <xsl:call-template name="region.pre-content" />
+                                <!-- For editing page permissions in fragment-admin mode  -->
+                                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                                    <div class="row-fluid">
+                                        <div class="col-md-9"></div>
+                                        <div class="col-md-3">
+                                            <div id="portalEditPagePermissions" class="fl-fix">
+                                                <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                                    <i class="fa fa-align-justify"></i>
+                                                    <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
+                                </xsl:if>
+                                <!-- Works with up-layout-preferences.js showMessage()  -->
+                                <div class="row-fluid">
+                                    <div id="portalPageBodyMessage" class="col-md-12"></div>
                                 </div>
-                            </div>
-                        </xsl:if>
-                        <!-- Works with up-layout-preferences.js showMessage()  -->
-                        <div class="row">
-                            <div id="portalPageBodyMessage" class="col-md-12"></div>
-                        </div>
 
-                        <xsl:choose>
-                            <xsl:when test="$PORTAL_VIEW='focused'">
-                                <!-- === FOCUSED VIEW === -->
-                                <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:apply-templates select="layout/content" />
-                            </xsl:otherwise>
-                        </xsl:choose>
+                                <xsl:choose>
+                                    <xsl:when test="$PORTAL_VIEW='focused'">
+                                        <!-- === FOCUSED VIEW === -->
+                                        <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:apply-templates select="layout/content" />
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
+                                <!-- /USE FLUID ROWS -->
+                            </div>
+                            <xsl:call-template name="region.sidebar-right" />
+                        </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
                     </div>
                 </div>
                 <xsl:call-template name="footer.nav" />
@@ -712,64 +741,6 @@
                 up.analytics.pageData = <page-analytics-data/>;
             </script>
         </body>
-      <script type="text/javascript">
-        up.jQuery(document).ready(function(){
-        
-          if(window.location.search.indexOf('redirectToDefault=true') > 0) {
-            up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessage('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
-          }
-          
-          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-          up.FragmentPermissionsManager(
-            "body",
-            {
-              savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              messages: {
-                columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
-              }
-            }
-          );
-          </xsl:if>
-          var layoutPreferences = up.LayoutPreferences(
-            "body",
-            {
-              tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
-              numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
-              portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
-              mediaPath: '<xsl:value-of select="$ABSOLUTE_MEDIA_PATH"/>',
-              currentSkin: '<xsl:value-of select="$SKIN"/>',
-              subscriptionsSupported: '<xsl:value-of select="$subscriptionsSupported"/>',
-              layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-              channelRegistryUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/portletList',
-              subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
-              columnWidthClassPattern: 'col-md-',
-              columnWidthClassFunction: function(column) {
-                  return 'col-md-' + Math.round(column / 8.3333);
-              },
-              messages: {
-                  confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
-                  confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                  addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
-                  column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
-                  columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
-                  fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
-                  narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
-                  even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
-                  wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
-                  narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
-                  searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                  allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
-                  persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
-              }
-            }
-          );
-          // For the portlet/Respondr version of the gallery control, 
-          // we must open it ourselves (if present) when the page loads.
-          if(layoutPreferences.components.gallery) {
-            layoutPreferences.components.gallery.openGallery();
-          }
-       });
-    </script>
     </html>
 </xsl:template>
 
