@@ -220,7 +220,7 @@ public class PortletMarketplaceController {
             logger.debug("Going to show managed portlets?: {}", Boolean.toString(showManagedPortlets));
         }
 
-        Map<String,Set<?>> registry = getRegistry(webRequest, user, showManagedPortlets);
+        Map<String,Set<?>> registry = getRegistry(user, showManagedPortlets);
         @SuppressWarnings("unchecked")
         Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
         model.addAttribute("channelBeanList", portletList);
@@ -250,7 +250,6 @@ public class PortletMarketplaceController {
      * return all portlets.  Setting user to null will superscede all other
      * parameters.
      *
-     * @param request
      * @param user - the user to limit results by. This will filter results to 
      *               only portlets that user can use. Null will return all portlets.
      * @param seeManage - additive parameter that will add/not add portlets to returned set.
@@ -259,7 +258,7 @@ public class PortletMarketplaceController {
      *                    If user is null, this parameter doesn't matter.
      * @return a set of portlets filtered that user can use, and other parameters
     */
-    public Map<String,Set<?>> getRegistry(WebRequest request, IPerson user, Boolean seeManage){
+    public Map<String,Set<?>> getRegistry(IPerson user, Boolean seeManage){
         // get a list of all channels 
         List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
         // sets up permissions if user is not null
