@@ -52,6 +52,6 @@
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://uportal.org/</value>
+        <value>http://www.apereo.org/uportal</value>
     </portlet-preference>
 </portlet-definition>

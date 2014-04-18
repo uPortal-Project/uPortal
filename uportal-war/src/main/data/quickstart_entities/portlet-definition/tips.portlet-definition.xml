@@ -78,7 +78,7 @@
     <portlet-preference>
         <name>tips</name>
         <readOnly>true</readOnly>
-        <value>The Service Desk can answer technical questions at (555) 555-5555 or servicedesk@jasig.org</value>
+        <value>The Service Desk can answer technical questions at (555) 555-5555 or servicedesk@apereo.org</value>
         <value>When using a public computer, don't forget to sign out, or close the browser, when you're done</value>
         <value>Quarters to semesters questions? Ask your advisor or visit the Student Help Center</value>
         <value>New portlets can be added to your layout by clicking on 'Customize'</value>
