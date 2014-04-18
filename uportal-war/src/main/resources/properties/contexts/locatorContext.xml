@@ -48,12 +48,17 @@
             class="org.jasig.portal.spring.locator.PortalDbLocator" lazy-init="false">
         <constructor-arg index="0" ref="PortalDb" />
     </bean>
-    
+
     <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
             class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
         <constructor-arg index="0" ref="PortalDB.metadata" />
     </bean>
-    
+
+    <bean id="org.jasig.portal.spring.locator.PortletCategoryRegistryLocator" 
+            class="org.jasig.portal.spring.locator.PortletCategoryRegistryLocator">
+        <constructor-arg index="0" ref="portletCategoryRegistry" />
+    </bean>
+
     <bean id="org.jasig.portal.spring.locator.EntityCachingServiceLocator" 
             class="org.jasig.portal.spring.locator.EntityCachingServiceLocator">
         <constructor-arg index="0" ref="entityCachingService" />
