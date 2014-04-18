@@ -20,7 +20,6 @@
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.portlet.CacheControl;
 import javax.portlet.Event;
@@ -32,8 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
@@ -68,6 +65,8 @@ import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 import org.jasig.portal.utils.web.PortletHttpServletResponseWrapper;
 import org.jasig.portal.utils.web.PortletMimeHttpServletResponseWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,7 +78,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
-	protected final Log logger = LogFactory.getLog(this.getClass());
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -225,7 +224,8 @@ public class PortletRendererImpl implements IPortletRenderer {
     
     /**
      * Interacts with the {@link IPortletCacheControlService} to determine if the markup should come from cache or not.
-     * If cached data doesn't exist or is expired, this delegates to {@link #doRenderMarkupInternal(IPortletWindowId, HttpServletRequest, HttpServletResponse, Writer)}.
+     * If cached data doesn't exist or is expired, this delegates to {@link #doRender(IPortletWindowId, HttpServletRequest,
+            HttpServletResponse, PortletOutputHandler, RenderPart)}.
      * @throws IOException 
      */
     @Override
@@ -392,9 +392,7 @@ public class PortletRendererImpl implements IPortletRenderer {
         httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_CACHE_CONTROL, cacheControl);
         httpServletRequest.setAttribute(ATTRIBUTE__PORTLET_OUTPUT_HANDLER, cachingPortletOutputHandler);
         
-        if (this.logger.isDebugEnabled()) {
-            this.logger.debug("Rendering portlet body for window '" + portletWindow + "'");
-        }
+        logger.debug("Rendering portlet " + renderPart.name() + " for window '" + portletWindow + "'");
 
         final long renderStartTime = System.nanoTime();
         try {

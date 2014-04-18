@@ -25,6 +25,7 @@ import java.text.MessageFormat;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,16 +67,27 @@ public class DynamicRespondrSkinViewController {
      *               to create a customized skin css file (RELATIVE_ROOT/skin-ID#.css to load.
      */
     @RenderMapping
-    public String displaySkinCssHeader(RenderRequest request, Model model) throws IOException {
-        // TODO:  Leverage the RENDER_HEADERS subphase for this behavior
+    public String displaySkinCssHeader(RenderRequest request, RenderResponse response, Model model) throws IOException {
 
-        PortletPreferences prefs = request.getPreferences();
-        Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, ""));
-        String defaultSkinName = prefs.getValue(PREF_SKIN_NAME, DEFAULT_SKIN_NAME);
-        String cssUrl = enabled ? calculateDynamicSkinUrlPathToUse(request, defaultSkinName)
-                : calculateCssLocationInWebapp(defaultSkinName, "");
-        model.addAttribute("skinCssUrl", cssUrl);
-        return "jsp/DynamicRespondrSkin/skinHeader";
+        // NOTE:  RENDER_HEADERS phase may be called before or at the same time as the RENDER_MARKUP. The spec is
+        // silent on this issue and uPortal does not guarantee order or timing of render execution, but does
+        // guarantee order of render output processing (output of RENDER_HEADERS phase is included before
+        // RENDER_MARKUP phase).  uPortal inserts the HTML markup returned from RENDER_HEADERS execution into the HEAD
+        // section of the page.
+
+        if (PortletRequest.RENDER_HEADERS.equals(request.getAttribute(PortletRequest.RENDER_PART))) {
+
+            PortletPreferences prefs = request.getPreferences();
+            Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, ""));
+            String defaultSkinName = prefs.getValue(PREF_SKIN_NAME, DEFAULT_SKIN_NAME);
+            String cssUrl = enabled ? calculateDynamicSkinUrlPathToUse(request, defaultSkinName)
+                    : calculateCssLocationInWebapp(defaultSkinName, "");
+            model.addAttribute("skinCssUrl", cssUrl);
+            return "jsp/DynamicRespondrSkin/skinHeader";
+        } else {
+            // RENDER_MARKUP
+            return null;
+        }
     }
 
     /**

@@ -638,6 +638,7 @@
 <xsl:template name="document.normal">
     <html lang="{$USER_LANG}" class="respondr">
         <head>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
             <xsl:call-template name="skinResources">
@@ -647,6 +648,25 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            <!-- Include the RENDER_HEADERS output of all channels in regions and all portlets displayed in
+                 focus mode. -->
+            <xsl:for-each select="//region/descendant::channel-header">
+                <xsl:copy-of select="."/>
+            </xsl:for-each>
+            <xsl:choose>
+                <xsl:when test="$PORTAL_VIEW='focused'">
+                    <!-- === FOCUSED VIEW === -->
+                    <xsl:for-each select="//focused/descendant::channel-header">
+                        <xsl:copy-of select="."/>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:for-each select="layout/content/descendant::channel-header">
+                        <xsl:copy-of select="."/>
+                    </xsl:for-each>
+                </xsl:otherwise>
+            </xsl:choose>
         </head>
         <body class="up dashboard portal fl-theme-mist">
             <div id="up-notification"></div>
@@ -659,6 +679,7 @@
                             <xsl:call-template name="region.pre-header" />
                         </div>
                     </div>
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     <div class="container">
                         <div class="row">
                             <xsl:call-template name="region.header-left" />
@@ -668,8 +689,10 @@
                     <xsl:call-template name="region.header-bottom" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     <div class="container">
                         <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
                             <xsl:call-template name="region.sidebar-left" />
@@ -710,6 +733,7 @@
                                     <div id="portalPageBodyMessage" class="col-md-12"></div>
                                 </div>
 
+                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                                 <xsl:choose>
                                     <xsl:when test="$PORTAL_VIEW='focused'">
                                         <!-- === FOCUSED VIEW === -->
@@ -719,6 +743,7 @@
                                         <xsl:apply-templates select="layout/content" />
                                     </xsl:otherwise>
                                 </xsl:choose>
+                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
                                 <!-- /USE FLUID ROWS -->
                             </div>
@@ -726,10 +751,12 @@
                         </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
                     </div>
                 </div>
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <xsl:call-template name="footer.nav" />
                 <xsl:call-template name="footer.legal" />
                 <xsl:call-template name="region.page-bottom" />
                 <xsl:call-template name="region.hidden-bottom" />
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             </div>
 
             <xsl:call-template name="page.dialogs" />

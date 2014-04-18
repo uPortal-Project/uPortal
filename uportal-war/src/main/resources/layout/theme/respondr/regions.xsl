@@ -62,6 +62,7 @@
     -->
     <xsl:template name="region.hidden-top">
         <xsl:if test="//region[@name='hidden-top']/channel">
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             <div id="region-page-top-hidden" class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -71,6 +72,7 @@
                     </div>
                 </div>
             </div>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </xsl:if>
     </xsl:template>
 
@@ -81,6 +83,7 @@
     -->
     <xsl:template name="region.page-top">
         <xsl:if test="//region[@name='page-top']/channel">
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             <div id="region-page-top" class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -90,6 +93,7 @@
                     </div>
                 </div>
             </div>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </xsl:if>
     </xsl:template>
 
@@ -191,6 +195,7 @@
     -->
     <xsl:template name="region.pre-content">
         <xsl:if test="//region[@name='pre-content']/channel">
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             <div id="region-pre-content" class="row-fluid">
                 <div class="col-md-12">
                     <xsl:for-each select="//region[@name='pre-content']/channel">
@@ -198,6 +203,7 @@
                     </xsl:for-each>
                 </div>
             </div>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </xsl:if>
     </xsl:template>
 

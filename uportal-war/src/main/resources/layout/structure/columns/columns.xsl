@@ -132,11 +132,14 @@
             <xsl:if test="/layout/@dlm:fragmentName">
                 <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
             </xsl:if>
-            
+
+            <!-- Headers to initiate RENDER_HEADER processing.  For Universality, include only those channels that are visible.
+                 For Respondr, the regions contain the channel-headers. -->
             <header>
               <xsl:choose>
                 <xsl:when test="$focusedFragmentId != 'none'">
-                    <!-- BEGIN display channel-headers for each channel visible on the page -->
+                    <!-- BEGIN display channel-headers for each channel visible on the page.  These channel headers are for
+                         Universality. -->
                     <xsl:for-each select="child::folder[@type='header']/descendant::channel">
                         <channel-header ID="{@ID}"/>
                     </xsl:for-each>
@@ -150,7 +153,8 @@
                     </xsl:for-each>
                 </xsl:when>
                 <xsl:when test="$userLayoutRoot = 'root'">
-                  <!-- BEGIN display channel-headers for each channel visible on the page -->
+                    <!-- BEGIN display channel-headers for each channel visible on the page.  These channel headers are for
+                         Universality.  -->
                   <xsl:for-each select="child::folder[@type='header']/descendant::channel">
                     <channel-header ID="{@ID}"/>
                   </xsl:for-each>
@@ -241,6 +245,11 @@
      +-->
 <xsl:template name="region">
     <region name="{@type}">
+        <!-- Add channel-headers for each portlet in the region so those portlets can contribute output in the
+             RENDER_HEADERS subphase of the two-phase rendering process.  -->
+        <xsl:for-each select="channel">
+            <channel-header ID="{@ID}"/>
+        </xsl:for-each>
         <xsl:copy-of select="channel"/>
     </region>
 </xsl:template>

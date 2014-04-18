@@ -487,6 +487,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		if(renderHeaderOption != null) {
 			result = renderHeaderOption.getValues().contains(Boolean.TRUE.toString());
 		}
+        logger.debug("Portlet {} need render header worker: {}", portletDefinition.getPortletName(), result);
 		return result;
 	}
 
@@ -981,7 +982,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Null safe means for retrieving the {@link Map} from the specified session
      * keyed by {@link #SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP}.
      * 
-     * @param session
+     * @param request HttpServletRequest
      * @return a never null {@link Map} in the session for storing portlet failure causes.
      */
     @SuppressWarnings("unchecked")
