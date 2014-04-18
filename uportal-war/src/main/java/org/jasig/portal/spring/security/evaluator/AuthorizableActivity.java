@@ -29,13 +29,13 @@ public class AuthorizableActivity {
 
     private String activityFname;
     private String ownerFname;
-    
+
     public AuthorizableActivity() {
     }
-    
-    public AuthorizableActivity(String activityFname, String ownerFname) {
-        this.activityFname = activityFname;
+
+    public AuthorizableActivity(String ownerFname, String activityFname) {
         this.ownerFname = ownerFname;
+        this.activityFname = activityFname;
     }
 
     public String getActivityFname() {
