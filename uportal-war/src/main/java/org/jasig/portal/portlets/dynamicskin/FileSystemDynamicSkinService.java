@@ -164,7 +164,9 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     }
 
     /**
-     * Create the less include file by appending the preference definitions to the end of the template file.
+     * Create the less include file by appending the configurable preference definitions (minus the configuration
+     * prefix string) to the end of the template file; e.g. portlet preference name
+     * PREFcolor1 is written to the less file as @color1:prefValue
      * 
      * @param prefs Portlet preferences
      * @param filename name of the less include file to create
@@ -177,7 +179,10 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         Enumeration<String> prefNames =  prefs.getNames();
         while (prefNames.hasMoreElements()) {
             String prefName = prefNames.nextElement();
-            str.append("@").append(prefName).append(": ").append(prefs.getValue(prefName, "")).append(";\n");
+            if (prefName.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+                String nameWithoutPrefix = prefName.substring(DynamicSkinService.CONFIGURABLE_PREFIX.length());
+                str.append("@").append(nameWithoutPrefix).append(": ").append(prefs.getValue(prefName, "")).append(";\n");
+            }
         }
 
         // Create byte[]s of the template and preferences content
@@ -232,13 +237,15 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
         int hash = 0;
         PortletPreferences preferences = request.getPreferences();
 
-        // Add the the list of preference names to an ordered list so we can get reliable hashcode calculations.
+        // Add the list of preference names to an ordered list so we can get reliable hashcode calculations.
         Map<String, String[]> prefs = preferences.getMap();
         TreeSet<String> orderedNames = new TreeSet<String>(prefs.keySet());
         Iterator<String> iterator = orderedNames.iterator();
         while (iterator.hasNext()) {
             String preferenceName = iterator.next();
-            hash = hash * 31 + preferences.getValue(preferenceName, "").trim().hashCode();
+            if (preferenceName.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+                hash = hash * 31 + preferences.getValue(preferenceName, "").trim().hashCode();
+            }
         }
         return Integer.toString(hash);
     }

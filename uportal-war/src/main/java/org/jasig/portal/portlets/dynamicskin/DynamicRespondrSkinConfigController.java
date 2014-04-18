@@ -59,8 +59,10 @@ public class DynamicRespondrSkinConfigController {
         Enumeration<String> preferenceNames = prefs.getNames();
         while (preferenceNames.hasMoreElements()) {
             String name = preferenceNames.nextElement();
-            String formValue = request.getParameter(name);
-            prefs.setValue(name, formValue != null ? formValue : "");
+            if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+                String formValue = request.getParameter(name);
+                prefs.setValue(name, formValue != null ? formValue : "");
+            }
         }
 
         prefs.store();
@@ -82,7 +84,9 @@ public class DynamicRespondrSkinConfigController {
         Enumeration<String> preferenceNames = preferences.getNames();
         while (preferenceNames.hasMoreElements()) {
             String name = preferenceNames.nextElement();
-            model.addAttribute(name, preferences.getValue(name, ""));
+            if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+                model.addAttribute(name, preferences.getValue(name, ""));
+            }
         }
 
         return "jsp/DynamicRespondrSkin/skinConfig";

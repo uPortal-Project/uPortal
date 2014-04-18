@@ -30,6 +30,13 @@ import javax.portlet.PortletRequest;
 public interface DynamicSkinService {
 
     /**
+     * String that is prepended to preferences that are configurable, and also are passed into the LESS file as
+     * variables (minus the prefix).  This insures someone can add a non-skin preference value in later as long
+     * as it doesn't have this prefix and the preference will not impact the skin.
+     */
+    static final String CONFIGURABLE_PREFIX = "PREF";
+
+    /**
      * Return true if the filePathname already exists on the file system.
      *
      * @param filePathname Fully-qualified file path name of the .css file
@@ -43,7 +50,7 @@ public interface DynamicSkinService {
      * uPortal deploy.
      *
      * Since the less compilation phase is fairly slow (several seconds) and intensive, this method will
-     * allow multiple threads to process different less compilations at the same time but insure the same
+     * allow multiple threads to process different less compilations at the same time but ensure the same
      * output file will not be created multiple times. Also this method will not let a bad LESS file cause repeated
      * LESS compilations and completely take down the portal.  The bad file will be blacklisted for a period
      * of time to limit performance impacts.

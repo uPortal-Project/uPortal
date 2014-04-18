@@ -50,8 +50,8 @@ public class DynamicRespondrSkinViewController {
     private static final MessageFormat CSS_PATH_FORMAT = new MessageFormat(RELATIVE_ROOT + "/{0}{1}.css");
     private static final String DYNAMIC_SKIN_FILENAME_BASE = "skin";
     private static final String DEFAULT_SKIN_NAME = "defaultSkin";
-    private static final String PREF_SKIN_NAME = "skinName";
-    private static final String PREF_DYNAMIC = "dynamic";
+    private static final String PREF_SKIN_NAME = DynamicSkinService.CONFIGURABLE_PREFIX + "dynamicSkinName";
+    private static final String PREF_DYNAMIC = DynamicSkinService.CONFIGURABLE_PREFIX +"dynamicSkinEnabled";
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -70,7 +70,7 @@ public class DynamicRespondrSkinViewController {
         // TODO:  Leverage the RENDER_HEADERS subphase for this behavior
 
         PortletPreferences prefs = request.getPreferences();
-        Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, "false"));
+        Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, ""));
         String defaultSkinName = prefs.getValue(PREF_SKIN_NAME, DEFAULT_SKIN_NAME);
         String cssUrl = enabled ? calculateDynamicSkinUrlPathToUse(request, defaultSkinName)
                 : calculateCssLocationInWebapp(defaultSkinName, "");

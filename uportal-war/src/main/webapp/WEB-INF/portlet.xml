@@ -590,34 +590,38 @@
             <title>Dynamic Respondr Skin</title>
         </portlet-info>
         <portlet-preferences>
-            <!-- Set to true to enable dynamic skins, which will process {skinName}.less with LESS variables
+            <!-- PREF is a prefix to dynamically select those portlet preference values that are sent to the
+                 config jsp page, and written to the LESS file as variables without the prefix. -->
+
+            <!-- Set to true to enable dynamic skins, which will process {PREFdynamicSkinName}.less with LESS variables
                  defined by portlet preferences to create a custom skin CSS file to embed into the page.
-                 Set to false to have the page load {skinName}.css. -->
+                 Set to empty string to have the page load {PREFdynamicSkinName}.css. -->
             <preference>
-                <name>dynamic</name>
-                <value>false</value>
+                <name>PREFdynamicSkinEnabled</name>
+                <value></value>
             </preference>
-            <!-- If dynamic=true, the Dynamic Skin Portlet will process {skinName}.less to create
+            <!-- If PREFdynamic=true, the Dynamic Skin Portlet will process {PREFdynamicSkinName}.less to create
                  a custom skin CSS file to link into the page.  If dynamic=false, the Dynamic Skin Portlet
-                 will link in {skinName}.css. -->
+                 will link in {PREFdynamicSkinName}.css. -->
             <preference>
-                <name>skinName</name>
+                <name>PREFdynamicSkinName</name>
                 <value>defaultSkin</value>
             </preference>
 
-            <!-- Preferences below this comment are name/value pairs that are dynamically injected as LESS
-                 variables into the LESS compilation processing. -->
+            <!-- All PREF* preference values (without the PREF prefix) are dynamically injected as LESS variables
+                 into the LESS compilation processing, but preferences below this comment are name/value pairs
+                 that are intended to be used within the LESS files. -->
 
             <preference>
-                <name>color1</name>
+                <name>PREFcolor1</name>
                 <value>#4065B0</value>
             </preference>
             <preference>
-                <name>color2</name>
+                <name>PREFcolor2</name>
                 <value>#8AA9D8</value>
             </preference>
             <preference>
-                <name>color3</name>
+                <name>PREFcolor3</name>
                 <value>#F68923</value>
             </preference>
         </portlet-preferences>
