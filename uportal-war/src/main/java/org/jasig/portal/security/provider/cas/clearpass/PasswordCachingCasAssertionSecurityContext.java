@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.util.XmlUtils;
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.security.provider.cas.CasAssertionSecurityContext;
@@ -36,8 +37,12 @@ import org.springframework.util.Assert;
 public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecurityContext {
 
     private static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
-    private static final int MAX_PASSWORD_RETRIEVAL_ATTEMPTS = 5;
+    private static final int MAX_PASSWORD_RETRIEVAL_RETRY_ATTEMPTS = 5;
     private static final long PASSWORD_RETRIEVAL_DELAY = 300;
+    private static final String PROPERTY_PASSWORD_RETRIEVAL_DELAY =
+            "org.jasig.portal.security.provider.cas.clearpass.retryDelay";
+    private static final String PROPERTY_PASSWORD_RETRIEVAL_MAX_RETRY_ATTEMPTS =
+            "org.jasig.portal.security.provider.cas.clearpass.maxRetryAttempts";
     private static final long serialVersionUID = -3816036745827152340L;
 
     private final String clearPassUrl;
@@ -49,12 +54,21 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     private Assertion assertion;
     private String proxyTicket;
 
+    // Count of number of times we've attempted to retrieve user's password
     private int passwordRetrievalCount;
+    // Delay in ms before attempting to automatically retrieve user's password again
+    private long passwordRetrievalDelay;
+    // Maximum number of times to try to automatically retrieve the user's password
+    private int passwordRetrievalMaxRetryAttempts;
 
     protected PasswordCachingCasAssertionSecurityContext(final String clearPassUrl) {
         super();
         Assert.notNull(clearPassUrl, "clearPassUrl cannot be null.");
         this.clearPassUrl = clearPassUrl;
+        passwordRetrievalDelay = PropertiesManager.getPropertyAsLong
+                (PROPERTY_PASSWORD_RETRIEVAL_DELAY, PASSWORD_RETRIEVAL_DELAY);
+        passwordRetrievalMaxRetryAttempts = PropertiesManager.getPropertyAsInt
+                (PROPERTY_PASSWORD_RETRIEVAL_MAX_RETRY_ATTEMPTS, MAX_PASSWORD_RETRIEVAL_RETRY_ATTEMPTS);
     }
 
     @Override
@@ -77,11 +91,11 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     }
 
     /**
-     * Attempt to use the PGTIOU to obtain the PGT to call CAS to get the user's password.  The Proxy Granting
-     * Ticket IOU (PGTIOU) is present in the assertion.  CAS delivers the Proxy Ticket (PGT) to one of the
-     * uPortal servers. Since the PGT may not be delivered to this uPortal node, if password retrieval fails
-     * attempt again a few times after waiting a bit to give the PGT a chance to get replicated to this uPortal
-     * node via distributed cache.
+     * Attempt to use the PGTIOU returned in the service ticket validation to obtain a proxy ticket to call CAS
+     * to get the user's password.  The Proxy Granting Ticket IOU (PGTIOU) is present in the assertion.
+     * CAS delivers the Proxy Granting Ticket (PGT) to one of the uPortal servers. Since the PGT may not be
+     * delivered to this uPortal node, if password retrieval fails attempt again a few times after waiting a
+     * bit to give the PGT a chance to get replicated to this uPortal node via distributed cache.
      *
      * <p>This method may potentially be called by multiple threads simultaneously so insure only one simultaneous
      * attempt is made to contact the CAS server to get the password.
@@ -93,34 +107,25 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     protected synchronized byte[] retrievePasswordFromCasServer() {
         // If we do not have the password, attempt to retrieve it.
         if (cachedCredentials == null) {
-            // Get the Proxy Granting Ticket (PGTIOU) from the assertion and use it to get the proxy ticket (PGT)
-            // that CAS delivered to one of the uPortal servers in the cluster so we can use the proxy ticket
-            // to get the user's password.
+            // Get the Proxy Granting Ticket (PGTIOU) from the assertion and use it to get a proxy ticket
+            // to obtain the user's password.
             if (proxyTicket == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Attempting to get Proxy Ticket (PGT) using Proxy Granting Ticket (PGTIOU) for user "
-                            + assertion.getPrincipal().getName());
-                }
+                log.debug("Attempting to get CAS ClearPass Proxy Ticket for user {} using PGTIOU in assertion",
+                        assertion.getPrincipal().getName());
                 proxyTicket = assertion.getPrincipal().getProxyTicketFor(this.clearPassUrl);
             }
 
             // If we were able to get the proxy ticket (it was delivered to this server or replicated to this server),
             // invoke CAS to retrieve the password.
             if (proxyTicket != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Attempting to get password using Proxy Ticket (PGT) " + proxyTicket + " for user "
-                            + assertion.getPrincipal().getName());
-                }
+                log.debug("Attempting to get password for user {} using Proxy Ticket {}",
+                        assertion.getPrincipal().getName(), proxyTicket);
 
                 String password = retrievePasswordUsingProxyTicket(proxyTicket);
 
                 if (password != null) {
                     log.debug("Password retrieved from ClearPass.");
                     this.cachedCredentials = password.getBytes();
-                } else {
-                    // For some reason we were unable to get the password from CAS.  Fall through and let the
-                    // background thread attempt again in case CAS had a transient issue.
-                    log.debug("Unable to retrieve password from ClearPass using proxy ticket.");
                 }
             }
 
@@ -131,21 +136,23 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
                 // If the proxy ticket is not available because it was sent to another server and hasn't replicated
                 // to this server yet, or if the password retrieval from CAS failed for some reason we'll
                 // try again a bit later if we haven't exceeded the max retrieval attempts setting.
-                if (++passwordRetrievalCount >= MAX_PASSWORD_RETRIEVAL_ATTEMPTS) {
-                    if (log.isDebugEnabled()) {
-                        log.error("Unable to obtain proxy ticket (PGT) from proxy granting ticket (PGTIOU) for"
-                                + " ClearPass service during for " + assertion.getPrincipal().getName()
-                                + " in " + MAX_PASSWORD_RETRIEVAL_ATTEMPTS + " attempts. Check your uPortal and CAS"
-                                + " configuration.  See uPortal manual section on Caching and Replaying credentials");
-                    }
+                String message = proxyTicket == null ? "proxy ticket" : "password";
+                if (++passwordRetrievalCount > passwordRetrievalMaxRetryAttempts) {
+                    // NOTE:  Each time a portlet requiring a password renders it will attempt to obtain the
+                    // password so this error message may appear many times with counts greatly exceeding
+                    // passwordRetrievalMaxRetryAttempts since they are not automatic retries but valid attempts
+                    // to get the password.
+                    log.error("Unable to obtain {} for {} from CAS ClearPass in {} attempts. Check your"
+                            + " uPortal and CAS configuration.  See uPortal manual section on Caching and"
+                            + " Replaying credentials", message, assertion.getPrincipal().getName(),
+                            passwordRetrievalCount);
                 } else {
-                    if (log.isDebugEnabled()) {
-                        log.info("Unable to obtain proxy ticket (PGT) from proxy granting ticket (PGTIOU) for"
-                                + " ClearPass service during for " + assertion.getPrincipal().getName() + ". Will try"
-                                + " again " + Integer.toString(MAX_PASSWORD_RETRIEVAL_ATTEMPTS - passwordRetrievalCount)
-                                + " more times to wait for it to replicate to this server through distributed cache");
-                    }
-                    executor.schedule(new ObtainPasswordWorker(this), PASSWORD_RETRIEVAL_DELAY, TimeUnit.MILLISECONDS);
+                    log.info("Unable to obtain {} for {} from CAS ClearPass. Will try again {} more times {}",
+                            message, assertion.getPrincipal().getName(),
+                            passwordRetrievalMaxRetryAttempts - passwordRetrievalCount + 1,
+                            proxyTicket == null ? " for PGT to replicate to this server through distributed cache"
+                                : "");
+                    executor.schedule(new ObtainPasswordWorker(this), passwordRetrievalDelay, TimeUnit.MILLISECONDS);
                 }
             }
         }
@@ -163,17 +170,14 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
             final String password = XmlUtils.getTextForElement(response, "credentials");
 
 
-            if (log.isTraceEnabled()) {
-                log.trace(String.format("ClearPass Response was:\n %s", response));
-            }
-
             if (CommonUtils.isNotBlank(password)) {
                 return password;
             }
 
-            log.error("Unable to Retrieve Password.  If you see a [403] HTTP response code returned from"
+            // Response won't have password so OK to log it.
+            log.error("Unable to Retrieve Password using url {}.  If you see a [403] HTTP response code returned from"
                     +" CommonUtils then it most likely means the proxy configuration on the CAS server is not"
-                    + " correct.\n\nFull Response from ClearPass was [" + response + "].");
+                    + " correct.\n\nFull Response from ClearPass was [{}]", url, response);
             return null;
         } catch (Exception e) {
             /*
