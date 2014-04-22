@@ -176,7 +176,7 @@
     -->
     <xsl:template name="region.sidebar-left">
         <xsl:if test="//region[@name='sidebar-left']/channel">
-            <div id="region-sidebar-left" class="col-sm-2">
+            <div id="region-sidebar-left" class="col-md-2">
                 <xsl:for-each select="//region[@name='sidebar-left']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
                 </xsl:for-each>
@@ -192,7 +192,7 @@
     <xsl:template name="region.pre-content">
         <xsl:if test="//region[@name='pre-content']/channel">
             <div id="region-pre-content" class="row-fluid">
-                <div class="col-sm-12">
+                <div class="col-md-12">
                     <xsl:for-each select="//region[@name='pre-content']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
@@ -208,7 +208,7 @@
     -->
     <xsl:template name="region.sidebar-right">
         <xsl:if test="//region[@name='sidebar-right']/channel">
-            <div id="region-sidebar-right" class="col-sm-2">
+            <div id="region-sidebar-right" class="col-md-2">
                 <xsl:for-each select="//region[@name='sidebar-right']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
                 </xsl:for-each>
