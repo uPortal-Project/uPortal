@@ -38,10 +38,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Service layer for Marketplace.
+ * Service layer implementation for Marketplace.
+ * @since uPortal 4.1
  */
 @Service
-public class MarketplaceService {
+public class MarketplaceService implements IMarketplaceService {
     // TODO Caching
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -56,13 +57,7 @@ public class MarketplaceService {
      */
     private IPortletCategoryRegistry portletCategoryRegistry;
 
-    /**
-     * Return the Marketplace entries visible to the user.
-     * Marketplace entries are visible to the user when the user enjoys permission for the
-     * UP_PORTLET_SUBSCRIBE.BROWSE or UP_PORTLET_PUBLISH.MANAGE activity on the portlet entity.
-     * @throws IllegalArgumentException when passed in user is null
-     * @since uPortal 4.1
-     */
+    @Override
     public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
 
         final List<IPortletDefinition> allPortletDefinitions =
@@ -87,16 +82,7 @@ public class MarketplaceService {
 
 
 
-    /**
-     * Return the potentially empty Set of portlet categories such that
-     * 1. the user has BROWSE (or MANAGE implying BROWSE) permission on the **category**, and
-     * 2. the user has BROWSE (or MANAGE implying BROWSE) permission on at least one portlet in that category.
-     * (That is, the category is not "empty" from the perspective of this user browsing).
-     *
-     * @param user non-null user
-     * @return potentially empty non-null Set of browseable categories
-     * @since uPortal 4.1
-     */
+    @Override
     public Set browseableNonEmptyPortletCategoriesFor(final IPerson user) {
 
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
@@ -131,15 +117,7 @@ public class MarketplaceService {
 
     }
 
-    /**
-     * Answers whether the given user may browse the portlet marketplace entry for the given portlet definition.
-     * @param user a non-null IPerson who might be permitted to browse the entry
-     * @param portletDefinition a non-null portlet definition the Marketplace entry of which the user might browse
-     * @return true if permitted, false otherwise
-     * @throws IllegalArgumentException if user is null
-     * @throws IllegalArgumentException if portletDefinition is null
-     * @since uPortal 4.1
-     */
+    @Override
     public boolean mayBrowsePortlet(final IPerson user, final IPortletDefinition portletDefinition) {
         Validate.notNull(user, "Cannot determine if null users can browse portlets.");
         Validate.notNull(portletDefinition, "Cannot determine whether a user can browse a null portlet definition.");

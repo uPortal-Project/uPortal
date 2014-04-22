@@ -71,7 +71,7 @@ public class PortletMarketplaceController {
     /**
      * Autowired.
      */
-    private MarketplaceService marketplaceService;
+    private IMarketplaceService marketplaceService;
 
 	
 	private IPortalRequestUtils portalRequestUtils;
@@ -81,12 +81,12 @@ public class PortletMarketplaceController {
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
 
-    public MarketplaceService getMarketplaceService() {
+    public IMarketplaceService getMarketplaceService() {
         return marketplaceService;
     }
 
     @Autowired
-    public void setMarketplaceService(MarketplaceService marketplaceService) {
+    public void setMarketplaceService(IMarketplaceService marketplaceService) {
         this.marketplaceService = marketplaceService;
     }
 
