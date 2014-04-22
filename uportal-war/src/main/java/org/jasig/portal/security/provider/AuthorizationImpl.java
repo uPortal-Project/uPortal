@@ -46,15 +46,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IPermissionPolicy;
-import org.jasig.portal.security.IPermissionSet;
-import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.security.*;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.PortletCategoryRegistryLocator;
@@ -371,14 +363,17 @@ throws AuthorizationException
 public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String portletDefinitionId)
 {
     String owner = IPermission.PORTAL_SUBSCRIBE;
-    String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
+
     
     // retrieve the indicated channel from the channel registry store and 
     // determine its current lifecycle state
     IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     if (portlet == null){
     	return false;
-    }    
+    }
+
+    String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
+
     PortletLifecycleState state = portlet.getLifecycleState();
     
     /*

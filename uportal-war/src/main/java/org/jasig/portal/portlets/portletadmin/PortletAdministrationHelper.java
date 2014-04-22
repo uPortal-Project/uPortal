@@ -90,10 +90,7 @@ import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.*;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.utils.ComparableExtractingComparator;
@@ -208,8 +205,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
 
 			try {
                 IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPortletPublishingService.FRAMEWORK_OWNER);
-                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IPortletPublishingService.SUBSCRIBER_ACTIVITY,
-                        IPermission.PORTLET_PREFIX + String.valueOf(form.getId()));
+                IAuthorizationPrincipal[] prins =
+                        pm.getAuthorizedPrincipals(IPortletPublishingService.SUBSCRIBER_ACTIVITY,
+                        PermissionHelper.permissionTargetIdForPortletDefinition(def));
                 for (int mp = 0; mp < prins.length; mp++) {
                 	JsonEntityBean bean;
                 	

@@ -24,10 +24,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.AuthorizationPrincipalHelper;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +114,7 @@ public class MarketplaceService implements IMarketplaceService {
 
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final String portletPermissionEntityId = permissionTargetIdForPortletDefinition(portletDefinition);
+        final String portletPermissionEntityId = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
 
         return mayBrowse(principal, portletPermissionEntityId);
 
@@ -146,22 +143,6 @@ public class MarketplaceService implements IMarketplaceService {
                 || principal.hasPermission(IPermission.PORTAL_PUBLISH,
                 IPermission.PORTLET_MANAGER_ACTIVITY, targetId));
 
-    }
-
-    /**
-     * Static utility method computing the permission target ID for a portlet definition.
-     * @param portletDefinition a portlet definition
-     * @return String permission target ID for the portlet definition.
-     * @throws IllegalArgumentException if portletDefinition is null
-     */
-    private static String permissionTargetIdForPortletDefinition(IPortletDefinition portletDefinition) {
-        // TODO: Put this method somewhere better.
-
-        Validate.notNull(portletDefinition, "Cannot compute permission target ID for a null portlet definition.");
-
-        final String portletPublicationId = portletDefinition.getPortletDefinitionId().getStringId();
-
-        return IPermission.PORTLET_PREFIX.concat(portletPublicationId);
     }
 
     // Getters and setters below here.

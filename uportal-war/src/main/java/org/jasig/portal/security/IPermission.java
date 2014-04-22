@@ -89,6 +89,7 @@ public interface IPermission {
     A String which, when concatentated with a portlet id, represents a portal
     portlet.  Used, for example, for Permission.target when the portal framework
     grants a Permission to perform some activity on a portlet.
+    See PermissionHelper for a convenience method for correctly using this.
   */
   public static final String PORTLET_PREFIX = "PORTLET_ID.";    
   
