@@ -189,7 +189,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
              */
             if (log.isWarnEnabled()) {
                 log.warn("Unable to retrieve the credential from the ClearPass " +
-                        "service for proxy ticket:  " + proxyTicket, e);
+                        "service for proxy ticket {}", proxyTicket, e);
             }
             return null;
         }
