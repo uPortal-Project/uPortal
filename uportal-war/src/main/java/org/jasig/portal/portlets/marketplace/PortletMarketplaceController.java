@@ -137,10 +137,23 @@ public class PortletMarketplaceController {
     @RenderMapping(params="action=view")
     public String entryView(RenderRequest renderRequest, RenderResponse renderResponse, WebRequest webRequest, PortletRequest portletRequest, Model model){
         IPortletDefinition result = this.portletDefinitionRegistry.getPortletDefinitionByFname(portletRequest.getParameter("fName"));
+
         if(result == null){
             this.setUpInitialView(webRequest, portletRequest, model, null);
             return "jsp/Marketplace/view";
         }
+
+        final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
+        final IPerson user = personManager.getPerson(servletRequest);
+
+        if (! this.marketplaceService.mayBrowsePortlet(user, result)) {
+            // TODO: provide an error experience
+            // currently at least blocks rendering the entry for the portlet the user is not authorized to see.
+            this.setUpInitialView(webRequest, portletRequest, model, null);
+            return "jsp/Marketplace/view";
+        }
+
+
         MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result, this.portletCategoryRegistry);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
