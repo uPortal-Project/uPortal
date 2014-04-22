@@ -93,4 +93,12 @@
 
   <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
 
+    <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
+        <constructor-arg>
+            <list>
+                <value>https://uPortal.server.edu</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
 </beans>

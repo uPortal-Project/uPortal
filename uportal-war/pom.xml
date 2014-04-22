@@ -565,8 +565,9 @@
             <scope>runtime</scope>
          </dependency>
 
-        <!-- For clustered uPortal environments using CAS ClearPass -->
-        <!--dependency>
+        <!-- For clustered uPortal environments using CAS ClearPass. It does not hurt to have the dependency included
+             even if the site does not use CAS ClearPass -->
+        <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-support-distributed-ehcache</artifactId>
             <version>${casclient.version}</version>
@@ -577,7 +578,7 @@
                 </exclusion>
             </exclusions>
             <scope>runtime</scope>
-        </dependency-->
+        </dependency>
 
 
         <dependency>
