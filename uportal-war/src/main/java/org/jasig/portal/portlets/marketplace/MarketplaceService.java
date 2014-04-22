@@ -148,7 +148,7 @@ public class MarketplaceService implements IMarketplaceService {
         Validate.notNull(targetId, "Cannot determine permissions on a null target.");
 
         return (principal.hasPermission(IPermission.PORTAL_SUBSCRIBE,
-                IPermission.PORTLET_SUBSCRIBER_BROWSE_ACTIVITY, targetId)
+                IPermission.PORTLET_BROWSE_ACTIVITY, targetId)
                 || principal.hasPermission(IPermission.PORTAL_PUBLISH,
                 IPermission.PORTLET_MANAGER_ACTIVITY, targetId));
 

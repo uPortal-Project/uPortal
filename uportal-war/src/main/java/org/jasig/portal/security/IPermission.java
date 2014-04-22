@@ -44,7 +44,7 @@ public interface IPermission {
      * Portlet subscribe permission to view ("browse") marketplace entry.
      * @since uPortal 4.1
      */
-    public static final String PORTLET_SUBSCRIBER_BROWSE_ACTIVITY = "BROWSE";
+    public static final String PORTLET_BROWSE_ACTIVITY = "BROWSE";
 
   
   /*
