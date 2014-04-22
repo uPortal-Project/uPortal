@@ -153,7 +153,7 @@ public class MarketplaceService implements IMarketplaceService {
 
     @Autowired
     public void setPortletDefinitionRegistry(final IPortletDefinitionRegistry portletDefinitionRegistry) {
-        Validate.notNull(portletDefinitionRegistry, "Pportlet definition registry must not be null.");
+        Validate.notNull(portletDefinitionRegistry, "Portlet definition registry must not be null.");
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
 
