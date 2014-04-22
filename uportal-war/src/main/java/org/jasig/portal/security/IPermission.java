@@ -39,6 +39,13 @@ public interface IPermission {
   public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
   public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
   public static final String PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
+
+    /**
+     * Portlet subscribe permission to view ("browse") marketplace entry.
+     * @since uPortal 4.1
+     */
+    public static final String PORTLET_SUBSCRIBER_BROWSE_ACTIVITY = "BROWSE";
+
   
   /*
    * Portlet render permissions by lifecycle state.  These permissions are not
