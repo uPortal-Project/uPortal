@@ -68,9 +68,6 @@ public class PortletMarketplaceController {
 
     private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
 
-    /**
-     * Autowired.
-     */
     private IMarketplaceService marketplaceService;
 
 	

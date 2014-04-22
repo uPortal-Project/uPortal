@@ -46,14 +46,8 @@ public class MarketplaceService implements IMarketplaceService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * Autowired.
-     */
     private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    /**
-     * Autowired.
-     */
     private IPortletCategoryRegistry portletCategoryRegistry;
 
     @Override
