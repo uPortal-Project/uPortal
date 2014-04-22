@@ -43,7 +43,6 @@ import java.util.Set;
  */
 @Service
 public class MarketplaceService implements IMarketplaceService {
-    // TODO Caching
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
