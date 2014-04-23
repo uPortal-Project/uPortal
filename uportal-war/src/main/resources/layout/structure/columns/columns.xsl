@@ -113,14 +113,11 @@
       <layout_fragment>
         <xsl:call-template name="debug-info"/>
         <xsl:call-template name="tabList"/>
-        <!-- Only include hidden-top, page-top, page-bottom, hidden-bottom, and only when showHeaderWhenDetached is enabled -->
-        <xsl:if test="//*[@ID = $userLayoutRoot]/parameter[@name='showHeaderWhenDetached' and @value='true']">
           <regions>
             <xsl:for-each select="child::folder[@type='hidden-top' or @type='page-top' or @type='page-bottom' or @type='hidden-bottom']">
               <xsl:call-template name="region"/>
             </xsl:for-each> 
           </regions>
-        </xsl:if>
         <content>
           <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
           <!-- Detect whether a detached channel is present in the user's layout ? -->

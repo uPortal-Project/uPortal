@@ -770,9 +770,6 @@
         <div id="wrapper">
             <xsl:call-template name="region.hidden-top" />
             <xsl:call-template name="region.page-top" />
-            <xsl:choose>
-                <!-- Show Sticky Header -->
-                <xsl:when test="/layout_fragment/content/channel/parameter[@name='showHeaderWhenDetached']/@value = 'true'">
                     <div class="portal-sticky-header" id="portal-sticky-header">
                         <header class="portal-header" role="banner">
                             <div class="portal-global">
@@ -810,27 +807,10 @@
                             <div class="row">
                                 <div id="portalPageBodyMessage" class="col-md-12"></div>
                             </div>
-                            <xsl:copy-of select="/layout_fragment/content"/>
+                            
                         </div>
+                        <xsl:copy-of select="/layout_fragment/content"/>
                     </div>
-                </xsl:when>
-                <!-- Don't Show Sticky Header -->
-                <xsl:otherwise>
-                    <div class="portal-sticky-content" role="main">
-                        <div class="portal-container">
-                            <div class="row">
-                                <div id="portalPageBodyMessage" class="col-md-12"></div>
-                            </div>
-                            <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top">
-                                <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return">
-                                    <xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/>
-                                </a>
-                            </div>
-                            <xsl:copy-of select="/layout_fragment/content"/>
-                        </div>
-                    </div>
-                </xsl:otherwise>
-            </xsl:choose>
             <xsl:call-template name="region.page-bottom" />
             <xsl:call-template name="region.hidden-bottom" />
         </div>
