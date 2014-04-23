@@ -32,20 +32,20 @@
 }
 
 /* Down Caret*/
-#addInfoToggle.collapsed i:after {
+#${n}tenantManager #addInfoToggle.collapsed i:after {
     content: "\f0d7";
 }
 /* Up Caret*/
-#addInfoToggle i:after {
+#${n}tenantManager #addInfoToggle i:after {
     content: "\f0d8";
 }
 
-.field-error {
+#${n}tenantManager .field-error {
     display: none;
     padding: 3px;
     margin: 0 5px;
 }
-.has-error div.field-error {
+#${n}tenantManager .has-error div.field-error {
     display: block;
 }
 </style>

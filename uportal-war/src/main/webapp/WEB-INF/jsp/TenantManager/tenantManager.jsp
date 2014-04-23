@@ -23,13 +23,13 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-    .tenant-manager .panel {
-        margin-top: 15px;
-    }
-    .tenant-manager .panel-heading {
-        font-weight: bold;
-        position: relative;
-    }
+${n}tenantManager .panel {
+    margin-top: 15px;
+}
+${n}tenantManager .panel-heading {
+    font-weight: bold;
+    position: relative;
+}
 </style>
 
 <portlet:renderURL var="showAddTenantUrl">
