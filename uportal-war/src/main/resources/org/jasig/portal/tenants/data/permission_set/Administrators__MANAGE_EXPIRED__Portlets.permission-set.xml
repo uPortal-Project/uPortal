@@ -19,16 +19,14 @@
     under the License.
 
 -->
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Everyone</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
-  <creator>system</creator>
-  <description>All Users</description>
-  <children>
-    <group>Authenticated Users</group>
-    <group>PAGS Root</group>
-    <group>Guests</group>
-    <group>Portal System</group>
-    <group>Tenants</group>
-  </children>
-</group>
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_PORTLET_PUBLISH</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal>
+    <group>${tenant.name} Administrators</group>
+  </principal>
+  <activity>MANAGE_EXPIRED</activity>
+  <target permission-type="GRANT">
+    <group>${tenant.name} Portlets</group>
+  </target>
+</permission-set>

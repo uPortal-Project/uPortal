@@ -41,7 +41,8 @@ import com.google.common.collect.ImmutableSet;
  */
 public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_GROUP_QNAME = new QName("group");
-    
+    public static final String TYPE_ID = "group-membership";
+
     /**
      * @deprecated used for importing old data files
      */
@@ -102,7 +103,7 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     
     @Override
     public String getTypeId() {
-        return "group-membership";
+        return TYPE_ID;
     }
 
     @Override

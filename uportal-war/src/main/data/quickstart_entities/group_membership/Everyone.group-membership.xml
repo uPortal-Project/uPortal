@@ -32,5 +32,6 @@
     <group>Portal System</group>
     <group>Staff</group>
     <group>Students</group>
+    <group>Tenants</group>
   </children>
 </group>

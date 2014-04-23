@@ -20,15 +20,8 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Everyone</name>
+  <name>Tenants</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>All Users</description>
-  <children>
-    <group>Authenticated Users</group>
-    <group>PAGS Root</group>
-    <group>Guests</group>
-    <group>Portal System</group>
-    <group>Tenants</group>
-  </children>
+  <description>Parent group for all tenants in the portal</description>
 </group>

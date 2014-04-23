@@ -28,6 +28,7 @@
     <group>Administration</group>
     <group>Development</group>
     <group>Information</group>
+    <group>Tenant Portlets</group>
     <group>uPortal</group>
   </children>
 </group>

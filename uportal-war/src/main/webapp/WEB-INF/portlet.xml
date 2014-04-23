@@ -914,6 +914,35 @@
         </security-role-ref>
     </portlet>
 
+    <portlet>
+        <portlet-name>TenantManager</portlet-name>
+        <display-name xml:lang="en">Tenant Manager</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/TenantManager-portlet.xml</value>
+        </init-param>
+        <expiration-cache>-1</expiration-cache>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Tenant Manager</title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>groupsTemplate</name>
+                <value>Tenant Template</value>
+            </preference>
+            <preference>
+                <name>tenantToken</name>
+                <value>$tenant</value>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>
         <portlet-mode>config</portlet-mode>
