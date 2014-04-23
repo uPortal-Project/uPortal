@@ -31,6 +31,7 @@
         <ns2:portletName>PortletMarketplace</ns2:portletName>
     </portlet-descriptor>
     <category>uPortal</category>
+    <category>Featured</category>
     <group>Everyone</group>
     <parameter>
         <name>iconUrl</name>

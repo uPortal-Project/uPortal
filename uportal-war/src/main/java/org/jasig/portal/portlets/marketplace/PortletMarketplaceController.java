@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlets.marketplace;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -69,7 +70,7 @@ public class PortletMarketplaceController {
     private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
 
     private IMarketplaceService marketplaceService;
-
+    private static String FEATURED_CATEGORY_NAME="Featured";
 	
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -227,6 +228,10 @@ public class PortletMarketplaceController {
         @SuppressWarnings("unchecked")
         Set<PortletCategory> categoryList = (Set<PortletCategory>) registry.get("categories");
 
+        @SuppressWarnings("unchecked")
+        Set<MarketplacePortletDefinition> featuredPortlets = (Set<MarketplacePortletDefinition>) registry.get("featured");
+        model.addAttribute("featuredList", featuredPortlets);
+        
         //Determine if the marketplace is going to show the root category
         String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE_NAME, "false");
         boolean showRootCategory = Boolean.parseBoolean(showRootCategoryPreferenceValue);
@@ -260,12 +265,22 @@ public class PortletMarketplaceController {
 
         final Set<MarketplacePortletDefinition> visiblePortlets =
                 this.marketplaceService.browseableMarketplaceEntriesFor(user);
-
+        
+        @SuppressWarnings("unchecked")
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
+        Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<MarketplacePortletDefinition>();
+        for (MarketplacePortletDefinition currentPortlet : visiblePortlets) {
+            for(PortletCategory category: currentPortlet.getParentCategories()){
+                if(FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
+                    featuredPortlets.add(currentPortlet);
+                }
+            }
+        }
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);
+        registry.put("featured", featuredPortlets);
         return registry;
     }
 }

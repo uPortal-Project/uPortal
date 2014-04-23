@@ -227,11 +227,57 @@
     padding-top: 1em;
 }
 
+#${n}marketplace .marketplaceSection{
+    border-bottom-style:dotted;
+    border-width:thin;
+}
 
 </style>
 
 
 <div id="${n}marketplace">
+
+<c:if test="${fn:length(featuredList) > 0}">
+    <div id="${n}featured" class="marketplaceSection">
+        <div>
+            <span><strong><spring:message code="featured" text="Featured" /></strong></span><br>
+        </div>
+        <c:set var="endRowPortletCounter" value="0"/>
+        <div class="row">
+            <c:if test="${fn:length(featuredList)mod 2!=0 }">
+                <div class="col-xs-3">
+                <c:set var="endRowPortletCounter" value="1" />
+                </div>
+            </c:if>
+            <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
+                <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
+                    <portlet:param name="action" value="view"/>
+                    <portlet:param name="fName" value="${featuredPortlet.FName}"/>
+                </portlet:renderURL>
+                <div class="col-xs-6 col-sm-6 text-center">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                        <a href="${entryURL}">
+                            <div>
+                                <c:out value="${featuredPortlet.title}"/>
+                            </div>
+                        </a>
+                        </div>
+                        <div class="panel-body">
+                            <div>
+                                <c:out value="${featuredPortlet.description}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <c:if test="${(endRowPortletCounter + status.count) mod 2 ==0}">
+                    <div class="clearfix"></div>
+                </c:if>
+            </c:forEach>
+        </div>
+    </div>
+</c:if>
+
 
 <div id="${n}categoryListContainer" class="marketplace_center_text panel panel-default" style="display:none">
     <div class="panel-body">
@@ -359,8 +405,9 @@
                 "<button type=\"button\" id=\"${n}category-sort-button\" class=\"btn btn-default category-sort-button\">${categoryLabel}</button>"+
                 "</div><br><br></div>");
             $("#${n}categoryListContainer").insertAfter($(".${n}sort_buttons"));
+            $("#${n}featured").insertAfter($("#${n}marketplace .top"));
             $("#${n}marketplace div.sort_info").html("<div><BR><BR><span><strong>${browseBy}</strong><br><br></div>");
-            $("#${n}marketplace div.dataTables_filter").append("<form action='${entryURL}'><button>${labelSearch}</button></form>");
+            $("#${n}marketplace div.dataTables_filter").append("<form action='${entryURL}'><button>${labelSearch}</button></form><br>");
 
             var setFilter = function(text){
                 myDataTable.fnFilter(text);
@@ -369,6 +416,8 @@
             var sortColumns = function(column){
                 myDataTable.fnSort([[column, 'asc']]);
             }
+            
+            $("#${n}marketplace .dataTables_filter").addClass("marketplaceSection");
 
             $(".${n}marketplace_category_link").click(function(){
                 setFilter(this.textContent);
