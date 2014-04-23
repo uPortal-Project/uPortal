@@ -52,12 +52,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.PersonFactory;
+import org.jasig.portal.security.*;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
@@ -321,7 +316,7 @@ public class PortletDefinitionImporterExporter
     
             // Set groups
             final AuthorizationService authService = AuthorizationService.instance();
-            final String target = IPermission.PORTLET_PREFIX + defId;
+            final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);
     
             final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
             final List<IPermission> permissions = new ArrayList<IPermission>(groupMembers.size());
@@ -368,7 +363,7 @@ public class PortletDefinitionImporterExporter
 
         // remove permissions
         AuthorizationService authService = AuthorizationService.instance();
-        String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
+        String target = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
         IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
         IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
         upm.removePermissions(oldPermissions);
@@ -471,7 +466,8 @@ public class PortletDefinitionImporterExporter
         
         final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
         final IPermissionManager pm = authService.newPermissionManager("UP_PORTLET_SUBSCRIBE");
-        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", IPermission.PORTLET_PREFIX + def.getPortletDefinitionId().getStringId());
+        final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
+        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", portletTargetId);
          
         for (IAuthorizationPrincipal principal : principals) {
             IGroupMember member = authService.getGroupMember(principal);

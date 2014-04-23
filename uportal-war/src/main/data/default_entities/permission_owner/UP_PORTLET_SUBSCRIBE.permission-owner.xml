@@ -24,6 +24,14 @@
     <fname>UP_PORTLET_SUBSCRIBE</fname>
     <desc>Permissions controlling the rendering of and subscription to uPortal content</desc>
     <activity>
+        <name>Browse</name>
+        <fname>BROWSE</fname>
+        <desc>View the target portlet or category of portlets in the Marketplace
+            (as in, browse marketplace entry).</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+
+    <activity>
         <name>Subscribe</name>
         <fname>SUBSCRIBE</fname>
         <desc>Subscribe to published, unexpired uPortal content</desc>

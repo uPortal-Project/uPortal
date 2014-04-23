@@ -39,6 +39,13 @@ public interface IPermission {
   public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
   public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
   public static final String PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
+
+    /**
+     * Portlet subscribe permission to view ("browse") marketplace entry.
+     * @since uPortal 4.1
+     */
+    public static final String PORTLET_BROWSE_ACTIVITY = "BROWSE";
+
   
   /*
    * Portlet render permissions by lifecycle state.  These permissions are not
@@ -82,6 +89,7 @@ public interface IPermission {
     A String which, when concatentated with a portlet id, represents a portal
     portlet.  Used, for example, for Permission.target when the portal framework
     grants a Permission to perform some activity on a portlet.
+    See PermissionHelper for a convenience method for correctly using this.
   */
   public static final String PORTLET_PREFIX = "PORTLET_ID.";    
   

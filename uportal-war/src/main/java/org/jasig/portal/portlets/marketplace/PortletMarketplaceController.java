@@ -19,8 +19,6 @@
 
 package org.jasig.portal.portlets.marketplace;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -35,17 +33,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
 
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 
 import org.slf4j.Logger;
@@ -71,9 +66,10 @@ public class PortletMarketplaceController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static String SHOW_ALL_PORTLETS_PREFERENCE_NAME = "showAllPortlets";
-    private static String SHOW_MANAGED_PORTLETS_PREFERENCE_NAME = "showManagedPortlets";
     private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
+
+    private IMarketplaceService marketplaceService;
+
 	
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -81,7 +77,16 @@ public class PortletMarketplaceController {
 	private IPortletCategoryRegistry portletCategoryRegistry;
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
-	
+
+    public IMarketplaceService getMarketplaceService() {
+        return marketplaceService;
+    }
+
+    @Autowired
+    public void setMarketplaceService(IMarketplaceService marketplaceService) {
+        this.marketplaceService = marketplaceService;
+    }
+
 	@Autowired
 	public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
@@ -129,10 +134,23 @@ public class PortletMarketplaceController {
     @RenderMapping(params="action=view")
     public String entryView(RenderRequest renderRequest, RenderResponse renderResponse, WebRequest webRequest, PortletRequest portletRequest, Model model){
         IPortletDefinition result = this.portletDefinitionRegistry.getPortletDefinitionByFname(portletRequest.getParameter("fName"));
+
         if(result == null){
             this.setUpInitialView(webRequest, portletRequest, model, null);
             return "jsp/Marketplace/view";
         }
+
+        final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
+        final IPerson user = personManager.getPerson(servletRequest);
+
+        if (! this.marketplaceService.mayBrowsePortlet(user, result)) {
+            // TODO: provide an error experience
+            // currently at least blocks rendering the entry for the portlet the user is not authorized to see.
+            this.setUpInitialView(webRequest, portletRequest, model, null);
+            return "jsp/Marketplace/view";
+        }
+
+
         MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result, this.portletCategoryRegistry);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
@@ -200,27 +218,9 @@ public class PortletMarketplaceController {
         final PortletPreferences preferences = portletRequest.getPreferences();
         final boolean isLogLevelDebug = logger.isDebugEnabled();
 
-        //Determine if the marketplace is going to show all the portlets
-        //Default behavior is to show just the portlets a user can subscribe to
-        String showAllPortletsPreferenceValue = preferences.getValue(SHOW_ALL_PORTLETS_PREFERENCE_NAME, "false");
-        boolean showAllPortlets = Boolean.parseBoolean(showAllPortletsPreferenceValue);
-        IPerson user = null;
-        if(showAllPortlets == false){
-            user = personManager.getPerson(servletRequest);
-        }
+        final IPerson user = personManager.getPerson(servletRequest);
 
-        //Determine if the marketplace is going to show portlets that a user can manage, but can't subscribe to.
-        //Note - if showing all portlets, this becomes moot.
-        //Default behavior is to show portlets that users manage
-        String showManagedPortletsPreferenceValue = preferences.getValue(SHOW_MANAGED_PORTLETS_PREFERENCE_NAME, "true");
-        boolean showManagedPortlets = Boolean.parseBoolean(showManagedPortletsPreferenceValue);
-
-        if(isLogLevelDebug){
-            logger.debug("Going to show all portlets?: {}", Boolean.toString(showAllPortlets));
-            logger.debug("Going to show managed portlets?: {}", Boolean.toString(showManagedPortlets));
-        }
-
-        Map<String,Set<?>> registry = getRegistry(webRequest, user, showManagedPortlets);
+        final Map<String,Set<?>> registry = getRegistry(user);
         @SuppressWarnings("unchecked")
         Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
         model.addAttribute("channelBeanList", portletList);
@@ -250,37 +250,20 @@ public class PortletMarketplaceController {
      * return all portlets.  Setting user to null will superscede all other
      * parameters.
      *
-     * @param request
-     * @param user - the user to limit results by. This will filter results to 
-     *               only portlets that user can use. Null will return all portlets.
-     * @param seeManage - additive parameter that will add/not add portlets to returned set.
-     *                    true will add portlets to the returned set the user can manage.
-     *                    false will not add additional portlets that user can manage.
-     *                    If user is null, this parameter doesn't matter.
+     * @param user - non-null user to limit results by. This will filter results to
+     *               only portlets that user can use.
      * @return a set of portlets filtered that user can use, and other parameters
     */
-    public Map<String,Set<?>> getRegistry(WebRequest request, IPerson user, Boolean seeManage){
-        // get a list of all channels 
-        List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
-        // sets up permissions if user is not null
-        EntityIdentifier ei = null;
-        IAuthorizationPrincipal ap = null;
-        if(user !=null){
-            ei = user.getEntityIdentifier();
-            ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        }
+    public Map<String,Set<?>> getRegistry(final IPerson user){
+
         Map<String,Set<?>> registry = new TreeMap<String,Set<?>>();
-        Set<MarketplacePortletDefinition> visiblePortlets = new HashSet<MarketplacePortletDefinition>();
-        Set<PortletCategory> visibleCategories = new HashSet<PortletCategory>();
-        for (IPortletDefinition channel : allChannels) {
-            String chanPubId = channel.getPortletDefinitionId().getStringId();
-            if(user==null                                   //if user is null, add portlet
-                || ap.canSubscribe(chanPubId)               //if can subscribe, add
-                || (seeManage && ap.canManage(chanPubId))){ //if can manage, add 
-                    visiblePortlets.add(new MarketplacePortletDefinition(channel, portletCategoryRegistry));
-                    visibleCategories.addAll(this.portletCategoryRegistry.getParentCategories(channel));
-            }
-        }
+
+        final Set<MarketplacePortletDefinition> visiblePortlets =
+                this.marketplaceService.browseableMarketplaceEntriesFor(user);
+
+        final Set<PortletCategory> visibleCategories =
+                this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
+
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);
         return registry;
