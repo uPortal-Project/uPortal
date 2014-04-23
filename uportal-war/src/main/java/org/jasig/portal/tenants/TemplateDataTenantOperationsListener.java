@@ -243,7 +243,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                         w3c = writer.write(doc, domImpl);
                         Source source = new DOMSource(w3c);
                         source.setSystemId(rsc.getFilename());  // must be set, else import chokes
-                        dataHandlerService.importData(source);
+                        dataHandlerService.importData(source, pdk);
                     }
                 }
             }
