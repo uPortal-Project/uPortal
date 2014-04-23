@@ -27,6 +27,7 @@
   <children>
     <group>Administration</group>
     <group>Development</group>
+    <group>Featured</group>
     <group>Information</group>
     <group>uPortal</group>
   </children>
