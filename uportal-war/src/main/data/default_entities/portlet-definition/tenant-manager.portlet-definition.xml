@@ -7,7 +7,7 @@
     <type>Portlet</type>
     <timeout>30000</timeout>
     <portlet-descriptor>
-        <ns2:webAppName>/uPortal</ns2:webAppName>
+        <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>TenantManager</ns2:portletName>
     </portlet-descriptor>
     <category>Administration</category>
