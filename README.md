@@ -1,6 +1,6 @@
 For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM40/Home)
 
-Additional information about uPortal is available on the [uPortal Home Page](http://www.jasig.org/uportal)
+Additional information about uPortal is available on the [uPortal Home Page](http://www.apereo.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
 ## Travis-CI Continuous Integration

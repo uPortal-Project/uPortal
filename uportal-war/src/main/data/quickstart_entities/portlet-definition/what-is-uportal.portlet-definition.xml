@@ -52,16 +52,16 @@
                 &lt;h2&gt;What is uPortal?&lt;/h2&gt;
                 
                 &lt;p&gt;
-                    &lt;a href=&quot;http://www.uportal.org&quot; target=&quot;_blank&quot;&gt;uPortal&lt;/a&gt; 
+                    &lt;a href=&quot;http://www.apereo.org/uportal&quot; target=&quot;_blank&quot;&gt;uPortal&lt;/a&gt;
                     is a free and open source Java-implemented web portal 
                     platform developed and maintained by participants drawn 
                     from across higher education under the coordination of 
-                    &lt;a href=&quot;http://www.ja-sig.org&quot; target=&quot;_blank&quot;&gt;Jasig&lt;/a&gt;. 
+                    &lt;a href=&quot;http://www.apereo.org/&quot; target=&quot;_blank&quot;&gt;Apereo&lt;/a&gt;.
                     uPortal can aggregate content, present self-service 
                     applications, personalize presentation and content on the 
-                    basis of groups and user attributes, and allow advanced 
+                    basis of groups and user attributes, drive mobile device applications, and allow advanced
                     end-user-participatory customization of the portal experience. 
-                    uPortal supports the JSR-168 Java portlet specification for 
+                    uPortal supports the JSR-286 and JSR-168 Java portlet specification for
                     including your custom applications within the portal.
                 &lt;/p&gt;
                 

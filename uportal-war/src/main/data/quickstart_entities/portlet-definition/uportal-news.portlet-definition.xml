@@ -60,7 +60,7 @@
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://jasig.org/uportal-news/feed</value>
+        <value>http://www.apereo.org/uportal-news/feed</value>
     </portlet-preference>
     <portlet-preference>
         <name>summaryView</name>

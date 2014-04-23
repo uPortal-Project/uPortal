@@ -20,10 +20,11 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>Jasig News</title>
-    <name>Jasig News</name>
+    <title>Apereo News</title>
+    <name>Apereo News</name>
+    <!-- retaining legacy fname so that this updated configuration updates old instances of this portlet. -->
     <fname>jasig-news</fname>
-    <desc>Jasig News channel</desc>
+    <desc>Apereo news feed.</desc>
     <type>RSS</type>
     <timeout>10000</timeout>
     <portlet-descriptor>
@@ -55,11 +56,13 @@
     <portlet-preference>
         <name>name</name>
         <readOnly>false</readOnly>
-        <value>Jasig News</value>
+        <value>Apereo News</value>
     </portlet-preference>
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
+        <!-- would be great to stop depending on jasig.org, but
+        do not see any RSS feed off of the new Apereo.org -->
         <value>http://jasig.org/jasig-news/feed</value>
     </portlet-preference>
     <portlet-preference>
