@@ -36,6 +36,9 @@ import org.apache.commons.lang.Validate;
 
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.IMarketplaceService;
+import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;

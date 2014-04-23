@@ -26,7 +26,7 @@ import javax.persistence.EmbeddedId;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 
 @Entity
 @Table(name = "UP_PORTLET_RATING")

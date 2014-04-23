@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.marketplace;
+package org.jasig.portal.portlet.marketplace;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -63,7 +63,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;

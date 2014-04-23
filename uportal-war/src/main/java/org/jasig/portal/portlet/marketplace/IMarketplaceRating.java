@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.marketplace;
+package org.jasig.portal.portlet.marketplace;
 
 import org.jasig.portal.portlet.dao.jpa.MarketplaceRatingPK;
 

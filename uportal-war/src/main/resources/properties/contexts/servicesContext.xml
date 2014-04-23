@@ -93,7 +93,7 @@
         <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
         --> 
          
-        <bean class="org.jasig.portal.portlets.marketplace.MarketplaceSearchService" />
+        <bean class="org.jasig.portal.portlet.marketplace.MarketplaceSearchService" />
 		
         
     </util:list>
