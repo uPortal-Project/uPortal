@@ -192,7 +192,7 @@ public class QueryablePropertySourcesPlaceholderConfigurerTest {
             fail("should have thrown an IllegalArgumentException");
         } catch ( IllegalArgumentException e ) {
             assertThat(e.getMessage(),
-                    containsString("Could not resolve placeholder 'doesnt.exist' in string value [${doesnt.exist}]"));
+                    containsString("Could not resolve placeholder 'doesnt.exist' in string value \"${doesnt.exist}\""));
         }
     }
 
@@ -226,7 +226,7 @@ public class QueryablePropertySourcesPlaceholderConfigurerTest {
             fail("should have thrown an IllegalArgumentException");
         } catch ( IllegalArgumentException e ) {
             assertThat(e.getMessage(),
-                    containsString("Could not resolve placeholder 'doesnt.exist' in string value [${doesnt.exist}]"));
+                    containsString("Could not resolve placeholder 'doesnt.exist' in string value \"${doesnt.exist}\""));
         }
     }
 
@@ -238,7 +238,7 @@ public class QueryablePropertySourcesPlaceholderConfigurerTest {
                         standardPropertiesOverrideDir());
             fail("Should have thrown a BeanDefinitionStoreException");
         } catch ( BeanDefinitionStoreException e ) {
-            assertThat(e.getMessage(), containsString("Could not resolve placeholder 'doesnt.exist' in string value [${doesnt.exist}]"));
+            assertThat(e.getMessage(), containsString("Could not resolve placeholder 'doesnt.exist' in string value \"${doesnt.exist}\""));
         }
     }
 
