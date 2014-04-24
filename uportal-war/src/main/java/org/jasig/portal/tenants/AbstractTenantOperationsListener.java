@@ -36,6 +36,10 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         this.failOnError = failOnError;
     }
 
+    /**
+     * Whether a failure in this listener represents total failure and brings 
+     * the process to an abrupt halt.  The default is <code>true</code>.
+     */
     @Override
     public boolean isFailOnError() {
         return failOnError;
