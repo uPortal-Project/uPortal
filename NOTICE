@@ -139,32 +139,31 @@ This project includes:
   Simple Content Management Portlet under Apache License Version 2.0
   Simple Content Portlet under Apache License Version 2.0
   SLF4J API Module under MIT License
+  Spring AOP under The Apache Software License, Version 2.0
+  Spring Aspects under The Apache Software License, Version 2.0
+  Spring Beans under The Apache Software License, Version 2.0
   Spring Binding under Apache License, Version 2.0
+  Spring Context under The Apache Software License, Version 2.0
+  Spring Context Support under The Apache Software License, Version 2.0
+  Spring Core under The Apache Software License, Version 2.0
+  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JavaScript under Apache License, Version 2.0
   Spring JavaScript Resources under Apache License, Version 2.0
+  Spring JDBC under The Apache Software License, Version 2.0
   Spring LDAP Core under Apache License, Version 2.0
   Spring LDAP Java 5 support under Apache License, Version 2.0
+  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
+  Spring Object/XML Marshalling under The Apache Software License, Version 2.0
+  Spring TestContext Framework under The Apache Software License, Version 2.0
+  Spring Transaction under The Apache Software License, Version 2.0
+  Spring Web under The Apache Software License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
-  spring-aop under The Apache Software License, Version 2.0
-  spring-asm under The Apache Software License, Version 2.0
-  spring-aspects under The Apache Software License, Version 2.0
-  spring-beans under The Apache Software License, Version 2.0
-  spring-context under The Apache Software License, Version 2.0
-  spring-context-support under The Apache Software License, Version 2.0
-  spring-core under The Apache Software License, Version 2.0
-  spring-expression under The Apache Software License, Version 2.0
-  spring-jdbc under The Apache Software License, Version 2.0
+  Spring Web MVC under The Apache Software License, Version 2.0
+  Spring Web Portlet under The Apache Software License, Version 2.0
   spring-modules-cache under Apache License, Version 2.0
-  spring-orm under The Apache Software License, Version 2.0
-  spring-oxm under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-test under The Apache Software License, Version 2.0
-  spring-tx under The Apache Software License, Version 2.0
-  spring-web under The Apache Software License, Version 2.0
-  spring-webmvc under The Apache Software License, Version 2.0
-  spring-webmvc-portlet under The Apache Software License, Version 2.0
   SSP under Apache License Version 2.0
   SSP Platform EAR under Apache License Version 2.0
   SSP Platform Parent under Apache License Version 2.0
