@@ -25,5 +25,5 @@
   <fname>default</fname>
   <description>A sample profile for common web browsers</description>
   <structure name="DLMTabsColumns"/>
-  <theme name="DLMXHTML"/>
+  <theme name="Respondr"/>
 </profile>
