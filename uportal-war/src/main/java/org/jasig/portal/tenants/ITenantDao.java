@@ -21,6 +21,12 @@ package org.jasig.portal.tenants;
 
 import java.util.List;
 
+/**
+ * Defines the (subsystem-private) contract for Tenant persistence.
+ * 
+ * @since uPortal 4.1
+ * @author awills
+ */
 /* package-private */ interface ITenantDao {
 
     /**

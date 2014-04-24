@@ -31,6 +31,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Defines the contract for Tenant operations vis-a-vis other subsystems.
+ * 
+ * @since uPortal 4.1
+ * @author awills
+ */
 @Service
 public final class TenantService {
 
