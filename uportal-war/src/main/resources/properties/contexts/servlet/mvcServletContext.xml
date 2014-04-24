@@ -53,5 +53,6 @@
     <context:component-scan base-package="org.jasig.portal.layout.dlm.remoting"/>
     <context:component-scan base-package="org.jasig.portal.security.remoting"/>
     <context:component-scan base-package="org.jasig.portal.rest"/>
+    <context:component-scan base-package="org.jasig.portal.web.servlet" />
 
 </beans>
