@@ -132,7 +132,7 @@ public class PortletMarketplaceController {
     @RenderMapping
     public String initializeView(WebRequest webRequest, PortletRequest portletRequest, Model model, @RequestParam(required=false) String initialFilter){
         this.setUpInitialView(webRequest, portletRequest, model, initialFilter);
-        return "jsp/Marketplace/view";
+        return "jsp/Marketplace/portlet/view";
     }
 
     @RenderMapping(params="action=view")
@@ -141,7 +141,7 @@ public class PortletMarketplaceController {
 
         if(result == null){
             this.setUpInitialView(webRequest, portletRequest, model, null);
-            return "jsp/Marketplace/view";
+            return "jsp/Marketplace/portlet/view";
         }
 
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
@@ -151,7 +151,7 @@ public class PortletMarketplaceController {
             // TODO: provide an error experience
             // currently at least blocks rendering the entry for the portlet the user is not authorized to see.
             this.setUpInitialView(webRequest, portletRequest, model, null);
-            return "jsp/Marketplace/view";
+            return "jsp/Marketplace/portlet/view";
         }
 
 
@@ -163,7 +163,7 @@ public class PortletMarketplaceController {
         model.addAttribute("portlet", mpDefinition);
         model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
         model.addAttribute("shortURL",mpDefinition.getShortURL());
-        return "jsp/Marketplace/entry";
+        return "jsp/Marketplace/portlet/entry";
     }
 	
 	/**
