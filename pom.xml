@@ -25,7 +25,7 @@
         <connection>scm:git:git://github.com/russlittle/SSP-Platform.git</connection>
         <developerConnection>scm:git:git@github.com:russlittle/SSP-Platform.git</developerConnection>
         <url>https://github.com/russlittle/SSP-Platform</url>
-      <tag>HEAD</tag>
+      <tag>ssp-rel-2-4-patches</tag>
   </scm>
 
     <issueManagement>
