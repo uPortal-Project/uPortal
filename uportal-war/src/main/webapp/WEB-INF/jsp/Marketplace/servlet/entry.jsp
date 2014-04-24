@@ -19,6 +19,7 @@
 --%>
 
 <%@ include file="/WEB-INF/jsp/servletInclude.jsp"%>
+<%@ include file="/WEB-INF/jsp/servletTop.jsp"%>
 <c:set var="n">marketplace_</c:set>
 <%-- While not unique to a portlet instance, namespace still useful for differentiating from other sources of tables,
 etc. that might be included in the JSP on future edits. --%>
@@ -465,3 +466,5 @@ up.jQuery(function() {
 });
 
 </script>
+
+<%@ include file="/WEB-INF/jsp/servletBottom.jsp"%>
