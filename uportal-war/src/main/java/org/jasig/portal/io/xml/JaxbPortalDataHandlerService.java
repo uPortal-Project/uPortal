@@ -655,7 +655,46 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     public void importData(Source source) {
 		this.importData(source, null);
     }
-    
+
+    @Override
+    public final void importData(final Source source, PortalDataKey portalDataKey) {
+        //Get a StAX reader for the source to determine info about the data to import
+        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
+
+        //If no PortalDataKey was passed build it from the source
+        if (portalDataKey == null) {
+            final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
+            portalDataKey = new PortalDataKey(rootElement);
+            bufferedXmlEventReader.reset();
+        }
+
+        final String systemId = source.getSystemId();
+
+        //Post Process the PortalDataKey to see if more complex import operations are needed
+        final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
+        if (portalDataType == null) {
+            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + getPartialSystemId(systemId));
+        }
+        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
+        bufferedXmlEventReader.reset();
+
+        //If only a single result from post processing import
+        if (postProcessedPortalDataKeys.size() == 1) {
+            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
+        }
+        //If multiple results from post processing ordering is needed
+        else {
+            //Iterate over the data key order list to run the imports in the correct order
+            for (final PortalDataKey orderedPortalDataKey : this.dataKeyImportOrder) {
+                if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
+                    //Reset the to start of the XML document for each import/upgrade call
+                    bufferedXmlEventReader.reset();
+                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
+                }
+            }
+        }
+    }
+
     /**
      * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where post-processing of keys has already take place
      */
@@ -677,46 +716,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(javax.xml.transform.Source)
-     */
-    protected final void importData(final Source source, PortalDataKey portalDataKey) {
-        //Get a StAX reader for the source to determine info about the data to import
-        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
-        
-        //If no PortalDataKey was passed build it from the source
-        if (portalDataKey == null) {
-            final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
-            portalDataKey = new PortalDataKey(rootElement);
-            bufferedXmlEventReader.reset();
-        }
-        
-        final String systemId = source.getSystemId();
-        
-        //Post Process the PortalDataKey to see if more complex import operations are needed
-        final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
-		if (portalDataType == null) {
-            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + getPartialSystemId(systemId));
-        }
-        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
-        bufferedXmlEventReader.reset();
-        
-        //If only a single result from post processing import
-        if (postProcessedPortalDataKeys.size() == 1) {
-            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
-        }
-        //If multiple results from post processing ordering is needed
-        else {
-            //Iterate over the data key order list to run the imports in the correct order
-            for (final PortalDataKey orderedPortalDataKey : this.dataKeyImportOrder) {
-                if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
-                    //Reset the to start of the XML document for each import/upgrade call
-                    bufferedXmlEventReader.reset();
-                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
-                }
-            }
-        }
-    }
     
     protected String getPartialSystemId(String systemId) {
     	final String directoryUriStr = IMPORT_BASE_DIR.get();

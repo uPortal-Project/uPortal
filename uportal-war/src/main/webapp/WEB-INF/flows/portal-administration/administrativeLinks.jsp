@@ -54,6 +54,9 @@
                 <li>
                     <a href="<c:url value="/p/fragment-admin"/>">Manage DLM Fragments</a>
                 </li>
+                <li>
+                    <a href="<c:url value="/p/tenant-manager"/>">Manage Tenants</a>
+                </li>
             </ul>
         </div>
     </div>

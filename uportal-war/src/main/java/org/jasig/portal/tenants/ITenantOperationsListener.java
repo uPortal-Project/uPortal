@@ -17,21 +17,23 @@
  * under the License.
  */
 
-package org.jasig.portal.events;
-
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.jasig.portal.security.IPerson;
+package org.jasig.portal.tenants;
 
 /**
- * Used to create and publish portal events
+ * Interface that supports pluggable behavior when tenants are created, updated,
+ * or removed.
  * 
- * @author Eric Dalquist
- * @version $Revision$
+ * @since uPortal 4.1
+ * @author awills
  */
-public interface IPortalEventFactory extends IPortalAuthEventFactory, IPortalLayoutEventFactory, IPortletExecutionEventFactory, IPortalTenantEventFactory {
-    
-    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+public  interface ITenantOperationsListener {
+
+    boolean isFailOnError();
+
+    void onCreate(ITenant tenant);
+
+    void onUpdate(ITenant tenant);
+
+    void onDelete(ITenant tenant);
 
 }

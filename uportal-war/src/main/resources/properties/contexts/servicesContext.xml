@@ -248,5 +248,31 @@
             </bean>
         </entry>
     </util:map>
-        
+
+    <!--
+     | Map of custom attributes for tenants that may be managed in the Tenant
+     | Manager.  (Any attribute may be created programmatically.)  Runtime type
+     | for attributes is Map<String,String>.  In this Map, the keys are attribute
+     | names and the values are themselves keys into the messageBundle for human-
+     | readable form labels.  The order specified is the order they will appear
+     | on the screen.
+     +-->
+    <util:map id="tenantManagerAttributes" map-class="java.util.LinkedHashMap">
+        <entry key="#{T(org.jasig.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_USERNAME}" value="tenant.manager.adminContactUsername" />
+        <entry key="#{T(org.jasig.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_EMAIL}" value="tenant.manager.adminContactEmail" />
+        <entry key="tenantOrg" value="tenant.manager.tenantOrgValue" />
+    </util:map>
+
+    <!--
+     | Defines what happens when a Tenant is created/updated/deleted.
+     +-->
+    <util:list id="tenantOperationsListeners">
+        <!-- Processes templated entities -->
+        <bean class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener" />
+        <!-- Persists the tenant object locally;  implemented as a listener so this behavior can occupy any position in the chain. -->
+        <bean class="org.jasig.portal.tenants.JpaPersistenceTenantOperationsListener" />
+        <!-- Sends a "reset password" email to the named admin contact;  MUST BE LAST! -->
+        <bean class="org.jasig.portal.tenants.ResetPasswordTenantOperationsListener" />
+    </util:list>
+
 </beans>

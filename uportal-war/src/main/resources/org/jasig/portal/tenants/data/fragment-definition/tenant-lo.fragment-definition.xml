@@ -19,16 +19,12 @@
     under the License.
 
 -->
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Everyone</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
-  <creator>system</creator>
-  <description>All Users</description>
-  <children>
-    <group>Authenticated Users</group>
-    <group>PAGS Root</group>
-    <group>Guests</group>
-    <group>Portal System</group>
-    <group>Tenants</group>
-  </children>
-</group>
+<fragment-definition script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
+  <dlm:fragment xmlns:dlm="http://org.jasig.portal.layout.dlm.config" name="${tenant.fname}" ownerID="${tenant.fname}-lo" precedence="80">
+    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
+      <paren mode="AND">
+        <attribute mode="deepMemberOf" name="${tenant.name}"/>
+      </paren>
+    </dlm:audience>
+  </dlm:fragment>
+</fragment-definition>

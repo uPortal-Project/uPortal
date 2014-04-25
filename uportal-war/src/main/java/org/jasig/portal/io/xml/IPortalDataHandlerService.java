@@ -162,10 +162,17 @@ public interface IPortalDataHandlerService {
     public void importData(Resource resource);
     
     /**
-     * Import data from the specified source
+     * Import data from the specified source with the default {@link PortalDataKey}.
      */
     public void importData(Source source);
     
+    /**
+     * Import data from the specified source with the specified {@link PortalDataKey}.
+     * 
+     * @since uPortal 4.1
+     */
+    public void importData(Source source, PortalDataKey portalDataKey);
+
     /**
      * @return All portal data types that can be exported
      */
@@ -225,4 +232,5 @@ public interface IPortalDataHandlerService {
      * @param dataId the id of the data to delete
      */
     public void deleteData(String typeId, String dataId);
+
 }

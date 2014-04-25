@@ -19,16 +19,16 @@
     under the License.
 
 -->
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Everyone</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
-  <creator>system</creator>
-  <description>All Users</description>
-  <children>
-    <group>Authenticated Users</group>
-    <group>PAGS Root</group>
-    <group>Guests</group>
-    <group>Portal System</group>
-    <group>Tenants</group>
-  </children>
-</group>
+<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
+  <name>${tenant.name} Members</name>
+  <description>Users who belong to the ${tenant.name} tenancy by virtue of their attributes</description>
+  <selection-test>
+    <test-group>
+      <test>
+        <attribute-name>o</attribute-name>
+        <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
+        <test-value>${tenant.attributesMap['tenantOrg']}</test-value>
+      </test>
+    </test-group>
+  </selection-test>
+</pags-group>

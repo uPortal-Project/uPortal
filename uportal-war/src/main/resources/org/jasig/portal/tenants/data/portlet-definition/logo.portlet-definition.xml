@@ -20,22 +20,29 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>Portlet Administration</title>
-    <name>Portlet Administration</name>
-    <fname>portlet-admin</fname>
-    <desc>Portlet for Portlet Administration</desc>
+    <title>${tenant.name} Logo</title>
+    <name>${tenant.name} Logo</name>
+    <fname>${tenant.fname}-logo</fname>
+    <desc>Renders the logo for ${tenant.name}</desc>
     <type>Portlet</type>
-    <timeout>50000</timeout>
+    <timeout>5000</timeout>
     <portlet-descriptor>
-        <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>PortletAdministration</ns2:portletName>
+        <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName>
+        <ns2:portletName>cms</ns2:portletName>
     </portlet-descriptor>
-    <category>uPortal</category>
-    <group>Portal Developers</group>
-    <group>Portal Administrators</group>
-    <group>Tenant Administrators</group>
+    <category>${tenant.name} Portlets</category>
+    <group>${tenant.name}</group>
     <parameter>
-        <name>iconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png</value>
+        <name>configurable</name>
+        <value>true</value>
     </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>true</value>
+    </parameter>
+    <portlet-preference>
+        <name>content</name>
+        <readOnly>false</readOnly>
+        <value>&lt;h1 class="portal-logo"&gt;${tenant.name}&lt;/h1&gt;</value>
+    </portlet-preference>
 </portlet-definition>

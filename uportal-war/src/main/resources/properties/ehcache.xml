@@ -1209,6 +1209,14 @@
                 replicateRemovals=true "/>
     </cache>
     
+    <!-- 
+     | Caches queries for tenants
+     +-->
+    <cache name="org.jasig.portal.tenants.JpaTenant.Query"
+        eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
     <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >

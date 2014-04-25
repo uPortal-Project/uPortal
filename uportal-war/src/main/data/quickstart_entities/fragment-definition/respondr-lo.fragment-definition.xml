@@ -22,8 +22,11 @@
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="Respondr" ownerID="respondr-lo" precedence="80">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-      <paren mode="OR">
+      <paren mode="AND">
         <attribute mode="deepMemberOf" name="Respondr Theme Users"/>
+        <paren mode="NOT">
+          <attribute mode="deepMemberOf" name="Tenants"/>
+        </paren>
       </paren>
     </dlm:audience>
   </dlm:fragment>
