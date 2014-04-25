@@ -19,6 +19,8 @@
 
 package org.jasig.portal.tenants;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -53,8 +55,14 @@ public final class TenantService {
     @Resource(name="tenantOperationsListeners")
     private List<ITenantOperationsListener> tenantOperationsListeners;
 
+    /**
+     * Provides the complete collection of tenants in the system in the default
+     * order (alphabetically by name).
+     */
     public List<ITenant> getTenantsList() {
-        return tenantDao.getAllTenants();
+        List<ITenant> rslt = new ArrayList<ITenant>(tenantDao.getAllTenants());
+        Collections.sort(rslt);
+        return rslt;
     }
 
     public ITenant createTenant(final ActionRequest req, final String name, 

@@ -135,4 +135,12 @@ import org.hibernate.annotations.Type;
                                     + ", attributes=" + attributes + "]";
     }
 
+    /**
+     * The default order for tenants is alphabetically by name.
+     */
+    @Override
+    public int compareTo(ITenant t) {
+        return this.name.compareTo(t.getName());
+    }
+
 }

@@ -19,7 +19,8 @@
 
 package org.jasig.portal.tenants;
 
-import java.util.List;
+import java.util.Set;
+
 
 /**
  * Defines the (subsystem-private) contract for Tenant persistence.
@@ -33,7 +34,7 @@ import java.util.List;
      * Obtains the complete set of {@link ITenant} objects contained 
      * within this data source.
      */
-    List<ITenant> getAllTenants();
+    Set<ITenant> getAllTenants();
 
     /**
      * Obtains the {@link ITenant} object with the specified fname.

@@ -33,7 +33,7 @@ import java.util.Map;
  * @since uPortal 4.1
  * @author awills
  */
-public interface ITenant {
+public interface ITenant extends Comparable<ITenant> {
 
     /**
      * Each tenant will be assigned a numeric identifier by the persistence

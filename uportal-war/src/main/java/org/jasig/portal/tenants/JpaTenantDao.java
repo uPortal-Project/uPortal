@@ -19,8 +19,9 @@
 
 package org.jasig.portal.tenants;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -65,10 +66,10 @@ import com.google.common.base.Function;
     }
 
     @Override
-    public List<ITenant> getAllTenants() {
+    public Set<ITenant> getAllTenants() {
         final TypedQuery<JpaTenant> query = this.createCachedQuery(this.allTenantsQuery);
         final List<JpaTenant> resultList = query.getResultList();
-        return new ArrayList<ITenant>(resultList);
+        return new HashSet<ITenant>(resultList);
     }
 
     @Override
