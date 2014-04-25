@@ -105,12 +105,21 @@ public final class TenantService {
     }
 
     public void deleteTenantByFName(String fname) {
-        final ITenant tenant = tenantDao.getTenantByFName(fname);
 
         // Invoke the listeners
+        final ITenant tenant = tenantDao.getTenantByFName(fname);
         for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
-            listener.onDelete(tenant);
+            try {
+                listener.onDelete(tenant);
+            } catch (Exception e) {
+                log.error("Error invoking ITenantOperationsListener '{}' for tenant:  {}", 
+                                    listener.toString(), tenant.toString(), e);
+                if (listener.isFailOnError()) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
+
     }
 
 }
