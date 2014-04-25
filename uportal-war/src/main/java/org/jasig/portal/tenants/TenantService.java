@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,20 +69,12 @@ public final class TenantService {
             final Map<String,String> attributes) {
 
         // Input validation
-        if (!TENANT_NAME_VALIDATOR_PATTERN.matcher(name).matches()) {
-            String msg = "Invalid tenant name '" + name +
-                    "' --  names must be between 5 and 32 " +
-                    "characters and may contain only a-z, A-Z, 0-9, spaces, " +
-                    "and underscores";
-            throw new IllegalArgumentException(msg);
-        }
-        if (!TENANT_FNAME_VALIDATOR_PATTERN.matcher(fname).matches()) {
-            String msg = "Invalid tenant fname '" + fname +
-                    "' -- fnames must be between 5 and 32 " +
-                    "characters and may contain only lower case letters, numbers, " +
-                    "and underscores";
-            throw new IllegalArgumentException(msg);
-        }
+        Validate.validState(TENANT_NAME_VALIDATOR_PATTERN.matcher(name).matches(),
+                "Invalid tenant name '%s'  -- names must match %s .", name, 
+                TENANT_NAME_VALIDATOR_REGEX);
+        Validate.validState(TENANT_FNAME_VALIDATOR_PATTERN.matcher(fname).matches(),
+                "Invalid tenant fname '%s'  -- fnames must match %s .", name, 
+                TENANT_FNAME_VALIDATOR_PATTERN);
 
         // Create the concrete tenant object
         final ITenant rslt = new JpaTenant();
