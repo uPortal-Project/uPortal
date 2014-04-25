@@ -77,7 +77,7 @@ public final class TenantService {
                 TENANT_FNAME_VALIDATOR_PATTERN);
 
         // Create the concrete tenant object
-        final ITenant rslt = new JpaTenant();
+        final ITenant rslt = tenantDao.instantiate();
         rslt.setName(name);
         rslt.setFname(fname);
         for (Map.Entry<String,String> y : attributes.entrySet()) {

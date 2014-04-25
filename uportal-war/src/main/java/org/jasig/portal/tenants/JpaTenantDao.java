@@ -85,30 +85,22 @@ import com.google.common.base.Function;
     }
 
     @Override
-    @PortalTransactional
-    public void createTenant(ITenant tenant) {
-
-        // Assertions
-        if (tenant.getId() != -1) {
-            // Tenant already exists
-            final String msg = "The specified tenant is not new:  " + tenant.getFname();
-            throw new IllegalArgumentException(msg);
-        }
-        this.getEntityManager().persist(tenant);
-
+    public ITenant instantiate() {
+        return new JpaTenant();
     }
 
     @Override
     @PortalTransactional
-    public void updateTenant(ITenant tenant) {
+    public void createOrUpdateTenant(ITenant tenant) {
 
         // Assertions
-        if (tenant.getId() == -1) {
-            // Tenant doesn't exist -- must be created
-            final String msg = "The specified tenant has not yet been created:  " + tenant.getFname();
+        if (tenant instanceof JpaTenant) {
+            this.getEntityManager().persist(tenant);
+        } else {
+            // This object is not supported by this DAO
+            final String msg = "The specified tenant is not an instanceof JpaTenant:  " + tenant.getFname();
             throw new IllegalArgumentException(msg);
         }
-        this.getEntityManager().persist(tenant);
 
     }
 

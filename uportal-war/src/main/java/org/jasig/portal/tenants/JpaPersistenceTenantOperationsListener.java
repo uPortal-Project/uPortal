@@ -36,12 +36,12 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
 
     @Override
     public void onCreate(final ITenant tenant) {
-        tenantDao.createTenant(tenant);
+        tenantDao.createOrUpdateTenant(tenant);
     }
 
     @Override
     public void onUpdate(final ITenant tenant) {
-        tenantDao.updateTenant(tenant);
+        tenantDao.createOrUpdateTenant(tenant);
     }
 
     @Override

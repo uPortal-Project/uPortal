@@ -45,19 +45,21 @@ import java.util.Set;
     ITenant getTenantByFName(String fname);
 
     /**
+     * Returns a new, empty {@link ITenant} instance of the runtime type 
+     * supported by this ITenantDao implementation.
+     * 
+     * @param fname The unique identifier for a tenant
+     * @return The tenant with the corresponding fname, or <code>null</code>
+     */
+    ITenant instantiate();
+
+    /**
      * Adds the specified {@link ITenant} to the data source.
      * 
      * @param tenant A tenant that has not yet been persisted to the data source
      * @return 
      */
-    void createTenant(ITenant tenant);
-
-    /**
-     * Updates the specified {@link ITenant} within the data source.
-     * 
-     * @param tenant A tenant that has been modified
-     */
-    void updateTenant(ITenant tenant);
+    void createOrUpdateTenant(ITenant tenant);
 
     /**
      * Deletes the specified {@link ITenant} within the data source.
