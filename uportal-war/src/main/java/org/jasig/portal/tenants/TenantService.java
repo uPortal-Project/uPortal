@@ -94,7 +94,7 @@ public final class TenantService {
                 listener.onCreate(rslt);
             } catch (Exception e) {
                 log.error("Error invoking ITenantOperationsListener '{}' for tenant:  {}", 
-                                    listener.getClass().getName(), rslt.toString(), e);
+                                    listener.toString(), rslt.toString(), e);
                 if (listener.isFailOnError()) {
                     throw new RuntimeException(e);
                 }
