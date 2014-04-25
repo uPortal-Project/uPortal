@@ -104,7 +104,7 @@ import com.google.common.base.Function;
 
         // Assertions
         if (tenant.getId() == -1) {
-            // Tenant doesn't exists -- must be created
+            // Tenant doesn't exist -- must be created
             final String msg = "The specified tenant has not yet been created:  " + tenant.getFname();
             throw new IllegalArgumentException(msg);
         }
