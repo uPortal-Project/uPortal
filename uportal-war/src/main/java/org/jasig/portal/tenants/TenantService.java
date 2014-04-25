@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import javax.portlet.ActionRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +64,8 @@ public final class TenantService {
         return rslt;
     }
 
-    public ITenant createTenant(final ActionRequest req, final String name, 
-            final String fname, final Map<String,String> attributes) {
+    public ITenant createTenant(final String name, final String fname, 
+            final Map<String,String> attributes) {
 
         // Input validation
         if (!TENANT_NAME_VALIDATOR_PATTERN.matcher(name).matches()) {
@@ -99,7 +98,7 @@ public final class TenantService {
         // Invoke the listeners
         for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
             try {
-                listener.onCreate(req, rslt);
+                listener.onCreate(rslt);
             } catch (Exception e) {
                 log.error("Error invoking ITenantOperationsListener '{}' for tenant:  {}", 
                                     listener.getClass().getName(), rslt.toString(), e);
@@ -112,12 +111,12 @@ public final class TenantService {
         return rslt;
     }
 
-    public void deleteTenantByFName(ActionRequest req, String fname) {
+    public void deleteTenantByFName(String fname) {
         final ITenant tenant = tenantDao.getTenantByFName(fname);
 
         // Invoke the listeners
         for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
-            listener.onDelete(req, tenant);
+            listener.onDelete(tenant);
         }
     }
 

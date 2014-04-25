@@ -19,8 +19,6 @@
 
 package org.jasig.portal.tenants;
 
-import javax.portlet.ActionRequest;
-
 /**
  * Implements all methods of {@link ITenantOperationsListener} as no-ops and can
  * therefore serve as a base class for concrete listeners that need to override
@@ -46,12 +44,12 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     @Override
-    public void onCreate(ActionRequest req, ITenant tenant) {}
+    public void onCreate(ITenant tenant) {}
 
     @Override
-    public void onUpdate(ActionRequest req, ITenant tenant) {}
+    public void onUpdate(ITenant tenant) {}
 
     @Override
-    public void onDelete(ActionRequest req, ITenant tenant) {}
+    public void onDelete(ITenant tenant) {}
 
 }

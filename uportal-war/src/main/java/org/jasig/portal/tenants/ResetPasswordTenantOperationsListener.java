@@ -19,7 +19,6 @@
 
 package org.jasig.portal.tenants;
 
-import javax.portlet.ActionRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.persondir.ILocalAccountDao;
@@ -50,12 +49,12 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
     private UserAccountHelper userAccountHelper;
 
     @Override
-    public void onCreate(final ActionRequest req, final ITenant tenant) {
+    public void onCreate(final ITenant tenant) {
         sendResetPasswordEmail(tenant);
     }
 
     @Override
-    public void onUpdate(final ActionRequest req, final ITenant tenant) {
+    public void onUpdate(final ITenant tenant) {
         // Send email here as well, in case the contact changes
         sendResetPasswordEmail(tenant);
     }

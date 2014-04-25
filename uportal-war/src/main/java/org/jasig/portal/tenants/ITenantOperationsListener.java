@@ -19,8 +19,6 @@
 
 package org.jasig.portal.tenants;
 
-import javax.portlet.ActionRequest;
-
 /**
  * Interface that supports pluggable behavior when tenants are created, updated,
  * or removed.
@@ -32,10 +30,10 @@ public  interface ITenantOperationsListener {
 
     boolean isFailOnError();
 
-    void onCreate(ActionRequest req, ITenant tenant);
+    void onCreate(ITenant tenant);
 
-    void onUpdate(ActionRequest req, ITenant tenant);
+    void onUpdate(ITenant tenant);
 
-    void onDelete(ActionRequest req, ITenant tenant);
+    void onDelete(ITenant tenant);
 
 }

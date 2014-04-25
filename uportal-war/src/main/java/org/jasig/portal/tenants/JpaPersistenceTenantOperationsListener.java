@@ -19,8 +19,6 @@
 
 package org.jasig.portal.tenants;
 
-import javax.portlet.ActionRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -37,17 +35,17 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
     private ITenantDao tenantDao;
 
     @Override
-    public void onCreate(final ActionRequest req, final ITenant tenant) {
+    public void onCreate(final ITenant tenant) {
         tenantDao.createTenant(tenant);
     }
 
     @Override
-    public void onUpdate(final ActionRequest req, final ITenant tenant) {
+    public void onUpdate(final ITenant tenant) {
         tenantDao.updateTenant(tenant);
     }
 
     @Override
-    public void onDelete(final ActionRequest req, final ITenant tenant) {
+    public void onDelete(final ITenant tenant) {
         tenantDao.removeTenant(tenant);
     }
 

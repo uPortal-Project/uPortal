@@ -79,13 +79,13 @@ public class TenantManagerController {
             }
         }
 
-        tenantService.createTenant(req, name, fname, attributes);
+        tenantService.createTenant(name, fname, attributes);
 
     }
 
     @ActionMapping(params="action=doRemoveTenant")
     public void doRemoveTenant(ActionRequest req, @RequestParam("fname") String fname) {
-        tenantService.deleteTenantByFName(req, fname);
+        tenantService.deleteTenantByFName(fname);
     }
 
 }

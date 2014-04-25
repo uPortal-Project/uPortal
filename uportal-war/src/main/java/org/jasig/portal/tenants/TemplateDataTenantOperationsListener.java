@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.portlet.ActionRequest;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -142,7 +141,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     }
 
     @Override
-    public void onCreate(final ActionRequest req, final ITenant tenant) {
+    public void onCreate(final ITenant tenant) {
 
         final StandardEvaluationContext ctx = new StandardEvaluationContext();
         ctx.setRootObject(new RootObjectImpl(tenant));
