@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -53,7 +54,6 @@ import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -70,7 +70,7 @@ import org.w3c.dom.DOMImplementation;
  * 
  * @author awills
  */
-public final class TemplateDataTenantOperationsListener extends AbstractTenantOperationsListener implements InitializingBean, ApplicationContextAware {
+public final class TemplateDataTenantOperationsListener extends AbstractTenantOperationsListener implements ApplicationContextAware {
 
     private static final String TEMPLATE_LOCATION = "classpath:/org/jasig/portal/tenants/data/**/*.xml";
     private static final String ATTRIBUTE_XPATH = "//@*";
@@ -125,8 +125,8 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.applicationContext = applicationContext;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    public void setup() throws Exception {
         templateResources = applicationContext.getResources(TEMPLATE_LOCATION);
 
         Map<String,String> nsPrefixes = new HashMap<String,String>();
