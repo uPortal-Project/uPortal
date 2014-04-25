@@ -54,6 +54,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortletRequestInfo;
@@ -78,11 +79,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
- */
-/**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portalEventFactory")
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
@@ -391,7 +387,36 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         
         this.applicationEventPublisher.publishEvent(portalRenderEvent);
     }
-    
+
+    /*
+     * Tenant Events
+     */
+
+    @Override
+    public void publishTenantCreatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantCreatedTenantEvent event = new TenantCreatedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishTenantUpdatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantUpdatedTenantEvent event = new TenantUpdatedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishTenantRemovedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantRemovedTenantEvent event = new TenantRemovedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    /*
+     * Implementation
+     */
+
     protected PortalEventBuilder createPortalEventBuilder(Object source, HttpServletRequest request) {
         request = getCurrentPortalRequest(request);
         final IPerson person = this.getPerson(request);
@@ -630,4 +655,5 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         
         return builder.build();
     }
+
 }

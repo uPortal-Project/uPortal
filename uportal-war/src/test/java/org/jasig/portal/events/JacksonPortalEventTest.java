@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.StringReader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
 import org.junit.Before;
@@ -150,6 +152,37 @@ public class JacksonPortalEventTest {
 
         event = new PortletHungEvent(eventBuilder, hungWorker);
         assertEventJsonEquals("{\"@c\":\".PortletHungEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\",\"fname\":\"fname\"}", event);
+
+        final ITenant tenant = new ITenant() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public int compareTo(ITenant o) { return 0; }
+            @Override
+            public long getId() { return 1L; }
+            @Override
+            public String getName() { return "Mordor"; }
+            @Override
+            public void setName(String name) {}
+            @Override
+            public String getFname() { return "mordor"; }
+            @Override
+            public void setFname(String fname) {}
+            @Override
+            public String getAttribute(String name) { return null; }
+            @Override
+            public void setAttribute(String name, String value) {}
+            @Override
+            public Map<String, String> getAttributesMap() { return Collections.emptyMap(); }
+        };
+
+        event = new TenantCreatedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantCreatedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
+
+        event = new TenantUpdatedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantUpdatedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
+
+        event = new TenantRemovedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantRemovedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
 
     }
     

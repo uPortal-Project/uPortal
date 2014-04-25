@@ -19,19 +19,21 @@
 
 package org.jasig.portal.events;
 
-
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.security.IPerson;
+import org.jasig.portal.tenants.ITenant;
 
 /**
- * Used to create and publish portal events
+ * Publishes events related to tenants in the portal.
  * 
- * @author Eric Dalquist
- * @version $Revision$
+ * @author awills
  */
-public interface IPortalEventFactory extends IPortalAuthEventFactory, IPortalLayoutEventFactory, IPortletExecutionEventFactory, IPortalTenantEventFactory {
-    
-    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+public interface IPortalTenantEventFactory {
+
+    void publishTenantCreatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant);
+
+    void publishTenantUpdatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant);
+
+    void publishTenantRemovedTenantEvent(HttpServletRequest request, Object source, ITenant tenant);
 
 }

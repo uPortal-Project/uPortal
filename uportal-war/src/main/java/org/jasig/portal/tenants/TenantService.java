@@ -26,8 +26,11 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.Validate;
+import org.jasig.portal.events.IPortalTenantEventFactory;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,12 @@ public final class TenantService {
 
     @Resource(name="tenantOperationsListeners")
     private List<ITenantOperationsListener> tenantOperationsListeners;
+
+    @Autowired
+    private IPortalRequestUtils portalRequestUtils;
+
+    @Autowired
+    private IPortalTenantEventFactory tenantEventFactory;
 
     /**
      * Provides the complete collection of tenants in the system in the default
@@ -101,6 +110,10 @@ public final class TenantService {
             }
         }
 
+        // Fire an appropriate PortalEvent
+        final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
+        tenantEventFactory.publishTenantCreatedTenantEvent(request, this, rslt);
+
         return rslt;
     }
 
@@ -119,6 +132,10 @@ public final class TenantService {
                 }
             }
         }
+
+        // Fire an appropriate PortalEvent
+        final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
+        tenantEventFactory.publishTenantCreatedTenantEvent(request, this, tenant);
 
     }
 

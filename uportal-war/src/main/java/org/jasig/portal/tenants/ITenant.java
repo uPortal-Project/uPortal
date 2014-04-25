@@ -19,6 +19,7 @@
 
 package org.jasig.portal.tenants;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Map;
  * @since uPortal 4.1
  * @author awills
  */
-public interface ITenant extends Comparable<ITenant> {
+public interface ITenant extends Comparable<ITenant>, Serializable {
 
     /**
      * Each tenant will be assigned a numeric identifier by the persistence

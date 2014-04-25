@@ -19,19 +19,25 @@
 
 package org.jasig.portal.events;
 
+import org.jasig.portal.tenants.ITenant;
 
-import javax.servlet.http.HttpServletRequest;
+public abstract class TenantEvent extends PortalEvent {
+    private static final long serialVersionUID = 1L;
 
-import org.jasig.portal.security.IPerson;
+    private final ITenant tenant;
 
-/**
- * Used to create and publish portal events
- * 
- * @author Eric Dalquist
- * @version $Revision$
- */
-public interface IPortalEventFactory extends IPortalAuthEventFactory, IPortalLayoutEventFactory, IPortletExecutionEventFactory, IPortalTenantEventFactory {
-    
-    public String getPortalEventSessionId(HttpServletRequest request, IPerson person);
+    TenantEvent() {
+        super();
+        this.tenant = null;
+    }
+
+    TenantEvent(PortalEventBuilder portalEventBuilder, ITenant tenant) {
+        super(portalEventBuilder);
+        this.tenant = tenant;
+    }
+
+    public ITenant getTenant() {
+        return tenant;
+    }
 
 }

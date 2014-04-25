@@ -61,6 +61,7 @@ import org.hibernate.annotations.Type;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 /* package-private */ class JpaTenant implements ITenant {
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "UP_TENANT_GEN")
