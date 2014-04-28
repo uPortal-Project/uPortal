@@ -196,7 +196,7 @@
     <xsl:template name="region.pre-content">
         <xsl:if test="//region[@name='pre-content']/channel">
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <div id="region-pre-content" class="row-fluid">
+            <div id="region-pre-content" class="row">
                 <div class="col-md-12">
                     <xsl:for-each select="//region[@name='pre-content']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />

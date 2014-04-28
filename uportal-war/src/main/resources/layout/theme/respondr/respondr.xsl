@@ -701,7 +701,7 @@
                                 <xsl:call-template name="region.pre-content" />
                                 <!-- For editing page permissions in fragment-admin mode  -->
                                 <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                                    <div class="row-fluid">
+                                    <div class="row">
                                         <div class="col-md-9"></div>
                                         <div class="col-md-3">
                                             <div id="portalEditPagePermissions" class="fl-fix">
@@ -714,7 +714,7 @@
                                     </div>
                                 </xsl:if>
                                 <!-- Works with up-layout-preferences.js showMessage()  -->
-                                <div class="row-fluid">
+                                <div class="row">
                                     <div id="portalPageBodyMessage" class="col-md-12"></div>
                                 </div>
 

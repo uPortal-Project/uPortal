@@ -78,7 +78,7 @@
   <xsl:template name="columns">
     <xsl:param name="COLUMNS" />
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <div id="portalPageBodyColumns" class="row-fluid">
+    <div id="portalPageBodyColumns" class="row">
       <xsl:for-each select="column">
         <xsl:variable name="NUMBER">
             <xsl:value-of select="position()" />
