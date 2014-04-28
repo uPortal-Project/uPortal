@@ -78,7 +78,7 @@ public class DynamicRespondrSkinViewController {
         if (PortletRequest.RENDER_HEADERS.equals(request.getAttribute(PortletRequest.RENDER_PART))) {
 
             PortletPreferences prefs = request.getPreferences();
-            Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, ""));
+            Boolean enabled = Boolean.valueOf(prefs.getValue(PREF_DYNAMIC, "false"));
             String defaultSkinName = prefs.getValue(PREF_SKIN_NAME, DEFAULT_SKIN_NAME);
             String cssUrl = enabled ? calculateDynamicSkinUrlPathToUse(request, defaultSkinName)
                     : calculateCssLocationInWebapp(defaultSkinName, "");
@@ -86,7 +86,7 @@ public class DynamicRespondrSkinViewController {
             return "jsp/DynamicRespondrSkin/skinHeader";
         } else {
             // RENDER_MARKUP
-            return null;
+            return "jsp/DynamicRespondrSkin/skinBody";
         }
     }
 

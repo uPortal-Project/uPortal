@@ -113,11 +113,22 @@
       <layout_fragment>
         <xsl:call-template name="debug-info"/>
         <xsl:call-template name="tabList"/>
-          <regions>
+        <!-- For each channel that will display on the page, add a channel-header element so the channel will be
+             invoked if it supports the RENDER_HEADERS phase to insert content in the page HEAD section. -->
+        <header>
+            <!-- For detached mode, include regions hidden-top, page-top, page-bottom, and hidden-bottom. -->
+            <xsl:for-each select="child::folder[@type='hidden-top' or @type='page-top' or @type='page-bottom' or @type='hidden-bottom']/descendant::channel">
+              <channel-header ID="{@ID}"/>
+            </xsl:for-each>
+            <!-- Include the channel that is shown in detached mode. -->
+            <channel-header ID="{$userLayoutRoot}"/>
+        </header>
+        <regions>
+            <!-- For detached mode, include regions hidden-top, page-top, page-bottom, and hidden-bottom. -->
             <xsl:for-each select="child::folder[@type='hidden-top' or @type='page-top' or @type='page-bottom' or @type='hidden-bottom']">
               <xsl:call-template name="region"/>
             </xsl:for-each> 
-          </regions>
+        </regions>
         <content>
           <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
           <!-- Detect whether a detached channel is present in the user's layout ? -->
@@ -133,48 +144,54 @@
                 <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
             </xsl:if>
 
-            <!-- Headers to initiate RENDER_HEADER processing.  For Universality, include only those channels that are visible.
-                 For Respondr, the regions contain the channel-headers. -->
+            <!-- For each channel that will display on the page, add a channel-header element so the channel will be
+                 invoked if it supports the RENDER_HEADERS phase to insert content in the page HEAD section. -->
+            <!-- Note: Currently include legacy support for folders of type header, footer, and sidebar, though these
+                 really aren't used anymore and are definitely obsolete as of uP 4.1 with Respondr support for
+                 regions.  Remove in uP 4.2 or later.  James W 4/14 -->
             <header>
-              <xsl:choose>
-                <xsl:when test="$focusedFragmentId != 'none'">
-                    <!-- BEGIN display channel-headers for each channel visible on the page.  These channel headers are for
-                         Universality. -->
-                    <xsl:for-each select="child::folder[@type='header']/descendant::channel">
-                        <channel-header ID="{@ID}"/>
-                    </xsl:for-each>
-                    <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-                        <channel-header ID="{@ID}"/>
-                    </xsl:for-each>
-                    <!-- END display channel-headers for each channel visible on the page -->
-                    <!-- Allows header portlets to appear in the output, even in focused mode -->
-                    <xsl:for-each select="child::folder[@type='header']">
-                        <xsl:copy-of select=".//channel"/>
-                    </xsl:for-each>
-                </xsl:when>
-                <xsl:when test="$userLayoutRoot = 'root'">
-                    <!-- BEGIN display channel-headers for each channel visible on the page.  These channel headers are for
-                         Universality.  -->
-                  <xsl:for-each select="child::folder[@type='header']/descendant::channel">
+                <!-- Display channel-headers for channels in regions (legacy: also folders of type header,
+                     footer, and sidebar). Exclude channels in the special folders _favorites and favorite_collection
+                     as they are not actually rendered on the page. -->
+                <!-- Note: With default quick start data set using Universality or mUniversality theme, uPortal log file
+                     will have warnings for dynamicSkinPortlet header being rendered but not being used by
+                     the theme because the data set has portlets in regions (for Respondr use).  If a site is using
+                     universality and not respondr, their layout-fragments should not have regions in them.  However it
+                     is convenient for us to have regions in the default data set to test switching back and
+                     forth between universality and Respondr. -->
+                <xsl:for-each select="child::folder[@type!='regular' and @type!='favorites' and @type!='favorite_collection']/descendant::channel">
                     <channel-header ID="{@ID}"/>
-                  </xsl:for-each>
-                  <xsl:for-each select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
-                    <channel-header ID="{@ID}"/>
-                  </xsl:for-each>
-                  <xsl:for-each select="child::folder[attribute::type='footer']/descendant::channel">
-                    <channel-header ID="{@ID}"/>
-                  </xsl:for-each>
-                  <!-- END display channel-headers for each channel visible on the page -->  
-                </xsl:when>
-                <xsl:otherwise>
-                <!-- display only focused channel-header -->
-                <channel-header ID="{$userLayoutRoot}"/>
-                </xsl:otherwise>
-              </xsl:choose>
+                </xsl:for-each>
+                <!-- Legacy: insert portlet content in channels in folders of type header into the head output.
+                     As of uP 4.1 standard practice is for portlets to support RENDER_HEADERS subphase. Remove
+                     in uP 4.2. James W 4/14 -->
+                <xsl:for-each select="child::folder[@type='header']">
+                    <xsl:copy-of select=".//channel"/>
+                </xsl:for-each>
+
+                <xsl:choose>
+                    <xsl:when test="$focusedFragmentId != 'none'">
+                        <!-- Display channel-headers for channels visible on the selected tab. -->
+                        <xsl:for-each select="child::folder[@ID = $focusedFragmentId]/descendant::channel">
+                            <channel-header ID="{@ID}"/>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:when test="$userLayoutRoot = 'root'">
+                        <!-- Display channel-headers for channels visible on the selected tab. -->
+                        <xsl:for-each
+                            select="folder[@ID = $activeTabID and @type='regular' and @hidden='false']/descendant::channel">
+                            <channel-header ID="{@ID}"/>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- Display channel-header for only focused channel -->
+                        <channel-header ID="{$userLayoutRoot}"/>
+                    </xsl:otherwise>
+                </xsl:choose>
 
             </header>
             
-    <!-- Always include all regions when in DASHBOARD (normal) mode-->
+            <!-- Always include all regions when in DASHBOARD (normal) mode-->
             <regions>
                 <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
                     <xsl:call-template name="region"/>
@@ -245,11 +262,6 @@
      +-->
 <xsl:template name="region">
     <region name="{@type}">
-        <!-- Add channel-headers for each portlet in the region so those portlets can contribute output in the
-             RENDER_HEADERS subphase of the two-phase rendering process.  -->
-        <xsl:for-each select="channel">
-            <channel-header ID="{@ID}"/>
-        </xsl:for-each>
         <xsl:copy-of select="channel"/>
     </region>
 </xsl:template>
@@ -294,6 +306,9 @@
     </navigation>
 </xsl:template>
 
+<!-- Folders of type sidebar is a legacy item from uPortal 2.x days that per Drew is not really used as far as he knows.
+     This is a good candidate for removal when Respondr has traction since it handles sidebar-left and sidebar-right
+     much more gracefully. James W 4/14 -->
 <xsl:template name="sidebarList">
   <sidebar>
     <!-- To define sidebar elements - hidden from navigation but shown in sidebar and herited from DLM and ordered by precedence on tab-->
@@ -489,6 +504,9 @@
   <xsl:copy-of select="."/>
 </xsl:template>
 
+<!-- Folders of type footer is a legacy item from uPortal 2.x days that per Drew is not used much as far as he knows.
+     This is a good candidate for removal when Respondr has traction since it handles footer and page bottom
+     much more gracefully. James W 4/14 -->
   <xsl:template name="footer">
       <footer>
           <xsl:for-each select="child::folder[attribute::type='footer']">

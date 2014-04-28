@@ -44,15 +44,12 @@ public class HeaderHandlingDispatcherPortlet extends DispatcherPortlet {
      *
      * @param request  the render request
      * @param response the render response
-     * @since 2.0
      */
     @Override
     protected void doHeaders(RenderRequest request, RenderResponse response) {
         try {
             doDispatch(request, response);
-        } catch (IOException ex) {
-            logger.error("Exception rendering headers for portlet " + getPortletName() + ". Aborting doHeaders", ex);
-        } catch (PortletException ex) {
+        } catch (IOException | PortletException ex) {
             logger.error("Exception rendering headers for portlet " + getPortletName() + ". Aborting doHeaders", ex);
         }
     }
