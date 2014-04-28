@@ -42,6 +42,10 @@
     <portlet-preference>
         <name>content</name>
         <readOnly>false</readOnly>
-        <value>&lt;h1 class="portal-logo"&gt;uPortal&lt;/h1&gt;</value>
+        <value>
+            <![CDATA[
+                <h1 class="portal-logo"><a href='/uPortal'>uPortal</a></h1>
+            ]]>
+        </value>
     </portlet-preference>
 </portlet-definition>
