@@ -398,8 +398,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
              * We want to handle DETACHED portlet windows differently/explicitly,
              * but we need to be aware there may be other portlets on the page
              * besides the targeted one.  These would be portlets in regions
-             * (Respondr theme) -- such as DynamicRespondrSkin -- when the 
-             * 'showHeaderWhenDetached' has been enabled in the portlet-definition.
+             * (Respondr theme) -- such as DynamicRespondrSkin.
              *
              * We need to confirm, therefore, that this is actually the portlet
              * in DETACHED.  If it is, we'll send back a 'stateless' PortletWindow.

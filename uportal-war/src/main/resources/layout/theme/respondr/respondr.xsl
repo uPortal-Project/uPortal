@@ -20,21 +20,10 @@
 
 -->
 
-<!-- ========================================================================= -->
-<!-- ========== CAUTION:  EXPERIMENTAL ======================================= -->
-<!-- ========================================================================= -->
-<!-- 
- | Respondr is a prototype theme based on the principals of Responsive Design 
- | and Twitter Bootsrap technology.  It was developed by Gary Tompson (Unicon) 
+<!--
+ | Respondr is a theme based on the principals of Responsive Design
+ | and Twitter Bootstrap technology.  It was developed by Gary Thompson (Unicon)
  | and integrated into uPortal 4.1 by Drew Wills (Unicon).
- |
- | More work is needed to make this theme fully-functional in uPortal.  (Can you help?)
- |
- | To enable:  Change the theme name property to "Respondr" in one or more of 
- | the profile database records within src/main/data and import.  The profile 
- | records that come with uPortal are:
- | - system_default/defaultTemplateUser_default (required_entities)
- | - system_mobileDefault/defaultTemplateUser_mobileDefault (default_entities)
  -->
 
 <!-- ========================================================================= -->
@@ -73,7 +62,10 @@
  | and their associated channels and portlets for mobile display.
  -->
 
-
+<!-- To allow &nbsp; in document. See http://www.onjava.com/pub/a/oreilly/java/news/javaxslt_0801.html -->
+<!DOCTYPE xsl:stylesheet [
+    <!ENTITY nbsp "&#160;">
+    ]>
 <!-- ========================================================================= -->
 <!-- ========== STYLESHEET DELCARATION ======================================= -->
 <!-- ========================================================================= -->
@@ -638,6 +630,7 @@
 <xsl:template name="document.normal">
     <html lang="{$USER_LANG}" class="respondr">
         <head>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
             <xsl:call-template name="skinResources">
@@ -647,6 +640,18 @@
                 <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
             <xsl:call-template name="page.js" />
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
+            <xsl:for-each select="//header/descendant::channel-header">
+                <xsl:copy-of select="."/>
+            </xsl:for-each>
+            <!-- Respondr:  Ignore channels in header section (legacy feature).  Respondr respects portlets
+                 using RENDER_HEADERS to include content in header area.
+            <xsl:for-each select="//header/descendant::channel">
+                <xsl:copy-of select="."/>
+            </xsl:for-each>
+            -->
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         </head>
         <body class="up dashboard portal fl-theme-mist">
             <div id="up-notification"></div>
@@ -659,6 +664,7 @@
                             <xsl:call-template name="region.pre-header" />
                         </div>
                     </div>
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     <div class="container">
                         <div class="row">
                             <xsl:call-template name="region.header-left" />
@@ -668,8 +674,10 @@
                     <xsl:call-template name="region.header-bottom" />
                     <xsl:apply-templates select="layout/navigation" />
                 </header>
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     <div class="container">
                         <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
                             <xsl:call-template name="region.sidebar-left" />
@@ -710,6 +718,7 @@
                                     <div id="portalPageBodyMessage" class="col-md-12"></div>
                                 </div>
 
+                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                                 <xsl:choose>
                                     <xsl:when test="$PORTAL_VIEW='focused'">
                                         <!-- === FOCUSED VIEW === -->
@@ -719,6 +728,7 @@
                                         <xsl:apply-templates select="layout/content" />
                                     </xsl:otherwise>
                                 </xsl:choose>
+                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
                                 <!-- /USE FLUID ROWS -->
                             </div>
@@ -726,10 +736,12 @@
                         </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
                     </div>
                 </div>
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <xsl:call-template name="footer.nav" />
                 <xsl:call-template name="footer.legal" />
                 <xsl:call-template name="region.page-bottom" />
                 <xsl:call-template name="region.hidden-bottom" />
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             </div>
 
             <xsl:call-template name="page.dialogs" />
@@ -749,9 +761,7 @@
 <!-- ====================================================================================== -->
 <!-- 
  | RED
- | This template displays one portlet at a time indetached window state.  It 
- | toggles between the sticky header and non-sticky header via portlet publish 
- | parameter showHeaderWhenDetached.
+ | This template displays one portlet at a time in detached window state.
  -->
 <xsl:template name="document.detached">
   <html lang="{$USER_LANG}" class="respondr">
@@ -765,6 +775,11 @@
             <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
         </xsl:if>
         <xsl:call-template name="page.js" />
+        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+        <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
+        <xsl:for-each select="//header/descendant::channel-header">
+            <xsl:copy-of select="."/>
+        </xsl:for-each>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
         <div id="wrapper">
@@ -787,14 +802,16 @@
                                                     <xsl:otherwise>
                                                         <xsl:value-of select="upMsg:getMessage('you.are.signed.in.as', $USER_LANG)"/>
                                                     </xsl:otherwise>
-                                                </xsl:choose>
+                                                </xsl:choose>&nbsp;
                                                 <span class="user-name">
                                                     <xsl:value-of select="$USER_NAME"/>
                                                 </span>
-                                                -
-                                                <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content portal-logout">
-                                                    <xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/>
-                                                </a>
+                                                <xsl:if test="$AUTHENTICATED='true'">
+                                                    -
+                                                    <a href="{$CONTEXT_PATH}/Logout" title="{upMsg:getMessage('log.off.and.exit', $USER_LANG)}" class="up-portlet-control hide-content portal-logout">
+                                                        <xsl:value-of select="upMsg:getMessage('sign.out', $USER_LANG)"/>
+                                                    </a>
+                                                </xsl:if>
                                             </div>
                                         </div>
                                     </div>
@@ -809,7 +826,9 @@
                             </div>
                             
                         </div>
+                        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                         <xsl:copy-of select="/layout_fragment/content"/>
+                        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     </div>
             <xsl:call-template name="region.page-bottom" />
             <xsl:call-template name="region.hidden-bottom" />

@@ -569,7 +569,7 @@
     <portlet>
         <portlet-name>DynamicRespondrSkin</portlet-name>
         <display-name xml:lang="en">Dynamic Respondr Skin</display-name>
-        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <portlet-class>org.springframework.web.portlet.HeaderHandlingDispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
             <value>classpath:/properties/contexts/portlet/DynamicRespondrSkin-portlet.xml</value>
@@ -625,6 +625,11 @@
                 <value>#F68923</value>
             </preference>
         </portlet-preferences>
+        
+        <container-runtime-option>
+            <name>javax.portlet.renderHeaders</name>
+            <value>true</value>
+        </container-runtime-option>
     </portlet>
 
     <portlet>

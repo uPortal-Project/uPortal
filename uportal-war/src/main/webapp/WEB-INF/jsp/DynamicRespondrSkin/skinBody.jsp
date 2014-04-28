@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
+<%--
 
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
@@ -18,9 +17,5 @@
     specific language governing permissions and limitations
     under the License.
 
--->
-<layout xmlns:dlm="http://www.uportal.org/layout/dlm" script="classpath://org/jasig/portal/io/import-layout_v3-2.crn" 
-    username="defaultTemplateUser" >
-  <folder hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
-  </folder>
-</layout>
+--%>
+<!-- DynamicRespondrSkin/skinBody has rendered intentionally empty. -->

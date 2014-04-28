@@ -112,10 +112,10 @@ public abstract class CachingPipelineComponent<R, E> extends PipelineComponentWr
             //Cache the buffer
             element = new Element(cacheKey, cachedEventReader);
             this.cache.put(element);
-            logger.debug("{} - Cached {} events for key {}", new Object[] {this.beanName, eventCache.size(), cacheKey});
+            logger.debug("{} - Cached {} events for key {}", this.beanName, eventCache.size(), cacheKey);
         }
         else {
-            logger.debug("{} - Founed  cached events for key {}", new Object[] {this.beanName, cacheKey});
+            logger.debug("{} - Found cached events for key {}", this.beanName, cacheKey);
         }
 
         final List<E> eventCache = cachedEventReader.getEventCache();

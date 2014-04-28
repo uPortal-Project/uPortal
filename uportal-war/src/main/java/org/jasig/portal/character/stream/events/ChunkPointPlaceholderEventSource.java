@@ -31,7 +31,7 @@ import org.jasig.portal.xml.stream.ChunkingEventReader;
  * Returns an empty string event. The chunk-point element and this source are used to break up the character
  * stream created by the {@link StAXSerializingComponent} and {@link ChunkingEventReader}. The <chunk-point/>
  * element should be placed before and after sections of markup that are very user or page specific (username, 
- * page title, session key, etc..). This allows the string de-duplication logic of the {@link CharacterDataEventImpl}
+ * page title, session key, etc.). This allows the string de-duplication logic of the {@link CharacterDataEventImpl}
  * to be more effective as more users will have common character event strings in their rendering pipeline.
  * 
  * @author Eric Dalquist

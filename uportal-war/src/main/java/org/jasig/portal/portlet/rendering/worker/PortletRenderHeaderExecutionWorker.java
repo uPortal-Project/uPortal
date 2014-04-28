@@ -67,7 +67,20 @@ class PortletRenderHeaderExecutionWorker extends
         return this.output;
 	}
 
-	/* (non-Javadoc)
+    /**
+     * Obtain the RENDER_HEADER output.  Note that uPortal supports the model of obtaining HTML markup from the
+     * portlet, whether from a Spring view or servlet output and inserting it within the HTML HEAD section of
+     * the page. uPortal does not support the model where the portlet creates DOM elements to be written to the
+     * HEAD section and constructs the HTML output; e.g. the following does NOT work in uPortal:
+     *
+     * <p><pre>
+     * Element linkElement = response.createElement(HTML.Tag.SCRIPT.toString());
+     * linkElement.setAttribute(HTML.Attribute.TYPE.toString(), "text/javascript");
+     * linkElement.setAttribute(HTML.Attribute.SRC.toString(), cssUrl);
+     * linkElement.setTextContent(" ");
+     * response.addProperty(MimeResponse.MARKUP_HEAD_ELEMENT, linkElement);
+     * </pre></p>
+     *
 	 * @see org.jasig.portal.portlet.rendering.worker.PortletExecutionWorker#callInternal()
 	 */
 	@Override
