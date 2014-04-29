@@ -145,33 +145,36 @@
             </xsl:if>
 
             <!-- For each channel that will display on the page, add a channel-header element so the channel will be
-                 invoked if it supports the RENDER_HEADERS phase to insert content in the page HEAD section. -->
-            <!-- Note: Currently include legacy support for folders of type header, footer, and sidebar, though these
-                 really aren't used anymore and are definitely obsolete as of uP 4.1 with Respondr support for
-                 regions.  Remove in uP 4.2 or later.  James W 4/14 -->
+                 invoked if it supports the RENDER_HEADERS phase to insert content in the page HEAD section.
+                 Sidebar is a feature in Universality to list portlets as a set of links and as such the portlets
+                 are not actually rendered and should not be included.  -->
+            <!-- Note: Currently include support for universality legacy types header and footer though these really
+                 aren't used anymore and are obsolete as of uP 4.1 with Respondr support for regions.
+                 Remove legacy items in uP 4.2 or later.  James W 4/14 -->
             <header>
-                <!-- Display channel-headers for channels in regions (legacy: also folders of type header,
-                     footer, and sidebar). Exclude channels in the special folders _favorites and favorite_collection
+                <!-- Display channel-headers for channels in regions (legacy: also folders of type header and
+                     footer). Exclude channels in the special folders sidebar, _favorites and favorite_collection
                      as they are not actually rendered on the page. -->
                 <!-- Note: With default quick start data set using Universality or mUniversality theme, uPortal log file
-                     will have warnings for dynamicSkinPortlet header being rendered but not being used by
-                     the theme because the data set has portlets in regions (for Respondr use).  If a site is using
-                     universality and not respondr, their layout-fragments should not have regions in them.  However it
-                     is convenient for us to have regions in the default data set to test switching back and
+                     will have warnings for dynamicSkinPortlet (fname=dynamic-respondr-skin) being invoked for both
+                     RENDER phases but results not being included by the theme because the data set has portlets
+                     in regions (for Respondr use). If a site is using universality and not respondr, their
+                     layout-fragments should not have regions in them and they should not include dynamic-respondr-skin.
+                     However it is convenient for us to have regions in the default data set to test switching back and
                      forth between universality and Respondr. -->
-                <xsl:for-each select="child::folder[@type!='regular' and @type!='favorites' and @type!='favorite_collection']/descendant::channel">
+                <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and @type!='favorites' and @type!='favorite_collection']/descendant::channel">
                     <channel-header ID="{@ID}"/>
                 </xsl:for-each>
                 <!-- Legacy: insert portlet content in channels in folders of type header into the head output.
-                     As of uP 4.1 standard practice is for portlets to support RENDER_HEADERS subphase. Remove
-                     in uP 4.2. James W 4/14 -->
+                     As of uP 4.1 standard practice is for portlets to support RENDER_HEADERS subphase. See Dynamic
+                     Skin Portlet for an example of usage.  Remove header/footer support in uP 4.2. James W 4/14 -->
                 <xsl:for-each select="child::folder[@type='header']">
                     <xsl:copy-of select=".//channel"/>
                 </xsl:for-each>
 
                 <xsl:choose>
                     <xsl:when test="$focusedFragmentId != 'none'">
-                        <!-- Display channel-headers for channels visible on the selected tab. -->
+                        <!-- Display channel-headers for channels visible on the selected tab (using externalId for tab name). -->
                         <xsl:for-each select="child::folder[@ID = $focusedFragmentId]/descendant::channel">
                             <channel-header ID="{@ID}"/>
                         </xsl:for-each>
