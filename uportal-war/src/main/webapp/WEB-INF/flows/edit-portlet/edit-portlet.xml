@@ -35,14 +35,9 @@
     
     <!-- Initialize a list of available portlet types -->
     <on-start>
-        <set name="flashScope.servletRequest"
-                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
-        <set name="flashScope.person"
-                value="personManager.getPerson(servletRequest)"/>
-        <set name="flowScope.portletTypes"
-                value="portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person)"/>
-        <set name="flowScope.completed"
-                value="portlet.id != null and portlet.id != '-1'"/>
+        <set name="flowScope.portletTypes" 
+            value="channelPublishingDefinitionDao.getChannelPublishingDefinitions()"/>
+        <set name="flowScope.completed" value="portlet.id != null and portlet.id != '-1'"/>
     </on-start>
     
     <!-- If we're creating a new portlet, display the first step in the workflow.
