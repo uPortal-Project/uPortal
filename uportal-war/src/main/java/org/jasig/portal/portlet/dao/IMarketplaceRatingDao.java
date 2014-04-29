@@ -22,7 +22,7 @@ package org.jasig.portal.portlet.dao;
 import java.util.Set;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 
 public interface IMarketplaceRatingDao{
     

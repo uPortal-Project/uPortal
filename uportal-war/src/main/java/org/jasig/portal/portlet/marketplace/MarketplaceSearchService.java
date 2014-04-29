@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.marketplace;
+package org.jasig.portal.portlet.marketplace;
 
 import java.util.List;
 
@@ -32,7 +32,6 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlets.search.IPortalSearchService;
-import org.jasig.portal.portlets.marketplace.ScreenShot;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;

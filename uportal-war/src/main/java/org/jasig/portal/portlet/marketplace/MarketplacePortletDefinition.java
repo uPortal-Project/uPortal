@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.marketplace;
+package org.jasig.portal.portlet.marketplace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -329,7 +329,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
 	@Override
 	public int getTimeout() {
-		return this.getTimeout();
+		return this.portletDefinition.getTimeout();
 	}
 
 	@Override
@@ -344,7 +344,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
 	@Override
 	public Integer getRenderTimeout() {
-		return this.getRenderTimeout();
+		return this.portletDefinition.getRenderTimeout();
 	}
 
 	@Override

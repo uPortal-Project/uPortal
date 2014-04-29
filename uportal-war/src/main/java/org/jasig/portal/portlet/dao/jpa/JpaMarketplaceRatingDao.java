@@ -37,7 +37,7 @@ import org.jasig.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlets.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
