@@ -58,6 +58,11 @@ public interface IPermission {
   public static final String PORTLET_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
 
   /*
+   * Portlet management permissions by portlet type.
+   */
+  public static final String PORTLET_MANAGER_SELECT_PORTLET_TYPE = "SELECT_PORTLET_TYPE";
+
+  /*
    * Portlet management permissions by lifecycle state.
    */
   public static final String PORTLET_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
@@ -92,6 +97,9 @@ public interface IPermission {
     See PermissionHelper for a convenience method for correctly using this.
   */
   public static final String PORTLET_PREFIX = "PORTLET_ID.";    
+
+  public static final String ALL_PORTLET_TYPES = "ALL_PORTLET_TYPES";
+
   public static final String ALL_PORTLETS_TARGET = "ALL_PORTLETS";
 
   public static final String ALL_GROUPS_TARGET = "ALL_GROUPS";
