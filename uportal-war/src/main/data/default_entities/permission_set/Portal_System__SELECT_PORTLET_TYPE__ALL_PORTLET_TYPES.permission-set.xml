@@ -25,7 +25,7 @@
   <principal>
     <group>Portal System</group>
   </principal>
-  <activity>PUBLISH_PORTLET_TYPE</activity>
+  <activity>SELECT_PORTLET_TYPE</activity>
   <target permission-type="GRANT">
     <literal>ALL_PORTLET_TYPES</literal>
   </target>

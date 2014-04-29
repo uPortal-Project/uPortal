@@ -60,7 +60,7 @@ public interface IPermission {
   /*
    * Portlet management permissions by portlet type.
    */
-  public static final String PORTLET_MANAGER_PUBLISH_PORTLET_TYPE = "PUBLISH_PORTLET_TYPE";
+  public static final String PORTLET_MANAGER_SELECT_PORTLET_TYPE = "SELECT_PORTLET_TYPE";
 
   /*
    * Portlet management permissions by lifecycle state.

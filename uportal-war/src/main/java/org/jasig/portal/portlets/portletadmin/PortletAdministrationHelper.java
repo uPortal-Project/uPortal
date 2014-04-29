@@ -850,14 +850,14 @@ public class PortletAdministrationHelper implements ServletContextAware {
 
         final Map<IPortletType, PortletPublishingDefinition> rawMap = portletPublishingDefinitionDao.getChannelPublishingDefinitions();
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
-        if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_PUBLISH_PORTLET_TYPE, IPermission.ALL_PORTLET_TYPES)) {
+        if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE, IPermission.ALL_PORTLET_TYPES)) {
             // Send the whole collection back...
             rslt = rawMap;
         } else {
             // Filter the collection by permissions...
             rslt = new HashMap<IPortletType, PortletPublishingDefinition>();
             for (Map.Entry<IPortletType, PortletPublishingDefinition> y : rawMap.entrySet()) {
-                if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_PUBLISH_PORTLET_TYPE, y.getKey().getName())) {
+                if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE, y.getKey().getName())) {
                     rslt.put(y.getKey(), y.getValue());
                 }
             }

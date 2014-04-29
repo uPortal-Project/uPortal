@@ -24,9 +24,9 @@
     <fname>UP_PORTLET_PUBLISH</fname>
     <desc>Permissions controlling the publishing and editing of uPortal content</desc>
     <activity>
-        <name>Publish Portlet Type</name>
-        <fname>PUBLISH_PORTLET_TYPE</fname>
-        <desc>Select portlet type when publishing a new portlet.</desc>
+        <name>Select Portlet Type</name>
+        <fname>SELECT_PORTLET_TYPE</fname>
+        <desc>Select the specified portlet type when publishing a new portlet.</desc>
         <targetProvider>portletTypeTargetProvider</targetProvider>
     </activity>
     <activity>
