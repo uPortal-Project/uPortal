@@ -329,7 +329,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
 	@Override
 	public int getTimeout() {
-		return this.getTimeout();
+		return this.portletDefinition.getTimeout();
 	}
 
 	@Override
@@ -344,7 +344,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
 	@Override
 	public Integer getRenderTimeout() {
-		return this.getRenderTimeout();
+		return this.portletDefinition.getRenderTimeout();
 	}
 
 	@Override
