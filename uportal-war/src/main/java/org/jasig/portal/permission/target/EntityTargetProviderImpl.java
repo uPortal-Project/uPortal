@@ -1,3 +1,22 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.jasig.portal.permission.target;
 
 import java.io.Serializable;
@@ -29,18 +48,19 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 3.3
  */
 public class EntityTargetProviderImpl implements IPermissionTargetProvider, Serializable {
-    
+    private static final long serialVersionUID = 1L;
+
     private Set<String> allowedEntityTypes = new HashSet<String>();
-    
+
     protected transient final Log log = LogFactory.getLog(getClass());
-    
+
     private transient IGroupListHelper groupListHelper;
-    
+
     @Autowired(required = true)
     public void setGroupListHelper(IGroupListHelper helper) {
         this.groupListHelper = helper;
     }
-    
+
     /**
      * Construct a new instance of targets matching the set of allowed
      * target entity types.
@@ -50,7 +70,7 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
     public EntityTargetProviderImpl(Set<String> allowedEntityTypes) {
         this.allowedEntityTypes = allowedEntityTypes;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.permission.target.IPermissionTargetProvider#getTarget(java.lang.String)
@@ -82,7 +102,7 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
             JsonEntityBean entity = groupListHelper.getEntity(type, key, false);
             if (entity != null) {
                 String entityId = entity.getId();
-            	if("portlet".equals(type))
+                if("portlet".equals(type))
                     entityId = IPermission.PORTLET_PREFIX.concat(entityId);
                 IPermissionTarget target = new PermissionTargetImpl(entityId, entity.getName());
                 return target;

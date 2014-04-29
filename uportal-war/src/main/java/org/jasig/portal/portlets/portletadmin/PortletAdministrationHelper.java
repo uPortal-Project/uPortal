@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -842,8 +843,31 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		
 		return false;
 	}
-	
-	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
+
+    public Map<IPortletType, PortletPublishingDefinition> getAllowableChannelPublishingDefinitions(IPerson user) {
+
+        Map<IPortletType, PortletPublishingDefinition> rslt;
+
+        final Map<IPortletType, PortletPublishingDefinition> rawMap = portletPublishingDefinitionDao.getChannelPublishingDefinitions();
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+        if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_PUBLISH_PORTLET_TYPE, IPermission.ALL_PORTLET_TYPES)) {
+            // Send the whole collection back...
+            rslt = rawMap;
+        } else {
+            // Filter the collection by permissions...
+            rslt = new HashMap<IPortletType, PortletPublishingDefinition>();
+            for (Map.Entry<IPortletType, PortletPublishingDefinition> y : rawMap.entrySet()) {
+                if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_PUBLISH_PORTLET_TYPE, y.getKey().getName())) {
+                    rslt.put(y.getKey(), y.getValue());
+                }
+            }
+        }
+
+        return rslt;
+
+    }
+
+    protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
         if (form.getPortletName() == null || (form.getApplicationId() == null && !form.isFramework())) {
             return null;
         }

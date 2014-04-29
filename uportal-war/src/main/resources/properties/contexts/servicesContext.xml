@@ -183,6 +183,9 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry key="portletTypeTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.PortletTypeTargetProviderImpl"/>
+                </entry>
                 <entry key="errorChannelTargetProvider">
                     <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
                         <property name="targets">
