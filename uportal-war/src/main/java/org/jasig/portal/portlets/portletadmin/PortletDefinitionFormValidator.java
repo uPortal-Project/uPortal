@@ -20,14 +20,22 @@
 package org.jasig.portal.portlets.portletadmin;
 
 import java.util.Date;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
+import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -40,6 +48,15 @@ public class PortletDefinitionFormValidator {
 	private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 
+    @Autowired
+    private PortletAdministrationHelper portletAdministrationHelper;
+
+    @Resource(name = "portalRequestUtils")
+    private IPortalRequestUtils portalRequestUtils;
+
+    @Autowired
+    private IPersonManager personManager;
+
 	@Autowired(required = true)
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
         this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
@@ -50,13 +67,37 @@ public class PortletDefinitionFormValidator {
 		this.portletDefinitionRegistry = portletDefinitionRegistry;
 	}
 	
-	public void validateChooseType(PortletDefinitionForm def, MessageContext context) {
-		if(def.getTypeId() == 0) {
-			context.addMessage(new MessageBuilder().error().source("typeId")
-					.code("please.choose.portlet.type").build());
-		}
-	}
-	
+    public void validateChooseType(PortletDefinitionForm def, MessageContext context) {
+        final int selectedTypeId = def.getTypeId();
+
+        switch (selectedTypeId) {
+            case 0:
+                // No type selected...
+                context.addMessage(new MessageBuilder().error().source("typeId")
+                    .code("please.choose.portlet.type").build());
+                break;
+            default:
+                // User specified a typeId;  validate that it exists and that
+                // the user has permission to choose it.
+                final PortletPublishingDefinition cpd = channelPublishingDefinitionDao.getChannelPublishingDefinition(selectedTypeId);
+                if (cpd == null) {
+                    context.addMessage(new MessageBuilder().error().source("typeId")
+                            .code("please.choose.portlet.type").build());
+                } else {
+                    HttpServletRequest req = portalRequestUtils.getCurrentPortalRequest();
+                    IPerson person = personManager.getPerson(req);
+                    Map<IPortletType, PortletPublishingDefinition> allowableCpds = 
+                            portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person);
+                    if (!allowableCpds.containsValue(cpd)) {
+                        context.addMessage(new MessageBuilder().error().source("typeId")
+                                .code("portlet.type.not permitted").build());
+                    }
+                }
+                break;
+        }
+
+    }
+
 	public void validateBasicInfo(PortletDefinitionForm def, MessageContext context) {
 		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
