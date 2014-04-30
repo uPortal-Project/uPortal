@@ -469,7 +469,7 @@ border: thin solid #b1c6f2;
 .up #portalPageFooter a:visited { color: #666; }
 .up #portalPageFooter a:hover { color: #666; }
 .up #portalPageFooter a:active { color: #666; }
-.up #portalPageFooter .copyright { text-align: center; font-weight: bold; font-size: 12px; color: black; padding-bottom: 0px; }
+.up #portalPageFooter .copyright { text-align: center; font-size: 9px; color: black; padding-bottom: 0px; }
 
 /* guest */
 .up .not-logged-in #portalPageHeader #portalLogo { padding: 5px 5px 5px 20px; }
