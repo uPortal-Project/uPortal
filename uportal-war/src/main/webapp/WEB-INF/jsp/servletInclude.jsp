@@ -39,7 +39,3 @@ It does not include the portlet-specific includes necessary in portlets.
 <portlet:defineObjects/>
 
 <spring:htmlEscape defaultHtmlEscape="true" />
-
-<spring:htmlEscape defaultHtmlEscape="true" />
-
-
