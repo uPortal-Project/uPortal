@@ -145,20 +145,13 @@ public class MarketplaceService implements IMarketplaceService {
 
     }
 
-    // Getters and setters below here.
-
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
-    }
+    // JavaBean property setters below here.
+    // getters omitted because no use cases for reading the properties
 
     @Autowired
     public void setPortletDefinitionRegistry(final IPortletDefinitionRegistry portletDefinitionRegistry) {
         Validate.notNull(portletDefinitionRegistry, "Portlet definition registry must not be null.");
         this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
-
-    public IPortletCategoryRegistry getPortletCategoryRegistry() {
-        return portletCategoryRegistry;
     }
 
     @Autowired
