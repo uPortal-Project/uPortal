@@ -720,12 +720,12 @@
             <dependency>
                 <groupId>org.jasig.ssp.service.persondir</groupId>
                 <artifactId>person-directory-api</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jasig.ssp.service.persondir</groupId>
                 <artifactId>person-directory-impl</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
