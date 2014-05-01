@@ -156,11 +156,22 @@
                 </xsl:choose>
             </header>
 
-            <!-- Always include all regions when in DASHBOARD (normal) mode-->
             <regions>
-                <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
-                    <xsl:call-template name="region"/>
-                </xsl:for-each>
+                <xsl:choose>
+                    <xsl:when test="$userLayoutRoot = 'root'">
+                        <!-- Include all regions when in DASHBOARD mode -->
+                        <xsl:for-each select="child::folder[@type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
+                            <xsl:call-template name="region"/>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- Include all regions EXCEPT 'region-customize' when in FOCUSED mode -->
+                        <xsl:for-each select="child::folder[@type!='customize' and @type!='regular' and @type!='sidebar' and channel]"><!-- Ignores empty folders -->
+                            <xsl:call-template name="region"/>
+                        </xsl:for-each>
+                    </xsl:otherwise>
+                </xsl:choose>
+
             </regions>
 
             <xsl:choose>
