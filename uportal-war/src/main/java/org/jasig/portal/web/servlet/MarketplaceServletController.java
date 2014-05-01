@@ -122,20 +122,13 @@ public class MarketplaceServletController {
     }
 
 
-    // Accessors and mutators below here.
+    // Mutators below here.
+    // Setter methods omitted for lack of use cases for.
 
-
-    public IMarketplaceService getMarketplaceService() {
-        return marketplaceService;
-    }
 
     @Autowired
     public void setMarketplaceService(IMarketplaceService marketplaceService) {
         this.marketplaceService = marketplaceService;
-    }
-
-    public IPersonManager getPersonManager() {
-        return personManager;
     }
 
     @Autowired
@@ -143,26 +136,14 @@ public class MarketplaceServletController {
         this.personManager = personManager;
     }
 
-    public IPortletCategoryRegistry getPortletCategoryRegistry() {
-        return portletCategoryRegistry;
-    }
-
     @Autowired
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
 
-    public IPortletDefinitionRegistry getPortletDefinitionRegistry() {
-        return portletDefinitionRegistry;
-    }
-
     @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
-
-    public IMarketplaceRatingDao getMarketplaceRatingDao() {
-        return marketplaceRatingDao;
     }
 
     @Autowired
