@@ -43,6 +43,9 @@
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\."/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\."/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
+        <!-- org.jasig.portal.web.servlet is component-scanned in by its Spring Web MVC context file.
+        This exclude avoids duplicatively component-scanning it.-->
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.web\.servlet\."/>
     </context:component-scan>
     
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">

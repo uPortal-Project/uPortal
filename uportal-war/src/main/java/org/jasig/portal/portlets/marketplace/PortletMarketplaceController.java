@@ -82,9 +82,6 @@ public class PortletMarketplaceController {
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
 
-    public IMarketplaceService getMarketplaceService() {
-        return marketplaceService;
-    }
 
     @Autowired
     public void setMarketplaceService(IMarketplaceService marketplaceService) {
