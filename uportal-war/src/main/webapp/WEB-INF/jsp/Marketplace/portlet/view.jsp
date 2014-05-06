@@ -319,7 +319,7 @@
             <c:forEach var="portlet" items="${channelBeanList}">
                 <tr>
                     <td class="essential" style="white-space: nowrap; border:none;">
-                        <a href="${renderRequest.contextPath}/p/${portlet.FName}">${portlet.title}</a>
+                        <a href="${portlet.renderUrl}">${portlet.title}</a>
                     </td>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
