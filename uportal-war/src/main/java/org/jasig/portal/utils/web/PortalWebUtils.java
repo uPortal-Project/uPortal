@@ -139,7 +139,6 @@ public final class PortalWebUtils {
      * @throws IllegalStateException if the request is not Spring-bound or is neither Servlet nor Portlet flavored
      */
     public static String currentRequestContextPath() {
-        String contextPath = "";
 
         final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
@@ -152,17 +151,17 @@ public final class PortalWebUtils {
 
             final ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
             final HttpServletRequest request = servletRequestAttributes.getRequest();
-            contextPath = request.getContextPath();
+            return request.getContextPath();
 
         } else if (requestAttributes instanceof PortletRequestAttributes) {
 
             final PortletRequestAttributes portletRequestAttributes = (PortletRequestAttributes) requestAttributes;
             final PortletRequest request = portletRequestAttributes.getRequest();
-            contextPath = request.getContextPath();
+            return request.getContextPath();
 
         } else {
             throw new IllegalStateException("Request attributes are an unrecognized implementation.");
         }
-        return contextPath;
+
     }
 }

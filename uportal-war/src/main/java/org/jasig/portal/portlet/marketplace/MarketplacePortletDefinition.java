@@ -279,7 +279,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      */
     public String getRenderUrl() {
 
-        String contextPath = PortalWebUtils.currentRequestContextPath();
+        final String contextPath = PortalWebUtils.currentRequestContextPath();
 
         // TODO: stop abstraction violation of relying on knowledge of uPortal URL implementation details
         return contextPath + "/p/" + getFName() + "/render.uP";
