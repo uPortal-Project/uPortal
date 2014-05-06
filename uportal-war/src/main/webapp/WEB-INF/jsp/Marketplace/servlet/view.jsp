@@ -330,15 +330,9 @@ etc. that might be included in the JSP on future edits. --%>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
                     </td>
-                    <%-- Not ready to deal with URLs
-                    <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
-                        <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${portlet.FName}"/>
-                    </portlet:renderURL>
-                    --%>
-                    <c:set var="entryURL" value="#" />
                     <td class="essential" style="border:none;">
-                        <a href="${entryURL}"><spring:message code="label.details" text="Details" /></a>
+                        <a href="${portlet.marketplaceEntryUrl}">
+                            <spring:message code="label.details" text="Details" /></a>
                     </td>
                     <td>
                         <c:forEach var="category" items="${portlet.parentCategories}">
