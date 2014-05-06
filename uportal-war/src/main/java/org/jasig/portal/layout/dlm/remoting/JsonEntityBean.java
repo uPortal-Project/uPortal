@@ -23,7 +23,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -35,10 +34,11 @@ import org.jasig.portal.portlets.groupselector.EntityEnum;
  * 
  * @author Drew Mazurek
  */
-@SuppressWarnings("unchecked")
 public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 
-	public static final String ENTITY_CATEGORY = "category";
+    private static final long serialVersionUID = 1L;
+
+    public static final String ENTITY_CATEGORY = "category";
 	public static final String ENTITY_CHANNEL = "channel";
 	public static final String ENTITY_GROUP = "group";
 	public static final String ENTITY_PERSON = "person";
@@ -51,8 +51,8 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     private String principalString;
 	private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
 	private boolean childrenInitialized = false;
-		
-	public JsonEntityBean() { }
+
+	public JsonEntityBean() {}
 	
 	public JsonEntityBean(PortletCategory category) {
 		
@@ -89,12 +89,21 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	public void setEntityType(EntityEnum entityType) {
 	    this.entityType = entityType;
 	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+
+    /**
+     * Identifies this bean uniquely within its entityType.  NOTE:  This id is
+     * not the fname (for portlets) or name field (for groups), but rater the
+     * unique String that represents this bean as a target in the permissions
+     * subsystem.  E.g. 'PORTLET_ID.19' or 'local.36' or 'pags.Authenticated Users'
+     */
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 	public String getName() {
 		return name;
 	}
@@ -121,7 +130,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     public void setPrincipalString(String principalString) {
         this.principalString = principalString;
     }
-    
+
 	public List<JsonEntityBean> getChildren() {
 		return children;
 	}
@@ -212,4 +221,13 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
             .append(this.principalString, this.getPrincipalString())
         .toComparison();
     }
+
+    @Override
+    public String toString() {
+        return "JsonEntityBean [entityType=" + entityType + ", id=" + id
+                + ", name=" + name + ", creatorId=" + creatorId
+                + ", description=" + description + ", principalString="
+                + principalString + "]";
+    }
+
 }
