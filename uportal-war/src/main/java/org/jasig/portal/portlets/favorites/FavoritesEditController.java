@@ -1,5 +1,5 @@
-/*
- * Licensed to Apereo under one or more contributor license
+/**
+ * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
  * Jasig licenses this file to you under the Apache License,
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.favorites;
 
 import org.jasig.portal.IUserPreferencesManager;
