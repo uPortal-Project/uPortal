@@ -62,7 +62,7 @@ public final class AggregatedPortletMappingImpl implements AggregatedPortletMapp
     @Column(name="ID")
     private final long id;
     
-    @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
+    @Column(name = "PORTLET_NAME", length = 128, nullable = false)
     private final String name;
 
     @NaturalId
