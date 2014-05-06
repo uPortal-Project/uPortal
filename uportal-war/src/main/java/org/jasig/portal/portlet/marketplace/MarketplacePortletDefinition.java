@@ -269,9 +269,11 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     }
 
     /**
-     * Get a bookmarkable URL for rendering the defined portlet, addressed by fname.
+     * Convenience method for getting a bookmarkable URL for rendering the defined portlet, addressed by fname.
      * This method will *ONLY* work when invoked in the context of a Spring-managed HttpServletRequest available
      * via RequestContextHolder.
+     * WARNING: This method does not consider whether the requesting user has permission to render the target portlet,
+     * so this might be getting a URL that the user can't actually use.
      * @return
      * @throws IllegalStateException when context does not allow computing the URL
      */
