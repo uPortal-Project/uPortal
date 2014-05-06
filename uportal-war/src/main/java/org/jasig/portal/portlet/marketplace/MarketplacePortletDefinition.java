@@ -38,6 +38,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -265,6 +266,22 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         List<IPortletDefinition> tempList = new ArrayList<IPortletDefinition>(this.relatedPortlets);
         Collections.shuffle(tempList);
         return new HashSet<IPortletDefinition>(tempList.subList(0, tempList.size()<QUANTITY_RELATED_PORTLETS_TO_SHOW ? tempList.size(): QUANTITY_RELATED_PORTLETS_TO_SHOW));
+    }
+
+    /**
+     * Get a bookmarkable URL for rendering the defined portlet, addressed by fname.
+     * This method will *ONLY* work when invoked in the context of a Spring-managed HttpServletRequest available
+     * via RequestContextHolder.
+     * @return
+     * @throws IllegalStateException when context does not allow computing the URL
+     */
+    public String getRenderUrl() {
+
+        String contextPath = PortalWebUtils.currentRequestContextPath();
+
+        // TODO: stop abstraction violation of relying on knowledge of uPortal URL implementation details
+        return contextPath + "/p/" + getFName() + "/render.uP";
+
     }
 
     @Override

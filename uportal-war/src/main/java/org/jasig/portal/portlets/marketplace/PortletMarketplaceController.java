@@ -158,7 +158,6 @@ public class PortletMarketplaceController {
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("portlet", mpDefinition);
-        model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
         model.addAttribute("shortURL",mpDefinition.getShortURL());
         return "jsp/Marketplace/portlet/entry";
     }
@@ -197,23 +196,8 @@ public class PortletMarketplaceController {
          model.addAttribute("rating",tempRating==null? null:tempRating.getRating());
          return "json";
      }
-	
-	/**
-	 * Given a portlet and a servlet request, you get a deeplink to this portlet
-	 * @param request servlet request contains the request URL
-	 * @param portlet portlet contains the fname
-	 * @return A direct URL to that portlet that can be shared with the world
-	 */
-	private String getDeepLink(HttpServletRequest request, MarketplacePortletDefinition portlet) {
-		final String requestURL = request.getRequestURL().toString();
-		final String requestURI = request.getRequestURI();
-		StringBuilder deepLinkSB = new StringBuilder();
-		deepLinkSB.append(requestURL != null ? requestURL.substring(0,requestURL.indexOf(requestURI)) : null);
-		deepLinkSB.append(request.getServletContext().getContextPath());
-		deepLinkSB.append("/p/").append(portlet.getFName());
-		return deepLinkSB.toString();
-	}
-	
+
+
     private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final PortletPreferences preferences = portletRequest.getPreferences();

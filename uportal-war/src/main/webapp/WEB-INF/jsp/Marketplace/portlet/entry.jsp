@@ -145,13 +145,14 @@
             <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
             <div class="col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${renderRequest.contextPath}/p/${portlet.FName}/render.uP" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button">Go</a>
+                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default
+                     marketplace_dropdown_button">Go</a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only"></span>
                     </button>
                     <ul class="dropdown-menu marketplace_dropdown_menu" role="menu"  style="right: 0; left: auto;">
-                        <li><a href="${renderRequest.contextPath}/p/${portlet.FName}/render.uP">Go</a></li>
+                        <li><a href="${portlet.renderUrl}">Go</a></li>
                         <li class="divider"></li>
                         <li><a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto"><spring:message code="link.to" text="Link to ..." /></a></li>
                     </ul>
@@ -329,7 +330,7 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep" value="${deepLink}"></input>
+                        <input type="text" class="form-control" id="inputDeep" value="${portlet.renderUrl}"></input>
                     </div>
                 </div>
                 <c:if test="${not empty shortURL }">
