@@ -282,15 +282,7 @@ etc. that might be included in the JSP on future edits. --%>
                     <br>
                     <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
                     <c:forEach var="relatedPortlet" items="${relatedPortlets}">
-
-                        <%-- Not ready to deal with URLs yet
-                        <portlet:renderURL var="marketplaceEntryURL" windowState="MAXIMIZED">
-                            <portlet:param name="action" value="view"/>
-                            <portlet:param name="fName" value="${relatedPortlet.FName}"/>
-                        </portlet:renderURL>
-                        --%>
-                        <c:set var="marketplaceEntryURL" value="#"/>
-                        <li>- <a href="${marketplaceEntryURL}">${relatedPortlet.name}</a></li>
+                        <li>- <a href="${relatedPortlet.marketplaceEntryUrl}">${relatedPortlet.name}</a></li>
                     </c:forEach>
                 </div>
             </div>
