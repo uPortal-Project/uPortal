@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlets.marketplace;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -73,8 +72,6 @@ public class PortletMarketplaceController {
     private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
 
     private IMarketplaceService marketplaceService;
-    private static String FEATURED_CATEGORY_NAME="Featured";
-	
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IPersonManager personManager;
@@ -254,14 +251,8 @@ public class PortletMarketplaceController {
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
-        Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<MarketplacePortletDefinition>();
-        for (MarketplacePortletDefinition currentPortlet : visiblePortlets) {
-            for(PortletCategory category: currentPortlet.getParentCategories()){
-                if(FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
-                    featuredPortlets.add(currentPortlet);
-                }
-            }
-        }
+        Set<MarketplacePortletDefinition> featuredPortlets = this.marketplaceService.featuredPortletsForUser(user);
+
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);
         registry.put("featured", featuredPortlets);
