@@ -63,4 +63,18 @@ public interface IMarketplaceService {
      * @since uPortal 4.1
      */
     boolean mayBrowsePortlet(IPerson user, IPortletDefinition portletDefinition);
+
+
+    /**
+     * Provides the potentially empty non-null Set of featured portlets for this user.
+     * "For this user" is subject to implementation-specific considerations (as in, is it the same featured portlets
+     * for everyone?  Does it depend on user role?  Do you especially feature GTD portlets for users who seem to be
+     * absent-minded?  Do you feature meal-related portlets around lunch time?  These decisions are entirely up to the
+     * implementation.
+     * However, the user MUST have BROWSE permission on all members of the Set.
+     * @param user non-null user for whom featured portlets are desired
+     * @return non-null potentially empty Set of featured portlet MarketplacePortletDefinitions
+     * @throws java.lang.IllegalArgumentException if user is null or otherwise observed to be broken
+     */
+    Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user);
 }

@@ -41,6 +41,7 @@ import java.util.Set;
 @Service
 public class MarketplaceService implements IMarketplaceService {
 
+    public static String FEATURED_CATEGORY_NAME="Featured";
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -118,6 +119,28 @@ public class MarketplaceService implements IMarketplaceService {
 
         return mayBrowse(principal, portletPermissionEntityId);
 
+    }
+
+    @Override
+    public Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user) {
+        Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
+
+        final Set<MarketplacePortletDefinition> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<>();
+
+        for (final IPortletDefinition portletDefinition : browseablePortlets) {
+
+            for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
+
+                if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
+                    featuredPortlets.add(
+                            new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
+                }
+
+            }
+        }
+
+        return featuredPortlets;
     }
 
 
