@@ -240,30 +240,23 @@ etc. that might be included in the JSP on future edits. --%>
 
 <div id="${n}marketplace">
 
-<c:if test="${fn:length(featuredList) > 0}">
+<c:if test="${fn:length(featuredPortlets) > 0}">
     <div id="${n}featured" class="marketplaceSection">
         <div>
             <span><strong><spring:message code="featured" text="Featured" /></strong></span><br>
         </div>
         <c:set var="endRowPortletCounter" value="0"/>
         <div class="row">
-            <c:if test="${fn:length(featuredList)mod 2!=0 }">
+            <c:if test="${fn:length(featuredPortlets)mod 2!=0 }">
                 <div class="col-xs-3">
                 <c:set var="endRowPortletCounter" value="1" />
                 </div>
             </c:if>
-            <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
-                <%-- Not ready to deal with linking yet
-                <c:url var="entryURL" >
-                    <c:param name="view" value="entry"/>
-                    <c:param name="fName" value="${featuredPortlet.FName}"/>
-                </c:url>
-                --%>
-                <c:set var="entryURL" value="#" />
+            <c:forEach var="featuredPortlet" items="${featuredPortlets}" varStatus="status">
                 <div class="col-xs-6 col-sm-6 text-center">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                        <a href="${entryURL}">
+                        <a href="${featuredPortlet.marketplaceEntryUrl}">
                             <div>
                                 <c:out value="${featuredPortlet.title}"/>
                             </div>

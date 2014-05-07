@@ -75,6 +75,10 @@ public class MarketplaceServletController {
         Set<MarketplacePortletDefinition> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user);
         model.addAttribute("channelBeanList", marketplaceEntries);
 
+        final Set<MarketplacePortletDefinition> featuredPortlets =
+                this.marketplaceService.featuredPortletsForUser(user);
+        model.addAttribute("featuredPortlets", featuredPortlets);
+
         Set<PortletCategory> categories = marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
         boolean showRootCategory = false; // TODO: make configurable
 
