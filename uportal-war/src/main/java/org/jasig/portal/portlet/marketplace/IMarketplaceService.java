@@ -20,6 +20,7 @@
 package org.jasig.portal.portlet.marketplace;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
@@ -50,7 +51,7 @@ public interface IMarketplaceService {
      * @return potentially empty non-null Set of browseable categories
      * @since uPortal 4.1
      */
-    Set browseableNonEmptyPortletCategoriesFor(IPerson user);
+    Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(IPerson user);
 
     /**
      * Answers whether the given user may browse the portlet marketplace entry for the given portlet definition.
