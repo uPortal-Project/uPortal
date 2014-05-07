@@ -165,7 +165,7 @@ public class PortletMarketplaceController {
 	 * @param response
 	 * @param portletFName fname of the portlet to rate
 	 * @param rating will be parsed to int
-	 * @param Review optional review to be saved along with rating
+	 * @param review optional review to be saved along with rating
 	 * @throws NumberFormatException if rating cannot be parsed to an int
 	 */
     @ResourceMapping("saveRating")
