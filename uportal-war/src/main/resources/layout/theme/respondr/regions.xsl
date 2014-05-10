@@ -63,7 +63,7 @@
     <xsl:template name="region.hidden-top">
         <xsl:if test="//region[@name='hidden-top']/channel">
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <div id="region-page-top-hidden" class="container">
+            <div id="region-page-top-hidden" class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='hidden-top']/channel">
@@ -84,7 +84,7 @@
     <xsl:template name="region.page-top">
         <xsl:if test="//region[@name='page-top']/channel">
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <div id="region-page-top" class="container">
+            <div id="region-page-top" class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='page-top']/channel">
@@ -161,7 +161,7 @@
     -->
     <xsl:template name="region.header-bottom">
         <xsl:if test="//region[@name='header-bottom']/channel">
-            <div id="region-header-bottom" class="container">
+            <div id="region-header-bottom" class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='header-bottom']/channel">
@@ -229,7 +229,7 @@
     -->
     <xsl:template name="region.page-bottom">
         <xsl:if test="//region[@name='page-bottom']/channel">
-            <div id="region-page-bottom" class="container">
+            <div id="region-page-bottom" class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='page-bottom']/channel">
@@ -248,7 +248,7 @@
     -->
     <xsl:template name="region.hidden-bottom">
         <xsl:if test="//region[@name='hidden-bottom']/channel">
-            <div id="region-page-bottom-hidden" class="container">
+            <div id="region-page-bottom-hidden" class="container-fluid">
                 <div class="row">
                     <div class="col-sm-12">
                         <xsl:for-each select="//region[@name='hidden-bottom']/channel">
@@ -268,7 +268,7 @@
     <xsl:template name="region.customize">
         <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
             <xsl:if test="//region[@name='customize']/channel">
-                <div id="region-customize" class="container hidden-xs">
+                <div id="region-customize" class="container-fluid hidden-xs">
                     <div id="customizeOptionsWrapper">
                         <div id="customizeOptions" class="collapse">
                                 <xsl:for-each select="//region[@name='customize']/channel">

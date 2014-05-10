@@ -289,7 +289,7 @@
  -->
 <xsl:template name="footer.nav">
     <footer class="portal-footer-nav" role="contentinfo">
-        <div class="container">
+        <div class="container-fluid">
 
             <!--
              | Tab layout:
@@ -359,7 +359,7 @@
  -->
 <xsl:template name="footer.legal">
     <footer class="portal-footer-legal" role="contentinfo">
-        <div class="container">
+        <div class="container-fluid">
             <div class="portal-power">
                 <h2><a href="http://www.jasig.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></h2>
                 <ul>
@@ -660,12 +660,12 @@
                 <xsl:call-template name="region.page-top" />
                 <header class="portal-header" role="banner">
                     <div class="portal-global">
-                        <div class="container">
+                        <div class="container-fluid">
                             <xsl:call-template name="region.pre-header" />
                         </div>
                     </div>
                     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row">
                             <xsl:call-template name="region.header-left" />
                             <xsl:call-template name="region.header-right" />
@@ -678,7 +678,7 @@
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
                     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
                             <xsl:call-template name="region.sidebar-left" />
                             <!-- The following div must know how many columns are taken by sidebar-left and sidebar-right, if any -->
@@ -789,7 +789,7 @@
                         <header class="portal-header" role="banner">
                             <div class="portal-global">
                                 <div class="navbar navbar-fixed-top" role="navigation">
-                                    <div class="container">
+                                    <div class="container-fluid">
                                         <div class="portal-user">
                                             <div class="navbar-header">
                                                 <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
@@ -820,7 +820,7 @@
                         </header>
                     </div>
                     <div class="portal-sticky-content" role="main">
-                        <div class="portal-sticky-container container">
+                        <div class="portal-sticky-container container-fluid">
                             <div class="row">
                                 <div id="portalPageBodyMessage" class="col-md-12"></div>
                             </div>

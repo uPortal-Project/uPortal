@@ -27,4 +27,4 @@
     </c:choose>
 </c:set>
 
-<span class="user-name">${greeting} ${userInfo['displayName']}</span>
+<span class="user-name">${greeting}&nbsp;${userInfo['displayName']}</span>
