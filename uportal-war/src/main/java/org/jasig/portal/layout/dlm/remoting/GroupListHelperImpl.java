@@ -20,6 +20,7 @@
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,7 +36,10 @@ import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
@@ -113,7 +117,123 @@ public class GroupListHelperImpl implements IGroupListHelper {
 		
 		return bean;
 	}
-	
+
+    @Override
+    public JsonEntityBean getIndividualBestRootEntity(final IPerson person, 
+            final String groupType, final String permissionOwner, 
+            final String permissionActivity) {
+        return getIndividualBestRootEntity(person, groupType, permissionOwner, new String[] { permissionActivity });
+    }
+
+    @Override
+    public JsonEntityBean getIndividualBestRootEntity(final IPerson person, 
+            final String groupType, final String permissionOwner, 
+            final String[] permissionActivities) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Choosing best root group for user='" + person.getUserName() + 
+                    "', groupType='" + groupType + "', permissionOwner='" + 
+                    permissionOwner + "', permissionActivities='" + 
+                    Arrays.toString(permissionActivities) + "'");
+        }
+
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(person);
+        final JsonEntityBean canonicalRootGroup = getRootEntity(groupType);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Found for groupType='" + groupType + 
+                    "' the following canonicalRootGroup:  " + 
+                    canonicalRootGroup);
+        }
+
+        // First check the appropriate canonical super-target for the specified type
+        String canonicalSuperTarget = null;
+        switch (groupType) {
+            case JsonEntityBean.ENTITY_GROUP:
+                canonicalSuperTarget = IPermission.ALL_GROUPS_TARGET;
+                break;
+            case JsonEntityBean.ENTITY_CATEGORY:
+                canonicalSuperTarget = IPermission.ALL_CATEGORIES_TARGET;
+                break;
+            default:
+                throw new RuntimeException("Unrecognized groupType:  " + groupType);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Identified for groupType='" + groupType + 
+                    "' the following canonicalSuperTarget:  " + 
+                    canonicalSuperTarget);
+        }
+        for (String activity : permissionActivities) {
+            if (principal.hasPermission(permissionOwner, activity, canonicalSuperTarget)) {
+                return canonicalRootGroup;
+            }
+        }
+
+        // Next check the canonical root group itself
+        for (String activity : permissionActivities) {
+            if (principal.hasPermission(permissionOwner, activity, canonicalRootGroup.getId())) {
+                return canonicalRootGroup;
+            }
+        }
+
+        // So much for the easy paths -- see if the user has any records at all for this specific owner/activity
+        JsonEntityBean rslt = null;  // Default
+        final List<IPermission> permissionsOfRelevantActivity = new ArrayList<IPermission>();
+        for (String activity : permissionActivities) {
+            permissionsOfRelevantActivity.addAll(
+                    Arrays.asList(principal.getAllPermissions(permissionOwner, activity, null))
+            );
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("For user='" + person.getUserName() + 
+                    "', groupType='" + groupType + "', permissionOwner='" + 
+                    permissionOwner + "', permissionActivities='" + 
+                    Arrays.toString(permissionActivities) + "' permissionsOfRelevantTypes.size()=" + 
+                    permissionsOfRelevantActivity.size());
+        }
+        switch (permissionsOfRelevantActivity.size()) {
+            case 0:
+                // No problem -- user doesn't have any of this sort of permission (leave it null)
+                break;
+            default:
+                // We need to make some sort of determination as to the best
+                // root group to send back.  With luck there aren't many matches.
+                for (IPermission p : permissionsOfRelevantActivity) {
+                    final JsonEntityBean candidate = getEntity(groupType, p.getTarget(), true);
+                    // Pass on any matches of the wrong groupType...
+                    if (!candidate.getEntityTypeAsString().equalsIgnoreCase(groupType)) {
+                        continue;
+                    }
+                    if (rslt == null) {
+                        // First allowable selection;  run with this one
+                        // unless/until we're forced to make a choice.
+                        rslt = candidate;
+                    } else {
+                        // For the present we'll assume the match with the most
+                        // children is the best;  this approach should work
+                        // decently unless folks start putting redundant
+                        // permissions records in the DB for multiple levels of
+                        // the same rich hierarchy.
+                        if (candidate.getChildren().size() > rslt.getChildren().size()) {
+                            rslt = candidate;
+                        }
+                    }
+                }
+                break;
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Selected for user='" + person.getUserName() + 
+                    "', groupType='" + groupType + "', permissionOwner='" + 
+                    permissionOwner + "', permissionActivities='" + 
+                    Arrays.toString(permissionActivities) + 
+                    "' the following best root group:  " + rslt);
+        }
+
+        return rslt;
+
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityTypesForGroupType(java.lang.String)

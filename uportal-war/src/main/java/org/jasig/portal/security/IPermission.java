@@ -68,12 +68,26 @@ public interface IPermission {
   public static final String PORTLET_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
   public static final String PORTLET_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
   public static final String PORTLET_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
-  
+
+  /*
+   * All management permissions in one handy array
+   */
+  public static final String[] PORTLET_MANAGER_MANAGE_ACTIVITIES = new String[] {
+      PORTLET_MANAGER_CREATED_ACTIVITY, PORTLET_MANAGER_APPROVED_ACTIVITY,
+      PORTLET_MANAGER_ACTIVITY, PORTLET_MANAGER_EXPIRED_ACTIVITY
+  };
+
   /*
    * PortletMode permissions
    */
   public static final String PORTLET_MODE_CONFIG = "PORTLET_MODE_CONFIG";
-    
+
+  /*
+   * UP_GROUP (GaP) Permissions
+   */
+
+  public static final String VIEW_GROUP_ACTIVITY = "VIEW_GROUP";
+
   /*
     Permission types.  At present only 2, but that could change.
   */
@@ -81,14 +95,24 @@ public interface IPermission {
   public static final String PERMISSION_TYPE_DENY = "DENY";
 
   /*
-    A String representing the uPortal framework, used, for example, for
-    Permission.owner when the framework grants a Permission.
-  */
-  public static final String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
-  
-  public static final String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
-  
+   * Permission Owner Strings
+   */
+
+  /**
+   * A String representing the uPortal framework, used, for example, for 
+   * Permission.owner when the framework grants a Permission.
+   */
   public static final String PORTAL_SYSTEM = "UP_SYSTEM";
+
+  /**
+   * Represents the GaP subsystem as a permissions owner
+   */
+  public static final String PORTAL_GROUPS = "UP_GROUPS";
+
+  public static final String PORTAL_PUBLISH = "UP_PORTLET_PUBLISH";
+
+  public static final String PORTAL_SUBSCRIBE = "UP_PORTLET_SUBSCRIBE";
+
 
   /*
     A String which, when concatentated with a portlet id, represents a portal

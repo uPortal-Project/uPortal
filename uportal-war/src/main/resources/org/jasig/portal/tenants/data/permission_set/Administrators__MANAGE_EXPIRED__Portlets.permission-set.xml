@@ -25,6 +25,7 @@
   <principal>
     <group>${tenant.name} Administrators</group>
   </principal>
+  <!-- NB:  The MANAGE_EXPIRED permission implies MANAGE_CREATED, MANAGE_APPROVED, and MANAGE (i.e. published) -->
   <activity>MANAGE_EXPIRED</activity>
   <target permission-type="GRANT">
     <group>${tenant.name} Portlets</group>

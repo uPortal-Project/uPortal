@@ -180,10 +180,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * @param chanId
 	 * @return
 	 */
-	public PortletDefinitionForm getPortletDefinitionForm(String portletId) {
-		
-		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
-		
+    public PortletDefinitionForm getPortletDefinitionForm(IPerson person, String portletId) {
+
+        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
+
 		// create the new form
 		final PortletDefinitionForm form;
 		if (def != null) {
@@ -247,18 +247,54 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			form.addGroup(new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup)));
 		}
 
-		return form;
-	}
-	
-	/**
-	 * Persist a new or edited PortletDefinition.
-	 * 
-	 * @param form
-	 * @param publisher
-	 */
-	public PortletDefinitionForm savePortletRegistration(PortletDefinitionForm form,
-			IPerson publisher) throws Exception {
-		
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+        // User must have SOME FORM of lifecycle permission over AT LEAST ONE
+        // category in which this portlet resides;  lifecycle permissions are
+        // hierarchical, so we'll test with the weakest.
+        if (!hasLifecyclePermission(person, PortletLifecycleState.CREATED, form.getCategories())) {
+            logger.warn("User '" + person.getUserName() + 
+                    "' attempted to edit the following portlet without MANAGE permission:  " + def);
+            throw new SecurityException("Not Authorized");
+        }
+
+        return form;
+    }
+
+    /**
+     * Persist a new or edited PortletDefinition.
+     * 
+     * @param form
+     * @param publisher
+     */
+    public PortletDefinitionForm savePortletRegistration(IPerson publisher, 
+            PortletDefinitionForm form) throws Exception {
+
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+
+        // User must have the selected lifecycle permission over AT LEAST ONE
+        // category in which this portlet resides.  (This is the same check that
+        // is made when the user enteres the lifecycle-selection step in the wizard.)
+        if (!hasLifecyclePermission(publisher, form.getLifecycleState(), form.getCategories())) {
+            logger.warn("User '" + publisher.getUserName() + 
+                    "' attempted to save the following portlet without the selected MANAGE permission:  " + form);
+            throw new SecurityException("Not Authorized");
+        }
+        if (form.getId() != null && !form.getId().equals("-1")) {
+            // Portlet is not new;  user must have the previous MANAGE permission
+            // in AT LEAST ONE previous category as well
+            IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinition(form.getId());
+            Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
+            List<JsonEntityBean> categoryBeans = new ArrayList<JsonEntityBean>();
+            for (PortletCategory cat : categories) {
+                categoryBeans.add(new JsonEntityBean(cat));
+            }
+            if (!hasLifecyclePermission(publisher, def.getLifecycleState(), categoryBeans)) {
+                logger.warn("User '" + publisher.getUserName() + 
+                        "' attempted to save the following portlet without the previous MANAGE permission:  " + form);
+                throw new SecurityException("Not Authorized");
+            }
+        }
+
 		// create the group array from the form's group list
 		IGroupMember[] groupMembers = new IGroupMember[form.getGroups().size()];
 		for (int i = 0; i < groupMembers.length; i++) {
@@ -271,7 +307,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 				
 			}
 		}
-		
+
         // create the category array from the form's category list
 		PortletCategory[] categories = new PortletCategory[form.getCategories().size()];
 		for (ListIterator<JsonEntityBean> iter = form.getCategories().listIterator(); iter.hasNext();) {
@@ -420,20 +456,38 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    
 	    portletPublishingService.savePortletDefinition(portletDef, publisher, Arrays.asList(categories), Arrays.asList(groupMembers));
 
-	    return this.getPortletDefinitionForm(portletDef.getPortletDefinitionId().getStringId());
+	    return this.getPortletDefinitionForm(publisher, portletDef.getPortletDefinitionId().getStringId());
 	}
-	
-	/**
-	 * Delete the portlet with the given portlet ID.
-	 * 
-	 * @param portletID the portlet ID
-	 * @param person the person removing the portlet
-	 */
-	public void removePortletRegistration(String portletId, IPerson person) {
-		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
-		portletDefinitionRegistry.deletePortletDefinition(def);
-	}
-	
+
+    /**
+     * Delete the portlet with the given portlet ID.
+     * 
+     * @param person the person removing the portlet
+     * @param form
+     */
+    public void removePortletRegistration(IPerson person, PortletDefinitionForm form) {
+
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+        // Arguably a check here is redundant since -- in the current
+        // portlet-manager webflow -- you can't get to this point in the
+        // conversation with out first obtaining a PortletDefinitionForm;  but
+        // it makes sense to check permissions here as well since the route(s)
+        // to reach this method could evolve in the future.
+
+        // Let's enforce the policy that you may only delete a portlet thet's
+        // currently in a lifecycle state you have permission to MANAGE.
+        // (They're hierarchical.)
+        if (!hasLifecyclePermission(person, form.getLifecycleState(), form.getCategories())) {
+            logger.warn("User '" + person.getUserName() +  "' attempted to remove portlet '" + 
+                                form.getFname() + "' without the proper MANAGE permission");
+            throw new SecurityException("Not Authorized");
+        }
+
+        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(form.getId());
+        portletDefinitionRegistry.deletePortletDefinition(def);
+
+    }
+
 	/**
 	 * Get a list of the key names of the currently-set arbitrary portlet
 	 * preferences.
@@ -796,9 +850,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	public boolean configModeAction(ExternalContext externalContext, String fname) throws IOException {
+
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
 	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
-	    
+
 	    final IPortletWindowId portletWindowId = this.getDelegateWindowId(externalContext, fname);
 	    if (portletWindowId == null) {
 	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
@@ -817,7 +872,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
 	        return true;
 	    }
-	    
+
 	    return false;
 	}
 	

@@ -37,7 +37,7 @@
     <on-start>
         <set name="flashScope.servletRequest"
                 value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
-        <set name="flashScope.person"
+        <set name="flowScope.person"
                 value="personManager.getPerson(servletRequest)"/>
         <set name="flowScope.portletTypes"
                 value="portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person)"/>
@@ -107,7 +107,7 @@
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('category')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('category', 'local.1', false)"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'category', T(org.jasig.portal.security.IPermission).PORTAL_PUBLISH, T(org.jasig.portal.security.IPermission).PORTLET_MANAGER_MANAGE_ACTIVITIES)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
@@ -142,7 +142,7 @@
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
             <evaluate expression="entityTypes.add('group')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getEntity('group', 'local.0', false)"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'group', T(org.jasig.portal.security.IPermission).PORTAL_GROUPS, T(org.jasig.portal.security.IPermission).VIEW_GROUP_ACTIVITY)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
@@ -162,7 +162,7 @@
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="portlet.groups"/>
         <output name="selectedGroups" value="portlet.groups"/>
-        
+
         <transition on="back" to="chooseCategory"/>
         <transition on="finish" to="chooseGroupNextScreen"/>
     </subflow-state>
@@ -187,8 +187,6 @@
         <on-entry>
             <set name="flashScope.servletRequest" 
                 value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
-            <set name="flashScope.person" 
-                value="personManager.getPerson(servletRequest)"/>
             <set name="viewScope.lifecycleStates" value="portletAdministrationHelper.getAllowedLifecycleStates(person, portlet.categories)"/>
         </on-entry>
         <transition on="back" to="chooseGroup" validate="false"/>
@@ -222,20 +220,12 @@
 
         <!-- save the portlet -->
         <transition on="save" to="finishPortletEdit">
-            <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
-            <set name="flashScope.person" 
-                value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="portletAdministrationHelper.savePortletRegistration(portlet, person)"></evaluate>
+            <evaluate expression="portletAdministrationHelper.savePortletRegistration(person, portlet)"></evaluate>
         </transition>
 
-        <!-- save the portlet -->
+        <!-- save and configure the portlet -->
         <transition on="saveAndConfig" to="configMode">
-            <set name="flashScope.servletRequest" 
-                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
-            <set name="flashScope.person" 
-                value="personManager.getPerson(servletRequest)"/>
-            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(portlet, person)" />
+            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)" />
         </transition>
         
         <!-- cancel our portlet edit and exit the sub-flow -->
@@ -255,7 +245,7 @@
         <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, portlet.getFname())" />
         <transition to="configMode" on="#{!flashScope.configComplete}" />
         <transition to="reviewPortlet" on="#{flashScope.configComplete}">
-            <set name="flowScope.portlet" value="portletAdministrationHelper.getPortletDefinitionForm(portlet.id)"/>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.getPortletDefinitionForm(person, portlet.id)"/>
         </transition>
     </action-state>
 

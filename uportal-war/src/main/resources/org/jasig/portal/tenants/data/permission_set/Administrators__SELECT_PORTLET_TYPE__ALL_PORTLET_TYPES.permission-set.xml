@@ -25,8 +25,8 @@
   <principal>
     <group>${tenant.name} Administrators</group>
   </principal>
-  <activity>MANAGE</activity>
+  <activity>SELECT_PORTLET_TYPE</activity>
   <target permission-type="GRANT">
-    <group>${tenant.name} Portlets</group>
+    <literal>ALL_PORTLET_TYPES</literal>
   </target>
 </permission-set>
