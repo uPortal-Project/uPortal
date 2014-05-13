@@ -19,7 +19,6 @@
 
 package org.jasig.portal.portlets.marketplace;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -73,8 +72,6 @@ public class PortletMarketplaceController {
     private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
 
     private IMarketplaceService marketplaceService;
-    private static String FEATURED_CATEGORY_NAME="Featured";
-	
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 	private IPersonManager personManager;
@@ -158,7 +155,6 @@ public class PortletMarketplaceController {
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("portlet", mpDefinition);
-        model.addAttribute("deepLink",getDeepLink(portalRequestUtils.getPortletHttpRequest(portletRequest), mpDefinition));
         model.addAttribute("shortURL",mpDefinition.getShortURL());
         return "jsp/Marketplace/portlet/entry";
     }
@@ -169,7 +165,7 @@ public class PortletMarketplaceController {
 	 * @param response
 	 * @param portletFName fname of the portlet to rate
 	 * @param rating will be parsed to int
-	 * @param Review optional review to be saved along with rating
+	 * @param review optional review to be saved along with rating
 	 * @throws NumberFormatException if rating cannot be parsed to an int
 	 */
     @ResourceMapping("saveRating")
@@ -197,23 +193,8 @@ public class PortletMarketplaceController {
          model.addAttribute("rating",tempRating==null? null:tempRating.getRating());
          return "json";
      }
-	
-	/**
-	 * Given a portlet and a servlet request, you get a deeplink to this portlet
-	 * @param request servlet request contains the request URL
-	 * @param portlet portlet contains the fname
-	 * @return A direct URL to that portlet that can be shared with the world
-	 */
-	private String getDeepLink(HttpServletRequest request, MarketplacePortletDefinition portlet) {
-		final String requestURL = request.getRequestURL().toString();
-		final String requestURI = request.getRequestURI();
-		StringBuilder deepLinkSB = new StringBuilder();
-		deepLinkSB.append(requestURL != null ? requestURL.substring(0,requestURL.indexOf(requestURI)) : null);
-		deepLinkSB.append(request.getServletContext().getContextPath());
-		deepLinkSB.append("/p/").append(portlet.getFName());
-		return deepLinkSB.toString();
-	}
-	
+
+
     private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final PortletPreferences preferences = portletRequest.getPreferences();
@@ -270,14 +251,8 @@ public class PortletMarketplaceController {
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
-        Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<MarketplacePortletDefinition>();
-        for (MarketplacePortletDefinition currentPortlet : visiblePortlets) {
-            for(PortletCategory category: currentPortlet.getParentCategories()){
-                if(FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
-                    featuredPortlets.add(currentPortlet);
-                }
-            }
-        }
+        Set<MarketplacePortletDefinition> featuredPortlets = this.marketplaceService.featuredPortletsForUser(user);
+
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);
         registry.put("featured", featuredPortlets);

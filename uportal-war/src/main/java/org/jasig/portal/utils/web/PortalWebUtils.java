@@ -22,10 +22,16 @@ package org.jasig.portal.utils.web;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.portlet.PortletRequest;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.portlet.context.PortletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
 
@@ -120,5 +126,42 @@ public final class PortalWebUtils {
             }
             return map;
         }
+    }
+
+    /**
+     * Get the request context path from the current request.
+     * Copes with both HttpServletRequest and PortletRequest and so usable when handling
+     * Spring-processed Servlet or Portlet requests.
+     * Requires that Spring have bound the request, as in the case of dispatcher servlet or portlet or when the binding
+     * filter or listener is active.  This should be the case for all requests in the uPortal framework and framework
+     * portlets.
+     * @return request.getContextPath() for the relevant servlet or portlet request
+     * @throws IllegalStateException if the request is not Spring-bound or is neither Servlet nor Portlet flavored
+     */
+    public static String currentRequestContextPath() {
+
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+
+        if (null == requestAttributes) {
+            throw new IllegalStateException("Request attributes are not bound.  " +
+                    "Not operating in context of a Spring-processed Request?");
+        }
+
+        if (requestAttributes instanceof ServletRequestAttributes) {
+
+            final ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+            final HttpServletRequest request = servletRequestAttributes.getRequest();
+            return request.getContextPath();
+
+        } else if (requestAttributes instanceof PortletRequestAttributes) {
+
+            final PortletRequestAttributes portletRequestAttributes = (PortletRequestAttributes) requestAttributes;
+            final PortletRequest request = portletRequestAttributes.getRequest();
+            return request.getContextPath();
+
+        } else {
+            throw new IllegalStateException("Request attributes are an unrecognized implementation.");
+        }
+
     }
 }

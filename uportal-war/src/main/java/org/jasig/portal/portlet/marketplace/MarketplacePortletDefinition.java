@@ -38,6 +38,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -59,7 +60,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private List<ScreenShot> screenShots;
     private PortletReleaseNotes releaseNotes;
     private Set<PortletCategory> categories;
-    private Set<IPortletDefinition> relatedPortlets;
+
+    // that MarketplacePortletDefinition contains more MarketplacePortletDefinition is okay only so long as
+    // related portlets are lazy-initialized on access and are not always accessed.
+    private Set<MarketplacePortletDefinition> relatedPortlets;
     private Set<PortletCategory> parentCategories;
     private String shortURL = null;
 
@@ -79,8 +83,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.initScreenShots();
         this.initPortletReleaseNotes();
         this.initCategories();
-        this.initRelatedPortlets();
         this.initShortURL();
+
+        // deliberately does *not* init related portlets, to avoid infinite recursion of initing related portlets.
+        // TODO: use a caching registry so that get some cache hits when referencing MarketplacePortletDefinitions
     }
 
     private void initShortURL() {
@@ -162,13 +168,27 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.setCategories(allCategories);
     }
 
+    /**
+     * Initialize related portlets.
+     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related portlets off of a
+     * MarketplacePortletDefinition do not always intantiate their related MarketplacePortletDefinitions, ad infinitem.
+     */
     private void initRelatedPortlets(){
-        Set<IPortletDefinition> allPortlets = new HashSet<IPortletDefinition>();
+        final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
+
         for(PortletCategory parentCategory: this.portletCategoryRegistry.getParentCategories(this)){
-            allPortlets.addAll(this.portletCategoryRegistry.getAllChildPortlets(parentCategory));
+
+            final Set<IPortletDefinition> portletsInCategory =
+                    this.portletCategoryRegistry.getAllChildPortlets(parentCategory);
+
+            for (IPortletDefinition portletDefinition : portletsInCategory) {
+                allRelatedPortlets.add(
+                        new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
+            }
         }
-        allPortlets.remove(this.portletDefinition);
-        this.setRelatedPortlets(new HashSet<IPortletDefinition>(allPortlets));
+
+        allRelatedPortlets.remove(this);
+        this.relatedPortlets = allRelatedPortlets;
     }
 
     private void setScreenShots(List<ScreenShot> screenShots){
@@ -232,7 +252,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         return this.parentCategories;
     }
 
-    private void setRelatedPortlets(Set<IPortletDefinition> relatedPortlets){
+    private void setRelatedPortlets(Set<MarketplacePortletDefinition> relatedPortlets){
         this.relatedPortlets = relatedPortlets;
     }
 
@@ -241,7 +261,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * @return a set of portlets that include all portlets in this portlets immediate categories and children categories
      * Will not return null. Will not include self in list.  Might return an empty set.
      */
-    public Set<IPortletDefinition> getRelatedPortlets() {
+    public Set<MarketplacePortletDefinition> getRelatedPortlets() {
+        // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
             this.initRelatedPortlets();
         }
@@ -255,7 +276,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * all related portlets will be returned
      * @return a subset of related portlets
      */
-    public Set<IPortletDefinition> getRandomSamplingRelatedPortlets(){
+    public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(){
+        // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
             this.initRelatedPortlets();
         }
@@ -264,7 +286,33 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         }
         List<IPortletDefinition> tempList = new ArrayList<IPortletDefinition>(this.relatedPortlets);
         Collections.shuffle(tempList);
-        return new HashSet<IPortletDefinition>(tempList.subList(0, tempList.size()<QUANTITY_RELATED_PORTLETS_TO_SHOW ? tempList.size(): QUANTITY_RELATED_PORTLETS_TO_SHOW));
+
+        final Set<MarketplacePortletDefinition> someRelatedPortlets = new HashSet<>();
+
+        for (int i = 0; i < Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size()); i++) {
+            // grab only the first QUANTITY_RELATED_PORTLETS_TO_SHOW related portlets, up to all available
+            someRelatedPortlets.add(new MarketplacePortletDefinition(tempList.get(i), this.portletCategoryRegistry));
+        }
+
+        return someRelatedPortlets;
+    }
+
+    /**
+     * Convenience method for getting a bookmarkable URL for rendering the defined portlet, addressed by fname.
+     * This method will *ONLY* work when invoked in the context of a Spring-managed HttpServletRequest available
+     * via RequestContextHolder.
+     * WARNING: This method does not consider whether the requesting user has permission to render the target portlet,
+     * so this might be getting a URL that the user can't actually use.
+     * @return
+     * @throws IllegalStateException when context does not allow computing the URL
+     */
+    public String getRenderUrl() {
+
+        final String contextPath = PortalWebUtils.currentRequestContextPath();
+
+        // TODO: stop abstraction violation of relying on knowledge of uPortal URL implementation details
+        return contextPath + "/p/" + getFName() + "/render.uP";
+
     }
 
     @Override
