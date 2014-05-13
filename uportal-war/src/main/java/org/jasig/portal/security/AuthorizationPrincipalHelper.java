@@ -41,7 +41,7 @@ public final class AuthorizationPrincipalHelper {
      */
     public static IAuthorizationPrincipal principalFromUser(final IPerson user) {
 
-        Validate.notNull(user, "Cannot determine marketplace entries for null user.");
+        Validate.notNull(user, "Cannot determine an authorization principal for null user.");
 
         final EntityIdentifier userEntityIdentifier = user.getEntityIdentifier();
         Validate.notNull(user, "The user object is defective: lacks entity identifier.");
