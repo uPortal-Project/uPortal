@@ -49,6 +49,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	private String creatorId;
 	private String description;
     private String principalString;
+    private String targetString;
 	private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
 	private boolean childrenInitialized = false;
 		
@@ -121,7 +122,26 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     public void setPrincipalString(String principalString) {
         this.principalString = principalString;
     }
-    
+
+    /**
+     * Identifies this bean uniquely as a permissions target.  NOTE:  This id is
+     * not the fname (for portlets) or name field (for groups), but rater a
+     * unique String like 'PORTLET_ID.19' or 'local.36' or 'pags.Authenticated Users'
+     * 
+     * @since uPortal 4.0.13.1
+     */
+    public String getTargetString() {
+        return targetString;
+    }
+
+    /**
+     * 
+     * @since uPortal 4.0.13.1
+     */
+    public void setTargetString(String targetString) {
+        this.targetString = targetString;
+    }
+
 	public List<JsonEntityBean> getChildren() {
 		return children;
 	}
