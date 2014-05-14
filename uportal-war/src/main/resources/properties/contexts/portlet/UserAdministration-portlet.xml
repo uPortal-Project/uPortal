@@ -43,6 +43,7 @@
                         <property name="redirectOnEnds">
                             <util:map>
                                 <entry key="swapIdentity" value="/Login"/>
+                                <entry key="swapDynamic" value="/Login"/>
                             </util:map>
                         </property>
                     </bean>

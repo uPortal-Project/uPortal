@@ -205,7 +205,9 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         // Clear out the existing session for the user if they have one
         String targetUid = null;
         String originalUid = null;
+        String originalEventSessionId = null;
         boolean swap = false;
+        String swapperProfile = null;
         if (request.isRequestedSessionIdValid()) {
             try {
                 HttpSession s = request.getSession(false);
@@ -222,8 +224,10 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                         final IPerson person = personManager.getPerson(request);
                         originalUid = person.getName();
                         swap = true;
+                        swapperProfile = identitySwapperManager.getTargetProfile(s);
                     }
                 }
+                //Original person in session so this must be an un-swap request
                 else {
                     final IPerson person = personManager.getPerson(request);
                     targetUid = person.getName();
@@ -249,6 +253,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
         if (requestedProfile != null) {
             s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
+        } else if(swapperProfile != null) {
+        	s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, swapperProfile);
         }
 
         IPerson person = null;

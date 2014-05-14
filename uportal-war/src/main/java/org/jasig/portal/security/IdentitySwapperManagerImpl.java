@@ -33,6 +33,7 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     public static final String IMPERSONATE_ACTIVITY = "IMPERSONATE";
     
     private static final String SWAP_TARGET_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_UID";
+    private static final String SWAP_TARGET_PROFILE = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_PROFILE";
     private static final String SWAP_ORIGINAL_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_ORIGINAL_UID";
     
 
@@ -65,15 +66,21 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     public void impersonateUser(PortletRequest portletRequest, IPerson currentUser, String targetUsername) {
         this.impersonateUser(portletRequest, currentUser.getName(), targetUsername);
     }
-
+    
     @Override
     public void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername) {
+    	impersonateUser(portletRequest, currentUserName, targetUsername,"default");
+    }
+
+    @Override
+    public void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername, String profile) {
         if (!canImpersonateUser(currentUserName, targetUsername)) {
             throw new RuntimeAuthorizationException(currentUserName, IMPERSONATE_OWNER, targetUsername);
         }
         
         final PortletSession portletSession = portletRequest.getPortletSession();
-        portletSession.setAttribute(SWAP_TARGET_UID, targetUsername, PortletSession.APPLICATION_SCOPE);        
+        portletSession.setAttribute(SWAP_TARGET_UID, targetUsername, PortletSession.APPLICATION_SCOPE);
+        portletSession.setAttribute(SWAP_TARGET_PROFILE, profile, PortletSession.APPLICATION_SCOPE);   
     }
 
     @Override
@@ -85,12 +92,19 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
         session.setAttribute(SWAP_ORIGINAL_UID, currentUserName);
     }
     
+    @Override
     public String getOriginalUsername(HttpSession session) {
         return (String) session.getAttribute(SWAP_ORIGINAL_UID);
     }
     
+    @Override
     public String getTargetUsername(HttpSession session) {
         return (String) session.getAttribute(SWAP_TARGET_UID);
+    }
+    
+    @Override
+    public String getTargetProfile(HttpSession session) {
+    	return (String) session.getAttribute(SWAP_TARGET_PROFILE);
     }
 
     @Override

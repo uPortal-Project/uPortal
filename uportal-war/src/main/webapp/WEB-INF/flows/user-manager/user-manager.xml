@@ -56,9 +56,11 @@
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
             <set name="viewScope.canImpersonate" value="identitySwapperManager.canImpersonateUser(user, person.name)"/>
             <set name="viewScope.parents" value="userAccountHelper.getParentGroups(person.name)"/>
+            <set name="viewScope.profiles" value="userLayoutStore.getSystemProfileList()" />
         </on-entry>
         <transition on="editUser" to="editLocalAccount"/>
         <transition on="swap" to="swapIdentity"/>
+        <transition on="swapDynamic" to="swapDynamic"/>
         <transition on="viewPermissions" to="viewPermissions"/>
         <transition on="resetLayout" to="resetLayout"/>
         <transition on="confirmRemove" to="confirmRemove"/>
@@ -151,8 +153,20 @@
                 value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user, person.name)" />
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name)" />
         </on-entry>
+    </end-state>
+    
+    <end-state id="swapDynamic">
+        <on-entry>
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <set name="flashScope.profile"
+                value="requestParameters.profile" />
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name, profile)" />
+        </on-entry>    
     </end-state>
     
     <end-state id="finish"/>
