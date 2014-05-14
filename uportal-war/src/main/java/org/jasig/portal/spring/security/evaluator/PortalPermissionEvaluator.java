@@ -70,12 +70,9 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         // valid uPortal permission target
         if (targetDomainObject instanceof String) {
             targetId = (String) targetDomainObject;
-        }
-        
-        // if the target is a JsonEntityBean, use the principal associated with
-        // the entity
-        else if (targetDomainObject instanceof JsonEntityBean) {
-            targetId = ((JsonEntityBean) targetDomainObject).getPrincipalString();
+        } else if (targetDomainObject instanceof JsonEntityBean) {
+            // JsonEntityBean objects now have a targetString member
+            targetId = ((JsonEntityBean) targetDomainObject).getTargetString();
         }
 
         // if the permission is already an AuthorizableActivity, go ahead and 
