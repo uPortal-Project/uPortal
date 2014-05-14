@@ -143,11 +143,17 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
      * Identifies this bean uniquely as a permissions target.  NOTE:  This id is
      * not the fname (for portlets) or name field (for groups), but rater a
      * unique String like 'PORTLET_ID.19' or 'local.36' or 'pags.Authenticated Users'
+     * 
+     * @since uPortal 4.0.14
      */
     public String getTargetString() {
         return targetString;
     }
 
+    /**
+     * 
+     * @since uPortal 4.0.14
+     */
     public void setTargetString(String targetString) {
         this.targetString = targetString;
     }
