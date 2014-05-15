@@ -23,7 +23,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
-    
+
     <!-- 
      | Portlet input 
      |
@@ -32,7 +32,7 @@
      | may not be null.
      +-->
     <input name="portlet"/>
-    
+
     <!-- Initialize a list of available portlet types -->
     <on-start>
         <set name="flashScope.servletRequest"
@@ -41,16 +41,15 @@
                 value="personManager.getPerson(servletRequest)"/>
         <set name="flowScope.portletTypes"
                 value="portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person)"/>
-        <set name="flowScope.completed"
-                value="portlet.id != null and portlet.id != '-1'"/>
+        <set name="flowScope.completed" value="!portlet.isNew()"/>
     </on-start>
-    
+
     <!-- If we're creating a new portlet, display the first step in the workflow.
         Otherwise, display the portlet summary view. --> 
     <decision-state id="isPortletNew">
         <if test="completed" then="reviewPortlet" else="chooseType"/>
     </decision-state>
-        
+
     <!-- PORTLET TYPE view -->
     <view-state id="chooseType" model="portlet">
         <transition on="next" to="afterChooseType">
@@ -60,28 +59,32 @@
             <evaluate expression="portlet.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>
-    
+
     <decision-state id="afterChooseType">
         <if test="portletAdministrationHelper.offerPortletSelection(portlet)" 
             then="choosePortlet" else="basicInfo"/>
     </decision-state>
-    
+
     <view-state id="choosePortlet">
         <on-render>
             <set name="flashScope.contexts" value="portletAdministrationHelper.getPortletApplications()"/>
         </on-render>
         <transition on="next" to="basicInfo" validate="false" bind="false">
-            <evaluate expression="portletAdministrationHelper.prepopulatePortlet(requestParameters.application, requestParameters.portlet, portlet)"/>
+            <evaluate expression="portlet.setApplicationId(requestParameters.application)"/>
+            <evaluate expression="portlet.setPortletName(requestParameters.portlet)"/>
         </transition>
         <transition on="back" to="chooseType" validate="false"/>
     </view-state>
-    
+
     <!-- BASIC INFO view (title, fname, etc.) -->
     <view-state id="basicInfo" model="portlet">
+        <on-entry>
+            <evaluate expression="portletAdministrationHelper.prepopulatePortletIfNew(portlet)"/>
+        </on-entry>
         <transition on="back" to="chooseType" validate="false"/>
         <transition on="next" to="setParameters"/>
     </view-state>
-    
+
     <!-- PORTLET PARAMETERS view -->
     <view-state id="setParameters" model="portlet">
         <on-entry>
@@ -101,7 +104,7 @@
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
     </view-state>
-    
+
     <!-- CATEGORIES view -->
     <subflow-state id="chooseCategory" subflow="entity-selector">
         <on-entry>
@@ -123,19 +126,19 @@
         <input name="pageTitleCode" value="'select.categories'"/>
         <input name="pageSubtitleCode" value="'categories.membership.which'" />
         <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
-        
+
         <!-- Group input/output mapping -->
         <input name="selectedGroups" value="portlet.categories"/>
         <output name="selectedGroups" value="portlet.categories"/>
-        
+
         <transition on="back" to="setParameters"/>
         <transition on="finish" to="chooseCategoryNextScreen"/>
     </subflow-state>
-    
+
     <decision-state id="chooseCategoryNextScreen">
         <if test="completed" then="reviewPortlet" else="chooseGroup"/>
     </decision-state>
-        
+
     <!-- GROUPS view -->
     <subflow-state id="chooseGroup" subflow="entity-selector">
         <on-entry>
@@ -149,7 +152,7 @@
         <input name="selectMultiple" value="true"/>
         <input name="requireSelection" value="true"/>
         <input name="rootEntity" value="rootEntity"/>
-        
+
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="!completed"/>
         <input name="saveButtonCode" value="completed ? 'review' : 'next'" />
@@ -170,7 +173,7 @@
     <decision-state id="chooseGroupNextScreen">
         <if test="completed" then="reviewPortlet" else="lifecycle"/>
     </decision-state>
-        
+
     <!-- Lifecycle Management -->
     <view-state id="lifecycle" model="portlet">
         <binder>
@@ -207,8 +210,7 @@
             <set name="flashScope.portletDescriptor" value="portletAdministrationHelper.getPortletDescriptor(portlet)"/>
             <set name="flashScope.arbitraryPreferenceNames" value="portletAdministrationHelper.getArbitraryPortletPreferenceNames(portlet)"/>
         </on-render>
-        
-        
+
         <!-- edit transitions -->
         <transition on="basicInfo" to="basicInfo"/>
         <transition on="chooseType" to="chooseType"/>
@@ -227,15 +229,15 @@
         <transition on="saveAndConfig" to="configMode">
             <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)" />
         </transition>
-        
+
         <!-- cancel our portlet edit and exit the sub-flow -->
         <transition on="cancel" to="cancelPortletEdit" bind="false"/>
     </view-state>
-    
+
     <decision-state id="configModeAction">
         <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).RESOURCE_PHASE" 
             then="configModeResourceRequest"/>
-            
+
         <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).ACTION_PHASE" 
             then="configModeActionRequest"
             else="configMode"/>
@@ -269,7 +271,7 @@
 
     <end-state id="cancelPortletEdit" />
     <end-state id="finishPortletEdit" />
-    
+
     <global-transitions>
         <transition on="update" to="reviewPortlet"/>
         <transition on="review" to="reviewPortlet"/>

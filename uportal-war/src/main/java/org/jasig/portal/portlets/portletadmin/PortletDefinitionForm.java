@@ -182,7 +182,15 @@ public class PortletDefinitionForm implements Serializable {
 		}
             
 	}
-	
+
+    /**
+     * Indicates whether this portlet has been previously published.
+     * @return
+     */
+    public boolean isNew() {
+        return id == null || id.equals("-1");
+    }
+
 	/**
 	 * Sets the Java class name and parameter defaults based on the 
 	 * PortletPublishingDefinition.
@@ -190,6 +198,12 @@ public class PortletDefinitionForm implements Serializable {
 	 * @param cpd
 	 */
 	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
+
+        // Set appName/portletName if a descriptor is present...
+        if (cpd.getPortletDescriptor() != null) {
+            applicationId = cpd.getPortletDescriptor().getWebAppName();
+            portletName = cpd.getPortletDescriptor().getPortletName();
+        }
 
 		// set default values for all portlet parameters
 		for (Step step : cpd.getSteps()) {
