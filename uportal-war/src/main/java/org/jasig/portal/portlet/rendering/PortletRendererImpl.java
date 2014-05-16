@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
@@ -136,6 +137,9 @@ public class PortletRendererImpl implements IPortletRenderer {
     	this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest);
     	
     	final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
+
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = PortletHttpServletResponseWrapper.create(httpServletResponse, portletWindow);
@@ -183,6 +187,8 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = PortletHttpServletResponseWrapper.create(httpServletResponse, portletWindow);
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
         
         //Execute the action, 
         if (this.logger.isDebugEnabled()) {
@@ -214,7 +220,9 @@ public class PortletRendererImpl implements IPortletRenderer {
     public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException  {
-        
+
+        // enforce CONFIG mode restriction through its enforcement in doRender().
+
         return doRender(portletWindowId,
                 httpServletRequest,
                 httpServletResponse,
@@ -231,7 +239,9 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Override
     public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException {
-        
+
+        // enforce CONFIG mode access restriction through its enforcement in the doRender() impl.
+
         return doRender(portletWindowId,
                 httpServletRequest,
                 httpServletResponse,
@@ -366,6 +376,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 
+        enforceConfigPermission(httpServletRequest, portletWindow);
+
         /*
          * If the portlet is rendering in EXCLUSIVE WindowState ignore the provided PortletOutputHandler and
          * write directly to the response.
@@ -469,6 +481,9 @@ public class PortletRendererImpl implements IPortletRenderer {
         if (logger.isDebugEnabled()) {
             logger.debug("Replaying cached content for Render " + renderPart + " request to " + portletWindow);
         }
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
+
         
     	final long renderStartTime = System.nanoTime();
     	
@@ -534,6 +549,8 @@ public class PortletRendererImpl implements IPortletRenderer {
                 .getPortletResourceState(httpServletRequest, portletWindowId);
 
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
 
         if (cacheState.isUseBrowserData()) {
             return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
@@ -620,6 +637,8 @@ public class PortletRendererImpl implements IPortletRenderer {
     protected long doResourceReplayBrowserContent(IPortletWindow portletWindow, HttpServletRequest httpServletRequest,
             CacheState<CachedPortletResourceData<Long>, Long> cacheState,
             PortletResourceOutputHandler portletOutputHandler) {
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
         
         if (logger.isDebugEnabled()) {
             logger.debug("Sending 304 for resource request to " + portletWindow);
@@ -653,6 +672,8 @@ public class PortletRendererImpl implements IPortletRenderer {
     protected Long doResourceReplayCachedContent(IPortletWindow portletWindow,
             HttpServletRequest httpServletRequest, CacheState<CachedPortletResourceData<Long>, Long> cacheState,
             PortletResourceOutputHandler portletOutputHandler, long baseExecutionTime) throws IOException {
+
+        enforceConfigPermission(httpServletRequest, portletWindow);
         
         if (logger.isDebugEnabled()) {
             logger.debug("Replaying cached content for resource request to " + portletWindow);
@@ -695,6 +716,8 @@ public class PortletRendererImpl implements IPortletRenderer {
 	 */
 	@Override
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+
+        // Don't enforce config mode restriction because this is going to snap the portlet window into VIEW mode anyway.
 		final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 		if(portletWindow != null) {
 			portletWindow.setPortletMode(PortletMode.VIEW);
@@ -737,22 +760,41 @@ public class PortletRendererImpl implements IPortletRenderer {
         
         return portletHttpServletRequestWrapper;
     }
-    
-    protected void setupPortletWindow(HttpServletRequest httpServletRequest, IPortletWindow portletWindow, IPortletUrlBuilder portletUrl) {
-        final PortletMode portletMode = portletUrl.getPortletMode();
+
+    /**
+     * Enforces CONFIG mode access control.  If you don't have CONFIG, and the PortletWindow specifies CONFIG, throws
+     * IllegalAccessException.  Otherwise does nothing.
+     *
+     * @param httpServletRequest the non-null current HttpServletRequest (for determining the requesting user)
+     * @param portletWindow a non-null portlet window that might be in CONFIG mode
+     * @throws org.jasig.portal.AuthorizationException if user is not permitted to access window specifying CONFIG mode
+     * @throws java.lang.IllegalArgumentException if the request or window are null
+     */
+    protected void enforceConfigPermission(final HttpServletRequest httpServletRequest,
+                                           final IPortletWindow portletWindow) {
+
+        Validate.notNull(httpServletRequest, "Servlet request must not be null to determine a remote user.");
+        Validate.notNull(portletWindow, "Portlet window must not be null to determine its mode.");
+
+        final PortletMode portletMode = portletWindow.getPortletMode();
         if (portletMode != null) {
             if (IPortletRenderer.CONFIG.equals(portletMode)) {
                 final IPerson person = this.personManager.getPerson(httpServletRequest);
-                
                 final EntityIdentifier ei = person.getEntityIdentifier();
                 final AuthorizationService authorizationService = AuthorizationService.instance();
                 final IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
-                
                 final IPortletEntity portletEntity = portletWindow.getPortletEntity();
                 final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-                
                 if (!ap.canConfigure(portletDefinition.getPortletDefinitionId().getStringId())) {
-                    throw new AuthorizationException(person.getUserName() + " does not have permission to render '" + portletDefinition.getFName() + "' in " + portletMode + " PortletMode");
+                    logger.error("User " + person +
+                                 " attempted to use portlet " + portletDefinition.getFName() +
+                                 " in " + portletMode + " mode " +
+                                    "but lacks permission to use that mode.  " +
+                                    "THIS MAY BE AN ATTEMPT TO EXPLOIT A HISTORICAL SECURITY FLAW.  " +
+                                    "YOU SHOULD PROBABLY FIGURE OUT WHO THIS USER IS AND" +
+                                    " WHY THEY ARE TRYING TO ACCESS UNAUTHORIZED MODES ILLICITLY.  NAUGHTY!");
+                    throw new AuthorizationException(person.getUserName() + " does not have permission to use '" +
+                            portletDefinition.getFName() + "' in " + portletMode + " PortletMode");
                 }
             }
         }
