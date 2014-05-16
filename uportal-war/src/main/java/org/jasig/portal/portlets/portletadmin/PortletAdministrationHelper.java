@@ -45,6 +45,7 @@ import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainerException;
@@ -743,29 +744,35 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 
     /**
-     * Pre-populate a PortletDefinitionForm with portlet-specific information
-     * using the supplied portlet descriptor.
-     * 
-     * @param application
-     * @param portlet
+     * Pre-populate a new {@link PortletDefinitionForm} with information from
+     * the {@link PortletDefinition}.
+     *
      * @param form
      */
-    public void prepopulatePortlet(String application, String portlet, PortletDefinitionForm form) {
-        final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
-        final PortletDefinition portletDD;
-        try {
-            portletDD = portletRegistryService.getPortlet(application, portlet);
-        }
-        catch (PortletContainerException e) {
-            this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
+    public void loadDefaultsFromPortletDefinitionIfNew(PortletDefinitionForm form) {
+
+        if (!form.isNew()) {
+            // Get out;  we only prepopulate new portlets
             return;
         }
 
-        form.setTitle(portletDD.getPortletName());
-        form.setName(portletDD.getPortletName());
-        form.setApplicationId(application);
-        form.setPortletName(portletDD.getPortletName());
-        for (Supports supports : portletDD.getSupports()) {
+        // appName/portletName must be set at this point
+        Validate.notBlank(form.getApplicationId(), "ApplicationId not set");
+        Validate.notBlank(form.getPortletName(), "PortletName not set");
+
+        final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
+        final PortletDefinition portletDef;
+        try {
+            portletDef = portletRegistryService.getPortlet(form.getApplicationId(), form.getPortletName());
+        }
+        catch (PortletContainerException e) {
+            this.logger.warn("Failed to load portlet descriptor for appId='" + form.getApplicationId() + "', portletName='" + form.getPortletName() + "'", e);
+            return;
+        }
+
+        form.setTitle(portletDef.getPortletName());
+        form.setName(portletDef.getPortletName());
+        for (Supports supports : portletDef.getSupports()) {
             for (String mode : supports.getPortletModes()) {
                 if ("edit".equalsIgnoreCase(mode)) {
                     form.setEditable(true);
