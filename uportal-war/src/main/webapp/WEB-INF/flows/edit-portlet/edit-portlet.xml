@@ -79,7 +79,7 @@
     <!-- BASIC INFO view (title, fname, etc.) -->
     <view-state id="basicInfo" model="portlet">
         <on-entry>
-            <evaluate expression="portletAdministrationHelper.prepopulatePortletIfNew(portlet)"/>
+            <evaluate expression="portletAdministrationHelper.loadDefaultsFromPortletDefinitionIfNew(portlet)"/>
         </on-entry>
         <transition on="back" to="chooseType" validate="false"/>
         <transition on="next" to="setParameters"/>

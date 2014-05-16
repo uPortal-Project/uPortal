@@ -744,14 +744,12 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 
     /**
-     * Pre-populate a {@link PortletDefinitionForm} with portlet-descriptor
-     * specific information.  The {@link PortletDescriptor} is either defined on
-     * the CPD or described by the appName/portletName pair (in the case of
-     * generic portlet publication).
+     * Pre-populate a new {@link PortletDefinitionForm} with information from
+     * the {@link PortletDefinition}.
      *
      * @param form
      */
-    public void prepopulatePortletIfNew(PortletDefinitionForm form) {
+    public void loadDefaultsFromPortletDefinitionIfNew(PortletDefinitionForm form) {
 
         if (!form.isNew()) {
             // Get out;  we only prepopulate new portlets
@@ -763,18 +761,18 @@ public class PortletAdministrationHelper implements ServletContextAware {
         Validate.notBlank(form.getPortletName(), "PortletName not set");
 
         final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
-        final PortletDefinition portletDD;
+        final PortletDefinition portletDef;
         try {
-            portletDD = portletRegistryService.getPortlet(form.getApplicationId(), form.getPortletName());
+            portletDef = portletRegistryService.getPortlet(form.getApplicationId(), form.getPortletName());
         }
         catch (PortletContainerException e) {
             this.logger.warn("Failed to load portlet descriptor for appId='" + form.getApplicationId() + "', portletName='" + form.getPortletName() + "'", e);
             return;
         }
 
-        form.setTitle(portletDD.getPortletName());
-        form.setName(portletDD.getPortletName());
-        for (Supports supports : portletDD.getSupports()) {
+        form.setTitle(portletDef.getPortletName());
+        form.setName(portletDef.getPortletName());
+        for (Supports supports : portletDef.getSupports()) {
             for (String mode : supports.getPortletModes()) {
                 if ("edit".equalsIgnoreCase(mode)) {
                     form.setEditable(true);
