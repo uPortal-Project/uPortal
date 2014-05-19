@@ -96,6 +96,11 @@
     </xsl:choose>
   </xsl:variable>
 
+    <!-- ****** SKIN SETTINGS ****** -->
+    <!-- Switches the Bootstrap containers to fluid (container-fluid) or fixed (container) -->
+    <xsl:variable name="CONTAINER-TYPE">container-fluid</xsl:variable>
+    <!-- ======================================== -->
+
   <!-- ========== TEMPLATE: NAVIGATION ========== -->
   <!-- ========================================== -->
   <!--
@@ -106,7 +111,7 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
-        <div class="container">
+        <div class="{$CONTAINER-TYPE}">
         <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
         <div id="portalNavigation" class="fl-widget">
           <div id="portalNavigationInner" class="fl-widget-inner header">
