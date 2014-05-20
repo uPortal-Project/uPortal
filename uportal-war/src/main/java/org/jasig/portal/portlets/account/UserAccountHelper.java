@@ -468,15 +468,18 @@ public class UserAccountHelper {
      */
     public void createPassword(PersonForm form, String token) {
 
+        final String username = form.getUsername();
+
         // Re-validate the token to prevent URL hacking
-        if (!validateLoginToken(form.getUsername(), token)) {
+        if (!validateLoginToken(username, token)) {
             throw new RuntimeException("Attempt to set a password for user '" 
-                    + form.getUsername() + "' without a valid security token");
+                    + username + "' without a valid security token");
         }
 
-        if (StringUtils.isNotBlank(form.getPassword())) {
-            ILocalAccountPerson account = accountDao.getPerson(form.getId());
-            account.setPassword(passwordService.encryptPassword(form.getPassword()));
+        final String password = form.getPassword();
+        if (StringUtils.isNotBlank(password)) {
+            ILocalAccountPerson account = accountDao.getPerson(username);
+            account.setPassword(passwordService.encryptPassword(password));
             account.setLastPasswordChange(new Date());
             account.removeAttribute("loginToken");
             accountDao.updateAccount(account);
