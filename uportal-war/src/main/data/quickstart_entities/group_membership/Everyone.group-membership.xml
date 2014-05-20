@@ -32,6 +32,7 @@
     <group>Portal System</group>
     <group>Staff</group>
     <group>Students</group>
+    <group>Tenant Administrators</group>
     <group>Tenants</group>
   </children>
 </group>

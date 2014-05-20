@@ -29,6 +29,7 @@
     <group>PAGS Root</group>
     <group>Guests</group>
     <group>Portal System</group>
+    <group>Tenant Administrators</group>
     <group>Tenants</group>
   </children>
 </group>
