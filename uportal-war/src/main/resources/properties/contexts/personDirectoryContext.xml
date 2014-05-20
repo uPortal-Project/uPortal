@@ -456,6 +456,7 @@
                     </value>
                 </constructor-arg>
                 <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                <property name="usernameDataAttribute" value="USER_NAME" />
                 <property name="queryAttributeMapping">
                     <map>
                         <entry key="username" value="USER_NAME" />
