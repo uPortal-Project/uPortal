@@ -280,8 +280,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
                     "' attempted to save the following portlet without the selected MANAGE permission:  " + form);
             throw new SecurityException("Not Authorized");
         }
-        if (form.getId() != null && !form.getId().equals("-1")) {
-            // Portlet is not new;  user must have the previous MANAGE permission
+
+        if (!form.isNew()) {
+            // User must have the previous lifecycle permission
             // in AT LEAST ONE previous category as well
             IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinition(form.getId());
             Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
@@ -292,6 +293,19 @@ public class PortletAdministrationHelper implements ServletContextAware {
             if (!hasLifecyclePermission(publisher, def.getLifecycleState(), categoryBeans)) {
                 logger.warn("User '" + publisher.getUserName() + 
                         "' attempted to save the following portlet without the previous MANAGE permission:  " + form);
+                throw new SecurityException("Not Authorized");
+            }
+        }
+
+        if (form.isNew() || portletDefinitionRegistry.getPortletDefinition(form.getId()).getType().getId() != form.getTypeId()) {
+            // User must have access to the selected CPD if s/he selected it in this interaction
+            final int selectedTypeId = form.getTypeId();
+            final PortletPublishingDefinition cpd = portletPublishingDefinitionDao.getChannelPublishingDefinition(selectedTypeId);
+            final Map<IPortletType, PortletPublishingDefinition> allowableCpds = this.getAllowableChannelPublishingDefinitions(publisher);
+            if (!allowableCpds.containsValue(cpd)) {
+                logger.warn("User '" + publisher.getUserName() + 
+                        "' attempted to administer the following portlet without the selected " + 
+                        IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE + " permission:  " + form);
                 throw new SecurityException("Not Authorized");
             }
         }
