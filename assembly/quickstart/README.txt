@@ -97,6 +97,12 @@ Please report bugs and suggestions:
 
  https://issues.jasig.org/browse/UP
 
+ NOTE: If you are reporting a potential security defect,
+ PLEASE DO NOT INITIALLY POST YOUR REPORT PUBLICLY in this issue tracker or
+ anywhere else.  Instead, please engage the Apereo security contact process.
+
+ https://wiki.jasig.org/display/JSG/Security+Contact+Group
+
 uPortal website:
 
  http://www.apereo.org/uportal
