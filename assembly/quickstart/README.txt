@@ -85,8 +85,8 @@ Notes
 
 ../ant -p
 
--Log messages for uPortal appear in @tomcat.name@/portal.log. Log files for
- Tomcat appear in @tomcat.name@/logs
+- Log messages for uPortal appear in @tomcat.name@/logs/uPortal.log .
+- Log files for Tomcat appear in @tomcat.name@/logs
 
 
 
