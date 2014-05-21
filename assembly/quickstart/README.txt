@@ -87,14 +87,6 @@ Notes
 
 -Log messages for uPortal appear in @tomcat.name@/portal.log. Log files for
  Tomcat appear in @tomcat.name@/logs
- 
-
-Developing with the Quickstart
---------------------------------------------------------------------------------
-The developers build of the quickstart (distinguished by a -dev suffix in the
-download name) includes a copy of uPortal that is still 'attached' to subversion.
-Running svn commands in the @uportal.name@ directory will work as if you checked
-out uPortal from the JA-SIG Subversion repository.
 
 
 
