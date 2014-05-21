@@ -107,6 +107,6 @@ Please report bugs and suggestions:
 
 uPortal website:
 
- http://www.uportal.org/
+ http://www.apereo.org/uportal
 
 
