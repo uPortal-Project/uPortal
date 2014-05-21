@@ -44,7 +44,7 @@ System requirements
 - Nothing else should be running on ports 8005, 8080, or 8887.
 - Path to the @quickstart.name@ folder should not contain spaces.
 - On windows an unzip utility OTHER than the Extrator utility that comes with
-  the OS is required. See: http://www.ja-sig.org/issues/browse/UP-2024
+  the OS is required. See: https://issues.jasig.org/browse/UP-2024
 
 
 Instructions
@@ -103,7 +103,7 @@ Contact
 --------------------------------------------------------------------------------
 Please report bugs and suggestions:
 
- http://www.ja-sig.org/issues/browse/UP
+ https://issues.jasig.org/browse/UP
 
 uPortal website:
 
