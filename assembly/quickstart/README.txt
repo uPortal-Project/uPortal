@@ -43,7 +43,7 @@ System requirements
   spaces.
 - Nothing else should be running on ports 8005, 8080, or 8887.
 - Path to the @quickstart.name@ folder should not contain spaces.
-- On windows an unzip utility OTHER than the Extrator utility that comes with
+- On windows an unzip utility OTHER than the Extractor utility that comes with
   the OS is required. See: https://issues.jasig.org/browse/UP-2024
 
 
@@ -76,7 +76,7 @@ developer, developer
 
 Notes
 --------------------------------------------------------------------------------
--The uPortal source code is included with this distribution. A seperate
+-The uPortal source code is included with this distribution. A separate
  build.xml exists in the @uportal.name@ directory that provides Ant targets to
  deploy changes made to the included uPortal source to the quickstart tomcat
  instance. To run Ant targets for the included uPortal source code cd into the
