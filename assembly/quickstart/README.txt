@@ -76,7 +76,7 @@ developer, developer
 
 Notes
 --------------------------------------------------------------------------------
--The uPortal source code is included with this distribution. A seperate
+-The uPortal source code is included with this distribution. A separate
  build.xml exists in the @uportal.name@ directory that provides Ant targets to
  deploy changes made to the included uPortal source to the quickstart tomcat
  instance. To run Ant targets for the included uPortal source code cd into the
