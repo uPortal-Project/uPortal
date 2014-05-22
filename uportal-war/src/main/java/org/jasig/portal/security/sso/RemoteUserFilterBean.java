@@ -62,11 +62,10 @@ public final class RemoteUserFilterBean implements Filter {
      */
 
     private String evaluateTemporarySsoTicket(final String uuid, final String currentRemoteUser) {
-        final ISsoTicket ticket = this.ticketDao.getTicket(uuid);
-        if ( ticket == null ) {
+        final String ticketUsername = this.ticketDao.redeemTicketForUsername(uuid);
+        if ( ticketUsername == null ) {
             return currentRemoteUser;
         }
-        final String ticketUsername = ticket.getUsername();
         if ( currentRemoteUser == null ) {
             return ticketUsername;
         }

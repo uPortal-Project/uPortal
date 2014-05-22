@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -37,6 +38,7 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.BeansException;
@@ -46,8 +48,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * Simple servlet to handle user logout. When a user
@@ -126,8 +126,12 @@ public class LogoutController implements InitializingBean, ApplicationContextAwa
      */
     @RequestMapping
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirect = this.getRedirectionUrl(request);
-        final HttpSession session = request.getSession(false);
+        String redirect = this.getRequestedRedirectionUrl(request);
+        boolean requestedRedirect = redirect != null;
+        if(!(requestedRedirect)) {
+            redirect = this.getRedirectionUrl(request);
+        }
+        HttpSession session = request.getSession(false);
 
         if (session != null) {
             // Record that an authenticated user is requesting to log out
@@ -256,5 +260,19 @@ public class LogoutController implements InitializingBean, ApplicationContextAwa
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+    
+    private String getRequestedRedirectionUrl(HttpServletRequest request){
+        final String refUrl = request.getParameter(LoginController.REFERER_URL_PARAM);
+        String redirectTarget = null;
+        if (refUrl != null) {
+            if (refUrl.startsWith("/")) {
+                redirectTarget = refUrl;
+            }
+            else {
+                log.warn("Reference URL passed in does not start with a / and will be ignored: " + refUrl);
+            }
+        }
+        return redirectTarget;
     }
 }
