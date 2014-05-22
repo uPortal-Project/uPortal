@@ -215,7 +215,8 @@ public class LocalAccountPersonAttributeDao extends AbstractDefaultAttributePers
                 Set<String> mappedAttrNames = null;
                 if ( this.queryAttributeMapping != null ) {
                     mappedAttrNames = this.queryAttributeMapping.get(attrName);
-                } else {
+                }
+                if ( mappedAttrNames == null || mappedAttrNames.isEmpty() ) {
                     mappedAttrNames = new HashSet<String>();
                     mappedAttrNames.add(attrName);
                 }
