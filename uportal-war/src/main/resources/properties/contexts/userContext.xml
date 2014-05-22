@@ -55,13 +55,20 @@
         <property name="subMappers">
             <util:list>
                 <ref bean="sessionAttributeProfileMapper" />
-                <ref bean="userAgentProfileMapper" />
-                 <!--
-                 | Define a profilMapper for user guest associated to the serverName attribute,
-                 | This example configuration is applyed only if user-agent isn't a mobile.
-                 | You need to define and import a new profil for each entries on default users
-                 | Add "guest-[server name]-" prefix to the subfname found
+
+                <!--
+                 | uPortal 4.1 promotes a responsive design theme Respondr.  The older uPortal 3.x, 4.0x
+                 | mUniversality view is by default disabled.  To re-enable it so those user agent strings that
+                 | match the regex instruction get the mUniversality view, uncomment the following bean.
                  +-->
+                <!--<ref bean="userAgentProfileMapper" />-->
+
+                <!--
+                | Define a profilMapper for user guest associated to the serverName attribute,
+                | This example configuration is applyed only if user-agent isn't a mobile.
+                | You need to define and import a new profil for each entries on default users
+                | Add "guest-[server name]-" prefix to the subfname found
+                +-->
                 <!--
                 <bean class="org.jasig.portal.layout.ServerNameGuestChainingProfileMapper">
                 	<property name="authorizedServerNames">
