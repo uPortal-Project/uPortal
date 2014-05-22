@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.portal.api.sso;
 
-package org.jasig.portal.security.sso;
+import java.util.Calendar;
 
-public interface ISsoTicketDao {
+public interface SsoTicket {
 
-    ISsoTicket issueTicket(String username);
+	String getUuid();
 
-    String redeemTicketForUsername(String uuid);
+	String getUsername();
 
-    void purgeExpiredSsoTickets();
-
+	Calendar getCreationDate();
 }

@@ -64,7 +64,18 @@ public class JpaSsoTicketDao implements ISsoTicketDao {
     }
 
     @Override
-    public ISsoTicket getTicket(String uuid) {
+    @Transactional
+    public String redeemTicketForUsername(String uuid) {
+        final ISsoTicket ticket = getTicket(uuid);
+        if ( ticket == null ) {
+            return null;
+        }
+        final String username = ticket.getUsername();
+        entityManager.remove(ticket);
+        return username;
+    }
+
+    private ISsoTicket getTicket(String uuid) {
         ISsoTicket rslt = null;  // default
         final Query query = entityManager.createQuery(GET_TICKET_JPQL);
         query.setParameter("uuid", uuid);
