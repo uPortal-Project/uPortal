@@ -22,10 +22,33 @@ package org.jasig.portal.api.permissions;
 import java.util.Set;
 
 public interface PermissionsService {
-	
+
+	/**
+	 * Portlet requests can access the currently registered implementation of this interface
+	 * by accessing the portlet context attribute having this name.
+	 */
 	static final String PORTLET_CONTEXT_ATTRIBUTE_NAME = 
 			PermissionsService.class.getName() 
 			+ ".PORTLET_CONTEXT_ATTRIBUTE_NAME";
+
+	/**
+	 * This indirection exists as an attempt to allow for injection of
+	 * security constraints in the future, esp on {@link #set(PermissionsService)},
+	 * e.g. to control via a {@code SecurityManager} which components can
+	 * set the current impl.
+	 */
+	static final class PermissionsServiceAccessor {
+		private static volatile PermissionsService IMPL;
+		public PermissionsService get() {
+			return IMPL;
+		}
+		public void set(PermissionsService impl) {
+			IMPL = impl;
+		}
+	}
+
+	/** Allows access to the PermissionsService impl to non-Portlet requests */
+	static final PermissionsServiceAccessor IMPL = new PermissionsServiceAccessor();
 
 	Set<Assignment> getAssignmentsForPerson(String username, boolean includeInherited);
 

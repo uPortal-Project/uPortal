@@ -49,6 +49,8 @@ import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.ScopingPortletSessionImpl;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +61,8 @@ import org.springframework.stereotype.Service;
  * @version $Revision$
  */
 @Service("portletEnvironmentService")
-public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.impl.PortletEnvironmentServiceImpl {
+public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.impl.PortletEnvironmentServiceImpl
+implements InitializingBean, DisposableBean {
     private PortletPreferencesFactory portletPreferencesFactory;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
@@ -78,7 +81,18 @@ public class PortletEnvironmentServiceImpl extends org.apache.pluto.container.im
 	}
     
     @Autowired
-    private ApiPermissionsService apiPermissionsService;
+    private PermissionsService apiPermissionsService;
+
+	@Override
+	public void afterPropertiesSet() {
+		// Allows access to the PermissionsService impl to non-Portlet requests
+		PermissionsService.IMPL.set(apiPermissionsService);
+	}
+
+	@Override
+	public void destroy() {
+		PermissionsService.IMPL.set(null);
+	}
     
     @Override
 	public PortletSession createPortletSession(PortletContext portletContext, PortletWindow portletWindow, HttpSession session) {
