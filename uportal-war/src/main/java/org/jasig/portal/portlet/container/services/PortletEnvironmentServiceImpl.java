@@ -43,6 +43,7 @@ import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apache.pluto.container.PortletWindow;
 import org.jasig.portal.api.permissions.ApiPermissionsService;
 import org.jasig.portal.api.permissions.PermissionsService;
+import org.jasig.portal.api.sso.SsoTicketService;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -83,15 +84,21 @@ implements InitializingBean, DisposableBean {
     @Autowired
     private PermissionsService apiPermissionsService;
 
+	@Autowired
+	private SsoTicketService ssoTicketService;
+
+
 	@Override
 	public void afterPropertiesSet() {
 		// Allows access to the PermissionsService impl to non-Portlet requests
 		PermissionsService.IMPL.set(apiPermissionsService);
+		SsoTicketService.IMPL.set(ssoTicketService);
 	}
 
 	@Override
 	public void destroy() {
 		PermissionsService.IMPL.set(null);
+		SsoTicketService.IMPL.set(null);
 	}
     
     @Override
@@ -103,7 +110,8 @@ implements InitializingBean, DisposableBean {
         final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
         
         portletContext.setAttribute(PermissionsService.PORTLET_CONTEXT_ATTRIBUTE_NAME, apiPermissionsService);
-        
+        portletContext.setAttribute(SsoTicketService.PORTLET_CONTEXT_ATTRIBUTE_NAME, ssoTicketService);
+
 		return new ScopingPortletSessionImpl(portletEntityId, portletContext, portletWindow, session);
 	}
 

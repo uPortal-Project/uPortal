@@ -64,6 +64,7 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.CCPPProfileService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.RequestDispatcherService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.jasig.portal.api.permissions.PermissionsService.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.jasig.portal.api.sso.SsoTicketService.*(..))"/>
         </aop:aspect>
         
         <aop:aspect ref="threadContextClassLoaderApplyingAspect">
