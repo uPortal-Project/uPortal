@@ -73,7 +73,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
                 @Index(name = "IDX_UP_LOGIN_EVENT_INTRVL", columnNames = { "AGGR_INTERVAL" }),
                 @Index(name = "IDX_UP_LOGIN_EVENT_GRP", columnNames = { "AGGR_GROUP_ID" })
         })
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.login.LoginAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class LoginAggregationImpl 

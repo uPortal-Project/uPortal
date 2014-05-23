@@ -67,7 +67,7 @@ import org.jasig.portal.permission.IPermissionOwner;
         pkColumnValue="UP_PERMISSION_OWNER",
         allocationSize=1
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PermissionOwnerImpl implements IPermissionOwner, Serializable {

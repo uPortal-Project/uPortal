@@ -44,7 +44,7 @@ import org.jasig.portal.version.om.Version;
         pkColumnValue="UP_VERSION",
         allocationSize=1
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.version.dao.jpa.VersionImpl-NaturalId")
 class VersionImpl extends AbstractVersion {
     private static final long serialVersionUID = 1L;
 

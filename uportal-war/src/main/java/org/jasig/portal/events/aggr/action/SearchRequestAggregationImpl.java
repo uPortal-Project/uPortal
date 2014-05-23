@@ -18,17 +18,7 @@
  */
 package org.jasig.portal.events.aggr.action;
 
-import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.BaseAggregationImpl;
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import java.io.Serializable;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -41,7 +31,18 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.io.Serializable;
+
+import org.apache.commons.lang.Validate;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.BaseAggregationImpl;
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
  * @author Chris Waymire (chris@waymire.net)
@@ -67,7 +68,7 @@ import java.io.Serializable;
                 @Index(name = "IDX_UP_SEARCH_REQ_GRP", columnNames = { "AGGR_GROUP_ID" }),
                 @Index(name = "IDX_UP_SEARCH_REQ_TRM", columnNames = { "SEARCH_TERM" })
         })
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.action.SearchRequestAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchRequestAggregationImpl
