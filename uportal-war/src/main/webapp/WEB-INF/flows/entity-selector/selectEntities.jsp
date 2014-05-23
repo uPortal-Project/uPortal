@@ -173,9 +173,9 @@
                                                 <c:if test="${ showBackButton }">
                                                     <input class="button btn" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
                                                 </c:if>
-                                                <input id="${n}buttonPrimary btn" class="button btn primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
+                                                <input id="${n}buttonPrimary" class="button btn btn-primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
                                                 <c:if test="${ showCancelButton }">
-                                                    <input class="button btn" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
+                                                    <input class="button btn btn-link" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
                                                 </c:if>
                                             </div>
                                         </form>
@@ -268,9 +268,9 @@
                                     <c:if test="${showBackButton}">
                                         <input class="button btn" type="submit" value="<spring:message code="${ backButtonCode }" text="${ backButtonText }"/>" name="_eventId_back"/>
                                     </c:if>
-                                    <input id="${n}buttonPrimary" class="button btn primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
+                                    <input id="${n}buttonPrimary" class="button btn btn-primary" type="submit" value="<spring:message code="${ saveButtonCode }" text="${ saveButtonText }"/>" name="_eventId_save"/>
                                     <c:if test="${showCancelButton}">
-                                        <input class="button btn" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
+                                        <input class="button btn btn-link" type="submit" value="<spring:message code="${ cancelButtonCode }" text="${ cancelButtonText }"/>" name="_eventId_cancel"/>
                                     </c:if>
                                 </div><!--end: buttons-->
                             </div><!--end: content-->
