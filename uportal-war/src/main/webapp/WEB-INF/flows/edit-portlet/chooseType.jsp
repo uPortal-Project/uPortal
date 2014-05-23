@@ -80,10 +80,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ portletTypes }" var="chanTypeEntry">
                 <tr>
                   <td align="center">
-                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
+                    <form:radiobutton id="${chanTypeEntry.key.id}" path="typeId" value="${chanTypeEntry.key.id}" cssClass="portlet-form-input-field"/>
                   </td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.name )}</td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.description )}</td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.name}" /></label></td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.description}" /></label></td>
                 </tr>
             </c:forEach>
           </tbody>
