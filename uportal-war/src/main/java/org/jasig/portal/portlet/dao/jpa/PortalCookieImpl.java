@@ -72,7 +72,7 @@ import org.joda.time.DateTime;
         appliesTo = "UP_PORTAL_COOKIES",
         indexes = @Index(name = "IDX_UP_PRTL_CK_EXP", columnNames = { "EXPIRES" })
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortalCookieImpl implements IPortalCookie {

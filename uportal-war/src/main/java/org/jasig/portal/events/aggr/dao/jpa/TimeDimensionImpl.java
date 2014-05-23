@@ -62,7 +62,7 @@ import org.joda.time.LocalTime;
         allocationSize=1
     )
 @Immutable
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class TimeDimensionImpl implements TimeDimension, Serializable {

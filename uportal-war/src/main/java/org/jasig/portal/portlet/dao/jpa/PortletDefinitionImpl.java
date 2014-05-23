@@ -88,7 +88,7 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
         pkColumnValue="UP_PORTLET_DEF",
         allocationSize=5
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class PortletDefinitionImpl implements IPortletDefinition {

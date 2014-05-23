@@ -61,7 +61,7 @@ import org.jasig.portal.portlet.om.IPortletType;
         pkColumnValue="UP_PORTLET_TYPE",
         allocationSize=1
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletTypeImpl implements Serializable, IPortletType {

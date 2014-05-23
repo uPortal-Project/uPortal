@@ -73,7 +73,7 @@ import org.joda.time.DateTime;
         appliesTo = "UP_EVENT_SESSION",
         indexes = @Index(name = "IDX_UP_EVENT_SESSION_DATE", columnNames = { "LAST_ACCESSED" })
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.session.EventSessionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class EventSessionImpl implements EventSession, Serializable {
