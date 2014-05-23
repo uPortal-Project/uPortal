@@ -106,7 +106,7 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
-        <div class="container">
+        <div class="container-fluid">
         <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
         <div id="portalNavigation" class="fl-widget">
           <div id="portalNavigationInner" class="fl-widget-inner header">
