@@ -58,17 +58,13 @@
 
     <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
 
-    <!-- focusedFragmentId is the focusedTabID param when that's not a regular tab :) -->
-    <xsl:variable name="focusedFragmentId">
-        <!-- If the user is *not* focusing on a particular portlet,
-             and the user is *not* focusing on a regular-type tab,
-             and if the focusedTabID is the id of a non-regular folder,
-             then that ID is the focusedFragmentID,
-             otherwise none. -->
+    <!-- focusedFolderId is the focusedTabID param IF (1) that value points to a
+         folder of type 'favorite_collection' AND (2) the user is not focusing on
+         a single portlet (i.e. not in 'focused mode'); otherwise it's 'none'  :) -->
+    <xsl:variable name="focusedFolderId">
         <xsl:choose>
             <xsl:when test="not(//folder/channel[@ID = $userLayoutRoot])
-                            and $focusedTabID!='none'
-                            and /layout/folder/folder[@ID=$focusedTabID and @type='favorites']">
+                            and /layout/folder/folder[@ID=$focusedTabID and @type='favorite_collection']">
                 <xsl:value-of select="/layout/folder/folder[@ID=$focusedTabID and @type!='regular']/@ID"/>
             </xsl:when>
             <xsl:otherwise>none</xsl:otherwise>
@@ -137,9 +133,9 @@
                 </xsl:for-each>
 
                 <xsl:choose>
-                    <xsl:when test="$focusedFragmentId != 'none'">
+                    <xsl:when test="$focusedFolderId != 'none'">
                         <!-- Display channel-headers for channels visible on the selected tab (using externalId for tab name). -->
-                        <xsl:for-each select="child::folder[@ID = $focusedFragmentId]/descendant::channel">
+                        <xsl:for-each select="child::folder[@ID = $focusedFolderId]/descendant::channel">
                             <channel-header ID="{@ID}"/>
                         </xsl:for-each>
                     </xsl:when>
@@ -175,15 +171,15 @@
             </regions>
 
             <xsl:choose>
-                <xsl:when test="$focusedFragmentId != 'none'"><xsl:call-template name="tabListFocusedFragment"/></xsl:when>
+                <xsl:when test="$focusedFolderId != 'none'"><xsl:call-template name="tabListfocusedFolder"/></xsl:when>
                 <xsl:otherwise><xsl:call-template name="tabList"/></xsl:otherwise>
             </xsl:choose>
 
             <content>
                 <xsl:attribute name="hasFavorites"><xsl:value-of select="$hasFavorites" /></xsl:attribute>
                 <xsl:choose>
-                    <xsl:when test="$focusedFragmentId != 'none'">
-                        <xsl:apply-templates select="folder[@ID=$focusedFragmentId]"/>
+                    <xsl:when test="$focusedFolderId != 'none'">
+                        <xsl:apply-templates select="folder[@ID=$focusedFolderId]"/>
                     </xsl:when>
                     <xsl:when test="$userLayoutRoot = 'root'">
                         <xsl:apply-templates select="folder[@type='regular' and @hidden='false']"/>
@@ -244,7 +240,7 @@
         <debug>
             <userLayoutRoot><xsl:value-of select="$userLayoutRoot"></xsl:value-of></userLayoutRoot>
             <focusedTabID><xsl:value-of select="$focusedTabID"></xsl:value-of></focusedTabID>
-            <focusedFragmentId><xsl:value-of select="$focusedFragmentId"/></focusedFragmentId>
+            <focusedFolderId><xsl:value-of select="$focusedFolderId"/></focusedFolderId>
             <hasFavorites><xsl:value-of select="$hasFavorites"/></hasFavorites>
             <defaultTab><xsl:value-of select="$defaultTab"></xsl:value-of></defaultTab>
             <detached><xsl:value-of select="$detached"></xsl:value-of></detached>
@@ -309,13 +305,13 @@
         </navigation>
     </xsl:template>
 
-    <xsl:template name="tabListFocusedFragment">
+    <xsl:template name="tabListfocusedFolder">
         <navigation>
             <!-- signals that add-tab prompt is not appropriate in the context of this navigation -->
             <xsl:attribute name="allowAddTab">false</xsl:attribute>
 
             <!-- just the one focused-on tab -->
-            <xsl:for-each select="/layout/folder/folder[@ID = $focusedFragmentId]">
+            <xsl:for-each select="/layout/folder/folder[@ID = $focusedFolderId]">
                 <xsl:call-template name="tab"/>
             </xsl:for-each>
         </navigation>
@@ -357,7 +353,7 @@
 
     <xsl:template match="folder[@type!='root' and @hidden='false']">
         <xsl:attribute name="type">regular</xsl:attribute>
-        <xsl:if test="$activeTabID = @ID or $focusedFragmentId = @ID">
+        <xsl:if test="$activeTabID = @ID or $focusedFolderId = @ID">
             <xsl:if test="child::folder">
                 <xsl:for-each select="folder">
                     <column>
@@ -405,8 +401,8 @@
             <xsl:for-each select="attribute::*">
                 <xsl:attribute name="{name()}"><xsl:value-of select="."/></xsl:attribute>
             </xsl:for-each>
-            <xsl:if test="@ID = $focusedFragmentId">
-                <xsl:attribute name="focusedFragment">true</xsl:attribute>
+            <xsl:if test="@ID = $focusedFolderId">
+                <xsl:attribute name="focusedFolder">true</xsl:attribute>
             </xsl:if>
             <xsl:if test="count(./folder[not(@dlm:addChildAllowed='false')]) >0">
                 <xsl:attribute name="dlm:hasColumnAddChildAllowed">true</xsl:attribute>
@@ -418,7 +414,7 @@
                     <xsl:attribute name="activeTab">true</xsl:attribute>
                     <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
                 </xsl:when>
-                <xsl:when test="$focusedFragmentId = @ID">
+                <xsl:when test="$focusedFolderId = @ID">
                     <xsl:attribute name="activeTab">true</xsl:attribute>
                     <!-- the focused fragment will be the only tab, so index 1 is the position of the active tab -->
                     <xsl:attribute name="activeTabPosition">1</xsl:attribute>
