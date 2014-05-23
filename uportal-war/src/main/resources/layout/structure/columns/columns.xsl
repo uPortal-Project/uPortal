@@ -68,7 +68,7 @@
         <xsl:choose>
             <xsl:when test="not(//folder/channel[@ID = $userLayoutRoot])
                             and $focusedTabID!='none'
-                            and /layout/folder/folder[@ID=$focusedTabID and @type!='regular']">
+                            and /layout/folder/folder[@ID=$focusedTabID and @type='favorites']">
                 <xsl:value-of select="/layout/folder/folder[@ID=$focusedTabID and @type!='regular']/@ID"/>
             </xsl:when>
             <xsl:otherwise>none</xsl:otherwise>
