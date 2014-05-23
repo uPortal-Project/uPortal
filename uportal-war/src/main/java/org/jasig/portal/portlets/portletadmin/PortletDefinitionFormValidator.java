@@ -21,8 +21,6 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.util.Date;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -30,8 +28,6 @@ import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
@@ -46,12 +42,6 @@ public class PortletDefinitionFormValidator {
 
     @Autowired
     private PortletAdministrationHelper portletAdministrationHelper;
-
-    @Resource(name = "portalRequestUtils")
-    private IPortalRequestUtils portalRequestUtils;
-
-    @Autowired
-    private IPersonManager personManager;
 
 	@Autowired(required = true)
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
@@ -129,8 +119,8 @@ public class PortletDefinitionFormValidator {
 					if (def.getParameters().containsKey(param.getName()) && 
 							!StringUtils.isEmpty(def.getParameters().get(param.getName()).getValue())) {
 						
-						String paramValue = def.getParameters().get(param.getName()).getValue();
-						String paramPath = "parameters['" + param.getName() + "'].value";
+						//String paramValue = def.getParameters().get(param.getName()).getValue();
+						//String paramPath = "parameters['" + param.getName() + "'].value";
 						
 						// if this parameter is intended to be a number, ensure
 						// that it is
