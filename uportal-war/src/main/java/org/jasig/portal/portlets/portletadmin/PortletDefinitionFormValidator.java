@@ -50,13 +50,27 @@ public class PortletDefinitionFormValidator {
 		this.portletDefinitionRegistry = portletDefinitionRegistry;
 	}
 	
-	public void validateChooseType(PortletDefinitionForm def, MessageContext context) {
-		if(def.getTypeId() == 0) {
-			context.addMessage(new MessageBuilder().error().source("typeId")
-					.code("please.choose.portlet.type").build());
-		}
-	}
-	
+    public void validateChooseType(PortletDefinitionForm def, MessageContext context) {
+        final int selectedTypeId = def.getTypeId();
+
+        switch (selectedTypeId) {
+            case 0:
+                // No type selected...
+                context.addMessage(new MessageBuilder().error().source("typeId")
+                    .code("please.choose.portlet.type").build());
+                break;
+            default:
+                // User specified a typeId;  validate that it exists
+                final PortletPublishingDefinition cpd = channelPublishingDefinitionDao.getChannelPublishingDefinition(selectedTypeId);
+                if (cpd == null) {
+                    context.addMessage(new MessageBuilder().error().source("typeId")
+                            .code("please.choose.portlet.type").build());
+                }
+                break;
+        }
+
+    }
+
 	public void validateBasicInfo(PortletDefinitionForm def, MessageContext context) {
 		if (StringUtils.isEmpty(def.getFname())) {
 			context.addMessage(new MessageBuilder().error().source("fName")
@@ -102,8 +116,8 @@ public class PortletDefinitionFormValidator {
 					if (def.getParameters().containsKey(param.getName()) && 
 							!StringUtils.isEmpty(def.getParameters().get(param.getName()).getValue())) {
 						
-						String paramValue = def.getParameters().get(param.getName()).getValue();
-						String paramPath = "parameters['" + param.getName() + "'].value";
+						//String paramValue = def.getParameters().get(param.getName()).getValue();
+						//String paramPath = "parameters['" + param.getName() + "'].value";
 						
 						// if this parameter is intended to be a number, ensure
 						// that it is
