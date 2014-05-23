@@ -40,9 +40,6 @@ public class PortletDefinitionFormValidator {
 	private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
 	private IPortletDefinitionRegistry portletDefinitionRegistry;
 
-    @Autowired
-    private PortletAdministrationHelper portletAdministrationHelper;
-
 	@Autowired(required = true)
 	public void setChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao channelPublishingDefinitionDao) {
         this.channelPublishingDefinitionDao = channelPublishingDefinitionDao;
