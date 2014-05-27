@@ -52,20 +52,32 @@
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading">${ fn:escapeXml(person.name )}</h2>
-        <div class="toolbar">
-            <ul>
+        <div class="btn-group toolbar">
                 <c:if test="${ canEdit }">
-                    <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                    <a class="btn btn-default" href="${ editDetailsUrl }"><spring:message code="edit" text="Edit" /></a>
                 </c:if>
-                <li class="btn"><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                <a class="btn btn-default" href="${ permissionsUrl }"><spring:message code="view.permissions" text="Permissions" /></a>
                 <c:if test="${ canDelete }">
-                    <li class="btn"><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                    <a class="btn btn-default" href="${ deleteUrl }"><spring:message code="delete" text="Delete" /></a>
                 </c:if>
+                <a class="btn btn-default" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout" text="Reset User Layout" /></a>
                 <c:if test="${ canImpersonate }">
-                    <li class="btn"><a class="button" href="${ impersonateUrl }"><spring:message code="impersonate"/></a></li>
+                	<a class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuImpersonate" data-toggle="dropdown">
+                    <spring:message code="impersonate" text="Impersonate"/>
+                    <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenuImpersonate">
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="${ impersonateUrl }"><spring:message code="label.default.profile" text="Default Profile"/></a></li>
+                      <c:forEach var="profile" items="${profiles}">
+                        <portlet:actionURL var="swapDynamicURL">
+                            <portlet:param name="execution" value="${flowExecutionKey}" />
+                            <portlet:param name="_eventId" value="swapDynamic"/>
+                            <portlet:param name="profile" value="${profile.value.profileFname}" />
+                        </portlet:actionURL>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="${ swapDynamicURL }">${profile.value.profileName}</a></li>
+                      </c:forEach>
+                    </ul>
                 </c:if>
-                <li class="btn"><a class="button" href="${ resetLayoutUrl }"><spring:message code="reset.user.layout"/></a></li>
-            </ul>
         </div>
     </div> <!-- end: portlet-titlebar -->
     
@@ -75,15 +87,15 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
-                <h3 class="title" role="heading"><spring:message code="attributes"/></h3>
+                <h3 class="title" role="heading"><spring:message code="attributes" text="Attributes" /></h3>
             </div>
             <div class="portlet-content">
 
                 <table class="portlet-table table">
                     <thead>
                         <tr>
-                            <th><spring:message code="attribute.name"/></th>
-                            <th><spring:message code="attribute.value"/></th>
+                            <th><spring:message code="attribute.name" text="Attribute" /></th>
+                            <th><spring:message code="attribute.value" text="Value" /></th>
                         </tr>
                     </thead>
                     <c:forEach items="${ groupedAttributes }" var="attribute">
@@ -106,7 +118,7 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
-                <h3 class="title" role="heading"><spring:message code="parent.groups"/></h3>
+                <h3 class="title" role="heading"><spring:message code="parent.groups" text="Parent Groups" /></h3>
             </div>
             <div class="content">
                 <ul>
@@ -118,7 +130,7 @@
         </div>
         
         <div class="buttons">
-            <a class="button btn" href="${ backUrl }"><spring:message code="back"/></a>
+            <a class="button btn" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
         </div>
     </div>
 </div>

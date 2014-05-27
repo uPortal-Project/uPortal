@@ -46,11 +46,22 @@ public interface IdentitySwapperManager {
     void impersonateUser(PortletRequest portletRequest, IPerson currentUser, String targetUsername);
     
     /**
-     * Setup the request so that a subsequent redirect to the login servlet will result in impersonation
+     * Setup the request so that a subsequent redirect to the login servlet will result in impersonation.
+     * This will login with the default profile.
      * 
      * @throws RuntimeAuthorizationException if the current user cannot impersonate the target user
      */
     void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername);
+    
+    /**
+     * Setup the request so that a subsequent redirect to the login servlet will result in an impersonation
+     * with a selected profile
+     * @param portletRequest The portlet request
+     * @param currentUserName The current username of the administrator
+     * @param targetUsername The target user name of the person being impersonated
+     * @param profile The profile of which you want to login under
+     */
+    void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername, String profile);
     
     /**
      * During impersonation of targetUsername sets the original user to currentUserName for later
@@ -69,6 +80,11 @@ public interface IdentitySwapperManager {
      * @return The target of impersonation, null if there is no impersonation target
      */
     String getTargetUsername(HttpSession session);
+    
+    /**
+     * @return The requested profile as part of an impersonation, null if there is no profile (will use default)
+     */
+    String getTargetProfile(HttpSession session);
 
     /**
      * 
