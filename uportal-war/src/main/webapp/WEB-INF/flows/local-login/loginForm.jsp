@@ -74,9 +74,6 @@
             </div>
         </form>
         
-        <p>
-            <a href="${ forgotPasswordUrl }"><spring:message code="forgot.your.username.or.password"/></a>
-        </p>
 
       </div>  
 
