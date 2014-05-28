@@ -17,3 +17,5 @@ uportal-portlets-overlay/*/overlays
 uportal-platform-api/target/
 **/node_modules/
 npm-debug.log
+/uportal-war/src/main/webapp/media/skins/respondr/gulpfile.js
+/uportal-war/src/main/webapp/media/skins/respondr/package.json
