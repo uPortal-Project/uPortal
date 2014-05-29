@@ -66,7 +66,7 @@ be deployed as, etc.
 #### Initial Deployment
 You must run the initportal target before uPortal is started the first time.
 This target will take care of compiling, deploying, database population and
-other initial tasks. Running initportal again is similiar to hitting a reset
+other initial tasks. Running initportal again is similar to hitting a reset
 button on the portal. Any saved configuration in the portal is lost and a clean
 version of the portal is configured.
 

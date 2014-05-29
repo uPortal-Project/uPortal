@@ -43,8 +43,8 @@ System requirements
   spaces.
 - Nothing else should be running on ports 8005, 8080, or 8887.
 - Path to the @quickstart.name@ folder should not contain spaces.
-- On windows an unzip utility OTHER than the Extrator utility that comes with
-  the OS is required. See: http://www.ja-sig.org/issues/browse/UP-2024
+- On windows an unzip utility OTHER than the Extractor utility that comes with
+  the OS is required. See: https://issues.jasig.org/browse/UP-2024
 
 
 Instructions
@@ -76,7 +76,7 @@ developer, developer
 
 Notes
 --------------------------------------------------------------------------------
--The uPortal source code is included with this distribution. A seperate
+-The uPortal source code is included with this distribution. A separate
  build.xml exists in the @uportal.name@ directory that provides Ant targets to
  deploy changes made to the included uPortal source to the quickstart tomcat
  instance. To run Ant targets for the included uPortal source code cd into the
@@ -85,16 +85,8 @@ Notes
 
 ../ant -p
 
--Log messages for uPortal appear in @tomcat.name@/portal.log. Log files for
- Tomcat appear in @tomcat.name@/logs
- 
-
-Developing with the Quickstart
---------------------------------------------------------------------------------
-The developers build of the quickstart (distinguished by a -dev suffix in the
-download name) includes a copy of uPortal that is still 'attached' to subversion.
-Running svn commands in the @uportal.name@ directory will work as if you checked
-out uPortal from the JA-SIG Subversion repository.
+- Log messages for uPortal appear in @tomcat.name@/logs/uPortal.log .
+- Log files for Tomcat appear in @tomcat.name@/logs
 
 
 
@@ -103,10 +95,16 @@ Contact
 --------------------------------------------------------------------------------
 Please report bugs and suggestions:
 
- http://www.ja-sig.org/issues/browse/UP
+ https://issues.jasig.org/browse/UP
+
+ NOTE: If you are reporting a potential security defect,
+ PLEASE DO NOT INITIALLY POST YOUR REPORT PUBLICLY in this issue tracker or
+ anywhere else.  Instead, please engage the Apereo security contact process.
+
+ https://wiki.jasig.org/display/JSG/Security+Contact+Group
 
 uPortal website:
 
- http://www.uportal.org/
+ http://www.apereo.org/uportal
 
 
