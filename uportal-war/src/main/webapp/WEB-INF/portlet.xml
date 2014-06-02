@@ -324,6 +324,25 @@
         <portlet-info>
             <title>Sql Query</title>
         </portlet-info>
+        <portlet-preferences>
+            <!--
+             | The name of the cache in ehcache.xml to cache the sql results set.  A preconfigured cache named
+             | org.jasig.portal.portlets.sqlquery.SqlQueryPortletController.queryResults exists in ehcache.xml,
+             | but you can define other cache names in ehcache.xml with whatever retention characteristics are
+             | needed and configure different SqlQuery Portlet instances to use the different caches.
+             |
+             | The cache key includes the query string so multiple SqlQuery Portlet instances could share the
+             | same cache if desired.
+             |
+             | To disable caching, use an empty cache name.  WARNING!  To avoid performance issues, disable caching
+             | ONLY for admin portlets or portlets that have VERY low usage!  Configure a new cache with a low
+             | time to live if you want infrequent caching.
+             +-->
+            <preference>
+                <name>cacheName</name>
+                <value></value>
+            </preference>
+        </portlet-preferences>
     </portlet>
     
     <portlet>
