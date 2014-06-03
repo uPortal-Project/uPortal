@@ -51,6 +51,8 @@ import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
 
 public class PortletDefinitionForm implements Serializable {
+
+    private static final String FRAMEWORK_PORTLET_URL = "/uPortal";
 	
 	private static final long serialVersionUID = 892741367149099647L;
 	protected transient final Log log = LogFactory.getLog(getClass());
@@ -199,9 +201,10 @@ public class PortletDefinitionForm implements Serializable {
 	 */
 	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
 
-        // Set appName/portletName if a descriptor is present...
+        // Set appName/portletName if a descriptor is present.  If a framework portlet, the applicationId is /uPortal.
         if (cpd.getPortletDescriptor() != null) {
-            applicationId = cpd.getPortletDescriptor().getWebAppName();
+            applicationId = cpd.getPortletDescriptor().isIsFramework() ? FRAMEWORK_PORTLET_URL
+                    : cpd.getPortletDescriptor().getWebAppName();
             portletName = cpd.getPortletDescriptor().getPortletName();
         }
 
