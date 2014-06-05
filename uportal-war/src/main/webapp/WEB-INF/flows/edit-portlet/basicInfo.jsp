@@ -55,7 +55,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	
 	<!-- Portlet Messages -->
     <spring:hasBindErrors name="portlet">
-        <div class="portlet-msg-error portlet-msg error" role="alert">
+        <div class="portlet-msg-error portlet-msg error text-danger" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
