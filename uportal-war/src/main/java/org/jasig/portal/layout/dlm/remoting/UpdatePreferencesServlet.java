@@ -605,7 +605,7 @@ public class UpdatePreferencesServlet {
                 UserLayoutChannelDescription channelDescription = (UserLayoutChannelDescription)result;
                 try {
                     if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
-                        log.warn("Error deleting the node" + channelId + "from favorites for user " + upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
+                        log.warn("Error deleting the node" + channelId + "from favorites for user " + (upm.getPerson() == null ? "unknown" : upm.getPerson().getID()));
                         response.setStatus(HttpServletResponse.SC_ACCEPTED);
                         return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
                     }
@@ -622,13 +622,9 @@ public class UpdatePreferencesServlet {
                 model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
                 return new ModelAndView("jsonView", model);
             }
-            // save the user's layout
-            ulm.saveUserLayout();
-        } catch (Exception e) {
-            log.warn("Error saving layout", e);
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
         }
+        // save the user's layout
+        ulm.saveUserLayout();
         return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.finding.favorite", "Can''t find favorite", locale)));
     }
 
