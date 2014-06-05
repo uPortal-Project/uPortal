@@ -77,23 +77,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
-            	<td><form:input path="title"/></td>
+            	<td><form:input path="title" size="30"/></td>
             </tr>  
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
-            	<td><form:input path="name"/></td>
+            	<td><form:input path="name" size="30"/></td>
            </tr>      
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
-            	<td><form:input path="fname"/></td>
+            	<td><form:input path="fname" size="30"/></td>
             </tr>     
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
-            	<td><form:input path="description"/></td>
+            	<td><form:textarea path="description" cols="33" rows="4"/></td>
             </tr> 
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
-            	<td><form:input path="timeout"/>ms</td>
+            	<td><form:input path="timeout" size="30"/> ms</td>
             </tr>  
           </tbody>
         </table>
