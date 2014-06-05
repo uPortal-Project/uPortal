@@ -30,27 +30,4 @@
         <up:portletName>cms</up:portletName>
       </portlet-descriptor>
 
-    <step>
-
-      <name>Portlet Descriptor</name>
-
-      <description>
-        Enter the Portlet web-application path and portlet name.
-      </description>
-
-      <parameter>
-        <name>disableDynamicTitle</name>
-        <label>disable.dynamitc.title</label>
-        <description>
-          Disable dynamic title
-        </description>
-        <single-choice-parameter-input display="hidden">
-            <default>true</default>
-            <option value="true" label="true"/>
-            <option value="false" label="true"/>
-        </single-choice-parameter-input>
-      </parameter>
-
-    </step>
-
 </portlet-publishing-definition>
