@@ -157,8 +157,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div>
     <!-- END: General Configuration Section -->
-    
-    
+
+    <!-- Display parameters/preferences sections *only if* the CPD declares steps for editing them. -->
+    <c:if test="${fn:length(cpd.steps) != 0}">
+
     <!-- Portlet Parameters Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
@@ -275,7 +277,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
       </div>
       <!-- END: Portlet Preferences Section -->
-  	
+
+    </c:if>
+
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">

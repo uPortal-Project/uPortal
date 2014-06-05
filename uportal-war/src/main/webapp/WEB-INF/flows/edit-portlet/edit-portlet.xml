@@ -82,8 +82,18 @@
             <evaluate expression="portletAdministrationHelper.loadDefaultsFromPortletDefinitionIfNew(portlet)"/>
         </on-entry>
         <transition on="back" to="chooseType" validate="false"/>
-        <transition on="next" to="setParameters"/>
+        <transition on="next" to="isDisplaySetParametersNext"/>
     </view-state>
+
+    <!-- 
+     | The setParameters state is for choosing options that are defined with 
+     | <step> elements in CPDs;  even GenericPortlet.cpd's <arbitrary-preferences> 
+     | occur in a step.  If, therefore, we're looking at a CPD with no steps, we
+     | can (and should) exclude the setParameters state entirely.
+     +-->
+    <decision-state id="isDisplaySetParametersNext">
+        <if test="cpd.getSteps().isEmpty()" then="chooseCategory" else="setParameters"/>
+    </decision-state>
 
     <!-- PORTLET PARAMETERS view -->
     <view-state id="setParameters" model="portlet">
@@ -104,6 +114,10 @@
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
     </view-state>
+
+    <decision-state id="isDisplaySetParametersBack">
+        <if test="cpd.getSteps().isEmpty()" then="basicInfo" else="setParameters"/>
+    </decision-state>
 
     <!-- CATEGORIES view -->
     <subflow-state id="chooseCategory" subflow="entity-selector">
@@ -131,7 +145,7 @@
         <input name="selectedGroups" value="portlet.categories"/>
         <output name="selectedGroups" value="portlet.categories"/>
 
-        <transition on="back" to="setParameters"/>
+        <transition on="back" to="isDisplaySetParametersBack"/>
         <transition on="finish" to="chooseCategoryNextScreen"/>
     </subflow-state>
 
