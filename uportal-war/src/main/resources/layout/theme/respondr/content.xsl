@@ -574,11 +574,12 @@
       <!-- Favorites -->
       <xsl:if test="$hasFavorites='true'">
           <xsl:choose>
-            <xsl:when test="$isInFavorites!='true'"> <!-- Add to favorite. -->
+          <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
             <li>
                 <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
                 class="addToFavoriteLink{@chanID}">
                     <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
+                </a>
                     <!-- used for the ajax call to add to favorites in up-favorite.js-->
                     <script type="text/javascript">
                         (function($) {
@@ -590,7 +591,6 @@
                              });
                          })(up.jQuery);
                     </script>
-                </a>
             </li>
           </xsl:when>
           <xsl:otherwise><!-- Remove From favorites. -->
@@ -599,19 +599,15 @@
                    title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
                    class="removeFromFavoriteLink{@chanID}">
                     <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
-                    <!-- used for the ajax call to remove from favorites in up-favorite.js-->
-                    <script type="text/javascript">
-                        (function($) {
-                            $( document ).ready(function() {
-                                $('.removeFromFavoriteLink<xsl:value-of
-                                     select="@chanID"/>').click({
-                                         portletId : '<xsl:value-of select="@ID"/>',
-                                         context : '<xsl:value-of select="$CONTEXT_PATH"/>'},
-                                         up.removeFromFavorite);
-                            });
-                        })(up.jQuery);
-                    </script>
                 </a>
+                <!-- used for the ajax call to remove from favorites in up-favorite.js-->
+                <script type="text/javascript">
+                    (function($) {
+                        $( document ).ready(function() {
+                            $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                        });
+                    })(up.jQuery);
+                </script>
             </li>
           </xsl:otherwise>
           </xsl:choose>
