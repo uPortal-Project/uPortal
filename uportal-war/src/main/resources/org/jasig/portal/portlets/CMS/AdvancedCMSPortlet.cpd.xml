@@ -32,25 +32,11 @@
 
     <step>
 
-        <name>Portlet Descriptor</name>
+        <name>Advanced CMS Settings</name>
 
         <description>
-            Enter the Portlet web-application path and portlet name.
+            These settings are specific to this type of portlet.
         </description>
-
-        <parameter>
-            <name>disableDynamicTitle</name>
-            <label>disable.dynamic.title</label>
-            <description>
-              Disable dynamic title
-            </description>
-            <example>false</example>
-            <single-choice-parameter-input>
-                <default>true</default>
-                <option value="true" label="true" />
-                <option value="false" label="false" />
-            </single-choice-parameter-input>
-        </parameter>
 
         <preference>
             <name>cleanContent</name>

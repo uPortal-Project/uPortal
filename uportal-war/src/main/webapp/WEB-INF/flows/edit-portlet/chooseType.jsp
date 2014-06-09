@@ -80,10 +80,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ portletTypes }" var="chanTypeEntry">
                 <tr>
                   <td align="center">
-                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
+                    <form:radiobutton id="${chanTypeEntry.key.id}" path="typeId" value="${chanTypeEntry.key.id}" cssClass="portlet-form-input-field"/>
                   </td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.name )}</td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.description )}</td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.name}" /></label></td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.description}" /></label></td>
                 </tr>
             </c:forEach>
           </tbody>
@@ -96,13 +96,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button btn primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button btn primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

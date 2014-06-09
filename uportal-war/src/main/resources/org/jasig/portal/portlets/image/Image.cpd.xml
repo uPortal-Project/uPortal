@@ -25,11 +25,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
 
-      <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
+    <portlet-descriptor xmlns:up="https://source.jasig.org/schemas/uportal">
         <up:isFramework>true</up:isFramework>
         <up:portletName>Image</up:portletName>
-      </portlet-descriptor>
-      
+    </portlet-descriptor>
+
     <step>
 
         <name>Image information</name>
@@ -37,17 +37,7 @@
         <description>
             Enter the image URI, dimensions, border, and URL to link to if the
             image is clicked
-          </description>
-
-        <parameter>
-            <name>disableDynamicTitle</name>
-            <label>disable.dynamic.title</label>
-            <single-choice-parameter-input display="hidden">
-                <default>true</default>
-                <option value="false" label="false" />
-                <option value="true" label="true" />
-            </single-choice-parameter-input>
-        </parameter>
+        </description>
 
         <preference>
             <name>img-uri</name>

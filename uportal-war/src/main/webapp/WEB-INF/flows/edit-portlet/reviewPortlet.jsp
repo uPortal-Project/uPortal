@@ -157,8 +157,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div>
     <!-- END: General Configuration Section -->
-    
-    
+
+    <!-- Display parameters/preferences sections *only if* the CPD declares steps for editing them. -->
+    <c:if test="${fn:length(cpd.steps) != 0}">
+
     <!-- Portlet Parameters Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
@@ -275,7 +277,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
       </div>
       <!-- END: Portlet Preferences Section -->
-  	
+
+    </c:if>
+
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
       <div class="titlebar">
@@ -360,13 +364,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
     </div> <!-- end: portlet-section -->
     
-		<!-- Buttons -->
+    <!-- Buttons -->
+    <c:set var="promptConfigMode" value="${supportsConfig and portlet.id == null}" />
     <div class="buttons">
-    	<a class="button btn primary" href="${ saveUrl }"><spring:message code="save"/></a>
-    	<c:if test="${supportsConfig and portlet.id == null}">
-    	   <a class="button btn primary" href="${ saveAndConfigUrl }"><spring:message code="save.and.configure"/></a>
-    	</c:if>
-    	<a class="button btn" href="${ cancelUrl }"><spring:message code="cancel"/></a>
+        <a class="button btn<c:if test="${!promptConfigMode}"> btn-primary</c:if>" href="${saveUrl}"><spring:message code="save"/></a>
+        <c:if test="${promptConfigMode}">
+           <a class="button btn btn-primary" href="${saveAndConfigUrl}"><spring:message code="save.and.configure"/></a>
+        </c:if>
+        <a class="button btn btn-link" href="${cancelUrl}"><spring:message code="cancel"/></a>
     </div>
     
   </div> <!-- end: portlet-content -->

@@ -24,25 +24,25 @@
     xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
-    
+
     <step>
       <name>display.settings</name>
       <description>
         These options influence how your Portlet is displayed within the portal
       </description>
-    
+
         <parameter>
             <name>iconUrl</name>
             <label>display.icon.url</label>
             <single-text-parameter-input display="text"/>
         </parameter>
-    
+
         <parameter>
             <name>mobileIconUrl</name>
             <label>display.mobile.icon.url</label>
             <single-text-parameter-input display="text"/>
         </parameter>
-    
+
         <parameter>
             <name>showChrome</name>
             <label>show.portlet.window.chrome</label>
@@ -52,7 +52,7 @@
                 <option value="true" label="true"/>
             </single-choice-parameter-input>
         </parameter>
-    
+
         <parameter>
             <name>alternativeMaximixedLink</name>
             <label>open.alternative.url.in.maximized.view</label>
@@ -68,7 +68,7 @@
                 <option value="true" label="true"/>
             </single-choice-parameter-input>
         </parameter>
-    
+
         <parameter>
             <name>highlight</name>
             <label>use.highlighted.appearance</label>
@@ -88,8 +88,7 @@
                 <option value="true" label="true"/>
             </single-choice-parameter-input>
         </parameter>
-    
-        
+
         <parameter>
             <name>blockImpersonation</name>
             <label>hide.in.impersonation.view</label>
@@ -106,8 +105,8 @@
             <description>Order in quicklinks list in portal sidebar</description>
             <single-text-parameter-input display="text"/>
         </parameter>
-   
-	<parameter>
+
+        <parameter>
             <name>printable</name>
             <label>portlet.print.enable</label>
             <single-choice-parameter-input display="select">
@@ -116,7 +115,20 @@
                 <option value="true" label="true"/>
             </single-choice-parameter-input>
         </parameter>
-    
+
+        <parameter>
+            <name>disableDynamicTitle</name>
+            <label>disable.dynamitc.title</label>
+            <description>
+                Disable dynamic title
+            </description>
+            <single-choice-parameter-input display="select">
+                <default>true</default>
+                <option value="true" label="true"/>
+                <option value="false" label="true"/>
+            </single-choice-parameter-input>
+        </parameter>
+
     </step>
-    
+
 </portlet-publishing-definition>

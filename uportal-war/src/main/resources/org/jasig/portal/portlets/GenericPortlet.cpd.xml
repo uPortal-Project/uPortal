@@ -24,43 +24,15 @@
     xmlns="https://source.jasig.org/schemas/uportal/portlet-publishing"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/portlet-publishing ../../../../xsd/portlet-publishing/portlet-publishing-definition.xsd">
-    
-    <step>
-        <name>Portlet Descriptor</name>
-
-        <description>
-            Enter the Portlet web-application path and portlet name.
-        </description>
-    </step>
-
-    <step>
-
-        <name>Portlet Titles</name>
-        <description></description>
-
-        <parameter>
-            <name>disableDynamicTitle</name>
-            <label>disable.dynamic.title</label>
-            <description>
-              Disable dynamic portlet titles.
-            </description>
-            <single-choice-parameter-input display="select">
-                <default>true</default>
-                <option value="false" label="false" />
-                <option value="true" label="true" />
-            </single-choice-parameter-input>
-        </parameter>
-
-    </step>
 
     <step>
 
         <name>Portlet Preferences</name>
 
         <description>
-        These are the preferences of the portlet itself.  There may
-        be zero or more preferences.
-      </description>
+            These are the preferences of the portlet itself.  There may
+            be zero or more preferences.
+        </description>
 
         <arbitrary-preferences>true</arbitrary-preferences>
 

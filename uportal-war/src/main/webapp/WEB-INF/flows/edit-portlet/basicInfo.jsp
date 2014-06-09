@@ -55,7 +55,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	
 	<!-- Portlet Messages -->
     <spring:hasBindErrors name="portlet">
-        <div class="portlet-msg-error portlet-msg error" role="alert">
+        <div class="portlet-msg-error portlet-msg error text-danger" role="alert">
             <form:errors path="*" element="div"/>
         </div> <!-- end: portlet-msg -->
     </spring:hasBindErrors>
@@ -77,23 +77,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <tbody>
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
-            	<td><form:input path="title"/></td>
+            	<td><form:input path="title" size="30"/></td>
             </tr>  
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
-            	<td><form:input path="name"/></td>
+            	<td><form:input path="name" size="30"/></td>
            </tr>      
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
-            	<td><form:input path="fname"/></td>
+            	<td><form:input path="fname" size="30"/></td>
             </tr>     
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
-            	<td><form:input path="description"/></td>
+            	<td><form:textarea path="description" cols="33" rows="4"/></td>
             </tr> 
             <tr>
             	<td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
-            	<td><form:input path="timeout"/>ms</td>
+            	<td><form:input path="timeout" size="30"/> ms</td>
             </tr>  
           </tbody>
         </table>
@@ -139,14 +139,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button btn primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button btn primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
           <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
         </c:otherwise>
       </c:choose>
-      <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div>
     
     </form:form> <!-- End Form -->
