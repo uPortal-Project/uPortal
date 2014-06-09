@@ -34,6 +34,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.beanutils.BeanPredicate;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.portal.IUserIdentityStore;
@@ -575,34 +578,54 @@ public class UpdatePreferencesServlet {
        }
     }
     
+    /**
+     * This method removes the channelId specified from favorites. Note that even if you pass in the layout channel id, it will always remove from the favorites.
+     * @param channelId The long channel ID that is used to determine which fname to remove from favorites
+     * @param request 
+     * @param response
+     * @return returns a mav object with a response attribute for noty
+     * @throws IOException if it has problem reading the layout file.
+     */
     @RequestMapping(method= RequestMethod.POST , params = "action=removeFavorite")
     public ModelAndView removeFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        //setup
         UserPreferencesManager upm = (UserPreferencesManager) userInstanceManager.getUserInstance(request).getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
         final Locale locale = RequestContextUtils.getLocale(request);
+        IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(channelId);
         
-        try {
-            if (!ulm.deleteNode(channelId)) {
-                 log.warn("Error deleting the node {} from favorites for user {}.",
-                        channelId, upm.getPerson() == null ? "unknown" : upm.getPerson().getID());
-                 response.setStatus(HttpServletResponse.SC_ACCEPTED);
-                 return new ModelAndView("jsonView",
-                         Collections.singletonMap("response",
-                                 getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+        if(portletDefinition != null &&  StringUtils.isNotBlank(portletDefinition.getFName())) {
+            String functionalName = portletDefinition.getFName();
+            List<IUserLayoutNodeDescription> favoritePortlets = FavoritesUtils.getFavoritePortlets(ulm.getUserLayout());
+            
+            //search for the favorite to delete
+            EqualPredicate nameEqlPredicate = new EqualPredicate(functionalName);
+            Object result = CollectionUtils.find(favoritePortlets, new BeanPredicate("functionalName",nameEqlPredicate));
+            
+            if(result != null && result instanceof UserLayoutChannelDescription) {
+                UserLayoutChannelDescription channelDescription = (UserLayoutChannelDescription)result;
+                try {
+                    if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
+                        log.warn("Error deleting the node" + channelId + "from favorites for user " + (upm.getPerson() == null ? "unknown" : upm.getPerson().getID()));
+                        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+                    }
+                    // save the user's layout
+                    ulm.saveUserLayout();
+                } catch (Exception e) {
+                    log.warn("Error saving layout", e);
+                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                    return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
+                }
+                
+                //document success for notifications
+                Map<String, String> model = new HashMap<String, String>();
+                model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
+                return new ModelAndView("jsonView", model);
             }
-            // save the user's layout
-            ulm.saveUserLayout();
-        } catch (Exception e) {
-            log.warn("Error saving layout", e);
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
         }
-
-        //document success for notifications
-        Map<String, String> model = new HashMap<String, String>();
-        model.put("response", getMessage("success.remove.portlet", "Removed from Favorites successfully", locale));
-        return new ModelAndView("jsonView", model);
+        // save the user's layout
+        ulm.saveUserLayout();
+        return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.finding.favorite", "Can''t find favorite", locale)));
     }
 
 	/**

@@ -23,7 +23,7 @@
   username="favorite-lo">
   <folder ID="s1" hidden="false" immutable="false" name="Root folder" type="root" unremovable="true">
     <folder ID="s4" dlm:deleteAllowed="false" dlm:editAllowed="false" hidden="false" immutable="false" name="_favorite" type="favorites" unremovable="false">
-      <folder ID="s5" dlm:deleteAllowed="false" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
+      <folder ID="s5" dlm:deleteAllowed="false" hidden="false" immutable="false" name="Column" type="favorite_column" unremovable="false">
         <structure-attribute>
           <name>width</name>
           <value>60%</value>
