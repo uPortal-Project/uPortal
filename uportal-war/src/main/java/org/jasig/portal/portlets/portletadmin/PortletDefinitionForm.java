@@ -49,6 +49,7 @@ import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.BooleanAttributeFactory;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
+import org.jasig.portal.xml.PortletDescriptor;
 
 public class PortletDefinitionForm implements Serializable {
 
@@ -201,11 +202,19 @@ public class PortletDefinitionForm implements Serializable {
 	 */
 	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
 
-        // Set appName/portletName if a descriptor is present.  If a framework portlet, the applicationId is /uPortal.
+        // Set appName/portletName if a descriptor is present.  If a framework
+        // portlet, the applicationId is /uPortal.
         if (cpd.getPortletDescriptor() != null) {
-            applicationId = cpd.getPortletDescriptor().isIsFramework() ? FRAMEWORK_PORTLET_URL
-                    : cpd.getPortletDescriptor().getWebAppName();
-            portletName = cpd.getPortletDescriptor().getPortletName();
+            final PortletDescriptor pDesc = cpd.getPortletDescriptor();
+            // PortletDescriptor is a class generated from XSD.  The value of
+            // isIsFramework() will commonly be null.
+            final boolean isFramework = pDesc.isIsFramework() != null
+                    ? pDesc.isIsFramework()
+                    : false;
+            applicationId = isFramework
+                    ? FRAMEWORK_PORTLET_URL
+                    : pDesc.getWebAppName();
+            portletName = pDesc.getPortletName();
         }
 
 		// set default values for all portlet parameters
