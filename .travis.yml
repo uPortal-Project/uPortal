@@ -1,0 +1,10 @@
+language: java
+branches:
+  only:
+    - master
+
+# This Travis configuration has the effect of suppressing Travis CI builds of branches where this .travis.yml file
+# is in the root of the project and that branch is not master.
+#
+# So, in practice, drop this file into SSP and other branches you want Travis-CI builds suppressed in, and 
+# Travis will stop bothering you about those not-Travis-using branches.
