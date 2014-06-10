@@ -57,6 +57,17 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
+        <!-- SSP-2380. Overrides an inherited repo, which historically resulted in a
+             corrupt joda-money download. Not totally sure where the repo dep is coming from.
+             Ended up totally blacklisting it here b/c while switching to https makes the joda
+             problem go away, you end up with tons of useless attempts to resolve deps from this
+             repo, most or all of which don't work. -->
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
         <repository>            
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
