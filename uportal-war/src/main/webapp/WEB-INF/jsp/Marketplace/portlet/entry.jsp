@@ -168,47 +168,62 @@
         <%-- Start with Screen shots and what not --%>
         <%--TODO replace carousel with more accessibility friendly element --%>
         <c:if test="${not empty portlet.screenShots}">
-            <div class="row">
-                <div class="col-xs-12 col-md-4">
-                    <p>
-                        <span class="marketplace_section_header"><spring:message code="screenshots.cap" text="SCREENSHOTS/VIDEOS"/></span>
-                    </p>
-                    <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
-                        <c:set var="validUrlCount" value="0"/>
-                        <div class="carousel-inner marketplace_carousel_inner">
-                        <c:forEach var="screenShot" items="${portlet.screenShots}">
-                            <c:set var="imageUrl" value="${screenShot.url}" />
-                            <c:if test="${up:isValidUrl(imageUrl)}">
-                                    <div class="item marketplace_screen_shots">
-                                       <img src="${imageUrl}" alt="screenshot for portlet">
-                                        <c:if test="${not empty screenShot.captions}">
-                                            <div class="carousel-caption">
-                                                <c:forEach var="portletCaption" items="${screenShot.captions}">
-                                                    <h3>${portletCaption}</h3>
-                                                </c:forEach>
-                                            </div>
-                                        </c:if>
-                                        <c:set var="validUrlCount" value="${validUrlCount + 1}" />
-                                    </div>
-                            </c:if>
-                        </c:forEach>
-                        </div>
-                        <ol class="carousel-indicators marketplace_carousel_indicators">
-                            <c:forEach var="i" begin="0" end="${validUrlCount-1}">
-                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
-                            </c:forEach>
-                        </ol>
-                        <c:if test="${validUrlCount gt 1}">
-                            <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
-                                <span class="glyphicon glyphicon-chevron-left"></span>
-                            </a>
-                            <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
-                                <span class="glyphicon glyphicon-chevron-right"></span>
-                            </a>
+            <c:set var="validUrlCount" value="0"/>
+            <c:forEach var="screenShot" items="${portlet.screenShots}">
+                <c:set var="imageUrl" value="${screenShot.url}" />
+                <c:if test="${up:isValidUrl(imageUrl)}">
+                    <c:set var="validUrlCount" value="${validUrlCount + 1}" />
+                    <%--If validUrlCount is 1 then we can make a header--%>
+                    <c:if test="${validUrlCount==1}">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-4">
+                                <p>
+                                    <span class="marketplace_section_header">
+                                        <spring:message code="screenshots.cap" text="SCREENSHOTS/VIDEOS"/>
+                                    </span>
+                                </p>
+                                <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
+                                    <%--Adds a carousel inner div --%>
+                                    <div class="carousel-inner marketplace_carousel_inner">
+                    </c:if>
+                    <div class="item marketplace_screen_shots">
+                       <img src="${imageUrl}" alt="screenshot for portlet">
+                        <c:if test="${not empty screenShot.captions}">
+                            <div class="carousel-caption">
+                                <c:forEach var="portletCaption" items="${screenShot.captions}">
+                                    <h3>${portletCaption}</h3>
+                                </c:forEach>
+                            </div>
                         </c:if>
                     </div>
+                </c:if>
+            </c:forEach>
+            <%--Closes the carousel-inner marketplace_carousel_inner div --%>
+            <c:if test="${validUrlCount gt 0}">
                 </div>
-            </div>
+            </c:if>
+            <%--Only add the little prev/next arrows when screenshots>1 --%>
+            <c:if test="${validUrlCount gt 1}">
+                <ol class="carousel-indicators marketplace_carousel_indicators">
+                    <c:forEach var="i" begin="0" end="${validUrlCount-1}">
+                        <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
+                    </c:forEach>
+                </ol>
+                <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+            </c:if>
+            <c:if test="${validUrlCount gt 0}">
+                <%--Closes the marketplace_screenshots_and_videos div--%>
+                </div>
+                <%--Closes the col div --%>
+                </div>
+                <%--Closes the row div --%>
+                </div>
+            </c:if>
         </c:if>
         <br>
         <div class="row col-xs-12" style="clear:both;">
