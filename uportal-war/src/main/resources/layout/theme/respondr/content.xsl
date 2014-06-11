@@ -398,18 +398,9 @@
 
       <!-- Remove Icon -->
       <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
-        <xsl:variable name="removePortletUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url type="action">
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:param name="remove_target" value="{@ID}"/>
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
+        <!-- calls a layout api on click that removes the current node from the layout -->
         <li>
-          <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="{$removePortletUrl}" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
+          <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
         </li>
       </xsl:if>
 
