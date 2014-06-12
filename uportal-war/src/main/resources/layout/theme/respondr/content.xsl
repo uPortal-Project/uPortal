@@ -397,7 +397,7 @@
       </xsl:if>
 
       <!-- Remove Icon -->
-      <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
+      <xsl:if test="@unremovable='false' and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
         <!-- calls a layout api on click that removes the current node from the layout -->
         <li>
           <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
