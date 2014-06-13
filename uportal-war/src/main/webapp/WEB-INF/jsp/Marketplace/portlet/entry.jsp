@@ -153,6 +153,19 @@
                     </button>
                     <ul class="dropdown-menu marketplace_dropdown_menu" role="menu"  style="right: 0; left: auto;">
                         <li><a href="${portlet.renderUrl}">Go</a></li>
+                        <li>
+                            <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
+                            <a href="javascript:;" title="${atptmfTitle}" class="${n}addToFavoriteLink">
+                                <span><spring:message code="add.to.my.favorites" text="Add to My Favorites"/></span>
+                            </a>
+                            <!-- used for the ajax call to add to favorites in up-favorite.js-->
+                            <script type="text/javascript">
+                                (function($) {
+                                    $( document ).ready(function() {
+                                        $('.${n}addToFavoriteLink').click({portletId : '${portlet.portletDefinitionId}', context : '${renderRequest.contextPath}'}, up.addToFavorite);
+                                    });
+                                })(up.jQuery);
+                            </script></li>
                         <li class="divider"></li>
                         <li><a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto"><spring:message code="link.to" text="Link to ..." /></a></li>
                     </ul>
