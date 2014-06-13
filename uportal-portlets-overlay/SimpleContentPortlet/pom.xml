@@ -96,6 +96,7 @@
                                 </component>
                             </components>
                             <componentProperties>
+                                <persistenceunit>AttachmentsDb</persistenceunit>
                                 <propertyfile>${project.build.directory}/classes/hibernate.properties</propertyfile>
                                 <drop>true</drop>
                             </componentProperties>
