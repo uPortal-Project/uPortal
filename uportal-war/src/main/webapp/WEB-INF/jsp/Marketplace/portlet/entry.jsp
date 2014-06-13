@@ -130,6 +130,15 @@
     
     #${n} .marketplace_carousel_inner img {
         max-height : 20em;
+        position:absolute;
+        top:0;
+        bottom:0;
+        right:0;
+        left:0;
+    }
+    
+    #${n} .marketplace_carousel_inner .item{
+        height: 20em;
     }
 
     #${n} #${n}marketplace_user_review_input, #${n}marketplace_user_rating_submit_button{
