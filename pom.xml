@@ -6,7 +6,7 @@
         <artifactId>jasig-parent</artifactId>
         <version>35</version>
     </parent>
-    
+
     <prerequisites>
         <maven>3.0.0</maven>
     </prerequisites>
@@ -20,19 +20,19 @@
     <name>uPortal Parent</name>
     <description>The root project definition for the uPortal project.</description>
     <url>${jasig-site-base}/uportal/${project.version}</url>
-    
+
     <scm>
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
         <url>https://github.com/Jasig/uPortal</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <url>${jasig-issues-base}/UP</url>
         <system>${jasig-issues-system}</system>
     </issueManagement>
-    
+
     <ciManagement>
         <system>bamboo</system>
         <url>http://developer.jasig.org/bamboo/browse/UP</url>
@@ -49,14 +49,14 @@
     </ciManagement>
 
     <repositories>
-        <repository>            
+        <repository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
-        <repository>            
+        <repository>
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
@@ -66,14 +66,14 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>            
+        <pluginRepository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
-        <pluginRepository>            
+        <pluginRepository>
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
@@ -118,7 +118,7 @@
         <jasig-widget-portlets.version>2.0.1</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.0.7</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.0.3</NotificationPortlet.version>
-        <SimpleContentPortlet.version>1.0.7</SimpleContentPortlet.version>
+        <SimpleContentPortlet.version>1.0.9</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.1.0</WeatherPortlet.version>
         <WebProxyPortlet.version>1.1.8</WebProxyPortlet.version>
 
@@ -216,7 +216,7 @@
          | they log in. 
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
-        
+
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
         <project.build.targetVersion>1.6</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -494,7 +494,7 @@
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>jsp-api</artifactId>
                 <version>${jsp-api.version}</version>
-            </dependency> 
+            </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
@@ -765,8 +765,8 @@
                 <version>${jasig-portlet-utils.version}</version>
                 <exclusions>
                     <exclusion>
-                      <artifactId>jcl-over-slf4j</artifactId>
-                      <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
+                        <groupId>org.slf4j</groupId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -780,8 +780,8 @@
                 <version>${resource-server.version}</version>
                 <exclusions>
                     <exclusion>
-                         <groupId>org.slf4j</groupId>
-                         <artifactId>jcl-over-slf4j</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -791,8 +791,8 @@
                 <version>${resource-server.version}</version>
                 <exclusions>
                     <exclusion>
-                         <groupId>org.slf4j</groupId>
-                         <artifactId>jcl-over-slf4j</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -802,8 +802,8 @@
                 <version>${resource-server.version}</version>
                 <exclusions>
                     <exclusion>
-                         <groupId>org.slf4j</groupId>
-                         <artifactId>jcl-over-slf4j</artifactId>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>jcl-over-slf4j</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -835,11 +835,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency> 
-                <groupId>org.jasypt</groupId> 
-                <artifactId>jasypt</artifactId> 
-                <version>${jasypt.version}</version> 
-            </dependency> 
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>${jasypt.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.core</artifactId>
@@ -1094,7 +1094,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -1122,12 +1122,12 @@
                         </goals>
                         <configuration>
                             <rules>
-                              <requireMavenVersion>
-                                <version>2.2</version>
-                              </requireMavenVersion>
-                              <requireJavaVersion>
-                                <version>1.6</version>
-                              </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>2.2</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>1.6</version>
+                                </requireJavaVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -1315,7 +1315,7 @@
                     <groupId>org.apache.portals.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
                     <version>${pluto.version}</version>
-                </plugin>  
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
