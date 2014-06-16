@@ -32,7 +32,7 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead" data-role="header">
         <h2 class="title" role="heading"><spring:message code="set.new.account.password"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main" data-role="content">
 
@@ -44,7 +44,12 @@
                     <form:errors path="*" element="div"/>
                 </div> <!-- end: portlet-msg -->
             </spring:hasBindErrors>
-        
+            <c:if test='${flowRequestContext.flowScope.contains("createPasswordError")}'>
+                <div class="portlet-msg-error portlet-msg error" role="alert">
+                    <div><spring:message code="update.password.failed"/></div>
+                </div>
+            </c:if>
+
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
@@ -67,12 +72,11 @@
                         </tbody>
                     </table>
                 </div>
-            </div>    
-            
+            </div>
+
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-            
                     <div class="buttons utilities">
                         <input class="button btn primary" type="submit" value="<spring:message code="update.password"/>" name="_eventId_updatePassword"/>
                     </div>
@@ -80,7 +84,5 @@
             </div>
 
         </form:form>
-            
-        
     </div>
 </div>

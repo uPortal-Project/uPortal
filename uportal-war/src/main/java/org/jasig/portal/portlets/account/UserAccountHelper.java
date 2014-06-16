@@ -411,8 +411,8 @@ public class UserAccountHelper {
         final Locale[] userLocales = localeStore.getUserLocales(person);
         LocaleManager localeManager = new LocaleManager(person, userLocales);
         Locale locale = localeManager.getLocales()[0];
-        
-        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, "reset-password", UrlType.RENDER);
+
+        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, "login", UrlType.RENDER);
         IPortletUrlBuilder portletUrlBuilder = builder.getTargetedPortletUrlBuilder();
         portletUrlBuilder.addParameter("username", account.getName());
         portletUrlBuilder.addParameter("loginToken", (String) account.getAttributeValue("loginToken"));
@@ -478,6 +478,10 @@ public class UserAccountHelper {
 
         final String password = form.getPassword();
         if (StringUtils.isNotBlank(password)) {
+            if (!password.equals(form.getConfirmPassword())) {
+                throw new RuntimeException("Passwords don't match");
+            }
+
             ILocalAccountPerson account = accountDao.getPerson(username);
             account.setPassword(passwordService.encryptPassword(password));
             account.setLastPasswordChange(new Date());
