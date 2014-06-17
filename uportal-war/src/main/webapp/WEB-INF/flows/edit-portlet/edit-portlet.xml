@@ -47,9 +47,20 @@
     <!-- If we're creating a new portlet, display the first step in the workflow.
         Otherwise, display the portlet summary view. --> 
     <decision-state id="isPortletNew">
-        <if test="completed" then="reviewPortlet" else="chooseType"/>
+        <if test="completed" then="reviewPortlet" else="isOnlyOnePortletTypeAvailable"/>
+    </decision-state>
+    
+    <decision-state id="isOnlyOnePortletTypeAvailable">
+        <if test="portletTypes.size() == 1" then="chooseDefaultPortlet" else="chooseType" />
     </decision-state>
 
+    <!-- if there is only one available portlet type, select it, then move to the next step automatically -->
+    <action-state id="chooseDefaultPortlet">
+        <evaluate expression="portletAdministrationHelper.updateFormForSinglePortletType(portletTypes, portlet)"
+        	result="flowScope.cpd" />
+        <transition to="afterChooseType"/> 
+    </action-state>
+    
     <!-- PORTLET TYPE view -->
     <view-state id="chooseType" model="portlet">
         <transition on="next" to="afterChooseType">

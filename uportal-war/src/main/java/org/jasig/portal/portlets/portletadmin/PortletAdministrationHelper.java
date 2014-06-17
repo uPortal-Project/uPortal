@@ -897,6 +897,27 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    return false;
 	}
 	
+	/**
+	 * updates the editPortlet form with the portletType 
+	 * of the first (and only) portletDefinition passed in through the Map of 
+	 * portlet definitions.
+	 * @param portletDefinitions
+	 * @param form
+	 * @return PortletPublishingDefinition of the first portlet definition in the 
+	 * list, null if the list is empty or has more than one element. 
+	 */
+	public PortletPublishingDefinition updateFormForSinglePortletType( Map<IPortletType, PortletPublishingDefinition> portletDefinitions, PortletDefinitionForm form) {
+		if (portletDefinitions.size() != 1) {
+			return null;
+		}
+		IPortletType portletType = portletDefinitions.keySet().iterator().next();
+		form.setTypeId(portletType.getId());
+		PortletPublishingDefinition cpd = portletPublishingDefinitionDao.getChannelPublishingDefinition(portletType.getId());
+		form.setChannelPublishingDefinition(cpd);
+		
+		return cpd;
+	}
+	
 	public boolean offerPortletSelection(PortletDefinitionForm form) {
 		final IPortletType portletType = this.portletTypeRegistry.getPortletType(form.getTypeId());
 		final PortletPublishingDefinition portletPublishingDefinition = this.portletPublishingDefinitionDao.getChannelPublishingDefinition(portletType.getId());
