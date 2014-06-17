@@ -21,13 +21,15 @@
 
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<!-- START: VALUES BEING PASSED FROM BACKEND -->
+<%-- Portlet Namespace  --%>
+<c:set var="n"><portlet:namespace/></c:set>
+
+<%-- Parameters --%>
 <portlet:actionURL var="queryUrl">
 	<portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
-<!-- END: VALUES BEING PASSED FROM BACKEND -->
 
-<!--
+<%--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
 | the user interface of this portlet
@@ -36,10 +38,41 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | (like jQuery and the Fluid Skinning System)
 | and more, refer to:
 | http://www.ja-sig.org/wiki/x/cQ
--->
+--%>
+
+<%-- Styles specific to this portlet --%>
+<style type="text/css">
+  #${n} .portlet-section {
+    margin-bottom: 2em;
+  }
+
+  #${n} .portlet-section .titlebar {
+    margin: 2em 0;
+  }
+
+  #${n} .portlet-section .titlebar .title {
+    background-color: #f5f6f7;
+    border-bottom: 2px solid #eee;
+    border-radius: 4px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0.25em 1em;
+  }
+
+  #${n} .form-group label {
+    color: #000;
+  }
+
+  #${n} .buttons {
+    border-top: 1px dotted #ccc;
+    border-bottom: 1px dotted #ccc;
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-basicinfo" role="section">
+<div class="fl-widget portlet ptl-mgr view-basicinfo" id="${n}" role="section">
 
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -51,52 +84,57 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
     
-    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST">
+    <form:form modelAttribute="portlet" action="${queryUrl}" method="POST" role="form" class="form-horizontal">
 	
 	<!-- Portlet Messages -->
     <spring:hasBindErrors name="portlet">
-        <div class="portlet-msg-error portlet-msg error text-danger" role="alert">
+        <!--div class="portlet-msg-error portlet-msg error text-danger" role="alert">
             <form:errors path="*" element="div"/>
-        </div> <!-- end: portlet-msg -->
+        </div--> <!-- end: portlet-msg -->
+
+        <div class="alert alert-danger" role="alert">
+          <form:errors path="*" element="div"/>
+        </div>
     </spring:hasBindErrors>
 		
     <!-- Portlet Section -->
     <div class="portlet-section" role="region">
-      <div class="titlbar">
+      <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
       </div>
       <div class="content">
 
-        <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlets.general.settings"/>">
-          <thead>
-            <tr>
-            	<th><spring:message code="option"/></th>
-              <th><spring:message code="setting"/></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.title"/>:</td>
-            	<td><form:input path="title" size="30"/></td>
-            </tr>  
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.name"/>:</td>
-            	<td><form:input path="name" size="30"/></td>
-           </tr>      
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.functional.name"/>:</td>
-            	<td><form:input path="fname" size="30"/></td>
-            </tr>     
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.description"/>:</td>
-            	<td><form:textarea path="description" cols="33" rows="4"/></td>
-            </tr> 
-            <tr>
-            	<td class="fl-text-align-right"><spring:message code="portlet.timeout"/>:</td>
-            	<td><form:input path="timeout" size="30"/> ms</td>
-            </tr>  
-          </tbody>
-        </table>
+        <div class="form-group">
+          <label for="portletTitle" class="col-sm-2 control-label"><spring:message code="portlet.title"/></label>
+          <div class="col-sm-10">
+            <form:input path="title" type="text" class="form-control" id="portletTitle"/>  
+          </div>
+          
+        </div>
+        <div class="form-group">
+          <label for="portletName" class="col-sm-2 control-label"><spring:message code="portlet.name"/></label>
+          <div class="col-sm-10">
+            <form:input path="name" type="text" class="form-control" id="portletName"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="portletFname" class="col-sm-2 control-label"><spring:message code="portlet.functional.name"/></label>
+          <div class="col-sm-10">
+            <form:input path="fname" type="text" class="form-control" id="portletFname"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="portletDescription" class="col-sm-2 control-label"><spring:message code="portlet.description"/></label>
+          <div class="col-sm-10">
+            <form:input path="description" type="text" class="form-control" id="portletDescription"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="portletTimeout" class="col-sm-2 control-label"><spring:message code="portlet.timeout"/></label>
+          <div class="col-sm-10">
+            <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
+          </div>
+        </div>
         
 			</div>
 		</div> <!-- end: portlet-section -->
@@ -108,45 +146,53 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-      	<fieldset>
-          <legend><spring:message code="portlet.controls"/></legend>
-            <label for="hasHelp" class="checkbox">
-              <form:checkbox path="hasHelp"/>
-              <spring:message code="hasHelp"/>
-            </label><br/>
-
-            <label for="editable" class="checkbox">
-              <form:checkbox path="editable"/>
-              <spring:message code="editable"/>
-            </label><br/>
-
-            <label for="configurable" class="checkbox">
-              <form:checkbox path="configurable"/>
-              <spring:message code="configurable"/>
-            </label><br/>
-
-            <label for="hasAbout" class="checkbox">
-              <form:checkbox path="hasAbout"/>
-              <spring:message code="hasAbout"/>
-            </label><br/>
-
-        </fieldset>
+        <div class="form-group">
+          <label for="portletControls" class="col-sm-2 control-label"><spring:message code="portlet.controls"/></label>
+          <div class="col-sm-10">
+            <div class="checkbox">
+              <label for="hasHelp">
+                <form:checkbox path="hasHelp"/>
+                <spring:message code="hasHelp"/>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="editable">
+                <form:checkbox path="editable"/>
+                <spring:message code="editable"/>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="configurable">
+                <form:checkbox path="configurable"/>
+                <spring:message code="configurable"/>
+              </label>
+            </div>
+            <div class="checkbox">
+              <label for="hasAbout">
+                <form:checkbox path="hasAbout"/>
+                <spring:message code="hasAbout"/>
+              </label>
+            </div>
+          </div>
+        </div>
         
       </div>
     </div> <!-- end: portlet-section -->
     
     <!-- Buttons -->
-    <div class="buttons">
-      <c:choose>
-        <c:when test="${ completed }">
-          <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
-        </c:when>
-        <c:otherwise>
-          <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
-          <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
-        </c:otherwise>
-      </c:choose>
-      <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+    <div class="buttons form-group">
+      <div class="col-sm-10 col-sm-offset-2">
+        <c:choose>
+          <c:when test="${ completed }">
+            <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          </c:when>
+          <c:otherwise>
+            <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+            <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+          </c:otherwise>
+        </c:choose>
+        <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      </div>
     </div>
     
     </form:form> <!-- End Form -->
