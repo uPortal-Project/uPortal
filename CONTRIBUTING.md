@@ -48,7 +48,7 @@ Do yo thang!
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
 
-_Prior to commiting, if you want to pull in the latest upstream changes  (highly appreciated btw), please use rebasing rather than merging.  Merging creates "merge commits" that really muck up the project timeline._
+_Prior to committing, if you want to pull in the latest upstream changes  (highly appreciated btw), please use rebasing rather than merging.  Merging creates "merge commits" that really muck up the project timeline._
 
 ## Submit
 * You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
