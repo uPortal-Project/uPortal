@@ -9,6 +9,7 @@ uPortal is an Apereo project.  Apereo requires that contributions be through Ind
 You can learn more about [Apereo licensing generally][], the [contributor licensing agreements specifically][], and get the actual [Individual Contributor License Agreement form][], as linked.
 
 ## Getting Started
+
 If you are just getting started with Git, GitHub and/or contributing to uPortal via GitHub there are a few pre-requisite steps.
 
 * Make sure you have a [Jasig JIRA account](https://issues.jasig.org)
@@ -60,6 +61,7 @@ Consider pushing your changes to a topic branch in a fork of your repository con
 _Prior to committing, if you want to pull in the latest upstream changes  (highly appreciated btw), please use rebasing rather than merging.  Merging creates "merge commits" that really muck up the project timeline._
 
 ## Submit
+
 * You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
 * Push your changes to a topic branch in your fork of the repository.
 * Initiate a [pull request](http://help.github.com/send-pull-requests/).  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
