@@ -17,6 +17,17 @@ If you are just getting started with Git, GitHub and/or contributing to uPortal 
     * [Set](https://help.github.com/articles/set-up-git) up your local git install
     * Clone your fork
 
+## Communicate first and often
+
+What contribution are you looking to make?  Whom will this benefit?  Would anyone like to know what you're doing? Can anyone help you design and scope your contribution?  Who can validate that it meets the need?
+
+Your potential bugfix or improvement or new feature should be represented by a JIRA issue in the issue tracker.
+
+You should probably post on uportal-dev@ signaling your intentions and inviting early input and feedback.
+
+You may be able to find others to collaborate with for mutual benefit.
+
+
 
 ## Create the working (topic) branch
 Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key.  If there is not already a Jira issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the Jira UP-123 : 
