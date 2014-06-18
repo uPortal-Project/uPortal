@@ -30,9 +30,12 @@ You may be able to find others to collaborate with for mutual benefit.
 
 
 ## Create the working (topic) branch
-Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key.  If there is not already a Jira issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the Jira UP-123 : 
 
-    git checkout -b UP-123 master
+Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key and a short indication of its topic.  If there is not already a Jira issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the Jira UP-123 : 
+
+    git checkout -b UP-3413_add-jsr286-css master
+
+This way one can identify at a glance from your feature branch name both roughly what it's about and where to get more information.
 
 For a more in-depth description of the git workflow check out the
 [uPortal Git Workflow](https://wiki.jasig.org/display/UPC/Git+Workflow+for+Non-Committers)
