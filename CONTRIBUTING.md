@@ -21,7 +21,7 @@ If you are just getting started with Git, GitHub and/or contributing to uPortal 
 
 What contribution are you looking to make?  Whom will this benefit?  Would anyone like to know what you're doing? Can anyone help you design and scope your contribution?  Who can validate that it meets the need?
 
-Your potential bugfix or improvement or new feature should be represented by a JIRA issue in the issue tracker.
+Your potential bugfix or improvement or new feature should be represented by a JIRA issue in the issue tracker.  (You'll also need this JIRA issue key in your topic branch name and in your commit messages, below.)
 
 You should probably post on uportal-dev@ signaling your intentions and inviting early input and feedback.
 
