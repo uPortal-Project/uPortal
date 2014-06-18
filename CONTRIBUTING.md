@@ -39,7 +39,13 @@ For a more in-depth description of the git workflow check out the
 
 
 ## Code
-Do yo thang!
+
+* Apply uPortal code conventions and architecture.
+* Write automated unit tests exercising existing code you are touching and exercising your new code.  If you are fixing a bug, first write a unit test demonstrating the bug so as to stave off future regression.
+
+## Collaborate
+
+Consider pushing your changes to a topic branch in a fork of your repository continually as you work, so that others can see what you are doing and can engage with you on it.
 
 ## Commit
 
