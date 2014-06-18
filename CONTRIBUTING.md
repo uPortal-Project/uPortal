@@ -11,7 +11,7 @@ You can learn more about [Apereo licensing generally][], the [contributor licens
 ## Getting Started
 If you are just getting started with Git, GitHub and/or contributing to uPortal via GitHub there are a few pre-requisite steps.
 
-* Make sure you have a [Jasig Jira account](https://issues.jasig.org)
+* Make sure you have a [Jasig JIRA account](https://issues.jasig.org)
 * Make sure you have a [GitHub account](https://github.com/signup/free)
 * [Fork](http://help.github.com/fork-a-repo) the uPortal repository.  As discussed in the linked page, this also includes:
     * [Set](https://help.github.com/articles/set-up-git) up your local git install
@@ -31,7 +31,7 @@ You may be able to find others to collaborate with for mutual benefit.
 
 ## Create the working (topic) branch
 
-Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key and a short indication of its topic.  If there is not already a Jira issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the Jira UP-123 : 
+Create a "topic" branch on which you will work.  The convention is to name the branch using the JIRA issue key and a short indication of its topic.  If there is not already a JIRA issue covering the work you want to do, create one.  Assuming you will be working from the master branch and working on the JIRA UP-123 : 
 
     git checkout -b UP-3413_add-jsr286-css master
 
@@ -53,7 +53,7 @@ Consider pushing your changes to a topic branch in a fork of your repository con
 ## Commit
 
 * Make commits of logical units.
-* Be sure to use the JIRA issue key in the commit message.  This is how Jira will pick up the related commits and display them on the Jira issue.
+* Be sure to use the JIRA issue key in the commit message.  This is how JIRA will pick up the related commits and display them on the JIRA issue.
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
 
@@ -63,7 +63,7 @@ _Prior to committing, if you want to pull in the latest upstream changes  (highl
 * You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
 * Push your changes to a topic branch in your fork of the repository.
 * Initiate a [pull request](http://help.github.com/send-pull-requests/).  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
-* Update the Jira issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about what was changed why and how.
+* Update the JIRA issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about what was changed why and how.
 
 [Apereo licensing generally]: http://www.apereo.org/licensing
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements
