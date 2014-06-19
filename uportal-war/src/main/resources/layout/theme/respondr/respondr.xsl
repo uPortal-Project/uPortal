@@ -270,7 +270,7 @@
             return false;
           });
           // Console for debugging.
-          console.debug("menu", menu, "menuToggle", menuToggle);
+          console.log("menu", menu, "menuToggle", menuToggle);
         }
 
         navMenuToggle();
