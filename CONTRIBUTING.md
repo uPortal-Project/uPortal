@@ -66,7 +66,7 @@ _Prior to committing, if you want to pull in the latest upstream changes  (highl
 
 * You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.
 * Push your changes to a topic branch in your fork of the repository.
-* Initiate a [pull request](http://help.github.com/send-pull-requests/).  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
+* Initiate a [pull request](http://help.github.com/send-pull-requests/).  Name the Pull Request prefixed with the issue identifier (e.g., "UP-4148 Update contributing guidance").  Mention and link the JIRA issue the first couple lines of your Pull Request description so it's very convenient for reviewers to get to the JIRA issue from your pull request.  Use the pull request as another opportunity to communicate effectively about what is being changed.  Can your change be shown in before and after screenshots?  Did you make interesting implementation decisions or tradeoffs?
 * Update the JIRA issue, adding a comment including a link to the created pull request.  If the problem or improvement came to be better understood through implementation, update the description and add comments to communicate what was learned.  A release engineer will rely upon the JIRA to summarize release notes for the release including your change and those release notes will link to the JIRA issue, so the JIRA issue as a good place to communicate clearly about what was changed why and how.
 
 [Apereo licensing generally]: http://www.apereo.org/licensing
