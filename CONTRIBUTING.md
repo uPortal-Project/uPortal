@@ -24,7 +24,9 @@ What contribution are you looking to make?  Whom will this benefit?  Would anyon
 
 Your potential bugfix or improvement or new feature should be represented by a JIRA issue in the issue tracker.  (You'll also need this JIRA issue key in your topic branch name and in your commit messages, below.)
 
-You should probably post on uportal-dev@ signaling your intentions and inviting early input and feedback.
+You should probably post on [uportal-dev@][] signaling your intentions and inviting early input and feedback.
+
+Perhaps uPortal adopters on [uportal-user@][] will be interested in helping to validate requirements and design?
 
 You may be able to find others to collaborate with for mutual benefit.
 
@@ -71,3 +73,6 @@ _Prior to committing, if you want to pull in the latest upstream changes  (highl
 [contributor licensing agreements specifically]: http://www.apereo.org/licensing/agreements
 [Contributor License Agreement]: http://www.apereo.org/licensing/agreements
 [Individual Contributor License Agreement form]: http://www.apereo.org/sites/default/files/licensing/apereo-icla.pdf
+
+[uportal-dev@]: https://wiki.jasig.org/display/JSG/uportal-dev
+[uportal-user@]: https://wiki.jasig.org/display/JSG/uportal-user
