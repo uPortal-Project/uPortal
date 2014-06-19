@@ -63,8 +63,8 @@
     -->
 
   <skin>
-    <skin-key>defaultSkin</skin-key>
-    <skin-name>defaultSkin</skin-name>
+    <skin-key>skin_name</skin-key>
+    <skin-name>skin_name</skin-name>
     <skin-description>
       Basic skin for the Respondr theme based on Twitter Bootstrap and Responsive Design
     </skin-description>

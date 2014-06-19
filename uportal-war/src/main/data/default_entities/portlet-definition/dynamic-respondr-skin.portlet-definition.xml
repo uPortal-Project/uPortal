@@ -47,4 +47,8 @@
         <name>mobileIconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
     </parameter>
+	<portlet-preference>
+	    <name>PREFdynamicSkinName</name>
+	    <value>nameSkin</value>
+	</portlet-preference>
 </portlet-definition>
