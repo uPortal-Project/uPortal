@@ -51,7 +51,7 @@ For a more in-depth description of the git workflow check out the
 
 ## Collaborate
 
-Consider pushing your changes to a topic branch in a fork of your repository continually as you work, so that others can see what you are doing and can engage with you on it.
+Consider pushing your changes to a topic branch in your (public) fork of the repository continually as you work, so that others can see what you are doing and can engage with you on it.  Consider commenting on the JIRA issue and/or on the uportal-dev@ email thread letting folks know this branch is available for collaboration.
 
 ## Commit
 
