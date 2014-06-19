@@ -45,6 +45,7 @@
   <!--
   <css>../defaultSkin.css</css>
   -->
+<css>../defaultSkin.css</css>
 
   <js import="true">../common/common_skin.xml</js>
 
