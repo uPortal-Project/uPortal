@@ -46,7 +46,7 @@ For a more in-depth description of the git workflow check out the
 
 ## Code
 
-* Apply uPortal code conventions and architecture.
+* Apply uPortal [code conventions][] and [architecture][].
 * Write automated unit tests exercising existing code you are touching and exercising your new code.  If you are fixing a bug, first write a unit test demonstrating the bug so as to stave off future regression.
 
 ## Collaborate
@@ -76,3 +76,6 @@ _Prior to committing, if you want to pull in the latest upstream changes  (highl
 
 [uportal-dev@]: https://wiki.jasig.org/display/JSG/uportal-dev
 [uportal-user@]: https://wiki.jasig.org/display/JSG/uportal-user
+
+[code conventions]: https://wiki.jasig.org/display/UPM41/Code+Styles+and+Conventions
+[architecture]: https://wiki.jasig.org/pages/viewpage.action?pageId=65274379
