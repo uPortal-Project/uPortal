@@ -75,7 +75,7 @@ var up = up || {};
             dataType: "json",
             async: true,
             success: function (){
-              console.debug("layout move successful. URL: " + theURL);
+              console.log("layout move successful. URL: " + theURL);
             },
             error: function(request, text, error) {
               $('#up-notification').noty({text: request.response, type: 'error'});
