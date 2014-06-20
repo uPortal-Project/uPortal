@@ -30,12 +30,9 @@ import org.jasig.portal.groups.IEntityGroupStoreFactory;
  * @since 4.1
  */
 public class EntityPersonAttributesGroupStoreFactory implements IEntityGroupStoreFactory {
-   private static IEntityGroupStore groupStore;
+   private static IEntityGroupStore groupStore = new EntityPersonAttributesGroupStore();
    
-   public static synchronized IEntityGroupStore getGroupStore() {
-      if (groupStore == null) {
-         groupStore = new EntityPersonAttributesGroupStore();
-      }
+   public static IEntityGroupStore getGroupStore() {
       return groupStore;
    }
    
