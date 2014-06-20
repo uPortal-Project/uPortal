@@ -56,30 +56,37 @@ var up = up || {};
     };
 
   up.moveStuff = function moveStuffFunction(tabOrPortlet, item, context) {
-    var sourceID = item.getAttribute('sourceid');
-    var destinationID =
-            item.previousSibling.getAttribute != undefined ?
-                item.previousSibling.getAttribute('sourceid') :
-                item.nextSibling.getAttribute('sourceid');
-    var method = item.previousSibling.getAttribute == undefined ? 'insertBefore' : 'appendAfter';
-        
-    var theURL = context + "/api/layout?action=move" + tabOrPortlet
-                         + "&sourceID=" + sourceID
-                         + "&elementID=" + destinationID
-                         + "&method=" + method;
-
-    $.ajax({
-            url: theURL,
+    var insertNodeBefore = function(sourceID, destinationID){
+        var saveOrderURL = context + "/api/layout?action=move" + tabOrPortlet
+        + "&sourceID=" + sourceID
+        + "&elementID=" + destinationID
+        + "&method=" + 'insertBefore';
+        console.log(saveOrderURL);
+        $.ajax({
+            url: saveOrderURL,
             type: "POST",
             data: null,
             dataType: "json",
-            async: true,
+            async: false,
             success: function (){
-              console.log("layout move successful. URL: " + theURL);
+              console.log("layout move successful. URL: " + saveOrderURL);
             },
             error: function(request, text, error) {
               $('#up-notification').noty({text: request.response, type: 'error'});
             }
         });
+    };
+    var sourceID = $(item).attr('sourceid');
+    //We need to insert item both before and after
+    //Insert the prev sibling before this item
+    if($(item).next().length!=0){
+        var siblingID = $(item).next().attr('sourceid');
+        insertNodeBefore(sourceID, siblingID);
+    }
+    //Insert this item before the next Sibling
+    if($(item).prev().length !=0 ){
+        var siblingID = $(item).prev().attr('sourceid');
+        insertNodeBefore(siblingID, sourceID);
+    }
   };
 })(jQuery);
