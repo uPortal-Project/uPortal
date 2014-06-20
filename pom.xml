@@ -129,6 +129,7 @@
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
         <cglib.version>3.1</cglib.version>
+        <cobertura-maven-plugin.version>2.6</cobertura-maven-plugin.version>
         <commons-cli.version>1.2</commons-cli.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-collections.version>3.2.1</commons-collections.version>
@@ -142,6 +143,7 @@
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <commons-pool.version>1.6</commons-pool.version>
         <commons-math3.version>3.2</commons-math3.version>
+        <coveralls-maven-plugin.version>2.2.0</coveralls-maven-plugin.version>
         <dom4j.version>1.6.1</dom4j.version>
         <easymock.version>3.2</easymock.version>
         <ejb3-persistence.version>1.0.1.GA</ejb3-persistence.version>
@@ -1450,12 +1452,12 @@
                 <plugin>
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>2.2.0</version>
+                    <version>${coveralls-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>${cobertura-maven-plugin.version}</version>
                     <configuration>
                         <format>xml</format>
                         <maxmem>256m</maxmem>
