@@ -57,22 +57,22 @@
 
         <form class="form-horizontal" role="form" action="${ loginUrl }" method="POST">
           <div class="form-group">
-            <label class="control-label col-sm-2" for="${n}userName"><spring:message code="username"/></label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-4" for="${n}userName"><spring:message code="username"/></label>
+            <div class="col-sm-8">
               <input class="xform-control" type="text" id="${n}userName" name="userName" value="${ attemptedUsername }"/>
             </div>
            </div>
 
           <div class="form-group">
-            <label class="control-label col-sm-2" for="${n}password"><spring:message code="password"/></label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-4" for="${n}password"><spring:message code="password"/></label>
+            <div class="col-sm-8">
               <input class="xform-control" type="password" id="${n}password" name="password"/>
             </div>
           </div>
 
           <div class="form-group">
-            <label class="control-label col-sm-2" for="${n}profile"><spring:message code="profile"/></label>
-            <div class="col-sm-10">
+            <label class="control-label col-sm-4" for="${n}profile"><spring:message code="profile"/></label>
+            <div class="col-sm-8">
               <select class="xform-control" id="${n}profile" name="profile">
                 <option value="desktop" ${ profile == 'desktop' ? 'selected=selected' : '' }>Desktop</option>
                 <option value="mobile" ${ profile == 'mobile' ? 'selected=selected' : '' }>Mobile</option>
@@ -82,13 +82,13 @@
           </div>
 
           <div class="buttons utilities form-group">
-              <div class="col-sm-offset-2 col-sm-10">
+              <div class="col-sm-offset-4 col-sm-8">
                 <input type="submit" value="<spring:message code="login"/>" class="primary button btn"/>
               </div>
           </div>
 
           <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="col-sm-offset-4 col-sm-8">
               <a href="${ forgotPasswordUrl }"><spring:message code="forgot.your.username.or.password"/></a>
             </div>
           </div>

@@ -32,15 +32,11 @@
             value="servletRequest.getSession().getAttribute('up_attemptedUserName')"/>
         <set name="flowScope.profile"
             value="loginPortletHelper.getSelectedProfile(externalContext.getNativeRequest())"/>
-        <set name="flowScope.username"
-             value="requestParameters.username"/>
-        <set name="flowScope.loginToken"
-             value="requestParameters.loginToken"/>
     </on-start>
 
     <!-- if the token exists, go through the reset password flow, otherwise, just login normally -->
     <decision-state id="checkForToken">
-        <if test="loginToken == null and username == null" then="loginForm" else="validateResetToken"/>
+        <if test="requestParameters.loginToken == null and requestParameters.username == null" then="loginForm" else="validateResetToken"/>
     </decision-state>
 
     <subflow-state id="validateResetToken" subflow="reset-password">

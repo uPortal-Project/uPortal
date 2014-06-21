@@ -1,11 +1,10 @@
-passwordReset (displayName, url) ::= <<
+newTenant (displayName, url) ::= <<
 <html>
 <body>
 
 <p>Dear $displayName$,</p>
 
-<p>We have received your request to reset your Jasig-Sakai Conference App 
-password. Please <a href="$url$">use this secure URL</a> to choose a new password.</p>
+<p>A new tenant account has been created on your behalf. Please <a href="$url$">use this secure URL</a> to setup a new password.</p>
 
 <p>Please enter the password you want for your account twice on the page that opens.</p> 
 

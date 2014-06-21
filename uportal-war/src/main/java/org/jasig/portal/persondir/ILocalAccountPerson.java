@@ -29,6 +29,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface ILocalAccountPerson {
+    // common attribute names...
+    public static final String ATTR_DISPLAY_NAME = "displayName";
+    public static final String ATTR_MAIL = "mail";
 
     public long getId();
     
