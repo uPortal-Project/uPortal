@@ -25,6 +25,11 @@ import java.util.Locale;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 
 
+/**
+ * Notification interface.  Implementations should notify users that their local
+ * uportal user account has had a password reset token assigned to it and pass
+ * along the URL that can be used to reset their password.
+ */
 public interface IPasswordResetNotification {
     /**
      * Notify the user of the password reset request.

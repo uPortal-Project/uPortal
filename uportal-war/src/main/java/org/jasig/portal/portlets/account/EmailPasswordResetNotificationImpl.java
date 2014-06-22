@@ -18,23 +18,19 @@
  */
 package org.jasig.portal.portlets.account;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -46,9 +42,9 @@ import org.stringtemplate.v4.STGroupDir;
 
 @Component("emailPasswordResetNotificationImpl")
 public class EmailPasswordResetNotificationImpl implements IPasswordResetNotification {
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private String i18nSubject = "reset.your.password";
+    private String subjectMessageKey = "reset.your.password";
     private JavaMailSender mailSender;
     private MessageSource messageSource;
     private String portalEmailAddress;
@@ -60,76 +56,76 @@ public class EmailPasswordResetNotificationImpl implements IPasswordResetNotific
      * Set the subject string.  Note that this is the i18n key, not a raw
      * text string.  eg. reset.your.password
      *
-     * @param i18nSubject
+     * @param subjectMessageKey the message key to use as a subject line.  Defaults to "reset.your.password"
      */
-    public void setI18nSubject(String i18nSubject) {
-        this.i18nSubject = i18nSubject;
+    public void setSubjectMessageKey(final String subjectMessageKey) {
+        this.subjectMessageKey = subjectMessageKey;
     }
 
 
     @Autowired
-    public void setMailSender(JavaMailSenderImpl mailSender) {
+    public void setMailSender(final JavaMailSenderImpl mailSender) {
         this.mailSender = mailSender;
     }
 
 
     @Autowired
-    public void setMessageSource(MessageSource messageSource) {
+    public void setMessageSource(final MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
 
     @Resource(name="portalEmailAddress")
-    public void setPortalEmailAddress(String portalEmailAddress) {
+    public void setPortalEmailAddress(final String portalEmailAddress) {
         this.portalEmailAddress = portalEmailAddress;
     }
 
 
-    public void setTemplateDir(String templateDir) {
+    public void setTemplateDir(final String templateDir) {
         this.templateDir = templateDir;
     }
 
 
-    public void setTemplateName(String templateName) {
+    public void setTemplateName(final String templateName) {
         this.templateName = templateName;
     }
 
 
     @Override
     public void sendNotification(URL resetUrl, ILocalAccountPerson account, Locale locale) {
-        log.debug("Sending password reset instructions to user with url " + resetUrl.toString());
-
-        List<String> recipients = getRecipientAddresses(account);
-        String subject = formatSubject(account, locale);
-        String body = formatBody(resetUrl, account, locale);
+        log.debug("Sending password reset instructions to user with url {}", resetUrl.toString());
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            for (String recipient : recipients) {
-                helper.addTo(recipient);
-            }
+            String email = (String)account.getAttributeValue(ILocalAccountPerson.ATTR_MAIL);
+            String subject = messageSource.getMessage(subjectMessageKey, new Object[]{}, locale);
+            String body = formatBody(resetUrl, account, locale);
 
+            helper.addTo(email);
             helper.setText(body, true);
             helper.setSubject(subject);
             helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
 
-            log.debug("Sending message to " + recipients + " from " +
-                    Arrays.toString(message.getFrom()) +  " subject " + message.getSubject());
+            log.debug("Sending message to {} from {} subject {}", email,
+                    Arrays.toString(message.getFrom()), message.getSubject());
             this.mailSender.send(helper.getMimeMessage());
 
-        } catch(MailException | MessagingException | UnsupportedEncodingException e) {
-            log.error("Unable to send password reset email ", e);
+        } catch(Exception e) {
+            log.error("Unable to send password reset email", e);
         }
     }
 
 
-    protected List<String> getRecipientAddresses(ILocalAccountPerson account) {
-        return Arrays.asList((String)account.getAttributeValue(ILocalAccountPerson.ATTR_MAIL));
-    }
-
-
-    protected String formatBody(URL resetUrl, ILocalAccountPerson account, Locale locale) {
+    /**
+     * Get the body content of the email.
+     *
+     * @param resetUrl the password reset URL
+     * @param account the user account that has had its password reset
+     * @param locale the locale of the user who reset the password
+     * @return The message body as a string.
+     */
+    private String formatBody(URL resetUrl, ILocalAccountPerson account, Locale locale) {
         final STGroup group = new STGroupDir(templateDir, '$', '$');
         final ST template = group.getInstanceOf(templateName);
 
@@ -141,11 +137,13 @@ public class EmailPasswordResetNotificationImpl implements IPasswordResetNotific
     }
 
 
-    protected String formatSubject(ILocalAccountPerson account, Locale locale) {
-        return messageSource.getMessage(i18nSubject, new Object[]{}, locale);
-    }
-
-
+    /**
+     * Determine the name to use in the password reset email that identifies the
+     * users whose password has been reset.
+     *
+     * @param person the account that has had its password reset
+     * @return the account holders name
+     */
     protected String findDisplayNameFromLocalAccountPerson(ILocalAccountPerson person) {
         Object name = person.getAttributeValue(ILocalAccountPerson.ATTR_DISPLAY_NAME);
         if ((name instanceof String) && !StringUtils.isEmpty((String) name)) {

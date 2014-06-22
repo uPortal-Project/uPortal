@@ -92,7 +92,7 @@ public class EmailPasswordResetNotificationImplTest {
 
         URL url = new URL(resetUrl);
 
-        service.setI18nSubject(subject);
+        service.setSubjectMessageKey(subject);
         service.setPortalEmailAddress(fromAddress);
         service.sendNotification(url, person, Locale.getDefault());
 
