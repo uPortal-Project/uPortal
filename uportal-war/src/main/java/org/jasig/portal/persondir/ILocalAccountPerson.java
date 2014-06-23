@@ -29,6 +29,24 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface ILocalAccountPerson {
+    // common attribute names...
+    /**
+     * Attribute name commonly used to retrieve users displayName.
+     * This attribute may not exist for all users, and may be named
+     * differently for some implementations, but this is common.
+     *
+     * @Since uPortal 4.1
+     */
+    public static final String ATTR_DISPLAY_NAME = "displayName";
+
+    /**
+     * Attribute name commonly used to retrieve users email address.
+     * This attribute may not exist for all users, and may be named
+     * differently for some implementations, but this is common.
+     *
+     * @Since uPortal 4.1
+     */
+    public static final String ATTR_MAIL = "mail";
 
     public long getId();
     

@@ -23,9 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.jasig.portal.portlets.account.IPasswordResetNotification;
 import org.jasig.portal.portlets.account.UserAccountHelper;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 /**
  * Integrates with the 'forgot-password' framework portlet to grant the tenant 
@@ -48,6 +50,13 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
     @Autowired
     private UserAccountHelper userAccountHelper;
 
+    private IPasswordResetNotification passwordResetNotification;
+
+    @Autowired
+    public void setPasswordResetNotification(IPasswordResetNotification passwordResetNotification) {
+        this.passwordResetNotification = passwordResetNotification;
+    }
+
     @Override
     public void onCreate(final ITenant tenant) {
         sendResetPasswordEmail(tenant);
@@ -67,7 +76,7 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
         ILocalAccountPerson admin = localAccountDao.getPerson(tenant.getAttribute(ADMIN_CONTACT_USERNAME));
         admin.setAttribute("loginToken", userAccountHelper.getRandomToken());
         final HttpServletRequest http = portalRequestUtils.getCurrentPortalRequest();
-        this.userAccountHelper.sendLoginToken(http, admin);
+        this.userAccountHelper.sendLoginToken(http, admin, passwordResetNotification);
         localAccountDao.updateAccount(admin);
     }
 
