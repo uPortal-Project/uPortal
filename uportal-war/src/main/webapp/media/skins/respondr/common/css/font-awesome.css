@@ -44,7 +44,7 @@
 /* FONT PATH
  * -------------------------- */
 
-/*
+
 @font-face {
   font-family: 'FontAwesome';
   src: url('../font/fontawesome-webfont.eot?v=3.2.1');
@@ -52,11 +52,11 @@
   font-weight: normal;
   font-style: normal;
 }
-*/
+
 
 /* FONT AWESOME CORE
  * -------------------------- */
-/*
+
 [class^="icon-"],
 [class*=" icon-"] {
   font-family: FontAwesome;
@@ -72,24 +72,24 @@
   display: inline-block;
   speak: none;
 }
-*/
+
 
 /* makes the font 33% larger relative to the icon container */
-/*
+
 .icon-large:before {
   vertical-align: -10%;
   font-size: 1.3333333333333333em;
 }
-*/
+
 /* makes sure icons active on rollover in links */
-/*
+
 a [class^="icon-"],
 a [class*=" icon-"] {
   display: inline;
 }
-*/
+
 /* increased font size for icon-large */
-/*
+
 [class^="icon-"].icon-fixed-width,
 [class*=" icon-"].icon-fixed-width {
   display: inline-block;
@@ -185,12 +185,12 @@ a [class*=" icon-"] {
 [class*=" icon-"].pull-right {
   margin-left: .3em;
 }
-*/
+
 
 /* BOOTSTRAP SPECIFIC CLASSES
  * -------------------------- */
 /* Bootstrap 2.0 sprites.less reset */
-/*
+
 [class^="icon-"],
 [class*=" icon-"] {
   display: inline;
@@ -203,9 +203,9 @@ a [class*=" icon-"] {
   background-repeat: repeat;
   margin-top: 0;
 }
-*/
+
 /* more sprites.less reset */
-/*
+
 .icon-white,
 .nav-pills > .active > a > [class^="icon-"],
 .nav-pills > .active > a > [class*=" icon-"],
@@ -221,9 +221,9 @@ a [class*=" icon-"] {
 .dropdown-submenu:hover > a > [class*=" icon-"] {
   background-image: none;
 }
-*/
+
 /* keeps Bootstrap styles with and without icons the same */
-/*
+
 .btn [class^="icon-"].icon-large,
 .nav [class^="icon-"].icon-large,
 .btn [class*=" icon-"].icon-large,
@@ -280,7 +280,7 @@ a [class*=" icon-"] {
 .btn.btn-large [class*=" icon-"].pull-right.icon-2x {
   margin-left: .2em;
 }
-*/
+
 /* Fixes alignment in nav lists */
 .nav-list [class^="icon-"],
 .nav-list [class*=" icon-"] {
