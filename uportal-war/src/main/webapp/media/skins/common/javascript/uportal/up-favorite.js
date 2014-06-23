@@ -56,11 +56,11 @@ var up = up || {};
     };
 
   up.moveStuff = function moveStuffFunction(tabOrPortlet, item, context) {
-    var insertNodeBefore = function(sourceID, destinationID){
+    var insertNode = function(sourceID, destinationID, method){
         var saveOrderURL = context + "/api/layout?action=move" + tabOrPortlet
         + "&sourceID=" + sourceID
         + "&elementID=" + destinationID
-        + "&method=" + 'insertBefore';
+        + "&method=" + method;
         console.log(saveOrderURL);
         $.ajax({
             url: saveOrderURL,
@@ -78,15 +78,20 @@ var up = up || {};
     };
     var sourceID = $(item).attr('sourceid');
     //We need to insert item both before and after
-    //Insert the prev sibling before this item
+    
+    //Insert item before the next if next exists
     if($(item).next().length!=0){
         var siblingID = $(item).next().attr('sourceid');
-        insertNodeBefore(sourceID, siblingID);
+        insertNode(sourceID, siblingID, 'insertBefore');
+    }else{
+        //if next does not exist append item to the end
+        var siblingID = $(item).prev().attr('sourceid');
+        insertNode(sourceID, siblingID, 'appendAfter');
     }
-    //Insert this item before the next Sibling
+    //Insert prev before item, if there is a previous
     if($(item).prev().length !=0 ){
         var siblingID = $(item).prev().attr('sourceid');
-        insertNodeBefore(siblingID, sourceID);
+        insertNode(siblingID, sourceID, 'insertBefore');
     }
   };
 })(jQuery);
