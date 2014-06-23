@@ -117,10 +117,9 @@
 
                 <!-- invite the user to add a tab if permission to do so
                 and navigation element is flagged as allowing tab-adding -->
-                 <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">
+                 <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and not($PORTAL_VIEW='focused')">
                     <li class="portal-navigation-add-item">
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
-                          <!-- <xsl:value-of select="upMsg:getMessage('add.tab', $USER_LANG)"/> -->
                           <i class="fa fa-plus-circle"></i>
                         </a>
                     </li>
