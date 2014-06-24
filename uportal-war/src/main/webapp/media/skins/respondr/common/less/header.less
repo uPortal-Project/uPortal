@@ -21,6 +21,9 @@
     background: @header-background-color;
     color: @header-text-color;
 
+    a {
+        color: @header-link-color;
+    }
     .portal-nav {
         .container {
             padding: 0;
@@ -33,13 +36,6 @@
     padding-top: 10px;
     right: 0;
 
-    .logout-launcher {
-        margin-left: 10px;
-
-        a.btn-link {
-            color: @logout-btn-link-text-color;
-        }
-    }
 }
 
 .portal-editing {
@@ -102,7 +98,6 @@ h1.portal-logo a:hover {
              .portal-user {
                 a {
                     margin-left: 10px;
-                    color: @header-text-color;
                 }
                 .notification-icon {
                     margin-right: 10px;
