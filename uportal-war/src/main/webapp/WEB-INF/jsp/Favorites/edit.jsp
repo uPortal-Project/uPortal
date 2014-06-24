@@ -68,7 +68,10 @@
           <c:choose>
             <c:when test="${collection.deleteAllowed}">
               <a href="${unFavoriteCollectionUrl}">
-                <span class="glyphicon glyphicon-trash pull-right"></span>${collection.name}
+                <span class="glyphicon glyphicon-trash pull-right"></span>
+              </a>
+              <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
+                ${collection.name}
               </a>
             </c:when>
             <c:otherwise>
@@ -99,7 +102,10 @@
           <c:choose>
             <c:when test="${favorite.deleteAllowed}">
               <a href="${unFavoritePortletUrl}">
-                <span class="glyphicon glyphicon-trash pull-right"></span>${favorite.name}
+                <span class="glyphicon glyphicon-trash pull-right"></span>
+              </a>
+              <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">
+                ${favorite.name}
               </a>
             </c:when>
             <c:otherwise>
