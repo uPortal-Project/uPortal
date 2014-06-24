@@ -58,12 +58,12 @@
 
                         switch (groupKeyArray.length) {
                             case 0:
-                                log.error("Creating new group $GROUP_NAME")
+                                log.debug("Creating new group $GROUP_NAME")
                                 group = GroupService.newGroup(Class.forName(ENTITY_TYPE))
                                 group.setName(GROUP_NAME);
                                 break;
                             case 1:
-                                log.error("Found existing group $GROUP_NAME")
+                                log.debug("Found existing group $GROUP_NAME")
                                 group = GroupService.findGroup(groupKeyArray[0].key)
                                 break;
                             default:
@@ -90,7 +90,7 @@
                             <script>
                                 import org.slf4j.LoggerFactory
                                 def log = LoggerFactory.getLogger(this.getClass());
-                                log.error("Removing members from group $group")
+                                log.debug("Removing members from group $group")
                                 group.getMembers().each() {group.removeMember(it)}
                             </script>
                         </groovy>
@@ -109,17 +109,17 @@
                                     def log = LoggerFactory.getLogger(this.getClass());
                                     String groupService = GetMemberServicePhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
                                     String memberId = GetMemberKeyPhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                                    log.error("Found service=$groupService, memberId=$memberId")
+                                    log.debug("Found service=$groupService, memberId=$memberId")
 
                                     if (GetMemberIsGroupPhrase.phraseIsGroup(Attributes.NODE.getName())) {
                                         String key = groupService + '.' + memberId;
-                                        log.error("Created key $key")
+                                        log.debug("Created key $key")
                                         IEntityGroup member = GroupService.findGroup(key)
-                                        log.error("Adding group $member")
+                                        log.debug("Adding group $member")
                                         group.addMember(member);
                                     } else {
                                         IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE))
-                                        log.error("Adding entity $member")
+                                        log.debug("Adding entity $member")
                                         group.addMember(member);
                                     }
                                 </script>

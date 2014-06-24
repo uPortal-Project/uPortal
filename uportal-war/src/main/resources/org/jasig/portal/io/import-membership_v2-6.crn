@@ -58,7 +58,7 @@
             def group = GroupService.findGroup(entityIdArr[0].getKey())
             Attributes.CACHE.put("group", group)
             def item = Attributes.CACHE.get("group")
-            log.error("Found item $item")
+            log.debug("Found item $item")
         </script>
         <subtasks>
             <node-iterator xpath="child/*">
@@ -75,19 +75,19 @@
                         def log = LoggerFactory.getLogger(this.getClass());
                         String groupService = GetMemberServicePhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
                         String memberId = GetMemberKeyPhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                        log.error("Found service=$groupService, memberId=$memberId")
+                        log.debug("Found service=$groupService, memberId=$memberId")
 
                         def group = Attributes.CACHE.get("group")
 
                         if (GetMemberIsGroupPhrase.phraseIsGroup(Attributes.NODE.getName())) {
                             String key = groupService + '.' + memberId;
-                            log.error("Created key $key")
+                            log.debug("Created key $key")
                             IEntityGroup member = GroupService.findGroup(key);
-                            log.error("Adding group $member")
+                            log.debug("Adding group $member")
                             group.addMember(member);
                         } else {
                             IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE))
-                            log.error("Adding entity $member")
+                            log.debug("Adding entity $member")
                             group.addMember(member);
                         }
                     </script>
