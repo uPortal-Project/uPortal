@@ -57,8 +57,8 @@
      | http://getbootstrap.com/javascript/#js-noconflict) and we can save the bootstrap functions to invoke them
      | manually.
      -->
-    <js included="plain" resource="true">/rs/fluid/pre1.5.0-6cb52a5083/js/fluid-custom.js</js>
-    <js included="aggregated" resource="true">/rs/fluid/pre1.5.0-6cb52a5083/js/fluid-custom.min.js</js>
+    <js included="plain" resource="true">/rs/fluid/1.5.0/js/fluid-custom.js</js>
+    <js included="aggregated" resource="true">/rs/fluid/1.5.0/js/fluid-custom.min.js</js>
 
     <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
     <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>

@@ -27,12 +27,12 @@
   <parameter name="fss-theme">fl-theme-mist</parameter>
   
   <!-- Fluid Skinning System (FSS).  Includes a CSS reset for browser normalization. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-framework.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-framework.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.5.0/fss/css/fss-framework.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.5.0/fss/css/fss-framework.min.css</css>
   
   <!-- Fluid Skinning System (FSS) theme. -->
-  <css included="plain">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-theme-mist.css</css>
-  <css included="aggregated">/ResourceServingWebapp/rs/fluid/pre1.5.0-6cb52a5083/fss/css/fss-theme-mist.min.css</css>
+  <css included="plain">/ResourceServingWebapp/rs/fluid/1.5.0/fss/css/fss-theme-mist.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/fluid/1.5.0/fss/css/fss-theme-mist.min.css</css>
   
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
