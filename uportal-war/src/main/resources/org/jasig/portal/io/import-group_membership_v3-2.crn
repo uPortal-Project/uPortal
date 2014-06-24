@@ -30,86 +30,109 @@
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
  |
+ | To debug, change log.debug to log.error (script classname is dynamic; e.g. Script1, Script 13, etc.)
  +-->
+<!-- Group membership processing is done in two steps in an initdb.  All groups are created in one pass.
+     In a second pass, the child elements are processed because they can reference the now-created groups. -->
 <choose>
     <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
-        <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
         <with>
+            <attribute key="ENTITY_TYPE">${valueOf(entity-type)}</attribute>
+            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
             <attribute key="CREATOR">${valueOf(creator)}</attribute>
             <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
-            <attribute key="ENTITY_TYPE_NAME">${groovy("org.jasig.portal.channel.IChannelDefinition".equals(ENTITY_TYPE) ? "org.jasig.portal.portlet.om.IPortletDefinition" : ENTITY_TYPE)}</attribute>
-            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
             <subtasks>
-                <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
-                    <sql-transaction>
-                        <sql-upsert>
-                            <update-statement>
-                                UPDATE up_group 
-                                SET creator_id = ?, description = ? 
-                                WHERE entity_type_id = ? AND group_name = ?
-                            </update-statement>
-                            <insert-statement>
-                                INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id) 
-                                VALUES(?, ?, ?, ?, ?)
-                            </insert-statement>
-                            
-                            <update-parameter value="${CREATOR}"/>
-                            <update-parameter value="${DESCRIPTION}"/>
-                            <update-parameter value="${ENTITY_TYPE_ID}"/>
-                            <update-parameter value="${GROUP_NAME}"/>
-                            
-                            <insert-parameter value="${CREATOR}"/>
-                            <insert-parameter value="${DESCRIPTION}"/>
-                            <insert-parameter value="${ENTITY_TYPE_ID}"/>
-                            <insert-parameter value="${GROUP_NAME}"/>
-                            <insert-parameter value="${crn(generate-group-id.crn)}"/>
-                        </sql-upsert>
-                    </sql-transaction>
-                </with-attribute>
+                <groovy>
+                    <script>
+                        import org.jasig.portal.groups.IEntityGroup
+                        import org.jasig.portal.groups.IGroupConstants
+                        import org.jasig.portal.groups.IGroupMember
+                        import org.jasig.portal.io.GetMemberKeyPhrase
+                        import org.jasig.portal.io.GetMemberServicePhrase
+                        import org.jasig.portal.services.GroupService
+                        import org.slf4j.LoggerFactory
+
+                        def log = LoggerFactory.getLogger(this.getClass());
+                        IEntityGroup group;
+                        def groupKeyArray = GroupService.searchForGroups(GROUP_NAME, IGroupConstants.IS, Class.forName(ENTITY_TYPE))
+
+                        switch (groupKeyArray.length) {
+                            case 0:
+                                log.debug("Creating new group $GROUP_NAME")
+                                group = GroupService.newGroup(Class.forName(ENTITY_TYPE))
+                                group.setName(GROUP_NAME);
+                                break;
+                            case 1:
+                                log.debug("Found existing group $GROUP_NAME")
+                                group = GroupService.findGroup(groupKeyArray[0].key)
+                                break;
+                            default:
+                                throw new RuntimeException("Found $groupKeyArray.length groups with name GROUP_NAME. Can only have 1");
+                         }
+
+                        group.setCreatorID(CREATOR)
+                        group.setDescription(DESCRIPTION)
+                        group.update()
+                    </script>
+                </groovy>
             </subtasks>
         </with>
-        </with-attribute>
     </when>
     <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
-        <sql-query>
-            <sql>
-                SELECT group_id, group_name
-                FROM up_group
-                WHERE group_name = ?
-            </sql>
-            <parameter value="${valueOf(name)}"/>
+        <with>
+            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+            <attribute key="ENTITY_TYPE">${valueOf(entity-type)}</attribute>
             <subtasks>
-                <with-attribute key="MEMBER_COUNT" value="${valueOf(count(children/*))}">
-                <if test="${jexl(MEMBER_COUNT > 0)}">
-                <sql-transaction>
-                    <sql-statement sql="DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ?">
-                        <parameter value="${GROUP_ID}" />
-                    </sql-statement>
-                    <node-iterator xpath="children/*">
-                        <with>
-                            <attribute key="MEMEBER_SERVICE">${org.jasig.portal.io.GetMemberServicePhrase(${Attributes.NODE})}</attribute>
-                            <attribute key="MEMEBER_KEY">${org.jasig.portal.io.GetMemberKeyPhrase(${Attributes.NODE})}</attribute>
-                            <subtasks>
-                                <choose>
-                                    <when test="${jexl(MEMEBER_SERVICE != null and MEMEBER_KEY != null)}">
-                                        <sql-statement sql="INSERT INTO up_group_membership(member_is_group, group_id, member_service, member_key) VALUES(?, ?, ?, ?)">
-                                            <parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${Attributes.NODE})}"/>
-                                            <parameter value="${GROUP_ID}"/>
-                                            <parameter value="${MEMEBER_SERVICE}"/>
-                                            <parameter value="${MEMEBER_KEY}"/>
-                                        </sql-statement>
-                                    </when>
-                                    <otherwise>
-                                        <echo-ln>WARNING: ${groovy(Attributes.NODE.getName())} member '${valueOf(.)}' of group '${GROUP_NAME}' could not be found and will not be added to the group.</echo-ln>
-                                    </otherwise>
-                                </choose>
-                            </subtasks>
-                        </with>
-                    </node-iterator>
-                </sql-transaction>
-                </if>
-                </with-attribute>
+                <with>
+                    <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.jasig.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE))[0].key))}</attribute>
+                    <subtasks>
+                        <groovy>
+                            <script>
+                                import org.slf4j.LoggerFactory
+                                def log = LoggerFactory.getLogger(this.getClass());
+                                log.debug("Removing members from group $group")
+                                group.getMembers().each() {group.removeMember(it)}
+                            </script>
+                        </groovy>
+                        <node-iterator xpath="children/*">
+                            <groovy>
+                                <script>
+                                    import org.jasig.portal.groups.IEntityGroup
+                                    import org.jasig.portal.groups.IGroupConstants
+                                    import org.jasig.portal.groups.IGroupMember
+                                    import org.jasig.portal.io.GetMemberIsGroupPhrase
+                                    import org.jasig.portal.io.GetMemberKeyPhrase
+                                    import org.jasig.portal.io.GetMemberServicePhrase
+                                    import org.jasig.portal.services.GroupService
+                                    import org.slf4j.LoggerFactory
+
+                                    def log = LoggerFactory.getLogger(this.getClass());
+                                    String groupService = GetMemberServicePhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
+                                    String memberId = GetMemberKeyPhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
+                                    log.debug("Found service=$groupService, memberId=$memberId")
+
+                                    if (GetMemberIsGroupPhrase.phraseIsGroup(Attributes.NODE.getName())) {
+                                        String key = groupService + '.' + memberId;
+                                        log.debug("Created key $key")
+                                        IEntityGroup member = GroupService.findGroup(key)
+                                        log.debug("Adding group $member")
+                                        group.addMember(member);
+                                    } else {
+                                        IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE))
+                                        log.debug("Adding entity $member")
+                                        group.addMember(member);
+                                    }
+                                </script>
+                            </groovy>
+                        </node-iterator>
+                        <groovy>
+                            <script>
+                                group.updateMembers();
+                            </script>
+                        </groovy>
+                    </subtasks>
+                </with>
             </subtasks>
-        </sql-query>
+        </with>
     </when>
 </choose>

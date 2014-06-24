@@ -61,13 +61,15 @@ public class GetMemberServicePhrase implements Phrase {
     }
 
     public Object evaluate(TaskRequest req, TaskResponse res) {
+        Element e = (Element) element.evaluate(req, res);
+        return getPhrase(e.getName(), e.getText());
+    }
 
+    public static String getPhrase(String name, String memberValue) {
         String rslt = null;
 
-        Element e = (Element) element.evaluate(req, res);
-
         // We can (and must) cut & run if the element is a <literal> or a <channel>...
-        if (e.getName().equals("literal") || e.getName().equals("channel")) {
+        if (name.equals("literal") || name.equals("channel")) {
             return "local";
         }
 
@@ -75,35 +77,34 @@ public class GetMemberServicePhrase implements Phrase {
 
             Class[] leafTypes = new Class[] {IPerson.class, IPortletDefinition.class};
             for (int i=0; i < leafTypes.length && rslt == null; i++) {
-                EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, leafTypes[i]);
+                EntityIdentifier[] eis = GroupService.searchForGroups(memberValue, IGroupConstants.IS, leafTypes[i]);
                 if (eis.length == 1) {
                     // Match!
                     if (eis[0].getType() == IEntityGroup.class) {
                         IEntityGroup g = GroupService.findGroup(eis[0].getKey());
                         rslt = g.getServiceName().toString();
                     } else {
-                        String msg = "The specified enttity is not a group:  " + e.getText();
+                        String msg = "The specified entity is not a group:  " + memberValue;
                         throw new RuntimeException(msg);
                     }
                     break;
                 } else if (eis.length > 1) {
-                    String msg = "Ambiguous member name:  " + e.getText();
+                    String msg = "Ambiguous member name:  " + memberValue;
                     throw new RuntimeException(msg);
                 }
             }
 
         } catch (Throwable t) {
-            String msg = "Error looking up the specified member:  " + e.getText();
+            String msg = "Error looking up the specified member:  " + memberValue;
             throw new RuntimeException(msg, t);
         }
 
         if (rslt == null) {
-            String msg = "The specified member was not found:  " + e.getText();
+            String msg = "The specified member was not found:  " + memberValue;
             throw new RuntimeException(msg);
         }
 
         return rslt;
-
     }
 
 }

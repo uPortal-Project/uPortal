@@ -155,16 +155,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 }
                 
                 if (!testPassed && logger.isWarnEnabled()) {
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("PAGS group=").append(group.getKey());
-                    sb.append(" contained person=").append(member.getKey());
-                    sb.append(", but the person failed to be contained in ");
-                    sb.append("ancesters of this group");
-                    sb.append((parentGroup != null ? " (parentGroup="+parentGroup.getKey()+")" : ""));
-                    sb.append(". This may indicate a ");
-                    sb.append("misconfigured PAGS group ");
-                    sb.append("store. Please check PAGSGroupStoreConfig.xml.");
-                    logger.warn(sb.toString());
+                    logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
+                            + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
+                            +" Please check PAGSGroupStoreConfig.xml.", group.getKey(), member.getKey(),
+                            parentGroup != null ? parentGroup.getKey() : "no parent");
                 }
                 return testPassed;
             }
