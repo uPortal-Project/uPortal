@@ -48,6 +48,9 @@
 
     <js included="plain">/ResourceServingWebapp/rs/bootstrap/3.1.1/js/bootstrap.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.1.1/js/bootstrap.min.js</js>
+    
+    <js included="plain">/ResourceServingWebapp/rs/bootstrap-plugins/accessibility/1.0.2/js/bootstrap-accessibility.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/bootstrap-plugins/accessibility/1.0.2/js/bootstrap-accessibility.min.js</js>
 
     <!-- Fluid must come after Bootstrap.  Issue found with Respondr.  When you click on the 'Manage Portlets' link,
      | fluid was calling that.container.tooltip("widget"); which should call jQueryUI's tooltip function, but
