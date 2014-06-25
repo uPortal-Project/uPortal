@@ -58,7 +58,7 @@
 /*
  * Secondary color with 3 lightened shades and 3 darkened shades.
  *
- * The variable color1 is used by the DynamicRespondrSkin portlet.
+ * The variable color2 is used by the DynamicRespondrSkin portlet.
  * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
  *    the value of.
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
@@ -75,7 +75,7 @@
 /*
  * Tertiary color with 3 lightened shades and 3 darkened shades.
  *
- * The variable color1 is used by the DynamicRespondrSkin portlet.
+ * The variable color3 is used by the DynamicRespondrSkin portlet.
  * 1) Do not change the variable name. It is used as a portlet preference variable name that users can override
  *    the value of.
  * 2) The value must be on the same line as the variable name and be terminated with a semicolon due to
@@ -100,7 +100,6 @@
  * Link colors
  */
 @link-color: #f00;
-@portal-global-link-color: #fff;
 @footer-link-color: @link-color;
 
 /**
@@ -108,6 +107,7 @@
  */
 @header-background-color: @color1;
 @header-text-color: #FFFFFF;
+@header-link-color: #FFFFFF;
 
 
 /**
@@ -116,9 +116,6 @@
 @portal-global-background-color: @color1;
 @portal-global-background-gradient: false;
 @portal-global-border-color: @color1-light;
-
-@logout-btn-link-text-color: #fff;
-@user-portal-link-color: #fff;
 
 /**
  * Theme based button styles
@@ -129,18 +126,6 @@
 @btn-skin-alt-text-color:         @grayscale10;
 @btn-skin-alt-background-color:   @color3;
 
-
-/**
- * Header
- */
-@notification-icon-color: #fff;
-
-@user-portal-logout-btn-text-color: #fff;
-
-/**
- * Emergency Alert
- */
-@emergency-alert-background-color: rgb(123, 0, 0);
 
 /**
  * Nav
