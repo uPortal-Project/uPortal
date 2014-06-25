@@ -19,6 +19,7 @@
 
 package org.jasig.portal.portlets.favorites;
 
+import org.apache.commons.lang3.Validate;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
@@ -205,5 +206,20 @@ public final class FavoritesUtils {
         logger.debug("Extracted favorite portlets [{}] from [{}]", favorites, userLayout);
 
         return favorites;
+    }
+
+
+    /**
+     * True if the layout contains any favorited collections or favorited individual portlets, false otherwise.
+     * @param layout non-null user layout that might contain favorite portlets and/or collections
+     * @return true if the layout contains at least one favorited portlet or collection, false otherwise
+     * @throws IllegalArgumentException if layout is null
+     */
+    public static boolean hasAnyFavorites(IUserLayout layout) {
+        Validate.notNull(layout, "Cannot determine whether a null layout contains favorites.");
+
+        // (premature) performance optimization: short circuit returns true if nonzero favorite portlets
+        return (!getFavoritePortlets(layout).isEmpty() || !getFavoriteCollections(layout).isEmpty() );
+
     }
 }

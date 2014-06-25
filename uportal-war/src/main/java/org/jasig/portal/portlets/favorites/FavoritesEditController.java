@@ -32,6 +32,7 @@ import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
 import javax.portlet.RenderRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -114,6 +115,7 @@ public class FavoritesEditController
     /**
      * Un-favorite a favorite node (portlet or collection) identified by node ID.
      * Routed by the action=delete parameter.
+     * If no favorites remain after un-favoriting, switches portlet mode to VIEW.
      *
      * Sets render parameters:
      * successMessageCode: message code of success message if applicable
@@ -125,7 +127,7 @@ public class FavoritesEditController
      * nameOfFavoriteActedUpon and action will always be set.
      *
      * @param nodeId identifier of target node
-     * @param response ActionResponse onto which render parameters will be set
+     * @param response ActionResponse onto which render parameters will, mode may, be set
      */
     @ActionMapping(params = {"action=delete"})
     public void unFavoriteNode(@RequestParam("nodeId") String nodeId, ActionResponse response) {
@@ -151,6 +153,13 @@ public class FavoritesEditController
                     layoutManager.saveUserLayout();
 
                     response.setRenderParameter("successMessageCode", "favorites.unfavorite.success.parameterized");
+
+                    IUserLayout updatedLayout = layoutManager.getUserLayout();
+
+                    // if removed last favorite, return to VIEW mode
+                    if (! FavoritesUtils.hasAnyFavorites(updatedLayout)) {
+                        response.setPortletMode(PortletMode.VIEW);
+                    }
 
                     logger.debug("Successfully unfavorited [{}]", nodeDescription);
 
