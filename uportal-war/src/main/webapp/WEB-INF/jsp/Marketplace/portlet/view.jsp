@@ -58,7 +58,7 @@
     float: right;
 }
 
-#${n}marketplace  .dataTables_info, .dataTables_length, .dataTables_paginate{
+#${n}marketplace .dataTables_paginate{
     white-space:nowrap;
 }
 
@@ -382,8 +382,8 @@
                        applyEllipsis(nRow,1,75);
                       },
                 "sDom": '<"top"f><"sort_info"><"${n}sort_buttons"><rt'+
-                    '<"row ${n}bottom" <"col-xs-6 col-md-3" i>'+
-                    '<"col-xs-6 col-md-push-6 col-md-3"l>'+
+                    '<"row ${n}bottom" <"col-xs-6 col-sm-8 col-md-3" i>'+
+                    '<"col-xs-6 col-md-push-6 col-sm-4 col-md-3"l>'+
                     '<"col-xs-12 col-md-pull-3 col-md-6"p>>',
                 "bStateSave": true,
                 "bAutoWidth":false
