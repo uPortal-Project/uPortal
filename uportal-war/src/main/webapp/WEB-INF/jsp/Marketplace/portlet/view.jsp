@@ -169,18 +169,6 @@
 #${n}marketplace .paging_full_numbers a.paginate_active {
     background-color: #99B3FF;
 }
-
-@media only screen and (max-width: 992px){
-    #${n}marketplace .sort-btn-group{
-        width: 100%;
-    }
-    #${n}marketplace .alphabetical-sort-button{
-        width: 50%;
-    }
-    #${n}marketplace .category-sort-button{
-        width: 50%;
-    }
-}
  
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table th:nth-child(1),
@@ -204,13 +192,16 @@
     }
 }
 
-
 #${n}marketplace .sort_info, .dataTables_info{
     text-align: left;
 }
 
+#${n}marketplace .sort_buttons_group{
+    display: block;
+}
+
 #${n}marketplace .marketplace_center_text, .dataTables_paginate,
-.btn_group_container, .dataTables_processing{
+.dataTables_processing{
     text-align:center;
 }
 
@@ -399,11 +390,16 @@
             });
 
             $("#${n}marketplace div.${n}sort_buttons")
-            .html("<div class=\"btn_group_container\">"+
-                "<div class=\"btn-group sort-btn-group\">"+
-                "<button type=\"button\" id=\"${n}alphabetical-sort-button\" class=\"btn btn-default alphabetical-sort-button\">${azIndex}</button>"+
-                "<button type=\"button\" id=\"${n}category-sort-button\" class=\"btn btn-default category-sort-button\">${categoryLabel}</button>"+
-                "</div><br><br></div>");
+            .html(    
+                "<div class=\"btn-group row container-fluid sort_buttons_group\">"+
+                  "<div class=\"col-sm-6 \">"+
+                    "<button type=\"button\" id=\"${n}alphabetical-sort-button\" class=\"btn btn-default btn-block\">${azIndex}</button>"+
+                  "</div>"+
+                  "<div class=\"col-sm-6 \">"+
+                    "<button type=\"button\" id=\"${n}category-sort-button\" class=\"btn btn-default btn-block\">${categoryLabel}</button>"+
+                  "</div>"+
+                "</div>"+
+                "<br><br>");
             $("#${n}categoryListContainer").insertAfter($(".${n}sort_buttons"));
             $("#${n}featured").insertAfter($("#${n}marketplace .top"));
             $("#${n}marketplace div.sort_info").html("<div><BR><BR><span><strong>${browseBy}</strong><br><br></div>");
