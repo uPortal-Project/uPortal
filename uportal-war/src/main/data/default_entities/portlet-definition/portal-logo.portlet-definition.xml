@@ -43,9 +43,14 @@
         <name>content</name>
         <readOnly>false</readOnly>
         <value>
-            <![CDATA[
+		<![CDATA[
+                <h1 class="portal-logo"><a href='/uPortal'>Susan McCarthy!!</a></h1>
+            ]]>
+
+          <!--  <![CDATA[
                 <h1 class="portal-logo"><a href='/uPortal'>uPortal</a></h1>
             ]]>
+-->
         </value>
     </portlet-preference>
 </portlet-definition>
