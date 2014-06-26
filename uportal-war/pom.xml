@@ -258,13 +258,7 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-sql</artifactId>
-            <!-- Commented out to make it easier to create groovy crn scripts using an IDE <scope>runtime</scope>-->
-        </dependency>
-
+        
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-groovysh</artifactId>
@@ -549,7 +543,7 @@
             <artifactId>groovy-xml</artifactId>
             <scope>runtime</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>

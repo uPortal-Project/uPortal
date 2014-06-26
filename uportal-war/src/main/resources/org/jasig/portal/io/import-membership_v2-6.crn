@@ -30,75 +30,47 @@
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
  |
- | To debug, change log.debug to log.error (script classname is dynamic; e.g. Script1, Script 13, etc.)
  +-->
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
-    <groovy>
-        <script>
-            import org.jasig.portal.groups.IEntityGroup
-            import org.jasig.portal.groups.IGroupConstants
-            import org.jasig.portal.groups.IGroupMember
-            import org.jasig.portal.io.GetMemberKeyPhrase
-            import org.jasig.portal.io.GetMemberServicePhrase
-            import org.jasig.portal.services.GroupService
-            import org.slf4j.LoggerFactory
-
-            def log = LoggerFactory.getLogger(this.getClass());
-
-            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.jasig.portal.security.IPerson.class)
-            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.jasig.portal.portlet.om.IPortletDefinition.class)
-            switch (entityIdArr.size()) {
-                case 0:
-                    throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME")
-                case 1:
-                    break
-                default:
-                    throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1")
-            }
-            def group = GroupService.findGroup(entityIdArr[0].getKey())
-            Attributes.CACHE.put("group", group)
-            def item = Attributes.CACHE.get("group")
-            log.debug("Found item $item")
-        </script>
+    <cache key="PARENT_GROUP_ID" cache-key="${groovy('GROUP_ID.' + PARENT_GROUP_NAME)}">
+        <factory>
+            <sql-query>
+                <sql>
+                    SELECT group_id 
+                    FROM up_group 
+                    WHERE group_name = ?
+                </sql>
+                <parameter value="${PARENT_GROUP_NAME}" />
+                <subtasks>
+                    <return value="${GROUP_ID}" />
+                </subtasks>
+            </sql-query>
+        </factory>
         <subtasks>
-            <node-iterator xpath="child/*">
-                <groovy>
-                    <script>
-                        import org.jasig.portal.groups.IEntityGroup
-                        import org.jasig.portal.groups.IGroupMember
-                        import org.jasig.portal.io.GetMemberIsGroupPhrase
-                        import org.jasig.portal.io.GetMemberKeyPhrase
-                        import org.jasig.portal.io.GetMemberServicePhrase
-                        import org.jasig.portal.services.GroupService
-                        import org.slf4j.LoggerFactory
-
-                        def log = LoggerFactory.getLogger(this.getClass());
-                        String groupService = GetMemberServicePhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                        String memberId = GetMemberKeyPhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                        log.debug("Found service=$groupService, memberId=$memberId")
-
-                        def group = Attributes.CACHE.get("group")
-
-                        if (GetMemberIsGroupPhrase.phraseIsGroup(Attributes.NODE.getName())) {
-                            String key = groupService + '.' + memberId;
-                            log.debug("Created key $key")
-                            IEntityGroup member = GroupService.findGroup(key);
-                            log.debug("Adding group $member")
-                            group.addMember(member);
-                        } else {
-                            IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE))
-                            log.debug("Adding entity $member")
-                            group.addMember(member);
-                        }
-                    </script>
-                </groovy>
-            </node-iterator>
-            <groovy>
-                <script>
-                    def group = Attributes.CACHE.get("group")
-                    group.updateMembers();
-                </script>
-            </groovy>
+            <sql-transaction>
+                <sql-upsert>
+                    <update-statement>
+                        UPDATE up_group_membership 
+                        SET member_is_group = ? 
+                        WHERE group_id = ? AND member_service = ? AND member_key = ? AND member_is_group = ?
+                    </update-statement>
+                    <insert-statement>
+                        INSERT INTO up_group_membership(member_is_group, group_id, member_service, member_key) 
+                        VALUES(?, ?, ?, ?)
+                    </insert-statement>
+                    
+                    <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${PARENT_GROUP_ID}"/><!-- DB schema assumes the parent is always a 'local' group... -->
+                    <update-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
+                    <update-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberIsGroupPhrase(${singleNode(child/*)})}"/>
+                    <insert-parameter value="${PARENT_GROUP_ID}"/><!-- DB schema assumes the parent is always a 'local' group... -->
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberServicePhrase(${singleNode(child/*)})}"/>
+                    <insert-parameter value="${org.jasig.portal.io.GetMemberKeyPhrase(${singleNode(child/*)})}"/>
+                </sql-upsert>
+            </sql-transaction>
         </subtasks>
-    </groovy>
+    </cache>
 </with-attribute>

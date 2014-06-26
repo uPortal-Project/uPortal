@@ -83,7 +83,7 @@
                                     </tr>
                                     
                                     <!-- Template for the file error info rows -->
-                                    <tr class="flc-uploader-file-error-tmplt fl-uploader-file-error fl-uploader-hidden-templates bg-danger">
+                                    <tr class="flc-uploader-file-error-tmplt fl-uploader-file-error fl-uploader-hidden-templates">
                                         <td colspan="3" class="flc-uploader-file-error"></td>
                                     </tr>
                                 </tbody>
