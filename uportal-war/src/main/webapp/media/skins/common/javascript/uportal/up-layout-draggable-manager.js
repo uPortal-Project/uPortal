@@ -337,9 +337,7 @@ var up = up || {};
 
             dragHandle = selector.find(that.options.selectors.dragHandle);
 
-            //$(selector[0]).appendTo('body').addClass('ui-draggable-dragging');
-
-            // The position style defintion has been added to the body
+            // The position style definition has been added to the body
             // to accommodate a FireFox/jQuery UI specific bug. We are using
             // jQuery UI Draggable to drag portlets from the gallery to the
             // portal's columns. Firefox has an issue placing the cursor
