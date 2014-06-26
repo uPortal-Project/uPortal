@@ -58,8 +58,20 @@ public class GetMemberIsGroupPhrase implements Phrase {
     public Object evaluate(TaskRequest req, TaskResponse res) {
 
         Element e = (Element) element.evaluate(req, res);
-        return e.getName().equals("group") ? "T" : "F";
+        return memberIsGroupPhrase(e.getName());
 
     }
 
+    /**
+     * Returns the String "T" if the member is a group, and "F" if the member is not a group.
+     * @param name element name
+     * @return "T" if a group, else "F"
+     */
+    public static String memberIsGroupPhrase(String name) {
+        return name.equals("group") ? "T" : "F";
+    }
+
+    public static boolean phraseIsGroup(String name) {
+        return name.equals("group");
+    }
 }

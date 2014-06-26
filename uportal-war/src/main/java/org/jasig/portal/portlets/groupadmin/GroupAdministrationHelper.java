@@ -248,12 +248,10 @@ public class GroupAdministrationHelper {
 			}
 		}
 		
-		// save the group, updating both its basic information and group
-		// membership
+		// save the group, updating both its basic information and group membership
 		group.update();
 		
-		// add this group to the membership list for the specified
-		// parent
+		// add this group to the membership list for the specified parent
 		IEntityGroup parentGroup = GroupService.findGroup(parent.getId());
 		parentGroup.addMember(group);
 		parentGroup.updateMembers();
@@ -289,7 +287,7 @@ public class GroupAdministrationHelper {
     }
     
     /**
-     * Get the authoriztaion principal matching the supplied IPerson.
+     * Get the authorization principal matching the supplied IPerson.
      * 
      * @param person
      * @return
