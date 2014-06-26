@@ -43,8 +43,9 @@
         <name>content</name>
         <readOnly>false</readOnly>
         <value>
+
 		<![CDATA[
-                <h1 class="portal-logo"><a href='/uPortal'>Susan McCarthy!!</a></h1>
+                <h1 class="portal-logo"><img src="/home/susan/uPortal/uPortal-git/portal_logo.png" alt="{upMsg:getMessage('portal.page.title', $USER_LANG)}"/></h1>
             ]]>
 
           <!--  <![CDATA[
