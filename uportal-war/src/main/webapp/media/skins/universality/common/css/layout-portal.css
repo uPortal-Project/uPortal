@@ -539,6 +539,7 @@ table.purpose-layout td {margin:0; padding:0;}
  */
 .up-gallery .skins-wrapper .skin-thumb {width: 120px; height: 70px;}
 
+
 /* Gallery Layout List
  * The list of page layouts.
  */
@@ -550,7 +551,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .portlet.ui-draggable-dragging {
     border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
     padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333; position: relative;
-    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto;
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 90px; width: 270px;
     overflow: hidden; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80);}
 .portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
 .portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
@@ -563,7 +564,7 @@ table.purpose-layout td {margin:0; padding:0;}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
 .portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
 .portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
-.portlet.ui-draggable-dragging .portlet-thumb-icon {width:37px; height:37px;}
+.portlet.ui-draggable-dragging .portlet-thumb-icon {float: left; width:37px; height:37px;}
 .portlet.ui-draggable-dragging .portlet-thumb-icon span {visibility: hidden;}
 .portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 11px;}
 

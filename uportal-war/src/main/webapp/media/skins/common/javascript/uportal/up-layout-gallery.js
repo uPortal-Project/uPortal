@@ -254,12 +254,30 @@ var up = up || {};
                                 }
                             }
                         }
+                    },
+                    listeners: {
+                        onModelChange: function (newModel, oldModel, pager) {
+                            // Temporary solution. The initDragAndDrop() method call has been wrapped
+                            // within a setTimeout to resolve a fluid.pager bug (i.e. UP-4000). When
+                            // the onModelChange event fires the DOM contained within the pager.container
+                            // element becomes stale. For some reason that is not yet known, the pager's
+                            // internal DOM, within the onModelChange event, is not ready for manipulation.
+                            // This is important because the initDragAndDrop() method needs to apply the jQuery
+                            // UI Draggable plugin to the underlying list items contained within the pager.container.
+                            // With a stale or out-of-sync DOM the list items within the gallery fail to become
+                            // draggable. Wrapping this method call within a setTimeout with the duration set to
+                            // 0 forces the initDragAndDrop() method to be the last JavaScript function executed,
+                            // giving time for the DOM to be redrawn.
+                            var timer = setTimeout(function () {
+                                that.dragManager.initDragAndDrop(newModel, oldModel, pager);
+                                clearTimeout(timer);
+                            }, 0);
+                        }
                     }
                 };
 
                 // initialize the pager and set it to 6 items per page.
                 that.state.pager = fluid.pagedTable($(container).find(".portlet-results"), pagerOptions);
-                that.state.pager.events.onModelChange.addListener(that.dragManager.initDragAndDrop);
                 that.state.pager.events.initiatePageSizeChange.fire(that.options.pageSize);
             }//end:if.
         };//end:function.

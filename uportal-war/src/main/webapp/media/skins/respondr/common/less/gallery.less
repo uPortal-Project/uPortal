@@ -672,33 +672,32 @@
 .up-gallery .results-wrapper .layouts-list li {width:140px; height:50%;}
 .up-gallery .layout-wrapper .layout-thumb {width: 27px; height:27px;}
 
-
 /* Gallery: Avatar */
+.portal .portlet.ui-draggable-dragging {padding: 0;}
 .portlet.ui-draggable-dragging {
     border: 1px solid #F68923; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px; border-radius-topright:0px; -moz-border-radius-topright:0px; -webkit-border-top-right-radius:0px;
     padding: 0; margin: 0; list-style: none; -moz-box-shadow: 0px 0px 4px 0px #333; -webkit-box-shadow: 0px 0px 4px 0px #333; box-shadow: 0px 0px 4px 0px #333; background: #333; position: relative;
-    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 80px; width: auto;
+    background-image:-moz-linear-gradient(90deg,#000000,#333333); background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#333333)); height: 90px; width: 270px;
     overflow: hidden; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)"; filter: alpha(opacity=80);}
 .portlet.ui-draggable-dragging .portlet-wrapper {overflow: hidden;}
-.portlet.ui-draggable-dragging .portlet-wrapper-inner {padding:0px 10px 0px 10px; position: relative;}
 .portlet.ui-draggable-dragging .portlet-thumb-link {
-    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 77%; padding: 2px 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,@white);
+    position: absolute; top: 0px; right: 0px; display: block; color: #000; text-decoration: none; font-size: 10px; padding: 0 8px; background: #666; background-image: -moz-linear-gradient(90deg,#666,@white);
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(@white)); text-align: center; cursor: move; background: #F68923; background-image: -moz-linear-gradient(90deg,#F68923,@white);
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(@white));}
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F68923),to(@white)); height: 16px; overflow: hidden;}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper {
     display: block; background: #444444 url("./common/images/gripper.png") 5px 0px no-repeat; cursor: move; -moz-border-radius-topleft: 5px; -webkit-border-top-left-radius: 5px; border-top-left-radius: 5px;}
 .portlet.ui-draggable-dragging .portlet-thumb-gripper span {display: block; width: 16px; height: 16px; overflow: hidden; visibility: hidden;}
-.portlet.ui-draggable-dragging .portlet-thumb-titlebar {padding: 5px 8px 3px 8px; font-size:11px; font-weight:bold; color:#DDD;}
 .portlet.ui-draggable-dragging .portlet-thumb-content {padding: 0px 8px 0px 8px;}
-.portlet.ui-draggable-dragging .portlet-thumb-icon {width:37px; height:37px;}
+.portlet.ui-draggable-dragging .portlet-thumb-titlebar {
+    padding: 5px 8px 3px 8px; font-size: 11px; font-weight: bold; color: #DDD;}
+.portlet.ui-draggable-dragging .portlet-thumb-icon {float: left; width: 37px; height: 37px;}
 .portlet.ui-draggable-dragging .portlet-thumb-icon span {visibility: hidden;}
-.portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 11px;}
-
+.portlet.ui-draggable-dragging .portlet-thumb-description {color: #AAA; padding: 0; margin-left: 36px; font-size: 10px;}
 
 /* Gallery: Drop Target */
+.portal .ui-droppable {min-height: 100px;}
 .layout-draggable-drop-target {display: none; background: #FF0000; padding: 5px; height: 150px; text-align: center; margin-bottom: 1em;  border: 2px dotted #960000; font-weight: bold; color: #960000;}
 .layout-draggable-drop-target span {display: block; padding: 65px 5px 5px 5px;}
 .layout-draggable-drop-target-active {}
 .layout-draggable-target-dropped {border: 1px solid #CCC; background: #EFEFEF url("./common/images/loading.gif") 50% 50% no-repeat;}
 .layout-draggable-target-dropped span {display:none;}
-
