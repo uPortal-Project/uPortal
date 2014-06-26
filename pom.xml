@@ -231,10 +231,9 @@
         <xstream.version>1.4.7</xstream.version>
 
         <!-- 
-         | uPortal uses this expression to determine whether the user is on a 
-         | mobile device, such as a phone or a tablet, or a desktop/laptop 
-         | browser;  users may also choose the mobile/non-mobile experience when 
-         | they log in. 
+         | When a user-agent profile mapping is enabled (see userContext.xml), uPortal uses this expression to
+         | determine whether the user is on a mobile device, such as a phone or a tablet, or a desktop/laptop
+         | browser;  users may also choose the mobile/non-mobile experience when they log in.
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
         
@@ -714,6 +713,11 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-jsr223</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-sql</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>

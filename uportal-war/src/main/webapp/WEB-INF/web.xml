@@ -61,7 +61,7 @@
     </listener>
     
     <!-- 
-     | Exposes the current RequstAttributes object
+     | Exposes the current RequestAttributes object
      +-->
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
