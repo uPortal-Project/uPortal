@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * This listener handles the JPA create/update/delete operations in the tenancy
  * subsystem.  It's implemented as an {@link ITenantOperationsListener}, instead
- * of hard-coded in {@link TenantService}, so it can be placed strategically in
+ * of hard-coded in {@link TenantService}, so it can be placed strategicly in
  * the listener chain (often last).
  * 
  * @author awills
