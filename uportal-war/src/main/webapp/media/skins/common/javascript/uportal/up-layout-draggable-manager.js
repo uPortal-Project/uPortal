@@ -150,7 +150,7 @@ var up = up || {};
         column = $(target);
         portlets = column.find(that.options.selectors.portlet);
         dropTarget = $(that.elem.pseudoDropTargetMarkUp);
-        
+
         // Determine the contents of a column. Does the column contain any portlets?
         if (portlets.length > 0) {
             // Column contains portlets. Are any portlets locked?
@@ -297,7 +297,7 @@ var up = up || {};
             // Obtain a reference to all eligible or "droppable" columns.
             eligibleColumns = that.elem.columnContainer.find(that.options.selectors.canAddChildren);
             droppableInnerColumns = eligibleColumns.find(that.options.selectors.innerColumn);
-            
+
             // Make columns droppable.
             that.makeDroppable(droppableInnerColumns);
         };//end:function.
@@ -334,8 +334,24 @@ var up = up || {};
          */
         that.makeDraggable = function (selector) {
             var dragHandle;
-            
+
             dragHandle = selector.find(that.options.selectors.dragHandle);
+
+            // The position style definition has been added to the body
+            // to accommodate a FireFox/jQuery UI specific bug. We are using
+            // jQuery UI Draggable to drag portlets from the gallery to the
+            // portal's columns. Firefox has an issue placing the cursor
+            // correctly on the dragged element. Adding a position of relative
+            // fixes this issue. A fix for this is schedule for jQuery UI 1.11.
+            // This fix has been added using JavaScript due to the fact that
+            // adding the position definition breaks the functionality in
+            // Chrome, Safari and IE.
+            // 
+            // http://stackoverflow.com/questions/18008657/jquery-ui-draggable-1-10-3-issue-with-firefox-not-finding-cursor-center-when-win
+            if ($.browser.mozilla) {
+                $(that.options.selectors.body).css({position: 'relative'});
+            }
+
             selector.draggable({
                 handle: dragHandle,
                 appendTo: that.options.selectors.body,
@@ -346,12 +362,13 @@ var up = up || {};
                 cursor: that.options.cursor,
                 cursorAt: that.options.cursorAt,
                 stack: that.options.stack,
-                tolerance: that.options.tolerance,
+                zIndex: 99999,
                 containment: that.options.selectors.body,
                 start: function (event, ui) {
                     that.enableEligibleColumns(event, ui);
                 }
             });
+
         };//end:function.
         
         /**
@@ -388,7 +405,7 @@ var up = up || {};
      ---------------------------------*/
     fluid.defaults("up.LayoutDraggableManager", {
         selectors: {
-            body: "#portal",
+            body: "body",
             galleryList: ".portlet-list",
             columnContainer: "#portalPageBodyColumns",
             column: ".portal-page-column",
@@ -398,10 +415,10 @@ var up = up || {};
             loader: "#galleryLoader",
             accept: ".portlet",
             canAddChildren: ".canAddChildren",
-            portlet: "div[id*=portlet_]",
-            lastPortletLocked: "div[id*=portlet_].locked:last",
-            firstPortletMovable: "div[id*=portlet_].movable:first",
-            portletMovable: "div[id*=portlet_].movable"
+            portlet: "[id*=portlet_]",
+            lastPortletLocked: "[id*=portlet_].locked:last",
+            firstPortletMovable: "[id*=portlet_].movable:first",
+            portletMovable: "[id*=portlet_].movable"
         },
         styles: {
             pseudoDropTarget: "layout-draggable-drop-target",
@@ -417,8 +434,8 @@ var up = up || {};
         helper: "clone",
         revert: "invalid",
         cursor: "move",
-        cursorAt: {top: 10, left: 12 },
-        stack: ".ui-draggable-dragging",
+        cursorAt: {top: 8, left: 10},
+        stack: ".portlet .ui-draggable",
         tolerance: "intersect",
         insertBefore: "insertBefore",
         appendAfter: "appendAfter",
