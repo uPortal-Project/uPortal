@@ -110,7 +110,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
-  
+
+  <c:if test="${not empty statusMsgCode}">
+      <div class="alert alert-success alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
+          <c:if test="${not empty layoutURL}">
+              <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
+          </c:if>
+      </div>
+  </c:if>
+
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>

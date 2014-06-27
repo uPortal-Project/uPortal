@@ -25,7 +25,7 @@
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <on-start>
-        <set name="flashScope.servletRequest" 
+        <set name="flashScope.servletRequest"
             value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.person"
             value="personManager.getPerson(servletRequest)"/>
@@ -70,9 +70,24 @@
      +-->
     <subflow-state id="edit-portlet" subflow="edit-portlet">
         <input name="portlet" value="portlet"/>
-        <transition on="finishPortletEdit" to="finishPortletEdit"/>
+        <output name="portletId" value="requestScope.portletId"/>
+
+        <transition on="finishPortletEdit" to="shouldDisplayLayoutLink">
+            <set name="flashScope.statusMsgCode" value="portlet.isNew() ? 'portlet.manager.registered' : 'portlet.manager.edited'"/>
+        </transition>
         <transition on="cancelPortletEdit" to="finishPortletEdit"/>
     </subflow-state>
+
+    <!-- check if the "Manage DLM Fragments" link should appear in the status message -->
+    <decision-state id="shouldDisplayLayoutLink">
+        <if test="portletAdministrationHelper.shouldDisplayLayoutLink(person, portlet, portletId)" then="getLayoutURL" else="listChannels"/>
+    </decision-state>
+
+    <!-- get the URL for the "Manage DLM Fragments" link -->
+    <action-state id="getLayoutURL">
+        <set name="flashScope.layoutURL" value="portletAdministrationHelper.getFragmentAdminURL(portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest()))"/>
+        <transition to="listChannels"/>
+    </action-state>
 
     <!--
      | Portlet deletion
@@ -81,6 +96,7 @@
         <transition on="remove" to="listChannels">
             <!-- Remove the portlet -->
             <evaluate expression="portletAdministrationHelper.removePortletRegistration(person, portlet)"/>
+            <set name="flashScope.statusMsgCode" value="'portlet.manager.removed'"/>
         </transition>
         <transition on="cancel" to="listChannels"/>
     </view-state>

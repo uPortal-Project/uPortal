@@ -39,9 +39,12 @@ import java.util.regex.Pattern;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.WindowState;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,11 +93,22 @@ import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.StringListAttribute;
+import org.jasig.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.PortletDescriptor;
@@ -112,7 +126,9 @@ import org.springframework.webflow.context.ExternalContext;
 @Service
 public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
-	
+
+    private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
+
 	private IGroupListHelper groupListHelper;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortletCategoryRegistry portletCategoryRegistry;
@@ -122,7 +138,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
     private PortletDelegationLocator portletDelegationLocator;
     private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
     private ServletContext servletContext;
-    
+    private FragmentAdministrationHelper fragmentAdminHelper;
+    private IPortalUrlProvider urlProvider;
+    private IAuthorizationService authorizationService;
+
 	@Override
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
@@ -135,8 +154,23 @@ public class PortletAdministrationHelper implements ServletContextAware {
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
 	}
-	
-	/**
+
+    @Autowired
+    public void setFragmentAdminHelper(final FragmentAdministrationHelper fragmentAdminHelper) {
+        this.fragmentAdminHelper = fragmentAdminHelper;
+    }
+
+    @Autowired
+    public void setUrlProvider(final IPortalUrlProvider urlProvider) {
+        this.urlProvider = urlProvider;
+    }
+
+    @Autowired
+    public void setAuthorizationService(final IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
+    }
+
+    /**
 	 * Set the portlet registry store
 	 * 
 	 * @param portletRegistryStore
@@ -501,6 +535,59 @@ public class PortletAdministrationHelper implements ServletContextAware {
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(form.getId());
         portletDefinitionRegistry.deletePortletDefinition(def);
 
+    }
+
+
+    /**
+     * Check if the link to the Fragment admin portlet should display in the status message.
+     *
+     * Checks that the portlet is new, that the portlet has been published and that
+     * the user has necessary permissions to go to the fragment admin page.
+     *
+     * @param person the person publishing/editing the portlet
+     * @param form the portlet being editted
+     * @param portletId the id of the saved portlet
+     * @return true if
+     */
+    public boolean shouldDisplayLayoutLink(IPerson person, PortletDefinitionForm form, String portletId) {
+        if (!form.isNew()) {
+            return false;
+        }
+
+        // only include the "do layout" link for published portlets.
+        if (form.getLifecycleState() != PortletLifecycleState.PUBLISHED) {
+            return false;
+        }
+
+        // check that the user can edit at least 1 fragment.
+        Map<String, String> layouts = fragmentAdminHelper.getAuthorizedDlmFragments(person.getUserName());
+        if (layouts == null || layouts.isEmpty()) {
+            return false;
+        }
+
+        // check that the user has subscribe priv.
+        IAuthorizationPrincipal authPrincipal = authorizationService.newPrincipal(person.getUserName(), EntityEnum.PERSON.getClazz());
+        if (!authPrincipal.canSubscribe(portletId)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Get the link to the fragment admin portlet.
+     *
+     * @param request the current http request.
+     * @return the portlet link
+     */
+    public String getFragmentAdminURL(HttpServletRequest request) {
+        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET, UrlType.RENDER);
+        IPortletUrlBuilder portletUrlBuilder = builder.getTargetedPortletUrlBuilder();
+        portletUrlBuilder.setPortletMode(PortletMode.VIEW);
+        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+
+        return builder.getUrlString();
     }
 
 	/**
