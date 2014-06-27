@@ -435,13 +435,18 @@ up.jQuery(function() {
                 }
             }
         }
+        var htmlDecode = function(input){
+            var e = document.createElement('div');
+            e.innerHTML = input;
+            return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+        };
         if($("#${n}marketplace_user_rating").val().length>0){
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
                 text='You have already rated "{0}"; adjust your rating if you wish.'
                 arguments="${portlet.title}"
                 htmlEscape="true" />');
-            $("#${n}marketplace_user_review_input").val("<c:out value="${marketplaceRating.review}"/>");
+            $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
         }else{
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
                 text='You have not yet rated "{0}".'
