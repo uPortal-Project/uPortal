@@ -41,6 +41,8 @@
                 value="personManager.getPerson(servletRequest)"/>
         <set name="flowScope.portletTypes"
                 value="portletAdministrationHelper.getAllowableChannelPublishingDefinitions(person)"/>
+        <!-- track if in the new portlet workflow.  Note: flowScope.completed changes state after save.  This doesn't -->
+        <set name="flowScope.isNew" value="portlet.isNew()"/>
         <set name="flowScope.completed" value="!portlet.isNew()"/>
     </on-start>
 
@@ -247,7 +249,7 @@
 
         <!-- save the portlet -->
         <transition on="save" to="finishPortletEdit">
-            <evaluate expression="portletAdministrationHelper.savePortletRegistration(person, portlet)"></evaluate>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)"></set>
         </transition>
 
         <!-- save and configure the portlet -->
@@ -271,10 +273,14 @@
     <action-state id="configModeActionRequest">
         <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, portlet.getFname())" />
         <transition to="configMode" on="#{!flashScope.configComplete}" />
-        <transition to="reviewPortlet" on="#{flashScope.configComplete}">
+        <transition to="configModeSaved" on="#{flashScope.configComplete}">
             <set name="flowScope.portlet" value="portletAdministrationHelper.getPortletDefinitionForm(person, portlet.id)"/>
         </transition>
     </action-state>
+
+    <decision-state id="configModeSaved">
+        <if test="isNew" then="finishPortletEdit" else="reviewPortlet"/>
+    </decision-state>
 
     <view-state id="configModeResourceRequest" view="portletDelegationView">
         <on-entry>
@@ -295,7 +301,9 @@
     </decision-state>
 
     <end-state id="cancelPortletEdit" />
-    <end-state id="finishPortletEdit" />
+    <end-state id="finishPortletEdit">
+        <output name="portletId" value="flowScope.portlet.id"/>
+    </end-state>
 
     <global-transitions>
         <transition on="update" to="reviewPortlet"/>
