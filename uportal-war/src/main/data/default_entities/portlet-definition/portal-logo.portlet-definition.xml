@@ -45,9 +45,7 @@
 
       <value>
 
-<name>Image</name>
-    <description>Displays an image with optional caption and subcaption</description>
-    <uri>/home/susan/uPortal/uPortal-git/portal_logo.png</uri>
+
 <!--
 
 	<![CDATA[
