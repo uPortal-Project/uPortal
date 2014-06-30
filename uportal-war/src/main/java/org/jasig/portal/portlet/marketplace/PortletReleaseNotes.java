@@ -26,6 +26,7 @@ import org.joda.time.DateTime;
 public class PortletReleaseNotes {
 
 	private DateTime releaseDate;
+	private DateTime initialReleaseDate;
 	private List<String> releaseNotes;
 	
 	public PortletReleaseNotes(){
@@ -34,7 +35,7 @@ public class PortletReleaseNotes {
 	
 	/**
 	 * 
-	 * @return releaseDate as String. Can be null if not set via portlet preference.
+	 * @return releaseDate as DateTime. Can be null if not set via portlet preference.
 	 */
 	public DateTime getReleaseDate() {
 		return releaseDate;
@@ -55,4 +56,17 @@ public class PortletReleaseNotes {
 	public void setReleaseNotes(List<String> releaseNotes) {
 		this.releaseNotes = releaseNotes;
 	}
+
+    /**
+     * 
+     * @return initialReleaseDate as DateTime. Can be null if not set via portlet preference.
+     */
+    public DateTime getInitialReleaseDate() {
+        return initialReleaseDate;
+    }
+
+    public void setInitialReleaseDate(DateTime initialReleaseDate) {
+        this.initialReleaseDate = initialReleaseDate;
+    }
+	
 }

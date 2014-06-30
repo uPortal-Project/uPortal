@@ -49,6 +49,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public static final String MARKETPLACE_FNAME = "portletmarketplace";
     public static final int QUANTITY_RELATED_PORTLETS_TO_SHOW = 5;
+    private static final String INITIAL_RELEASE_DATE_PREFERENCE_NAME="Initial_Release_Date";
     private static final String RELEASE_DATE_PREFERENCE_NAME="Release_Date";
     private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
     private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -146,6 +147,15 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
             }
             if(MarketplacePortletDefinition.RELEASE_NOTE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
                 temp.setReleaseNotes(Arrays.asList(portletPreference.getValues()));
+                continue;
+            }
+            if(MarketplacePortletDefinition.INITIAL_RELEASE_DATE_PREFERENCE_NAME.equalsIgnoreCase(portletPreference.getName())){
+                try {
+                    DateTime dt = releaseDateFormatter.parseDateTime(portletPreference.getValues()[0]);
+                    temp.setInitialReleaseDate(dt);
+                } catch (Exception e){
+                    logger.warn("Issue with parsing "+ INITIAL_RELEASE_DATE_PREFERENCE_NAME + ". Should be in format " + RELEASE_DATE_FORMAT, e);
+                }
                 continue;
             }
         }
