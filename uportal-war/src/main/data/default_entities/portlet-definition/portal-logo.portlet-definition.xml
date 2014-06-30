@@ -45,10 +45,10 @@
         <value>
 
 		<![CDATA[
-                <h1 class="portal-logo"><img src="/home/susan/uPortal/uPortal-git/portal_logo.png" alt="{upMsg:getMessage('portal.page.title', $USER_LANG)}"/></h1>
+         <h1 class="portal-logo"><img src="uPortal/uPortal-git/portal_logo.png"/></h1>
             ]]>
-
-          <!--  <![CDATA[
+<!--
+            <![CDATA[
                 <h1 class="portal-logo"><a href='/uPortal'>uPortal</a></h1>
             ]]>
 -->
