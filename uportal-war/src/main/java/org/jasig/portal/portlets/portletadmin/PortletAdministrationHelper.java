@@ -547,7 +547,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
      * @param person the person publishing/editing the portlet
      * @param form the portlet being editted
      * @param portletId the id of the saved portlet
-     * @return true if
+     * @return true If all three conditions are met
      */
     public boolean shouldDisplayLayoutLink(IPerson person, PortletDefinitionForm form, String portletId) {
         if (!form.isNew()) {

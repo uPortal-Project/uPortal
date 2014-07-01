@@ -72,22 +72,12 @@
         <input name="portlet" value="portlet"/>
         <output name="portletId" value="requestScope.portletId"/>
 
-        <transition on="finishPortletEdit" to="shouldDisplayLayoutLink">
+        <transition on="finishPortletEdit" to="listChannels">
             <set name="flashScope.statusMsgCode" value="portlet.isNew() ? 'portlet.manager.registered' : 'portlet.manager.edited'"/>
+            <set name="flashScope.layoutURL" value="portletAdministrationHelper.shouldDisplayLayoutLink(person, portlet, portletId) ? portletAdministrationHelper.getFragmentAdminURL(portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())) : null" />
         </transition>
         <transition on="cancelPortletEdit" to="finishPortletEdit"/>
     </subflow-state>
-
-    <!-- check if the "Manage DLM Fragments" link should appear in the status message -->
-    <decision-state id="shouldDisplayLayoutLink">
-        <if test="portletAdministrationHelper.shouldDisplayLayoutLink(person, portlet, portletId)" then="getLayoutURL" else="listChannels"/>
-    </decision-state>
-
-    <!-- get the URL for the "Manage DLM Fragments" link -->
-    <action-state id="getLayoutURL">
-        <set name="flashScope.layoutURL" value="portletAdministrationHelper.getFragmentAdminURL(portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest()))"/>
-        <transition to="listChannels"/>
-    </action-state>
 
     <!--
      | Portlet deletion
