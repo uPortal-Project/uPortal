@@ -38,7 +38,8 @@
       <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n7"/>
     </folder>
     <folder ID="s8" hidden="false" immutable="true" name="Header Left folder" type="header-left" unremovable="true">
-      <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n9"/>
+     <!-- <channel fname="portal-logo" unremovable="false" hidden="false" immutable="false" ID="n9"/> -->
+      <channel fname="MCLogo" unremovable="false" hidden="false" immutable="false" ID="n9"/>
     </folder>
   </folder>
 </layout>
