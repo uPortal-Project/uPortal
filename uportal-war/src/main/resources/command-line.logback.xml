@@ -88,8 +88,8 @@
     <appender-ref ref="CONSOLE"/>
   </logger>
    -->
-   
-  <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
+
+    <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
   <logger name="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
   <logger name="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
   
@@ -100,4 +100,11 @@
 
   <!-- Hide some bad JGroups log messages -->
   <logger name="org.jgroups.protocols" additivity="false" level="WARN"/>
+
+  <!-- Hide some warning messages associated with PAGS and Person Directory for group import -->
+  <logger name="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl" additivity="false" level="ERROR"/>
+  <logger name="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR"/>
+  <logger name="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao" additivity="false" level="ERROR"/>
+  <logger name="org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester" additivity="false" level="ERROR"/>
+  <logger name="org.hibernate.engine.jdbc.internal.JdbcResourceRegistryImpl" additivity="false" level="ERROR"/>
 </configuration>

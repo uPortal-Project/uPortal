@@ -75,6 +75,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
+        logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
         GroupDefinition groupDef = convertEntityToGroupDef(group);
         if (member.isGroup()) 
         {
@@ -179,6 +180,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public Iterator<IEntityGroup> findContainingGroups(IGroupMember member) 
     throws GroupsException 
     {
+        logger.debug("finding containing groups for member key {}", member.getKey());
         return (member.isEntity()) 
           ? findContainingGroupsForEntity((IEntity)member)
           : findContainingGroupsForGroup((IEntityGroup)member);
@@ -186,6 +188,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     
     private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group)
     {
+        logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
          Set<IEntityGroup> parents = getContainingGroups(group.getName(), new HashSet<IEntityGroup>());
          return (parents !=null)
             ? parents.iterator()
@@ -341,9 +344,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
        }
     private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
     {
+        logger.debug("Looking up containing groups for {}", name);
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
-        Set<IPersonAttributesGroupDefinition> pagsParentGroups = pagsGroup.getParents();
+        Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
         for (IPersonAttributesGroupDefinition parent : pagsParentGroups) {
             if (!groups.contains(parent)) {
                 groups.add(convertPagsGroupToEntity(parent));

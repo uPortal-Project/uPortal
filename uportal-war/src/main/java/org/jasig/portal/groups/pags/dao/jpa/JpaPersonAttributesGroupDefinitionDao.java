@@ -26,17 +26,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.base.Function;
+import org.apache.commons.lang.Validate;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
+import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.springframework.stereotype.Repository;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -88,7 +87,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         entityManager.remove(persistentDefinition);
     }
 
-    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    @PortalTransactional
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String name) {
         CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
@@ -109,6 +108,29 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         return groups;
     }
 
+    @PortalTransactional
+    @Override
+    public Set<IPersonAttributesGroupDefinition> getParentPersonAttributesGroupDefinitions(IPersonAttributesGroupDefinition group) {
+        CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery =
+                criteriaBuilder.createQuery(PersonAttributesGroupDefinitionImpl.class);
+        Root<PersonAttributesGroupDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
+
+        Join<PersonAttributesGroupDefinitionImpl, PersonAttributesGroupDefinitionImpl> members =
+                root.join(PersonAttributesGroupDefinitionImpl_.members);
+        ParameterExpression<String> nameParameter = criteriaBuilder.parameter(String.class);
+        criteriaQuery.where(criteriaBuilder.equal(members.get(PersonAttributesGroupDefinitionImpl_.name), nameParameter));
+        TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
+        query.setParameter(nameParameter, group.getName());
+
+        Set<IPersonAttributesGroupDefinition> parents = new HashSet<IPersonAttributesGroupDefinition>();
+        for (IPersonAttributesGroupDefinition parent : query.getResultList()) {
+            parents.add(parent);
+        }
+        return parents;
+    }
+
+    @PortalTransactional
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions() {
         final TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);

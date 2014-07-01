@@ -35,8 +35,8 @@ import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reference individual, or leaf, group service.
@@ -48,7 +48,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
 implements IIndividualGroupService, ILockableGroupService
 {
     
-    private static final Log log = LogFactory.getLog(ReferenceIndividualGroupService.class);
+    private static final Logger log = LoggerFactory.getLogger(ReferenceIndividualGroupService.class);
     
     // Describes the attributes of this service.  See compositeGroupServices.xml.
     protected ComponentGroupServiceDescriptor serviceDescriptor;
@@ -202,6 +202,7 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
  */
 public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
+    log.debug("Finding containing groups for member {}", gm.getKey());
     Collection groups = new ArrayList(10);
     IEntityGroup group = null;
     for ( Iterator it = getGroupStore().findContainingGroups(gm); it.hasNext(); )

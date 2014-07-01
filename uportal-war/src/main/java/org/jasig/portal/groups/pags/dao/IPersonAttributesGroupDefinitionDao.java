@@ -33,5 +33,6 @@ public interface IPersonAttributesGroupDefinitionDao {
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String groupKey);
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions();
     public IPersonAttributesGroupDefinition createPersonAttributesGroupDefinition(String name, String description);
+    public Set<IPersonAttributesGroupDefinition> getParentPersonAttributesGroupDefinitions(IPersonAttributesGroupDefinition group);
 
 }
