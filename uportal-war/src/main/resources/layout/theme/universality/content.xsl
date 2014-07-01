@@ -257,6 +257,13 @@
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
     <div class="up-portlet-controls">
+      <!--
+          Window State: MAXIMIZED/MINIMIZED/NORMAL to open the urls in the
+          contextual menu.  Leaving blank will continue to the current behavior
+          of keeping the current window state on a mode switch.
+      -->
+      <xsl:variable name="portalURLState">
+      </xsl:variable>
       <xsl:variable name="hasHelp">
           <xsl:if test="parameter[@name='hasHelp'] and parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
       </xsl:variable>
@@ -275,7 +282,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="HELP" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="HELP" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -293,7 +300,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="ABOUT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="ABOUT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -311,7 +318,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="EDIT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="EDIT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -329,7 +336,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="PRINT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="PRINT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
