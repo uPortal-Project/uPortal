@@ -344,6 +344,13 @@
     <div class="btn-group">
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
+      <!--
+          Window State: MAXIMIZED/MINIMIZED/NORMAL to open the urls in the
+          contextual menu.  Leaving blank will continue to the current behavior
+          of keeping the current window state on a mode switch.
+      -->
+      <xsl:variable name="portalURLState">
+      </xsl:variable>
     <!--
       Porlet Controls Display Order:
       help, remove, maximize, minimize, info, print, settings, ...
@@ -386,7 +393,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="HELP" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="HELP" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -490,7 +497,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="ABOUT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="ABOUT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -507,7 +514,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="EDIT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="EDIT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
@@ -525,7 +532,7 @@
               <xsl:with-param name="url">
                   <url:portal-url>
                       <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                      <url:portlet-url mode="CONFIG" copyCurrentRenderParameters="true" />
+                      <url:portlet-url state="$portalURLState" mode="CONFIG" copyCurrentRenderParameters="true" />
                   </url:portal-url>
               </xsl:with-param>
             </xsl:call-template>
@@ -543,7 +550,7 @@
             <xsl:with-param name="url">
                 <url:portal-url>
                     <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="PRINT" copyCurrentRenderParameters="true" />
+                    <url:portlet-url state="$portalURLState" mode="PRINT" copyCurrentRenderParameters="true" />
                 </url:portal-url>
             </xsl:with-param>
           </xsl:call-template>
