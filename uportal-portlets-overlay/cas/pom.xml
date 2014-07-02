@@ -156,6 +156,20 @@
                 <filtering>true</filtering>
                 <directory>src/main/resources</directory>
             </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/webapp/WEB-INF</directory>
+                <includes>
+                    <include>cas.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/webapp/WEB-INF/spring-configuration</directory>
+                <includes>
+                    <include>clearpass-configuration.xml</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>

@@ -1785,7 +1785,7 @@
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
            memoryStoreEvictionPolicy="LRU" statistics="true">
-        <!-- Uncomment when enabling CAS Clearpass in clustered environment
+        <!-- Uncomment when enabling CAS Clearpass in clustered uPortal environment
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
             properties="replicateAsynchronously=false,

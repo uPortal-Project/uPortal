@@ -99,21 +99,22 @@
     <property name="ticketValidator">
       <bean class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
         <constructor-arg index="0" value="${server.prefix}" />
-        <property name="acceptAnyProxy" value="true" />
+           <property name="allowedProxyChains" ref="clearPassProxyList" />
+           <!-- As a convenient alternative to specifying allowedProxyChains, you can comment it out and instead use
+                this property, but do NOT deploy to production this way. Use clearPassProxyList instead.
+           <property name="acceptAnyProxy" value="true" />  -->
       </bean>
     </property>
   </bean>
 
   <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
 
-    <!-- Not needed because we have acceptAnyProxy=true above.
     <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
         <constructor-arg>
             <list>
-                <value>https://servername.inst.edu</value>
+                <value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</value>
             </list>
         </constructor-arg>
     </bean>
-    -->
 
 </beans>
