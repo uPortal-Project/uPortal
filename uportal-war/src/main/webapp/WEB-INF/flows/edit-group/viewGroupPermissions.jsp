@@ -163,8 +163,8 @@ up.jQuery(function() {
 
     var pager;
     var editUrl = "${editUrl}";
-    var targetUrl = "<c:url value="/api/assignments/target/${ principalString }.json?includeInherited=true"/>";
-    var principalUrl = "<c:url value="/api/assignments/principal/${ principalString }.json?includeInherited=true"/>";
+    var targetUrl = "<c:url value="/api/assignments/target/${ up:encodePathSegment(principalString) }.json?includeInherited=true"/>";
+    var principalUrl = "<c:url value="/api/assignments/principal/${ up:encodePathSegment(principalString) }.json?includeInherited=true"/>";
 
     var getPermissionAssignments = function(url) {
         var rslt;

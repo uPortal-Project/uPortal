@@ -178,8 +178,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         var $ = up.jQuery;
 
         var pager;
-        var targetUrl = "<c:url value="/api/assignments/target/${ personEntity.principalString }.json?includeInherited=true"/>";
-        var principalUrl = "<c:url value="/api/assignments/principal/${ personEntity.principalString }.json?includeInherited=true"/>";
+        var targetUrl = "<c:url value="/api/assignments/target/${ up:encodePathSegment(personEntity.principalString) }.json?includeInherited=true"/>";
+        var principalUrl = "<c:url value="/api/assignments/principal/${ up:encodePathSegment(personEntity.principalString) }.json?includeInherited=true"/>";
         var editUrl = "${editUrl}";
         var deleteUrl = "${deleteUrl}";
 
