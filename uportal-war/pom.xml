@@ -674,6 +674,7 @@
                  +-->
                 <includes>
                     <include>org/apache/pluto/driver/container/pluto-configuration.properties</include>
+                    <include>properties/ehcache.xml</include>
                     <include>properties/portal.properties</include>
                     <include>properties/rdbm.properties</include>
                     <include>properties/security.properties</include>
@@ -691,6 +692,7 @@
                 <filtering>false</filtering>
                 <excludes>
                     <exclude>org/apache/pluto/driver/container/pluto-configuration.properties</exclude>
+                    <exclude>properties/ehcache.xml</exclude>
                     <exclude>properties/portal.properties</exclude>
                     <exclude>properties/rdbm.properties</exclude>
                     <exclude>properties/security.properties</exclude>

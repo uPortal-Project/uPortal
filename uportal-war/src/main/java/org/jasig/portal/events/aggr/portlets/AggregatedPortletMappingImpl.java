@@ -51,7 +51,7 @@ import org.hibernate.annotations.Type;
         allocationSize=10
     )
 @Immutable
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class AggregatedPortletMappingImpl implements AggregatedPortletMapping, Serializable {

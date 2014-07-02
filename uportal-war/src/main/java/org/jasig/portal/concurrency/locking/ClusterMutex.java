@@ -56,7 +56,7 @@ import org.springframework.util.Assert;
         allocationSize=1
     )
 //THIS CLASS CANNOT BE CACHED
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.concurrency.locking.ClusterMutex-NaturalId")
 public class ClusterMutex implements Serializable {
     private static final long serialVersionUID = 1L;
 

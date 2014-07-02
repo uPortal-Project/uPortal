@@ -50,7 +50,7 @@ import org.hibernate.annotations.NaturalIdCache;
         allocationSize=10
     )
 @Immutable
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class AggregatedTabMappingImpl implements AggregatedTabMapping, Serializable {

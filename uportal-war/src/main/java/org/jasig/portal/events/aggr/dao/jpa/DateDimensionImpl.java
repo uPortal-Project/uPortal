@@ -61,7 +61,7 @@ import org.joda.time.LocalDate;
         pkColumnValue="UP_DATE_DIMENSION_PROP",
         allocationSize=1
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class DateDimensionImpl implements DateDimension, Serializable {

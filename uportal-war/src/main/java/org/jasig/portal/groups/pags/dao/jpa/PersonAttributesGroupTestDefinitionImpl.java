@@ -58,7 +58,7 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitio
         pkColumnValue="UP_PAGS_TEST",
         allocationSize=5
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttributesGroupTestDefinition {
