@@ -22,7 +22,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<!--
+<%--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
 | the user interface of this portlet
@@ -31,27 +31,83 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | (like jQuery and the Fluid Skinning System)
 | and more, refer to:
 | http://www.ja-sig.org/wiki/x/cQ
--->
+--%>
 
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
 
-<!-- Portlet -->
-<%--<link type="text/css" rel="stylesheet" href="<c:url value="/css/activity.min.css"/>" />--%>
+<style type="text/css">
+    .portal-activity .box-outer {
+        height: 160px;
+        background-color: #2E2E2E;
+    }
+
+    .portal-activity .box-header {
+        width: 100%;
+        height: 20px;
+        background-color: black;
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        color: white;
+    }
+
+    .portal-activity .box-total {
+        margin-top: 5px;
+        color: white;
+        font-weight: bold;
+        font-size: xx-large;
+        text-align: center;
+        line-height: 100%;
+    }
+
+    .portal-activity .box-data {
+        padding-top: 5px;
+        padding-bottom: 15px;
+        color: white;
+    }
+
+    .portal-activity .box-data table {
+        margin-left: auto;
+        margin-right: auto;
+        border-collapse: collapse;
+    }
+
+    .portal-activity .box-data table td {
+        line-height: 100%;
+        padding: 2px;
+    }
+
+    .portal-activity .popular-search {
+        clear: both;
+        margin-top: 15px;
+    }
+
+    .portal-activity .popular-search .title {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    .portal-activity a:link, .portal-activity a:visited, .portal-activity a:hover, .portal-activity a:active {
+        text-decoration: none;
+    }
+</style>
+
+<%-- Portlet --%>
 <div class="fl-widget portlet portal-activity" role="section">
     <form id="${n}form">
 
-        <!-- Portlet Body -->
-        <div class="portlet-body" role="main">
+        <%-- Portlet Body --%>
+        <div class="fl-widget-content portlet-body" role="main">
 
-            <!-- Portlet Section -->
-            <div id="${n}popularPortlets" class="portlet-section" role="region">
+            <%-- Portlet Section --%>
+            <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">
 
                 <div class="portlet-section-body">
-                    <a id="portalActivityToggle" class="button btn"><spring:message code="portal.activity.who"/></a>
+                    <span style="font-weight:bold;"><spring:message code="portal.activity.who"/></span>
                     <br/><br/>
-                    <div id="portalActivity">
-                        <div>
-                            <div class="box-outer">
+                    <div class="fl-container-flex fl-centered">
+                        <div class="fl-container-flex fl-col-flex3 fl-fix content">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.now"/></div>
                                 <div class="box-total">${usageNow.total}</div>
                                 <div class="box-data">
@@ -65,7 +121,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </table>
                                 </div>
                             </div>
-                            <div class="box-outer">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.today"/></div>
                                 <div class="box-total">${usageToday.total}</div>
                                 <div class="box-data">
@@ -79,7 +135,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     </table>
                                 </div>
                             </div>
-                            <div class="box-outer">
+                            <div class="fl-col box-outer">
                                 <div class="box-header"><spring:message code="portal.activity.yesterday"/></div>
                                 <div class="box-total">${usageYesterday.total}</div>
                                 <div class="box-data">
@@ -95,9 +151,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </div>
                         </div>
                     </div>
-                    <br/>
-                    <a id="portalSearchActivityToggle" class="button btn"><spring:message code="portal.activity.searching"/></a>
-                    <div id="portalSearchActivity" class="popular-search">
+                    <div class="popular-search">
+                        <div class="title"><spring:message code="portal.activity.searching"/></div>
                         <div class="results">
                             <c:forEach items="${popularSearchTerms}" var="searchInfo" varStatus="status">
                                 <c:if test="${status.index > 0}"><bold>|</bold></c:if>
@@ -105,21 +160,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </c:forEach>
                         </div>
                     </div>
-                    </a>
                 </div>
             </div>
         </div>
     </form>
 </div>
-
-<script>
-$( "#portalActivityToggle" ).click(function() {
-$( "#portalActivity" ).slideToggle( "slow" );
-});
-
-$( "#portalSearchActivityToggle" ).click(function() {
-$( "#portalSearchActivity" ).slideToggle( "slow" );
-});
-</script>
-
 
