@@ -77,7 +77,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
         pkColumnValue="UP_SS_DESC",
         allocationSize=5
     )
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class StylesheetDescriptorImpl implements IStylesheetDescriptor {

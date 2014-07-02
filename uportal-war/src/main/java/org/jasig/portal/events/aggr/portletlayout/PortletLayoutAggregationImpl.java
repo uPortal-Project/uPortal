@@ -18,18 +18,7 @@
  */
 package org.jasig.portal.events.aggr.portletlayout;
 
-import org.apache.commons.lang.Validate;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.BaseAggregationImpl;
-import org.jasig.portal.events.aggr.DateDimension;
-import org.jasig.portal.events.aggr.TimeDimension;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
-import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
+import java.io.Serializable;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -44,7 +33,19 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import java.io.Serializable;
+
+import org.apache.commons.lang.Validate;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
+import org.jasig.portal.events.aggr.AggregationInterval;
+import org.jasig.portal.events.aggr.BaseAggregationImpl;
+import org.jasig.portal.events.aggr.DateDimension;
+import org.jasig.portal.events.aggr.TimeDimension;
+import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
+import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 
 /**
  * @author Chris Waymire <cwaymire@unicon.net>
@@ -70,7 +71,7 @@ import java.io.Serializable;
                 @Index(name = "IDX_UP_PORTLET_LAYOUT_INTRVL", columnNames = { "AGGR_INTERVAL" }),
                 @Index(name = "IDX_UP_PORTLET_LAYOUT_GRP", columnNames = { "AGGR_GROUP_ID" })
         })
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl-NaturalId")
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class PortletLayoutAggregationImpl

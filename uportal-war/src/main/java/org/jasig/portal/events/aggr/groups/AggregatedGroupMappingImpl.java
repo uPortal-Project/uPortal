@@ -73,7 +73,7 @@ import org.hibernate.annotations.NaturalIdCache;
         allocationSize=10
     )
 @Immutable
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public final class AggregatedGroupMappingImpl implements AggregatedGroupMapping, Serializable {

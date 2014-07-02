@@ -76,7 +76,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
                 @Index(name = "IDX_UP_PLT_EXEC_INTRVL", columnNames = { "AGGR_INTERVAL" }),
                 @Index(name = "IDX_UP_PLT_EXEC_GRP", columnNames = { "AGGR_GROUP_ID" })
         })
-@NaturalIdCache
+@NaturalIdCache(region = "org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public final class PortletExecutionAggregationImpl 
