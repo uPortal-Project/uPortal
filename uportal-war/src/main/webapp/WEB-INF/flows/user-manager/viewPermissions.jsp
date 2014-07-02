@@ -1,4 +1,4 @@
-<%--
+<%-
 
     Licensed to Jasig under one or more contributor license
     agreements. See the NOTICE file distributed with this work
@@ -184,7 +184,7 @@ up.jQuery(function() {
             table : null,
             pageSize: 10
         },
-        url: "<c:url value="/api/assignments/principal/${ personEntity.principalString }.json?includeInherited=true"/>",
+        url: "<c:url value="/api/assignments/principal/${ up:encodePathSegment(personEntity.principalString) }.json?includeInherited=true"/>",
         searchExclude: 1, //Exclude principal
         showPrincipal: false,
         showTarget: true
@@ -201,7 +201,7 @@ up.jQuery(function() {
             table : null,
             pageSize: 10
         },
-        url: "<c:url value="/api/assignments/target/${ personEntity.principalString }.json?includeInherited=true"/>",
+        url: "<c:url value="/api/assignments/target/${ up:encodePathSegment(personEntity.principalString) }.json?includeInherited=true"/>",
         searchExclude: 3, //Exclude target
         showPrincipal: true,
         showTarget: false

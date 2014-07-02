@@ -184,7 +184,7 @@ up.jQuery(function() {
             table : null,
             pageSize: 10
         },
-        url: "<c:url value="/api/assignments/principal/${ principalString }.json?includeInherited=true"/>",
+        url: "<c:url value="/api/assignments/principal/${ up:encodePathSegment(principalString) }.json?includeInherited=true"/>",
         searchExclude: 1, //Exclude principal
         showPrincipal: false,
         showTarget: true
@@ -201,7 +201,7 @@ up.jQuery(function() {
             table : null,
             pageSize: 10
         },
-        url: "<c:url value="/api/assignments/target/${ principalString }.json?includeInherited=true"/>",
+        url: "<c:url value="/api/assignments/target/${ up:encodePathSegment(principalString) }.json?includeInherited=true"/>",
         searchExclude: 3, //Exclude target
         showPrincipal: true,
         showTarget: false
