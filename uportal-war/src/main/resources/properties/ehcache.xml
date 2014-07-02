@@ -1785,12 +1785,14 @@
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
            memoryStoreEvictionPolicy="LRU" statistics="true">
+        <!-- Uncomment when enabling CAS Clearpass in clustered environment
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
             properties="replicateAsynchronously=false,
                 replicatePuts=true,
                 replicateUpdates=true, replicateUpdatesViaCopy=true,
                 replicateRemovals=true "/>
+        -->
     </cache>
 
 </ehcache>
