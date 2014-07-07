@@ -25,7 +25,7 @@
     <uri>classpath:/layout/theme/respondr/respondr.xsl</uri>
     <stylesheet-parameter>
         <name>skin</name>
-        <default-value>defaultSkin</default-value>
+        <default-value>skin_name</default-value>
         <scope>PERSISTENT</scope>
         <description>Skin name</description>
     </stylesheet-parameter>

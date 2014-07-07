@@ -869,7 +869,7 @@
                     <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/</outputDirectory>
                     <compress>true</compress>
                     <includes>
-                        <include>defaultSkin.less</include>
+                        <include>skin_name.less</include>
                     </includes>
                     <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
                 </configuration>

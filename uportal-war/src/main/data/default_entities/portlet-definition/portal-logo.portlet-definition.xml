@@ -42,10 +42,29 @@
     <portlet-preference>
         <name>content</name>
         <readOnly>false</readOnly>
-        <value>
+
+      <value>
+
+
+<!--
+
+	<![CDATA[
+         <h1 class="portal-logo"><img src="uPortal/uPortal-git/JasigWidgetPortlets/src/main/webapp/images/default-icon.png"/></h1>
+            ]]>
+-->
+<!--
+		<![CDATA[
+         <h1 class="portal-logo"><img src="uPortal/uPortal-git/portal_logo.png"/></h1>
+            ]]>
+-->
+
+<!--
             <![CDATA[
                 <h1 class="portal-logo"><a href='/uPortal'>uPortal</a></h1>
             ]]>
+-->
         </value>
+
     </portlet-preference>
+
 </portlet-definition>

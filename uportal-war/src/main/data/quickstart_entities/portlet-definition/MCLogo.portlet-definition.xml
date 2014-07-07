@@ -20,17 +20,18 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>Dynamic Respondr Skin</title>
-    <name>Dynamic Respondr Skin</name>
-    <fname>dynamic-respondr-skin</fname>
-    <desc>Compiles Bootstrap LESS dynamically, allowing administrators to make some skin configuration choices in a UI.  Supports the optional 'dynamic' strategy for Respondr.</desc>
+    <title>MC Logo</title>
+    <name>MC Logo</name>
+    <fname>MCLogo</fname>
+    <desc>Renders the MC logo at the top of the page</desc>
     <type>Portlet</type>
-    <timeout>30000</timeout>
+    <timeout>5000</timeout>
     <portlet-descriptor>
-        <ns2:isFramework>true</ns2:isFramework>
-        <ns2:portletName>DynamicRespondrSkin</ns2:portletName>
+  <!--      <ns2:webAppName>/SimpleContentPortlet</ns2:webAppName> -->
+	<ns2:webAppName>/jasig-widget-portlets</ns2:webAppName>
+        <ns2:portletName>cms</ns2:portletName>
     </portlet-descriptor>
-    <group>Respondr Theme Users</group>
+    <group>Everyone</group>
     <parameter>
         <name>configurable</name>
         <value>true</value>
@@ -39,16 +40,32 @@
         <name>disableDynamicTitle</name>
         <value>true</value>
     </parameter>
-    <parameter>
-        <name>iconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
-    </parameter>
-    <parameter>
-        <name>mobileIconUrl</name>
-        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
-    </parameter>
-	<portlet-preference>
-	    <name>PREFdynamicSkinName</name>
-	    <value>nameSkin</value>
-	</portlet-preference>
+    <portlet-preference>
+        <name>content</name>
+        <readOnly>false</readOnly>
+
+      <value>
+
+
+<!--
+
+	<![CDATA[
+         <h1 class="portal-logo"><img src="uPortal/uPortal-git/JasigWidgetPortlets/src/main/webapp/images/default-icon.png"/></h1>
+            ]]>
+-->
+<!--
+		<![CDATA[
+         <h1 class="portal-logo"><img src="uPortal/uPortal-git/portal_logo.png"/></h1>
+            ]]>
+-->
+
+<!--
+            <![CDATA[
+                <h1 class="portal-logo"><a href='/uPortal'>uPortal</a></h1>
+            ]]>
+-->
+        </value>
+
+    </portlet-preference>
+
 </portlet-definition>
