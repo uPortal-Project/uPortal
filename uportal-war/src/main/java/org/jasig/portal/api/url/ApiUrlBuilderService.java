@@ -27,120 +27,184 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.api.sso.SsoTicketService;
-import org.jasig.portal.api.url.BuildUrlRequest;
-import org.jasig.portal.api.url.BuiltUrl;
-import org.jasig.portal.api.url.UrlBuilderSerivce;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.security.sso.RemoteUserFilterBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
 
 /**
- * See design notes in {@link SsoTicketService}, esp re the {@code secret}
- * field/arg.
+ * See design notes in {@link iUrlBuilderService}
  */
 @Service
-public class ApiUrlBuilderService implements UrlBuilderSerivce, InitializingBean {
+public class ApiUrlBuilderService implements UrlBuilderService {
 
+	// For building the loginUrl
+	private static final String LOGIN_SERVLET_PATH = "/Login";
 
-    // For building the loginUrl
-    private static final String LOGIN_SERVLET_PATH = "/Login";
+	@Value("${environment.build.uportal.protocol}")
+	private String protocol;
 
+	@Value("${environment.build.uportal.server}")
+	private String server;
 
-    private static final Map<String,UrlTemplate> URL_TEMPLATES = Collections.unmodifiableMap(new HashMap<String, UrlTemplate>() {{ 
-        put("sspEarlyAlertNew", new UrlTemplate("/p/early-alert", Collections.unmodifiableMap(new HashMap<String, String>() {{ 
-        	put("schoolId","pP_schoolId");
-        	put("formattedCourse","pP_formattedCourse");
-        	put("sectionCode","pP_sectionCode");
-        	put("termCode","pP_termCode");
-        	put("studentUserName","pP_studentUserName");
-        	put("action","pP_action");
-        	}})));
-        put("sspEarlyAlertRoster", new UrlTemplate("/p/early-alert", Collections.unmodifiableMap(new HashMap<String, String>() {{ 
-        	put("formattedCourse","pP_formattedCourse");
-        	put("sectionCode","pP_sectionCode");
-        	put("termCode","pP_termCode");
-        	}})));
-        
-    }});
+	@Value("${environment.build.uportal.context}")
+	private String context;
 
+	private final Map<String, UrlTemplate> getUrlTemplates() {
+		return Collections.unmodifiableMap(new HashMap<String, UrlTemplate>() {
+			{
+				put("ea.form",
+						new UrlTemplate(
+								"p/early-alert?pP_action=enterAlert&",
+								Collections
+										.unmodifiableMap(new HashMap<String, String>() {
+											{
+												put("schoolId", "schoolId");
+												put("formattedCourse",
+														"pP_formattedCourse");
+												put("sectionCode",
+														"pP_sectionCode");
+												put("termCode", "pP_termCode");
+												put("studentUserName",
+														"pP_studentUserName");
+											}
+										})));
+				put("ea.new",
+						new UrlTemplate(
+								"p/early-alert?pP_action=enterAlert&",
+								Collections
+										.unmodifiableMap(new HashMap<String, String>() {
+											{
+												put("schoolId", "pP_schoolId");
+												put("formattedCourse",
+														"pP_formattedCourse");
+												put("sectionCode",
+														"pP_sectionCode");
+												put("termCode", "pP_termCode");
+												put("studentUserName",
+														"pP_studentUserName");
+											}
+										})));
+				put("ea",
+						new UrlTemplate("p/early-alert?", Collections
+								.unmodifiableMap(new HashMap<String, String>() {
+									{
+										put("formattedCourse",
+												"pP_formattedCourse");
+										put("sectionCode", "pP_sectionCode");
+										put("termCode", "pP_termCode");
+									}
+								})));
+				put("ea.roster",
+						new UrlTemplate("p/early-alert?", Collections
+								.unmodifiableMap(new HashMap<String, String>() {
+									{
+										put("formattedCourse",
+												"pP_formattedCourse");
+										put("sectionCode", "pP_sectionCode");
+										put("termCode", "pP_termCode");
+									}
+								})));
+				put("ssp",
+						new UrlTemplate("p/ssp", Collections
+								.unmodifiableMap(new HashMap<String, String>())));
+				put("mygps",
+						new UrlTemplate("p/mygps", Collections
+								.unmodifiableMap(new HashMap<String, String>())));
+				put("reports",
+						new UrlTemplate("p/reports", Collections
+								.unmodifiableMap(new HashMap<String, String>())));
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-	
-	}
-
-	@Override
-	public BuiltUrl issueUrl(BuildUrlRequest buildRequest) throws UnsupportedEncodingException, MalformedURLException {
-		
-		
-
-        URL contextUrl = null;
-		try {
-			contextUrl = new URL(buildRequest.getRequestUrl().toString());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        URL loginUrl = null;
-		loginUrl = new URL(contextUrl, buildRequest.getContextPath() + LOGIN_SERVLET_PATH);
-		
-        final StringBuilder login = new StringBuilder();
-        if(loginUrl != null)
-				login.append(loginUrl.toExternalForm())
-				    .append("?").append(RemoteUserFilterBean.TICKET_PARAMETER).append("=").append(buildRequest.getSsoTicket().getUuid())
-				    .append("&").append(LoginController.REFERER_URL_PARAM).append("=").append(URLEncoder.encode(buildTemplate(buildRequest), "UTF-8"));
-			
-
-        final BuiltUrlImp rslt = new BuiltUrlImp();
-        rslt.setSuccess(true);
-		rslt.setUrl(login.toString());
-        return rslt;
-	}
-	
-	String buildTemplate(BuildUrlRequest urlBuildRequest) throws UnsupportedEncodingException{
-		UrlTemplate  template = URL_TEMPLATES.get(urlBuildRequest.getUrlTemplateName());
-		final StringBuilder redirect = new StringBuilder(template.root);
-		String suffix="/";
-		if(template.pathParams != null){
-			for(String parameterKey:template.pathParams){
-				redirect.append(suffix).
-				append(URLEncoder.encode(urlBuildRequest.getParameters().get(parameterKey).toString(), "UTF-8"));
 			}
+		});
+	}
+
+	@Override
+	public String issueUrl(BuildUrlRequest buildRequest)
+			throws UnsupportedEncodingException, MalformedURLException {
+
+		URL url = new URL(buildBaseUrlWithLogin());
+
+		final StringBuilder login = new StringBuilder();
+		if (url != null && buildRequest.getSsoTicket() != null) {
+			login.append(url.toExternalForm())
+					.append("?")
+					.append(RemoteUserFilterBean.TICKET_PARAMETER)
+					.append("=")
+					.append(URLEncoder.encode(buildRequest.getSsoTicket()
+							.getUuid(), "UTF-8")).append("&")
+					.append(LoginController.REFERER_URL_PARAM).append("=")
+					.append(buildTemplate(buildRequest));
+			return login.toString();
 		}
-		suffix="?";
-		for(String parameterKey:urlBuildRequest.getParameters().keySet()){
-			if(template.paramKeyTranslation.containsKey(parameterKey)){
-				redirect.append(suffix).
-					append(template.paramKeyTranslation.get(parameterKey)).
-					append("=").
-					append(URLEncoder.encode(urlBuildRequest.getParameters().get(parameterKey).toString(), "UTF-8"));
+
+		return  protocol + "://" + server + buildTemplate(buildRequest);
+	}
+
+	private String buildBaseUrlWithLogin() {
+		return protocol + "://" + server + context + LOGIN_SERVLET_PATH;
+	}
+
+	String buildTemplate(BuildUrlRequest urlBuildRequest)
+			throws UnsupportedEncodingException {
+		UrlTemplate template = getUrlTemplates().get(
+				urlBuildRequest.getUrlTemplateName());
+		Map<String, String> parameters = urlBuildRequest.getParameters();
+		Map<String, String> pathParams = new HashMap<String, String>();
+
+		final StringBuilder redirect = new StringBuilder(context + "/"
+				+ template.root);
+
+		String suffix = "";
+		for (String parameterKey : parameters.keySet()) {
+			if(StringUtils.isBlank(parameters.get(parameterKey))){
+				continue;
+			}
+			if (template.paramKeyTranslation.containsKey(parameterKey)) {
+				redirect.append(suffix)
+						.append(template.paramKeyTranslation.get(parameterKey))
+						.append("=")
+						.append(URLEncoder.encode(parameters.get(parameterKey),
+								"UTF-8"));
 				suffix = "&";
+			} else {
+				pathParams.put(parameterKey, parameters.get(parameterKey));
 			}
 		}
-		return redirect.toString();
-	}
-	
-	static class UrlTemplate {
-		String root;
-		Map<String,String> paramKeyTranslation;
-		List<String> pathParams = null;
-		
-		UrlTemplate(String root, Map<String,String> paramKeyTranslation){
-			this.root = root;
-			this.paramKeyTranslation = paramKeyTranslation;
-		}
-		
-		UrlTemplate(String root, Map<String,String> paramKeyTranslation, List<String> pathParams){
-			this.root = root;
-			this.paramKeyTranslation = paramKeyTranslation;
-			this.pathParams = pathParams;
-		}
-		
-		
+		buildTemplatePath(redirect, pathParams);
+		String url = redirect.toString();
+
+		// removes any path params not matched
+		return url.replaceAll("(/\\{.*\\}/)", "/").split("\\{")[0];
 	}
 
-	
+	private void buildTemplatePath(StringBuilder redirect,
+			Map<String, String> pathParams) throws UnsupportedEncodingException {
+		for (String parameterKey : pathParams.keySet()) {
+			if(pathParams.get(parameterKey) == null)
+				continue;
+			String paramToken = "/{" + parameterKey + "}";
+			int start = redirect.indexOf(paramToken);
+			if (start < 0)
+				continue;
+			String encodedParam = UriUtils.encodePathSegment(pathParams.get(parameterKey), "UTF-8");
+			redirect.replace(start, start + paramToken.length(), "/"
+					+ encodedParam);
+		}
+	}
+
+	private static class UrlTemplate {
+		String root;
+		Map<String, String> paramKeyTranslation;
+		List<String> pathParams = null;
+
+		UrlTemplate(String root, Map<String, String> paramKeyTranslation) {
+			this.root = root;
+			this.paramKeyTranslation = paramKeyTranslation;
+		}
+	}
+
 }

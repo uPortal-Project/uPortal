@@ -4,17 +4,41 @@ import java.util.Map;
 
 import org.jasig.portal.api.sso.SsoTicket;
 
+public class BuildUrlRequest {
 
-public interface BuildUrlRequest {
+	private Map<String, String> parameters;
+	private String urlTemplateName;
+	private SsoTicket ssoTicket;
 
-	Map<String, String> getParameters();
-	
-	String getRequestUrl();
+	public BuildUrlRequest(Map<String, String> parameters,
+			String urlTemplateName, SsoTicket ssoTicket) {
+		this.urlTemplateName = urlTemplateName;
+		this.parameters = parameters;
+		this.ssoTicket = ssoTicket;
+	}
 
-	String getContextPath();
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
 
-	String getUrlTemplateName();
-	
-	SsoTicket getSsoTicket();
+	public String getUrlTemplateName() {
+		return urlTemplateName;
+	}
+
+	public SsoTicket getSsoTicket() {
+		return ssoTicket;
+	}
+
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
+
+	public void setUrlTemplateName(String urlTemplateName) {
+		this.urlTemplateName = urlTemplateName;
+	}
+
+	public void setSsoTicket(SsoTicket ssoTicket) {
+		this.ssoTicket = ssoTicket;
+	}
 
 }
