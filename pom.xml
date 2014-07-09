@@ -55,14 +55,14 @@
             <name>Sonatype Nexus Snapshots</name>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <repository>            
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </repository>
     </repositories>
 
@@ -72,14 +72,14 @@
             <name>Sonatype Nexus Snapshots</name>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
         <pluginRepository>            
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
     </pluginRepositories>
     <properties>
