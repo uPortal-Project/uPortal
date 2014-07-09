@@ -55,7 +55,7 @@
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </repository>
         <!-- SSP-2380. Overrides an inherited repo, which historically resulted in a
              corrupt joda-money download. Not totally sure where the repo dep is coming from.
@@ -73,7 +73,7 @@
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </repository>
     </repositories>
 
@@ -83,14 +83,14 @@
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
         <pluginRepository>            
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
             <releases><enabled>false</enabled></releases>
-            <snapshots><enabled>true</enabled></snapshots>
+            <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
     </pluginRepositories>
     <properties>
