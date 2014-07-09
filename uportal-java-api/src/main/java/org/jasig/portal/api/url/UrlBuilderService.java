@@ -48,7 +48,7 @@ public interface UrlBuilderService {
 		public void set(UrlBuilderService impl) {
 			IMPL = impl;
 		}
-	
+	}
 
 	/** Allows access to the UrlBuilderService impl to non-Portlet requests */
 	static final UrlBuilderAccessor IMPL = new UrlBuilderAccessor();
