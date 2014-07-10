@@ -62,7 +62,7 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 								Collections
 										.unmodifiableMap(new HashMap<String, String>() {
 											{
-												put("schoolId", "schoolId");
+												put("schoolId", "pP_schoolId");
 												put("formattedCourse",
 														"pP_formattedCourse");
 												put("sectionCode",
@@ -137,7 +137,7 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 					.append(URLEncoder.encode(buildRequest.getSsoTicket()
 							.getUuid(), "UTF-8")).append("&")
 					.append(LoginController.REFERER_URL_PARAM).append("=")
-					.append(buildTemplate(buildRequest));
+					.append(URLEncoder.encode(buildTemplate(buildRequest), "UTF-8"));
 			return login.toString();
 		}
 
