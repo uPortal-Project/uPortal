@@ -1,69 +1,37 @@
-<%--
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
-    Licensed to Jasig under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
---%>
-<style type="text/css">
-	.ui-autocomplete.ui-menu {
-		padding: 0;
-		overflow: hidden;
-	}
-	.ui-autocomplete li {
-		list-style: none;
-        max-width: 315px; /* Fixes Autocomplete on 1st search after page render would have very wide results box off side of window */
-        /*max-height: 75px;*/ /* Limiting # of chars sent tends to keep description to 2 lines in autocomplete results so don't need max-height. */
-        overflow:hidden;
-	}
-
-	.ui-autocomplete .ui-menu-item a {
-		border-bottom: 1px solid #efefef;
-		padding: .5em;
-	}
-
-	.ui-autocomplete .ui-menu-item a:hover {
-		cursor: pointer;
-	}
-    .ui-autocomplete a.ui-state-focus .autocomplete-header {
-		color: #fff;
-	}
-
-	.ui-autocomplete a.ui-state-focus {
-		border: 0;
-		background: rgb(62, 70, 79);
-		color: #fff;
-	}
-	.ui-autocomplete a.ui-corner-all {
-		-webkit-border-radius: 0 0 0 0;
-		border-radius: 0 0 0 0;
-	}
-	.ui-autocomplete .autocomplete-header {
-		font-weight: 800;
-		color: rgb(123, 34, 64);
-	}
-
-</style>
-<script type="text/javascript">
-
-var initSearchAuto = initSearchAuto || function($, searchFieldSelector) {
+var initSearchAuto = initSearchAuto || function($, params) {
+    var settings = $.extend({
+        prepopulateAutoSuggestUrl: '',
+        prepopulateUrlPattern: '',
+        autoSuggestResultsProcessor: 'default'
+    }, params);
+    var searchFieldSelector = settings.searchFieldSelector;
+    var prepopulateAutoSuggestUrl = settings.prepopulateAutoSuggestUrl;
+    var prepopulateUrlPattern = settings.prepopulateUrlPattern;
+    var autoSuggestResultsProcessor = autoSuggestResultsProcessors($)[settings.autoSuggestResultsProcessor];
+    var searchUrl = settings.autoSuggestSearchUrl;
 
     var searchField = $(searchFieldSelector);
     var actionUrl = searchField.closest('form').attr('action');
-    var searchUrl = $('input.autocompleteUrl')[0].value;
 
     /**
      * Helper method for making it a little easier to format the output in the menu
@@ -116,5 +84,13 @@ var initSearchAuto = initSearchAuto || function($, searchFieldSelector) {
         .append( formatOutput(item) )
         .appendTo( ul );
     };
+    if (prepopulateAutoSuggestUrl.length > 0) {
+        $.get(prepopulateAutoSuggestUrl)
+        .done(function(data) {
+            var autoCompleteData = autoSuggestResultsProcessor(data, prepopulateUrlPattern);
+            searchField.autocomplete( "option", "source", autoCompleteData);
+            searchField.autocomplete( "option", "minLength", 1);
+            searchField.autocomplete( "option", "delay", 200);
+        });
+    }
 };
-</script>

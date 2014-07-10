@@ -656,6 +656,37 @@
                 <name>autocompleteMaxTextSize</name>
                 <value>92</value>
             </preference>
+            <!-- Optional.  If specified indicates that the auto-complete search should use prepopulated source data
+                 and not query uPortal based on the user's entered keystrokes.  If not specified, the default search
+                 auto-suggest behavior occurs where auto-suggest queries uPortal with the field data entered by
+                 the user, which is slower but does a broader search within uPortal.  Specify a relative URL;
+                 e.g. for the portlet list used in the Gallery, enter /api/portletList.  The request path
+                 will be prepended. -->
+            <preference>
+                <name>prepopulateAutoSuggestUrl</name>
+                <value></value>
+            </preference>
+            <!-- If pre-populating auto-complete search results, this is the optional pattern for the resulting URL
+                 to display when the user selects an auto-complete search item.  The autoSuggestResultsProcessor can
+                 use this to craft an URL based on the selected item.  The request path will be prepended to this URL.
+                 For example, for the portlet list JSON returned by portlet list api, you would enter
+                 /p/$fname/max because the portletList autoSuggestResultsProcessor replaces $fname with the portlet
+                 fname from the portlet list JSON response. This is optional because not all
+                 autoSuggestResultsProcessors may need it. If the data returned from the prepopulateAutoSuggestUrl
+                 contains an URL, this preference would not need to be used.  -->
+            <preference>
+                <name>prepopulateUrlPattern</name>
+                <value></value>
+            </preference>
+            <!-- The name of the autoSuggestResultsProcessor method in autoSuggestResultsProcessors.js to use to
+                 process the JSON response from the prepopulateAutoSuggestUrl (if specified), or the default search
+                 auto-suggest Url. The default value is 'default' which is used with the default search auto-suggest
+                 feature. Other values, such as portletListProcessor are functions within
+                 autoSuggestResultsProcessors.js.  -->
+            <preference>
+                <name>autoSuggestResultsProcessor</name>
+                <value>default</value>
+            </preference>
         </portlet-preferences>
         
         <supported-processing-event>
