@@ -85,7 +85,8 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         }
         return owner;
     }
-    
+
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionOwner getPermissionOwner(long id){
         return getEntityManager().find(PermissionOwnerImpl.class, id);
@@ -118,17 +119,20 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         return activity;
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionActivity getPermissionActivity(long id) {
         return getEntityManager().find(PermissionActivityImpl.class, id);
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionActivity getPermissionActivity(long ownerId, String activityFname) {
         final IPermissionOwner permissionOwner = this.getPermissionOwner(ownerId);
         return findActivity(permissionOwner, activityFname);
     }
 
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     @Override
     public IPermissionActivity getPermissionActivity(String ownerFname, String activityFname) {
         final IPermissionOwner permissionOwner = this.getPermissionOwner(ownerFname);
