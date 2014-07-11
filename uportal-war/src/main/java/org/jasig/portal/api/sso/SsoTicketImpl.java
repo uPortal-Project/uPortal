@@ -28,7 +28,7 @@ public class SsoTicketImpl implements SsoTicket {
 
 	@Override
 	public String getUuid() {
-		return uuid;  //To change body of implemented methods use File | Settings | File Templates.
+		return uuid;
 	}
 
 	public void setUuid(String uuid) {
@@ -37,7 +37,7 @@ public class SsoTicketImpl implements SsoTicket {
 
 	@Override
 	public String getUsername() {
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+		return null;
 	}
 
 	public void setUsername(String username) {
@@ -46,7 +46,7 @@ public class SsoTicketImpl implements SsoTicket {
 
 	@Override
 	public Calendar getCreationDate() {
-		return creationDate;  //To change body of implemented methods use File | Settings | File Templates.
+		return creationDate;
 	}
 
 	public void setCreationDate(Calendar creationDate) {

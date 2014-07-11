@@ -54,7 +54,7 @@ public interface UrlBuilderService {
 	static final UrlBuilderAccessor IMPL = new UrlBuilderAccessor();
 
 	/**
-	 * Create a redirect Url for the given urlTemplateName and parameters list.
+	 * Create a Platfrom Url for the given {@code urlTemplateName} and {@code parameters} list.
 	 * 
 	 * @param urlTemplateName
 	 *            the key in the urlTemplates map currently hardcoded in the
@@ -64,7 +64,7 @@ public interface UrlBuilderService {
 	 *            properly converting to portal acceptable keys
 	 * @return
 	 */
-	String issueUrl(BuildUrlRequest buildRequest)
+	String buildUrl(BuildUrlRequest buildRequest)
 			throws UnsupportedEncodingException, MalformedURLException;
 
 }

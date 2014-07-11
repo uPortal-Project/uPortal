@@ -18,6 +18,13 @@
  */
 package org.jasig.portal.api.url;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.security.mvc.LoginController;
+import org.jasig.portal.security.sso.RemoteUserFilterBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,16 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.portal.security.mvc.LoginController;
-import org.jasig.portal.security.sso.RemoteUserFilterBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriUtils;
-
 /**
- * See design notes in {@link iUrlBuilderService}
+ * See design notes in {@link UrlBuilderService}
  */
 @Service
 public class ApiUrlBuilderService implements UrlBuilderService {
@@ -56,9 +55,10 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 	private final Map<String, UrlTemplate> getUrlTemplates() {
 		return Collections.unmodifiableMap(new HashMap<String, UrlTemplate>() {
 			{
+				put("default", new UrlTemplate("/", Collections.EMPTY_MAP));
 				put("ea.form",
 						new UrlTemplate(
-								"p/early-alert?pP_action=enterAlert&",
+								"/p/early-alert?pP_action=enterAlert&",
 								Collections
 										.unmodifiableMap(new HashMap<String, String>() {
 											{
@@ -74,7 +74,7 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 										})));
 				put("ea.new",
 						new UrlTemplate(
-								"p/early-alert?pP_action=enterAlert&",
+								"/p/early-alert?pP_action=enterAlert&",
 								Collections
 										.unmodifiableMap(new HashMap<String, String>() {
 											{
@@ -89,7 +89,7 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 											}
 										})));
 				put("ea",
-						new UrlTemplate("p/early-alert?", Collections
+						new UrlTemplate("/p/early-alert?", Collections
 								.unmodifiableMap(new HashMap<String, String>() {
 									{
 										put("formattedCourse",
@@ -99,7 +99,7 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 									}
 								})));
 				put("ea.roster",
-						new UrlTemplate("p/early-alert?", Collections
+						new UrlTemplate("/p/early-alert?", Collections
 								.unmodifiableMap(new HashMap<String, String>() {
 									{
 										put("formattedCourse",
@@ -109,13 +109,13 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 									}
 								})));
 				put("ssp",
-						new UrlTemplate("p/ssp", Collections
+						new UrlTemplate("/p/ssp", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 				put("mygps",
-						new UrlTemplate("p/mygps", Collections
+						new UrlTemplate("/p/mygps", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 				put("reports",
-						new UrlTemplate("p/reports", Collections
+						new UrlTemplate("/p/reports", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 
 			}
@@ -123,40 +123,61 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 	}
 
 	@Override
-	public String issueUrl(BuildUrlRequest buildRequest)
+	public String buildUrl(BuildUrlRequest buildRequest)
 			throws UnsupportedEncodingException, MalformedURLException {
 
-		URL url = new URL(buildBaseUrlWithLogin());
+		final String templateName = buildRequest.getUrlTemplateName();
+		if ( StringUtils.isBlank(templateName) ) {
+			throw new IllegalArgumentException("URL build request did not include a template name");
+		}
+		final String canonicalizedTemplateName = templateName.trim().toLowerCase();
 
-		final StringBuilder login = new StringBuilder();
-		if (url != null && buildRequest.getSsoTicket() != null) {
-			login.append(url.toExternalForm())
+		final UrlTemplate template = getUrlTemplates().get(canonicalizedTemplateName);
+		if ( template == null ) {
+			throw new IllegalArgumentException("URL template identifier [" + templateName +
+					"] (canonicalized to [" + canonicalizedTemplateName + "]) not recognized");
+		}
+
+		String templatedUrl = buildTemplate(template, buildRequest);
+
+		final boolean isSsoRequest = buildRequest.getSsoTicket() != null &&
+				StringUtils.isNotBlank(buildRequest.getSsoTicket().getUuid());
+
+		if ( !(isSsoRequest) ) {
+			final String baseUrl = new URL(buildServerUrl().toString()).toExternalForm();
+			return new StringBuilder(baseUrl).append(templatedUrl).toString();
+		}
+
+		final String baseUrl = new URL(builPlatformUrlWithLogin().toString()).toExternalForm();
+		return new StringBuilder(baseUrl)
 					.append("?")
 					.append(RemoteUserFilterBean.TICKET_PARAMETER)
 					.append("=")
 					.append(URLEncoder.encode(buildRequest.getSsoTicket()
 							.getUuid(), "UTF-8")).append("&")
 					.append(LoginController.REFERER_URL_PARAM).append("=")
-					.append(URLEncoder.encode(buildTemplate(buildRequest), "UTF-8"));
-			return login.toString();
-		}
-
-		return  protocol + "://" + server + buildTemplate(buildRequest);
+					.append(URLEncoder.encode(templatedUrl, "UTF-8")).toString();
 	}
 
-	private String buildBaseUrlWithLogin() {
-		return protocol + "://" + server + context + LOGIN_SERVLET_PATH;
+	private StringBuilder buildServerUrl() {
+		return new StringBuilder(protocol).append("://").append(server);
 	}
 
-	String buildTemplate(BuildUrlRequest urlBuildRequest)
+	private StringBuilder buildPlatformUrl() {
+		return buildServerUrl().append(context);
+	}
+
+	private StringBuilder builPlatformUrlWithLogin() {
+		return buildPlatformUrl().append(LOGIN_SERVLET_PATH);
+	}
+
+	private String buildTemplate(UrlTemplate template, BuildUrlRequest urlBuildRequest)
 			throws UnsupportedEncodingException {
-		UrlTemplate template = getUrlTemplates().get(
-				urlBuildRequest.getUrlTemplateName());
+
 		Map<String, String> parameters = urlBuildRequest.getParameters();
 		Map<String, String> pathParams = new HashMap<String, String>();
 
-		final StringBuilder redirect = new StringBuilder(context + "/"
-				+ template.root);
+		final StringBuilder redirect = new StringBuilder(context).append(template.root);
 
 		String suffix = "";
 		for (String parameterKey : parameters.keySet()) {

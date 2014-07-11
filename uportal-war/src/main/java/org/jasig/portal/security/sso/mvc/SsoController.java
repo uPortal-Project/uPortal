@@ -37,7 +37,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.api.sso.SsoTicket;
 import org.jasig.portal.api.sso.SsoTicketImpl;
+import org.jasig.portal.api.sso.SsoTicketService;
 import org.jasig.portal.api.url.BuildUrlRequest;
 import org.jasig.portal.api.url.UrlBuilderService;
 import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
@@ -74,9 +76,8 @@ public final class SsoController {
 	// For building the refUrl
 	private static final Object ACTION_KEY_SIMPLE = "action";
 	private static final Object ACTION_VALUE = "enterAlert";
-	private static final String EA_VIEW = "ea.new";
+	private static final String DEFAULT_TEMPLATE = "default";
 	private static final String EARLY_ALERT_TEMPLATE_NEW = "ea.new";
-	private static final String EARLY_ALERT_TEMPLATE_ROSTER = "ea.roster";
 
 	private static final String SUCCESS_FIELD = "success";
 	private static final String URL_FIELD = "URL";
@@ -94,8 +95,11 @@ public final class SsoController {
 	@Value("${org.jasig.portal.security.sso.mvc.SsoController.signedUrlToLiveMinutes}")
 	private int signedUrlToLiveMinutes = 5; // default
 
+	@Value("${org.jasig.portal.api.sso.ApiSsoTicketService.secret}")
+	private String ticketIssuingSecret;
+
 	@Autowired
-	private ISsoTicketDao ticketDao;
+	private SsoTicketService ssoTicketService;
 
 	@Autowired
 	private UrlBuilderService urlBuilder;
@@ -173,12 +177,7 @@ public final class SsoController {
 			}
 
 			log.info("Generating SSO ticket for username '{}'", username);
-			ISsoTicket ticket = ticketDao.issueTicket(username);
-
-			SsoTicketImpl ssoTicket = new SsoTicketImpl();
-			ssoTicket.setUuid(ticket.getUuid());
-			ssoTicket.setUsername(ticket.getUsername());
-			ssoTicket.setCreationDate(ticket.getCreationDate());
+			final SsoTicket ssoTicket = ssoTicketService.issueTicket(username, ticketIssuingSecret);
 
 			@SuppressWarnings("unchecked")
 			Enumeration<String> iter = req.getParameterNames();
@@ -190,15 +189,13 @@ public final class SsoController {
 			parameters.put(ACTION_KEY_SIMPLE.toString(),
 					ACTION_VALUE.toString());
 
+			final String view = StringUtils.isBlank(inputs.getView()) ? DEFAULT_TEMPLATE : inputs.getView().trim();
 			BuildUrlRequest buildRequest = new BuildUrlRequest(
-					parameters,
-					null != inputs.getView()
-							&& EA_VIEW.equals(inputs.getView()) ? EARLY_ALERT_TEMPLATE_NEW
-							: EARLY_ALERT_TEMPLATE_ROSTER, ssoTicket);
+					parameters, view, ssoTicket);
 
 			final Map<String, Object> rslt = new HashMap<String, Object>();
 			rslt.put(SUCCESS_FIELD, true);
-			rslt.put(URL_FIELD, urlBuilder.issueUrl(buildRequest));
+			rslt.put(URL_FIELD, urlBuilder.buildUrl(buildRequest));
 			return new ModelAndView("json", rslt);
 		} else {
 			return sendServerError(res, HttpServletResponse.SC_FORBIDDEN,
@@ -424,7 +421,7 @@ public final class SsoController {
 			this.termCode = termCode;
 			this.view = view;
 			// Check the incoming EA params if ea.new is indicated
-			if (null != this.view && this.view.equals(EA_VIEW)) {
+			if (!(StringUtils.isBlank(this.view)) && this.view.equals(EARLY_ALERT_TEMPLATE_NEW)) {
 				this.formattedCourse = formattedCourse;
 				this.studentSchoolId = studentSchoolId;
 				this.sectionCode = sectionCode;
