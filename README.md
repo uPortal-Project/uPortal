@@ -1,4 +1,4 @@
-For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM40/Home)
+For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM41/Home)
 
 Additional information about uPortal is available on the [uPortal Home Page](http://www.apereo.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
@@ -45,7 +45,7 @@ email address is the best place to go with questions related to configuring or
 deploying uPortal.    
 
 The uPortal manual is a collaborative document on the wiki which has more
-detailed documentation: https://wiki.jasig.org/display/UPM40
+detailed documentation: https://wiki.jasig.org/display/UPM41
 
 
 ## Other Notes
