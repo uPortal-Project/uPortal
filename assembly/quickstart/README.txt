@@ -37,7 +37,7 @@ Contents
 
 System requirements
 --------------------------------------------------------------------------------
-- JDK 1.6 or later
+- JDK 1.7 or later
 - JDK must include tools.jar.
 - JAVA_HOME environment variable must be set to a path that does not contain
   spaces.
