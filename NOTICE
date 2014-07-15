@@ -38,6 +38,7 @@ This project includes:
   Apache Commons Codec under The Apache Software License, Version 2.0
   Apache Commons Compress under The Apache Software License, Version 2.0
   Apache Commons FileUpload under The Apache Software License, Version 2.0
+  Apache Commons Lang under The Apache Software License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache Pluto Container API under The Apache Software License, Version 2.0
   Apache Pluto Container Driver API under The Apache Software License, Version 2.0
