@@ -13,13 +13,13 @@ uPortal uses Travis-CI for lightweight continuous integration.  You can see buil
 * JDK 1.7 or later - Just a JRE is not sufficient, a full JDK is required
 * Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration changes that must be made for Tomcat 6.0 which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM40/Installing+Tomcat).
 * Maven 3.0.3 or later
-* Ant 1.8.2
+* Ant 1.8.2 or 1.9.3 or later.
 
 ## Building and Deploying
 uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
-Ant tasks. Ant 1.8.2 or later is required
+Ant tasks. Ant 1.8.2 or 1.9.3 or later is required
 
 ### Ant tasks (run "ant -p" for a full list) :
 
