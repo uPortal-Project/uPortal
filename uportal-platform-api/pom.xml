@@ -14,8 +14,4 @@
     <name>uPortal Platform API</name>
     <description>uPortal Platform API</description>
 
-    <build>
-        <plugins>
-        </plugins>
-    </build>
 </project>
