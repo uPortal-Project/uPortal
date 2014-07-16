@@ -34,6 +34,7 @@ import org.jasig.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,9 @@ public class GoogleAnalyticsController {
     
     private PortletPreferencesJsonDao portletPreferencesJsonDao;
 
+    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name:guest}")
+    private String guestUserName;
+
     @Autowired
     public void setPortletPreferencesJsonDao(PortletPreferencesJsonDao portletPreferencesJsonDao) {
         this.portletPreferencesJsonDao = portletPreferencesJsonDao;
@@ -55,7 +59,14 @@ public class GoogleAnalyticsController {
     
     @RenderMapping
     public String renderAnalyticsHeader(RenderRequest request, ModelMap model) throws IOException {
-        final String remoteUser = request.getRemoteUser();
+
+        // For which user account are we logging portal activity?
+        String remoteUser = request.getRemoteUser();
+        if (remoteUser == null) {
+            // User is not authenticated;  log for the guest user
+            remoteUser = guestUserName;
+        }
+
         final IGroupMember groupMember = GroupService.getGroupMember(remoteUser, IPerson.class);
         final Map<String, Boolean> isMemberCache = new HashMap<String, Boolean>();
         
