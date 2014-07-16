@@ -42,6 +42,9 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 
 	// For building the loginUrl
 	private static final String LOGIN_SERVLET_PATH = "/Login";
+	
+	// For building the logoutUrl
+	private static final String LOGOUT_SERVLET_PATH = "/Logout";
 
 	@Value("${environment.build.uportal.protocol}")
 	private String protocol;
@@ -148,15 +151,22 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 			return new StringBuilder(baseUrl).append(templatedUrl).toString();
 		}
 
-		final String baseUrl = new URL(builPlatformUrlWithLogin().toString()).toExternalForm();
-		return new StringBuilder(baseUrl)
+		final String logoutUrl = new URL(buildPlatformUrlWithLogout().toString()).toExternalForm();
+		final String loginUrl = buildContextWithLogin().toString();
+		
+		 String loginWithReferrerUrl = new StringBuilder(loginUrl)
+			.append("?")
+			.append(RemoteUserFilterBean.TICKET_PARAMETER)
+			.append("=")
+			.append(URLEncoder.encode(buildRequest.getSsoTicket()
+					.getUuid(), "UTF-8")).append("&")
+			.append(LoginController.REFERER_URL_PARAM).append("=")
+			.append(URLEncoder.encode(templatedUrl, "UTF-8")).toString();
+		 
+		return new StringBuilder(logoutUrl)
 					.append("?")
-					.append(RemoteUserFilterBean.TICKET_PARAMETER)
-					.append("=")
-					.append(URLEncoder.encode(buildRequest.getSsoTicket()
-							.getUuid(), "UTF-8")).append("&")
 					.append(LoginController.REFERER_URL_PARAM).append("=")
-					.append(URLEncoder.encode(templatedUrl, "UTF-8")).toString();
+					.append(URLEncoder.encode(loginWithReferrerUrl, "UTF-8")).toString();
 	}
 
 	private StringBuilder buildServerUrl() {
@@ -167,8 +177,12 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 		return buildServerUrl().append(context);
 	}
 
-	private StringBuilder builPlatformUrlWithLogin() {
-		return buildPlatformUrl().append(LOGIN_SERVLET_PATH);
+	private StringBuilder buildContextWithLogin() {
+		return new StringBuilder(context).append(LOGIN_SERVLET_PATH);
+	}
+	
+	private StringBuilder buildPlatformUrlWithLogout() {
+		return buildPlatformUrl().append(LOGOUT_SERVLET_PATH);
 	}
 
 	private String buildTemplate(UrlTemplate template, BuildUrlRequest urlBuildRequest)

@@ -37,6 +37,7 @@ import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 import org.jasig.portal.utils.ContextPropertyPlaceholderUtils;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.BeansException;
@@ -46,8 +47,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import static org.jasig.portal.spring.context.support.QueryablePropertySourcesPlaceholderConfigurer.UnresolvablePlaceholderStrategy;
 
 /**
  * Simple servlet to handle user logout. When a user
@@ -126,7 +125,9 @@ public class LogoutController implements InitializingBean, ApplicationContextAwa
      */
     @RequestMapping
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirect = this.getRedirectionUrl(request);
+    	String redirect = getRedirectUrl(request);
+    	if(redirect == null)
+    		redirect = this.getRedirectionUrl(request);
         final HttpSession session = request.getSession(false);
 
         if (session != null) {
@@ -256,5 +257,19 @@ public class LogoutController implements InitializingBean, ApplicationContextAwa
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+    
+    private String getRedirectUrl(HttpServletRequest request){
+    	final String refUrl = request.getParameter(LoginController.REFERER_URL_PARAM);
+    	String redirectTarget = null;
+        if (refUrl != null) {
+            if (refUrl.startsWith("/")) {
+                redirectTarget = refUrl;
+            }
+            else {
+                log.warn("Reference URL passed in does not start with a / and will be ignored: " + refUrl);
+            }
+        }
+        return redirectTarget;
     }
 }
