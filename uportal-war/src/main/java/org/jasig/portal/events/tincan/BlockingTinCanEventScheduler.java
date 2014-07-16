@@ -16,12 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.jasig.portal.events.tincan;
 
-package org.springframework.web.client.interceptors;
+import org.jasig.portal.events.tincan.om.LrsStatement;
+import org.jasig.portal.events.tincan.providers.ITinCanAPIProvider;
+
 
 /**
+ * Event scheduler that blocks while sending events to all providers.
+ * Since this is called from event aggregation which is itself async
+ * in the portal, keeping this as the default for now.
+ *
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public enum Headers {
-    Authorization
+public class BlockingTinCanEventScheduler extends AbstractTinCanEventScheduler implements ITinCanEventScheduler {
+    @Override
+    public void scheduleEvent(LrsStatement statement) {
+        for (ITinCanAPIProvider provider : providers) {
+            provider.sendEvent(statement);
+        }
+    }
 }

@@ -1,18 +1,20 @@
 package org.jasig.portal.events.tincan;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.jasig.portal.events.tincan.om.LrsStatement;
+import org.jasig.portal.events.tincan.providers.ITinCanAPIProvider;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TincanConcurrentQueueHandler implements TinCanEventSender {
+public class TincanConcurrentQueueHandler implements ITinCanEventScheduler {
 	final private Queue<LrsStatement> theQueue = new ConcurrentLinkedQueue<LrsStatement>();
 	
 	@Override
-    public void sendEvent(LrsStatement statement) {
+    public void scheduleEvent(LrsStatement statement) {
 	    this.theQueue.offer(statement);
     }
 
@@ -28,4 +30,9 @@ public class TincanConcurrentQueueHandler implements TinCanEventSender {
 			cur = theQueue.poll();
 		}
 	}
+
+
+    @Override
+    public void setProviders(List<ITinCanAPIProvider> providers) {
+    }
 }

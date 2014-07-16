@@ -17,11 +17,30 @@
  * under the License.
  */
 
-package org.springframework.web.client.interceptors;
+package org.jasig.portal.events.tincan;
+
+import org.jasig.portal.events.PortalEvent;
+import org.jasig.portal.events.tincan.om.LrsStatement;
+
 
 /**
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public enum Headers {
-    Authorization
+public interface IPortalEventToLrsStatementConverter {
+    /**
+     * Check if this converter supports the PortalEvent.
+     *
+     * @param event the event
+     * @return true if the event is supported else false
+     */
+    boolean supports(PortalEvent event);
+
+
+    /**
+     * Convert the event to a statement.
+     *
+     * @param event the event to convert
+     * @return the new LrsStatement
+     */
+    LrsStatement toLrsStatement(PortalEvent event);
 }

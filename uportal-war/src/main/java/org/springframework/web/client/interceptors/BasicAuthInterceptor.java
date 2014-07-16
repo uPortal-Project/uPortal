@@ -1,3 +1,22 @@
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.springframework.web.client.interceptors;
 
 import java.io.IOException;
@@ -6,7 +25,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertyResolver;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -15,12 +34,13 @@ import org.springframework.util.Assert;
 
 
 /**
+ * Interceptor for RestTemplate that add the headers required for Basic authentication.
+ *
  * @author Josh Helmer, jhelmer@unicon.net
  */
 public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
-    private static final String AUTHORIZATION_HEADER = "Authorization";
     private String id;
-    private Environment environment;
+    private PropertyResolver propertyResolver;
     private String authHeader;
 
 
@@ -31,17 +51,14 @@ public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
 
 
     @Autowired
-    public void setEnvironment(final Environment env) {
-        this.environment = env;
+    public void setPropertyResolver(final PropertyResolver propertyResolver) {
+        this.propertyResolver = propertyResolver;
     }
 
 
     @Override
     public ClientHttpResponse intercept(HttpRequest req, byte[] bytes, ClientHttpRequestExecution execution) throws IOException {
-        Assert.notNull(environment);
-        Assert.notNull(id);
-
-        req.getHeaders().add(AUTHORIZATION_HEADER, getAuthHeader());
+        req.getHeaders().add(Headers.Authorization.name(), getAuthHeader());
 
         return execution.execute(req, bytes);
     }
@@ -49,17 +66,20 @@ public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
 
     private synchronized String getAuthHeader() {
         if (authHeader == null) {
-            String authString = environment.getProperty("org.jasig.http.basic-auth." + id + ".authString");
+            String authCode = propertyResolver.getProperty("org.jasig.rest.interceptor.basic-auth." + id + ".authCode");
 
-            if (StringUtils.isBlank(authString)) {
-                String username = environment.getProperty("org.jasig.http.basic-auth." + id + ".username");
-                String password = environment.getProperty("org.jasig.http.basic-auth." + id + ".password");
+            if (StringUtils.isBlank(authCode)) {
+                String username = propertyResolver.getProperty("org.jasig.rest.interceptor.basic-auth." + id + ".username");
+                String password = propertyResolver.getProperty("org.jasig.rest.interceptor.basic-auth." + id + ".password");
+
+                Assert.notNull(username);
+                Assert.notNull(password);
 
                 String auth = username + ":" + password;
-                authString = new String(Base64.encodeBase64(auth.getBytes()));
+                authCode = new String(Base64.encodeBase64(auth.getBytes()));
             }
 
-            authHeader = "Basic " + authString;
+            authHeader = "Basic " + authCode;
         }
 
         return authHeader;
