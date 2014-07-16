@@ -26,6 +26,7 @@ import java.util.Set;
 import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
 import org.jasig.portal.security.IPerson;
 
+
 /**
  * Utility used to create portal events for testing. Events all use package-private constructors but for tests
  * a way to create them is needed.
@@ -45,5 +46,4 @@ public final class TestEventFactory {
         final PortalEventBuilder portalEventBuilder = new PortalEventBuilder(source, serverName, eventSessionId, person, null);
         return new LoginEvent(portalEventBuilder, groups, attributes);
     }
-    
 }
