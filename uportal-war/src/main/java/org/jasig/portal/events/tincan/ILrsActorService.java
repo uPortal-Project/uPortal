@@ -17,11 +17,20 @@
  * under the License.
  */
 
-package org.springframework.web.client.interceptors;
+package org.jasig.portal.events.tincan;
+
+import org.jasig.portal.events.tincan.om.LrsActor;
+
 
 /**
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public enum Headers {
-    Authorization
+public interface ILrsActorService {
+    /**
+     * Given a username, get an LrsActor object.
+     *
+     * @param username the username to lookup
+     * @return the LrsActor.
+     */
+    LrsActor getLrsActor(String username);
 }

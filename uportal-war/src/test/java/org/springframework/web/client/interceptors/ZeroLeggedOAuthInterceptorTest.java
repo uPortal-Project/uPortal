@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.http.HttpHeaders;
@@ -36,9 +37,10 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RestTemplate;
 
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasKey;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -48,37 +50,20 @@ import static org.mockito.Mockito.when;
 /**
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public class BasicAuthInterceptorTest {
+public class ZeroLeggedOAuthInterceptorTest {
     @Test
-    public void testInterceptorWithUsernamePassword() throws Exception {
-        final String id = "test";
-        final String username = "test";
-        final String password = "test";
-
-        PropertyResolver resolver = mock(PropertyResolver.class);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".username"))).thenReturn(username);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".password"))).thenReturn(password);
-
-        doInterceptorTest(resolver, id, "dGVzdDp0ZXN0");
-    }
-
-
-    @Test
-    public void testInterceptorWithAuthCode() throws Exception {
-        final String id = "test";
-        final String authCode = "c29tZUxvbmdVc2VybmFtZTpzb21lTG9uZ1Bhc3N3b3Jk";
-
-        PropertyResolver resolver = mock(PropertyResolver.class);
-        when(resolver.getProperty(eq("org.jasig.rest.interceptor.basic-auth." + id + ".authCode"))).thenReturn(authCode);
-
-        doInterceptorTest(resolver, id, authCode);
-    }
-
-
-    private void doInterceptorTest(PropertyResolver resolver, String id, String expectedAuthCode) throws Exception {
-        final String url = "http://www.test.com/lrs";
+    public void testInterceptor() throws Exception {
+        final String url = "http://www.test.com/lrs?param1=val1&param2=val2";
         final String data = "test";
-        final String expectedHeader = "Basic " + expectedAuthCode;
+        final String id = "test";
+        final String realm = "realm";
+        final String consumerKey = "consumerKey";
+        final String secretKey = "secretKey";
+
+        PropertyResolver resolver = mock(PropertyResolver.class);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.oauth." + id + ".realm"))).thenReturn(realm);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.oauth." + id + ".consumerKey"))).thenReturn(consumerKey);
+        when(resolver.getProperty(eq("org.jasig.rest.interceptor.oauth." + id + ".secretKey"))).thenReturn(secretKey);
 
         // holder for the headers...
         HttpHeaders headers = new HttpHeaders();
@@ -98,7 +83,7 @@ public class BasicAuthInterceptorTest {
         when(factory.createRequest(any(URI.class), any(HttpMethod.class))).thenReturn(client);
 
         // add the new interceptor...
-        BasicAuthInterceptor interceptor = new BasicAuthInterceptor();
+        ZeroLeggedOAuthInterceptor interceptor = new ZeroLeggedOAuthInterceptor();
         interceptor.setPropertyResolver(resolver);
         interceptor.setId(id);
         List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
@@ -107,11 +92,23 @@ public class BasicAuthInterceptorTest {
         RestTemplate rest = new RestTemplate(factory);
         rest.setInterceptors(interceptors);
 
-        // do it...
         rest.postForLocation(url, data, Collections.emptyMap());
 
         // make sure auth header is correctly set...
         assertThat(headers, hasKey(Headers.Authorization.name()));
-        assertThat(headers.get(Headers.Authorization.name()), contains(expectedHeader));
+
+        String authHeader = headers.get(Headers.Authorization.name()).get(0);
+        assertThat(authHeader, containsString("OAuth realm=\"" + realm + "\""));
+        assertThat(authHeader, containsString("oauth_consumer_key=\"" + consumerKey + "\""));
+        // for now, only supports HMAC-SHA1.  May have to fix later...
+        assertThat(authHeader, containsString("oauth_signature_method=\"HMAC-SHA1\""));
+        assertThat(authHeader, containsString("oauth_version=\"1.0\""));
+        assertThat(authHeader, containsString("oauth_timestamp="));
+        assertThat(authHeader, containsString("oauth_nonce="));
+        assertThat(authHeader, containsString("oauth_signature="));
+
+        // oauth lib will create 2 oauth_signature params if you call sign
+        // multiple times.  Make sure only get 1.
+        assertThat(StringUtils.countMatches(authHeader, "oauth_signature="), is(1));
     }
 }

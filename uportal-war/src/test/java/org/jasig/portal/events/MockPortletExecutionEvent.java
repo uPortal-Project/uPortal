@@ -17,11 +17,10 @@
  * under the License.
  */
 
-package org.springframework.web.client.interceptors;
+package org.jasig.portal.events;
 
 /**
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public enum Headers {
-    Authorization
+public class MockPortletExecutionEvent extends PortletExecutionEvent {
 }
