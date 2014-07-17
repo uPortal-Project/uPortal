@@ -30,15 +30,16 @@
      +-->
     <folder ID="s2" hidden="true" immutable="true" name="Page Top folder" type="page-top" unremovable="true">
       <channel fname="dynamic-respondr-skin" unremovable="false" hidden="false" immutable="false" ID="n3"/>
-      <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n4"/>
+      <channel fname="fragment-admin-exit" unremovable="false" hidden="false" immutable="false" ID="n5"/>
     </folder>
-    <folder ID="s5" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
-      <channel fname="notification-icon" unremovable="false" hidden="false" immutable="false" ID="n6"/>
-      <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n7"/>
-      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+    <folder ID="s6" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
+      <channel fname="notification-icon" unremovable="false" hidden="false" immutable="false" ID="n7"/>
+      <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+      <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n9"/>
+      <channel fname="session-timeout" unremovable="false" hidden="false" immutable="false" ID="n10"/>
     </folder>
-    <folder ID="s9" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
-      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n10"/>
+    <folder ID="s11" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n12"/>
     </folder>
   </folder>
 </layout>

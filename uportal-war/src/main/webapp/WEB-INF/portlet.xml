@@ -929,6 +929,31 @@
         </portlet-preferences>
     </portlet>
 
+    <portlet>
+        <portlet-name>SessionTimeout</portlet-name>
+        <display-name xml:lang="en">Session Timeout</display-name>
+        <portlet-class>org.springframework.web.portlet.HeaderHandlingDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/SessionTimeout-portlet.xml</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Session Timeout</title>
+        </portlet-info>
+        <portlet-preferences>
+        </portlet-preferences>
+
+        <container-runtime-option>
+            <name>javax.portlet.renderHeaders</name>
+            <value>true</value>
+        </container-runtime-option>
+    </portlet>
+
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>
         <portlet-mode>config</portlet-mode>
