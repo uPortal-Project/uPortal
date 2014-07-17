@@ -2,7 +2,7 @@ package org.jasig.portal.events.tincan.om;
 
 import java.util.Locale;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.jasig.portal.events.tincan.json.LocalizedStringSerializer;
 
 /**
