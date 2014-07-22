@@ -18,22 +18,21 @@
   --%>
 <!-- Session timeout portlet -->
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+<c:set var="n"><portlet:namespace/></c:set>
 
-<div id="${n}-session-timeout-dlg" style="display: none" title="<spring:message code="session-timeout.title"/>">
-    <div class="session-timeout-body">
-        <span>
-            <spring:message code="session-timeout.body1" arguments="<span class='session-timeout-remaining'></span>" htmlEscape="false"/>
-        </span>
-        <span>
-            <spring:message code="session-timeout.body2"/>
-        </span>
+<div id="${n}session-timeout-dlg" style="display: none;">
+    <div class="modal-header">
+        <h4 class="modal-title"><spring:message code="session-timeout.title"/></h4>
     </div>
-
-    <div class="session-timeout-buttons btn-group">
-        <button type="button" class="btn btn-default">
+    <div class="modal-body">
+        <p><spring:message code="session-timeout.body1" arguments="<span class='session-timeout-remaining'></span>" htmlEscape="false"/></p>
+        <p><spring:message code="session-timeout.body2"/></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default refresh-session" data-dismiss="modal">
             <spring:message code="session-timeout.button.keep-alive"/>
         </button>
-        <button type="button" class="btn btn-default">
+        <button type="button" class="btn btn-primary logout">
             <spring:message code="session-timeout.button.logout"/>
         </button>
     </div>

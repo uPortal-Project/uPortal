@@ -946,6 +946,26 @@
             <title>Session Timeout</title>
         </portlet-info>
         <portlet-preferences>
+            <preference>
+                <name>enabled</name>
+                <value>true</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <name>dialogDisplayTime</name>
+                <value>60</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <name>resetSessionURL</name>
+                <value>/api/ajax-success</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <name>logoutURL</name>
+                <value>/Logout</value>
+                <read-only>false</read-only>
+            </preference>
         </portlet-preferences>
 
         <container-runtime-option>

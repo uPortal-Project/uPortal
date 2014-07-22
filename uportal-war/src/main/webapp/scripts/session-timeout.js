@@ -19,55 +19,178 @@
 
 var up = up || {};
 
-(function(up, $) {
+up.SessionTimeout = up.SessionTimeout || (function(up, $) {
     'use strict';
 
-    var seconds = 1000,
-        minutes = 60 * seconds,
-        dialog = {};
-
-    if (up.SessionTimeout) {
-        return;
-    }
+    var SECONDS = 1000,
+        MINUTES = 60 * SECONDS,
+        timeoutDialog,
+        timerId,
+        that = {};
 
 
+    /**
+     * Factory for timeoutDialog instances.
+     * @param config
+     * @returns the timeoutDialog instance
+     */
+    timeoutDialog = function(config) {
+        var display,
+            updateCountdown,
+            doLogout,
+            doRefresh,
+            hideDialog,
+            countdownTimerId;
 
-    up.SessionTimeout = function(config) {
-        var startTimer,
-            showTimeoutDialog,
-            sleepTime,
-            bufferTime,
-            waitTime,
-            dialogId,
-            dialog;
 
-        waitTime = config.waitTime || 5 * minutes;
-        bufferTime = config.bufferTime || 30 * seconds;
-        sleepTime = config.sleepTime || (30 * minutes) - waitTime - bufferTime;
-        dialogId = config.dialogId;
-
-        dialog = function(waitTime) {
-            var display = function() {
-                $(dialogId).dialog();
-            };
-
-            return {
-                display: display
-            };
+        /**
+         * Log out of the app.
+         */
+        doLogout = function() {
+            window.location = config.logoutUrl;
         };
 
 
-        showTimeoutDialog = function() {
+        /**
+         * Refresh the session
+         */
+        doRefresh = function() {
+            var promise, success, fail;
+
+            promise = $.ajax({
+                url: config.resetSessionUrl
+            });
+
+            success = function() {
+                hideDialog();
+                config.restartTimer();
+            };
+
+            fail = function() {
+                alert("Error resetting your session!");
+            };
+
+            promise.then(success, fail);
         };
 
 
+        /**
+         * Hide the timeout dialog.
+         */
+        hideDialog = function() {
+            config.dialogEl.dialog('close');
+            if (countdownTimerId) {
+                clearTimeout(countdownTimerId);
+            }
+        };
+
+
+        /**
+         * Update the countdown time on the dialog.  If countdown
+         * reaches 0, will auto-logout.
+         */
+        updateCountdown = function() {
+            var now,
+                remaining;
+
+            now = new Date().getTime();
+            // # of seconds before auto-logout...
+            remaining = Math.round((config.logoutTime - now) / 1000);
+
+            // time's up!  Log out...
+            if (remaining <= 0) {
+                hideDialog();
+                doLogout();
+                return;
+            }
+
+            config.dialogEl.find('.session-timeout-remaining').text(remaining);
+            countdownTimerId = setTimeout(updateCountdown, 500);
+        };
+
+
+        /**
+         * Display the timeout dialog.
+         */
+        display = function() {
+            config.dialogEl.find('.refresh-session').click(doRefresh);
+            config.dialogEl.find('.logout').click(doLogout);
+            // grr.  would prefer to use bootstrap, but doesn't work well
+            // in universality.
+            config.dialogEl.dialog({
+                show: 'fade',
+                hide: 'fade',
+                autoOpen: true,
+                closeOnEscape: false,
+                dialogClass: 'session-timeout-dlg',
+                draggable: false,
+                width: '600px',
+                modal: true,
+                resizable: false
+            });
+
+            // start the timer that counts down # of seconds...
+            countdownTimerId = setTimeout(updateCountdown, 500);
+        };
+
+        return {
+            display: display
+        };
+    };
+
+
+    /**
+     * Factory for creating the sessionTimeout instance.
+     *
+     * @param config
+     * @returns {{startTimer: startTimer}}
+     * @constructor
+     */
+    that = function(config) {
+        var startTimer;
+
+        // start the timer that tracks when a session has expired.
         startTimer = function() {
-            setTimeout(showTimeoutDialog, sleepTime);
+            var showTimeoutDialog,
+                sessionTimeout,
+                dialogDisplayTime,
+                sleepTime,
+                bufferTime,
+                now = new Date().getTime(),
+                logoutTime;
+
+            // figure out when the dialog should pop and how long it should remain visible.
+            sessionTimeout = config.sessionTimeout || 30 * MINUTES;
+            bufferTime = config.bufferTime || 30 * SECONDS;
+            dialogDisplayTime = config.dialogDisplayTime || 1 * MINUTES;
+
+            sleepTime = sessionTimeout - bufferTime - dialogDisplayTime;
+
+            // calculate when auto-logout should occur...
+            logoutTime = now + sessionTimeout - bufferTime;
+
+
+            showTimeoutDialog = function() {
+                timeoutDialog({
+                    logoutTime: logoutTime,
+                    dialogEl: $('#' + config.dialogId),
+                    logoutUrl: config.logoutUrl,
+                    resetSessionUrl: config.resetSessionUrl,
+                    restartTimer: startTimer
+                }).display();
+            };
+
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+
+            timerId = setTimeout(showTimeoutDialog, sleepTime);
         };
 
         return {
             startTimer: startTimer
         };
-    }
+    };
 
+    return that;
 } (up, jQuery));

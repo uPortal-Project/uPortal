@@ -37,6 +37,7 @@
     </folder>
     <folder ID="s7" hidden="false" immutable="true" name="Header Right folder" type="header-right" unremovable="true">
       <channel fname="search-launcher" unremovable="false" hidden="false" immutable="false" ID="n8"/>
+      <channel fname="session-timeout" unremovable="false" hidden="false" immutable="false" ID="n9"/>
     </folder>
   </folder>
 </layout>

@@ -446,7 +446,10 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="header.block">
-  	<!-- Portal Page Bar -->
+    <!-- Session timeout -->
+    <xsl:copy-of select="//channel[@fname = 'session-timeout']"/>
+
+    <!-- Portal Page Bar -->
     <xsl:call-template name="portal.page.bar"/>
 
     <!-- Skip Navigation -->
@@ -543,6 +546,9 @@
    | Template contents can be any valid XSL or XHTML.
   -->
   <xsl:template name="header.focused.block">
+    <!-- Session timeout -->
+    <xsl:copy-of select="//channel[@fname = 'session-timeout']"/>
+
     <!-- Portal Page Bar -->
     <xsl:call-template name="portal.page.bar"/>
 

@@ -17,18 +17,58 @@
   ~ under the License.
   --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
+<c:set var="n"><portlet:namespace/></c:set>
 
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
+<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.4/jquery-ui-1.10.4.min.js"/>"></script>
+
+<style type="text/css">
+    #${n}session-timeout-dlg .modal-dialog {
+        color: #000000;
+        text-align: left;
+    }
+
+    #${n}session-timeout-dlg .modal-header {
+        padding: 10px 0;
+    }
+
+    #${n}session-timeout-dlg .modal-header h4 {
+        font-size: 150%;
+    }
+
+    #${n}session-timeout-dlg .modal-body {
+        padding: 10px 0;
+    }
+
+    #${n}session-timeout-dlg .modal-footer {
+        float: right;
+        padding: 10px 0;
+    }
+
+    .session-timeout-dlg {
+        border-radius: 12px;
+        -moz-border-radius: 12px;
+        -webkit-border-radius: 12px;
+        box-shadow: 4px 4px 8px #808080;
+        -moz-box-shadow: 4px 4px 8px #808080;
+        -webkit-box-shadow: 4px 4px 8px #808080;
+    }
+
+    .session-timeout-dlg .ui-dialog-titlebar {
+        display: none;
+    }
+</style>
 
 <script src="<c:url value='/scripts/session-timeout.js'/>"/></script>
 <script>
     <rs:compressJs>
         var config = {
-            waitTime: 1000,
-            sleepTime: 5000,
-            bufferTime: 1000,
-            dialogId: '${n}-session-timeout-dlg'
+            enabled: ${enabled},
+            sessionTimeout: ${sessionTimeout} * 1000,
+            dialogDisplayTime: ${dialogDisplayTime} * 1000,
+            dialogId: '${n}session-timeout-dlg',
+            logoutUrl: '<c:url value="${logoutURL}"/>',
+            resetSessionUrl: '<c:url value="${resetSessionURL}"/>'
         };
 
         up.SessionTimeout(config).startTimer();
