@@ -34,7 +34,7 @@
       - (eg. portal.properties).  See portal.properties for example configuration.
       -->
     <bean id="scormCloudTinCanProvider" class="org.jasig.portal.events.tincan.providers.DefaultTinCanAPIProvider">
-        <property name="LRSUrl" value="${org.jasig.portal.tincan-api.learning-locker-lrs.url}"/>
+        <property name="LRSUrl" value="${org.jasig.portal.tincan-api.scorm-cloud-lrs.url:}"/>
         <property name="restTemplate">
             <bean class="org.springframework.web.client.RestTemplate">
                 <property name="interceptors">
@@ -42,7 +42,7 @@
                         <!-- Enable a MAXIMUM of 1 of the following interceptors -->
                         <!-- -->
                         <bean class="org.springframework.web.client.interceptors.BasicAuthInterceptor">
-                            <property name="id" value="learning-locker-lrs"/>
+                            <property name="id" value="scorm-cloud-lrs"/>
                         </bean>
                         <!-- -->
 
