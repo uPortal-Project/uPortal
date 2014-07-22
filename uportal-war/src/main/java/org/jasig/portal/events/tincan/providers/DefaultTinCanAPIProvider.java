@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.events.tincan.UrnBuilder;
 import org.jasig.portal.events.tincan.om.LocalizedString;
 import org.jasig.portal.events.tincan.om.LrsActor;
@@ -31,7 +32,7 @@ import org.jasig.portal.events.tincan.om.LrsVerb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -49,6 +50,7 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private RestTemplate restTemplate;
     private String LRSUrl = "";
+    private boolean enabled = false;
 
 
     @Autowired
@@ -58,15 +60,31 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
 
 
     /**
-     * Set the LRS URL.  Note:  Since, for now, this interface only handles creating statments,
+     * Set the LRS URL.  Note:  Since, for now, this interface only handles creating statements,
      * the URL should include the *full* REST endpoint for creating statements.  In most cases
      * that means you need to tack /statements on to the end of the base URL provided by the provider.
      *
      * @param url the statements REST endpoint
      */
-    @Required
     public void setLRSUrl(String url) {
         this.LRSUrl = url;
+    }
+
+
+    @Value("${org.jasig.portal.tincan-api.enabled:false}")
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+
+    /**
+     * Verify that the LRSUrl is defined.  If not, just disable this provider.
+     */
+    public void checkConfig() {
+        if (StringUtils.isEmpty(LRSUrl)) {
+            logger.warn("Disabling TinCan API interface.  Missing LRSUrl!");
+            enabled = false;
+        }
     }
 
 
@@ -75,19 +93,23 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
      */
     @Override
     public void init() {
-        final UrnBuilder objectIdBuilder = new UrnBuilder("UTF-8", "tincan", "uportal", "activities");
-        objectIdBuilder.add("startup");
+        checkConfig();
 
-        LrsActor actor = new LrsActor("mailto:no-reply@jasig.org", "uPortal user");
-        Map<String, LocalizedString> definition = new HashMap<>();
-        definition.put("name", new LocalizedString(Locale.US, "uPortal Instance"));
-        LrsObject object = new LrsObject(
-                objectIdBuilder.getUri(),
-                "Activity",
-                definition);
+        if (enabled) {
+            final UrnBuilder objectIdBuilder = new UrnBuilder("UTF-8", "tincan", "uportal", "activities");
+            objectIdBuilder.add("startup");
 
-        LrsStatement statement = new LrsStatement(actor, LrsVerb.INITIALIZED, object);
-        sendEvent(statement);
+            LrsActor actor = new LrsActor("mailto:no-reply@jasig.org", "uPortal user");
+            Map<String, LocalizedString> definition = new HashMap<>();
+            definition.put("name", new LocalizedString(Locale.US, "uPortal Instance"));
+            LrsObject object = new LrsObject(
+                    objectIdBuilder.getUri(),
+                    "Activity",
+                    definition);
+
+            LrsStatement statement = new LrsStatement(actor, LrsVerb.INITIALIZED, object);
+            sendEvent(statement);
+        }
     }
 
 
