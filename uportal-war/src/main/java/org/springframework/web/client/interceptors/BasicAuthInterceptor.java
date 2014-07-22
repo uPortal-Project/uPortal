@@ -72,8 +72,8 @@ public class BasicAuthInterceptor implements ClientHttpRequestInterceptor {
                 String username = propertyResolver.getProperty("org.jasig.rest.interceptor.basic-auth." + id + ".username");
                 String password = propertyResolver.getProperty("org.jasig.rest.interceptor.basic-auth." + id + ".password");
 
-                Assert.notNull(username);
-                Assert.notNull(password);
+                Assert.notNull(username, "The property \"org.jasig.rest.interceptor.basic-auth." + id + ".username\" must be set.");
+                Assert.notNull(password, "The property \"org.jasig.rest.interceptor.basic-auth." + id + ".password\" must be set.");
 
                 String auth = username + ":" + password;
                 authCode = new String(Base64.encodeBase64(auth.getBytes()));
