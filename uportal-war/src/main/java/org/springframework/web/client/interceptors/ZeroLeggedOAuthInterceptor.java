@@ -120,6 +120,9 @@ public class ZeroLeggedOAuthInterceptor implements ClientHttpRequestInterceptor 
             String consumerKey = propertyResolver.getProperty("org.jasig.rest.interceptor.oauth." + id + ".consumerKey");
             String secretKey = propertyResolver.getProperty("org.jasig.rest.interceptor.oauth." + id + ".secretKey");
 
+            Assert.notNull(consumerKey, "The property \"org.jasig.rest.interceptor.oauth." + id + ".consumerKey\" must be set.");
+            Assert.notNull(secretKey, "The property \"org.jasig.rest.interceptor.oauth." + id + ".secretKey\" must be set.");
+
             consumer = new RealmOAuthConsumer(consumerKey, secretKey, realm, serviceProvider);
         }
 
