@@ -17,7 +17,64 @@
  * under the License.
  */
 
+/*
+ * This function contains a set of results processor functions to process JSON results of pre-population or search as
+ * you type ajax auto-suggest search results and prepare them for search auto-suggest rendering.  The result is
+ * an array of javascript objects containing properties:
+ *
+ * label: full text for auto-suggest filtering (for pre-sourced data auto-suggest searches)
+ * title: auto-suggest result 1st line of item to display
+ * desc: auto-suggest result 2nd line of item to display
+ * url: url to go to when an auto-suggest item is chosen
+ */
+var autoSuggestResultsProcessors = function (jQuery) {
+    var $ = jQuery;
 
+    /* Processor to process the portletListAPI JSON response for use by auto-suggest.  This is expected to be used
+     * for pre-populating auto-suggest source data.
+     * categoriesArr - portletListAPI JSON response data
+     * urlPattern - url pattern containing the string '$fname' which is replaced with the channel name
+     */
+    var portletListProcessorFunc = function(categoriesArr, urlPattern) {
+        var channels = $.map(categoriesArr.channels, function (channel, index) {
+            return {
+                label: channel.title + channel.description === null ? '' : ' ' + channel.description,
+                title: channel.title,
+                desc: channel.description === null ? '' : channel.description,
+                url: urlPattern.replace('$fname', channel.fname)
+            }
+        });
+        return channels.concat($.map(categoriesArr.categories, function(category, index) {
+            return portletListProcessorFunc(category, urlPattern);
+        }));
+    };
+
+    return {
+        /* Default processor to handle auto-suggest queries to uPortal (queried, not pre-populated). Note that
+         * default is a reserved word in Javascript so must be quoted.
+         * json - auto-suggest query response JSON
+         * urlPattern - Not used. Required for general API signature. The resulting data contains the URL to use.
+         */
+        "default": function (json, urlPattern) {
+            return $.map(json, function (value, key) {
+                return {
+                    label: value.title + (value.description === null) ? '' : ' ' + value.description,
+                    title: value.title,
+                    desc: (value.description === null) ? '' : value.description,
+                    url: value.url
+                }
+            });
+        },
+        /* Processor to handle /api/portletList JSON results */
+        portletListProcessor: function (portletListJson, urlPattern) {
+            return portletListProcessorFunc(portletListJson.registry, urlPattern);
+        }
+    }
+};
+
+/*
+ * This is the main auto-suggest search function.
+ */
 var initSearchAuto = initSearchAuto || function($, params) {
     var settings = $.extend({
         prepopulateAutoSuggestUrl: '',
@@ -39,7 +96,7 @@ var initSearchAuto = initSearchAuto || function($, params) {
      * @return {string}      Returns a formatted string that will be injected into the menu
      */
     var formatOutput = function(item) {
-        var output = '<a><span class="autocomplete-header">' + htmlEscape(item.label) + '</span><br>' + htmlEscape(item.desc) + '</a>';
+        var output = '<a><span class="autocomplete-header">' + htmlEscape(item.title) + '</span><br>' + htmlEscape(item.desc) + '</a>';
         return output;
     }
 
@@ -63,14 +120,8 @@ var initSearchAuto = initSearchAuto || function($, params) {
                  */
                 $.getJSON( searchUrl, { query: request.term, ajax: true } )
                 .done(function ( data ) {
-                    response($.map(data.results, function (value, key) {
-                        return {
-                            label: value.title,
-                            desc: (value.description === null) ? '' : value.description,
-                            url: value.url
-                        };
-                    }));
-                });
+                    response(autoSuggestResultsProcessors($)['default'](data.results, ''))
+                })
             });
         },
         select: function( event, ui ) {
