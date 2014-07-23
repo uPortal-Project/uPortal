@@ -31,5 +31,6 @@
     <group>Portal System</group>
     <group>Tenant Administrators</group>
     <group>Tenants</group>
+    <!--<group>DB Root</group>-->
   </children>
 </group>

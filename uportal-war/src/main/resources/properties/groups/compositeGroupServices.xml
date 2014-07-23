@@ -138,4 +138,23 @@ This list of component group services is processed by the composite, or "root" s
   </service>
 -->
 
+
+<!--  
+ | Uncomment to configure a External DB group service component.  Be sure to edit 
+ | DBGroupStore.properties to apply your settings.
+ |
+ | DBGroupStore is an implementation that recognizes groups and memberships defined 
+ | in an External Database server and makes them available in the portal.  
+ +-->
+ <!--
+  <service>
+    <name>ExternalDB</name>
+    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.jasig.portal.groups.db.ExternalDBEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.jasig.portal.groups.db.ExternalDBGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.jasig.portal.groups.db.ExternalDBEntitySearcherFactory</entity_searcher_factory>
+    <internally_managed>false</internally_managed>
+    <caching_enabled>false</caching_enabled>
+  </service>
+-->
 </servicelist>
