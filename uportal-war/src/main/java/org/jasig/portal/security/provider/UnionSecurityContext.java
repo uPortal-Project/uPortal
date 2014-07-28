@@ -40,7 +40,7 @@ class UnionSecurityContext extends ChainingSecurityContext {
   }
 
   public synchronized void authenticate() throws PortalSecurityException {
-  // lets chaining invoke authetication on all subcontexts
+  // lets chaining invoke authentication on all subcontexts
   // then sets resulting principal, descriptor and isauth based on
   // first authenticated context.
 

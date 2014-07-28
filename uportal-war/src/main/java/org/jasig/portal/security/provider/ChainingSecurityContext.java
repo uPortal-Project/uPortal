@@ -84,7 +84,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
   /**
-   * We walk the chain of subcontext assigning principals and opaquecredentials
+   * We walk the chain of subcontexts assigning principals and opaqueCredentials
    * from the parent. Note that the contexts themselves should resist
    * actually performing the assignment if an assignment has already been made
    * to either the credentials or the UID.
@@ -212,7 +212,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
 
-  // I 'spose the public class could just implement all of these interfaces
+  // I suppose the public class could just implement all of these interfaces
   // but I prefer member classes. -ADN
 
   protected class ChainingPrincipal implements IPrincipal {
