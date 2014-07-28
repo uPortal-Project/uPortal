@@ -117,7 +117,7 @@ public class Authentication {
         //Set the principals and credentials for the security context chain
         this.configureSecurityContextChain(principals, credentials, person, securityContext, BASE_CONTEXT_NAME);
 
-        // NOTE: The LoginServlet looks in the security.properties file to
+        // NOTE: PortalPreAuthenticatedProcessingFilter looks in the security.properties file to
         // determine what tokens to look for that represent the principals and
         // credentials for each context. It then retrieves the values from the request
         // and stores the values in the principals and credentials HashMaps that are
@@ -253,8 +253,7 @@ public class Authentication {
     }
 
     /**
-     * Get the principal and credential for a specific context and store them in
-     * the context.
+     * Get the principal and credential for a specific context and store them in the context.
      * @param principals
      * @param credentials
      * @param ctxName
@@ -291,7 +290,7 @@ public class Authentication {
         String username = principals.get(ctxName);
         String credential = credentials.get(ctxName);
         // If username or credential are null, this indicates that the token was not
-        // set in security properties. We will then use the value for root.
+        // set in security.properties. We will then use the value for root.
         username = username != null ? username : (String) principals.get(BASE_CONTEXT_NAME);
         credential = credential != null ? credential : (String) credentials.get(BASE_CONTEXT_NAME);
         if (log.isDebugEnabled()) {
@@ -310,8 +309,7 @@ public class Authentication {
     }
 
     /**
-     * Recureses through the {@link ISecurityContext} chain, setting the credentials
-     * for each.
+     * Recurse through the {@link ISecurityContext} chain, setting the credentials for each.
      * TODO This functionality should be moved into the {@link org.jasig.portal.security.provider.ChainingSecurityContext}.
      *
      * @param principals

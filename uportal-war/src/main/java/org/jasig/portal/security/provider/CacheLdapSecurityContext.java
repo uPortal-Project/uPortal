@@ -75,7 +75,7 @@ public class CacheLdapSecurityContext extends SimpleLdapSecurityContext {
 
   /**
    * We need to override this method in order to return a class that implements
-   * the NotSoOpaqueCredentals interface.
+   * the NotSoOpaqueCredentials interface.
    */
   public IOpaqueCredentials getOpaqueCredentials () {
     if (this.isauth) {

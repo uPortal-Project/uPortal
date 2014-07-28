@@ -21,7 +21,7 @@ package org.jasig.portal.security.provider;
 
 /**
  * <p>The factory class for the simple security context. Just returns a new
- * instance of the TruestSecurityContext.</p>
+ * instance of the SimpleSecurityContext.</p>
  *
  * @author Andrew Newman, newman@yale.edu
  * @version $Revision$

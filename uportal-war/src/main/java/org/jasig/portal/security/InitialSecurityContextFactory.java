@@ -154,7 +154,7 @@ public class InitialSecurityContextFactory {
     }
     
     /**
-     * Recursivly parses the tree of {@link ContextConfiguration} objects to create
+     * Recursively parses the tree of {@link ContextConfiguration} objects to create
      * a tree (chain) of {@link ISecurityContext}s. The root context is returned by
      * the method after all of it's sub-contexts have been created and configured.
      * 
@@ -185,7 +185,7 @@ public class InitialSecurityContextFactory {
      * for the specified context. The factory is loaded and the configuration is
      * named then the {@link Properties} are parsed to find all context configuration
      * properties and sub-contexts for this context. For each sub-context this method
-     * is called recursivly.
+     * is called recursively.
      * 
      * @param fullContextName The fully qualified name of the context to configure.
      * @param securtiyProperties The {@link Properties} to use for configuration.

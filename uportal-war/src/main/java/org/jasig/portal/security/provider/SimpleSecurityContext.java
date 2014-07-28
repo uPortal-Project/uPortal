@@ -106,8 +106,7 @@ public class SimpleSecurityContext extends ChainingSecurityContext implements
                 throw new RuntimeException("Error authenticating user", e);
             }
         }
-        // If the principal and/or credential are missing, the context
-        // authentication
+        // If the principal and/or credential are missing, the context authentication
         // simply fails. It should not be construed that this is an error.
         else {
             log.info("Principal or OpaqueCredentials not initialized prior to authenticate");

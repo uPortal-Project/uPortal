@@ -51,7 +51,7 @@ public interface ISecurityContext extends Serializable {
    * Principal interface. By operating on this returned object the
    * implementation class for the credentials type will be able to access
    * any values set in the instance without exposing an interface method that
-   * would allow others (inappropriate) acces to the fields.
+   * would allow others (inappropriate) access to the fields.
    *
    * @return An empty principal container.
    *
@@ -88,7 +88,7 @@ public interface ISecurityContext extends Serializable {
    * Returns the currently authenticated principal if we are currently
    * authenticated. Note that merely testing this for a non-null pointer
    * is not sufficient to verify authenticated status. The isAuthenticated()
-   * call should be used. In some authentication schemes, an asyncronous
+   * call should be used. In some authentication schemes, an asynchronous
    * event could potentially change one's authentication status.
    *
    * @return The currently authenticated principal.
@@ -98,8 +98,8 @@ public interface ISecurityContext extends Serializable {
   /**
    * Returns any credentials that an authenticated principal currently
    * has. Note that opaque credentials don't have any methods for examination
-   * of the credentials contents. This call would primarily be useful to
-   * chain authentication manually within the same authentication schem.
+   * of the credential's contents. This call would primarily be useful to
+   * chain authentication manually within the same authentication scheme.
    *
    * @return The currently authenticated credentials object.
    *
@@ -121,25 +121,25 @@ public interface ISecurityContext extends Serializable {
 
   /**
    * Returns a boolean status as to whether the descriptor corresponds to an
-   * authenticated principal. Note that the get(Principaal|OpaqueCredentials)
+   * authenticated principal. Note that the get(Principal|OpaqueCredentials)
    * calls return null until isAuthenticated first returns <code>true</code>.
    */
   public boolean isAuthenticated();
 
   /**
-   * Returns an <code>ISecurityContext</code> for the named subserviant security
+   * Returns an <code>ISecurityContext</code> for the named subservient security
    * context.
    *
    * @return The security context object reference associated with the
    * name specified as the first parameter.
    *
-   * @param ctx The non-compound name of the subserviant security context.
+   * @param ctx The non-compound name of the subservient security context.
    */
   public ISecurityContext getSubContext(String ctx) throws PortalSecurityException;
 
   /**
    * Returns an enumeration of the security contexts currently registered as
-   * being subserviant to this one.
+   * being subservient to this one.
    *
    * @return The enumeration object containing all of the contexts.
    */
@@ -147,16 +147,16 @@ public interface ISecurityContext extends Serializable {
 
   /**
    * Returns an enumeration of the names of the security contexts currently
-   * registered as being subserviant to this one.
+   * registered as being subservient to this one.
    *
    * @return The enumeration object containing all of the subcontext names.
    */
   public Enumeration getSubContextNames();
 
   /**
-   * Adds a named sub context to the list of subserviant subcontexts.
+   * Adds a named sub context to the list of subservient subcontexts.
    *
-   * @param name The non-compound name of the subserviant context. Note that
+   * @param name The non-compound name of the subservient context. Note that
    * under normal circumstances the establishment of the InitialSecurityContext
    * will automatically register all subcontext.
    *

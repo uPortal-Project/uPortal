@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  * validated password of passphrase to perform just-in-time validation but the
  * means of validation is now COMPLETELY in the hands of the channel. If the
  * channel utilizes a weak authenticity-checking mechanism and the password is
- * the same as the one that portal users regard as secure, then unbeknownst to
+ * the same as the one that portal users regard as secure, then unbeknown to
  * the user, their "secure" password is being placed in jeopardy. PLEASE use
  * this SecurityContext implementation sparingly and with your eyes open!</p>
  *
@@ -118,7 +118,7 @@ class CacheSecurityContext extends ChainingSecurityContext implements ISecurityC
 
   /**
    * We need to override this method in order to return a class that implements
-   * the NotSoOpaqueCredentals interface.
+   * the NotSoOpaqueCredentials interface.
    */
   public IOpaqueCredentials getOpaqueCredentials() {
     if (parentContext != null && parentContext.isAuthenticated()) {
