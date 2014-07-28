@@ -33,9 +33,10 @@ public interface ITinCanAPIProvider {
     /**
      * Handle an LRS statement.
      *
-     * @param statement the statment to handle
+     * @param statement the statement to handle
+     * @return
      */
-    void sendEvent(LrsStatement statement);
+    boolean sendEvent(LrsStatement statement);
 
     /**
      * Do any tear-down clean up.  Probably unnecessary, but just included for parity w/ init.
