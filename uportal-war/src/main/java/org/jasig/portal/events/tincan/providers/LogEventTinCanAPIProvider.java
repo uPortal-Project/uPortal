@@ -49,7 +49,7 @@ public class LogEventTinCanAPIProvider implements ITinCanAPIProvider {
 
 
     @Override
-    public void sendEvent(LrsStatement statement) {
+    public boolean sendEvent(LrsStatement statement) {
         String json = null;
         try {
             json = objectMapper.writeValueAsString(statement);
@@ -57,6 +57,8 @@ public class LogEventTinCanAPIProvider implements ITinCanAPIProvider {
         } catch (JsonProcessingException e) {
             log.error("Error logging xAPI event", e);
         }
+
+        return true;
     }
 
 
