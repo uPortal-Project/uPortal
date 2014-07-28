@@ -48,7 +48,7 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
      * @see org.jasig.portal.security.ISecurityContext#addSubContext(java.lang.String, org.jasig.portal.security.ISecurityContext)
      */
     public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException {
-        throw new UnsupportedOperationException("This conext does not support chaining.");
+        throw new UnsupportedOperationException("This context does not support chaining.");
     }
 
     /* (non-Javadoc)
