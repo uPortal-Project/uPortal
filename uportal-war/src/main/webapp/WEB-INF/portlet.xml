@@ -672,7 +672,7 @@
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-publishing-event>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Directory</portlet-name>
         <display-name xml:lang="en">Directory</display-name>
@@ -952,17 +952,19 @@
                 <read-only>false</read-only>
             </preference>
             <preference>
-                <name>dialogDisplayTime</name>
+                <name>dialogDisplaySeconds</name>
                 <value>60</value>
                 <read-only>false</read-only>
             </preference>
             <preference>
-                <name>resetSessionURL</name>
+                <!-- This URL is relative to the root of the uPortal instance -->
+                <name>resetSessionURLFragment</name>
                 <value>/api/ajax-success</value>
                 <read-only>false</read-only>
             </preference>
             <preference>
-                <name>logoutURL</name>
+                <!-- This URL is relative to the root of the uPortal instance -->
+                <name>logoutURLFragment</name>
                 <value>/Logout</value>
                 <read-only>false</read-only>
             </preference>

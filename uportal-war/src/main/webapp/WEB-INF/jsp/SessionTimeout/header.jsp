@@ -64,11 +64,11 @@
     <rs:compressJs>
         var config = {
             enabled: ${enabled},
-            sessionTimeout: ${sessionTimeout} * 1000,
-            dialogDisplayTime: ${dialogDisplayTime} * 1000,
+            sessionTimeoutMS: ${sessionTimeoutMS},
+            dialogDisplayMS: ${dialogDisplayMS},
             dialogId: '${n}session-timeout-dlg',
-            logoutUrl: '<c:url value="${logoutURL}"/>',
-            resetSessionUrl: '<c:url value="${resetSessionURL}"/>'
+            logoutURL: '<c:url value="${logoutURLFragment}"/>',
+            resetSessionURL: '<c:url value="${resetSessionURLFragment}"/>'
         };
 
         up.SessionTimeout(config).startTimer();

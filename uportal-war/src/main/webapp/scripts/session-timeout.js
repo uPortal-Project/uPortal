@@ -19,7 +19,7 @@
 
 var up = up || {};
 
-up.SessionTimeout = up.SessionTimeout || (function(up, $) {
+up.SessionTimeout = up.SessionTimeout || (function($) {
     'use strict';
 
     var SECONDS = 1000,
@@ -47,7 +47,7 @@ up.SessionTimeout = up.SessionTimeout || (function(up, $) {
          * Log out of the app.
          */
         doLogout = function() {
-            window.location = config.logoutUrl;
+            window.location = config.logoutURL;
         };
 
 
@@ -58,7 +58,7 @@ up.SessionTimeout = up.SessionTimeout || (function(up, $) {
             var promise, success, fail;
 
             promise = $.ajax({
-                url: config.resetSessionUrl
+                url: config.resetSessionURL
             });
 
             success = function() {
@@ -142,7 +142,7 @@ up.SessionTimeout = up.SessionTimeout || (function(up, $) {
     /**
      * Factory for creating the sessionTimeout instance.
      *
-     * @param config
+     * @param config object.
      * @returns {{startTimer: startTimer}}
      * @constructor
      */
@@ -152,30 +152,30 @@ up.SessionTimeout = up.SessionTimeout || (function(up, $) {
         // start the timer that tracks when a session has expired.
         startTimer = function() {
             var showTimeoutDialog,
-                sessionTimeout,
-                dialogDisplayTime,
-                sleepTime,
-                bufferTime,
+                sessionTimeoutMS,
+                dialogDisplayMS,
+                sleepMS,
+                bufferMS,
                 now = new Date().getTime(),
                 logoutTime;
 
             // figure out when the dialog should pop and how long it should remain visible.
-            sessionTimeout = config.sessionTimeout || 30 * MINUTES;
-            bufferTime = config.bufferTime || 30 * SECONDS;
-            dialogDisplayTime = config.dialogDisplayTime || 1 * MINUTES;
+            sessionTimeoutMS = config.sessionTimeoutMS || 30 * MINUTES;
+            bufferMS = config.bufferTimeMS || 30 * SECONDS;
+            dialogDisplayMS = config.dialogDisplayMS || 1 * MINUTES;
 
-            sleepTime = sessionTimeout - bufferTime - dialogDisplayTime;
+            sleepMS = Math.max(sessionTimeoutMS - bufferMS - dialogDisplayMS, 0);
 
             // calculate when auto-logout should occur...
-            logoutTime = now + sessionTimeout - bufferTime;
+            logoutTime = now + sleepMS + dialogDisplayMS;
 
 
             showTimeoutDialog = function() {
                 timeoutDialog({
                     logoutTime: logoutTime,
                     dialogEl: $('#' + config.dialogId),
-                    logoutUrl: config.logoutUrl,
-                    resetSessionUrl: config.resetSessionUrl,
+                    logoutURL: config.logoutURL,
+                    resetSessionURL: config.resetSessionURL,
                     restartTimer: startTimer
                 }).display();
             };
@@ -184,13 +184,14 @@ up.SessionTimeout = up.SessionTimeout || (function(up, $) {
                 clearTimeout(timerId);
             }
 
-            timerId = setTimeout(showTimeoutDialog, sleepTime);
+            timerId = setTimeout(showTimeoutDialog, sleepMS);
         };
 
+        // return public interface API.
         return {
             startTimer: startTimer
         };
     };
 
     return that;
-} (up, jQuery));
+} (jQuery));

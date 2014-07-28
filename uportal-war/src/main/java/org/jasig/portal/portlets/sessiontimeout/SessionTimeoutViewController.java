@@ -35,14 +35,35 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 
 /**
+ * Controller for the session timeout portlet.  This controller mostly just
+ * reads the configs and then renders the JSP.
+ *
  * @author Josh Helmer, jhelmer@unicon.net
  * @since 4.1.1
  */
 @Controller
 @RequestMapping("VIEW")
 public class SessionTimeoutViewController {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private static final int DEFAULT_DIALOG_TIME = 60;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final int DEFAULT_DIALOG_DISPLAY_SECONDS = 60;
+    private static final String DEFAULT_LOGOUT_URL_FRAGMENT = "/Logout";
+    private static final String DEFAULT_RESET_SESSION_FRAGMENT = "/api/ajax-success";
+
+    private static final String HEADER_JSP = "jsp/SessionTimeout/header";
+    private static final String BODY_JSP = "jsp/SessionTimeout/body";
+
+    /* Model attribute names */
+    public static final String ATTR_ENABLED = "enabled";
+    public static final String ATTR_SESSION_TIMEOUT_MS = "sessionTimeoutMS";
+    public static final String ATTR_DIALOG_DISPLAY_MS = "dialogDisplayMS";
+    public static final String ATTR_LOGOUT_URL_FRAGMENT = "logoutURLFragment";
+    public static final String ATTR_RESET_SESSION_URL_FRAGMENT = "resetSessionURLFragment";
+
+    /* Portlet preference attribute names */
+    private static final String PREF_ENABLED = "enabled";
+    private static final String PREF_DIALOG_DISPLAY_SECONDS = "dialogDisplaySeconds";
+    private static final String PREF_LOGOUT_URL_FRAGMENT = "logoutURLFragment";
+    private static final String PREF_RESET_SESSION_URL_FRAGMENT = "resetSessionURLFragment";
 
 
     @RenderMapping
@@ -52,37 +73,38 @@ public class SessionTimeoutViewController {
 
             boolean enabled = getEnabled(prefs);
             int timeout = req.getPortletSession().getMaxInactiveInterval();
-            String logoutURL = prefs.getValue("logoutURL", "/Logout");
-            String resetURL = prefs.getValue("resetSessionURL", "/api/ajax-success");
+            String logoutURL = prefs.getValue(PREF_LOGOUT_URL_FRAGMENT, DEFAULT_LOGOUT_URL_FRAGMENT);
+            String resetURL = prefs.getValue(PREF_RESET_SESSION_URL_FRAGMENT, DEFAULT_RESET_SESSION_FRAGMENT);
             int dialogDisplayTime = getDialogDisplayTime(prefs, timeout);
 
-            model.addAttribute("enabled", enabled);
-            model.addAttribute("sessionTimeout", timeout);
-            model.addAttribute("dialogDisplayTime", dialogDisplayTime);
-            model.addAttribute("logoutURL", logoutURL);
-            model.addAttribute("resetSessionURL", resetURL);
+            model.addAttribute(ATTR_ENABLED, enabled);
+            model.addAttribute(ATTR_SESSION_TIMEOUT_MS, timeout * 1000);
+            model.addAttribute(ATTR_DIALOG_DISPLAY_MS, dialogDisplayTime * 1000);
+            model.addAttribute(ATTR_LOGOUT_URL_FRAGMENT, logoutURL);
+            model.addAttribute(ATTR_RESET_SESSION_URL_FRAGMENT, resetURL);
 
-            return "jsp/SessionTimeout/header";
+            return HEADER_JSP;
         } else {
-            return "jsp/SessionTimeout/body";
+            return BODY_JSP;
         }
     }
 
 
     private int getDialogDisplayTime(PortletPreferences prefs, int timeout) {
-        String dialogTimeStr = prefs.getValue("dialogDisplayTime", "60");
+        String dialogTimeStr = prefs.getValue(PREF_DIALOG_DISPLAY_SECONDS, Integer.toString(DEFAULT_DIALOG_DISPLAY_SECONDS));
 
-        int time = DEFAULT_DIALOG_TIME;
+        int time = DEFAULT_DIALOG_DISPLAY_SECONDS;
         try {
             time = Integer.parseInt(dialogTimeStr);
         } catch (NumberFormatException e) {
-            logger.debug("Invalid dialogDisplayTime preference: {0}, using default of 60s", dialogTimeStr);
-            return DEFAULT_DIALOG_TIME;
+            logger.warn("Invalid dialogDisplayTime preference: {0}, using default of {1}s",
+                    dialogTimeStr, DEFAULT_DIALOG_DISPLAY_SECONDS);
+            return DEFAULT_DIALOG_DISPLAY_SECONDS;
         }
 
         if (time >= timeout) {
-            logger.debug("Invalid dialogDisplayTime preference: {0}.  Time can not exceed session timeout.  Using default", dialogTimeStr);
-            return DEFAULT_DIALOG_TIME;
+            logger.warn("Invalid dialogDisplayTime preference: {0}.  Time can not exceed session timeout.  Using session timeout value", dialogTimeStr);
+            return timeout;
         }
 
         return time;
@@ -90,7 +112,7 @@ public class SessionTimeoutViewController {
 
 
     private boolean getEnabled(PortletPreferences prefs) {
-        String val = prefs.getValue("enabled", "true");
+        String val = prefs.getValue(PREF_ENABLED, "true");
         return "true".equalsIgnoreCase(val);
     }
 }
