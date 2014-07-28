@@ -34,7 +34,7 @@
       - (eg. portal.properties).  See portal.properties for example configuration.
       -->
     <bean id="scormCloudTinCanProvider" class="org.jasig.portal.events.tincan.providers.DefaultTinCanAPIProvider">
-        <property name="LRSUrl" value="${org.jasig.portal.tincan-api.scorm-cloud-lrs.url:}"/>
+        <property name="id" value="scorm-cloud-lrs"/>
         <property name="restTemplate">
             <bean class="org.springframework.web.client.RestTemplate">
                 <property name="interceptors">
