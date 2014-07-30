@@ -89,7 +89,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         text-decoration: none;
     }
 </style>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.6.1/jquery-1.6.1.min.js"/>"></script>
 
 <!-- Portlet -->
 <div class="fl-widget portlet portal-activity" role="section">
@@ -169,12 +168,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 </div>
 
 <script>
-$( "#portalActivityToggle" ).click(function() {
-$( "#portalActivity" ).slideToggle( "slow" );
+up.jQuery( "#portalActivityToggle" ).click(function() {
+    up.jQuery( "#portalActivity" ).slideToggle( "slow" );
 });
 
-$( "#portalSearchActivityToggle" ).click(function() {
-$( "#portalSearchActivity" ).slideToggle( "slow" );
+up.jQuery( "#portalSearchActivityToggle" ).click(function() {
+    up.jQuery( "#portalSearchActivity" ).slideToggle( "slow" );
 });
 </script>
 
