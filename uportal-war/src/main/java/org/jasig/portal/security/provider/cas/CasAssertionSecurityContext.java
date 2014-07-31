@@ -19,10 +19,18 @@
 
 package org.jasig.portal.security.provider.cas;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.util.AssertionHolder;
+import org.jasig.portal.spring.locator.ApplicationContextLocator;
+import org.jasig.services.persondir.support.IAdditionalDescriptors;
+import org.springframework.context.ApplicationContext;
 
 /**
  * Implementation of the {@link org.jasig.portal.security.provider.cas.ICasSecurityContext} that reads the Assertion
@@ -34,6 +42,8 @@ import org.jasig.cas.client.util.AssertionHolder;
  * @since 3.2
  */
 public class CasAssertionSecurityContext extends ChainingSecurityContext implements ICasSecurityContext {
+
+    private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionAdditionalDescriptors";
 
     private Assertion assertion;
 
@@ -49,7 +59,17 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
      * @param assertion the Assertion that was retrieved from the ThreadLocal.  CANNOT be NULL.
      */
     protected void postAuthenticate(final Assertion assertion) {
-        // template method.
+        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
+        IAdditionalDescriptors additionalDescriptors = (IAdditionalDescriptors) applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
+        Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
+        for (Map.Entry<String,Object> y : assertion.getAttributes().entrySet()) {
+            // TODO:  What really happens here?
+            log.debug("Adding attribute '" + y.getKey() + "' from Assertion with value '" + y.getValue()
+                            + "';  runtime type of value is " + y.getValue().getClass().getName());
+            List<Object> values = Arrays.asList(new Object[] { y.getValue().toString() });
+            attributes.put(y.getKey(), values);
+        }
+        additionalDescriptors.addAttributes(attributes);
     }
 
     @Override
