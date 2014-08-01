@@ -19,14 +19,11 @@
 
 package org.jasig.portal.security.provider.cas;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.jasig.cas.client.util.AssertionHolder;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.portal.security.PortalSecurityException;
@@ -34,8 +31,6 @@ import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.services.persondir.support.IAdditionalDescriptors;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 
 /**
@@ -48,15 +43,17 @@ import org.springframework.core.io.Resource;
  * @since 3.2
  */
 public class CasAssertionSecurityContext extends ChainingSecurityContext implements ICasSecurityContext {
-    private static final String DEFAULT_PORTAL_SECURITY_PROPERTY_FILE = "properties/security.properties";
     private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionScopeAdditionalDescriptors";
-    private static final String PROPERTY_COPY_ASSERT_ATTRS_TO_USER_ATTRS = "org.jasig.portal.security.provider.cas.CasAssertionSecurityContext.copy-assertion-attributes-to-user-attributes";
+    private static final String CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN = "casCopyAssertionAttributesToUserAttributes";
 
+    private ApplicationContext applicationContext;
     private Assertion assertion;
-    private boolean copyAssertionAttributesToUserAttributes = true;
+    private boolean copyAssertionAttributesToUserAttributes = false;
 
     public CasAssertionSecurityContext() {
-        readConfiguration();
+        applicationContext = ApplicationContextLocator.getApplicationContext();
+        String propertyVal = applicationContext.getBean(CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN, String.class);
+        copyAssertionAttributesToUserAttributes = "true".equalsIgnoreCase(propertyVal);
     }
 
     public int getAuthType() {
@@ -165,31 +162,9 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         }
 
         // get the attribute descriptor from Spring...
-        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
         IAdditionalDescriptors additionalDescriptors = (IAdditionalDescriptors) applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
 
         // add the new properties...
         additionalDescriptors.addAttributes(attributes);
-    }
-
-
-    /**
-     * Read the config attributes specific to this security context.
-     */
-    private void readConfiguration() {
-        final Resource resource = new ClassPathResource(DEFAULT_PORTAL_SECURITY_PROPERTY_FILE, getClass().getClassLoader());
-        final Properties securityProperties = new Properties();
-
-        InputStream inputStream = null;
-        try {
-            inputStream = resource.getInputStream();
-            securityProperties.load(inputStream);
-            String propertyVal = securityProperties.getProperty(PROPERTY_COPY_ASSERT_ATTRS_TO_USER_ATTRS, "false");
-            copyAssertionAttributesToUserAttributes = "true".equalsIgnoreCase(propertyVal);
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(inputStream);
-        }
     }
 }
