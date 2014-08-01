@@ -19,26 +19,15 @@
 
 package org.jasig.portal.events.aggr;
 
-import java.util.Map;
-
-import javax.persistence.EntityManager;
 import javax.persistence.FlushModeType;
 
 import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.aggr.session.EventSession;
-import org.joda.time.DateTime;
+import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 
 /**
  * Defines a class that aggregates events.
  * <br/>
- * IMPORTANT: The AggrEventsDb EntityManager that is open during execution is running in {@link FlushModeType#COMMIT}. It is
- * recommended that implementations make use of the {@link EventAggregationContext} to track created/modified entities during
- * {@link #aggregateEvent(PortalEvent, EventSession, EventAggregationContext, Map)} calls and only call 
- * {@link EntityManager#persist(Object)} during {@link #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)}
- * calls.
- * <br/>
- * An explicit {@link EntityManager#flush()} call is made after all aggregators have had
- * {@link #handleIntervalBoundary(AggregationInterval, EventAggregationContext, Map)} called. 
+ * IMPORTANT: The AggrEventsDb EntityManager {@link BaseAggrEventsJpaDao} that is open during execution is running in {@link FlushModeType#COMMIT}.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -53,31 +42,4 @@ public interface IPortalEventAggregator<E extends PortalEvent> {
      * @return true if this aggregator supports the specified event
      */
     boolean supports(PortalEvent event);
-    
-    /**
-     * Add the specified event to the aggregate
-     * 
-     * @param e The event to aggregate
-     * @param eventSession Information about the event session associated with the event
-     * @param eventAggregationContext Context used to store stateful information for an event aggregation run
-     * @param currentIntervals Information about all of the intervals the event exists in.
-     */
-    void aggregateEvent(E e, EventSession eventSession, EventAggregationContext eventAggregationContext, Map<AggregationInterval, AggregationIntervalInfo> currentIntervals);
-    
-    /**
-     * Handle crossing over an interval boundary, called after the LAST event of the interval is processed.
-     * 
-     * @param interval The type of interval that was crossed
-     * @param intervals Information about all intervals that the previous set of events was part of
-     */
-    void handleIntervalBoundary(AggregationInterval interval, EventAggregationContext eventAggregationContext, Map<AggregationInterval, AggregationIntervalInfo> intervals);
-    
-    /**
-     * Due to cases where an interval boundary might be missed this method should contain the logic to
-     * clean up and close all aggregations for the specified interval exist before the specified DateTime
-     * 
-     * @return the number of unclosed aggregations that were closed
-     * @see BaseAggregationPrivateDao#getUnclosedAggregations(DateTime, DateTime, AggregationInterval)
-     */
-    int cleanUnclosedAggregations(DateTime start, DateTime end, AggregationInterval interval);
 }
