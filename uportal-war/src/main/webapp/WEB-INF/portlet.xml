@@ -952,6 +952,11 @@
                 <read-only>false</read-only>
             </preference>
             <preference>
+                <!-- The session timeout warning will start displaying this many seconds before
+                     the end of the user's session and will remain on the screen for this many seconds
+                     (until the end of the session) at which point the portlet will redirect to the
+                     logout URL specified in logoutURLFragment.
+                -->
                 <name>dialogDisplaySeconds</name>
                 <value>60</value>
                 <read-only>false</read-only>
