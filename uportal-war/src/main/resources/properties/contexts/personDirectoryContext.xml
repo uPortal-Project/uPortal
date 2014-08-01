@@ -113,14 +113,15 @@
     <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
         <property name="delegateDescriptors">
             <list>
-                <ref bean="sessionAdditionalDescriptors" />
-                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
-                    <aop:scoped-proxy />
-                </bean>
+                <ref bean="sessionScopeAdditionalDescriptors"/>
+                <ref bean="requestScopeAdditionalDescriptors"/>
             </list>
         </property>
     </bean>
-    <bean id="sessionAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+    <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+    <bean id="requestScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
         <aop:scoped-proxy />
     </bean>
 
@@ -129,17 +130,10 @@
      | username may not always be provided by the request object.
      +-->
     <bean id="requestAttributesDao"
-        class="org.jasig.portal.persondir.support.SpecialAdditionalDescriptorsPersonAttributeDao">
+        class="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao">
         <property name="descriptors" ref="requestAdditionalDescriptors" />
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="currentUserProvider" ref="currentUserProvider" />
-        <property name="possibleUserAttributeNames">
-            <set>
-                <value>foo</value>
-                <value>agentDevice</value>
-                <value>serverName</value>
-            </set>
-        </property>
     </bean>
 
 
