@@ -19,18 +19,24 @@
 
 package org.jasig.portal.security.provider.cas;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
-import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.cas.client.validation.Assertion;
+import org.apache.commons.io.IOUtils;
 import org.jasig.cas.client.util.AssertionHolder;
+import org.jasig.cas.client.validation.Assertion;
+import org.jasig.portal.security.PortalSecurityException;
+import org.jasig.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.services.persondir.support.IAdditionalDescriptors;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
 
 /**
  * Implementation of the {@link org.jasig.portal.security.provider.cas.ICasSecurityContext} that reads the Assertion
@@ -42,10 +48,16 @@ import org.springframework.context.ApplicationContext;
  * @since 3.2
  */
 public class CasAssertionSecurityContext extends ChainingSecurityContext implements ICasSecurityContext {
-
-    private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionAdditionalDescriptors";
+    private static final String DEFAULT_PORTAL_SECURITY_PROPERTY_FILE = "properties/security.properties";
+    private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionScopeAdditionalDescriptors";
+    private static final String PROPERTY_COPY_ASSERT_ATTRS_TO_USER_ATTRS = "org.jasig.portal.security.provider.cas.CasAssertionSecurityContext.copy-assertion-attributes-to-user-attributes";
 
     private Assertion assertion;
+    private boolean copyAssertionAttributesToUserAttributes = true;
+
+    public CasAssertionSecurityContext() {
+        readConfiguration();
+    }
 
     public int getAuthType() {
         return CAS_AUTHTYPE;
@@ -59,17 +71,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
      * @param assertion the Assertion that was retrieved from the ThreadLocal.  CANNOT be NULL.
      */
     protected void postAuthenticate(final Assertion assertion) {
-        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
-        IAdditionalDescriptors additionalDescriptors = (IAdditionalDescriptors) applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
-        Map<String, List<Object>> attributes = new HashMap<String, List<Object>>();
-        for (Map.Entry<String,Object> y : assertion.getAttributes().entrySet()) {
-            // TODO:  What really happens here?
-            log.debug("Adding attribute '" + y.getKey() + "' from Assertion with value '" + y.getValue()
-                            + "';  runtime type of value is " + y.getValue().getClass().getName());
-            List<Object> values = Arrays.asList(new Object[] { y.getValue().toString() });
-            attributes.put(y.getKey(), values);
-        }
-        additionalDescriptors.addAttributes(attributes);
+        copyAssertionAttributesToUserAttributes(assertion);
     }
 
     @Override
@@ -127,5 +129,67 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         builder.append(" assertion:");
         builder.append(this.assertion);
         return builder.toString();
+    }
+
+    /**
+     * If enabled, convert CAS assertion person attributes into uPortal user attributes.
+     *
+     * @param assertion the Assertion that was retrieved from the ThreadLocal.  CANNOT be NULL.
+     */
+    protected void copyAssertionAttributesToUserAttributes(Assertion assertion) {
+        if (!copyAssertionAttributesToUserAttributes) {
+            return;
+        }
+
+        // skip this if there are no attributes or if the attribute set is empty.
+        if (assertion.getPrincipal().getAttributes() == null || assertion.getPrincipal().getAttributes().isEmpty()) {
+            return;
+        }
+
+        Map<String, List<Object>> attributes = new HashMap<>();
+        // loop over the set of person attributes from CAS...
+        for (Map.Entry<String, Object> attrEntry : assertion.getPrincipal().getAttributes().entrySet()) {
+            log.debug("Adding attribute '{}' from Assertion with value '{}'; runtime type of value is {}",
+                    attrEntry.getKey(), attrEntry.getValue(), attrEntry.getValue().getClass().getName());
+
+            // convert each attribute to a list, if necessary...
+            List<Object> valueList = null;
+            if (attrEntry.getValue() instanceof List) {
+                valueList = (List)attrEntry.getValue();
+            } else {
+                valueList = Arrays.asList(attrEntry.getValue());
+            }
+
+            // add the attribute...
+            attributes.put(attrEntry.getKey(), valueList);
+        }
+
+        // get the attribute descriptor from Spring...
+        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
+        IAdditionalDescriptors additionalDescriptors = (IAdditionalDescriptors) applicationContext.getBean(SESSION_ADDITIONAL_DESCRIPTORS_BEAN);
+
+        // add the new properties...
+        additionalDescriptors.addAttributes(attributes);
+    }
+
+
+    /**
+     * Read the config attributes specific to this security context.
+     */
+    private void readConfiguration() {
+        final Resource resource = new ClassPathResource(DEFAULT_PORTAL_SECURITY_PROPERTY_FILE, getClass().getClassLoader());
+        final Properties securityProperties = new Properties();
+
+        InputStream inputStream = null;
+        try {
+            inputStream = resource.getInputStream();
+            securityProperties.load(inputStream);
+            String propertyVal = securityProperties.getProperty(PROPERTY_COPY_ASSERT_ATTRS_TO_USER_ATTRS, "false");
+            copyAssertionAttributesToUserAttributes = "true".equalsIgnoreCase(propertyVal);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }
