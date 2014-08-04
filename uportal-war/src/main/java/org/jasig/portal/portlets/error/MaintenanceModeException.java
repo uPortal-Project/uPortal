@@ -20,7 +20,14 @@
 package org.jasig.portal.portlets.error;
 
 /**
- * Indicates the portlet is out-of-service and will be re-enabled (by an administrator) at a later date.
+ * Indicates the portlet is out-of-service and will be re-enabled (by an
+ * administrator) at a later date.  The rendering stack uses this exception
+ * to signal to the error portlet that the portlet is in MAINTENANCE so it
+ * knows to display the proper message (instead of 'An error occurred...').
+ * In the future, this class could be enhanced to cary a custom message about
+ * the state of the portlet from the administrator who put it in MAINTENANCE.
+ *
+ * @since 4.2
  */
 public class MaintenanceModeException extends RuntimeException {
 }
