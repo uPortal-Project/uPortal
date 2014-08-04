@@ -667,18 +667,19 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public PortletLifecycleState getLifecycleState() {
-		final Date now = new Date();
-        if (expirationDate != null && expirationDate.before(now)) {
-			return PortletLifecycleState.EXPIRED;
-		} else if (publishDate != null && publishDate.before(now)) {
-			return PortletLifecycleState.PUBLISHED;
-		} else if (approvalDate != null && approvalDate.before(now)) {
-			return PortletLifecycleState.APPROVED;
-		} else {
-			return PortletLifecycleState.CREATED;
-		}
+        final Date now = new Date();
+        if (parameters.containsKey(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME)) {
+            return PortletLifecycleState.MAINTENANCE;
+        } else if (expirationDate != null && expirationDate.before(now)) {
+            return PortletLifecycleState.EXPIRED;
+        } else if (publishDate != null && publishDate.before(now)) {
+            return PortletLifecycleState.PUBLISHED;
+        } else if (approvalDate != null && approvalDate.before(now)) {
+            return PortletLifecycleState.APPROVED;
+        } else {
+            return PortletLifecycleState.CREATED;
+        }
     }
-
 
     @Override
     public int hashCode() {

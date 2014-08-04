@@ -130,7 +130,12 @@ public class PortletErrorController {
 		model.addAttribute("exception", cause);
 		final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(cause);
 		model.addAttribute("rootCauseMessage", rootCauseMessage);
-		
+
+        // Maintenance Mode?
+        if (cause != null && cause instanceof MaintenanceModeException) {
+            return "/jsp/PortletError/maintenance";
+        }
+
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(hasAdminPrivileges(userInstance)) {
 			IPortletWindow window = this.portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);

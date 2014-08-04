@@ -22,6 +22,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ page import="org.jasig.portal.portlet.om.PortletLifecycleState,java.util.Set" %>
 
+<c:set var="n"><portlet:namespace/></c:set>
+
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
 <portlet:actionURL var="queryUrl">
 	<portlet:param name="execution" value="${flowExecutionKey}" />
@@ -40,7 +42,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-lifecycle" role="section">
+<div id="${n}PortletLifecycle" class="fl-widget portlet ptl-mgr view-lifecycle" role="section">
 
 	<!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -82,7 +84,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ lifecycleStates }" var="lifecycleState">
 	            <tr>
 	              <td align="center">
-	                <form:radiobutton path="lifecycleState" value="${ lifecycleState }" cssClass="portlet-form-input-field"/>
+	                <form:radiobutton path="lifecycleState" value="${ lifecycleState }" cssClass="portlet-form-input-field lifecycle-state"/>
 	              </td>
 	              <td><spring:message code="lifecycle.name.${ lifecycleState }"/></td>
 	              <td><spring:message code="lifecycle.description.${ lifecycleState }"/></td>
@@ -95,10 +97,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div> <!-- end: portlet-section -->
     
     <!-- Portlet Section -->       
-    <c:set var="lStates" value="${ lifecycleStates }"/>
-    <% Set states = (Set) pageContext.getAttribute("lStates"); %>
-    <c:if test="<%= states.contains(PortletLifecycleState.PUBLISHED) %>">
-    <div class="portlet-section" id="${n}publishingDateSection" style="${ portlet.lifecycleState == 'PUBLISHED' || portlet.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+    <div class="portlet-section" id="publishingDateSection" style="display: none;">
       <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="auto.publish.optional"/></h3>
       </div>
@@ -140,11 +139,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
  
       </div>
     </div> <!-- end: portlet-section -->
-    </c:if>
-    
-     <!-- Portlet Section -->
-    <c:if test="<%= states.contains(PortletLifecycleState.EXPIRED) %>">
-    <div class="portlet-section" id="${n}expirationDateSection" style="${ portlet.lifecycleState == 'EXPIRED' ? 'display:none;' : '' }">
+
+    <!-- Portlet Section -->
+    <div class="portlet-section" id="expirationDateSection" style="display: none;">
       <div class="titlebar">
         <h3 class="title" role="heading"><spring:message code="auto.expire.optional"/></h3>
       </div>
@@ -186,9 +183,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
  
       </div>
     </div> <!-- end: portlet-section -->
-    </c:if>
 
-		<!-- Buttons -->    
+    <!-- Buttons -->
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
@@ -212,16 +208,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 up.jQuery(function() {
     var $ = up.jQuery;
     $(document).ready(function(){
-        $(".cal-datepicker").datepicker().change(function(){
+        var updateOptionalInputs = function () {
+            var lifecycle = $('#${n}PortletLifecycle .lifecycle-state:checked').val();
+            $('#${n}PortletLifecycle #publishingDateSection').css('display', lifecycle == "APPROVED" ? "block" : "none");
+            $('#${n}PortletLifecycle #expirationDateSection').css('display', lifecycle == "PUBLISHED" ? "block" : "none");
+        };
+        $("#${n}PortletLifecycle .cal-datepicker").datepicker().change(function(){
             if ($(this).val()) $(this).next().css("display", "inline");
             else $(this).next().css("display", "none");
         });
-        $(".clear-date").click(function(){ $(this).parent().css("display", "none").prev().val(""); });
-        $(":radio").click(function(){
-            var lifecycle = $(this).val();
-            $('#${n}publishingDateSection').css('display', lifecycle == "PUBLISHED" || lifecycle == "EXPIRED" ? "none" : "block");
-            $('#${n}expirationDateSection').css('display', lifecycle == "EXPIRED" ? "none" : "block");
+        $("#${n}PortletLifecycle .clear-date").click(function(){ $(this).parent().css("display", "none").prev().val(""); });
+        $("#${n}PortletLifecycle .lifecycle-state").click(function(){
+            updateOptionalInputs();
         });
+        updateOptionalInputs();
     });
 });
 </script>

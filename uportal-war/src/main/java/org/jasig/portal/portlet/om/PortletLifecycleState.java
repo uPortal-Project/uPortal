@@ -26,10 +26,12 @@ package org.jasig.portal.portlet.om;
  */
 public enum PortletLifecycleState {
 	
-	CREATED(0),APPROVED(1),PUBLISHED(2),EXPIRED(3);
-	
+	CREATED(0), APPROVED(1), PUBLISHED(2), EXPIRED(3), MAINTENANCE(4);
+
+    public static final String MAINTENANCE_MODE_PARAMETER_NAME = "PortletLifecycleState.inMaintenanceMode";
+
 	private int order;
-	
+
 	private PortletLifecycleState(int order) {
 		this.order = order;
 	}
@@ -42,8 +44,16 @@ public enum PortletLifecycleState {
 		return (this.getOrder() < state.getOrder());
 	}
 
+    public boolean isEqualToOrBefore(PortletLifecycleState state) {
+        return (this.getOrder() <= state.getOrder());
+    }
+
 	public boolean isAfter(PortletLifecycleState state) {
 		return (this.getOrder() > state.getOrder());
 	}
+
+    public boolean isEqualToOrAfter(PortletLifecycleState state) {
+        return (this.getOrder() >= state.getOrder());
+    }
 
 }

@@ -221,7 +221,7 @@ public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String p
  * Answers if the principal has permission to MANAGE this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelPublishId int
+ * @param portletDefinitionId
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 @RequestCache
@@ -252,8 +252,14 @@ throws AuthorizationException
      * may not yet be published or expired.
      */
     
-    String activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
-	if ((order <= PortletLifecycleState.EXPIRED.getOrder() 
+    String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
+    if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
+            && doesPrincipalHavePermission(principal, owner, activity, target)) {
+        return true;
+    }
+
+    activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
+	if ((order <= PortletLifecycleState.EXPIRED.getOrder()
 			|| portlet.getExpirationDate() != null)
 			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
 		return true;
@@ -305,8 +311,14 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
     }    
     int order = state.getOrder();
     
-    String activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
-	if (order <= PortletLifecycleState.EXPIRED.getOrder()
+    String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
+    if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
+            && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
+        return true;
+    }
+
+    activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
+    if (order <= PortletLifecycleState.EXPIRED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
 		return true;
     }
@@ -339,7 +351,7 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
  * 
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelPublishId int
+ * @param portletDefinitionId
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 @RequestCache
@@ -356,7 +368,7 @@ throws AuthorizationException
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
- * @param channelPublishId int
+ * @param portletDefinitionId
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 @RequestCache
@@ -381,8 +393,11 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
      * following logic checks the appropriate permission for the lifecycle.
      */
     String permission;
-    if (state.equals(PortletLifecycleState.PUBLISHED)) {
-    	permission = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
+    if (state.equals(PortletLifecycleState.PUBLISHED)
+            || state.equals(PortletLifecycleState.MAINTENANCE)) {
+        // NB:  There is no separate SUBSCRIBE permission for MAINTENANCE
+        // mode;  everyone simply sees the 'out of service' message
+        permission = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     } else if (state.equals(PortletLifecycleState.APPROVED)) {
     	permission = IPermission.PORTLET_SUBSCRIBER_APPROVED_ACTIVITY;
     } else if (state.equals(PortletLifecycleState.CREATED)) {
