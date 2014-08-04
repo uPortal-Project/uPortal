@@ -672,7 +672,7 @@
             <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
         </supported-publishing-event>
     </portlet>
-    
+
     <portlet>
         <portlet-name>Directory</portlet-name>
         <display-name xml:lang="en">Directory</display-name>
@@ -927,6 +927,58 @@
                 <value>$tenant</value>
             </preference>
         </portlet-preferences>
+    </portlet>
+
+    <portlet>
+        <portlet-name>SessionTimeout</portlet-name>
+        <display-name xml:lang="en">Session Timeout</display-name>
+        <portlet-class>org.springframework.web.portlet.HeaderHandlingDispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/properties/contexts/portlet/SessionTimeout-portlet.xml</value>
+        </init-param>
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Session Timeout</title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <name>enabled</name>
+                <value>true</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <!-- The session timeout warning will start displaying this many seconds before
+                     the end of the user's session and will remain on the screen for this many seconds
+                     (until the end of the session) at which point the portlet will redirect to the
+                     logout URL specified in logoutURLFragment.
+                -->
+                <name>dialogDisplaySeconds</name>
+                <value>60</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <!-- This URL is relative to the root of the uPortal instance -->
+                <name>resetSessionURLFragment</name>
+                <value>/api/ajax-success</value>
+                <read-only>false</read-only>
+            </preference>
+            <preference>
+                <!-- This URL is relative to the root of the uPortal instance -->
+                <name>logoutURLFragment</name>
+                <value>/Logout</value>
+                <read-only>false</read-only>
+            </preference>
+        </portlet-preferences>
+
+        <container-runtime-option>
+            <name>javax.portlet.renderHeaders</name>
+            <value>true</value>
+        </container-runtime-option>
     </portlet>
 
     <custom-portlet-mode>
