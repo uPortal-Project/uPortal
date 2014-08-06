@@ -34,8 +34,8 @@ import org.jasig.portal.ldap.LdapServices;
 import org.jasig.portal.ldap.ILdapServer;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -59,7 +59,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class SimpleLdapSecurityContext extends ChainingSecurityContext implements IConfigurableSecurityContext {
 
-    private static final Log log = LogFactory.getLog(SimpleLdapSecurityContext.class);
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     // Attributes that we're interested in.
     public static final int ATTR_UID = 0;
@@ -67,9 +67,9 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
     public static final int ATTR_LASTNAME = ATTR_FIRSTNAME + 1;
     private final int SIMPLE_LDAP_SECURITYAUTHTYPE = 0xFF04;
     private static final String[] attributes = {
-            "uid",      // user ID
-            "givenName",                // first name
-            "sn"        // last name
+            "uid",          // user ID
+            "givenName",    // first name
+            "sn"            // last name
     };
 
     public static final String LDAP_PROPERTIES_CONNECTION_NAME = "connection";
@@ -117,8 +117,8 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
             ldapConn = LdapServices.getDefaultLdapServer();
 
         String creds = new String(this.myOpaqueCredentials.credentialstring);
-        if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("") && this.myOpaqueCredentials.credentialstring
-                != null && !creds.trim().equals("")) {
+        if (this.myPrincipal.UID != null && !this.myPrincipal.UID.trim().equals("")
+                && this.myOpaqueCredentials.credentialstring != null && !creds.trim().equals("")) {
             DirContext conn = null;
             NamingEnumeration results = null;
             StringBuffer user = new StringBuffer("(");
@@ -127,8 +127,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
 
             user.append(ldapConn.getUidAttribute()).append("=");
             user.append(this.myPrincipal.UID).append(")");
-            if (log.isDebugEnabled())
-                log.debug("SimpleLdapSecurityContext: Looking for " + user.toString());
+            log.debug("SimpleLdapSecurityContext: Looking for {}", user.toString());
 
             try {
                 conn = ldapConn.getConnection();
@@ -143,8 +142,9 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
                     try {
                         results = conn.search(ldapConn.getBaseDN(), user.toString(), searchCtls);
                         if (results != null) {
-                            if (!results.hasMore())
-                                log.error("SimpleLdapSecurityContext: user not found , " + this.myPrincipal.UID);
+                            if (!results.hasMore()) {
+                                log.error("SimpleLdapSecurityContext: user not found: {}", this.myPrincipal.UID);
+                            }
                             while (results != null && results.hasMore()) {
                                 SearchResult entry = (SearchResult) results.next();
                                 StringBuffer dnBuffer = new StringBuffer();
@@ -163,22 +163,20 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
                                 searchCtls.setSearchScope(SearchControls.OBJECT_SCOPE);
 
                                 String attrSearch = "(" + ldapConn.getUidAttribute() + "=*)";
-                                log.debug("SimpleLdapSecurityContext: Looking in " +
-                                                dnBuffer.toString() + " for " + attrSearch);
+                                log.debug("SimpleLdapSecurityContext: Looking in {} for {}", dnBuffer.toString(), attrSearch);
                                 conn.search(dnBuffer.toString(), attrSearch, searchCtls);
 
                                 this.isauth = true;
                                 this.myPrincipal.FullName = first_name + " " + last_name;
-                                log.debug("SimpleLdapSecurityContext: User " +
-                                                this.myPrincipal.UID + " (" +
-                                                this.myPrincipal.FullName + ") is authenticated");
+                                log.debug("SimpleLdapSecurityContext: User {} ({}) is authenticated",
+                                        this.myPrincipal.UID, this.myPrincipal.FullName);
 
                                 // Since LDAP is case-insensitive with respect to uid, force
                                 // user name to lower case for use by the portal
                                 this.myPrincipal.UID = this.myPrincipal.UID.toLowerCase();
                             } // while (results != null && results.hasMore())
                         } else {
-                            log.error("SimpleLdapSecurityContext: No such user: " + this.myPrincipal.UID);
+                            log.error("SimpleLdapSecurityContext: No such user: {}", this.myPrincipal.UID);
                         }
                     } catch (AuthenticationException ae) {
                         log.info("SimpleLdapSecurityContext: Password invalid for user: " + this.myPrincipal.UID);
@@ -196,7 +194,9 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
                 log.error("Error getting connection to LDAP server.", ne);
             }
         } else {
-            log.error("Principal or OpaqueCredentials not initialized prior to authenticate");
+            // If the principal and/or credential are missing, the context authentication
+            // simply fails. It should not be construed that this is an error. It happens for guest access.
+            log.info("Principal or OpaqueCredentials not initialized prior to authenticate");
         }
         // Ok...we are now ready to authenticate all of our subcontexts.
         super.authenticate();
