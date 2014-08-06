@@ -1419,8 +1419,32 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
-        <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
+        <!--
+         | Shell to execute maven.  Do not use mvn ant task.  See http://jira.codehaus.org/browse/MANTTASKS-246.
+         | Setup parameters for mac/linux/unix vs. windows.  For windows, run cmd /c mvn.bat.
+         | On Windows the space in the path c:\Program Files\...\mvn.bat messes up the argument list so we don't pass
+         | the full path to the mvn bat file. Per uPortal installation documentation, ${maven.home}/bin should be in
+         | the path environment variable so we just need the executable name.
+         +-->
+        <condition property="mvnExecutable" value="cmd">
+            <os family="windows"/>
+        </condition>
+        <property name="mvnExecutable" value="mvn"/>
+
+        <condition property="windowsCmdArg1" value="/c">
+            <os family="windows"/>
+        </condition>
+        <property name="windowsCmdArg1" value="-Djasig.ignore"/>
+        <condition property="windowsCmdArg2" value="mvn.bat">
+            <os family="windows"/>
+        </condition>
+        <property name="windowsCmdArg2" value="-Djasig.ignore"/>
+
+        <exec executable="${mvnExecutable}" failonerror="true">
+            <arg value="${windowsCmdArg1}"/>
+            <arg value="${windowsCmdArg2}"/>
             <arg value="-s${maven.settings}" />
+            <arg value="-B"/>
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
@@ -1435,6 +1459,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <arg value="${goal7}" />
             <arg value="${goal8}" />
             <arg value="${goal9}" />
-        </artifact:mvn>
+        </exec>
     </target>
 </project>
