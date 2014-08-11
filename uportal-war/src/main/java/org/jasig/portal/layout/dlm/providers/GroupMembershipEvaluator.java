@@ -149,10 +149,10 @@ public class GroupMembershipEvaluator extends Evaluator
                   isMember = groupMember.isDeepMemberOf(group);
               }
               return isMember;
-          } catch (GroupsException e)
+          } catch (Exception e)
           {
-              throw new RuntimeException("Unable to determine if user "
-                      + p.getFullName() + " is in group " + groupName + ".", e);
+              throw new RuntimeException("Unable to determine if user '"
+                      + p.getFullName() + "' is in group '" + groupName + "'", e);
           }
       }
 
