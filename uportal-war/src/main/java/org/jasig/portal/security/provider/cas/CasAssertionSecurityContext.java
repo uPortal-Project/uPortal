@@ -62,7 +62,25 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
         this.assertion = AssertionHolder.getAssertion();
 
         if (this.assertion != null) {
-            this.myPrincipal.setUID(assertion.getPrincipal().getName());
+
+            final String usernameFromCas = assertion.getPrincipal().getName();
+
+            if (null == usernameFromCas) {
+                throw new IllegalStateException("Non-null CAS assertion unexpectedly had null principal name.");
+            }
+
+            this.myPrincipal.setUID(usernameFromCas);
+
+            // verify that the principal UID was successfully set
+            final String uidAsSetInThePrincipal = this.myPrincipal.getUID();
+
+            if (! usernameFromCas.equals(uidAsSetInThePrincipal) ) {
+                final String logMessage = "Attempted to set portal principal username to [" + usernameFromCas +
+                        "] as read from the CAS assertion, but uid as set in the principal is instead [" + uidAsSetInThePrincipal + "].  This may be an attempt to exploit CVE-2014-5059 / UP-4192 .";
+                log.error(logMessage);
+                throw new IllegalStateException(logMessage);
+            }
+
             this.isauth = true;
             log.debug("CASContext authenticated [" + this.myPrincipal.getUID() + "] using assertion [" + this.assertion + "]");
             postAuthenticate(assertion);
