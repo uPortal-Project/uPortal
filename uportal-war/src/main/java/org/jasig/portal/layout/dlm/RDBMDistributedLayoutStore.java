@@ -435,7 +435,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                     for (final String value : portletPreference.getValues()) {
                         final org.dom4j.Element valueElement = preferenceEntry.addElement("value");
-                        valueElement.setText(value);
+                        if(value != null) {
+                        	valueElement.setText(value);
+                        }
                     }
                 }
             }
