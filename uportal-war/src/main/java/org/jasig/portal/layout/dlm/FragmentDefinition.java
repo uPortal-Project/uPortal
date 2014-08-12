@@ -320,9 +320,7 @@ public class FragmentDefinition extends EvaluatorGroup
                     + p.getAttribute("username") + " )");
         try {
             if (evaluators == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("isApplicable()=false due to evaluators collection being null");
-                }
+                LOG.debug("isApplicable()=false due to evaluators collection being null");
             } else {
                 for (Evaluator v : evaluators) {
                     if (v.isApplicable(p)) {
@@ -333,7 +331,7 @@ public class FragmentDefinition extends EvaluatorGroup
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to evaluate whether fragment '" + this.getName()
-                                    + "' is applicable to user '" + p.getUserName() + "'");
+                                    + "' is applicable to user '" + p.getUserName() + "'", e);
         }
 
         if (LOG.isInfoEnabled()) {
