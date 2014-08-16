@@ -127,7 +127,7 @@ up.jQuery(function() {
    var privateChartWrapper = undefined;
    var resizeInterval = undefined;
    var intervalsCache = {};
-   
+
    // Used by svg->canvas->png conversion
    $.fn.outerHTML = function(s) {
       return s ? this.before(s).remove() : $("<p>").append(
@@ -300,56 +300,54 @@ up.jQuery(function() {
    $(window).resize(resizeChart);
 
    $("#${n} .datepicker").datepicker();
-   $("#${n}_reportForm").ajaxForm({
-      url : reportDataUrl,
-      type : 'GET',
-      traditional : true,
-      dataType : "json",
-      beforeSubmit : function(arr, form, options) {
-         if (!validateIntervals()) {
-            return false;
-         }
-         
-         $("#${n}_chartLoading").show();
+   $('#${n}_reportForm').submit(function(event) {
+       if (!validateIntervals()) {
+           return false;
+       }
 
-         // Update report download links for the new query
-         var queryString = form.serialize();
-         $("#${n}_downloadCsv").attr('href', buildUrl(reportDataUrl, queryString, {
-            format : "csv"
-         }));
-         $("#${n}_downloadHtml").attr('href', buildUrl(reportDataUrl, queryString, {
-            format : "html"
-         }));
-         $("#${n}_downloadPng").attr('href', '');
-         $("#${n}_permLink").attr('href', buildUrl(reportUrl, queryString));
-         
-         
+       $("#${n}_chartLoading").show();
 
-         $(document.body).animate({
-            'scrollTop' : $('#${n}_chartLinkBar').offset().top
-         }, 1000);
-      },
-      success : function(data) {
-         // Render the updated graph
-         var table = new google.visualization.DataTable(data.table);
+       // Update report download links for the new query
+       var queryString = $('#${n}_reportForm').serialize();
+       $("#${n}_downloadCsv").attr('href', buildUrl(reportDataUrl, queryString, {
+           format: "csv"
+       }));
+       $("#${n}_downloadHtml").attr('href', buildUrl(reportDataUrl, queryString, {
+           format: "html"
+       }));
+       $("#${n}_downloadPng").attr('href', '');
+       $("#${n}_permLink").attr('href', buildUrl(reportUrl, queryString));
 
-         // Render the report title, or the title with the augmented text based on report parameters
-         var tableTitle = $("#${n}_titleUnmodified").text();
-         if (data.titleAugmentation) {
-             tableTitle = $("#${n}_titleTemplate").text().replace("$0",data.titleAugmentation);
-         }
+       $(document.body).animate({
+           'scrollTop': $('#${n}_chartLinkBar').offset().top
+       }, 1000);
 
-         var chartWrapper = getChartWrapper();
-         chartWrapper.setOption('title',tableTitle);
-         chartWrapper.setDataTable(table);
-         chartWrapper.draw();
-         
-         $("#${n}_chartLoading").hide();
-      },
-      error : function() {
-         alert("Report Query Failed");
-         $("#${n}_chartLoading").hide();
-      }
+       $.ajax({
+           url: buildUrl(reportDataUrl, queryString, {}),
+           type: 'POST',
+           dataType: 'json'
+       }).then(function (data) {
+           // Render the updated graph
+           var table = new google.visualization.DataTable(data.table);
+
+           // Render the report title, or the title with the augmented text based on report parameters
+           var tableTitle = $("#${n}_titleUnmodified").text();
+           if (data.titleAugmentation) {
+               tableTitle = $("#${n}_titleTemplate").text().replace("$0", data.titleAugmentation);
+           }
+
+           var chartWrapper = getChartWrapper();
+           chartWrapper.setOption('title', tableTitle);
+           chartWrapper.setDataTable(table);
+           chartWrapper.draw();
+
+           $("#${n}_chartLoading").hide();
+       }, function () {
+           alert("Report Query Failed");
+           $("#${n}_chartLoading").hide();
+       });
+
+       event.preventDefault();
    });
 
    $("#${n}_editChart").click(function() { editChart(); return false; });
