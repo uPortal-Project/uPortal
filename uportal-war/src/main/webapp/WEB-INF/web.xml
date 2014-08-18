@@ -71,6 +71,15 @@
     <listener>
         <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
     </listener>
+
+    <filter>
+        <filter-name>requestParameterFilter</filter-name>
+        <filter-class>org.jasig.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
+        <init-param>
+            <param-name>parametersToCheck</param-name>
+            <param-value>ticket SAMLArt pgtIou pgtId</param-value>
+        </init-param>
+    </filter>
     
     <filter>
         <filter-name>ssoRemoteUserFilter</filter-name>
@@ -211,7 +220,15 @@
         <servlet-name>RenderingDispatcherServlet</servlet-name>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
     </filter-mapping>
- <!-- 
+
+    <filter-mapping>
+        <filter-name>requestParameterFilter</filter-name>
+        <url-pattern>/Login</url-pattern>
+        <url-pattern>/CasProxyServlet</url-pattern>
+    </filter-mapping>
+
+    <!-- the requestParameterFilter **must** be mapped before the CAS Validate Filter -->
+  <!--    
     <filter-mapping>
         <filter-name>CAS Validate Filter</filter-name>
         <url-pattern>/Login</url-pattern>
