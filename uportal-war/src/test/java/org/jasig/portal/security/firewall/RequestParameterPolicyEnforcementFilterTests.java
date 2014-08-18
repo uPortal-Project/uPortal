@@ -23,11 +23,13 @@ import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link org.jasig.portal.security.firewall.RequestParameterPolicyEnforcementFilter}.
@@ -62,8 +64,8 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         initParameterNames.add("unrecognizedInitParameterName");
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
 
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
         final RequestParameterPolicyEnforcementFilter filter = new RequestParameterPolicyEnforcementFilter();
         filter.init(filterConfig);
@@ -82,14 +84,14 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
         initParameterNames.add(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID);
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
                 .thenReturn("true");
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
                 .thenReturn("none");
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
                 .thenReturn(null);
 
         filter.init(filterConfig);
@@ -110,14 +112,14 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         // mock up filter config.  Default configuration with no init-params for this use case.
         final Set<String> initParameterNames = new HashSet<String>();
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
                 .thenReturn(null);
 
 
@@ -133,12 +135,12 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
 
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getParameterMap()).thenReturn(requestParameterMap);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final FilterChain chain = Mockito.mock(FilterChain.class);
+        final FilterChain chain = mock(FilterChain.class);
 
         filter.doFilter(request, response, chain);
 
@@ -158,14 +160,14 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         final Set<String> initParameterNames = new HashSet<String>();
         initParameterNames.add(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS);
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
                 .thenReturn("true");
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
                 .thenReturn(null);
 
 
@@ -181,12 +183,12 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         final Map<String, String[]> requestParameterMap = new HashMap<String, String[]>();
         requestParameterMap.put("someName", new String[] {"someValue", "someOtherValue"});
 
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getParameterMap()).thenReturn(requestParameterMap);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final FilterChain chain = Mockito.mock(FilterChain.class);
+        final FilterChain chain = mock(FilterChain.class);
 
         filter.doFilter(request, response, chain);
 
@@ -206,14 +208,14 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         // mock up filter config.  Default configuration with no init-params for this use case.
         final Set<String> initParameterNames = new HashSet<String>();
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
                 .thenReturn(null);
 
 
@@ -230,12 +232,12 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         // percent character is illicit by default, so, illicit character in this parameter value
         requestParameterMap.put("someName", new String[] {"someValue%40gmail.com"});
 
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getParameterMap()).thenReturn(requestParameterMap);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final FilterChain chain = Mockito.mock(FilterChain.class);
+        final FilterChain chain = mock(FilterChain.class);
 
         filter.doFilter(request, response, chain);
 
@@ -254,14 +256,14 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         final Set<String> initParameterNames = new HashSet<String>();
         initParameterNames.add(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK);
         final Enumeration parameterNamesEnumeration = Collections.enumeration(initParameterNames);
-        final FilterConfig filterConfig = Mockito.mock(FilterConfig.class);
-        Mockito.when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
+        final FilterConfig filterConfig = mock(FilterConfig.class);
+        when(filterConfig.getInitParameterNames()).thenReturn(parameterNamesEnumeration);
 
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.ALLOW_MULTI_VALUED_PARAMETERS))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.CHARACTERS_TO_FORBID))
                 .thenReturn(null);
-        Mockito.when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
+        when(filterConfig.getInitParameter(RequestParameterPolicyEnforcementFilter.PARAMETERS_TO_CHECK))
                 .thenReturn("ticket");
 
 
@@ -279,12 +281,12 @@ public final class RequestParameterPolicyEnforcementFilterTests {
         // but this parameter name is unchecked
         requestParameterMap.put("uncheckedName", new String[] {"someValue%40gmail.com"});
 
-        final HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        Mockito.when(request.getParameterMap()).thenReturn(requestParameterMap);
+        final HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameterMap()).thenReturn(requestParameterMap);
 
-        final HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+        final HttpServletResponse response = mock(HttpServletResponse.class);
 
-        final FilterChain chain = Mockito.mock(FilterChain.class);
+        final FilterChain chain = mock(FilterChain.class);
 
         filter.doFilter(request, response, chain);
 
