@@ -83,7 +83,7 @@ import java.util.Set;
  *
  * This class is declared final because it is not designed for extension.
  *
- * @since uPortal 4.0.15
+ * @since uPortal 4.0.15 , 4.1.1
  */
 public final class RequestParameterPolicyEnforcementFilter implements Filter {
 
