@@ -59,7 +59,6 @@
         <form action="${ formUrl }" method="POST">
             <input id="${n}searchInput" class="searchInput" name="query" value="${ fn:escapeXml(query )}"/>
             <input type="submit" value="<spring:message code="search.submit"/>"/>
-            <input class="autocompleteUrl" name="autocompleteUrl" type="hidden" value="${autocompleteUrl}"/>
         </form>
         
         <c:if test="${hitMaxQueries}">
@@ -132,8 +131,8 @@
 
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js"/>"></script>
-
-<%@ include file="autosuggest_handler.jsp"%>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/search/autosuggestHandler.js"></script>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/search/autosuggest.css">
 
 <script language="javascript" type="text/javascript"><rs:compressJs>
 /*
@@ -143,8 +142,19 @@ var searchjQ = searchjQ || {};
 searchjQ["${n}"] = searchjQ["${n}"] || {};
 searchjQ["${n}"].jQuery = jQuery.noConflict(true);
 
+<%-- Only set prepopulateAutoSuggestUrl if the portlet preference is not empty. --%>
+<c:if test="${not empty portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}">
+<c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
+</c:if>
+
 searchjQ["${n}"].jQuery(document).ready(function() {
-    initSearchAuto(searchjQ["${n}"].jQuery, "#${n}searchInput");
+    initSearchAuto(searchjQ["${n}"].jQuery, {
+        searchFieldSelector: "#${n}searchInput",
+        prepopulateAutoSuggestUrl: "${prepopulateAutoSuggestUrl}",
+        prepopulateUrlPattern: "${pageContext.request.contextPath}${portletPreferencesValues['prepopulateUrlPattern'][0]}",
+        autoSuggestResultsProcessor: "${portletPreferencesValues['autoSuggestResultsProcessor'][0]}",
+        autoSuggestSearchUrl: "${autocompleteUrl}"
+    });
     searchjQ["${n}"].jQuery("#${n}searchResults").tabs();
     <%-- If not configured for multiple tabs, don't display the tabs header --%>
     <c:if test="${empty tabKeys}">
