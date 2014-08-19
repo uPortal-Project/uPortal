@@ -46,6 +46,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
     @Override
     protected final void postAuthenticate(final Assertion assertion) {
         retrievePasswordFromCasServer(assertion);
+        super.postAuthenticate(assertion);
     }
 
     @Override

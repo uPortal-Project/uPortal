@@ -113,14 +113,16 @@
     <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
         <property name="delegateDescriptors">
             <list>
-                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
-                    <aop:scoped-proxy />
-                </bean>
-                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
-                    <aop:scoped-proxy />
-                </bean>
+                <ref bean="sessionScopeAdditionalDescriptors"/>
+                <ref bean="requestScopeAdditionalDescriptors"/>
             </list>
         </property>
+    </bean>
+    <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+    <bean id="requestScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
+        <aop:scoped-proxy />
     </bean>
 
     <!--
