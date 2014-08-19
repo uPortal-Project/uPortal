@@ -35,17 +35,25 @@ var autoSuggestResultsProcessors = function (jQuery) {
      * categoriesArr - portletListAPI JSON response data
      * urlPattern - url pattern containing the string '$fname' which is replaced with the channel name
      */
-    var portletListProcessorFunc = function(categoriesArr, urlPattern) {
+    var portletListProcessorFunc = function(categoriesArr, urlPattern, uniqueItems) {
+        uniqueItems = uniqueItems || {};
         var channels = $.map(categoriesArr.channels, function (channel, index) {
+            // Keep an associative array of IDs we've found.  If we have already processed this portlet earlier in
+            // the list, skip it so we don't have duplicates in the list.
+            if (uniqueItems[channel.id]) {
+                return null;
+            } else {
+                uniqueItems[channel.id] = channel.id;
+            }
             return {
-                label: channel.title + channel.description === null ? '' : ' ' + channel.description,
+                label: channel.name + '~' + channel.title + '~' + channel.description,
                 title: channel.title,
                 desc: channel.description === null ? '' : channel.description,
                 url: urlPattern.replace('$fname', channel.fname)
             }
         });
         return channels.concat($.map(categoriesArr.categories, function(category, index) {
-            return portletListProcessorFunc(category, urlPattern);
+            return portletListProcessorFunc(category, urlPattern, uniqueItems);
         }));
     };
 
@@ -58,7 +66,7 @@ var autoSuggestResultsProcessors = function (jQuery) {
         "default": function (json, urlPattern) {
             return $.map(json, function (value, key) {
                 return {
-                    label: value.title + (value.description === null) ? '' : ' ' + value.description,
+                    label: value.title + (value.description === null ? '' : ' ') + value.description,
                     title: value.title,
                     desc: (value.description === null) ? '' : value.description,
                     url: value.url
@@ -85,6 +93,9 @@ var initSearchAuto = initSearchAuto || function($, params) {
     var prepopulateAutoSuggestUrl = settings.prepopulateAutoSuggestUrl;
     var prepopulateUrlPattern = settings.prepopulateUrlPattern;
     var autoSuggestResultsProcessor = autoSuggestResultsProcessors($)[settings.autoSuggestResultsProcessor];
+    if(typeof autoSuggestResultsProcessor === "undefined") {
+        alert ("Invalid autoSuggestResultsProcessor defined in portlet preferences. Must fix for auto-suggest search to work.")
+    }
     var searchUrl = settings.autoSuggestSearchUrl;
 
     var searchField = $(searchFieldSelector);
