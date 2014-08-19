@@ -125,7 +125,7 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.4</aspectjrt.version>
         <aspectjweaver.version>1.7.4</aspectjweaver.version>
-        <casclient.version>3.2.1</casclient.version>
+        <casclient.version>3.3.3</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
         <cglib.version>3.1</cglib.version>
@@ -751,6 +751,10 @@
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.opensaml</groupId>
+                        <artifactId>opensaml</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
