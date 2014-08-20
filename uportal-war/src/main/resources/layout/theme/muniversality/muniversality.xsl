@@ -310,6 +310,7 @@
               <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
             </xsl:call-template>
 
+            <xsl:copy-of select="//channel[@fname = 'google-analytics-config']"/>
             <xsl:call-template name="page.js" />
         </head>
         <body class="up {$FLUID_THEME_CLASS} dashboard-{$VIEW}">
