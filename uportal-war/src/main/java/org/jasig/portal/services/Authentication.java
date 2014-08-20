@@ -179,7 +179,7 @@ public class Authentication {
                 }
                 else {
                     if (log.isWarnEnabled()) {
-                        log.warn("Authentication Service recieved " + "unknown additional descriptor [" + addInfo + "]");
+                        log.warn("Authentication Service received unknown additional descriptor [" + addInfo + "]");
                     }
                 }
             }
@@ -207,7 +207,7 @@ public class Authentication {
                 if (person.getAttribute("portalDisplayName") != null) {
                     person.setFullName((String) person.getAttribute("portalDisplayName"));
                 }
-                // If not try the eduPerson displyName
+                // If not try the eduPerson displayName
                 else if (person.getAttribute("displayName") != null) {
                     person.setFullName((String) person.getAttribute("displayName"));
                 }
@@ -218,7 +218,7 @@ public class Authentication {
             }
             // Find the uPortal userid for this user or flunk authentication if not found
             // The template username should actually be derived from directory information.
-            // The reference implemenatation sets the uPortalTemplateUserName to the default in
+            // The reference implementation sets the uPortalTemplateUserName to the default in
             // the portal.properties file.
             // A more likely template would be staff or faculty or undergraduate.
             final boolean autocreate = PropertiesManager

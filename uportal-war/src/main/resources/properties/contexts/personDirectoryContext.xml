@@ -160,12 +160,12 @@
         </property>
         <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
         <property name="cachedPersonAttributesDao" >
-            <bean id="mergedPersonAttributeDao" class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+            <bean class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
                 <property name="merger">
                     <!-- This is a "first one wins" strategy. I.e. the first value found for
-                    any given result attrbute will be assigned to the user. Different values
+                    any given result attribute will be assigned to the user. Different values
                     found in subsequently queried attribute sources will be ignored. Suitable
-                    if uP-local attributes should always take precedency. Other
+                    if uP-local attributes should always take precedence. Other
                     options (all in the same package):
 
                         MultivaluedAttributeMerger - Collects values from all DAOs into lists (does not
