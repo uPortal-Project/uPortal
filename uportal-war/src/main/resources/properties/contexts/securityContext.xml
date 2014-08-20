@@ -82,6 +82,6 @@
     <!-- This is used in CasAssertionSecurityContext.  Putting it here just to avoid
          introducing static variables, or re-reading security.properties repeatedly. -->
     <bean id="casCopyAssertionAttributesToUserAttributes" class="java.lang.String">
-        <constructor-arg index="0" value="${org.jasig.portal.security.cas.copy-assertion-attributes-to-user-attributes:false}"/>
+        <constructor-arg index="0" value="${org.jasig.portal.security.cas.assertion.copyAttributesToUserAttributes:false}"/>
     </bean>
 </beans>

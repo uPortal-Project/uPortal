@@ -24,9 +24,13 @@
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     
     <!-- ********** User Information Support Beans ********** -->
@@ -118,6 +122,7 @@
             </list>
         </property>
     </bean>
+    <!-- Do not change this bean id without altering CasAssertionSecurityContext to refer to the new id. -->
     <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
         <aop:scoped-proxy />
     </bean>
