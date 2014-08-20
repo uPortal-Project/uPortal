@@ -35,7 +35,17 @@
                     <groupId>xalan</groupId>
                     <artifactId>serializer</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jasig.cas</groupId>
+                    <artifactId>cas-client-core</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Use same version as uPortal to ease debugging -->
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
         </dependency>
 
         <dependency>
