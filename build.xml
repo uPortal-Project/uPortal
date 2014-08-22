@@ -1475,7 +1475,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="windowsCmdArg2" value="-Djasig.ignore"/>
 
-        <exec executable="${mvnExecutable}" failonerror="true">
+        <exec executable="${mvnExecutable}" dir="${pomDir}" failonerror="true">
             <arg value="${windowsCmdArg1}"/>
             <arg value="${windowsCmdArg2}"/>
             <arg value="-s${maven.settings}" />
