@@ -130,6 +130,22 @@
 
 
     <!-- ============================== Public Targets ============================== -->
+    
+    <target name="deploy-less">
+      <exec executable="lessc">
+        <arg value="" />
+        <arg value="${basedir}/uportal-war/src/main/webapp/media/skins/bucky/defaultSkin.less" />
+        <arg value="${server.base}/webapps/portal/media/skins/bucky/defaultSkin.css" />
+      </exec>
+    </target>
+
+    <target name="deploy-xsl">
+      <exec executable="rsync">
+        <arg value="-avC" />
+        <arg value="${basedir}/uportal-war/src/main/resources/layout" />
+        <arg value="${server.base}/webapps/portal/WEB-INF/classes" />
+      </exec>
+    </target>
 
     <target name="help" description="Prints information about using this ant build file.">
         <loadfile property="helpMessage" srcFile="docs/antHelp.txt" />
