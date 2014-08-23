@@ -21,7 +21,7 @@
 -->
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -199,6 +199,12 @@
                         *not* be given a chance to process the original query. But they will if you add
                         them directly to the MergingPersonAttributeDaoImpl.personAttributeDaos list here.)
                         -->
+                        <!-- Keep duplicateUsernameAttributeSource as the last DAO to duplicate the username
+                             if it wasn't already filled in by earlier sources.  This addresses UP-4177 for a person who has
+                             never logged into uPortal before and doesn't get their attributes set by LDAP
+                             or another source.
+                        -->
+                        <ref bean="duplicateUsernameAttributeSource"/>
                     </list>
                 </property>
             </bean>
@@ -230,13 +236,13 @@
             </map>
         </property>
     </bean>
-    
+
     <!--
      | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the
      | portal database and is searched for by username, results are cached by the outer caching DAO
      +-->
     <bean id="uPortalJdbcUserSource"
-        class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+          class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
@@ -250,7 +256,7 @@
             <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
                 <constructor-arg index="0" ref="PersonDB" />
                 <constructor-arg>
-                    <value> 
+                    <value>
                         SELECT USER_NAME
                         FROM UP_USER
                         WHERE {0}
@@ -276,7 +282,20 @@
             </bean>
         </property>
     </bean>
-    
+
+    <!--
+     | For any user coming into the system, new or existing, create uid and user.login.id attributes that match the
+     | username.
+     +-->
+    <bean id="duplicateUsernameAttributeScript" class="org.jasig.portal.persondir.AttributeDuplicatingPersonAttributesScript"
+          c:keyToDuplicate="username" c:desiredNames-ref="attributeNamesToDuplicateUsernameTo"/>
+    <bean id="duplicateUsernameAttributeSource" class="org.jasig.services.persondir.support.GroovyPersonAttributeDao"
+        c:groovyObject-ref="duplicateUsernameAttributeScript"/>
+    <util:set id="attributeNamesToDuplicateUsernameTo" value-type="java.lang.String">
+        <value>uid</value>
+        <value>user.login.id</value>
+    </util:set>
+
     <!-- Where non-local attribute DAOs go -->
     
     <bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
