@@ -258,7 +258,12 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-groovysh</artifactId>
@@ -507,12 +512,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.service.persondir</groupId>
-            <artifactId>person-directory-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-platform-api</artifactId>
             <version>${project.version}</version>
@@ -635,6 +634,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <scope>test</scope>
@@ -711,6 +716,49 @@
             </resource>
         </resources>
         <plugins>
+            <!-- Compile groovy classes -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+                                    <classpath refid="maven.compile.classpath" />
+                                </taskdef>
+                                <mkdir dir="${project.build.outputDirectory}" />
+                                <groovyc srcdir="${basedir}/src/main/groovy" destdir="${project.build.outputDirectory}" encoding="${project.build.sourceEncoding}">
+                                    <classpath refid="maven.compile.classpath" />
+                                </groovyc>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>generate-test-sources</phase>
+                        <configuration>
+                            <target>
+                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
+                                    <classpath refid="maven.test.classpath" />
+                                </taskdef>
+                                <mkdir dir="${project.build.testOutputDirectory}" />
+                                <groovyc srcdir="${basedir}/src/test/groovy" destdir="${project.build.testOutputDirectory}" encoding="${project.build.sourceEncoding}">
+                                    <classpath refid="maven.test.classpath" />
+                                </groovyc>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
