@@ -46,7 +46,7 @@ public class CasAssertionSecurityContext extends ChainingSecurityContext impleme
     private static final String SESSION_ADDITIONAL_DESCRIPTORS_BEAN = "sessionScopeAdditionalDescriptors";
     private static final String CAS_COPY_ASSERT_ATTR_TO_USER_ATTR_BEAN = "casCopyAssertionAttributesToUserAttributes";
 
-    private ApplicationContext applicationContext;
+    private transient ApplicationContext applicationContext;
     private Assertion assertion;
     private boolean copyAssertionAttributesToUserAttributes = false;
 
