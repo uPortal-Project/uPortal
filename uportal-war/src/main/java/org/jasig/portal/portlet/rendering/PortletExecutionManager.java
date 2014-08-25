@@ -97,7 +97,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
-     * Queue used to track workers that did not complete in their alloted time. 
+     * Queue used to track workers that did not complete in their allotted time.
      */
     private final Queue<IPortletExecutionWorker<?>> hungWorkers = new ConcurrentLinkedQueue<IPortletExecutionWorker<?>>();
 
