@@ -148,8 +148,7 @@ public class PortletMarketplaceController {
             return "jsp/Marketplace/portlet/view";
         }
 
-
-        MarketplacePortletDefinition mpDefinition = new MarketplacePortletDefinition(result, this.portletCategoryRegistry);
+        MarketplacePortletDefinition mpDefinition = marketplaceService.getOrCreateMarketplacePortletDefinition(result);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
         model.addAttribute("marketplaceRating", tempRatingImpl);

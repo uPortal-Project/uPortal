@@ -294,17 +294,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         if(this.relatedPortlets.isEmpty()){
             return this.relatedPortlets;
         }
-        List<IPortletDefinition> tempList = new ArrayList<IPortletDefinition>(this.relatedPortlets);
+
+        List<MarketplacePortletDefinition> tempList = new ArrayList<MarketplacePortletDefinition>(this.relatedPortlets);
         Collections.shuffle(tempList);
+        final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
+        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>(tempList.subList(0, count));
 
-        final Set<MarketplacePortletDefinition> someRelatedPortlets = new HashSet<>();
-
-        for (int i = 0; i < Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size()); i++) {
-            // grab only the first QUANTITY_RELATED_PORTLETS_TO_SHOW related portlets, up to all available
-            someRelatedPortlets.add(new MarketplacePortletDefinition(tempList.get(i), this.portletCategoryRegistry));
-        }
-
-        return someRelatedPortlets;
+        return rslt;
     }
 
     /**
