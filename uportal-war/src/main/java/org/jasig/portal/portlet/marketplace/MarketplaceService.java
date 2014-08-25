@@ -18,6 +18,9 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheEntry;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.Validate;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -27,6 +30,7 @@ import org.jasig.portal.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -47,6 +51,10 @@ public class MarketplaceService implements IMarketplaceService {
 
     private IPortletCategoryRegistry portletCategoryRegistry;
 
+    @Autowired
+    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
+    private Cache marketplacePortletDefinitionCache;
+
     @Override
     public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
 
@@ -58,8 +66,7 @@ public class MarketplaceService implements IMarketplaceService {
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 
             if ( mayBrowsePortlet(user, portletDefinition) ) {
-                final MarketplacePortletDefinition marketplacePortletDefinition =
-                        new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry);
+                final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
                 visiblePortletDefinitions.add(marketplacePortletDefinition);
             }
         }
@@ -69,8 +76,6 @@ public class MarketplaceService implements IMarketplaceService {
         return visiblePortletDefinitions;
 
     }
-
-
 
     @Override
     public Set browseableNonEmptyPortletCategoriesFor(final IPerson user) {
@@ -132,8 +137,7 @@ public class MarketplaceService implements IMarketplaceService {
             for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
 
                 if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
-                    featuredPortlets.add(
-                            new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
+                    featuredPortlets.add(getOrCreateMarketplacePortletDefinition(portletDefinition));
                 }
 
             }
@@ -142,6 +146,16 @@ public class MarketplaceService implements IMarketplaceService {
         return featuredPortlets;
     }
 
+    @Override
+    public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
+        Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
+        if (element == null) {
+            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, portletCategoryRegistry);
+            element = new Element(portletDefinition.getFName(), mpd);
+            this.marketplacePortletDefinitionCache.put(element);
+        }
+        return (MarketplacePortletDefinition) element.getObjectValue();
+    }
 
     // Private stateless static utility methods below here
 

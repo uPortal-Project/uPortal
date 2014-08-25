@@ -63,7 +63,6 @@ public interface IMarketplaceService {
      */
     boolean mayBrowsePortlet(IPerson user, IPortletDefinition portletDefinition);
 
-
     /**
      * Provides the potentially empty non-null Set of featured portlets for this user.
      * "For this user" is subject to implementation-specific considerations (as in, is it the same featured portlets
@@ -76,4 +75,13 @@ public interface IMarketplaceService {
      * @throws java.lang.IllegalArgumentException if user is null or otherwise observed to be broken
      */
     Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user);
+
+    /**
+     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
+     * Implementations of IMarketplaceService may cache these objects to-taste.
+     * @param portletDefinition A valid {@link IPortletDefinition}
+     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition.
+     */
+    MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition);
+
 }
