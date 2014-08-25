@@ -377,6 +377,16 @@
                         For more background see https://issues.jasig.org/browse/SSP-1669 and
                         https://issues.jasig.org/browse/SSP-2359.
 
+                        ## LTI Support ##
+
+                        Some LTI consumers (Moodle in particular) are not able OOTB to pass launch parameters that we
+                        can map to either username or schoolID, but can pass an email address. The default configuration
+                        for the local uP person directory DAO supports this, but to extend that configuration to
+                        search into your "external" JDBC/AD/LDAP DAOs, you'll need to add a line like this to the
+                        queryAttributeMapping property in those "external" DAOs:
+
+                          <entry key="primaryEmailAddress" value="{physical-mail-attribute-name}"/>
+
                         -->
                     </list>
                 </property>
