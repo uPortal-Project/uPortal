@@ -1,0 +1,50 @@
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License. You may obtain a
+    copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on
+    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied. See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+
+<permission-owner xmlns="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd">  
+  <name>Student Success Plan</name>  
+  <fname>SSP</fname>  
+  <desc>Permissions controlling features in SSP</desc>
+  <activity> 
+    <name>BULK_SEARCH_EXPORT</name>  
+    <fname>BULK_SEARCH_EXPORT</fname>  
+    <desc>BULK_SEARCH_EXPORT</desc>  
+    <targetProvider>portalSystemTargetProvider</targetProvider> 
+  </activity>
+  <activity> 
+    <name>BULK_WATCHLIST_WRITE</name>  
+    <fname>BULK_WATCHLIST_WRITE</fname>  
+    <desc>BULK_WATCHLIST_WRITE</desc>  
+    <targetProvider>portalSystemTargetProvider</targetProvider> 
+  </activity>
+  <activity> 
+    <name>BULK_EMAIL_STUDENT</name>  
+    <fname>BULK_EMAIL_STUDENT</fname>  
+    <desc>BULK_EMAIL_STUDENT</desc>  
+    <targetProvider>portalSystemTargetProvider</targetProvider> 
+  </activity>
+  <activity> 
+    <name>BULK_PROGRAM_STATUS</name>  
+    <fname>BULK_PROGRAM_STATUS</fname>  
+    <desc>BULK_PROGRAM_STATUS</desc>  
+    <targetProvider>portalSystemTargetProvider</targetProvider> 
+  </activity>  
+</permission-owner>
