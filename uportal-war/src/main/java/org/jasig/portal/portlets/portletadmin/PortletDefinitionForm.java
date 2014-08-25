@@ -156,12 +156,11 @@ public class PortletDefinitionForm implements Serializable {
     	}
         this.setLifecycleState(def.getLifecycleState());
 		
-		int order = this.getLifecycleState().getOrder();
-		if (order < PortletLifecycleState.PUBLISHED.getOrder()) {
+		if (def.getLifecycleState().equals(PortletLifecycleState.APPROVED)) {
 			this.setPublishDateTime(def.getPublishDate());
 		}
 		
-		if (order < PortletLifecycleState.EXPIRED.getOrder()) {
+		if (def.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
 			this.setExpirationDateTime(def.getExpirationDate());
 		}
 		

@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.base.Function;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -49,6 +50,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor;
@@ -56,6 +58,7 @@ import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory;
+import org.jasig.portal.portlets.error.MaintenanceModeException;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
@@ -68,8 +71,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
-
-import com.google.common.base.Function;
 
 /**
  * Handles the asynchronous execution of portlets, handling execution errors and publishing
@@ -898,7 +899,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Returns the PortletRenderResult waiting up to the portlet's timeout
      * 
      * @return The PortletRenderResult from the portlet's execution
-     * @throws TimeoutException If the portlet's timeout was hit before a result was returned 
+     * @throws TimeoutException If the portlet's timeout was hit before a result was returned
      * @throws Exception The exception thrown by the portlet during execution 
      */
     protected PortletRenderResult getPortletRenderResult(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -938,7 +939,15 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     		// previous action failed, dispatch to errorPortlet immediately
     		portletRenderExecutionWorker = this.portletWorkerFactory.createFailureWorker(request, response, portletWindowId, cause);
     	} else {
-    		portletRenderExecutionWorker = this.portletWorkerFactory.createRenderWorker(request, response, portletWindowId);
+            IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            IPortletDefinition portletDef = portletWindow.getPortletEntity().getPortletDefinition();
+            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
+                // Prevent the portlet from rendering;  replace with a helpful "Out of Service" message
+                portletRenderExecutionWorker = this.portletWorkerFactory.createFailureWorker(request, response, portletWindowId, new MaintenanceModeException());
+            } else {
+                // Happy path
+                portletRenderExecutionWorker = this.portletWorkerFactory.createRenderWorker(request, response, portletWindowId);
+            }
     	}
     	
     	portletRenderExecutionWorker.submit();
