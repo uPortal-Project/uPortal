@@ -399,6 +399,7 @@
                 <entry key="schoolId" value="username" />
                 <entry key="givenName" value="givenName" />
                 <entry key="sn" value="sn"/>
+                <entry key="primaryEmailAddress" value="mail"/>
             </map>
         </property>
         <property name="resultAttributeMapping">
