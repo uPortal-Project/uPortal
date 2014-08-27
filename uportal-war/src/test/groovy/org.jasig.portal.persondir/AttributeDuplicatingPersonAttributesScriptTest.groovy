@@ -22,7 +22,13 @@ import org.jasig.portal.persondir.AttributeDuplicatingPersonAttributesScript
 import org.jasig.services.persondir.IPersonAttributeScriptDao
 
 class AttributeDuplicatingPersonAttributesScriptTest extends GroovyTestCase {
-    void testSomething() {
+
+    /**
+     * Test that an AttributeDuplicatingPersonAttributesScript configured to duplicate the username attribute to the
+     * uid and the user.login.id attribute , when presented with a user with a username attribute,
+     * does that duplication.
+     */
+    void testUsernameAttributeDuplicatesToAdditionalAttributes() {
         IPersonAttributeScriptDao dao = new AttributeDuplicatingPersonAttributesScript(
                 "username", new HashSet<String>(["uid", "user.login.id"]))
         Map<String, List<Object>> userAttributes = dao.getPersonAttributesFromMultivaluedAttributes(
