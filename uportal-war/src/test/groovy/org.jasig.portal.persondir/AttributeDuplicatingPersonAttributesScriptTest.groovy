@@ -31,9 +31,12 @@ class AttributeDuplicatingPersonAttributesScriptTest extends GroovyTestCase {
     void testUsernameAttributeDuplicatesToAdditionalAttributes() {
         IPersonAttributeScriptDao dao = new AttributeDuplicatingPersonAttributesScript(
                 "username", new HashSet<String>(["uid", "user.login.id"]))
-        Map<String, List<Object>> userAttributes = dao.getPersonAttributesFromMultivaluedAttributes(
+        Map<String, List<Object>> actual = dao.getPersonAttributesFromMultivaluedAttributes(
                 [username: ['tomThumb'].asList()])
         assertEquals("username should have duplicated to uid and user.login.id attributes for three total attributes.",
-                3, userAttributes.size());
+                3, actual.size());
+        Map<String, List<Object>> expected =
+          [username: ['tomThumb'].asList(), uid: ['tomThumb'].asList(), "user.login.id": ['tomThumb'].asList() ]
+        assertEquals("username value should have duplicated to uid and user.login.id values.", expected, actual);
     }
 }
