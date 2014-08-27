@@ -39,4 +39,22 @@ class AttributeDuplicatingPersonAttributesScriptTest extends GroovyTestCase {
           [username: ['tomThumb'].asList(), uid: ['tomThumb'].asList(), "user.login.id": ['tomThumb'].asList() ]
         assertEquals("username value should have duplicated to uid and user.login.id values.", expected, actual);
     }
+
+    /**
+     * Test that an AttributeDuplicatingPersonAttributesScript configured to duplicate the attitude attribute does
+     * not duplicate the attribute when presented with a user without that attribute.
+     */
+    void testNonMatchingUserAttributesDoNotDuplicate() {
+
+        IPersonAttributeScriptDao duplicator =
+                new AttributeDuplicatingPersonAttributesScript("attitude", new HashSet(["bearing", "demeanor"]));
+
+        Map expected = [username: ['gazda']]
+
+        Map actual = duplicator.getPersonAttributesFromMultivaluedAttributes(expected);
+
+        assertEquals "Duplicator should have been a no-op", expected , actual
+
+
+    }
 }
