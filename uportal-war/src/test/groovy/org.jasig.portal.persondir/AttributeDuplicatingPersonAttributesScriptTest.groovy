@@ -33,6 +33,7 @@ class AttributeDuplicatingPersonAttributesScriptTest extends GroovyTestCase {
                 "username", new HashSet<String>(["uid", "user.login.id"]))
         Map<String, List<Object>> userAttributes = dao.getPersonAttributesFromMultivaluedAttributes(
                 [username: ['tomThumb'].asList()])
-        assert userAttributes.size() == 3
+        assertEquals("username should have duplicated to uid and user.login.id attributes for three total attributes.",
+                3, userAttributes.size());
     }
 }
