@@ -46,9 +46,8 @@ class AttributeDuplicatingPersonAttributesScript extends BaseGroovyScriptDaoImpl
         if (userAttributes?.get(keyToDuplicate)) {
             List<Object> attributeValues = userAttributes.get(keyToDuplicate);
             Map<String, List<Object>> newUserAttributes = new HashMap<> (userAttributes);
-            Iterator<String> i = desiredNames.iterator();
-            while (i.hasNext()) {
-                String desiredName = i.next();
+
+            for (desiredName in desiredNames) {
                 newUserAttributes.put(desiredName, attributeValues);
             }
             return newUserAttributes
