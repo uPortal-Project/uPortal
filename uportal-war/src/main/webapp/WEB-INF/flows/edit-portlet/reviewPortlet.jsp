@@ -285,7 +285,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <c:if test="${fn:length(cpd.steps) != 0}">
           <div class="tab-pane" id="parameters">
             <div class="form-group">
-              <div class="col-sm- col-sm-offset-3">
+              <div class="col-sm-2 col-sm-offset-3">
                 <a class="btn btn-default edit-action" href="${ setParametersUrl }"><span><spring:message code="edit.parameters"/></span></a>
               </div>
             </div>
