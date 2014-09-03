@@ -253,6 +253,7 @@
     up.fluid = fluid;
     fluid = null;
     fluid_1_4 = null;
+    fluid_1_5 = null;
     up._ = _.noConflict();
     up._.templateSettings = {
       interpolate : /{{=(.+?)}}/g,
