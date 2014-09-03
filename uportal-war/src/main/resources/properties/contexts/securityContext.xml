@@ -23,9 +23,11 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd">
            
    <security:global-method-security />
 
@@ -79,4 +81,7 @@
     </bean>
 
     <bean id="ssoRemoteUserFilter" class="org.jasig.portal.security.sso.RemoteUserFilterBean" />
+
+    <lang:groovy id="ssoPersonSearchResultFilter" refresh-check-delay="60000"
+                 script-source="${org.jasig.portal.security.sso.personFilteringScript}" />
 </beans>

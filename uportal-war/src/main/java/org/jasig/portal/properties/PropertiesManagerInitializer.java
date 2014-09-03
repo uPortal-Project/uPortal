@@ -68,8 +68,8 @@ public class PropertiesManagerInitializer implements BeanFactoryPostProcessor {
         }
         // IGNORE is consistent with historical PropertiesManager behavior (that's also why we trap the exception above)
         final Properties resolvedProperties =
-                ContextPropertyPlaceholderUtils.resolve(properties, propertyResolver,
-                        UnresolvablePlaceholderStrategy.IGNORE);
+                ContextPropertyPlaceholderUtils.resolve(properties, UnresolvablePlaceholderStrategy.IGNORE,
+                        propertyResolver);
         PropertiesManager.setProperties(resolvedProperties);
     }
 

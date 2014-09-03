@@ -26,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.jasig.portal.api.sso.SsoTicketImpl;
 import org.jasig.portal.api.sso.SsoTicketService;
 import org.jasig.portal.api.url.BuildUrlRequest;
 import org.jasig.portal.api.url.UrlBuilderService;
+import org.jasig.portal.portlets.lookup.IPersonAttributesFilter;
 import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.security.sso.ISsoTicket;
@@ -50,7 +52,9 @@ import org.jasig.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
@@ -59,6 +63,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/sso")
+@DependsOn("ssoPersonSearchResultFilter")
 public final class SsoController {
 
 	private static final String USERNAME_PARAMETER = "username";
@@ -106,6 +111,10 @@ public final class SsoController {
 
 	@Autowired
 	private IPersonLookupHelper personLookupHelper;
+
+	@Autowired
+	@Qualifier("ssoPersonSearchResultFilter")
+	private IPersonAttributesFilter ssoPersonSearchResultFilter;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -238,21 +247,49 @@ public final class SsoController {
 	private String resolveCanonicalUsername(String username) {
 		final IPersonAttributes person = personLookupHelper.findPerson(
 				SystemPerson.INSTANCE, username);
-		return person == null ? null : person.getName();
+		final IPersonAttributes canonicalizedPerson = filterPersonSearchResults(person);
+		return canonicalizedPerson == null ? null : canonicalizedPerson.getName();
 	}
 
 	private String resolveCanonicalUsernameFromSchoolId(String schoolId) {
 		final List<IPersonAttributes> persons = personLookupHelper
 				.searchForPeople(SystemPerson.INSTANCE,
 						personBySchoolIdSearchQuery(schoolId));
-		if (persons == null || persons.isEmpty()) {
+		final List<IPersonAttributes> filteredPersons = filterPersonSearchResults(persons);
+		log.debug("SchoolId search on [{}] matches before filtering: [{}]. After: [{}].",
+				new Object[] { schoolId, (persons == null ? 0 : persons.size()),
+						(filteredPersons == null ? 0 : filteredPersons.size())});
+		if ( filteredPersons == null || filteredPersons.isEmpty() ) {
 			return null;
 		}
-		if (persons.size() > 1) {
-			throw new IllegalStateException("SchoolId [" + schoolId
-					+ "] matched too many users (" + persons.size() + ")");
+		if (filteredPersons.size() > 1) {
+			throw new IllegalStateException("SchoolId search on [" + schoolId
+					+ "] matched too many users (" + (persons == null ? 0 : persons.size())
+					+ ") (After filtering: "
+					+ (filteredPersons == null ? 0 : filteredPersons.size()) + ")");
 		}
-		return persons.get(0).getName();
+		return filteredPersons.get(0).getName();
+	}
+
+	private IPersonAttributes filterPersonSearchResults(IPersonAttributes person) {
+		if ( person == null || ssoPersonSearchResultFilter == null ) {
+			return person;
+		}
+		final List<IPersonAttributes> filteredPersons = filterPersonSearchResults(Arrays.asList(person));
+		return (filteredPersons == null || filteredPersons.isEmpty()) ? null : filteredPersons.get(0);
+	}
+
+	private List<IPersonAttributes> filterPersonSearchResults(List<IPersonAttributes> persons) {
+		if ( persons == null || persons.isEmpty() || ssoPersonSearchResultFilter == null ) {
+			return persons;
+		}
+		// Use the "environment.build.sso" prefix rather than "org.jasig.portal.security.sso.mvc"
+		// b/c the former is set in ssp-platform-config.properties and the latter in portal.properties.
+		// Normally we'd just go ahead and add the necessary properties to portal.properties but in this
+		// case we need to let people set aribitrary properties below the given prefix. So if we
+		// used the portal.properties prefix we'd either force people to fork that file or break from
+		// the established naming conventionin ssp-platform-config.properties.
+		return ssoPersonSearchResultFilter.filter(persons,"environment.build.sso");
 	}
 
 	private Map<String, Object> personBySchoolIdSearchQuery(String schoolId) {
