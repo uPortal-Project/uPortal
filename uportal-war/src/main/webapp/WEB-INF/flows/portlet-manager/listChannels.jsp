@@ -127,7 +127,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
         <ul class="btn-group">
-          <li class="btn"><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
+          <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right datatable-search-view">
@@ -183,11 +183,11 @@ up.jQuery(function() {
     // Url generating helper functions
     var getEditURL = function(portletId) {
         var url = '${editPortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/></a>';
+        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-edit"></i></span></a>';
     };
     var getDeleteURL = function(portletId) {
         var url = '${removePortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/></a>';
+        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-trash-o"></i></span></a>';
     };
 
     // Created as its own 

@@ -37,67 +37,85 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | http://www.ja-sig.org/wiki/x/cQ
 -->
+<style>
+    .form-group {
+        margin-top: 10px;
+    }
+    .buttons {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+</style>
     
 <!-- Portlet -->
-<div class="fl-widget portlet ptl-mgr view-chooseportlet" role="section">
-
-    <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading">
-       <spring:message code="register.new.portlet"/>
-    </h2>
-  </div> <!-- end: portlet-titlebar -->
-  
-  <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
-    
-    <!-- Portlet Messages -->
-    <spring:hasBindErrors name="portlet">
-        <div class="portlet-msg-error portlet-msg error" role="alert">
-            <form:errors path="*" element="div" />
-        </div> <!-- end: portlet-msg -->
-    </spring:hasBindErrors>
-    
-    <form action="${queryUrl}" method="POST">
-        
-    <!-- Portlet Section -->
-    <div class="portlet-section" role="region">
-    	<div class="titlebar">
-        <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
-      </div>
-      <div class="content">
-
-        <select name="application">
-            <c:forEach items="${contexts}" var="context">
-                <option value="${fn:escapeXml(context.name)}">${fn:escapeXml(context.name)}</option>
-            </c:forEach>
-        </select>
-        
-        <select name="portlet">
-            <c:forEach items="${contexts[0].portlets}" var="portlet">
-                <option value="${fn:escapeXml(portlet.portletName)}">${fn:escapeXml(fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName)}</option>
-            </c:forEach>
-        </select>
-        
-      </div>
-    </div> <!-- end: portlet-section -->
-    
-    <!-- Buttons -->
-    <div class="buttons">
-      <c:choose>
-        <c:when test="${ completed }">
-          <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
-        </c:when>
-        <c:otherwise>
-          <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
-          <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
-        </c:otherwise>
-      </c:choose>
-      <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+<div class="fl-widget portlet ptl-mgr view-chooseportlet bootstrap-styles container-fluid" role="section">
+    <div class="row">
+        <!-- Portlet Titlebar -->
+        <div class="fl-widget-titlebar titlebar portlet-titlebar col-md-12" role="sectionhead">
+            <h2 class="title" role="heading">
+                <spring:message code="register.new.portlet"/>
+            </h2>
+        </div> <!-- end: portlet-titlebar -->
     </div>
-    
-    </form> <!-- End Form -->
-            
+
+    <!-- Portlet Content -->
+    <div class="fl-widget-content content portlet-content row" role="main">
+
+        <!-- Portlet Messages -->
+        <spring:hasBindErrors name="portlet">
+            <div class="col-md-6 col-md-offset-2">
+                <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">
+                    <form:errors path="*" element="div" />
+                </div> <!-- end: portlet-msg -->
+            </div>
+        </spring:hasBindErrors>
+
+        <form action="${queryUrl}" method="POST" class="form-horizontal" role="form">
+
+            <!-- Title -->
+            <div class="titlebar">
+                <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
+            </div>
+            <!-- Application Dropdown -->
+            <div class="form-group">
+                <div class=" col-md-3">
+                    <select name="application" class="form-control">
+                        <c:forEach items="${contexts}" var="context">
+                            <option value="${fn:escapeXml(context.name)}">${fn:escapeXml(context.name)}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </div>
+            <!-- Portlet Dropdown -->
+            <div class="form-group">
+                <div class="col-md-3">
+                    <select name="portlet" class="form-control col-md-4">
+                        <c:forEach items="${contexts[0].portlets}" var="portlet">
+                            <option value="${fn:escapeXml(portlet.portletName)}
+                            ">${fn:escapeXml(fn:length(portlet.displayNames) > 0 ? portlet.displayNames[0].displayName : portlet.portletName)}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
+            </div>
+            <!-- Buttons -->
+            <div class="form-group">
+                <div class="buttons">
+                    <c:choose>
+                        <c:when test="${ completed }">
+                            <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+                        </c:when>
+                        <c:otherwise>
+                            <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+                            <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+                        </c:otherwise>
+                    </c:choose>
+                    <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                </div>
+            </div>
+
+        </form> <!-- End Form -->
+
     </div> <!-- end: portlet-content -->
     
     <script type="text/javascript">
@@ -117,8 +135,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	            });
 	        });
         });
-        
-        
     </script>
         
 </div> <!-- end: portlet -->
