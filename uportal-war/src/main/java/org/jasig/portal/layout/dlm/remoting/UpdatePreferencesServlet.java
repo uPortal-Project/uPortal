@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPath;
@@ -58,7 +60,9 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
@@ -71,6 +75,7 @@ import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -108,6 +113,19 @@ public class UpdatePreferencesServlet {
 	private IStylesheetUserPreferencesService stylesheetUserPreferencesService;
 	private IUserLayoutStore userLayoutStore;
     private MessageSource messageSource;
+    private IPortletWindowRegistry portletWindowRegistry;
+    
+    @Value("${org.jasig.portal.layout.dlm.remoting.addedWindowState:null}")
+    private String addedPortletWindowState;
+    
+    private WindowState addedWindowState;
+    
+    @PostConstruct
+    private void initAddedPortletWindowState(){
+        if(addedPortletWindowState!=null && !"null".equalsIgnoreCase(addedPortletWindowState) && !addedPortletWindowState.isEmpty()){
+            addedWindowState = new WindowState(addedPortletWindowState);
+        }
+    }
 
 	@Autowired
     public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
@@ -143,17 +161,22 @@ public class UpdatePreferencesServlet {
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
-	// default tab name
-	protected static final String DEFAULT_TAB_NAME = "New Tab";
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+    
+    // default tab name
+    protected static final String DEFAULT_TAB_NAME = "New Tab";
 
-	/**
-	 * Remove an element from the layout.
-	 *
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
+    /**
+     * Remove an element from the layout.
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(method = RequestMethod.POST, params = "action=removeElement")
     public ModelAndView removeElement(HttpServletRequest request,
             HttpServletResponse response)
@@ -687,10 +710,15 @@ public class UpdatePreferencesServlet {
 		try {
 			// save the user's layout
             ulm.saveUserLayout();
-		} catch (Exception e) {
-			log.warn("Error saving layout", e);
-			return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Can''t add a new channel", locale)));
-		}
+            if(addedWindowState!=null){
+                IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(request, channel.getFunctionalName());
+                portletWindow.setWindowState(addedWindowState);
+                this.portletWindowRegistry.storePortletWindow(request, portletWindow);
+            }
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Can''t add a new channel", locale)));
+        }
 
 		Map<String, String> model = new HashMap<String, String>();
 		model.put("response", getMessage("success.add.portlet", "Added a new channel", locale));
