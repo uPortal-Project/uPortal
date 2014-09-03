@@ -90,8 +90,8 @@ public class LogoutController implements InitializingBean, ApplicationContextAwa
             final Properties props =
                     ContextPropertyPlaceholderUtils.resolve(
                             ResourceLoader.getResourceAsProperties(LogoutController.class,
-                                    "/properties/security.properties"), applicationContext,
-                            UnresolvablePlaceholderStrategy.IGNORE);
+                                    "/properties/security.properties"), UnresolvablePlaceholderStrategy.IGNORE,
+                                    applicationContext);
             final Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 final String propName = (String) propNames.nextElement();

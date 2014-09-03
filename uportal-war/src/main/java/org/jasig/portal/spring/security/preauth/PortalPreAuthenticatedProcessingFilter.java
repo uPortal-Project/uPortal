@@ -99,8 +99,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             // UnresolvablePlaceholderStrategy.IGNORE is consistent with pre-SSP-1888 behavior.
             Properties props =
                     ContextPropertyPlaceholderUtils.resolve(ResourceLoader.getResourceAsProperties(getClass(),
-                            "/properties/security.properties"), applicationContext,
-                            UnresolvablePlaceholderStrategy.IGNORE);
+                            "/properties/security.properties"), UnresolvablePlaceholderStrategy.IGNORE,
+                            applicationContext);
             Enumeration propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 String propName = (String) propNames.nextElement();
