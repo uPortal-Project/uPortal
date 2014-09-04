@@ -91,6 +91,14 @@
   <root level="INFO">
     <appender-ref ref="PORTAL"/>
   </root>
+
+  <!-- Hide needlessly noisy warnings created as a side-effect of cross-context 'SSO person' lookups -->
+  <logger name="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR">
+    <appender-ref ref="PORTAL"/>
+  </logger>
+  <logger name="org.jasig.portal.persondir.support.AdditionalDescriptorsPersonAttributeDao" additivity="false" level="ERROR">
+    <appender-ref ref="PORTAL"/>
+  </logger>
   
   <!-- Log use of the identity and attribute swapper -->
   <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="INFO">

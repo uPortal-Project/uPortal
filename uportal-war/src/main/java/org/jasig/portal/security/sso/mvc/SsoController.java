@@ -19,6 +19,26 @@
 
 package org.jasig.portal.security.sso.mvc;
 
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.api.sso.SsoPersonLookupService;
+import org.jasig.portal.api.sso.SsoTicket;
+import org.jasig.portal.api.sso.SsoTicketService;
+import org.jasig.portal.api.url.BuildUrlRequest;
+import org.jasig.portal.api.url.UrlBuilderService;
+import org.jasig.portal.security.SystemPerson;
+import org.jasig.services.persondir.IPersonAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.codec.Hex;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -34,36 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.api.sso.SsoTicket;
-import org.jasig.portal.api.sso.SsoTicketImpl;
-import org.jasig.portal.api.sso.SsoTicketService;
-import org.jasig.portal.api.url.BuildUrlRequest;
-import org.jasig.portal.api.url.UrlBuilderService;
-import org.jasig.portal.portlets.lookup.IPersonAttributesFilter;
-import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
-import org.jasig.portal.security.SystemPerson;
-import org.jasig.portal.security.sso.ISsoTicket;
-import org.jasig.portal.security.sso.ISsoTicketDao;
-import org.jasig.services.persondir.IPersonAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.crypto.codec.Hex;
-import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
-
 @Controller
 @RequestMapping("/sso")
-@DependsOn("ssoPersonSearchResultFilter")
 public final class SsoController {
 
 	private static final String USERNAME_PARAMETER = "username";
@@ -110,11 +102,7 @@ public final class SsoController {
 	private UrlBuilderService urlBuilder;
 
 	@Autowired
-	private IPersonLookupHelper personLookupHelper;
-
-	@Autowired
-	@Qualifier("ssoPersonSearchResultFilter")
-	private IPersonAttributesFilter ssoPersonSearchResultFilter;
+	private SsoPersonLookupService ssoPersonLookupService;
 
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -245,57 +233,21 @@ public final class SsoController {
 	}
 
 	private String resolveCanonicalUsername(String username) {
-		final IPersonAttributes person = personLookupHelper.findPerson(
-				SystemPerson.INSTANCE, username);
-		final IPersonAttributes canonicalizedPerson = filterPersonSearchResults(person);
-		return canonicalizedPerson == null ? null : canonicalizedPerson.getName();
+		final Map<String, Object> ssoPersonByUsername = ssoPersonLookupService.findSsoPersonByUsername(username);
+		return ssoPersonByUsername == null ? null : (String)ssoPersonByUsername.get(SsoPersonLookupService.USERNAME_ATTRIBUTE_NAME);
 	}
 
 	private String resolveCanonicalUsernameFromSchoolId(String schoolId) {
-		final List<IPersonAttributes> persons = personLookupHelper
-				.searchForPeople(SystemPerson.INSTANCE,
-						personBySchoolIdSearchQuery(schoolId));
-		final List<IPersonAttributes> filteredPersons = filterPersonSearchResults(persons);
-		log.debug("SchoolId search on [{}] matches before filtering: [{}]. After: [{}].",
-				new Object[] { schoolId, (persons == null ? 0 : persons.size()),
-						(filteredPersons == null ? 0 : filteredPersons.size())});
-		if ( filteredPersons == null || filteredPersons.isEmpty() ) {
+		final List<Map<String, Object>> ssoPersons =
+				ssoPersonLookupService.findSsoPerson(SCHOOL_ID_PERSONDIR_LOGICAL_ATTR_NAME, schoolId);
+		if ( ssoPersons == null || ssoPersons.isEmpty() ) {
 			return null;
 		}
-		if (filteredPersons.size() > 1) {
-			throw new IllegalStateException("SchoolId search on [" + schoolId
-					+ "] matched too many users (" + (persons == null ? 0 : persons.size())
-					+ ") (After filtering: "
-					+ (filteredPersons == null ? 0 : filteredPersons.size()) + ")");
+		if (ssoPersons.size() > 1) {
+			throw new IllegalStateException("SchoolId search on [" + schoolId + "] matched too many users ["
+					+ ssoPersons.size() + "]");
 		}
-		return filteredPersons.get(0).getName();
-	}
-
-	private IPersonAttributes filterPersonSearchResults(IPersonAttributes person) {
-		if ( person == null || ssoPersonSearchResultFilter == null ) {
-			return person;
-		}
-		final List<IPersonAttributes> filteredPersons = filterPersonSearchResults(Arrays.asList(person));
-		return (filteredPersons == null || filteredPersons.isEmpty()) ? null : filteredPersons.get(0);
-	}
-
-	private List<IPersonAttributes> filterPersonSearchResults(List<IPersonAttributes> persons) {
-		if ( persons == null || persons.isEmpty() || ssoPersonSearchResultFilter == null ) {
-			return persons;
-		}
-		// Use the "environment.build.sso" prefix rather than "org.jasig.portal.security.sso.mvc"
-		// b/c the former is set in ssp-platform-config.properties and the latter in portal.properties.
-		// Normally we'd just go ahead and add the necessary properties to portal.properties but in this
-		// case we need to let people set aribitrary properties below the given prefix. So if we
-		// used the portal.properties prefix we'd either force people to fork that file or break from
-		// the established naming conventionin ssp-platform-config.properties.
-		return ssoPersonSearchResultFilter.filter(persons,"environment.build.sso");
-	}
-
-	private Map<String, Object> personBySchoolIdSearchQuery(String schoolId) {
-		Map<String, Object> query = new HashMap<String, Object>();
-		query.put(SCHOOL_ID_PERSONDIR_LOGICAL_ATTR_NAME, schoolId);
-		return query;
+		return (String) ssoPersons.get(0).get(SsoPersonLookupService.USERNAME_ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -314,15 +266,6 @@ public final class SsoController {
 		return inputs.hasUsername() ? inputs.getUsername() : inputs
 				.getSchoolId();
 	}
-
-	private String findUsernameForSchoolId(String schoolId) {
-		return null; // To change body of created methods use File | Settings |
-						// File Templates.
-	}
-
-	/*
-	 * Implementation
-	 */
 
 	private ModelAndView sendServerError(final HttpServletResponse res,
 			final int status, final String message) {
