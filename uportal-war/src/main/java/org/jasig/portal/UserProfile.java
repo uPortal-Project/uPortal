@@ -21,6 +21,7 @@ package org.jasig.portal;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.i18n.LocaleManager;
 
 /**
@@ -221,8 +222,16 @@ public class UserProfile implements Serializable, IUserProfile {
 
     @Override
     public String toString() {
-        return "name :" + pName + "," + "description: " + description + "," + "layout_id: " + layout_id + ","
-                + "struct_ss_id: " + struct_ss_id + "," + "theme_ss_id: " + theme_ss_id + "," + "system: " + system
-                + "," + "localeManager: " + localeManager;
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("fname", fname)
+                .append("name", pName)
+                .append("description", description)
+                .append("layoutId", layout_id)
+                .append("struct_ss_id", struct_ss_id)
+                .append("theme_ss_id", theme_ss_id)
+                .append("system", system)
+                .append("localeManager", localeManager)
+                .toString();
     }
 }
