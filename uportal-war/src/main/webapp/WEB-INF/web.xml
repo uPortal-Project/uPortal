@@ -407,6 +407,11 @@
         <extension>wbmp</extension>
         <mime-type>image/vnd.wap.wbmp</mime-type>
     </mime-mapping>
+
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/x-icon</mime-type>
+    </mime-mapping>
     
     <error-page>
         <error-code>500</error-code>
