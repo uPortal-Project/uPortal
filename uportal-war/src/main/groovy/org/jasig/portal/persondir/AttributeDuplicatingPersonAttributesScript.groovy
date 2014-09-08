@@ -25,6 +25,9 @@ import org.jasig.services.persondir.support.BaseGroovyScriptDaoImpl
  * E.g. if an attribute called 'username' is present, add attributes uid and user.login.id if not present with the
  * list of values of the username attribute.
  *
+ * If the keyToDuplicate is not present, getPersonAttributesFromMultivaluedAttributes() returns the existing
+ * userAttributes unchanged as a no-op.
+ *
  * @author James Wennmacher, jwennmacher@unicon.net
  */
 
@@ -46,14 +49,13 @@ class AttributeDuplicatingPersonAttributesScript extends BaseGroovyScriptDaoImpl
         if (userAttributes?.get(keyToDuplicate)) {
             List<Object> attributeValues = userAttributes.get(keyToDuplicate);
             Map<String, List<Object>> newUserAttributes = new HashMap<> (userAttributes);
-            Iterator<String> i = desiredNames.iterator();
-            while (i.hasNext()) {
-                String desiredName = i.next();
+
+            for (desiredName in desiredNames) {
                 newUserAttributes.put(desiredName, attributeValues);
             }
             return newUserAttributes
         }
-        return null;
+        return userAttributes;
     }
 
     void setKeyToDuplicate(String keyToDuplicate) {

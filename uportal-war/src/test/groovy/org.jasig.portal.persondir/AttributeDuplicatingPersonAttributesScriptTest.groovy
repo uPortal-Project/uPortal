@@ -22,11 +22,39 @@ import org.jasig.portal.persondir.AttributeDuplicatingPersonAttributesScript
 import org.jasig.services.persondir.IPersonAttributeScriptDao
 
 class AttributeDuplicatingPersonAttributesScriptTest extends GroovyTestCase {
-    void testSomething() {
+
+    /**
+     * Test that an AttributeDuplicatingPersonAttributesScript configured to duplicate the username attribute to the
+     * uid and the user.login.id attribute , when presented with a user with a username attribute,
+     * does that duplication.
+     */
+    void testUsernameAttributeDuplicatesToAdditionalAttributes() {
         IPersonAttributeScriptDao dao = new AttributeDuplicatingPersonAttributesScript(
                 "username", new HashSet<String>(["uid", "user.login.id"]))
-        Map<String, List<Object>> userAttributes = dao.getPersonAttributesFromMultivaluedAttributes(
+        Map<String, List<Object>> actual = dao.getPersonAttributesFromMultivaluedAttributes(
                 [username: ['tomThumb'].asList()])
-        assert userAttributes.size() == 3
+        assertEquals("username should have duplicated to uid and user.login.id attributes for three total attributes.",
+                3, actual.size());
+        Map<String, List<Object>> expected =
+          [username: ['tomThumb'].asList(), uid: ['tomThumb'].asList(), "user.login.id": ['tomThumb'].asList() ]
+        assertEquals("username value should have duplicated to uid and user.login.id values.", expected, actual);
+    }
+
+    /**
+     * Test that an AttributeDuplicatingPersonAttributesScript configured to duplicate the attitude attribute does
+     * not duplicate the attribute when presented with a user without that attribute.
+     */
+    void testNonMatchingUserAttributesDoNotDuplicate() {
+
+        IPersonAttributeScriptDao duplicator =
+                new AttributeDuplicatingPersonAttributesScript("attitude", new HashSet(["bearing", "demeanor"]));
+
+        Map expected = [username: ['gazda']]
+
+        Map actual = duplicator.getPersonAttributesFromMultivaluedAttributes(expected);
+
+        assertEquals "Duplicator should have been a no-op", expected , actual
+
+
     }
 }
