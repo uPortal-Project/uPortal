@@ -312,36 +312,37 @@ public class FragmentDefinition extends EvaluatorGroup
     }
 
     @Override
-    public boolean isApplicable( IPerson p )
-    {
+    public boolean isApplicable(IPerson p) {
+
         boolean isApplicable = false;
         if (LOG.isInfoEnabled())
             LOG.info(">>>> calling " + name + ".isApplicable( "
                     + p.getAttribute("username") + " )");
-        if ( /*view == null ||
-             view.getUserId() == -1 || */
-             evaluators == null )
-        {
-            isApplicable = false;
-            if (LOG.isDebugEnabled()) {
+        try {
+            if (evaluators == null) {
                 LOG.debug("isApplicable()=false due to evaluators collection being null");
-            }
-        }
-        else
-        {
-            for ( int i=0; i<evaluators.size(); i++ )
-                if ( evaluators.get(i).isApplicable( p ) )
-                {
-                    isApplicable = true;
-                    break;
+            } else {
+                for (Evaluator v : evaluators) {
+                    if (v.isApplicable(p)) {
+                        isApplicable = true;
+                        break;
+                    }
                 }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to evaluate whether fragment '" + this.getName()
+                                    + "' is applicable to user '" + p.getUserName() + "'", e);
         }
-        if (LOG.isInfoEnabled())
+
+        if (LOG.isInfoEnabled()) {
             LOG.info("---- " + name
                     + ".isApplicable( "
                     + p.getAttribute( "username" )
                     + " )=" + isApplicable);
+        }
+
         return isApplicable;
+
     }
     
     private String loadAttribute( String name, 
