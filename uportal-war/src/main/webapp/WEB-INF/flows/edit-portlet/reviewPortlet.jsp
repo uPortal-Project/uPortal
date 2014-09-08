@@ -232,43 +232,43 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <%-- Configuration --%>
         <div class="tab-pane active" id="configuration">
           <div class="form-group">
-            <div class="col-sm-2 col-sm-offset-2">
+            <div class="col-sm-2 col-sm-offset-3">
               <a class="btn btn-default edit-action" href="${ basicInfoUrl }"><span><spring:message code="edit.configuration"/></span></a>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.title"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.title"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static"><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.title )}" class="pa-edit">${ fn:escapeXml(portlet.title )}</a></p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.name"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.name"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static"><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.name )}" class="pa-edit">${ fn:escapeXml(portlet.name )}</a></p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.functional.name"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.functional.name"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static"><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.fname )}" class="pa-edit">${ fn:escapeXml(portlet.fname )}</a</p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.description"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.description"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static"><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.description )}" class="pa-edit">${ fn:escapeXml(portlet.description )}</a></p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.timeout"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.timeout"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static"><a href="${ basicInfoUrl }" title="${ fn:escapeXml(portlet.timeout )}" class="pa-edit">${ fn:escapeXml(portlet.timeout )}</a></p>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="portlet.type"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="portlet.type"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static">
                 <c:forEach items="${ portletTypes }" var="type">
                   <c:if test="${ type.key.id == portlet.typeId }">
@@ -285,7 +285,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <c:if test="${fn:length(cpd.steps) != 0}">
           <div class="tab-pane" id="parameters">
             <div class="form-group">
-              <div class="col-sm-2 col-sm-offset-2">
+              <div class="col-sm-2 col-sm-offset-3">
                 <a class="btn btn-default edit-action" href="${ setParametersUrl }"><span><spring:message code="edit.parameters"/></span></a>
               </div>
             </div>
@@ -293,8 +293,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
               <c:forEach items="${ step.parameters }" var="parameter">
                 <c:if test="${ parameter.parameterInput.value.display != 'HIDDEN' && (portlet.parameters[parameter.name].value != null && portlet.parameters[parameter.name].value != '') }">
                   <div class="form-group">
-                    <label class="col-sm-2 control-label"><spring:message code="${ parameter.label }" text="${ parameter.label }"/></label>
-                    <div class="col-sm-10">
+                    <label class="col-sm-3 control-label"><spring:message code="${ parameter.label }" text="${ parameter.label }"/></label>
+                    <div class="col-sm-9">
                       <p class="form-control-static">
                         <a href="${ setParametersUrl }" class="pa-edit">
                           ${ fn:escapeXml(portlet.parameters[parameter.name].value )}
@@ -312,13 +312,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <div class="tab-pane" id="xmlPreferences">
           <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
             <div class="form-group ${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
-              <label class="col-sm-2 control-label preference-name">${ fn:escapeXml(pref.name )}</label>
+              <label class="col-sm-6 control-label preference-name">${ fn:escapeXml(pref.name )}</label>
               <c:forEach var="value" items="${ pref.values }">
-                <div class="col-sm-5">
+                <div class="col-sm-4">
                   <p class="form-control-static">${ fn:escapeXml(value )}</p>
                 </div>
               </c:forEach>
-              <div class="col-sm-5">
+              <div class="col-sm-2">
                 <p class="form-control-static">
                   <c:if test="${ pref.readOnly == 'true'}">
                     <span class="read-only">Read only</span>
@@ -332,7 +332,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <%-- Preferences --%>
         <div class="tab-pane" id="preferences">
           <div class="form-group">
-            <div class="col-sm-2 col-sm-offset-2">
+            <div class="col-sm-2 col-sm-offset-6">
               <c:choose>
                 <c:when test="${supportsConfig and portlet.id >= 0}">
                   <a class="btn btn-default edit-action" href="${ configModeUrl }"><span><spring:message code="edit.rich.configuration"/></span></a>
@@ -345,7 +345,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </div>
           <c:forEach items="${ portlet.portletPreferences }" var="pref">
             <div class="form-group">
-              <label class="col-sm-2 control-label preference-name">${ fn:escapeXml(pref.key )}</label>
+              <label class="col-sm-6 control-label preference-name">${ fn:escapeXml(pref.key )}</label>
               <div class="col-sm-5">
                 <p class="form-control-static">
                   <c:forEach items="${ pref.value.value }" var="val">
@@ -353,7 +353,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                   </c:forEach>
                 </p>
               </div>
-              <div class="col-sm-5">
+              <div class="col-sm-2">
                 <p class="form-control-static">
                   <c:if test="${ portlet.portletPreferenceReadOnly[pref.key].value == 'true'}">
                     <span class="read-only">Read only</span>
@@ -367,13 +367,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <%-- Categories --%>
         <div class="tab-pane" id="categories">
           <div class="form-group">
-            <div class="col-sm-offset-2">
+            <div class="col-sm-offset-3">
               <a class="btn btn-default edit-action" href="${ chooseCategoryUrl }"><span><spring:message code="edit.categories"/></span></a>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="categories"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="categories"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static">
                 <c:forEach items="${ portlet.categories }" var="category">
                   <a class="label label-info" href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a>
@@ -386,13 +386,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <%-- Groups --%>
         <div class="tab-pane" id="groups">
           <div class="form-group">
-            <div class="col-sm-offset-2">
+            <div class="col-sm-offset-3">
               <a class="btn btn-default edit-action" href="${ chooseGroupUrl }"><span><spring:message code="edit.groups"/></span></a>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="groups"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="groups"/></label>
+            <div class="col-sm-9">
               <p class="form-control-static">
                 <c:forEach items="${ portlet.groups }" var="group">
                   <a class="label label-info" href="${ chooseGroupUrl }">${ fn:escapeXml(group.name )}</a>
@@ -405,13 +405,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         <%-- Lifecycle --%>
         <div class="tab-pane" id="lifecycle">
           <div class="form-group">
-            <div class="col-sm-offset-2">
+            <div class="col-sm-offset-3">
               <a class="btn btn-default edit-action" href="${ lifecycleUrl }"><span><spring:message code="edit.lifecycle"/></span></a>
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2 control-label"><spring:message code="state"/></label>
-            <div class="col-sm-10">
+            <label class="col-sm-3 control-label"><spring:message code="state"/></label>
+            <div class="col-sm-9">
               <%-- The following is temporary and will be replaced when backend
                      work for portlet lifecycle management is done. --%>
               <p class="form-control-static"><a href="${ lifecycleUrl }" title="<spring:message code="lifecycle.name.${ portlet.lifecycleState }"/>" class="pa-edit"><spring:message code="lifecycle.name.${ portlet.lifecycleState }"/></a></p>
@@ -419,8 +419,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </div>
           <c:if test="${ (portlet.lifecycleState != 'PUBLISHED' && portlet.lifecycleState != 'EXPIRED') && portlet.publishDate != null }">
             <div class="form-group">
-              <label class="col-sm-2 control-label"><spring:message code="auto.publish.date.time"/></label>
-              <div class="col-sm-10">
+              <label class="col-sm-3 control-label"><spring:message code="auto.publish.date.time"/></label>
+              <div class="col-sm-9">
                 <fmt:formatDate type="both" value="${portlet.publishDate}" var="publishDate"/>
                 <p class="form-control-static"><a href="${ lifecycleUrl }" title="${ fn:escapeXml(publishDate )}" class="pa-edit">${ fn:escapeXml(publishDate )}</a></p>
               </div>
@@ -428,8 +428,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           </c:if>
           <c:if test="${ portlet.lifecycleState != 'EXPIRED' && portlet.expirationDate != null }">
             <div class="form-group">
-              <label class="col-sm-2 control-label"><spring:message code="auto.expire.date.time"/></label>
-              <div class="col-sm-10">
+              <label class="col-sm-3 control-label"><spring:message code="auto.expire.date.time"/></label>
+              <div class="col-sm-9">
                 <fmt:formatDate type="both" value="${portlet.expirationDate}" var="expirationDate"/>
                 <p class="form-control-static"><a href="${ lifecycleUrl }" title="${ fn:escapeXml(expirationDate )}" class="pa-edit">${ fn:escapeXml(expirationDate )}</a></p>
               </div>
@@ -442,7 +442,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <!-- Buttons -->
     <c:set var="promptConfigMode" value="${supportsConfig and portlet.id == null}" />
     <div class="buttons form-group">
-      <div class="col-sm-10 col-sm-offset-2">
+      <div class="col-sm-9 col-sm-offset-3">
         <a class="button btn<c:if test="${!promptConfigMode}"> btn-primary</c:if>" href="${saveUrl}"><spring:message code="save"/></a>
         <c:if test="${promptConfigMode}">
            <a class="button btn btn-primary" href="${saveAndConfigUrl}"><spring:message code="save.and.configure"/></a>
