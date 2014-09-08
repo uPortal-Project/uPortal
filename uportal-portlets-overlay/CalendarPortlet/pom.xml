@@ -193,7 +193,7 @@
                         <property name="plugin_classpath" refid="maven.plugin.classpath" />
 
                         <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                             <classpath>
                                 <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF" />
                                 <pathelement path="${runtime_classpath}" />
