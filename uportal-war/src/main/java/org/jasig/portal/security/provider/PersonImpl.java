@@ -113,9 +113,9 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Provides access to a mutable copy of the attributes attached to this {@link IPerson}.
-     *
-     * @return
+     * Provides access to this {@link org.jasig.portal.security.provider.PersonImpl}'s private copy of the attributes
+     * attached to this {@link IPerson}.  Changes to the map will affect the attributes directly.  (Perhaps we'd rather
+     * do a defensive copy?)
      */
     public Map<String,List<Object>> getAttributeMap() {
         final Map<String,List<Object>> attrMap = this.userAttributes;
