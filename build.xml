@@ -661,15 +661,21 @@
                 </then>
             </if>
 
-            <artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
-                <pom file="${bootstrap.dir}/uportal-ant-tasks/pom.xml" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <fileset id="uportal-build.fsid" file="${basedir}/build.xml" />
+            <maven-artifact-macro project-name="uportal-ant" project-path="${bootstrap.dir}/uportal-ant-tasks" checkfilesid="uportal-build.fsid">
 
-            <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
-                <classpath>
-                    <path refid="uportal-ant" />
-                </classpath>
-            </typedef>
+                <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
+                    <classpath>
+                        <path refid="uportal-ant.classpath" />
+                    </classpath>
+                </typedef>
+            </maven-artifact-macro>
 
             <mkdir dir="${server.base}/shared/lib" />
             <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
@@ -711,19 +717,23 @@
             </condition>
         </fail>
 
-
         <basename property="war.filename" file="${portletAppPath}" />
 
         <uportal-parent-macro>
-            <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
-
-            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
-                <classpath>
-                    <path refid="pluto-ant" />
-                </classpath>
-            </taskdef>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <fileset id="uportal-build.fsid" file="${basedir}/build.xml" />
+            <maven-artifact-macro project-name="pluto-assembler" project-path="${bootstrap.dir}/pluto-assembler" checkfilesid="uportal-build.fsid">
+                <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+                    <classpath>
+                        <path refid="pluto-assembler.classpath" />
+                    </classpath>
+                </taskdef>
+            </maven-artifact-macro>
         </uportal-parent-macro>
 
         <assemblePortlet destdir="${jasig.tmpdir}" war="${portletAppPath}" />
@@ -798,9 +808,15 @@
         </fail>
 
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <maven-artifact-macro project-name="hsql" project-path="${bootstrap.dir}/hsqldb">
+                <!-- no subtasks needed -->
+            </maven-artifact-macro>
 
             <property name="database" value="file:${basedir}/data/uPortal;hsqldb.tx=mvcc" />
             <property name="port" value="${environment.build.hsql.port}" />
@@ -839,9 +855,15 @@
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
     	<echo>${environment.token}</echo>
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <maven-artifact-macro project-name="hsql" project-path="${bootstrap.dir}/hsqldb">
+                <!-- no subtasks needed -->
+            </maven-artifact-macro>
 
             <copy file="${bootstrap.dir}/hsqldb.sqltool.rc.sample" tofile="${bootstrap.dir}/hsqldb.sqltool.rc" overwrite="true">
                 <filterset>
@@ -1219,10 +1241,10 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </target>
 
     <!--
-     | Macro for tasks involving a maven project. The macro loads the pom, creates a classpath,
-     | ensures the project artifact is up-to-date, and runs the <sub-tasks> element. If the
-     | artifact is not up-to-date the <pre-package> element can be used to add behavior before
-     | 'mvn package' is called on the project.
+     | Macro for tasks involving a maven project. The macro loads the pom, ensures the project artifact is up-to-date,
+     | creates a @{project-name}.classpath property based on the project's pom.xml, and runs the <sub-tasks> element.
+     | If the artifact is not up-to-date the <pre-package> element can be used to add behavior before 'mvn package' is
+     | called on the project.
      |
      | The following are available in the pre-package and sub-tasks elements:
      | pom object   - @{project-name}.pom       - The Maven POM object for the project
@@ -1241,9 +1263,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
              | Load the pom & classpath
              +-->
             <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            <artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
-                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
 
             <!--
              | Define the location of the resulting artifact
@@ -1309,6 +1328,15 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </if>
 
             <!--
+             | Per https://issues.jasig.org/browse/UP-4163 and https://issues.jasig.org/browse/UP-4221, create the
+             | classpath property AFTER invoking maven to build the project and download all dependencies because the
+             | dependencies anttask improperly downloads from only the repositories specified in transient dependency
+             | POMs and on failure does not fallback to download from the standard maven-central repository
+             | (see http://jira.codehaus.org/browse/MANTTASKS-246).
+            +-->
+            <artifact:dependencies pathid="@{project-name}.classpath" pomrefid="@{project-name}.pom"/>
+
+            <!--
              | Execute the sub-tasks
              +-->
             <sub-tasks />
@@ -1316,8 +1344,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </macrodef>
 
     <!--
-     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
-     | dependencies. The task also ensures the uportal-search-api WAR exists and is up to date.
+     | The task ensures the uportal-search-api JAR exists and is up to date.
      |
      | The following are available in the search-api-sub-tasks element:
      | properties from the uportal-parent-macro macrodef
@@ -1343,8 +1370,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </macrodef>
 	
     <!--
-     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
-     | dependencies. The task also ensures the uportal-platform-api WAR exists and is up to date.
+     | The task ensures the uportal-platform-api JAR exists and is up to date.
      |
      | The following are available in the platform-api-sub-tasks element:
      | properties from the uportal-parent-macro macrodef
@@ -1370,8 +1396,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </macrodef>
 
     <!--
-     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
-     | dependencies. The task also ensures the uportal-db artifact exists and is up to date.
+     | The task ensures the uportal-db pom is installed into the local repository for dependency resolution.
      |
      | The following are available in the uportal-db-sub-tasks element:
      | properties from the uportal-parent-macro macrodef
@@ -1418,26 +1443,35 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </uportal-platform-api-macro>
             <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
-                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
-                    </artifact:dependencies>
-
-                    <!--
-                     | Include the uportal-war-classes JAR in the final classpath
-                     +-->
-                    <path id="uportal-war-full.classpath">
-                        <path refid="uportal-war-classes.classpath" />
-                        <path refid="uportal-war.classpath" />
-                    </path>
-
-                    <!--
-                     | Execute the war-sub-tasks
-                     +-->
-                    <war-sub-tasks />
-                </maven-artifact-macro>
             </uportal-search-api-macro>
+
+            <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
+
+                <!--
+                 | Include the uportal-war-classes JAR in the final classpath for use by initdb.  DON'T reference it
+                 | with an artifact:dependencies task.  Due to artifact:dependencies attempting to download
+                 | dependencies and having errors when when a transient dependency has a repository specified in its
+                 | pom.xml (see http://jira.codehaus.org/browse/MANTTASKS-246), use the uPortal-classes.jar in the
+                 | target directory from the uPortal war build (or we could define a reference to the one in
+                 | .m2/repository but the target dir is simpler and the file should be present).
+                 +-->
+                <fail message="Unable to find ${uportal-war.dir}/target/uPortal-classes.jar. Run ant deploy-war to rebuild uportal-war">
+                    <condition>
+                        <not>
+                            <available file="${uportal-war.dir}/target/uPortal-classes.jar"/>
+                        </not>
+                    </condition>
+                </fail>
+                <path id="uportal-war-full.classpath">
+                    <path location="${uportal-war.dir}/target/uPortal-classes.jar" />
+                    <path refid="uportal-war.classpath" />
+                </path>
+
+                <!--
+                 | Execute the war-sub-tasks
+                 +-->
+                <war-sub-tasks />
+            </maven-artifact-macro>
         </sequential>
     </macrodef>
 
