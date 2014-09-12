@@ -2,4 +2,5 @@
 /.project
 /.classpath
 /bin
+/src/main/webapp/css
 /target
