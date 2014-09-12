@@ -38,6 +38,7 @@
             import org.jasig.portal.groups.IEntityGroup
             import org.jasig.portal.groups.IGroupConstants
             import org.jasig.portal.groups.IGroupMember
+            import org.jasig.portal.io.GetMemberIsGroupPhrase
             import org.jasig.portal.io.GetMemberKeyPhrase
             import org.jasig.portal.io.GetMemberServicePhrase
             import org.jasig.portal.services.GroupService
@@ -56,49 +57,27 @@
                     throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1")
             }
             def group = GroupService.findGroup(entityIdArr[0].getKey())
-            Attributes.CACHE.put("group", group)
-            def item = Attributes.CACHE.get("group")
-            log.debug("Found item $item")
+
+            Attributes.NODE.selectNodes('child/*').each {
+                String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
+                String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
+                log.debug("Found service=$groupService, memberId=$memberId")
+
+                if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                    String key = groupService + '.' + memberId;
+                    log.debug("Created key $key")
+                    IEntityGroup member = GroupService.findGroup(key);
+                    log.debug("Adding group $member")
+                    group.addMember(member);
+                } else {
+                    IGroupMember member = GroupService.getGroupMember(memberId, group.getEntityType())
+                    log.debug("Adding entity $member")
+                    group.addMember(member);
+                }
+            }
+
+            group.updateMembers();
+
         </script>
-        <subtasks>
-            <node-iterator xpath="child/*">
-                <groovy>
-                    <script>
-                        import org.jasig.portal.groups.IEntityGroup
-                        import org.jasig.portal.groups.IGroupMember
-                        import org.jasig.portal.io.GetMemberIsGroupPhrase
-                        import org.jasig.portal.io.GetMemberKeyPhrase
-                        import org.jasig.portal.io.GetMemberServicePhrase
-                        import org.jasig.portal.services.GroupService
-                        import org.slf4j.LoggerFactory
-
-                        def log = LoggerFactory.getLogger(this.getClass());
-                        String groupService = GetMemberServicePhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                        String memberId = GetMemberKeyPhrase.getPhrase(Attributes.NODE.getName(), Attributes.NODE.getText())
-                        log.debug("Found service=$groupService, memberId=$memberId")
-
-                        def group = Attributes.CACHE.get("group")
-
-                        if (GetMemberIsGroupPhrase.phraseIsGroup(Attributes.NODE.getName())) {
-                            String key = groupService + '.' + memberId;
-                            log.debug("Created key $key")
-                            IEntityGroup member = GroupService.findGroup(key);
-                            log.debug("Adding group $member")
-                            group.addMember(member);
-                        } else {
-                            IGroupMember member = GroupService.getGroupMember(memberId, group.getEntityType())
-                            log.debug("Adding entity $member")
-                            group.addMember(member);
-                        }
-                    </script>
-                </groovy>
-            </node-iterator>
-            <groovy>
-                <script>
-                    def group = Attributes.CACHE.get("group")
-                    group.updateMembers();
-                </script>
-            </groovy>
-        </subtasks>
     </groovy>
 </with-attribute>
