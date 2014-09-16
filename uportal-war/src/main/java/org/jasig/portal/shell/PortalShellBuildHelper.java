@@ -47,4 +47,6 @@ public interface PortalShellBuildHelper {
 
     void deleteUser(String target, String user);
 
+    void hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
+
 }
