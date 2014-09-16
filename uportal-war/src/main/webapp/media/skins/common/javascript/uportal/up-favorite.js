@@ -22,7 +22,7 @@ var up = up || {};
   up.addToFavorite = function addToFavoritesFunction(event) {
     var portletId = event.data.portletId;
     var context = event.data.context;
-    $.ajax({
+    return $.ajax({
             url: context + "/api/layout?action=addFavorite&channelId=" + portletId,
             type: "POST",
             data: null,
@@ -40,7 +40,7 @@ var up = up || {};
   up.removeFromFavorite = function removeFromFavoritesFunction(event) {
     var portletId = event.data.portletId;
     var context = event.data.context;
-    $.ajax({
+    return $.ajax({
             url: context + "/api/layout?action=removeFavorite&channelId=" + portletId,
             type: "POST",
             data: null,
