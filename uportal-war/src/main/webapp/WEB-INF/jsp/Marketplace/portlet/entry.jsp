@@ -167,10 +167,15 @@
 
 <script type="text/template" id="${n}options-menu">
     <li>
+        <a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
+            <spring:message code="link.to" text="Link to ..."/>
+        </a>
+    </li>
+    <li class="divider"></li>
+    <li>
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
         <a href="javascript:;" title="${atptmfTitle}"
-                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}"
-                data-portlet-channel-id="${ portlet.portletDefinitionId }">
+                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
             {% if (isFavorite) { %}
                 <i class="fa fa-star"></i>
             {% } else { %}
@@ -190,7 +195,7 @@
     </li>
     {% _.each(tabs, function(tab) { %}
         <li>
-            <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}" data-portlet-channel-id="${ portlet.portletDefinitionId }">
+            <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
                 <span>
                     {%- tab.name %}
                 </span>
@@ -462,6 +467,9 @@
                 'click .marketplace_remove_favorite': 'removeFavorite'
             },
             template: _.template($('#${n}options-menu').text()),
+            options: {
+                portletChannelId: '${portlet.portletDefinitionId}'
+            },
 
 
             initialize: function(options) {
@@ -480,20 +488,19 @@
 
 
             addPortlet: function(evt) {
-                var portletChannelId, tabId, url, promise, tabName;
+                var tabId, url, promise, tabName;
 
                 evt.preventDefault();
 
                 tabId = $(evt.currentTarget).data('tabId');
                 tabName = this._getTabNameById(tabId);
-                portletChannelId = $(evt.currentTarget).data('portletChannelId');
 
                 url = '<c:url value="/api/layout"/>';
                 promise = $.ajax({
                     url: url,
                     data: {
                         action: 'addPortlet',
-                        channelID: portletChannelId,
+                        channelID: this.options.portletChannelId,
                         elementID: tabId,
                         position: ''
                     },
@@ -538,14 +545,13 @@
 
 
             addFavorite: function(evt) {
-                var portletChannelId, promise;
+                var promise;
 
                 evt.preventDefault();
 
-                portletChannelId = $(evt.currentTarget).data('portletChannelId');
                 evt.data = {
                     context: '${rootContext}',
-                    portletId: portletChannelId
+                    portletId: this.options.portletChannelId
                 };
 
                 promise = up.addToFavorite(evt);
@@ -556,12 +562,11 @@
 
 
             removeFavorite: function(evt) {
-                var portletChannelId, promise;
+                var promise;
 
-                portletChannelId = $(evt.currentTarget).data('portletChannelId');
                 evt.data = {
                     context: '${rootContext}',
-                    portletId: portletChannelId
+                    portletId: this.options.portletChannelId
                 };
 
                 promise = up.removeFromFavorite(evt);
@@ -610,7 +615,14 @@
             promise.then(function(data) {
                 optionsMenuModel.update(data);
             }, function() {
-                alert('Error loading tab info');
+                <spring:message code="marketplace.tablist.error"
+                        text="An error occurred while loading the tab list"
+                        htmlEscape="false"
+                        var="tabListErrorMsg"/>
+                $('#up-notification').noty({
+                    text: '${tabListErrorMsg}',
+                    type: 'error'
+                });
             });
         };
 
