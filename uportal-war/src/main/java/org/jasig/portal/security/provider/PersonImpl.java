@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -110,7 +111,12 @@ public class PersonImpl implements IPerson {
         final Collection<List<Object>> values = this.userAttributes.values();
         return Collections.enumeration(values);
     }
-    
+
+    /**
+     * Provides access to this {@link org.jasig.portal.security.provider.PersonImpl}'s private copy of the attributes
+     * attached to this {@link IPerson}.  Changes to the map will affect the attributes directly.  (Perhaps we'd rather
+     * do a defensive copy?)
+     */
     public Map<String,List<Object>> getAttributeMap() {
         final Map<String,List<Object>> attrMap = this.userAttributes;
         return attrMap;
@@ -284,23 +290,13 @@ public class PersonImpl implements IPerson {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(PersonImpl.class.getName());
-        sb.append(" fullName=[");
-        sb.append(this.m_FullName);
-        sb.append("]");
-        sb.append(" id=[");
-        sb.append(this.m_ID);
-        sb.append("]");
-        sb.append(" securityContext=[");
-        sb.append(this.m_securityContext);
-        sb.append("]");
-        sb.append(" attributes=[");
-        sb.append(this.userAttributes);
-        sb.append("]");
-        sb.append(" isGuest:");
-        sb.append(this.isGuest());
-        return sb.toString();
+        return new ToStringBuilder(this)
+                .append("id", m_ID)
+                .append("fullName", m_FullName)
+                .append("attributes", userAttributes)
+                .append("securityContext", m_securityContext)
+                .append("isGuest", isGuest())
+                .toString();
     }
 
     @Override
