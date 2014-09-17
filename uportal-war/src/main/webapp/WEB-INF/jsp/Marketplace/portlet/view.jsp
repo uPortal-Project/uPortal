@@ -81,7 +81,7 @@
 #${n}marketplace .sorting_desc_disabled {
     background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
 }
- 
+
 #${n}marketplace table.display thead th:active,
 #${n}marketplace table.display thead td:active {
     outline: none;
@@ -101,7 +101,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Misc
  */
- 
+
 #${n}marketplace .top{
     background-color: #F5F5F5;
  }
@@ -165,7 +165,7 @@
 #${n}marketplace .paging_full_numbers a.paginate_active {
     background-color: #99B3FF;
 }
- 
+
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table th:nth-child(1),
     #unseen table th:nth-child(3),
@@ -182,7 +182,7 @@
         width: 90%;
         float: right:
     }
-    
+
     #${n}marketplacem tr.odd {
         background-color: #fff;
     }
@@ -214,6 +214,11 @@
     padding-top: 1em;
 }
 
+#${n}marketplace .marketplaceSection .panel {
+    height: 90px;
+    max-height: 90px;
+}
+
 </style>
 
 
@@ -236,7 +241,7 @@
                     <portlet:param name="action" value="view"/>
                     <portlet:param name="fName" value="${featuredPortlet.FName}"/>
                 </portlet:renderURL>
-                <div class="col-xs-6 col-sm-6 text-center">
+                <div class="col-sm-6 col-lg-3 text-center">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                         <a href="${entryURL}">
@@ -252,7 +257,7 @@
                         </div>
                     </div>
                 </div>
-                <c:if test="${(endRowPortletCounter + status.count) mod 2 ==0}">
+                <c:if test="${(endRowPortletCounter + status.count) mod 2 == 4}">
                     <div class="clearfix"></div>
                 </c:if>
             </c:forEach>
@@ -263,19 +268,19 @@
 <div class="sort_filter_group">
     <div class="row">
         <div class="col-sm-1">
-            <p><strong>${browseBy}Browse By</strong></p>
+            <p><strong><spring:message code="label.browseBy" text="Browse By" /></strong></p>
         </div>
         <div class="col-sm-8">
             <div class="sort_buttons_group">
-                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default">Sort A-Z</button>
-                <button type="button" id="${n}category-sort-button" class="btn btn-default">Categories</button>
+                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default"><spring:message code="label.azIndex" text="A-Z Index" /></button>
+                <button type="button" id="${n}category-sort-button" class="btn btn-default"><spring:message code="label.category" text="Categories" /></button>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="input-group">
                 <input type="text" class="form-control" id="${n}portletTable_filter" placeholder="Search Portlets">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" id="${n}clear_filter_button">Clear</button>
+                    <button class="btn btn-default" id="${n}clear_filter_button"><spring:message code="label.clear" text="Clear" /></button>
                 </span>
             </div>
         </div>
@@ -347,12 +352,8 @@
     </div>
 </div>
 
-<spring:message code="label.search" var="labelSearch" text="Search" />
 <spring:message code="label.mostPopular" var="mostPopular" text="Most Popular" />
-<spring:message code="label.azIndex" var="azIndex" text="A-Z index" />
 <spring:message code="label.audience" var="audience" text="Audience" />
-<spring:message code="label.browseby" var="browseBy" text="Browse by" />
-<spring:message code="category" var="categoryLabel" text="Category" />
 
 <script type="text/javascript">
     var $ = up.jQuery;
