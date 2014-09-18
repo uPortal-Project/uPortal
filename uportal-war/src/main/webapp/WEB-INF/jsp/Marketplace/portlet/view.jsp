@@ -229,13 +229,7 @@
         <div>
             <h3><strong><spring:message code="featured" text="Featured" /></strong></h3><br>
         </div>
-        <c:set var="endRowPortletCounter" value="0"/>
         <div class="row">
-            <c:if test="${fn:length(featuredList)mod 2!=0 }">
-                <div class="col-xs-3">
-                <c:set var="endRowPortletCounter" value="1" />
-                </div>
-            </c:if>
             <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
                 <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                     <portlet:param name="action" value="view"/>
@@ -257,7 +251,7 @@
                         </div>
                     </div>
                 </div>
-                <c:if test="${(endRowPortletCounter + status.count) mod 2 == 4}">
+                <c:if test="${(status.index + 1) mod 4 == 0}">
                     <div class="clearfix"></div>
                 </c:if>
             </c:forEach>
