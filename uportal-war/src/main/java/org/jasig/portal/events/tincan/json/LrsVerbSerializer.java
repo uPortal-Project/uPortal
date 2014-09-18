@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -38,10 +38,6 @@ public class LrsVerbSerializer extends JsonSerializer<LrsVerb> {
         jgen.writeStartObject();
         jgen.writeStringField("id", value.getUri());
         
-        //TODO need to make this localizable
-//        jgen.writeObjectFieldStart("display");
-//        jgen.writeStringField("en-US", value.name().toLowerCase());
-//        jgen.writeEndObject();
         jgen.writeObjectField("display", new LocalizedString(new Locale("en-US"), value.name().toLowerCase()));
         
         jgen.writeEndObject();

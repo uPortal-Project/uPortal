@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -21,7 +21,7 @@ package org.jasig.portal.events.tincan.converters;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import org.jasig.portal.events.LoginEvent;
+import org.jasig.portal.events.LogoutEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.tincan.om.LocalizedString;
 import org.jasig.portal.events.tincan.om.LrsObject;
@@ -35,7 +35,7 @@ import org.jasig.portal.events.tincan.om.LrsObject;
 public class LogoutEventConverter extends AbstractPortalEventToLrsStatementConverter {
     @Override
     public boolean supports(PortalEvent event) {
-        return event instanceof LoginEvent;
+        return event instanceof LogoutEvent;
     }
 
 
