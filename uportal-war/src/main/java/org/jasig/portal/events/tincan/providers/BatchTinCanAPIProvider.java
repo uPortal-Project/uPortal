@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -89,6 +89,8 @@ public class BatchTinCanAPIProvider extends DefaultTinCanAPIProvider {
                 logger.error("LRS provider failed to send to {}, statement list: {}", getLRSUrl(), list);
                 logger.error("- Response: {}", response);
             }
+        // todo: Need to think through a strategy for handling errors submitting
+        // to the LRS.
         } catch (HttpClientErrorException e) {
             // log some additional info in this case...
             logger.error("LRS provider for URL " + getLRSUrl() + " failed to send statement list" , e);

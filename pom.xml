@@ -835,11 +835,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.jasig.portlet.utils</groupId>
-                <artifactId>portlet-ws-util</artifactId>
-                <version>${jasig-portlet-utils.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jasig.resourceserver</groupId>
                 <artifactId>resource-server-api</artifactId>
                 <version>${resource-server.version}</version>

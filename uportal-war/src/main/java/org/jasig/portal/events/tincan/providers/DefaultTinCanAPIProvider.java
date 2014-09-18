@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -55,10 +55,10 @@ import static java.lang.String.format;
  *
  * Each provider is must be configured with an id.  The id will
  * be used to load the configuration for the provider.  The id
- * must be injected as a spring property.
+ * must be injected as a spring property.*
  *
  * Additional configuration is available by setting properties
- * in the portal.properties or you local overrides.properties
+ * in the portal.properties or your local overrides.properties
  * file.  The additional properties that may be configured are:
  *
  * <table>
@@ -279,6 +279,8 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
                 logger.error("LRS provider for URL " + LRSUrl + " it not configured properly, or is offline.  Disabling provider.");
             }
 
+        // todo: Need to think through a strategy for handling errors submitting
+        // to the LRS.
         } catch (HttpClientErrorException e) {
             // log some additional info in this case...
             logger.error("LRS provider for URL " + LRSUrl + " failed to contact LRS for initialization.  Disabling provider." , e);

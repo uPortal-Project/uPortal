@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to Jasig under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -72,7 +72,10 @@ public class PortletExecutionEventConverter extends AbstractPortalEventToLrsStat
     public boolean supports(PortalEvent event) {
         boolean postEvent = false;
         for (Class<?> cls : supportedEventTypes) {
-            postEvent |= cls.isAssignableFrom(event.getClass());
+            if (cls.isAssignableFrom(event.getClass())) {
+                postEvent = true;
+                break;
+            }
         }
 
         if (postEvent && filterFNames != null) {
@@ -82,6 +85,7 @@ public class PortletExecutionEventConverter extends AbstractPortalEventToLrsStat
             for (String fname : filterFNames) {
                 if (fname != null && fname.equalsIgnoreCase(execEvent.getFname())) {
                     foundFName = true;
+                    break;
                 }
             }
 
