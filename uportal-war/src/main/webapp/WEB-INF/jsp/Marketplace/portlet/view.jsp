@@ -81,7 +81,7 @@
 #${n}marketplace .sorting_desc_disabled {
     background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
 }
-
+ 
 #${n}marketplace table.display thead th:active,
 #${n}marketplace table.display thead td:active {
     outline: none;
@@ -101,7 +101,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Misc
  */
-
+ 
 #${n}marketplace .top{
     background-color: #F5F5F5;
  }
@@ -165,7 +165,7 @@
 #${n}marketplace .paging_full_numbers a.paginate_active {
     background-color: #99B3FF;
 }
-
+ 
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table th:nth-child(1),
     #unseen table th:nth-child(3),
@@ -182,7 +182,7 @@
         width: 90%;
         float: right:
     }
-
+    
     #${n}marketplacem tr.odd {
         background-color: #fff;
     }
@@ -217,6 +217,7 @@
 #${n}marketplace .marketplaceSection .panel {
     height: 90px;
     max-height: 90px;
+    overflow: none;
 }
 
 </style>
@@ -262,7 +263,7 @@
 <div class="sort_filter_group">
     <div class="row">
         <div class="col-sm-1">
-            <p><strong><spring:message code="label.browseBy" text="Browse By" /></strong></p>
+            <p><strong><spring:message code="label.browseBy" text="Browse By"/></strong></p>
         </div>
         <div class="col-sm-8">
             <div class="sort_buttons_group">
