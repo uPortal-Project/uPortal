@@ -335,6 +335,10 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
      * way that the TinCan configuration is handled for Sakai.
      */
     protected void loadConfig() {
+        if (!isEnabled()) {
+            return;
+        }
+
         final String urlProp = format(PROPERTY_FORMAT, id, "url");
         LRSUrl = propertyResolver.getProperty(urlProp);
         actorName = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "actor-name"), actorName);
@@ -345,7 +349,7 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
         activitiesFormParamName = propertyResolver.getProperty(format(PROPERTY_FORMAT, id, "activity-form-param-name"), activitiesFormParamName);
 
         if (StringUtils.isEmpty(LRSUrl)) {
-            logger.error("Disabling TinCan API interface.  Property {0} not set!", urlProp);
+            logger.error("Disabling TinCan API interface.  Property {} not set!", urlProp);
             enabled = false;
             return;
         }
