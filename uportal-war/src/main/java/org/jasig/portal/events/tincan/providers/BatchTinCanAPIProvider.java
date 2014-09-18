@@ -59,7 +59,7 @@ public class BatchTinCanAPIProvider extends DefaultTinCanAPIProvider {
 
     /**
      * Send a batch of LRS statements.  MUST BE SCHEDULED!  Failure to
-     * property configure this class will result in memory leaks.
+     * properly configure this class will result in memory leaks.
      */
     public void sendBatch() {
         LrsStatement statement = null;
