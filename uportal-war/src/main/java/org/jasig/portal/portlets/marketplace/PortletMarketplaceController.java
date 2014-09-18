@@ -333,8 +333,6 @@ public class PortletMarketplaceController {
             XPathExpression tabExpr = xpath.compile("/layout/folder/folder[@hidden = 'false' and @type = 'regular']");
             NodeList list = (NodeList)tabExpr.evaluate(doc, XPathConstants.NODESET);
 
-
-
             // Count columns and non-editable columns...
             XPathExpression columnCountExpr = xpath.compile("count(./folder[@hidden = \"false\"])");
             XPathExpression nonEditableCountExpr = xpath.compile("count(./folder[@hidden = \"false\" and @*[local-name() = \"editAllowed\"] = \"false\"])");
@@ -380,19 +378,16 @@ public class PortletMarketplaceController {
         return null;
     }
 
-
-    public static class PortletTab {
-        private String name;
-        private String id;
-        private List<String> layoutIds = Collections.emptyList();
+    public static final class PortletTab {
+        private final String name;
+        private final String id;
+        private final List<String> layoutIds;
 
 
         public PortletTab(final String name, final String id, final List<String> layoutIds) {
             this.name = name;
             this.id = id;
-            if (layoutIds != null) {
-                this.layoutIds = layoutIds;
-            }
+            this.layoutIds = (layoutIds == null) ? Collections.<String>emptyList() : layoutIds;
         }
 
 

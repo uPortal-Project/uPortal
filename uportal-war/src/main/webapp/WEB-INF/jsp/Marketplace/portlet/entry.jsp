@@ -210,9 +210,11 @@
             <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
             <div class="col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">Go</a>
+                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">
+                        <spring:message code="go" text="Go"/>
+                    </a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
-                        Options
+                        <spring:message code="options" text="Options"/>
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu marketplace_dropdown_menu" role="menu" style="right: 0; left: auto;">
