@@ -27,7 +27,7 @@ import org.jasig.portal.events.PortletExecutionEvent;
 import org.jasig.portal.events.aggr.AggregationInterval;
 import org.jasig.portal.events.aggr.AggregationIntervalInfo;
 import org.jasig.portal.events.aggr.BaseAggregationPrivateDao;
-import org.jasig.portal.events.aggr.BasePortalEventAggregator;
+import org.jasig.portal.events.aggr.BaseIntervalAwarePortalEventAggregator;
 import org.jasig.portal.events.aggr.DateDimension;
 import org.jasig.portal.events.aggr.EventAggregationContext;
 import org.jasig.portal.events.aggr.TimeDimension;
@@ -43,7 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class PortletExecutionAggregator extends BasePortalEventAggregator<PortletExecutionEvent, PortletExecutionAggregationImpl, PortletExecutionAggregationKey> {
+public class PortletExecutionAggregator extends BaseIntervalAwarePortalEventAggregator<PortletExecutionEvent, PortletExecutionAggregationImpl, PortletExecutionAggregationKey> {
     private static final String MAPPED_PORTLETS_CACHE_KEY = PortletExecutionAggregator.class.getName() + "_MAPPED_PORTLETS";
 
     private PortletExecutionAggregationPrivateDao portletExecutionAggregationDao;
