@@ -221,7 +221,7 @@ public class PortletMarketplaceController {
      }
 
     @ResourceMapping("layoutInfo")
-    public String getLayoutInfo(ResourceRequest request, ResourceResponse response, @RequestParam String portletFName, Model model) throws TransformerException {
+    public String getLayoutInfo(ResourceRequest request, @RequestParam String portletFName, Model model) throws TransformerException {
         Validate.notNull(portletFName, "Please supply a portlet fname");
 
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
