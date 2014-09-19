@@ -431,6 +431,10 @@
                 myDataTable.fnFilter("");
                 $("#${n}portletTable_filter").val("").focus();
             });
+
+            if("${initialFilter}"){
+                setFilter("${initialFilter}");
+            };
         });
     });
 })(up.jQuery);
