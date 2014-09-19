@@ -20,6 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
+<c:set var="rootContext">${pageContext.request.contextPath}</c:set>
 <style>
 
     #${n}{
@@ -52,10 +53,11 @@
     }
     #${n} .marketplace_dropdown_button{
         background-color:#666666;
-    }
-    #${n} .marketplace_dropdown_button:first-child{
         color:#FFFFFF
     }
+    <%--#${n} .marketplace_dropdown_button:first-child{--%>
+        <%--color:#FFFFFF--%>
+    <%--}--%>
     #${n} .marketplace_button_group>.btn-group:last-child>.btn:first-child{
         border-bottom-left-radius:5px;
         border-top-left-radius:5px;
@@ -145,8 +147,62 @@
         margin-top: 1em;
         margin-bottom: 1em;
     }
-    
+
+    #${n} .marketplace_dropdown_menu {
+        margin: 0;
+        padding: 0;
+    }
+
+    #${n} .marketplace_dropdown_menu li {
+        margin: 0;
+        padding: 0;
+    }
+
+    #${n} .marketplace_dropdown_menu li a[disabled] {
+        color: #666666;
+        background-color: #c0c0c0;
+    }
+
 </style>
+
+<script type="text/template" id="${n}options-menu">
+    <li>
+        <a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto">
+            <spring:message code="link.to" text="Link to ..."/>
+        </a>
+    </li>
+    <li class="divider"></li>
+    <li>
+        <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
+        <a href="javascript:;" title="${atptmfTitle}"
+                class="{% if (isFavorite) { print('marketplace_remove_favorite'); } else { print('marketplace_add_favorite'); } %}">
+            {% if (isFavorite) { %}
+                <i class="fa fa-star"></i>
+            {% } else { %}
+                <i class="fa fa-star-o"></i>
+            {% } %}
+            <span>
+                <spring:message code="my.favorites" text="My Favorites"/>
+            </span>
+        </a>
+    </li>
+    <li>
+        <a href="javascript://" disabled>
+                <span>
+                    <spring:message code="marketplace.add.to.tab" text="Add portlet to tab:"/>
+                </span>
+        </a>
+    </li>
+    {% _.each(tabs, function(tab) { %}
+        <li>
+            <a href="javascript:;" class="marketplace_add_to_tab_link" data-tab-id="{%= tab.id %}">
+                <span>
+                    {%- tab.name %}
+                </span>
+            </a>
+        </li>
+    {% }); %}
+</script>
 
 <div id="${n}">
     <div>
@@ -154,29 +210,14 @@
             <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
             <div class="col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default
-                     marketplace_dropdown_button">Go</a>
+                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">
+                        <spring:message code="go" text="Go"/>
+                    </a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
+                        <spring:message code="options" text="Options"/>
                         <span class="caret"></span>
-                        <span class="sr-only"></span>
                     </button>
-                    <ul class="dropdown-menu marketplace_dropdown_menu" role="menu"  style="right: 0; left: auto;">
-                        <li><a href="${portlet.renderUrl}">Go</a></li>
-                        <li>
-                            <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
-                            <a href="javascript:;" title="${atptmfTitle}" class="${n}addToFavoriteLink">
-                                <span><spring:message code="add.to.my.favorites" text="Add to My Favorites"/></span>
-                            </a>
-                            <!-- used for the ajax call to add to favorites in up-favorite.js-->
-                            <script type="text/javascript">
-                                (function($) {
-                                    $( document ).ready(function() {
-                                        $('.${n}addToFavoriteLink').click({portletId : '${portlet.portletDefinitionId}', context : '${renderRequest.contextPath}'}, up.addToFavorite);
-                                    });
-                                })(up.jQuery);
-                            </script></li>
-                        <li class="divider"></li>
-                        <li><a href="javascript:;" title='<spring:message code="link.to" text="Link to ..." />' data-toggle="modal" data-target="#${n}copy-modal" id="${n}linkto"><spring:message code="link.to" text="Link to ..." /></a></li>
+                    <ul class="dropdown-menu marketplace_dropdown_menu" role="menu" style="right: 0; left: auto;">
                     </ul>
                 </div>
             </div>
@@ -387,17 +428,207 @@
     </div>
 </div>
 <portlet:resourceURL id="saveRating" var="saveRatingUrl" />
-<script type="text/javascript">
-up.jQuery(function() {
-    var $ = up.jQuery;
+<portlet:resourceURL id="layoutInfo" var="portletInfoUrl">
+    <portlet:param name="portletFName" value="${portlet.FName}"/>
+</portlet:resourceURL>
 
+<script type="text/javascript">
+(function($, Backbone, _) {
     $(document).ready( function () {
+        // IMPORTANT: The tabs object is not a true model so it won't do
+        // notifications on change.  If tabs needs to change, replace the
+        // entire object, don't modify the one in this model.
+        var MenuModel = Backbone.Model.extend({
+            defaults: {
+                loading: true,
+                isFavorite: false,
+                fname: null,
+                tabs: []
+            },
+
+            update: function(data) {
+                this.set({
+                    isFavorite: data.favorite,
+                    tabs: data.tabs
+                });
+            }
+        });
+
+        var MenuController = Backbone.View.extend({
+            events: {
+                'click .marketplace_add_to_tab_link': 'addPortlet',
+                'click .marketplace_add_favorite': 'addFavorite',
+                'click .marketplace_remove_favorite': 'removeFavorite'
+            },
+            template: _.template($('#${n}options-menu').text(), null, {
+                // use jinja style templates instead of the up default (mustache style)
+                // Mostly... I just find these easier to read!
+                evaluate: /{%([\s\S]+?)%}/g,
+                interpolate: /{%=([\s\S]+?)%}/g,
+                escape: /{%-([\s\S]+?)%}/g
+            }),
+            options: {
+                portletChannelId: '${portlet.portletDefinitionId}'
+            },
+
+
+            initialize: function(options) {
+                this.listenTo(this.model, 'change', this.render);
+            },
+
+
+            render: function() {
+                var html;
+
+                html = this.template(this.model.toJSON());
+                this.$el.html(html);
+
+                return this.$el;
+            },
+
+
+            addPortlet: function(evt) {
+                var tabId, url, promise, tabName;
+
+                evt.preventDefault();
+
+                tabId = $(evt.currentTarget).data('tabId');
+                tabName = this._getTabNameById(tabId);
+
+                url = '<c:url value="/api/layout"/>';
+                promise = $.ajax({
+                    url: url,
+                    data: {
+                        action: 'addPortlet',
+                        channelID: this.options.portletChannelId,
+                        elementID: tabId,
+                        position: ''
+                    },
+                    type: 'POST',
+                    dataType: 'json'
+                });
+
+                promise.success(function() {
+                    <spring:message code="success" text="Success" var="success"/>
+                    <spring:message code="marketplace.add.portlet.success"
+                            text="{0} Portlet has been added to tab {1}"
+                            htmlEscape="false"
+                            arguments="<strong>${success}!</strong>, <span class=\"tab-name\"></span>"
+                            var="addPortletSuccessMsg"/>
+                    var content = $('<div>${addPortletSuccessMsg}</div>');
+                    content.find('.tab-name').text(tabName);
+
+                    $('#up-notification').noty({
+                        text: content.html(),
+                        type: 'success'
+                    });
+                });
+
+                promise.error(function() {
+                    <spring:message code="marketplace.add.portlet.error"
+                            text="Portlet could not be added to tab {0}"
+                            htmlEscape="false"
+                            arguments="<span class=\"tab-name\"></span>"
+                            var="addPortletErrorMsg"/>
+                    var content = $('<div>${addPortletErrorMsg}</div>');
+                    content.find('.tab-name').text(tabName);
+                    $('#up-notification').noty({
+                        text: content.html(),
+                        type: 'error'
+                    });
+                });
+
+                promise.done(function() {
+                    updateOptionsMenu();
+                });
+            },
+
+
+            addFavorite: function(evt) {
+                var promise;
+
+                evt.preventDefault();
+
+                evt.data = {
+                    context: '${rootContext}',
+                    portletId: this.options.portletChannelId
+                };
+
+                promise = up.addToFavorite(evt);
+                promise.done(function() {
+                    updateOptionsMenu();
+                });
+            },
+
+
+            removeFavorite: function(evt) {
+                var promise;
+
+                evt.data = {
+                    context: '${rootContext}',
+                    portletId: this.options.portletChannelId
+                };
+
+                promise = up.removeFromFavorite(evt);
+                promise.done(function() {
+                    updateOptionsMenu();
+                });
+            },
+
+
+            _getTabNameById: function(id) {
+                var tabsArray, first;
+
+                tabsArray = _.where(this.model.get('tabs'), {id: id});
+                if (!tabsArray) {
+                    return '';
+                }
+
+                first = _.first(tabsArray);
+                if (!first) {
+                    return '';
+                }
+
+                return first.name;
+            }
+        });
+
         var defaults = {
             textReviewCharLimit : 160,
             visibleReleaseNoteCount: 3
         };
         var remainingCharsAvailable = defaults.textReviewCharLimit;
-        
+        var optionsMenuModel = new MenuModel();
+        var optionsMenuController = new MenuController({
+            el: $('#${n} ul.marketplace_dropdown_menu'),
+            model: optionsMenuModel
+        });
+
+
+        var updateOptionsMenu = function() {
+            var promise;
+
+            promise = $.ajax({
+                url: '${portletInfoUrl}'
+            });
+
+            promise.then(function(data) {
+                optionsMenuModel.update(data);
+            }, function() {
+                <spring:message code="marketplace.tablist.error"
+                        text="An error occurred while loading the tab list"
+                        htmlEscape="false"
+                        var="tabListErrorMsg"/>
+                $('#up-notification').noty({
+                    text: '${tabListErrorMsg}',
+                    type: 'error'
+                });
+            });
+        };
+
+        updateOptionsMenu();
+
+
         var updateCharactersRemaining = function(){
             if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit){
                 $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
@@ -417,7 +648,7 @@ up.jQuery(function() {
         $(".marketplace_screen_shots:first").addClass("active");
         $(".marketplace_carousel_indicators>li:first-child").addClass("active");
         $(".marketplace_release_notes>li:nth-child(-n+"+
-            defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
+                defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
         $('#${n}copy-modal').modal('hide');
         var lengthLink = $('#marketplace_show_more_less_link');
         if(lengthLink.length>0) {
@@ -430,7 +661,7 @@ up.jQuery(function() {
                     lengthLink.innerHTML="Less";
                 }else{
                     $(".marketplace_release_notes>li:not(:nth-child(-n+"+
-                        defaults.visibleReleaseNoteCount+"))").removeClass("marketplace_show");
+                            defaults.visibleReleaseNoteCount+"))").removeClass("marketplace_show");
                     lengthLink.innerHTML="More";
                 }
             }
@@ -443,52 +674,53 @@ up.jQuery(function() {
         if($("#${n}marketplace_user_rating").val().length>0){
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
-                text='You have already rated "{0}"; adjust your rating if you wish.'
-                arguments="${portlet.title}"
-                htmlEscape="true" />');
+            text='You have already rated "{0}"; adjust your rating if you wish.'
+            arguments="${portlet.title}"
+            htmlEscape="true" />');
             $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
         }else{
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
-                text='You have not yet rated "{0}".'
-                arguments="${portlet.title}"
-                htmlEscape="true" />');
+            text='You have not yet rated "{0}".'
+            arguments="${portlet.title}"
+            htmlEscape="true" />');
         }
         updateCharactersRemaining();
         $("#${n}save_rating_form").submit(function (e) {
             $.ajax({
                 url: '${saveRatingUrl}',
                 data: {rating: $("#${n}marketplace_user_rating").val(), portletFName: "${portlet.FName}",
-                          review: $("#${n}marketplace_user_review_input").val().trim()},
-                 type: 'POST',
-                 success: function(){
-                     $('#up-notification').noty({
-                         text: '<spring:message code="rating.saved.successfully" text="Success"/>',
-                         layout: 'TopCenter',
-                         type: 'success'
-                     });
-                     updateRatingInstructions('<spring:message code="rating.instructions.rated.now"
-                         text='You have now rated "{0}"; update your rating if you wish.'
-                         arguments="${portlet.title}"
-                         htmlEscape="false"
-                     />');
-                 },
-                 error: function(){
-                     $('#up-notification').noty({
+                    review: $("#${n}marketplace_user_review_input").val().trim()},
+                type: 'POST',
+                success: function(){
+                    $('#up-notification').noty({
+                        text: '<spring:message code="rating.saved.successfully" text="Success"/>',
+                        layout: 'TopCenter',
+                        type: 'success'
+                    });
+                    updateRatingInstructions('<spring:message code="rating.instructions.rated.now"
+                     text='You have now rated "{0}"; update your rating if you wish.'
+                     arguments="${portlet.title}"
+                     htmlEscape="false"
+                 />');
+                },
+                error: function(){
+                    $('#up-notification').noty({
                         text: '<spring:message code="rating.saved.unsuccessfully" text="Failure"/>',
-                         layout: 'TopCenter',
-                         type: 'error'
-                     });
-                 }
-             });
+                        layout: 'TopCenter',
+                        type: 'error'
+                    });
+                }
+            });
             e.preventDefault();
-         });
-         $("#${n}marketplace_user_rating").change(function() {
-             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
-         });
-         $("#${n}marketplace_user_review_input").keyup(function(){
-             updateCharactersRemaining();
+        });
+        $("#${n}marketplace_user_rating").change(function() {
+            $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
+        });
+        $("#${n}marketplace_user_review_input").keyup(function(){
+            updateCharactersRemaining();
         });
     });
-});
+
+} (up.jQuery, up.Backbone, up._));
 
 </script>
