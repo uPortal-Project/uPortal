@@ -256,8 +256,10 @@
     up._ = _.noConflict();
     up._.templateSettings = {
       interpolate : /{{=(.+?)}}/g,
-      evaluate    : /{{(.+?)}}/g
+      evaluate    : /{{(.+?)}}/g,
+      escape: /{{-([\s\S]+?)}}/g
     };
+    up.Backbone = Backbone.noConflict();
 
     (function($) {
       $(function() {

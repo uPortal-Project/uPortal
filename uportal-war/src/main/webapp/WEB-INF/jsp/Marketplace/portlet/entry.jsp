@@ -432,8 +432,6 @@
     <portlet:param name="portletFName" value="${portlet.FName}"/>
 </portlet:resourceURL>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/underscore/1.5.2/underscore-1.5.2.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/backbone/1.1.0/backbone-1.1.0.min.js"/>"></script>
 <script type="text/javascript">
 (function($, Backbone, _) {
     $(document).ready( function () {
@@ -456,19 +454,19 @@
             }
         });
 
-        _.templateSettings = {
-            evaluate: /{%([\s\S]+?)%}/g,
-            interpolate: /{%=([\s\S]+?)%}/g,
-            escape: /{%-([\s\S]+?)%}/g
-        };
-
         var MenuController = Backbone.View.extend({
             events: {
                 'click .marketplace_add_to_tab_link': 'addPortlet',
                 'click .marketplace_add_favorite': 'addFavorite',
                 'click .marketplace_remove_favorite': 'removeFavorite'
             },
-            template: _.template($('#${n}options-menu').text()),
+            template: _.template($('#${n}options-menu').text(), null, {
+                // use jinja style templates instead of the up default (mustache style)
+                // Mostly... I just find these easier to read!
+                evaluate: /{%([\s\S]+?)%}/g,
+                interpolate: /{%=([\s\S]+?)%}/g,
+                escape: /{%-([\s\S]+?)%}/g
+            }),
             options: {
                 portletChannelId: '${portlet.portletDefinitionId}'
             },
@@ -723,6 +721,6 @@
         });
     });
 
-} (up.jQuery, Backbone.noConflict(), _.noConflict()));
+} (up.jQuery, up.Backbone, up._));
 
 </script>

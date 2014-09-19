@@ -44,6 +44,8 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
@@ -100,6 +102,7 @@ public class PortletMarketplaceController {
 	private IPortletDefinitionDao portletDefinitionDao;
 	private IMarketplaceRatingDao marketplaceRatingDAO;
     private IUserInstanceManager userInstanceManager;
+    private IUserLayoutStore userLayoutStore;
 
 
     @Autowired
@@ -140,6 +143,11 @@ public class PortletMarketplaceController {
     @Autowired
     public void setUserInstanceManager(final IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
+    }
+
+	@Autowired
+    public void setUserLayoutStore(final IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
     }
 
     /**
@@ -230,7 +238,10 @@ public class PortletMarketplaceController {
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
 
-        List<PortletTab> tabs = getPortletTabInfo(ulm, portletFName);
+        IPerson person = ui.getPerson();
+        DistributedUserLayout userLayout = userLayoutStore.getUserLayout(person, upm.getUserProfile());
+
+        List<PortletTab> tabs = getPortletTabInfo(userLayout, portletFName);
         boolean isFavorite = isPortletFavorited(ulm.getUserLayout(), portletFName);
 
         model.addAttribute("favorite", isFavorite);
@@ -323,25 +334,30 @@ public class PortletMarketplaceController {
     }
 
 
-    private List<PortletTab> getPortletTabInfo(IUserLayoutManager layoutManager, String fname) {
-        Document doc = layoutManager.getUserLayoutDOM();
+    private List<PortletTab> getPortletTabInfo(DistributedUserLayout layout, String fname) {
+        final String XPATH_TAB = "/layout/folder/folder[@hidden = 'false' and @type = 'regular']";
+        final String XPATH_COUNT_COLUMNS = "count(./folder[@hidden = \"false\"])";
+        final String XPATH_COUNT_NON_EDITABLE_COLUMNS = "count(./folder[@hidden = \"false\" and @*[local-name() = \"editAllowed\"] = \"false\"])";
+        final String XPATH_GET_TAB_PORTLET_FMT = ".//channel[@hidden = \"false\" and @fname = \"%s\"]";
+
+        Document doc = layout.getLayout();
 
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
 
         try {
-            XPathExpression tabExpr = xpath.compile("/layout/folder/folder[@hidden = 'false' and @type = 'regular']");
+            XPathExpression tabExpr = xpath.compile(XPATH_TAB);
             NodeList list = (NodeList)tabExpr.evaluate(doc, XPathConstants.NODESET);
 
             // Count columns and non-editable columns...
-            XPathExpression columnCountExpr = xpath.compile("count(./folder[@hidden = \"false\"])");
-            XPathExpression nonEditableCountExpr = xpath.compile("count(./folder[@hidden = \"false\" and @*[local-name() = \"editAllowed\"] = \"false\"])");
+            XPathExpression columnCountExpr = xpath.compile(XPATH_COUNT_COLUMNS);
+            XPathExpression nonEditableCountExpr = xpath.compile(XPATH_COUNT_NON_EDITABLE_COLUMNS);
 
             // get the list of tabs...
-            String xpathStr = format(".//channel[@hidden = \"false\" and @fname = \"%s\"]", fname);
+            String xpathStr = format(XPATH_GET_TAB_PORTLET_FMT, fname);
             XPathExpression portletExpr = xpath.compile(xpathStr);
 
-            List<PortletTab> tabs = new ArrayList<PortletTab>();
+            List<PortletTab> tabs = new ArrayList<>();
             for (int i = 0; i < list.getLength(); i++) {
                 Node tab = list.item(i);
                 String tabName = ((Element)tab).getAttribute("name");
@@ -356,7 +372,7 @@ public class PortletMarketplaceController {
                 }
 
                 // get all instances of this portlet on this tab...
-                List<String> layoutIds = new ArrayList<String>();
+                List<String> layoutIds = new ArrayList<>();
                 NodeList fnameListPerTab = (NodeList)portletExpr.evaluate(tab, XPathConstants.NODESET);
                 for (int j = 0; j < fnameListPerTab.getLength(); j++) {
                     Node channel = fnameListPerTab.item(j);
