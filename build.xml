@@ -1340,19 +1340,19 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
                  | Include the uportal-war-classes JAR in the final classpath for use by initdb.  DON'T reference it
                  | with an artifact:dependencies task.  Due to artifact:dependencies attempting to download
                  | dependencies and having errors when when a transient dependency has a repository specified in its
-                 | pom.xml (see http://jira.codehaus.org/browse/MANTTASKS-246), use the uPortal-classes.jar in the
+                 | pom.xml (see http://jira.codehaus.org/browse/MANTTASKS-246), use the ssp-platform-classes.jar in the
                  | target directory from the uPortal war build (or we could define a reference to the one in
                  | .m2/repository but the target dir is simpler and the file should be present).
                  +-->
-                <fail message="Unable to find ${uportal-war.dir}/target/uPortal-classes.jar. Run ant deploy-war to rebuild uportal-war">
+                <fail message="Unable to find ${uportal-war.dir}/target/ssp-platform-classes.jar. Run ant deploy-war to rebuild uportal-war">
                     <condition>
                         <not>
-                            <available file="${uportal-war.dir}/target/uPortal-classes.jar"/>
+                            <available file="${uportal-war.dir}/target/ssp-platform-classes.jar"/>
                         </not>
                     </condition>
                 </fail>
                 <path id="uportal-war-full.classpath">
-                    <path location="${uportal-war.dir}/target/uPortal-classes.jar" />
+                    <path location="${uportal-war.dir}/target/ssp-platform-classes.jar" />
                     <path refid="uportal-war.classpath" />
                 </path>
 
