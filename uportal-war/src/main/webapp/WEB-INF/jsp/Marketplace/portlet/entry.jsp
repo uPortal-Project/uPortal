@@ -348,6 +348,8 @@
                     <c:set var="validUrlCount" value="0"/>
                     <c:forEach var="screenShot" items="${portlet.screenShots}">
                         <c:set var="imageUrl" value="${screenShot.url}" />
+                        <%-- todo: replace this with a less expensive test - perhaps handle client side --%>
+                        <%--<c:if test="${up:isValidUrl(imageUrl)}">--%>
                         <c:set var="validUrlCount" value="${validUrlCount + 1}" />
                         <%--If validUrlCount is 1 then we can make a header--%>
                         <c:if test="${validUrlCount==1}">
@@ -373,6 +375,7 @@
                                 </div>
                             </c:if>
                         </div>
+                        <%--</c:if>--%>
                     </c:forEach>
                     <%--Closes the carousel-inner marketplace_carousel_inner div --%>
                     <c:if test="${validUrlCount gt 0}">
