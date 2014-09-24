@@ -163,6 +163,71 @@
         background-color: #c0c0c0;
     }
 
+    .marketplace_section.row {
+        margin-right: 15px;
+        padding: 20px 0;
+    }
+
+    .marketplace_section .panel {
+        border: none;
+        border-radius: 0;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadoe: none;
+    }
+
+    .marketplace_section .panel .portlet-box {
+        height: 112px;
+        max-height: 112px;
+        margin: 0;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #dddddd;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        -webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    .marketplace_section .panel .portlet-box a {
+        width: 100%;
+        display: block;
+    }
+
+    .marketplace_section .panel .portlet-box a:hover {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    .marketplace_section .panel .portlet-box .portlet-icon {
+        width: 92px;
+        height: 92px;
+        max-height: 92px;
+        background-color: #cccccc;
+        padding: 10px;
+        float: left;
+        margin-right: 15px;
+    }
+
+    .marketplace_section .panel .portlet-box .portlet-details {
+        text-align: left;
+        color: #000000;
+        margin-right: 0;
+    }
+
+    .marketplace_section .panel .portlet-box .portlet-details h5 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+    }
+
+
+    .marketplace_section .panel .portlet-box .portlet-details p {
+        font-size: 10px;
+    }
 </style>
 
 <script type="text/template" id="${n}options-menu">
@@ -289,15 +354,19 @@
             </c:if>
         </c:if>
         <br>
-        <div class="row col-xs-12" style="clear:both;">
+        <div class="row col-xs-12">
             <p>
                 <span class="marketplace_section_header"><spring:message code="rating.and.review.cap" text="RATINGS & REVIEWS"/></span>
             </p>
-                <div class="marketplace_average_rating col-xs-3 col-sm-2">
-                <div><input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/></div>
-                <div></div>
+            <div class="marketplace_average_rating col-xs-3 col-sm-2">
+                <div>
+                    <input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
                 </div>
-                <div id="marketplace_users_rated col-xs-3"><span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span></div>
+                <div></div>
+            </div>
+            <div id="marketplace_users_rated col-xs-3">
+                <span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span>
+            </div>
            <br>
            <div class="marketplace_user_rating row col-xs-12">
                <br>
@@ -324,7 +393,7 @@
             <br>
         </div>
         <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
-            <div class="row">
+            <div class="row clearfix">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
@@ -349,23 +418,44 @@
                 </div>
             </div>
         </c:if>
-        <br>
+
+        <div class="spacer clearfix"></div>
+
         <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
-            <div class="row">
-                <div class = "col-xs-12 col-md-4">
-                    <br>
-                    <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
-                    <c:forEach var="relatedPortlet" items="${relatedPortlets}">
-                        <portlet:renderURL var="marketplaceEntryURL" windowState="MAXIMIZED">
-                            <portlet:param name="action" value="view"/>
-                            <portlet:param name="fName" value="${relatedPortlet.FName}"/>
-                        </portlet:renderURL>
-                        <li>- <a href="${marketplaceEntryURL}">${relatedPortlet.name}</a></li>
-                    </c:forEach>
-                </div>
+            <div class="marketplace_section row clearfix">
+                <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
+                    <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
+                        <portlet:param name="action" value="view"/>
+                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                    </portlet:renderURL>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="panel panel-default">
+                            <div class="row portlet-box">
+                                <a href="${entryURL}">
+                                    <div class="portlet-icon">
+                                        <c:choose>
+                                            <c:when test="${empty relatedPortlet.getParameter('iconUrl')}">
+                                                <img src="<c:url value="/media/skins/icons/mobile/default.png"/>">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${relatedPortlet.getParameter('iconUrl').value}">
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="portlet-details">
+                                        <h5><c:out value="${relatedPortlet.title}"/></h5>
+                                        <p><c:out value="${relatedPortlet.description}"/></p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="${(status.index + 1) mod 4 == 0}">
+                        <div class="clearfix"></div>
+                    </c:if>
+                </c:forEach>
             </div>
-            <br>
         </c:if>
         <c:set var="portletCategories" value="${portlet.parentCategories}"/>
         <c:if test="${not empty portletCategories}">
