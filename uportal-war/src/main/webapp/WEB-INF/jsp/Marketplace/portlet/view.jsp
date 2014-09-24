@@ -234,6 +234,11 @@
     overflow: hidden;
 }
 
+#${n}marketplace .marketplaceSection .panel .portlet-box:hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
 #${n}marketplace .marketplaceSection .panel .portlet-box a {
     width: 100%;
     display: block;
@@ -248,31 +253,35 @@
     width: 92px;
     height: 92px;
     max-height: 92px;
-    background-color: #cccccc;
-    padding: 10px;
+    background-color: #eee;
     margin-right: 15px;
     float: left;
+    border:3px solid #999;
+    text-align: center;
 }
 
 #${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon img {
     width: 72px;
     height: 72px;
+    margin-top: 7px;
+
 }
 
 #${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details {
     text-align: left;
-    color: #000000;
+    color: #000;
     margin-right: 0;
 }
 
 #${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details h5 {
     font-size: 16px;
-    margin: 0 0 10px 0;
+    margin: 0 0 3px 0;
 }
 
 
 #${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details p {
-    font-size: 10px;
+    font-size: 11px;
+    margin: 0;
 }
 </style>
 
