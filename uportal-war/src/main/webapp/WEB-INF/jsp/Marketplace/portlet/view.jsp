@@ -63,23 +63,23 @@
  */
 
 #${n}marketplace .sorting_asc {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_both.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_both.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_asc_disabled {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc_disabled {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png"/>') no-repeat center right;
 }
  
 #${n}marketplace table.display thead th:active,
