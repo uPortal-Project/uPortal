@@ -285,7 +285,7 @@
             <h3><strong><spring:message code="featured" text="Featured" /></strong></h3><br>
         </div>
         <div class="row">
-            <rs:resourceURL value="/rs/tango/0.8.90/32x32/categories/applications-other.png" var="defaultIcon"/>
+            <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
             <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
                 <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                     <portlet:param name="action" value="view"/>
@@ -297,12 +297,12 @@
                             <a href="${entryURL}">
                                 <div class="portlet-icon">
                                     <c:choose>
-                                        <c:when test="${empty featuredPortlet.getParameter('iconUrl')}">
+                                        <c:when test="${empty featuredPortlet.getParameter('mobileIconUrl')}">
 
                                             <img src="${defaultIcon}">
                                         </c:when>
                                         <c:otherwise>
-                                            <img src="${featuredPortlet.getParameter('iconUrl').value}">
+                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}">
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
