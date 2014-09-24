@@ -138,7 +138,9 @@
                                 <groupId>xalan</groupId>
                                 <artifactId>serializer</artifactId>
                             </exclusion>
-                            <!-- exclude logback during the build. -->
+                            <!-- exclude logback during the build since we can't specify to use commandline-logback.xml
+                                 during the running of this plug-in and logback.xml references CATALINA_BASE.webroot
+                                 which is undefined when running db-init from the command line. -->
                             <exclusion>
                                 <groupId>ch.qos.logback</groupId>
                                 <artifactId>logback-classic</artifactId>
