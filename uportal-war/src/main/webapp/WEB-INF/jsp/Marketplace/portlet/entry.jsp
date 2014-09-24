@@ -438,6 +438,7 @@
         <c:if test="${not empty relatedPortlets}">
             <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED PORTLETS" /></span>
             <div class="marketplace_section row clearfix">
+                <rs:resourceURL value="/rs/tango/0.8.90/32x32/categories/applications-other.png" var="defaultIcon"/>
                 <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
@@ -450,7 +451,7 @@
                                     <div class="portlet-icon">
                                         <c:choose>
                                             <c:when test="${empty relatedPortlet.getParameter('iconUrl')}">
-                                                <img src="<c:url value="/media/skins/icons/mobile/default.png"/>">
+                                                <img src="${defaultIcon}">
                                             </c:when>
                                             <c:otherwise>
                                                 <img src="${relatedPortlet.getParameter('iconUrl').value}">
