@@ -302,6 +302,8 @@
     <div>
         <div class="row">
             <div class="col-xs-1">
+                <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"  >
+                </portlet:renderURL>
                 <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
             <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
@@ -522,8 +524,6 @@
             <br>
         </c:if>
         <div class="row col-xs-12" style="clear:both;">
-            <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"  >
-            </portlet:renderURL>
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4">
