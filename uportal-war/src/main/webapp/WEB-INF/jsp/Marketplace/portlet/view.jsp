@@ -254,6 +254,11 @@
     float: left;
 }
 
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon img {
+    width: 72px;
+    height: 72px;
+}
+
 #${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details {
     text-align: left;
     color: #000000;

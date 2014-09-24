@@ -213,6 +213,18 @@
         margin-right: 15px;
     }
 
+
+    .marketplace_section .panel .portlet-box .portlet-icon img {
+        width: 72px;
+        height: 72px;
+    }
+
+
+    #${n} .spacer {
+        display: block;
+        margin-top: 20px;
+    }
+
     .marketplace_section .panel .portlet-box .portlet-details {
         text-align: left;
         color: #000000;
@@ -354,7 +366,8 @@
             </c:if>
         </c:if>
         <br>
-        <div class="row col-xs-12">
+        <div class="row">
+            <div class="col-xs-12">
             <p>
                 <span class="marketplace_section_header"><spring:message code="rating.and.review.cap" text="RATINGS & REVIEWS"/></span>
             </p>
@@ -388,7 +401,7 @@
                    </div>
                    <br>
                </form>
-                <br><br>            
+               </div>
            </div>
             <br>
         </div>
@@ -423,6 +436,7 @@
 
         <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
+            <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED PORTLETS" /></span>
             <div class="marketplace_section row clearfix">
                 <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
