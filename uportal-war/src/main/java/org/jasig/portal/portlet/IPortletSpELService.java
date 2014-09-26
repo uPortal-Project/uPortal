@@ -38,7 +38,7 @@ import org.springframework.expression.ParseException;
  * </ul>
  *
  * @author James Wennmacher, jwennmacher@unicon.net
- * @since 4.1
+ * @since 4.2
  */
 
 public interface IPortletSpELService {
