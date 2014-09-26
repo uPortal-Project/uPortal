@@ -63,23 +63,23 @@
  */
 
 #${n}marketplace .sorting_asc {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_both.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_both.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_asc_disabled {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png"/>') no-repeat center right;
 }
 
 #${n}marketplace .sorting_desc_disabled {
-    background: url('/uPortal/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png') no-repeat center right;
+    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png"/>') no-repeat center right;
 }
  
 #${n}marketplace table.display thead th:active,
@@ -215,11 +215,74 @@
 }
 
 #${n}marketplace .marketplaceSection .panel {
-    height: 90px;
-    max-height: 90px;
-    overflow: none;
+    padding: 0;
+    border: none;
 }
 
+#${n}marketplace .marketplaceSection .panel .portlet-box {
+    height: 112px;
+    max-height: 112px;
+    margin: 0;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #dddddd;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    -webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box:hover {
+    background-color: #eee;
+    cursor: pointer;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box a {
+    width: 100%;
+    display: block;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box a:hover {
+    text-decoration: none;
+    color: #000000;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon {
+    width: 92px;
+    height: 92px;
+    max-height: 92px;
+    background-color: #eee;
+    margin-right: 15px;
+    float: left;
+    border:3px solid #999;
+    text-align: center;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon img {
+    width: 72px;
+    height: 72px;
+    margin-top: 7px;
+
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details {
+    text-align: left;
+    color: #000;
+    margin-right: 0;
+}
+
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details h5 {
+    font-size: 16px;
+    margin: 0 0 3px 0;
+}
+
+
+#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details p {
+    font-size: 11px;
+    margin: 0;
+}
 </style>
 
 
@@ -231,24 +294,32 @@
             <h3><strong><spring:message code="featured" text="Featured" /></strong></h3><br>
         </div>
         <div class="row">
+            <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
             <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
                 <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                     <portlet:param name="action" value="view"/>
                     <portlet:param name="fName" value="${featuredPortlet.FName}"/>
                 </portlet:renderURL>
-                <div class="col-sm-6 col-lg-3 text-center">
+                <div class="col-sm-6 col-lg-3">
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                        <a href="${entryURL}">
-                            <div>
-                                <c:out value="${featuredPortlet.title}"/>
-                            </div>
-                        </a>
-                        </div>
-                        <div class="panel-body">
-                            <div>
-                                <c:out value="${featuredPortlet.description}"/>
-                            </div>
+                        <div class="row portlet-box">
+                            <a href="${entryURL}">
+                                <div class="portlet-icon">
+                                    <c:choose>
+                                        <c:when test="${empty featuredPortlet.getParameter('mobileIconUrl')}">
+
+                                            <img src="${defaultIcon}">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${featuredPortlet.getParameter('mobileIconUrl').value}">
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="portlet-details">
+                                    <h5><c:out value="${featuredPortlet.title}"/></h5>
+                                    <p><c:out value="${featuredPortlet.description}"/></p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -324,7 +395,7 @@
                 <tr>
                     <td class="essential" style="white-space: nowrap; border:none;">
                         <strong><a href="${portlet.renderUrl}">${portlet.title} <i class="fa fa-external-link"></i></a></strong>
-    </td>
+                    </td>
                     <td class="optional" style="border:none;">
                         ${portlet.description}
                     </td>

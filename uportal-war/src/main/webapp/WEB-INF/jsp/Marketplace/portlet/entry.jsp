@@ -26,12 +26,6 @@
     #${n}{
         min-height:250px;
     }
-    #${n} .marketplace_description_title h2{
-        font-family:'Arial Bold', 'Arial';
-        font-weight:700;
-        color:#000000;
-        text-align:left;
-    }
     #${n} .marketplace_portlet_title{
         font-family: 'Arial Bold', 'Arial';
         font-weight:700;
@@ -123,11 +117,15 @@
        padding: 0;
     }
     
-    #${n} .marketplace_user_rating{
-       outline-style: solid;
-       outline-color: grey;
-       margin-left: 0px;
-       outline-width: thin;
+    #${n} .marketplace_user_rating {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    #${n} .carousel-container {
+        margin: 0 auto;
     }
     
     #${n} .marketplace_carousel_inner img {
@@ -163,6 +161,102 @@
         background-color: #c0c0c0;
     }
 
+    #${n} .marketplace_section.row {
+        margin-right: 15px;
+        padding: 20px 0;
+    }
+
+    #${n} .marketplace_section .panel {
+        border: none;
+        border-radius: 0;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadoe: none;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box {
+        height: 112px;
+        max-height: 112px;
+        margin: 0;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #dddddd;
+        -webkit-border-radius: 8px;
+        -moz-border-radius: 8px;
+        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        -webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        -moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box:hover {
+        background-color: #eee;
+        cursor: pointer;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box a {
+        width: 100%;
+        display: block;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box a:hover {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box .portlet-icon {
+        width: 92px;
+        height: 92px;
+        max-height: 92px;
+        background-color: #eee;
+        margin-right: 15px;
+        float: left;
+        border:3px solid #999;
+        text-align: center;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box .portlet-icon img {
+        width: 72px;
+        height: 72px;
+        margin-top: 7px;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box .portlet-details {
+        text-align: left;
+        color: #000;
+        margin-right: 0;
+    }
+
+    #${n} .marketplace_section .panel .portlet-box .portlet-details h5 {
+        font-size: 16px;
+        margin: 0 0 3px 0;
+    }
+
+
+    #${n} .marketplace_section .panel .portlet-box .portlet-details p {
+        font-size: 11px;
+        margin: 0;
+    }
+
+    #${n} .header-info-wrapper {
+        margin-top: 20px;
+    }
+
+    #${n} .header-info-wrapper .header-img {
+        padding-right: 0;
+    }
+
+    #${n} .header-info-wrapper img {
+        margin-top: 20px;
+        float: right;
+    }
+
+    #${n} .spacer {
+        display: block;
+        margin-top: 20px;
+    }
 </style>
 
 <script type="text/template" id="${n}options-menu">
@@ -207,8 +301,11 @@
 <div id="${n}">
     <div>
         <div class="row">
-            <div class="col-md-6 col-xs-6 marketplace_portlet_title">${portlet.title}</div>
-            <div class="col-md-6 col-xs-6" class="${n}go_button">
+            <div class="col-xs-1">
+                <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
+                <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
+            </div>
+            <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
                     <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">
                         <spring:message code="go" text="Go"/>
@@ -222,109 +319,129 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12 marketplace_description_title"><h2>${portlet.title}</h2></div>
-            <div class="col-sm-12 marketplace_description_body">${portlet.description}</div>
+        <div class="row header-info-wrapper">
+            <div class="col-sm-1 header-img">
+                <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
+                    <c:choose>
+                        <c:when test="${empty portlet.getParameter('mobileIconUrl')}">
+                            <img src="${defaultIcon}">
+                        </c:when>
+                        <c:otherwise>
+                            <img src="${portlet.getParameter('mobileIconUrl').value}">
+                        </c:otherwise>
+                </c:choose>
+            </div>
+            <div class="col-sm-11">
+                <div class="marketplace_description_title">
+                    <h1>${portlet.title}</h1>
+                </div>
+                <div class="marketplace_description_body">
+                    <p>${portlet.description}</p>
+                </div>
+            </div>
         </div>
-        <br>
-        <%-- Now let's add some Preferences --%>
-        <%-- Start with Screen shots and what not --%>
-        <%--TODO replace carousel with more accessibility friendly element --%>
-        <c:if test="${not empty portlet.screenShots}">
-            <c:set var="validUrlCount" value="0"/>
-            <c:forEach var="screenShot" items="${portlet.screenShots}">
-                <c:set var="imageUrl" value="${screenShot.url}" />
-                <c:if test="${up:isValidUrl(imageUrl)}">
-                    <c:set var="validUrlCount" value="${validUrlCount + 1}" />
-                    <%--If validUrlCount is 1 then we can make a header--%>
-                    <c:if test="${validUrlCount==1}">
-                        <div class="row">
-                            <div class="col-xs-12 col-md-4">
-                                <p>
-                                    <span class="marketplace_section_header">
-                                        <spring:message code="screenshots.cap" text="SCREENSHOTS/VIDEOS"/>
-                                    </span>
-                                </p>
-                                <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
-                                    <%--Adds a carousel inner div --%>
-                                    <div class="carousel-inner marketplace_carousel_inner">
-                    </c:if>
-                    <div class="item marketplace_screen_shots">
-                       <img src="${imageUrl}" alt="screenshot for portlet">
-                        <c:if test="${not empty screenShot.captions}">
-                            <div class="carousel-caption">
-                                <c:forEach var="portletCaption" items="${screenShot.captions}">
-                                    <h3>${portletCaption}</h3>
-                                </c:forEach>
+        <div class="row">
+            <div class="col-sm-12">
+                <%-- Now let's add some Preferences --%>
+                <%-- Start with Screen shots and what not --%>
+                <%--TODO replace carousel with more accessibility friendly element --%>
+                <c:if test="${not empty portlet.screenShots}">
+                    <c:set var="validUrlCount" value="0"/>
+                    <c:forEach var="screenShot" items="${portlet.screenShots}">
+                        <c:set var="imageUrl" value="${screenShot.url}" />
+                        <%-- todo:  replace this with a less expensive test -- preferably client side --%>
+                        <%--<c:if test="${up:isValidUrl(imageUrl)}">--%>
+                        <c:set var="validUrlCount" value="${validUrlCount + 1}" />
+                        <%--If validUrlCount is 1 then we can make a header--%>
+                        <c:if test="${validUrlCount==1}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1><spring:message code="screenshots.cap" text="Screenshots/Videos"/></h1>
+                                </div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-offset-3 col-xs-6">
+                                    <div class="carousel-container">
+                                        <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
+                                            <%--Adds a carousel inner div --%>
+                                            <div class="carousel-inner marketplace_carousel_inner">
                         </c:if>
-                    </div>
-                </c:if>
-            </c:forEach>
-            <%--Closes the carousel-inner marketplace_carousel_inner div --%>
-            <c:if test="${validUrlCount gt 0}">
-                </div>
-            </c:if>
-            <%--Only add the little prev/next arrows when screenshots>1 --%>
-            <c:if test="${validUrlCount gt 1}">
-                <ol class="carousel-indicators marketplace_carousel_indicators">
-                    <c:forEach var="i" begin="0" end="${validUrlCount-1}">
-                        <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
+                        <div class="item marketplace_screen_shots">
+                            <img src="${imageUrl}" alt="screenshot for portlet">
+                            <c:if test="${not empty screenShot.captions}">
+                                <div class="carousel-caption">
+                                    <c:forEach var="portletCaption" items="${screenShot.captions}">
+                                        <h3>${portletCaption}</h3>
+                                    </c:forEach>
+                                </div>
+                            </c:if>
+                        </div>
+                        <%--<c:if/>--%>
                     </c:forEach>
-                </ol>
-                <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                </a>
-                <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                </a>
-            </c:if>
-            <c:if test="${validUrlCount gt 0}">
-                <%--Closes the marketplace_screenshots_and_videos div--%>
+                    <%--Closes the carousel-inner marketplace_carousel_inner div --%>
+                    <c:if test="${validUrlCount gt 0}">
+                        </div>
+                    </c:if>
+                    <%--Only add the little prev/next arrows when screenshots>1 --%>
+                    <c:if test="${validUrlCount gt 1}">
+                        <ol class="carousel-indicators marketplace_carousel_indicators">
+                            <c:forEach var="i" begin="0" end="${validUrlCount-1}">
+                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
+                            </c:forEach>
+                        </ol>
+                        <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+                        <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </c:if>
+                    <c:if test="${validUrlCount gt 0}">
+                        <%--Closes the marketplace_screenshots_and_videos div--%>
+                        </div>
+                        <%--Closes the col div --%>
+                        </div>
+                        <%--Closes the container div --%>
+                        </div>
+                        <%--Closes the row div --%>
+                        </div>
+                    </c:if>
+                </c:if>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
+                <div class="col-xs-3 marketplace_average_rating">
+                    <div>
+                        <input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
+                    </div>
                 </div>
-                <%--Closes the col div --%>
+                <div id="col-xs-9 marketplace_users_rated">
+                    <span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span>
                 </div>
-                <%--Closes the row div --%>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="marketplace_user_rating">
+                    <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
+                    <div id="${n}marketplace_rating_instructions" class="help-block"></div>
+                    <form id="${n}save_rating_form">
+                        <div class="col-xs-4">
+                            <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
+                            <div id="${n}input_chars_remaining"></div>
+                        </div>
+                        <div class="form-group">
+                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled"><spring:message code="submit" text="Submit"/></button>
+                        </div>
+                    </form>
+                    <div class="clearfix"></div>
                 </div>
-            </c:if>
-        </c:if>
-        <br>
-        <div class="row col-xs-12" style="clear:both;">
-            <p>
-                <span class="marketplace_section_header"><spring:message code="rating.and.review.cap" text="RATINGS & REVIEWS"/></span>
-            </p>
-                <div class="marketplace_average_rating col-xs-3 col-sm-2">
-                <div><input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/></div>
-                <div></div>
-                </div>
-                <div id="marketplace_users_rated col-xs-3"><span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span></div>
-           <br>
-           <div class="marketplace_user_rating row col-xs-12">
-               <br>
-               <span class="marketplace_user_rating_prompt"><spring:message code="rate.this.portlet" text="Rate this portlet"/></span>
-               <br>
-               <div id="${n}marketplace_rating_instructions" class="help-block">
-               </div>
-               <form id="${n}save_rating_form">
-                   <div class="col-xs-4">
-                       <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
-                   </div>
-                   <br>
-                   <div class="form-group">
-                       <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
-                       <div id="${n}input_chars_remaining"></div>
-                   </div>
-                   <div class="form-group">
-                       <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled" style="float:right" ><spring:message code="submit" text="Submit"/></button>
-                   </div>
-                   <br>
-               </form>
-                <br><br>            
-           </div>
-            <br>
+
+            </div>
         </div>
         <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
-            <div class="row">
+            <div class="row clearfix">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
@@ -349,23 +466,46 @@
                 </div>
             </div>
         </c:if>
-        <br>
+
+        <div class="spacer clearfix"></div>
+
         <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
-            <div class="row">
-                <div class = "col-xs-12 col-md-4">
-                    <br>
-                    <span class="marketplace_section_header"><spring:message code="related.portlets" text="RELATED APPS" /></span>
-                    <c:forEach var="relatedPortlet" items="${relatedPortlets}">
-                        <portlet:renderURL var="marketplaceEntryURL" windowState="MAXIMIZED">
-                            <portlet:param name="action" value="view"/>
-                            <portlet:param name="fName" value="${relatedPortlet.FName}"/>
-                        </portlet:renderURL>
-                        <li>- <a href="${marketplaceEntryURL}">${relatedPortlet.name}</a></li>
-                    </c:forEach>
-                </div>
+            <h1><spring:message code="related.portlets" text="Related Portlets"/></h1>
+            <div class="marketplace_section row clearfix">
+                <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
+                <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
+                    <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
+                        <portlet:param name="action" value="view"/>
+                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                    </portlet:renderURL>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="panel panel-default">
+                            <div class="row portlet-box">
+                                <a href="${entryURL}">
+                                    <div class="portlet-icon">
+                                        <c:choose>
+                                            <c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
+                                                <img src="${defaultIcon}">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                    <div class="portlet-details">
+                                        <h5><c:out value="${relatedPortlet.title}"/></h5>
+                                        <p><c:out value="${relatedPortlet.description}"/></p>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <c:if test="${(status.index + 1) mod 4 == 0}">
+                        <div class="clearfix"></div>
+                    </c:if>
+                </c:forEach>
             </div>
-            <br>
         </c:if>
         <c:set var="portletCategories" value="${portlet.parentCategories}"/>
         <c:if test="${not empty portletCategories}">
@@ -383,14 +523,12 @@
             <br>
         </c:if>
         <div class="row col-xs-12" style="clear:both;">
-            <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"  >
-            </portlet:renderURL>
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4">
             </div>
             <div class="col-xs-4" style="float:left">
-                <a href="${initialViewURL}"><spring:message code="back.to.list" text="Back to List"/></a>
+
             </div>
         </div>
     </div>                      
