@@ -27,6 +27,10 @@ public class SqlQueryConfigForm {
 	
 	private String viewName;
 
+    private String cacheName;
+
+    private Boolean perUserCaching;
+
 	public String getSqlQuery() {
 		return this.sqlQuery;
 	}
@@ -50,7 +54,20 @@ public class SqlQueryConfigForm {
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
 	}
-	
-	
-	
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public Boolean getPerUserCaching() {
+        return perUserCaching;
+    }
+
+    public void setPerUserCaching(Boolean perUserCaching) {
+        this.perUserCaching = perUserCaching;
+    }
 }

@@ -150,7 +150,7 @@ public class PortletDefinitionImporterExporter
             }
             
             if (category == null) {
-                throw new IllegalArgumentException("No category '" + categoryName + "' found when importing porltet: " + portletRep.getFname());
+                throw new IllegalArgumentException("No category '" + categoryName + "' found when importing portlet: " + portletRep.getFname());
             }
             
             categories.add(category);
@@ -168,7 +168,7 @@ public class PortletDefinitionImporterExporter
             }
             
             if (group == null) {
-                throw new IllegalArgumentException("No group '" + groupName + "' found when importing porltet: " + portletRep.getFname());
+                throw new IllegalArgumentException("No group '" + groupName + "' found when importing portlet: " + portletRep.getFname());
             }
             
             groups.add(group);
