@@ -71,6 +71,7 @@
         <property name="properties">
             <props>
                 <prop key="persistenceUnitName">AggrEventsDb</prop>
+                <prop key="org.jasig.portal.events.aggr.session.JpaEventSessionDao.maxPurgeBatchSize">10</prop>
             </props>
         </property>
     </bean>
