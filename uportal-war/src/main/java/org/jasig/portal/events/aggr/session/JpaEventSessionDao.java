@@ -171,12 +171,10 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
         query.executeUpdate();
     }
 
-    @AggrEventsTransactional
-    private void purgeEventList(int begin, int end, DateTime lastAggregatedEventDate) {
+    private void purgeEventList(int batchSize, DateTime lastAggregatedEventDate) {
         final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery);
         query.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
-        query.setFirstResult(begin);
-        query.setMaxResults(end);
+        query.setMaxResults(batchSize);
         final List<EventSessionImpl> resultList = query.getResultList();
         for (final EventSessionImpl eventSession : resultList) {
             this.getEntityManager().remove(eventSession);
@@ -190,9 +188,11 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
         countQuery.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
         final int totalRows =   countQuery.getSingleResult().intValue();
 
-        final int numberBatches = totalRows / maxPurgeBatchSize;
-        for(int i = 0; i <= numberBatches; i++) {
-            purgeEventList((i * maxPurgeBatchSize),(((i+1)* maxPurgeBatchSize) - 1),lastAggregatedEventDate );
+        if (totalRows > 0) {
+            final int numberBatches = totalRows / maxPurgeBatchSize;
+            for (int i = 0; i <= numberBatches; i++) {
+                purgeEventList(maxPurgeBatchSize, lastAggregatedEventDate);
+            }
         }
         
         return totalRows;
