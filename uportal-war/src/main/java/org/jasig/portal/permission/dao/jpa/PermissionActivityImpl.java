@@ -161,7 +161,7 @@ class PermissionActivityImpl implements IPermissionActivity, Serializable {
         }
 
         IPermissionActivity activity = (IPermissionActivity) obj;
-        return this.fname.equals(activity);
+        return this.fname.equals(activity.getFname());
     }
 
     /**

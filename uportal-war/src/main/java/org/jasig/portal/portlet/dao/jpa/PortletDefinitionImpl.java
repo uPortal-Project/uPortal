@@ -574,10 +574,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public void setParameters(Set<IPortletDefinitionParameter> newParameters) {
-        if (this.parameters == newParameters) {
-            return;
-        }
-        
+
         if (newParameters == null) {
             this.parameters = new LinkedHashMap<String, IPortletDefinitionParameter>();
         }
