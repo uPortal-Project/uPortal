@@ -95,6 +95,7 @@ public class PortletRedirectionController {
         final IRedirectionUrl url = services.get(serviceKey);
         if (url == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
         }
 
         String redirectUrl = getUrlString(url, request, pathElements);

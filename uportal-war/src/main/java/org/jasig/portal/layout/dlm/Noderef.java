@@ -100,7 +100,7 @@ public final class Noderef {
                                 .append(layoutId).append(structureId);
             rslt = sb.toString();
         } else {
-            // An extr-layout Noderef
+            // An extra-layout Noderef
             rslt = structureId;
         }
         return rslt;

@@ -43,7 +43,7 @@ public RDBMEntityStore()
  */
 public IEntity newInstance(String key) throws GroupsException
 {
-    return newInstance(key, null);
+    throw new UnsupportedOperationException();
 }
 /**
  * @return org.jasig.portal.groups.IEntity

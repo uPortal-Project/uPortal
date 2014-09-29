@@ -646,17 +646,17 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     sc.setSearchScope(SearchControls.SUBTREE_SCOPE);
     sc.setReturningAttributes(new String[] {keyfield});
     try {
-      userlist = context.search(usercontext,query,sc);
+        userlist = context.search(usercontext,query,sc);
+        ArrayList keys = new ArrayList();
+        processLdapResults(userlist,keys);
+        String[] k = (String[]) keys.toArray(new String[0]);
+        for (int i=0; i<k.length; i++){
+            ids.add(new EntityIdentifier(k[i],iperson));
+        }
+        return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[0]);
     } catch (NamingException nex) {
-      log.error("LDAPGroupStore: Unable to perform filter "+query, nex);
+        throw new GroupsException("LDAPGroupStore: Unable to perform filter "+query, nex);
     }
-    ArrayList keys = new ArrayList();
-    processLdapResults(userlist,keys);
-    String[] k = (String[]) keys.toArray(new String[0]);
-    for (int i=0; i<k.length; i++){
-      ids.add(new EntityIdentifier(k[i],iperson));
-    }
-    return (EntityIdentifier[]) ids.toArray(new EntityIdentifier[0]);
   }
 
 /**

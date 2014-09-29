@@ -1335,7 +1335,9 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                                             rs2.next();
                                             defaultUserId = rs2.getInt(1);
                                         } finally {
-                                            rs2.close();
+                                            if (rs2 != null) {
+                                                rs2.close();
+                                            }
                                         }
                                     } finally {
                                         pstmt2.close();
