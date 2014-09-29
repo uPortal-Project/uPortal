@@ -93,15 +93,16 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
 
     @Override
     public long getDateHeader(String name) {
-        final Object value = this.additionalHeaders.get(name);
+        final String value = this.additionalHeaders.get(name);
         if (value == null) {
             return super.getDateHeader(name);
         }
-        if (value instanceof Long) {
-            return (Long)value;
+        try {
+            final long longValue = Long.parseLong(value);
+            return longValue;
+        } catch (NumberFormatException nfe) {
+            throw new IllegalArgumentException("Header '" + name + "' cannot be converted to long: '" + value + "'", nfe);
         }
-        
-        throw new IllegalArgumentException("Header '" + name + "' cannot be converted to long: '" + value + "' is of type " + value.getClass().getName());
     }
 
     @Override
@@ -140,15 +141,16 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
 
     @Override
     public int getIntHeader(String name) {
-        final Object value = this.additionalHeaders.get(name);
+        final String value = this.additionalHeaders.get(name);
         if (value == null) {
             return super.getIntHeader(name);
         }
-        if (value instanceof Integer) {
-            return (Integer)value;
+        try {
+            final int intValue = Integer.parseInt(value);
+            return intValue;
+        } catch (NumberFormatException nfe) {
+            throw new IllegalArgumentException("Header '" + name + "' cannot be converted to int: '" + value + "'", nfe);
         }
-        
-        throw new IllegalArgumentException("Header '" + name + "' cannot be converted to int: '" + value + "' is of type " + value.getClass().getName());
     }
     
     @Override

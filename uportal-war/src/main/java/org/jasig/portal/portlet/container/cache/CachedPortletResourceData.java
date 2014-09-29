@@ -84,7 +84,7 @@ public class CachedPortletResourceData<T extends Serializable> implements Cached
                 if (value instanceof Long) {
                     portletOutputHandler.addDateHeader(name, (Long)value);
                 }
-                else if (value instanceof Long) {
+                else if (value instanceof Integer) {
                     portletOutputHandler.addIntHeader(name, (Integer)value);
                 }
                 else {
