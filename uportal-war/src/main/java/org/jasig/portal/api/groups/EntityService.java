@@ -118,7 +118,7 @@ public final class EntityService {
             // the group member interface doesn't include the entity name, so
             // we'll need to look that up manually
             entity.setName(lookupEntityName(entity));
-            if (EntityEnum.GROUP.equals(entity.getEntityType()) || EntityEnum.PERSON.equals(entity.getEntityType())) {
+            if (EntityEnum.GROUP.toString().equals(entity.getEntityType()) || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
                 IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
                 Principal principal = new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
                 entity.setPrincipal(principal);
@@ -146,7 +146,7 @@ public final class EntityService {
             entity.setName(lookupEntityName(entity));
         }
 
-        if (EntityEnum.GROUP.equals(entity.getEntityType()) || EntityEnum.PERSON.equals(entity.getEntityType())) {
+        if (EntityEnum.GROUP.toString().equals(entity.getEntityType()) || EntityEnum.PERSON.toString().equals(entity.getEntityType())) {
             IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
             Principal principal = new PrincipalImpl(authP.getKey(), authP.getPrincipalString());
             entity.setPrincipal(principal);
