@@ -59,9 +59,8 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 
     @Override
     public void setReview(String review) {
-        if(review!=null){
-            review.trim();
-            review = review.substring(0, Math.min(review.length(), REVIEW_MAX_LENGTH));
+        if(review != null){
+            review = review.trim().substring(0, Math.min(review.length(), REVIEW_MAX_LENGTH));
         }
         this.review = review;
     }
@@ -75,7 +74,7 @@ class MarketplaceRatingImpl implements IMarketplaceRating{
 	}
 
 	/**
-	 * @param must be within range of MAX_RATING and MIN_RATING
+	 * @param rating must be within range of MAX_RATING and MIN_RATING
 	 *        
 	 */
 	public void setRating(int rating) {

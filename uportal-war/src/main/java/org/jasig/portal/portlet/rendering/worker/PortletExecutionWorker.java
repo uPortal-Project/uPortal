@@ -186,7 +186,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                 executionComplete();
             }
         }
-    };
+    }
     
     private void startExecution() {
         //grab the current thread
