@@ -170,8 +170,6 @@ up.analytics.config.view = up.analytics.config.view || {};
       },
 
       initialize : function() {
-         _.bindAll(this);
-
          this.listenTo(this.model, 'change', this.render);
          this.listenTo(this.model, 'destroy', this.remove);
       },
@@ -315,8 +313,6 @@ up.analytics.config.view = up.analytics.config.view || {};
       el : $("div#${n}google-analytics-config"),
 
       initialize : function() {
-         _.bindAll(this);
-
          this.listenTo(this.model, 'change', this.render);
          this.listenTo(this.model.get("hosts"), 'add', this.render);
          this.listenTo(this.model.get("hosts"), 'remove', this.render);
