@@ -195,13 +195,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
         <c:if test="${ not empty step.arbitraryPreferences }">
             <div class="preference-options-section">
-              <table>
+              <table class="portlet-table table table-hover">
                 <thead>
                   <tr>
                       <th><spring:message code="preference"/></th>
                       <th><spring:message code="value"/></th>
                       <th><spring:message code="read.only.prevents.user.customization"/></th>
-                    <th></th>
+                      <th></th>
                   </tr>
                 </thead>
                 <tbody>
