@@ -37,7 +37,21 @@
 .portlet .fl-pager .fl-pager-ui li{
         list-style-type: none;
         display: inline-block;
+
+    &.fl-pager-disabled {
+        cursor: default !important;
+
+        a {
+            color: @grayscale7 !important;
+            cursor: default !important;
+
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
 }
+
 .fl-pager caption{
         padding: .63em 0;
         margin-bottom: 0;
