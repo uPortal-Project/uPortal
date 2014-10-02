@@ -25,7 +25,7 @@
   <principal> 
     <group>SSP_MANAGER</group> 
   </principal>
-  <activity>BULK_SEARCH_EXPORT</activity>
+  <activity>BULK_EMAIL_STUDENT</activity>
   <target permission-type="GRANT"> 
     <literal>ALL</literal> 
   </target>
