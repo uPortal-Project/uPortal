@@ -79,7 +79,7 @@
                             <xsl:value-of select="$EXTERNAL_LOGIN_URL"/>
                         </xsl:when>
                         <xsl:otherwise>
-                        	<xsl:variable name="portletLoginUrl">
+                            <xsl:variable name="portletLoginUrl">
                                 <xsl:call-template name="portalUrl">
                                     <xsl:with-param name="url">
                                         <url:portal-url>
@@ -88,7 +88,7 @@
                                         </url:portal-url>
                                     </xsl:with-param>
                                 </xsl:call-template>
-                        	</xsl:variable>
+                            </xsl:variable>
                             <xsl:value-of select="$portletLoginUrl"/>
                         </xsl:otherwise>
                     </xsl:choose>
@@ -166,7 +166,7 @@
     <div class="portal-nav portlet-content">
         <ul data-role="listview" class="up-portal-nav">
             <xsl:for-each select="//navigation/tab">
-                <xsl:if test="@name != '_favorite'">
+                <xsl:if test="@name != '_favorite' and (@type='regular' or @type='favorite_collection')">
                     <li data-role="list-divider">
                         <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
                     </li>
