@@ -65,6 +65,9 @@
 
     <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
     <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+
+    <js included="plain" resource="true">/rs/backbone/1.1.0/backbone-1.1.0.js</js>
+    <js included="aggregated" resource="true">/rs/backbone/1.1.0/backbone-1.1.0.min.js</js>
     
     <js included="plain">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.min.js</js>
