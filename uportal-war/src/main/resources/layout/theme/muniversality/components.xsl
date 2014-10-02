@@ -166,7 +166,7 @@
     <div class="portal-nav portlet-content">
         <ul data-role="listview" class="up-portal-nav">
             <xsl:for-each select="//navigation/tab">
-                <xsl:if test="@name != '_favorite' and (@type='regular' or @type='favorite_collection')">
+                <xsl:if test="@type='regular' or @type='favorite_collection'">
                     <li data-role="list-divider">
                         <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
                     </li>
