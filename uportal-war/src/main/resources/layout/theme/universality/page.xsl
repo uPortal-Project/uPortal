@@ -124,7 +124,7 @@
             };
             up.Backbone = Backbone.noConflict();
             fluid = null;
-            fluid_1_4 = null;
+            fluid_1_5 = null;
         </script>
         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
         <xsl:for-each select="/layout/header/channel-header">
