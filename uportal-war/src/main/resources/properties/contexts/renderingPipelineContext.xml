@@ -162,7 +162,7 @@
                             </property>
                             <property name="groupToSkinMap">
                                 <map>
-                                    <entry key="pags.studends" value="students" />
+                                    <entry key="pags.students" value="students" />
                                     <entry key="pags.staff" value="staff" />
                                     <entry key="pags.faculty" value="staff" />
                                 </map>
