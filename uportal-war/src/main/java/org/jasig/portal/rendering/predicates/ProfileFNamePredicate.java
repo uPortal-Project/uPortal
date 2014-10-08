@@ -5,6 +5,8 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class ProfileFNamePredicate
     implements Predicate<HttpServletRequest> {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     // auto-wired
     private IUserInstanceManager userInstanceManager;
@@ -33,9 +37,22 @@ public class ProfileFNamePredicate
 
         final String profileFName = userInstance.getPreferencesManager().getUserProfile().getProfileFname();
 
+        // used for logging
+        final String username = userInstance.getPerson().getUserName();
+
         if (profileFNameToMatch.equals(profileFName)) {
+
+            logger.debug("User {} does have profile with matching fname {}.",
+                    username,
+                    profileFName );
+
             return true;
         }
+
+        logger.debug("Request for user {} presents profile fname {} which does not match configured profile fname {}.",
+                username,
+                profileFName,
+                profileFNameToMatch);
 
         return false;
     }

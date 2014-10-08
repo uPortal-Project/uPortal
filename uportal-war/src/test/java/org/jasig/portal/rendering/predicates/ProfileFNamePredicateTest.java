@@ -2,6 +2,7 @@ package org.jasig.portal.rendering.predicates;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.Before;
@@ -32,6 +33,8 @@ public class ProfileFNamePredicateTest {
 
     @Mock private IUserInstance userInstance;
 
+    @Mock private IPerson person;
+
     @Mock private IUserPreferencesManager userPreferencesManager;
 
     @Mock private IUserProfile userProfile;
@@ -44,10 +47,15 @@ public class ProfileFNamePredicateTest {
         initMocks(this);
 
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
+
+        when(userInstance.getPerson()).thenReturn(person);
+
         when(userInstance.getPreferencesManager()).thenReturn(userPreferencesManager);
         when(userPreferencesManager.getUserProfile()).thenReturn(userProfile);
 
         when(userProfile.getProfileFname()).thenReturn("exampleUserProfileFname");
+
+        when(person.getUserName()).thenReturn("exampleUserName");
 
         predicate = new ProfileFNamePredicate();
         predicate.setUserInstanceManager(userInstanceManager);
