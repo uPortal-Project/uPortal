@@ -20,6 +20,8 @@
 package org.jasig.portal.rendering;
 
 import com.google.common.base.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.servlet.ServletException;
@@ -38,6 +40,8 @@ import java.io.IOException;
 public class BranchingRenderingPipeline
     implements IPortalRenderingPipeline {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     // dependency-injected
     private Predicate<HttpServletRequest> predicate;
 
@@ -55,8 +59,10 @@ public class BranchingRenderingPipeline
         // render either the true or false pipe, depending on the trueness or falseness of the predicate
 
         if (predicate.apply(request)) {
+            logger.trace("Branching to the true pipe.");
             truePipe.renderState(request, response);
         } else {
+            logger.trace("Branching to the false pipe.");
             falsePipe.renderState(request, response);
         }
 
