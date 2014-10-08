@@ -4,6 +4,8 @@ import com.google.common.base.Predicate;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.UrlState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 public class FocusedOnOnePortletPredicate
     implements Predicate<HttpServletRequest> {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     // auto-wired.
     private IUrlSyntaxProvider urlSyntaxProvider;
 
@@ -24,12 +28,26 @@ public class FocusedOnOnePortletPredicate
 
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
 
+        if (null == portalRequestInfo) {
+            logger.warn("Portal request info was not available for this request, " +
+                    "so assuming that it does not represent focus on one portlet.");
+            // False when portalRequestInfo is null because unknown portal state is not
+            // focused-on-one-portlet portal state.
+            return false;
+        }
+
+        final UrlState urlState = portalRequestInfo.getUrlState();
+
         // true when there is a portal request and that request is not for a portal in NORMAL state
         // i.e. portal is in some other state, like Maximized or Exclusive or Detached.
-        // false otherwise. False when portalRequestInfo is null because unknown portal state is not
-        // focused-on-one-portlet portal state.
-        return (null != portalRequestInfo &&
-                ! (UrlState.NORMAL.equals(portalRequestInfo.getUrlState())));
+        // false otherwise.
+        final boolean doesRequestFocusOnOnePortlet = (! (UrlState.NORMAL.equals(urlState)));
+
+        logger.debug("Determined request with UrlState {} {} focus on one portlet.",
+                urlState,
+                doesRequestFocusOnOnePortlet ? "does" : "does not");
+
+        return doesRequestFocusOnOnePortlet;
     }
 
     @Autowired
