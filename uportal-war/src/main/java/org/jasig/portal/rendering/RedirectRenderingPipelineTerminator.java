@@ -1,5 +1,7 @@
 package org.jasig.portal.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
@@ -17,6 +19,8 @@ import java.io.IOException;
 public class RedirectRenderingPipelineTerminator
     implements IPortalRenderingPipeline {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * Path to which terminator will redirect.
      */
@@ -30,6 +34,8 @@ public class RedirectRenderingPipelineTerminator
             throw new IllegalStateException("RedirectRenderingPipelineTerminator must be configured " +
                     "with path to which to redirect.");
         }
+
+        logger.trace("Redirecting to {} .", this.redirectTo);
 
         response.sendRedirect(this.redirectTo);
         
