@@ -46,8 +46,7 @@ public class BranchingRenderingPipelineTest {
 
     @Mock private HttpServletResponse response;
 
-    @Mock
-    private IPortalRenderingPipeline truePipe;
+    @Mock private IPortalRenderingPipeline truePipe;
 
     @Mock private IPortalRenderingPipeline falsePipe;
 
