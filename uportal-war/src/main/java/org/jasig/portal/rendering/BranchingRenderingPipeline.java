@@ -82,4 +82,11 @@ public class BranchingRenderingPipeline
     public void setFalsePipe(IPortalRenderingPipeline falsePipe) {
         this.falsePipe = falsePipe;
     }
+
+    @Override
+    public String toString() {
+        return "BranchingRenderingPipeline which considering predicate [" + this.predicate +
+                "] proceeds down pipe [" + this.truePipe + "] when the predicate is true and proceeds down pipe [" +
+                this.falsePipe + "] when the predicate is false.";
+    }
 }

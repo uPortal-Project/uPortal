@@ -105,5 +105,23 @@ public class BranchingRenderingPipelineTest {
         verifyZeroInteractions(truePipe);
     }
 
+    /**
+     * Test that BranchingRenderingPipeline has a friendly toString() implementation.
+     */
+    @Test
+    public void hasFriendlyToString() {
+
+        when(predicate.toString()).thenReturn("String representation of the predicate.");
+        when(truePipe.toString()).thenReturn("String representation of truePipe.");
+        when(falsePipe.toString()).thenReturn("String representation of falsePipe.");
+
+        final String friendlyToString = "BranchingRenderingPipeline which considering predicate " +
+                "[String representation of the predicate.]" +
+                " proceeds down pipe [String representation of truePipe.] when the predicate is true" +
+                " and proceeds down pipe [String representation of falsePipe.] when the predicate is false.";
+
+        assertEquals(friendlyToString, branchingRenderingPipeline.toString());
+    }
+
 
 }
