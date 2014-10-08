@@ -54,4 +54,8 @@ public class FocusedOnOnePortletPredicate
     public void setUrlSyntaxProvider(IUrlSyntaxProvider urlSyntaxProvider) {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
+
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
 }

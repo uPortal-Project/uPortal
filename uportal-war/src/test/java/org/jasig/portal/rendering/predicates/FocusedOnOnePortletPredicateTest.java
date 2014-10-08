@@ -10,6 +10,7 @@ import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -103,6 +104,13 @@ public class FocusedOnOnePortletPredicateTest {
         when(this.syntaxProvider.getPortalRequestInfo(mockRequest)).thenReturn(null);
 
         assertFalse(predicate.apply(this.mockRequest));
+
+    }
+
+    @Test
+    public void hasFriendlyToString() {
+
+        assertEquals("FocusedOnOnePortletPredicate", predicate.toString());
 
     }
 
