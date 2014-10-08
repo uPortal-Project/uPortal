@@ -11,6 +11,7 @@ import org.mockito.Mock;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
@@ -88,6 +89,15 @@ public class ProfileFNamePredicateTest {
         predicate.setProfileFNameToMatch("willNotFindThis");
 
         assertFalse( predicate.apply(request) );
+
+    }
+
+    @Test
+    public void hasFriendlyToString() {
+
+        predicate.setProfileFNameToMatch("someProfile");
+
+        assertEquals("Predicate: true where profile fname is someProfile.", predicate.toString());
 
     }
 

@@ -68,4 +68,9 @@ public class ProfileFNamePredicate
         this.profileFNameToMatch = profileFNameToMatch;
     }
 
+    @Override
+    public String toString() {
+        return "Predicate: true where profile fname is " + this.profileFNameToMatch + ".";
+    }
+
 }
