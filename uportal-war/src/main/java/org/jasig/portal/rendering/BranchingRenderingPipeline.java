@@ -59,10 +59,10 @@ public class BranchingRenderingPipeline
         // render either the true or false pipe, depending on the trueness or falseness of the predicate
 
         if (predicate.apply(request)) {
-            logger.trace("Branching to the true pipe.");
+            logger.trace("Branching to the true pipe [{}].", truePipe);
             truePipe.renderState(request, response);
         } else {
-            logger.trace("Branching to the false pipe.");
+            logger.trace("Branching to the false pipe [{}].", falsePipe);
             falsePipe.renderState(request, response);
         }
 
