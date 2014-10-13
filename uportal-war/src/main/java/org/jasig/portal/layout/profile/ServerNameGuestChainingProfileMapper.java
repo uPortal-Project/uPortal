@@ -99,4 +99,10 @@ public class ServerNameGuestChainingProfileMapper implements IProfileMapper, Ini
 		this.authorizedServerNames = authorizedServerNames;
 	}
 
+    @Override
+    public String toString() {
+        return "ServerNameGuestChainingProfileMapper defaulting to [" + this.defaultProfileName +
+                "] with sub-mappers [" + this.subMappers + "].";
+    }
+
 }
