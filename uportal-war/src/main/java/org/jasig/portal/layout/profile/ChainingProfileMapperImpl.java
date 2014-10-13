@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
@@ -87,6 +89,14 @@ public final class ChainingProfileMapperImpl implements IProfileMapper {
                 subMappers, defaultProfileName);
 
         return defaultProfileName;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+            .append("subMappers", subMappers)
+            .append("defaultProfileName", defaultProfileName)
+            .toString();
     }
 
 }
