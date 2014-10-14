@@ -20,6 +20,7 @@
 package org.jasig.portal.portlet.container.cache;
 
 import javax.portlet.CacheControl;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -34,7 +35,18 @@ public class CacheControlImpl implements CacheControl {
     // PLT.22.1 cache scope is assumed private by default
     private boolean publicScope = false;
     private boolean useCachedContent = false;
-    
+
+    /**
+     * Reset the cache control settings to their default values.
+     * @param httpServletRequest HttpServletRequest
+     */
+    public void resetProperties(HttpServletRequest httpServletRequest) {
+        setETag(httpServletRequest.getHeader("If-None-Match"));
+        setPublicScope(false);
+        setUseCachedContent(false);
+        setExpirationTime(0);
+    }
+
 	/* (non-Javadoc)
      * @see javax.portlet.CacheControl#getETag()
      */
