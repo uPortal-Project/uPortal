@@ -34,7 +34,7 @@ import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.layout.IProfileMapper;
+import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;

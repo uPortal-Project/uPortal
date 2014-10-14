@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.profile;
 
 import java.util.Collections;
 import java.util.List;

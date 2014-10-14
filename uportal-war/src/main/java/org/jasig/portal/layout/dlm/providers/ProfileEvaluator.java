@@ -28,7 +28,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.jasig.portal.layout.IProfileMapper;
+import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;

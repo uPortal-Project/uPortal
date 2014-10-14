@@ -31,9 +31,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.portlets.login.LoginPortletHelper;
 import org.jasig.portal.security.mvc.LoginController;
+import org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
