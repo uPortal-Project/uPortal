@@ -157,9 +157,14 @@ public class PortalPreAuthenticatedProcessingFilter
          * is useful.
          */
         if (loginPath.equals(currentPath)) {
-            // clear out the current security context so we can re-establish
-            // it once the new session is established
+
             SecurityContextHolder.clearContext();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
+                " so we can re-establish it once the new session is established.");
+            }
+
             this.doPortalAuthentication((HttpServletRequest)request);
             chain.doFilter(request, response);
         }
