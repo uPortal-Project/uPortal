@@ -184,6 +184,11 @@ public class PortalPreAuthenticatedProcessingFilter
         
         // otherwise, call the base class logic
         else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
+                        " so no uPortal-custom filtering.");
+            }
+
             super.doFilter(request, response, chain);
         }
         
