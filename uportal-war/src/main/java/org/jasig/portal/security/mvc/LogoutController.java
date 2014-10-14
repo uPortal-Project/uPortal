@@ -159,7 +159,10 @@ public class LogoutController implements InitializingBean {
             }
         }
 
-        // Send the user back to the guest page
+        if (log.isTraceEnabled()) {
+            log.trace("Redirecting to " + redirect + " to send the user back to the guest page.");
+        }
+
         final String encodedRedirectURL = response.encodeRedirectURL(redirect);
         response.sendRedirect(encodedRedirectURL);
     }
