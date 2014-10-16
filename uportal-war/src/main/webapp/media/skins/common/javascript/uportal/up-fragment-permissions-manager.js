@@ -254,7 +254,7 @@ var up = up || {};
             elementExtractor: function(that, link){
                 return $(link).parents(".up-portlet-wrapper"); 
             },
-            titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a").text(); },
+            titleExtractor: function(element){ return element.find(".up-portlet-wrapper-inner h2 a:eq(0)").text(); },
             selectors: {
                 formTitle: "h2"
             },
