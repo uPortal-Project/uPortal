@@ -219,10 +219,13 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         if (!portletRenderExecutionWorker.isRetrieved()) {
             final IPortletWindowId portletWindowId = portletRenderExecutionWorker.getPortletWindowId();
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-            this.logger.warn("Portlet worker started but never retrieved for: " + portletWindow
-                    + ": If random portlet fnames it may be users switching tabs before page is done rendering. "
-                    + "If repeatedly occurring with one portlet fname see "
-                    + "http://jasig.275507.n4.nabble.com/Portlet-worker-started-but-never-retrieved-td4580698.html");
+            this.logger.warn("Portlet worker started but never retrieved for {}, worker {}."
+                    + " If random portlet fnames it may be users switching tabs before page is done rendering"
+                    + " (would see separate log message with java.net.SocketException on socket write)."
+                    + " If repeatedly occurring with one portlet fname your theme layout xsl may not be including"
+                    + " a portlet present in your layout xml files (see"
+                    + " http://jasig.275507.n4.nabble.com/Portlet-worker-started-but-never-retrieved-td4580698.html)",
+                    portletWindow, portletRenderExecutionWorker);
             
             try {
                 portletRenderExecutionWorker.get(0);
@@ -532,8 +535,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         try {
             resourceWorker.get(timeout);
 		} catch (Exception e) {
-			//log the exception
-			this.logger.error("resource worker failed with exception", e);
+			// Log the exception but not this thread's stacktrace. The portlet worker has already logged its stack trace
+			this.logger.error("resource worker {} failed with exception {}", resourceWorker, e.toString());
 			// render generic serveResource error
 			try {
 				if(!response.isCommitted()) {
@@ -687,7 +690,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
             catch (Exception e1) {
                 logger.error("Failed to render error portlet for: " + portletWindowId, e1);
-                return "Error Portlet Unavailable. Please contact your portal adminstrators.";
+                return "Error Portlet Unavailable. Please contact your portal administrators.";
             }
 		}
     }
@@ -798,7 +801,17 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         return defaultPortletUrl;
     }
-    
+
+    /**
+     * This method handles portlets that are slow to warm up. The default config multiplies the portlet's
+     * configured timeout by 20 the first 5 times it executes. The key is the portlet descriptor so even if you
+     * have the same portlet (web proxy for example) published 20 times only the first 5 renders of ANY WPP
+     * will get the extra time.
+     * @param portletDefinition
+     * @param request
+     * @param timeout
+     * @return
+     */
     protected final long getModifiedTimeout(IPortletDefinition portletDefinition, HttpServletRequest request, long timeout) {
         final IPortletDescriptorKey portletDescriptorKey = portletDefinition.getPortletDescriptorKey();
         final AtomicInteger counter = this.executionCount.get(portletDescriptorKey);
