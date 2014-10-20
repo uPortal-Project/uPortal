@@ -70,7 +70,7 @@ public interface IPortletType extends IPortalData {
 	/**
 	 * Set the description for this channel type
 	 * 
-	 * @param description
+	 * @param descr
 	 */
 	public void setDescription(String descr);
 
@@ -79,7 +79,7 @@ public interface IPortletType extends IPortalData {
 	 * type.  This CPD will be used to determine configuration options for 
 	 * channels of this type.
 	 * 
-	 * @param ChannelPublishingDocument URI
+	 * @param cpdUri URI
 	 */
 	public void setCpdUri(String cpdUri);
 
