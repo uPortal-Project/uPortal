@@ -713,7 +713,7 @@ public class SearchPortletController {
     /**
      * Since portlets don't have access to the portlet definition to create a useful search results link using
      * something like the portlet definition's title, post-process the link text and for those portlets whose
-     * type is present in the substitution set,replace the title with the portlet definition's title.
+     * type is present in the substitution set, replace the title with the portlet definition's title.
      * @param result Search results object (may be modified)
      * @param httpServletRequest HttpServletRequest
      * @param portletWindowId Portlet Window ID
