@@ -79,7 +79,7 @@ public interface IPortletType extends IPortalData {
 	 * type.  This CPD will be used to determine configuration options for 
 	 * channels of this type.
 	 * 
-	 * @param cpdUri Channel publishing definition URI
+	 * @param cpdUri ChannelPublishingDocument URI
 	 */
 	public void setCpdUri(String cpdUri);
 
