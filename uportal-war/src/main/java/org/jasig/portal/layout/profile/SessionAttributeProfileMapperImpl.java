@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.portal.security.IPerson;
 
 import org.slf4j.Logger;
@@ -128,9 +130,10 @@ public class SessionAttributeProfileMapperImpl
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " which considers session attribute [" + this.attributeName +
-                "] as key to mappings [" + this.mappings +
-                "], falling back on default [" + this.defaultProfileName + "] .";
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                     .append("attributeName", this.attributeName)
+                     .append("mappings", this.mappings)
+                     .append("defaultProfileName", this.defaultProfileName).toString();
     }
 
 }
