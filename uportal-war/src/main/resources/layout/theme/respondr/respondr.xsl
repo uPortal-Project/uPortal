@@ -358,24 +358,16 @@
 <!-- 
  | YELLOW
  | This template renders the tabs at the top of the page.
+ | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
  -->
-<xsl:template name="footer.legal">
-    <footer class="portal-footer-legal" role="contentinfo">
-        <div class="container-fluid">
-            <div class="portal-power">
-                <h2><a href="http://www.jasig.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a></h2>
-                <ul>
-                    <li><a href="http://www.jasig.org/" target="_blank">Jasig.org</a></li>
-                    <li><a href="http://www.jasig.org/uportal" target="_blank">uPortal.org</a></li>
-                    <li><a href="http://www.jasig.org/uportal/download" target="_blank">Download</a></li>
-                    <li><a href="http://www.jasig.org/uportal/community" target="_blank">Community</a></li>
-                    <li><a href="http://www.opentracker.net/article/how-write-website-privacy-policy" target="_blank">Privacy Policy</a></li>
-                    <li><a href="http://wiki.jasig.org/display/UPM40/Accessibility" target="_blank">Accessibility</a></li>
-                </ul>
-                <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
-            </div>
-        </div>
-    </footer>
+<xsl:template name="footer.second">
+    <xsl:if test="//region[@name='footer-second']/channel">
+        <footer class="portal-footer-legal" role="contentinfo">
+            <xsl:for-each select="//region[@name='footer-second']/channel">
+                <xsl:call-template name="regions.portlet.decorator" />
+            </xsl:for-each>
+        </footer>
+    </xsl:if>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -740,7 +732,7 @@
                 </div>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <xsl:call-template name="footer.nav" />
-                <xsl:call-template name="footer.legal" />
+                <xsl:call-template name="footer.second" />
                 <xsl:call-template name="region.page-bottom" />
                 <xsl:call-template name="region.hidden-bottom" />
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
