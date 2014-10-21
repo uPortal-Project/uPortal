@@ -250,13 +250,6 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         //  Create the user's session
         HttpSession s = request.getSession(true);
 
-        final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
-        if (requestedProfile != null) {
-            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
-        } else if(swapperProfile != null) {
-        	s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, swapperProfile);
-        }
-
         IPerson person = null;
         try {
             final HashMap<String, String> principals;
@@ -309,6 +302,13 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             request.getSession(false).invalidate();
             // Add the authentication failure
             request.getSession(true).setAttribute(LoginController.AUTH_ERROR_KEY, Boolean.TRUE);
+        }
+
+        final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
+        if (requestedProfile != null) {
+            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
+        } else if(swapperProfile != null) {
+            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, swapperProfile);
         }
     }
 
