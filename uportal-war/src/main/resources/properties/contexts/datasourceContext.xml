@@ -32,25 +32,24 @@
      
     <!--  base pooled datasource with common configuration -->
     <bean id="basePooledDataSource" class="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" abstract="true">
-    	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />
-        <property name="initialSize" value="1" />
-        <property name="minIdle" value="1" />
-        <property name="maxActive" value="50" />
-        <property name="maxIdle" value="50" />
-        <property name="maxWait" value="2000" />
-        
-        <property name="abandonWhenPercentageFull" value="70" />
-        <property name="removeAbandoned" value="true" />
-        <property name="removeAbandonedTimeout" value="300" />
-        
-        <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
-        
-        <property name="testWhileIdle" value="true" />
-        <property name="testOnBorrow" value="true" />
+    	<property name="baseObjectName" value="uPortal:section=DataSource,name=" />        
     </bean>
 
     <bean id="PortalDb" parent="basePooledDataSource">
         <qualifier value="PortalDb"/>
+        <property name="initialSize" value="${hibernate.initial.size}" />
+        <property name="minIdle" value="${hibernate.min.idle}" />
+        <property name="maxActive" value="${hibernate.max.active}" />
+        <property name="maxIdle" value="${hibernate.max.idle}" />
+        <property name="maxWait" value="${hibernate.max.wait}" />
+        <property name="abandonWhenPercentageFull" value="${hibernate.abandon.when.percentage.full}" />
+        <property name="removeAbandoned" value="${hibernate.remove.abandoned}" />
+        <property name="removeAbandonedTimeout" value="${hibernate.remove.abandoned.timeout}" />
+        <property name="jdbcInterceptors" value="${hibernate.jdbc.interceptors}"/>        
+        <property name="testWhileIdle" value="${hibernate.test.while.idle}" />
+        <property name="testOnBorrow" value="${hibernate.test.on.borrow}" />
+        
+        
         <property name="driverClassName" value="${hibernate.connection.driver_class}" />
         <property name="url" value="${hibernate.connection.url}" />
         <property name="username" value="${hibernate.connection.username}" />
@@ -69,6 +68,18 @@
      +-->
     <bean id="RawEventsDb" parent="basePooledDataSource">
         <qualifier value="RawEventsDb" />
+        <property name="initialSize" value="${RawEventsInitialSize}" />
+        <property name="minIdle" value="${RawEventsMinIdle}" />
+        <property name="maxActive" value="${RawEventsMaxActive}" />
+        <property name="maxIdle" value="${RawEventsMaxIdle}" />
+        <property name="maxWait" value="${RawEventsMaxWait}" />
+        <property name="abandonWhenPercentageFull" value="${RawEventsAbandonWhenPercentageFull}" />
+        <property name="removeAbandoned" value="${RawEventsRemoveAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${RawEventsRemoveAbandonedTimeout}" />
+        <property name="jdbcInterceptors" value="${RawEventsJdbcInterceptors}"/>        
+        <property name="testWhileIdle" value="${RawEventsTestWhileIdle}" />
+        <property name="testOnBorrow" value="${RawEventsTestOnBorrow}" />
+        
         <property name="driverClassName" value="${RawEventsJdbcDriver}" />
         <property name="url" value="${RawEventsJdbcUrl}" />
         <property name="username" value="${RawEventsJdbcUser}" />
@@ -80,6 +91,18 @@
      +-->
     <bean id="AggrEventsDb" parent="basePooledDataSource">
         <qualifier value="AggrEventsDb" />
+        <property name="initialSize" value="${AggrEventsInitialSize}" />
+        <property name="minIdle" value="${AggrEventsMinIdle}" />
+        <property name="maxActive" value="${AggrEventsMaxActive}" />
+        <property name="maxIdle" value="${AggrEventsMaxIdle}" />
+        <property name="maxWait" value="${AggrEventsMaxWait}" />
+        <property name="abandonWhenPercentageFull" value="${AggrEventsAbandonWhenPercentageFull}" />
+        <property name="removeAbandoned" value="${AggrEventsRemoveAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${AggrEventsRemoveAbandonedTimeout}" />
+        <property name="jdbcInterceptors" value="${AggrEventsJdbcInterceptors}"/>        
+        <property name="testWhileIdle" value="${AggrEventsTestWhileIdle}" />
+        <property name="testOnBorrow" value="${AggrEventsTestOnBorrow}" />
+
         <property name="driverClassName" value="${AggrEventsJdbcDriver}" />
         <property name="url" value="${AggrEventsJdbcUrl}" />
         <property name="username" value="${AggrEventsJdbcUser}" />
