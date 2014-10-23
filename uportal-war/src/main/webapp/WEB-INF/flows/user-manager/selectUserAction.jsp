@@ -47,7 +47,7 @@
             <div class="panel">
                 <div class="titlebar">
                     <h2 class="title">
-                        <a href="${ createUserUrl }"><spring:message code="create.new.user"/></a>
+                        <a href="${ createUserUrl }" class="btn btn-primary"><i class="fa fa-plus"></i> <spring:message code="create.new.user"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="create.new.user.description"/></h3>
                 </div>
@@ -55,7 +55,7 @@
             <div class="panel">
                 <div class="titlebar">
                     <h2 class="title">
-                        <a href="${ findUserUrl }"><spring:message code="find.user"/></a>
+                        <a href="${ findUserUrl }" class="btn btn-primary"><i class="fa fa-search"></i> <spring:message code="find.user"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="find.user.description"/></h3>
                 </div>
