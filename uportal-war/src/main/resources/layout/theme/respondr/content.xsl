@@ -530,8 +530,19 @@
               </xsl:with-param>
             </xsl:call-template>
           </xsl:variable>
+            <xsl:variable name="portletConfigureLightboxUrl">
+                <xsl:call-template name="portalUrl">
+                    <xsl:with-param name="url">
+                        <url:portal-url>
+                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                            <url:portlet-url state="EXCLUSIVE" mode="CONFIG" copyCurrentRenderParameters="true" />
+                        </url:portal-url>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:variable name="portletTitle" select="@title"/>
           <li>
-            <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
+            <a href="{$portletConfigureUrl}" data-lightbox-url="{$portletConfigureLightboxUrl}" data-lightbox-title="{upMsg:getMessage('configure', $USER_LANG)}: {$portletTitle}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><xsl:value-of select="upMsg:getMessage('configure', $USER_LANG)"/></a>
           </li>
         </xsl:if>
       </xsl:if>

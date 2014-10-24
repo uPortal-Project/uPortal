@@ -43,6 +43,10 @@
  | If a change is made to this section it MUST be copied to all other XSL files
  | used by the theme
 -->
+<!DOCTYPE stylesheet [
+<!ENTITY times "&#215;">
+]>
+
 <xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -258,6 +262,20 @@
                 </div>
             </div>
         </xsl:if>
+        <div id='config-lightbox' class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Configuration</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="loading"></div>
+                        <div class="modal-body-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </xsl:template>
 
     <!-- ========== TEMPLATE: CUSTOMIZE ========== -->
@@ -341,8 +359,19 @@
                             </xsl:with-param>
                         </xsl:call-template>
                     </xsl:variable>
+                    <xsl:variable name="portletConfigureLightboxUrl">
+                        <xsl:call-template name="portalUrl">
+                            <xsl:with-param name="url">
+                                <url:portal-url>
+                                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                                    <url:portlet-url state='EXCLUSIVE' mode="CONFIG" copyCurrentRenderParameters="true" />
+                                </url:portal-url>
+                            </xsl:with-param>
+                        </xsl:call-template>
+                    </xsl:variable>
                     <li class="hover-option">
-                        <a href="{$portletConfigureUrl}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><i class="fa fa-gears"></i></a>
+                        <xsl:variable name="portletTitle" select="@title"/>
+                        <a href="{$portletConfigureUrl}" data-lightbox-url="{$portletConfigureLightboxUrl}" data-lightbox-title="{upMsg:getMessage('configure', $USER_LANG)}: {$portletTitle}" title="{upMsg:getMessage('configure.portlet', $USER_LANG)}" class="up-portlet-control configure"><i class="fa fa-gears"></i></a>
                     </li>
                 </xsl:if>
             </ul>
