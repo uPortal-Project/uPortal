@@ -39,6 +39,7 @@ public class CacheControlImpl implements CacheControl {
     /**
      * Reset the cache control settings to their default values.
      * @param httpServletRequest HttpServletRequest
+     * @since 4.2
      */
     public void resetProperties(HttpServletRequest httpServletRequest) {
         setETag(httpServletRequest.getHeader("If-None-Match"));
