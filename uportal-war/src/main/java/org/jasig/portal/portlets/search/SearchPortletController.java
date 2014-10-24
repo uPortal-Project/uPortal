@@ -57,6 +57,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.search.PortletUrl;
@@ -122,6 +125,8 @@ public class SearchPortletController {
     // > 0 is higher priority, < 0 is lower priority.
     private Map<String, Integer> autocompleteResultTypeToPriorityMap = new HashMap<String, Integer>();
 
+    private Set<String> searchResultsLinkTextPortletTitleSubstitutionSet = new HashSet<>();
+
     // TODO: It would be better to revise the search event to have a set of ignored types and expect the
     // search event listeners to voluntarily ignore the search event if they are one of the ignored types (and
     // again filtering here in case the search event listener doesn't respect the ignore set).
@@ -173,6 +178,11 @@ public class SearchPortletController {
     @Resource(name = "searchAutocompleteIgnoreResultTypes")
     public void setAutocompleteIgnoreResultTypes(Set<String> autocompleteIgnoreResultTypes) {
         this.autocompleteIgnoreResultTypes = autocompleteIgnoreResultTypes;
+    }
+
+    @Resource(name = "searchResultsLinkNamePortletTitleSubstitutionSet")
+    public void setSearchResultsLinkTextPortletTitleSubstitutionSet(Set<String> portletTypeSet) {
+        this.searchResultsLinkTextPortletTitleSubstitutionSet = portletTypeSet;
     }
 
     /**
@@ -695,7 +705,27 @@ public class SearchPortletController {
         for (SearchResult result : portletSearchResults.getSearchResult()) {
             final String resultUrl = this.getResultUrl(httpServletRequest, result, portletWindowId);
             this.logger.debug("Created {} with from {}", resultUrl, result.getTitle());
+            modifySearchResultLinkTitle(result, httpServletRequest, portletWindowId);
             results.addPortletSearchResults(resultUrl, result);
+        }
+    }
+
+    /**
+     * Since portlets don't have access to the portlet definition to create a useful search results link using
+     * something like the portlet definition's title, post-process the link text and for those portlets whose
+     * type is present in the substitution set, replace the title with the portlet definition's title.
+     * @param result Search results object (may be modified)
+     * @param httpServletRequest HttpServletRequest
+     * @param portletWindowId Portlet Window ID
+     */
+    protected void modifySearchResultLinkTitle(SearchResult result, final HttpServletRequest httpServletRequest,
+                                               final IPortletWindowId portletWindowId) {
+        if (result.getType().size() > 0 && searchResultsLinkTextPortletTitleSubstitutionSet.contains(result.getType().get(0))) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+            final IPortletEntity portletEntity = portletWindow.getPortletEntity();
+            final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
+            String portletTitle = portletDefinition.getTitle();
+            result.setTitle(portletTitle);
         }
     }
     
