@@ -174,20 +174,27 @@ var up = up || {};
             that.options.selected = [];
             that.options.selected.push(key);
             selectionBasket.html(buildSingleSelectionSnippet(that, entity, true));
+
+            // Assign click event.
+            selectionBasket.find("a").click(function () {
+                that.options.selected = [];
+                selectionBasket.html(buildSingleSelectionSnippet(that, entity, false));
+                deselectEntity(that, $(this).attr("key"));
+            });//end:click.
             break;
         case true: // Multiple.
             // If 'key' does not exist within 'selected' arrary.
             if ($.inArray(key, that.options.selected) < 0) {
-                
+
                 // Add the key to our selected list.
                 that.options.selected.push(key);
-                
+
                 // Add an element to the user-visible select list.
                 li = $('<li><a href="javascript:;" key="' + entity.entityType + ":" + entity.id + '">' + entity.name + '</a><input type="hidden" name="groups" value="' + entity.entityType + ":" + entity.id + '"/></li>');
-                
+
                 // Append li to selectionBasket.
                 selectionBasket.find("ul").append(li);
-                
+
                 // Assign click event.
                 li.find("a").click(function () {
                     deselectEntity(that, $(this).attr("key"));
