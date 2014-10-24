@@ -17,30 +17,30 @@
     specific language governing permissions and limitations
     under the License.
 
---%>
+    --%>
 
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
+    <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<!-- START: VALUES BEING PASSED FROM BACKEND -->
-<portlet:actionURL var="queryUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
+    <!-- START: VALUES BEING PASSED FROM BACKEND -->
+    <portlet:actionURL var="queryUrl">
+    <portlet:param name="execution" value="${flowExecutionKey}" />
 </portlet:actionURL>
 
 <c:set var="n"><portlet:namespace/></c:set>
 
 <portlet:actionURL var="newPortletUrl" >
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="createPortlet"/>
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="createPortlet"/>
 </portlet:actionURL>
 <portlet:actionURL var="editPortletUrl" escapeXml="false">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="editPortlet"/>
-  <portlet:param name="portletId" value="PORTLETID"/>
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="editPortlet"/>
+    <portlet:param name="portletId" value="PORTLETID"/>
 </portlet:actionURL>
 <portlet:actionURL var="removePortletUrl" escapeXml="false">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="removePortlet"/>
-  <portlet:param name="portletId" value="PORTLETID"/>
+    <portlet:param name="execution" value="${flowExecutionKey}" />
+    <portlet:param name="_eventId" value="removePortlet"/>
+    <portlet:param name="portletId" value="PORTLETID"/>
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
@@ -56,60 +56,78 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
-    display: none;
-}
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
+    #${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+        display: none;
+    }
 
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
+    #${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
+        display: inline-block;
+    }
 
-#${n}portletBrowser table tr td a {
-    color: #428BCA;
-}
+    #${n}portletBrowser .dataTables_wrapper {
+        width: 100%;
+    }
 
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
+    #${n}portletBrowser .pagination {
+        margin: 0;
+    }
 
-#${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
+    #${n}portletBrowser .dataTables_info, #${n}portletBrowser .dataTables_length {
+        margin-top: 7px;
+    }
 
-#${n}portletBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
+    #${n}portletBrowser .dataTables_paginate .paginate_button {
+        margin: 2px;
+        color: #428bca;
+        cursor: pointer;
+        *cursor: hand;
+    }
+    #${n}portletBrowser .dataTables_paginate .paginate_active {
+        margin: 2px;
+        color: #000;
+    }
 
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}portletBrowser .datatable-search-view {
-    text-align:right;
-}
+    #${n}portletBrowser .dataTables_paginate .paginate_active:hover {
+        text-decoration: line-through;
+    }
+
+    #${n}portletBrowser table tr td a {
+        color: #428bca;
+    }
+
+    #${n}portletBrowser .dataTables-left {
+        float: left;
+    }
+
+    #${n}portletBrowser .dataTables-right {
+        float: right;
+    }
+
+    #${n}portletBrowser .column-filter-widget {
+        display: inline;
+        margin-right: 10px;
+    }
+
+    #${n}portletBrowser .column-filter-widget select {
+        width: 150px;
+    }
+
+    #${n}portletBrowser .filter-term {
+        display: block;
+        text-align: bottom;
+    }
+
+    #${n}portletBrowser .dataTables_length label {
+        font-weight: normal;
+    }
+    #${n}portletBrowser .datatable-search-view {
+        text-align: right;
+    }
 </style>
 
 <!-- Portlet -->
 <div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
+<<<<<<< Updated upstream
 
   <c:if test="${not empty statusMsgCode}">
       <div class="alert alert-success alert-dismissable">
@@ -136,28 +154,52 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <input type="text" class="portlet-search-input"/>
         </form>
       </div>
+=======
+    <c:if test="${not empty statusMsgCode}">
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
+            <c:if test="${not empty layoutURL}">
+                <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
+            </c:if>
+        </div>
+    </c:if>
+    <!-- Portlet Titlebar -->
+    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
+        <div class="fl-col-flex2 toolbar" role="toolbar">
+            <div class="fl-col">
+                <ul class="btn-group">
+                    <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
+                </ul>
+            </div>
+            <div class="fl-col fl-text-align-right datatable-search-view">
+                <form class="portlet-search-form form-inline" style="display:inline">
+                    <label><spring:message code="search"/></label>
+                    <input type="text" class="portlet-search-input form-control"/>
+                </form>
+            </div>
+        </div>
+        <div style="clear:both"></div>
+>>>>>>> Stashed changes
     </div>
-    <div style="clear:both"></div>
-  </div>
-
-  <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
-      <div>
-        <table id="${n}portletsList" class="portlet-table table table-bordered table-hover" style="width:100%;">
-          <thead>
-            <tr>
-              <th><spring:message code="name"/></th>
-              <th><spring:message code="type"/></th>
-              <th><spring:message code="state"/></th>
-              <th><spring:message code="edit"/></th>
-              <th><spring:message code="delete"/></th>
-              <th><spring:message code="category"/></th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-  </div> <!-- end: portlet-body -->
-
+    <!-- Portlet Content -->
+    <div class="fl-widget-content content portlet-content" role="main">
+        <div>
+            <table id="${n}portletsList" class="portlet-table table table-bordered table-hover" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th><spring:message code="name"/></th>
+                        <th><spring:message code="type"/></th>
+                        <th><spring:message code="state"/></th>
+                        <th><spring:message code="edit"/></th>
+                        <th><spring:message code="delete"/></th>
+                        <th><spring:message code="category"/></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div> <!-- end: portlet-body -->
 </div> <!-- end: portlet -->
 
 <script type="text/javascript">
@@ -231,39 +273,39 @@ up.jQuery(function() {
                     bVisible: false,
                     asSorting: [ "desc", "asc" ]
                 }  // Categories - hidden 
-            ],
-            fnInitComplete: function (oSettings) {
-                portletList_configuration.main.table.fnDraw();
-            },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: aoData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
+                ],
+                fnInitComplete: function (oSettings) {
+                    portletList_configuration.main.table.fnDraw();
+                },
+                fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
+                    oSettings.jqXHR = $.ajax({
+                        url: sUrl,
+                        data: aoData,
+                        dataType: "json",
+                        cache: false,
+                        type: oSettings.sServerMethod,
+                        success: function (json) {
+                            if (json.sError) {
+                                oSettings.oApi._fnLog(oSettings, 0, json.sError);
+                            }
 
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
+                            $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
+                            fnCallback(json);
+                        },
+                        error: function (xhr, error, thrown) {
+                            lib.handleError(xhr, error, thrown);
+                        }
+                    });
+                },
+                fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                    var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                    var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                    infoMessage = infoMessage.replace(/_START_/g, iStart).
+                    replace(/_END_/g, iEnd).
+                    replace(/_TOTAL_/g, iTotal).
+                    replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                    return infoMessage;
+                },
             // Add links to the proper columns after we get the data
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 // Create edit and delete links
@@ -271,19 +313,19 @@ up.jQuery(function() {
                 $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
                 aiExclude: [portletList_configuration.column.name,
-                                portletList_configuration.column.type,
-                                portletList_configuration.column.placeHolderForEditLink,
-                                portletList_configuration.column.placeHolderForDeleteLink]
+                portletList_configuration.column.type,
+                portletList_configuration.column.placeHolderForEditLink,
+                portletList_configuration.column.placeHolderForDeleteLink]
             }
         });
-    };
+};
 
-    initializeTable();
+initializeTable();
 
     // Hide the out of the box search and populate it with our text box
     $('#${n}portletBrowser .portlet-search-input').keyup(function(){
@@ -291,7 +333,8 @@ up.jQuery(function() {
     });
     // Adding formatting to sDom
     $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
+    $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
+    $(".column-filter-widget select").addClass("form-control");
 
 });
 </script>
