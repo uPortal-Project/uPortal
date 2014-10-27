@@ -143,13 +143,11 @@ up.lightboxConfig = up.lightboxConfig || (function(window, $) {
             url = $(evt.currentTarget).data('lightboxUrl');
             title = $(evt.currentTarget).data('lightboxTitle');
 
-            ajaxDoneFn = function() {
-                $(conf.selectors.loading).fadeOut();
-                $(conf.selectors.content).fadeIn();
-            };
-
             pageLoadedFn = function(content) {
                 processAjaxResponse(conf, content);
+
+                $(conf.selectors.loading).fadeOut();
+                $(conf.selectors.content).fadeIn();
             };
 
             pageLoadErrorFn = function() {
@@ -172,7 +170,6 @@ up.lightboxConfig = up.lightboxConfig || (function(window, $) {
             });
 
             promise.then(pageLoadedFn, pageLoadErrorFn);
-            promise.then(ajaxDoneFn);
 
             return false;
         });
