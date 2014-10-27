@@ -35,8 +35,8 @@ up.lightboxConfig = up.lightboxConfig || (function(window, $) {
      * we can do.  If the portlet being editing is maximized, it will try to
      * retain that.  Otherwise, it will switch back the normal state.
      *
-     * @param url
-     * @returns {*|XML|string|void|dojox.string.Builder}
+     * @param url the url to update
+     * @returns the updated URL as a string.
      */
     convertExclusiveUrlToPageUrl = function(url) {
         var newUrl, matches, currentPagePortletId, portletId, state;
