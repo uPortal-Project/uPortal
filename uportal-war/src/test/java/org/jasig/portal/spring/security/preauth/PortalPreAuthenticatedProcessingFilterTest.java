@@ -44,7 +44,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class PortalPreAuthenticationProcessingFilterTest {
+public class PortalPreAuthenticatedProcessingFilterTest {
     @InjectMocks PortalPreAuthenticatedProcessingFilter filter;
 
     @Mock FilterChain filterChain;
