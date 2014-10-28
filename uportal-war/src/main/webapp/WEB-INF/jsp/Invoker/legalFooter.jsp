@@ -22,15 +22,15 @@
 
 <div class="container-fluid">
     <div class="portal-power">
-        <h2><a href="http://www.jasig.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.jasig.org" title="Jasig.org - Open for Higher Education">Jasig</a> - ${pageContext.request.serverName}</h2>
+        <h2><a href="http://www.apereo.org/uportal" target="_blank">Powered by uPortal</a>, an open-source project by <a href="http://www.apereo.org" title="Apereo.org - Serving the Academic Mission">Apereo</a> - ${pageContext.request.serverName}</h2>
         <ul>
-            <li><a href="http://www.jasig.org/" target="_blank">Jasig.org</a></li>
-            <li><a href="http://www.jasig.org/uportal" target="_blank">uPortal.org</a></li>
-            <li><a href="http://www.jasig.org/uportal/download" target="_blank">Download</a></li>
-            <li><a href="http://www.jasig.org/uportal/community" target="_blank">Community</a></li>
+            <li><a href="http://www.apereo.org/" target="_blank">Apereo.org</a></li>
+            <li><a href="http://www.apereo.org/uportal" target="_blank">uPortal</a></li>
+            <li><a href="http://www.apereo.org/uportal/download" target="_blank">Download</a></li>
+            <li><a href="http://www.apereo.org/uportal/community" target="_blank">Community</a></li>
             <li><a href="http://www.opentracker.net/article/how-write-website-privacy-policy" target="_blank">Privacy Policy</a></li>
             <li><a href="http://wiki.jasig.org/display/UPM40/Accessibility" target="_blank">Accessibility</a></li>
         </ul>
-        <p><a href="http://www.jasig.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
+        <p><a href="http://www.apereo.org/uportal/about/license" title="uPortal" target="_blank">uPortal</a> is licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" title="Apache License, Version 2.0" target="_blank">Apache License, Version 2.0</a> as approved by the Open Source Initiative (OSI), an <a href="http://www.opensource.org/docs/osd" title="OSI-certified" target="_blank">OSI-certified</a> ("open") and <a href="http://www.gnu.org/licenses/license-list.html" title="Gnu/FSF-recognized" target="_blank">Gnu/FSF-recognized</a> ("free") license.</p>
     </div>
 </div>
