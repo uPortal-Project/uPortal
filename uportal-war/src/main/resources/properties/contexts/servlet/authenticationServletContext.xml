@@ -29,7 +29,9 @@
 
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-    
+
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
+
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.jasig.portal.security.mvc"/>

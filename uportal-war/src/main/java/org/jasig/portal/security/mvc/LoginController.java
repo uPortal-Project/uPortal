@@ -28,12 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.portlet.marketplace.IMarketplaceService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -62,6 +64,8 @@ public class LoginController {
     
     private IPortalUrlProvider portalUrlProvider;
     private IPersonManager personManager;
+    private IMarketplaceService marketplaceService;
+    private boolean enableMarketplaceCaching = false;
 
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
@@ -73,6 +77,15 @@ public class LoginController {
         this.portalUrlProvider = portalUrlProvider;
     }
 
+    @Autowired(required = false)
+    public void setMarketplaceService(final IMarketplaceService marketplaceService) {
+        this.marketplaceService = marketplaceService;
+    }
+
+    @Value("${org.jasig.portal.portlets.marketplacePortlet.enablePreLoading:false}")
+    public void setEnableMarketplaceCaching(final boolean enableMarketplaceCaching) {
+        this.enableMarketplaceCaching = enableMarketplaceCaching;
+    }
 
     /**
      * Process the incoming HttpServletRequest
@@ -147,6 +160,10 @@ public class LoginController {
             String attemptedUserName = request.getParameter("userName");
             if (attemptedUserName != null)
                 request.getSession(false).setAttribute(ATTEMPTED_USERNAME_KEY, request.getParameter("userName"));
+        }
+
+        if (enableMarketplaceCaching && marketplaceService != null) {
+            marketplaceService.loadMarketplaceEntriesFor(person);
         }
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);

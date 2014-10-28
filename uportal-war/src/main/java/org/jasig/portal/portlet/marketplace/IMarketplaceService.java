@@ -23,6 +23,8 @@ import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Marketplace service layer responsible for gathering and applying policy about what Marketplace entries
@@ -30,6 +32,21 @@ import java.util.Set;
  * @since uPortal 4.1
  */
 public interface IMarketplaceService {
+
+
+    /**
+     * Load the list of marketplace entries for a user.  Will load entries async.
+     * This method is primarily intended for seeding data.  Most impls shoul call
+     * browseableMarketplaceEntriesFor() instead.
+     *
+     * @param user the non-null user
+     * @return a Future that will resolve to a set of MarketplacePortletDefinition objects
+     *      the requested user has browse access to.
+     * @throws java.lang.IllegalArgumentException if user is null
+     * @since 4.2
+     */
+    Future<Set<MarketplacePortletDefinition>> loadMarketplaceEntriesFor(final IPerson user);
+
 
     /**
      * Return the Marketplace entries visible to the user.

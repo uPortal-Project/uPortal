@@ -33,11 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Service layer implementation for Marketplace.
@@ -64,9 +70,16 @@ public class MarketplaceService implements IMarketplaceService {
         this.authorizationService = service;
     }
 
-    @Override
-    public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
+    /**
+     * Cache of Username -> Future<Set<MarketplacePortletDefinition>
+     */
+    @Autowired
+    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
+    private Cache marketplaceUserPortletDefinitionCache;
 
+
+    @Async
+    public Future<Set<MarketplacePortletDefinition>> loadMarketplaceEntriesFor(final IPerson user) {
         final List<IPortletDefinition> allPortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
 
@@ -82,13 +95,35 @@ public class MarketplaceService implements IMarketplaceService {
 
         logger.trace("These portlet definitions {} are browseable by {}.", visiblePortletDefinitions, user);
 
-        return visiblePortletDefinitions;
+        Future<Set<MarketplacePortletDefinition>> result = new AsyncResult<>(visiblePortletDefinitions);
+        Element cacheElement = new Element(user.getUserName(), result);
+        marketplaceUserPortletDefinitionCache.put(cacheElement);
 
+        return result;
     }
 
     @Override
-    public Set browseableNonEmptyPortletCategoriesFor(final IPerson user) {
+    public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
+        Element cacheElement = marketplaceUserPortletDefinitionCache.get(user.getUserName());
+        Future<Set<MarketplacePortletDefinition>> future = null;
+        if (cacheElement == null) {
+            // not in cache, load it and cache the results...
+            future = loadMarketplaceEntriesFor(user);
+        } else {
+            future = (Future<Set<MarketplacePortletDefinition>>)cacheElement.getObjectValue();
+        }
 
+        try {
+            return future.get();
+
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error(e.getMessage(), e);
+            return new TreeSet<>();
+        }
+    }
+
+    @Override
+    public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user) {
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
         final Set<MarketplacePortletDefinition> browseablePortlets = browseableMarketplaceEntriesFor(user);
