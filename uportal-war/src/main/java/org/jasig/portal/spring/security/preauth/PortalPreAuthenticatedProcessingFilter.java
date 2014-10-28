@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl;
+import org.jasig.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
@@ -45,6 +45,7 @@ import org.jasig.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -53,11 +54,15 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  * PortalPreAuthenticatedProcessingFilter enables Spring Security 
  * pre-authentication in uPortal by returning the current IPerson object as
  * the user details.
+ *
+ * At login, fires ProfileSelectionEvent representing any runtime request for a profile selection
+ * (as in, profile request parameter or target profile indicated by the swapper manager).
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class PortalPreAuthenticatedProcessingFilter
+        extends AbstractPreAuthenticatedProcessingFilter {
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
     
     private String loginPath = "/Login";
@@ -68,6 +73,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     protected Authentication authenticationService = null;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
+
+    private ApplicationEventPublisher eventPublisher;
     
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -305,10 +312,21 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         }
 
         final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
+
         if (requestedProfile != null) {
-            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
+
+            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, requestedProfile, person, request);
+            this.eventPublisher.publishEvent(event);
+
         } else if(swapperProfile != null) {
-            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, swapperProfile);
+
+            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, swapperProfile, person, request);
+            this.eventPublisher.publishEvent(event);
+
+        } else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No requested or swapper profile requested so no profile selection event.");
+            }
         }
     }
 
@@ -366,4 +384,19 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         return (retHash);
     }
 
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher anApplicationEventPublisher) {
+        super.setApplicationEventPublisher(anApplicationEventPublisher);
+        this.eventPublisher = anApplicationEventPublisher;
+    }
+
+    /**
+     * Convenience method for sub-classes to access the event publisher without having to override this class
+     * implementation of setApplicationEventPublisher (which this class had to override in its parent class because
+     * that parent class failed to expose a getter method like this!)
+     * @return the Spring application event publisher.
+     */
+    protected final ApplicationEventPublisher getApplicationEventPublisher() {
+        return this.eventPublisher;
+    }
 }

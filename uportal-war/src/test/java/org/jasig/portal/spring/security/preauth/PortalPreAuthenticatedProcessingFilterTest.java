@@ -20,6 +20,8 @@ package org.jasig.portal.spring.security.preauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -30,15 +32,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
+import org.jasig.portal.security.IdentitySwapperManager;
+import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -57,11 +63,15 @@ public class PortalPreAuthenticatedProcessingFilterTest {
     @Mock Authentication auth;
     @Mock SecurityContext initialContext;
     @Mock AuthenticationManager authenticationManager;
+    @Mock ApplicationEventPublisher eventPublisher;
+    @Mock IdentitySwapperManager identitySwapperManager;
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         filter.setAuthenticationService(new org.jasig.portal.services.Authentication());
+        filter.setApplicationEventPublisher(eventPublisher);
+        filter.setIdentitySwapperManager(identitySwapperManager);
         filter.afterPropertiesSet();
        
         when(request.getSession(false)).thenReturn(session);
@@ -103,6 +113,42 @@ public class PortalPreAuthenticatedProcessingFilterTest {
         PortalPersonUserDetails details = (PortalPersonUserDetails) filter.getPreAuthenticatedPrincipal(request);
         
         assertEquals("testuser", details.getUsername());
+    }
+
+    @Test
+    public void testFiresProfileSelectionEvent() throws IOException, ServletException {
+        SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(request.getServletPath()).thenReturn("/Login");
+        when(request.getParameter(LoginController.REQUESTED_PROFILE_KEY)).thenReturn("someProfileKey");
+        filter.doFilter(request, response, filterChain);
+
+        final ProfileSelectionEvent expectedEvent =
+                new ProfileSelectionEvent(filter, "someProfileKey", person, request);
+        verify(this.eventPublisher).publishEvent(expectedEvent);
+    }
+
+    /**
+     * Test that when swapping to another identity while specifying a target profile, fires event for that profile.
+     */
+    @Test
+    public void testFiresSwappedToProfileSelectionEvent() throws IOException, ServletException {
+        SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(request.getServletPath()).thenReturn("/Login");
+        when(request.isRequestedSessionIdValid()).thenReturn(true);
+
+
+
+        when(identitySwapperManager.getTargetProfile(session)).thenReturn("targetProfileKey");
+        when(identitySwapperManager.getOriginalUsername(session)).thenReturn(null);
+        when(identitySwapperManager.getTargetUsername(session)).thenReturn("targetUsername");
+
+        filter.doFilter(request, response, filterChain);
+
+        final ProfileSelectionEvent expectedEvent =
+                new ProfileSelectionEvent(filter, "targetProfileKey", person, request);
+        verify(this.eventPublisher).publishEvent(expectedEvent);
     }
 
 }
