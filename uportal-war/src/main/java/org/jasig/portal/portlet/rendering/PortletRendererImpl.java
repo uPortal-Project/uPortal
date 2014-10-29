@@ -60,7 +60,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
@@ -543,10 +542,12 @@ public class PortletRendererImpl implements IPortletRenderer {
         enforceConfigPermission(httpServletRequest, portletWindow);
 
         if (cacheState.isUseBrowserData()) {
+            logger.trace("doServeResource-Reusing browser data");
             return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
         }
         
         if (cacheState.isUseCachedData()) {
+            logger.trace("doServeResource-Reusing cached data");
             return doResourceReplayCachedContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler, 0);
         }
         
@@ -594,10 +595,12 @@ public class PortletRendererImpl implements IPortletRenderer {
             }
             
             if (cacheState.isBrowserSetEtag()) {
+                logger.trace("doServeResource-useCachedContent, Reusing browser data");
                 //Browser-side content matches, send a 304
                 return doResourceReplayBrowserContent(portletWindow, httpServletRequest, cacheState, portletOutputHandler);
             }
-            
+            logger.trace("doServeResource-useCachedContent, Reusing cached data");
+
             return doResourceReplayCachedContent(portletWindow, httpServletRequest, cacheState, cachingPortletOutputHandler, executionTime);
         }
         

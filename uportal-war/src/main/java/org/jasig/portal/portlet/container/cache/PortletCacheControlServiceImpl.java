@@ -295,6 +295,7 @@ public class PortletCacheControlServiceImpl implements IPortletCacheControlServi
         }
         // No browser-set etag, use the cached etag value if there is cached data
         else if (cachedPortletData != null) {
+            logger.debug("setting cacheControl.eTag from cached data to {}", cachedPortletData.getEtag());
             cacheControl.setETag(cachedPortletData.getEtag());
         }
         
