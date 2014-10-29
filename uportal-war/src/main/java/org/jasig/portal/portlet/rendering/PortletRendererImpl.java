@@ -60,6 +60,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.ParameterMap;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
@@ -553,18 +554,9 @@ public class PortletRendererImpl implements IPortletRenderer {
         final CachingPortletResourceOutputHandler cachingPortletOutputHandler = new CachingPortletResourceOutputHandler(portletOutputHandler, cacheSizeThreshold);
 
         CacheControl cacheControl = cacheState.getCacheControl();
-
-        // UP-4264 We are about to invoke the portlet, so reset the eTag and other cacheControl properties to the
-        // default values per the portlet spec, not the previous potentially cached values. In particular we don't
-        // want the cached eTag value if the browser did not send an eTag, but also the portlet will be expecting
-        // the cache control properties to be at the default values (in case it sets them differently for some reason).
-        if (cacheControl instanceof CacheControlImpl) {
-            ((CacheControlImpl)cacheControl).resetProperties(httpServletRequest);
-        }
-
         //Wrap the cache control so it immediately sets the caching related response headers
         cacheControl = new HeaderSettingCacheControl(cacheControl, cachingPortletOutputHandler);
-
+        
         //Setup the request and response
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = new PortletResourceHttpServletResponseWrapper(httpServletResponse, portletWindow, portletOutputHandler, cacheControl);
