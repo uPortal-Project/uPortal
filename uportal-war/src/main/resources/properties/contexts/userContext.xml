@@ -52,22 +52,6 @@
 
     <bean id="profileMapper" class="org.jasig.portal.layout.ChainingProfileMapperImpl">
         <property name="defaultProfileName" value="default" />
-        <!--
-         | Use the following optional property to make profile choices "sticky."
-         | Here's how it works when stickySelection=true:
-         |
-         |   - If none of the subMappers returns a profile, you get the
-         |     profile identified by 'defaultProfileName' (same as ever)
-         |   - When any other profile is chosen by a subMapper, that choice is remembered
-         |   - Next time none of the subMappers returns a profile, you get the "sticky" choice
-         |   - You continue to get the same sticky choice until a new sticky choice is made, or...
-         |   - When the profile identified by defaultProfileName is
-         |     chosen by a subMapper, your sticky choice is cleared
-         |
-         | The default value is 'false'
-         |
-        <property name="stickySelection" value="true" />
-         +-->
         <property name="subMappers">
             <util:list>
                 <ref bean="sessionAttributeProfileMapper" />

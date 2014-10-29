@@ -21,14 +21,12 @@ package org.jasig.portal.layout;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.*;
 
-import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +47,6 @@ public class ChainingProfileMapperImplTest {
     @Mock HttpServletRequest request;
     @Mock IProfileMapper subMapper1;
     @Mock IProfileMapper subMapper2;
-    @Mock UserProfile userProfile;
-    @Mock Hashtable<Integer, UserProfile> profiles;
     
     @Mock IUserLayoutStore layoutStore;
     
@@ -63,8 +59,6 @@ public class ChainingProfileMapperImplTest {
         List<IProfileMapper> subMappers = new ArrayList<IProfileMapper>();
         subMappers.add(subMapper1);
         subMappers.add(subMapper2);
-        profiles.put(1, userProfile);
-        when(layoutStore.getUserProfileList(person)).thenReturn(profiles);
         mapper.setSubMappers(subMappers);
     }
     
@@ -85,7 +79,6 @@ public class ChainingProfileMapperImplTest {
     @Test
     public void testSecondProfile() {
         when(subMapper2.getProfileFname(person, request)).thenReturn("profile2");
-        when(layoutStore.getUserProfileList(person)).thenReturn(profiles);
         String fname = mapper.getProfileFname(person, request);
         assertEquals("profile2", fname);
     }
