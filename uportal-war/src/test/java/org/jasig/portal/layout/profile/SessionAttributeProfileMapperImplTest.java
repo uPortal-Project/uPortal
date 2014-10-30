@@ -25,47 +25,106 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpSession;
 
 public class SessionAttributeProfileMapperImplTest {
     
     SessionAttributeProfileMapperImpl mapper = new SessionAttributeProfileMapperImpl();
     @Mock IPerson person;
     @Mock HttpServletRequest request;
-    @Mock HttpSession session;
+    MockHttpSession session;
     
     @Before
     public void setUp() {
+
+        session = new MockHttpSession();
+
         MockitoAnnotations.initMocks(this);
         when(request.getSession(false)).thenReturn(session);
-        
-        mapper.setDefaultProfileName("profile");
+
         mapper.setAttributeName("key");
         
         Map<String,String> mappings = new HashMap<String,String>();
         mappings.put("key1", "fname1");
         mappings.put("key2", "fname2");
         mapper.setMappings(mappings);
-    }
-    
-    @Test
-    public void testDefault() {
-        final String fname = mapper.getProfileFname(person, request);
-        assertEquals("profile", fname);
+
+        // intentionally does not  mapper.setDefaultProfileName("profile");
+        // so that can test the no-default-set case
     }
 
+    /**
+     * Test that when aware of a desired profile selection,
+     * and that desire maps to a configured profile fname,
+     * then performs that mapping.
+     *
+     * This is the happy path, normal case.
+     */
     @Test
-    public void testMatchedProfile() {
-        when(session.getAttribute("key")).thenReturn("key2");
+    public void testMapsToProfileIndicatedByRequestedKey() {
+
+        // first the mapper handles a profile selection request, at user /Login
+
+        final ProfileSelectionEvent selectionEvent = new ProfileSelectionEvent(this, "key2", person, request);
+
+        mapper.onApplicationEvent(selectionEvent);
+
+        // then the mapper is subsequently consulted in the context of that session
+
+        // key2 --> fname2 in the mapping config injected in setUp().
+        assertEquals("fname2", mapper.getProfileFname(person, request));
+
+    }
+
+    /**
+     * Test that when not aware of a desired profile selection,
+     * returns the configured default profile name.
+     */
+    @Test
+    public void testDefault() {
+        mapper.setDefaultProfileName("defaultProfile");
+
         final String fname = mapper.getProfileFname(person, request);
-        assertEquals("fname2", fname);
+        assertEquals("defaultProfile", fname);
+    }
+
+    /**
+     * Test that when aware of a desired profile selection,
+     * but that desire does not map to a configured profile fname,
+     * then returns unconfigured default.
+     */
+    @Test
+    public void testMapsToNullWhenRequestedKeyNotMappedAndNoDefaultConfigured() {
+
+        final ProfileSelectionEvent selectionEvent = new ProfileSelectionEvent(this, "bogusKey", person, request);
+
+        mapper.onApplicationEvent(selectionEvent);
+
+        assertEquals(null, mapper.getProfileFname(person, request));
+
+    }
+
+    /**
+     * Test that when aware of a desired profile selection,
+     * but that desire does not map to a configured profile fname,
+     * then returns configured default.
+     */
+    @Test
+    public void testMapsToConfiguredDefaultWhenRequestedProfileKeyNotMapped() {
+
+        mapper.setDefaultProfileName("default_profile_fname");
+
+        final ProfileSelectionEvent selectionEvent = new ProfileSelectionEvent(this, "bogusKey", person, request);
+
+        mapper.onApplicationEvent(selectionEvent);
+
+        assertEquals("default_profile_fname", mapper.getProfileFname(person, request));
     }
 
 }

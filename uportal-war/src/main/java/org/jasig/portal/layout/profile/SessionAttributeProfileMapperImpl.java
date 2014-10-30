@@ -26,12 +26,26 @@ import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.security.IPerson;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
+import org.springframework.util.Assert;
+
 /**
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class SessionAttributeProfileMapperImpl implements IProfileMapper {
+public class SessionAttributeProfileMapperImpl
+    implements IProfileMapper, ApplicationListener<ProfileSelectionEvent> {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /**
+     * Since uPortal 4.2, instead of externally relying upon this key and hoping that a runtime
+     * SessionAttributeProfileMapperImpl is not configured to use a different key,
+     * consider instead firing a ProfileSelectionEvent and let this class store its data itself into the session.
+     */
     public static final String DEFAULT_SESSION_ATTRIBUTE_NAME = "profileKey";
 
     private Map<String,String> mappings = Collections.<String,String>emptyMap();
@@ -78,11 +92,35 @@ public class SessionAttributeProfileMapperImpl implements IProfileMapper {
         return defaultProfileName;
     }
 
+    /*
+     * Store the requested profile key into the user Session so that this SessionAttributeProfileMapperImpl
+     * can subsequently find it and use it to determine a profile mapping.
+     */
+    @Override
+    public void onApplicationEvent(final ProfileSelectionEvent event) {
+        final HttpSession session = event.getRequest().getSession(false);
+
+        Assert.notNull(session, "Cannot store a profile selection into a null session.");
+
+        session.setAttribute(this.attributeName, event.getRequestedProfileKey());
+
+        logger.trace("Stored desired profile key [{}] into session (at attribute [{}]).",
+                event.getRequestedProfileKey(), attributeName);
+
+        final String fnameTheKeyMapsTo = this.mappings.get( event.getRequestedProfileKey() );
+
+        if (null == fnameTheKeyMapsTo) {
+            logger.warn("The desired profile key {} has no mapping so will have no effect.",
+                    event.getRequestedProfileKey());
+        }
+
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + " which considers session attribute [" + this.attributeName +
                 "] as key to mappings [" + this.mappings +
-                "], falling back on default [" + this.defaultProfileName +"] .";
+                "], falling back on default [" + this.defaultProfileName + "] .";
     }
 
 }
