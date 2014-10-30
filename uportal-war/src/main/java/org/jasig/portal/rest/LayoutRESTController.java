@@ -24,8 +24,6 @@ import java.util.List;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
@@ -37,6 +35,7 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.rest.layout.LayoutPortlet;
+import org.jasig.portal.rest.layout.TabListOfNodes;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalUrlBuilder;
@@ -49,9 +48,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 @Controller
@@ -94,8 +95,14 @@ public class LayoutRESTController {
         this.portletDao = portletDao;
     }
     
+    /**
+     * A REST call to get a json feed of the current users layout
+     * @param request The servlet request. Utilized to get the users instance and eventually there layout
+     * @param tab The tab name of which you would like to filter; optional; if not provided, will return entire layout.
+     * @return json feed of the layout
+     */
     @RequestMapping(value="/layoutDoc", method = RequestMethod.GET)
-    public ModelAndView getRESTController(HttpServletRequest request, HttpServletResponse response) {
+    public ModelAndView getRESTController(HttpServletRequest request, @RequestParam(value = "tab", required = false) String tab) {
         final IPerson person = personManager.getPerson(request);
         List<LayoutPortlet> portlets = new ArrayList<LayoutPortlet>();
         
@@ -110,7 +117,21 @@ public class LayoutRESTController {
             final DistributedUserLayout userLayout = userLayoutStore.getUserLayout(person, profile);
             Document document = userLayout.getLayout();
             
-            NodeList portletNodes = document.getElementsByTagName("channel");
+            NodeList portletNodes = null;
+            if(tab != null) {
+               NodeList folders = document.getElementsByTagName("folder");
+               for (int i = 0; i < folders.getLength(); i++) {
+                   Node node = folders.item(i);
+                   if(tab.equalsIgnoreCase(node.getAttributes().getNamedItem("name").getNodeValue())) {
+                       TabListOfNodes tabNodes = new TabListOfNodes();
+                       tabNodes.addAllChannels(node.getChildNodes());
+                       portletNodes = tabNodes;
+                       break;
+                   }
+               }
+            } else {
+               portletNodes = document.getElementsByTagName("channel");
+            }
             for (int i = 0; i < portletNodes.getLength(); i++) {
                 try {
                     
@@ -121,19 +142,32 @@ public class LayoutRESTController {
                     portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
                     
                     IPortletDefinition def = portletDao.getPortletDefinitionByFname(attributes.getNamedItem("fname").getNodeValue());
+                    
+                    //get icons
                     IPortletDefinitionParameter iconParam = def.getParameter("iconUrl");
                     if (iconParam != null) {
-                        portlet.setIconUrl(iconParam.getValue());                        
+                        portlet.setIconUrl(iconParam.getValue());
                     }
                     
-                    // get the maximized URL for this portlet
-                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
-                    final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
-                    if (targetPortletWindowId != null) {
-                        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
-                        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+                    IPortletDefinitionParameter faIconParam = def.getParameter("faIcon");
+                    if(faIconParam != null) {
+                        portlet.setFaIcon(faIconParam.getValue());
                     }
-                    portlet.setUrl(portalUrlBuilder.getUrlString());
+                    
+                    //get alt max URL
+                    IPortletDefinitionParameter alternativeMaximizedLink = def.getParameter("alternativeMaximizedLink");
+                    if( alternativeMaximizedLink != null) {
+                    	portlet.setUrl(alternativeMaximizedLink.getValue());
+                    } else {
+	                    // get the maximized URL for this portlet
+	                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
+	                    final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
+	                    if (targetPortletWindowId != null) {
+	                        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
+	                        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+	                    }
+	                    portlet.setUrl(portalUrlBuilder.getUrlString());
+                    }
                     portlets.add(portlet);
 
                 } catch (Exception e) {

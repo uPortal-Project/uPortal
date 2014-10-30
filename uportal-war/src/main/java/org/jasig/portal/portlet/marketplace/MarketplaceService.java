@@ -21,7 +21,9 @@ package org.jasig.portal.portlet.marketplace;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheEntry;
 import net.sf.ehcache.Element;
+
 import org.apache.commons.lang3.Validate;
+import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
@@ -50,10 +52,17 @@ public class MarketplaceService implements IMarketplaceService {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     private IPortletCategoryRegistry portletCategoryRegistry;
+    
+    private IAuthorizationService authorizationService;
 
     @Autowired
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
     private Cache marketplacePortletDefinitionCache;
+    
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService service) {
+        this.authorizationService = service;
+    }
 
     @Override
     public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
@@ -156,6 +165,15 @@ public class MarketplaceService implements IMarketplaceService {
         }
         return (MarketplacePortletDefinition) element.getObjectValue();
     }
+    
+    @Override
+    public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname) {
+        IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        if(portletDefinition != null) {
+            return getOrCreateMarketplacePortletDefinition(portletDefinition);
+        }
+        return null;
+    }
 
     // Private stateless static utility methods below here
 
@@ -179,6 +197,15 @@ public class MarketplaceService implements IMarketplaceService {
                 || principal.hasPermission(IPermission.PORTAL_PUBLISH,
                 IPermission.PORTLET_MANAGER_ACTIVITY, targetId));
 
+    }
+    
+    @Override
+    @RequestCache
+    public boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition) {
+        Validate.notNull(user, "Cannot determine if null users can browse portlets.");
+        Validate.notNull(portletDefinition, "Cannot determine whether a user can browse a null portlet definition.");
+        //short-cut for guest user, it will always be false for guest, otherwise evaluate
+        return user.isGuest() ? false : authorizationService.canPrincipalSubscribe(AuthorizationPrincipalHelper.principalFromUser(user), portletDefinition.getPortletDefinitionId().getStringId());
     }
 
     // JavaBean property setters below here.

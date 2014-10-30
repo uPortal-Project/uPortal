@@ -19,6 +19,8 @@
 
 package org.jasig.portal.rest;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,9 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,10 +44,24 @@ import org.springframework.web.servlet.ModelAndView;
 public class SessionRESTController {
 
     private IPersonManager personManager;
+    private IPortalEventFactory portalEventFactory;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    
+    private String uPortalVersion;
+    
+    @Value("${org.jasig.portal.version}")
+    public void setVersion(String version) {
+        this.uPortalVersion = version;
+    }
     
     @Autowired(required = true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
+    }
+    
+    @Autowired
+    public void setPortalEventFactory(IPortalEventFactory pef) {
+        this.portalEventFactory = pef;
     }
 
     @RequestMapping(value="/session.json", method = RequestMethod.GET)
@@ -56,9 +76,18 @@ public class SessionRESTController {
         
         else {
             final IPerson person = personManager.getPerson(request);
+            final String key = portalEventFactory.getPortalEventSessionId(request, person);
             final Map<String, String> attributes = new HashMap<String, String>();
             attributes.put("userName", person.getUserName());
-            attributes.put("displayName", person.getFullName());
+            attributes.put("displayName", person.isGuest() ? "Guest" : person.getFullName());
+            attributes.put("sessionKey", person.isGuest() ? null: key); //only provide keys to non guest users
+            attributes.put("version", uPortalVersion);
+            try {
+                attributes.put("serverName", InetAddress.getLocalHost().getHostName());
+            } catch (UnknownHostException e) {
+                logger.warn("Wasn't able to get server information", e);
+                attributes.put("serverName", "unknown");
+            }
             mv.addObject("person", attributes);
         }
 

@@ -62,6 +62,17 @@ public interface IMarketplaceService {
      * @since uPortal 4.1
      */
     boolean mayBrowsePortlet(IPerson user, IPortletDefinition portletDefinition);
+    
+    /**
+     * Answers whether the given user may add the portlet to their layout
+     * @param user a non-null IPerson who might be permitted to add
+     * @param portletDefinition a non-null portlet definition
+     * @return true if permitted, false otherwise
+     * @throws IllegalArgumentException if user is null
+     * @throws IllegalArgumentException if portletDefinition is null
+     * @since uPortal 4.2
+     */
+    boolean mayAddPortlet(IPerson user, IPortletDefinition portletDefinition);
 
     /**
      * Provides the potentially empty non-null Set of featured portlets for this user.
@@ -83,5 +94,13 @@ public interface IMarketplaceService {
      * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition.
      */
     MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition);
+    
+    /**
+     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
+     * Implementations of IMarketplaceService may cache these objects to-taste.
+     * @param fname a valid fname of a portlet
+     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition. 
+     */
+    MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname);
 
 }
