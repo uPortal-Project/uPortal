@@ -78,4 +78,11 @@ public class SessionAttributeProfileMapperImpl implements IProfileMapper {
         return defaultProfileName;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " which considers session attribute [" + this.attributeName +
+                "] as key to mappings [" + this.mappings +
+                "], falling back on default [" + this.defaultProfileName +"] .";
+    }
+
 }
