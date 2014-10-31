@@ -351,27 +351,6 @@
 </xsl:template>
 <!-- ========================================================================= -->
 
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: FOOTER LEGAL ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | YELLOW
- | This template renders the tabs at the top of the page.
- | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
- -->
-<xsl:template name="footer.second">
-    <xsl:if test="//region[@name='footer-second']/channel">
-        <footer class="portal-footer-legal" role="contentinfo">
-            <xsl:for-each select="//region[@name='footer-second']/channel">
-                <xsl:call-template name="regions.portlet.decorator" />
-            </xsl:for-each>
-        </footer>
-    </xsl:if>
-</xsl:template>
-<!-- ========================================================================= -->
-
-
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PAGE DIALOGS ==================================== -->
 <!-- ========================================================================= -->
@@ -732,7 +711,7 @@
                 </div>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <xsl:call-template name="footer.nav" />
-                <xsl:call-template name="footer.second" />
+                <xsl:call-template name="region.footer.second" />
                 <xsl:call-template name="region.page-bottom" />
                 <xsl:call-template name="region.hidden-bottom" />
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->

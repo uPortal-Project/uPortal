@@ -360,4 +360,23 @@
         </xsl:if>
     </xsl:template>
 
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: FOOTER SECOND REGION (License links) =============== -->
+    <!-- ========================================================================= -->
+    <!--
+     | This template renders region intended to hold the license portlet.
+     | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
+     -->
+    <xsl:template name="region.footer.second">
+        <xsl:if test="//region[@name='footer-second']/channel">
+            <footer id="region-footer-second" role="contentinfo">
+                <xsl:for-each select="//region[@name='footer-second']/channel">
+                    <xsl:call-template name="regions.portlet.decorator" />
+                </xsl:for-each>
+            </footer>
+        </xsl:if>
+    </xsl:template>
+    <!-- ========================================================================= -->
+
 </xsl:stylesheet>
