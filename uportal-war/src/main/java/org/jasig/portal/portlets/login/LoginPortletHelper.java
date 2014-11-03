@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.security.mvc.LoginController;
+import org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;

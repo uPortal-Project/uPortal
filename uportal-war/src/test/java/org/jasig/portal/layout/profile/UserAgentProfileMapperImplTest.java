@@ -16,55 +16,63 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.profile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import static org.mockito.Mockito.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
+import org.jasig.portal.layout.profile.UserAgentProfileMapper;
+import org.jasig.portal.layout.profile.UserAgentProfileMapper.Mapping;
 import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class SessionAttributeProfileMapperImplTest {
-    
-    SessionAttributeProfileMapperImpl mapper = new SessionAttributeProfileMapperImpl();
+public class UserAgentProfileMapperImplTest {
+
+    UserAgentProfileMapper mapper = new UserAgentProfileMapper();
     @Mock IPerson person;
     @Mock HttpServletRequest request;
-    @Mock HttpSession session;
     
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(request.getSession(false)).thenReturn(session);
         
         mapper.setDefaultProfileName("profile");
-        mapper.setAttributeName("key");
+        mapper.setUserAgentHeader("agent");
         
-        Map<String,String> mappings = new HashMap<String,String>();
-        mappings.put("key1", "fname1");
-        mappings.put("key2", "fname2");
+        List<Mapping> mappings = new ArrayList<Mapping>();
+        Mapping mapping1 = new Mapping();
+        mapping1.setPattern(".*iPad.*");
+        mapping1.setProfileName("tablet");
+        Mapping mapping2 = new Mapping();
+        mapping2.setPattern(".*iOS.*");
+        mapping2.setProfileName("mobile");
+        mappings.add(mapping1);
+        mappings.add(mapping2);
         mapper.setMappings(mappings);
     }
-    
+
     @Test
     public void testDefault() {
         final String fname = mapper.getProfileFname(person, request);
         assertEquals("profile", fname);
     }
-
+    
     @Test
-    public void testMatchedProfile() {
-        when(session.getAttribute("key")).thenReturn("key2");
-        final String fname = mapper.getProfileFname(person, request);
-        assertEquals("fname2", fname);
+    public void testMatchProfile() {
+        when(request.getHeader("agent")).thenReturn("iPad iOS", "iPhone iOS");
+        
+        final String fname1 = mapper.getProfileFname(person, request);
+        assertEquals("tablet", fname1);
+        
+        final String fname2 = mapper.getProfileFname(person, request);
+        assertEquals("mobile", fname2);
     }
-
+    
 }

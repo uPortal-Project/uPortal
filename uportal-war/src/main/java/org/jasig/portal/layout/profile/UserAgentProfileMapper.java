@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.profile;
 
 import java.util.Collections;
 import java.util.List;
@@ -70,7 +70,7 @@ public class UserAgentProfileMapper implements IProfileMapper {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.IProfileMapper#getProfileFname(org.jasig.portal.security.IPerson, javax.servlet.http.HttpServletRequest)
+     * @see org.jasig.portal.layout.profile.IProfileMapper#getProfileFname(org.jasig.portal.security.IPerson, javax.servlet.http.HttpServletRequest)
      */
     @Override
     public String getProfileFname(IPerson person, HttpServletRequest request) {

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.groups.pags.IPersonTester;
-import org.jasig.portal.layout.IProfileMapper;
+import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;

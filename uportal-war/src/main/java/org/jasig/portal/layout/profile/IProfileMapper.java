@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.layout;
+package org.jasig.portal.layout.profile;
 
 import javax.servlet.http.HttpServletRequest;
 
