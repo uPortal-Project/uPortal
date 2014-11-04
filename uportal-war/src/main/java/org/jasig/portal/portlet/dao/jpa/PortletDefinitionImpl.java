@@ -117,7 +117,12 @@ class PortletDefinitionImpl implements IPortletDefinition {
     @JoinColumn(name = "PORTLET_PREFS_ID", nullable = false)
     @Fetch(FetchMode.JOIN)
     private final PortletPreferencesImpl portletPreferences;
-    
+
+    /**
+     * Name is used for admin tools, but will typically not be presented to end users.  It allows
+     * for situations where you need to define multiple similar portlets, all sharing a title. but
+     * still provides a way to distinguish between the portlets in admin tools.
+     */
     @Column(name = "PORTLET_NAME", length = 128, nullable = false, unique = true)
     private String name;
 
@@ -125,7 +130,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	@Column(name = "PORTLET_FNAME", length = 255, nullable = false)
 	@Type(type = "fname")
 	private String fname;
-	
+
     @Column(name = "PORTLET_TITLE", length = 128, nullable = false)
     @Index(name = "IDX_PORTLET_DEF__TITLE")
     private String title;

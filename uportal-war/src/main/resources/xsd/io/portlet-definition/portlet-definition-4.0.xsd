@@ -38,6 +38,9 @@
                 <xs:extension base="io:basePortalDataType40">
                     <xs:sequence>
                         <xs:element name="title" type="xs:string"/>
+                        <!-- 'title' is the value that will be displayed in the portlet chrome and in
+                            navigation menus.  'name' is intended primarily for internal or admin usage.
+                            'name' can be used to distinguish between similar portlets that may share a title. -->
                         <xs:element name="name" type="xs:string"/>
                         <xs:element name="fname" type="up:fname-type"/>
                         <xs:element name="desc" type="xs:string" minOccurs="0"/>
