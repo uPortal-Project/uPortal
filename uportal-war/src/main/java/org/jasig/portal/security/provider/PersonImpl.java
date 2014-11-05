@@ -100,19 +100,6 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns a <code>java.util.Enumeration</code> of all the attribute values.
-     * @return <code>java.util.Enumeration</code> of the attributes.
-     */
-    public Enumeration<List<Object>> getAttributes() {
-        if (this.userAttributes == null) {
-            return null;
-        }
-        
-        final Collection<List<Object>> values = this.userAttributes.values();
-        return Collections.enumeration(values);
-    }
-
-    /**
      * Provides access to this {@link org.jasig.portal.security.provider.PersonImpl}'s private copy of the attributes
      * attached to this {@link IPerson}.  Changes to the map will affect the attributes directly.  (Perhaps we'd rather
      * do a defensive copy?)

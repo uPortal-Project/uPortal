@@ -120,12 +120,6 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    */
   public void setAttributes (Map<String, List<Object>> attrs);
 
-  /**
-   * Gets all of the attributes associated with the user
-   * @return all of the attributes associated with the user
-   */
-  public Enumeration<List<Object>> getAttributes ();
-
   public Map<String,List<Object>> getAttributeMap();
   
   /**

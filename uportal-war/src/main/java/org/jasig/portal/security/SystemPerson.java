@@ -140,14 +140,6 @@ public final class SystemPerson implements IPerson {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#getAttributes()
-     */
-    @Override
-    public Enumeration<List<Object>> getAttributes() {
-        return null;
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.security.IPerson#getAttributeMap()
      */
     @Override

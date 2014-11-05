@@ -54,10 +54,6 @@ public class RestrictedPerson implements IPerson {
     public Enumeration<String> getAttributeNames() {
         return this.person.getAttributeNames();
     }
-
-    public Enumeration<List<Object>> getAttributes() {
-        return this.person.getAttributes();
-    }
     
     public Map<String,List<Object>> getAttributeMap() {
         return this.person.getAttributeMap();

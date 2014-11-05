@@ -1624,10 +1624,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         public void setAttributes(Map attrs) {
         }
 
-        public Enumeration getAttributes() {
-            return null;
-        }
-
         public Enumeration getAttributeNames() {
             return null;
         }
