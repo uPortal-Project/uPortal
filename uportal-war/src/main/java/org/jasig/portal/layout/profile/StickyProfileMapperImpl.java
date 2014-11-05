@@ -53,6 +53,9 @@ import java.util.Map;
  *
  * Subsequent or upstream profile mappers can fall back on a default, see also ChainingProfileMapperImpl.
  *
+ * Fails gracefully.  If persisted profile selection if any cannot be determined, logs and returns null indicating no
+ * available opinion about desired profile mapping.
+ *
  * Typically this mapper will be in the profile mapping chain within a ChainingProfileMapperImpl.
  *
  * @since uPortal 4.2
@@ -133,8 +136,13 @@ public class StickyProfileMapperImpl
         final String userName = person.getUserName();
         Validate.notNull(userName, "Cannot get profile fname for a null username.");
 
-        return this.profileSelectionRegistry.profileSelectionForUser(userName);
+        try {
+            return this.profileSelectionRegistry.profileSelectionForUser(userName);
+        } catch (Exception e) {
+            logger.error("Failed to read persisted profile selection for user " + userName + " if any.  Ignoring.", e);
+        }
 
+        return null; // default to no opinion if registry lookup failed.
     }
 
 

@@ -68,7 +68,7 @@ public class StickyProfileMapperImplTest {
     }
 
     /**
-     * Test that when the underlying service has a stored selection for a user, reflects that selection.
+     * Test that when the underlying registry has a stored selection for a user, reflects that selection.
      */
     @Test
     public void testReflectsStoredSelection() {
@@ -76,6 +76,33 @@ public class StickyProfileMapperImplTest {
         final String mappedFName = stickyMapper.getProfileFname(person, request);
 
         assertEquals("profileFNameFromRegistry", mappedFName);
+
+    }
+
+    /**
+     * Test that when the underlying registry has no stored selection for a user,
+     * maps to null (indicating no opinion about what profile ought to be mapped.)
+     */
+    @Test
+    public void testMapsToNullWhenNoStoredSelection() {
+
+        // over-ride the set-up specified behavior
+        when(registry.profileSelectionForUser("bobby")).thenReturn(null);
+
+        assertNull(stickyMapper.getProfileFname(person, request));
+    }
+
+    /**
+     * Test that when the underlying registry fails, translates this failure into a null mapping
+     * (indicating no available opinion about what profile ought to be mapped.)
+     */
+    @Test
+    public void testMapsToNullWhenUnderlyingRegistryThrows() {
+
+        // over-ride the set-up specified behavior
+        when(registry.profileSelectionForUser("bobby")).thenThrow(RuntimeException.class);
+
+        assertNull(stickyMapper.getProfileFname(person, request));
 
     }
 
