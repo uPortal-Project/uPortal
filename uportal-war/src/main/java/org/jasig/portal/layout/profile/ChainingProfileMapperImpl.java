@@ -35,6 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * subsequent mappers are not checked.  This implementation also supports a default profile fname;  If none of the
  * enclosed mappers returns a value, the specified default will be returned.
  *
+ * Fails gracefully.  This means that if a chained mapper fails,
+ * the error will be logged and ignored, with the chaining mapper continuing along the chain
+ * looking for a non-failing mapper or falling back on the default if there are no answering mappers, just as if the
+ * failing mapper had returned null indicating no opinion rather than throwing.
+ *
  * @author Jen Bourey, jennifer.bourey@gmail.com
  */
 public final class ChainingProfileMapperImpl implements IProfileMapper {
@@ -58,15 +63,23 @@ public final class ChainingProfileMapperImpl implements IProfileMapper {
         this.subMappers = Collections.unmodifiableList(subMappers);
     }
 
+
     @Override
     public String getProfileFname(IPerson person, HttpServletRequest request) {
 
         for (IProfileMapper mapper : subMappers) {
-            final String fname = mapper.getProfileFname(person, request);
-            if (fname != null) {
-                logger.debug("Profile mapper {} found profile fname={}", mapper, fname);
-                return fname;
+            try {
+                final String fname = mapper.getProfileFname(person, request);
+                if (fname != null) {
+                    logger.debug("Profile mapper {} found profile fname={}", mapper, fname);
+                    return fname;
+                }
+            } catch (final Exception mapperThrownException) {
+                logger.error("Profile mapper " + mapper + " threw on attempt to map profile.",
+                        mapperThrownException);
+                // ignore, treating the mapper as if it has no available opinion about the mapping
             }
+
         }
 
         logger.trace("None of the chained profile mappers [{}] mapped to a profile, " +

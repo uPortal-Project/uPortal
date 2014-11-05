@@ -85,4 +85,26 @@ public class ChainingProfileMapperImplTest {
         assertEquals("profile2", fname);
     }
 
+    /**
+     * Fails gracefully when one mapper fails, proceeding to the next mapper.
+     */
+    @Test
+    public void testFailsGracefullyProceedingToNextMapper() {
+        when(subMapper1.getProfileFname(person, request)).thenThrow(RuntimeException.class);
+        when(subMapper2.getProfileFname(person, request)).thenReturn("profile2");
+        String fname = mapper.getProfileFname(person, request);
+        assertEquals("profile2", fname);
+    }
+
+    /**
+     * Fails gracefully when the last mapper throws, falling back on the default.
+     */
+    @Test
+    public void testFailsGracefullyToDefaultWhenLastMapperThrows() {
+        when(subMapper2.getProfileFname(person, request)).thenThrow(RuntimeException.class);
+        String fname = mapper.getProfileFname(person, request);
+        // "profile" is the default profile name configured in setUp().
+        assertEquals("profile", fname);
+    }
+
 }
