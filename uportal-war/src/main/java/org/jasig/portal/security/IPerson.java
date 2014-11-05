@@ -30,7 +30,6 @@ import org.jasig.portal.IBasicEntity;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @version $Revision$
  */
 public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity, Serializable {
 
