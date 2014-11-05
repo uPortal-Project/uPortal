@@ -119,4 +119,11 @@ public class DynamicRenderingPipeline implements IPortalRenderingPipeline {
         this.logger.warn("No mediaType was specified in the pipeline output properties, defaulting to " + DEFAULT_MEDIA_TYPE);
         return DEFAULT_MEDIA_TYPE;
     }
+
+    @Override
+    public String toString() {
+        return "DynamicRenderingPipeline using url syntax provider [" + this.urlSyntaxProvider +
+                "] and wrapping pipeline component [" + this.pipeline +
+                "].";
+    }
 }
