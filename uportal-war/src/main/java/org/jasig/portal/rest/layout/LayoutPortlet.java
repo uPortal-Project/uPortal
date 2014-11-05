@@ -25,6 +25,7 @@ public class LayoutPortlet {
     private String description;
     private String url;
     private String iconUrl;
+    private String faIcon;
 
     public String getNodeId() {
         return nodeId;
@@ -65,6 +66,13 @@ public class LayoutPortlet {
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
     }
-    
+
+    public String getFaIcon() {
+        return faIcon;
+    }
+
+    public void setFaIcon(String faIcon) {
+        this.faIcon = faIcon;
+    }
 
 }
