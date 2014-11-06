@@ -39,7 +39,7 @@ public interface IMarketplaceService {
 
     /**
      * Load the list of marketplace entries for a user.  Will load entries async.
-     * This method is primarily intended for seeding data.  Most impls shoul call
+     * This method is primarily intended for seeding data.  Most impls should call
      * browseableMarketplaceEntriesFor() instead.
      *
      * @param user the non-null user
