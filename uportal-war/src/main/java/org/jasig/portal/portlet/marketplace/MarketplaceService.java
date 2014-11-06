@@ -18,13 +18,8 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheEntry;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.Validate;
@@ -46,12 +41,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -70,7 +62,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     private IPortletCategoryRegistry portletCategoryRegistry;
     
     private IAuthorizationService authorizationService;
-    private boolean enableMarketplaceCaching = false;
+    private boolean enableMarketplacePreloading = false;
 
     @Autowired
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
@@ -88,9 +80,9 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
     private Cache marketplaceUserPortletDefinitionCache;
 
-    @Value("${org.jasig.portal.portlets.marketplacePortlet.enablePreLoading:false}")
-    public void setEnableMarketplaceCaching(final boolean enableMarketplaceCaching) {
-        this.enableMarketplaceCaching = enableMarketplaceCaching;
+    @Value("${org.jasig.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
+    public void setLoadMarketplaceOnLogin(final boolean enableMarketplacePreloading) {
+        this.enableMarketplacePreloading = enableMarketplacePreloading;
     }
 
 
@@ -102,7 +94,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      */
     @Override
     public void onApplicationEvent(LoginEvent loginEvent) {
-        if (enableMarketplaceCaching) {
+        if (enableMarketplacePreloading) {
             IPerson person = loginEvent.getPerson();
             loadMarketplaceEntriesFor(person);
         }
@@ -114,7 +106,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         final List<IPortletDefinition> allPortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
 
-        final List<MarketplaceEntry> visiblePortletDefinitions = new ArrayList<>();
+        final Set<MarketplaceEntry> visiblePortletDefinitions = new HashSet<>();
 
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 

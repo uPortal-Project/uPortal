@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -26,7 +25,6 @@ import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
@@ -42,6 +40,11 @@ public interface IMarketplaceService {
      * This method is primarily intended for seeding data.  Most impls should call
      * browseableMarketplaceEntriesFor() instead.
      *
+     * Note:  Set is immutable since it is potentially shared between threads.  If
+     * the set needs mutability, be sure to consider the thread safety implications.
+     * No protections have been provided against modifying the MarketplaceEntry itself,
+     * so be careful when modifying the entities contained in the list.
+     *
      * @param user the non-null user
      * @return a Future that will resolve to a set of MarketplaceEntry objects
      *      the requested user has browse access to.
@@ -56,7 +59,7 @@ public interface IMarketplaceService {
      * Marketplace entries are visible to the user when the user enjoys permission for the
      * UP_PORTLET_SUBSCRIBE.BROWSE or UP_PORTLET_PUBLISH.MANAGE activity on the portlet entity.
      * @throws IllegalArgumentException when passed in user is null
-     * @since uPortal 4.1
+     * @since uPortal 4.2
      */
     ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user);
 

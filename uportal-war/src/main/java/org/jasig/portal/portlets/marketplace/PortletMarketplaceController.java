@@ -40,7 +40,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
