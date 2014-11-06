@@ -170,12 +170,4 @@ public final class SystemPerson implements IPerson {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#setEntityIdentifier(org.jasig.portal.EntityIdentifier)
-     */
-    @Override
-    public void setEntityIdentifier(EntityIdentifier ei) {
-        throw new UnsupportedOperationException();
-    }
-
 }

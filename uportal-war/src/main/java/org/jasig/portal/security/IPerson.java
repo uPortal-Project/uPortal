@@ -24,7 +24,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 
 /**
@@ -139,13 +138,6 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    */
   public boolean isGuest ();
 
-  /**
-   * Explicitly set the entity identifier
-   * The default implementation enforces a one time setting
-   * so that the value can't be changed once explicitly set.
-   * @param ei
-   */
-  public void setEntityIdentifier(EntityIdentifier ei);
 }
 
 

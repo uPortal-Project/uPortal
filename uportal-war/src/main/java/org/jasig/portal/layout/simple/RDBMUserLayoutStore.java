@@ -1639,9 +1639,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             return null;
         }
 
-        public void setEntityIdentifier(EntityIdentifier ei) {
-        }
-
         public String getName() {
             return null;
         }

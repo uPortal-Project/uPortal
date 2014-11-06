@@ -245,15 +245,6 @@ public class PersonImpl implements IPerson {
         return m_eid;
     }
 
-    /**
-     * One time set of the entity identifier
-     * @param ei
-     */
-    public void setEntityIdentifier(final EntityIdentifier ei) {
-        m_eid = ei;
-        entityIdentifierSet = true;
-    }
-
     /* (non-Javadoc)
     * @see java.security.Principal#getName()
     */
