@@ -74,7 +74,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     /**
-     * Cache of Username -> Future<Set<MarketplacePortletDefinition>
+     * Cache of Username -> Future<Set<MarketplaceEntry>
      */
     @Autowired
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
