@@ -29,7 +29,7 @@ import org.jasig.portal.security.ISecurityContext;
 /**
  * An IPerson object that wraps another IPerson
  * object and prevents access to the
- * underlying sercurity context.
+ * underlying security context.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
