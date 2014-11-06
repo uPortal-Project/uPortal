@@ -18,25 +18,35 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheEntry;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.lang3.Validate;
 import org.jasig.portal.concurrency.caching.RequestCache;
+import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +60,7 @@ import java.util.concurrent.Future;
  * @since uPortal 4.1
  */
 @Service
-public class MarketplaceService implements IMarketplaceService {
+public class MarketplaceService implements IMarketplaceService, ApplicationListener<LoginEvent> {
 
     public static String FEATURED_CATEGORY_NAME="Featured";
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -60,6 +70,7 @@ public class MarketplaceService implements IMarketplaceService {
     private IPortletCategoryRegistry portletCategoryRegistry;
     
     private IAuthorizationService authorizationService;
+    private boolean enableMarketplaceCaching = false;
 
     @Autowired
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
@@ -77,25 +88,51 @@ public class MarketplaceService implements IMarketplaceService {
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
     private Cache marketplaceUserPortletDefinitionCache;
 
+    @Value("${org.jasig.portal.portlets.marketplacePortlet.enablePreLoading:false}")
+    public void setEnableMarketplaceCaching(final boolean enableMarketplaceCaching) {
+        this.enableMarketplaceCaching = enableMarketplaceCaching;
+    }
+
+
+    /**
+     * Handle the portal LoginEvent.   If marketplace caching is enabled, will preload
+     * marketplace entries for the currently logged in user.
+     *
+     * @param loginEvent the login event.
+     */
+    @Override
+    public void onApplicationEvent(LoginEvent loginEvent) {
+        if (enableMarketplaceCaching) {
+            IPerson person = loginEvent.getPerson();
+            loadMarketplaceEntriesFor(person);
+        }
+    }
+
 
     @Async
-    public Future<Set<MarketplacePortletDefinition>> loadMarketplaceEntriesFor(final IPerson user) {
+    public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user) {
         final List<IPortletDefinition> allPortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
 
-        final Set<MarketplacePortletDefinition> visiblePortletDefinitions = new HashSet<>();
+        final List<MarketplaceEntry> visiblePortletDefinitions = new ArrayList<>();
 
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 
-            if ( mayBrowsePortlet(user, portletDefinition) ) {
+            if (mayBrowsePortlet(user, portletDefinition)) {
                 final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
-                visiblePortletDefinitions.add(marketplacePortletDefinition);
+                MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition);
+
+                // flag whether this use can add the portlet...
+                boolean canAdd = mayAddPortlet(user, portletDefinition);
+                entry.setCanAdd(canAdd);
+
+                visiblePortletDefinitions.add(entry);
             }
         }
 
         logger.trace("These portlet definitions {} are browseable by {}.", visiblePortletDefinitions, user);
 
-        Future<Set<MarketplacePortletDefinition>> result = new AsyncResult<>(visiblePortletDefinitions);
+        Future<ImmutableSet<MarketplaceEntry>> result = new AsyncResult<>(ImmutableSet.copyOf(visiblePortletDefinitions));
         Element cacheElement = new Element(user.getUserName(), result);
         marketplaceUserPortletDefinitionCache.put(cacheElement);
 
@@ -103,14 +140,14 @@ public class MarketplaceService implements IMarketplaceService {
     }
 
     @Override
-    public Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(final IPerson user) {
+    public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(final IPerson user) {
         Element cacheElement = marketplaceUserPortletDefinitionCache.get(user.getUserName());
-        Future<Set<MarketplacePortletDefinition>> future = null;
+        Future<ImmutableSet<MarketplaceEntry>> future = null;
         if (cacheElement == null) {
             // not in cache, load it and cache the results...
             future = loadMarketplaceEntriesFor(user);
         } else {
-            future = (Future<Set<MarketplacePortletDefinition>>)cacheElement.getObjectValue();
+            future = (Future<ImmutableSet<MarketplaceEntry>>)cacheElement.getObjectValue();
         }
 
         try {
@@ -118,7 +155,7 @@ public class MarketplaceService implements IMarketplaceService {
 
         } catch (InterruptedException | ExecutionException e) {
             logger.error(e.getMessage(), e);
-            return new TreeSet<>();
+            return ImmutableSet.of();
         }
     }
 
@@ -126,14 +163,14 @@ public class MarketplaceService implements IMarketplaceService {
     public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user) {
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final Set<MarketplacePortletDefinition> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
 
         final Set<PortletCategory> browseableCategories = new HashSet<PortletCategory>();
 
         // by considering only the parents of portlets browseable by this user,
         // categories containing zero browseable portlets are excluded.
-        for (final IPortletDefinition portletDefinition : browseablePortlets) {
-
+        for (final MarketplaceEntry entry : browseablePortlets) {
+            IPortletDefinition portletDefinition = entry.getMarketplacePortletDefinition();
             for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
 
                 final String categoryId = category.getId();
@@ -173,11 +210,11 @@ public class MarketplaceService implements IMarketplaceService {
     public Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user) {
         Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
 
-        final Set<MarketplacePortletDefinition> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
         final Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<>();
 
-        for (final IPortletDefinition portletDefinition : browseablePortlets) {
-
+        for (final MarketplaceEntry entry : browseablePortlets) {
+            IPortletDefinition portletDefinition = entry.getMarketplacePortletDefinition();
             for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
 
                 if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){

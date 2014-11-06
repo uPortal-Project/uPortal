@@ -53,16 +53,9 @@ public class MarketplaceRESTController {
     public ModelAndView marketplaceEntriesFeed(HttpServletRequest request) {
         final IPerson user = personManager.getPerson(request);
 
-        Set<MarketplacePortletDefinition> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user);
-        
-        List<MarketplaceEntry> rslt = new ArrayList<MarketplaceEntry>();
-        for (MarketplacePortletDefinition pdef : marketplaceEntries) {
-            MarketplaceEntry marketplaceEntry = new MarketplaceEntry(pdef);
-            marketplaceEntry.setCanAdd(marketplaceService.mayAddPortlet(user, pdef));
-            rslt.add(marketplaceEntry);
-        }
+        Set<MarketplaceEntry> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user);
 
-        return new ModelAndView("json", "portlets", rslt);
+        return new ModelAndView("json", "portlets", marketplaceEntries);
     }
     
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)

@@ -18,8 +18,11 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
@@ -45,7 +48,7 @@ public interface IMarketplaceService {
      * @throws java.lang.IllegalArgumentException if user is null
      * @since 4.2
      */
-    Future<Set<MarketplacePortletDefinition>> loadMarketplaceEntriesFor(final IPerson user);
+    Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user);
 
 
     /**
@@ -55,7 +58,7 @@ public interface IMarketplaceService {
      * @throws IllegalArgumentException when passed in user is null
      * @since uPortal 4.1
      */
-    Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(IPerson user);
+    ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user);
 
     /**
      * Return the potentially empty Set of portlet categories such that
