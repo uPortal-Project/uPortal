@@ -45,7 +45,7 @@ class AttributeDuplicatingPersonAttributesScript extends BaseGroovyScriptDaoImpl
     }
 
     @Override
-    Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(Map<String, List<Object>> userAttributes) {
+    public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(Map<String, List<Object>> userAttributes) {
         if (userAttributes?.get(keyToDuplicate)) {
             List<Object> attributeValues = userAttributes.get(keyToDuplicate);
             Map<String, List<Object>> newUserAttributes = new HashMap<> (userAttributes);
@@ -58,11 +58,4 @@ class AttributeDuplicatingPersonAttributesScript extends BaseGroovyScriptDaoImpl
         return userAttributes;
     }
 
-    void setKeyToDuplicate(String keyToDuplicate) {
-        this.keyToDuplicate = keyToDuplicate
-    }
-
-    void setDesiredNames(Set<String> desiredNames) {
-        this.desiredNames = desiredNames
-    }
 }
