@@ -138,7 +138,7 @@ public class PersonImpl implements IPerson {
     /**
      * Sets the specified attribute to a value.
      *
-     * Reference impementation checks for the setting of the username attribute
+     * Reference implementation checks for the setting of the username attribute
      * and updates the EntityIdentifier accordingly
      *
      * @param key Attribute's name
