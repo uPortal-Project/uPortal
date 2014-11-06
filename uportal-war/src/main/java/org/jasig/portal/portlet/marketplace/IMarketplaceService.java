@@ -43,7 +43,7 @@ public interface IMarketplaceService {
      * browseableMarketplaceEntriesFor() instead.
      *
      * @param user the non-null user
-     * @return a Future that will resolve to a set of MarketplacePortletDefinition objects
+     * @return a Future that will resolve to a set of MarketplaceEntry objects
      *      the requested user has browse access to.
      * @throws java.lang.IllegalArgumentException if user is null
      * @since 4.2
