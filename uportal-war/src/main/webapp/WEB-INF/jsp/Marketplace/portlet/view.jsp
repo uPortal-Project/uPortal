@@ -401,13 +401,13 @@
                     </td>
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${portlet.FName}"/>
+                        <portlet:param name="fName" value="${portlet.fname}"/>
                     </portlet:renderURL>
                     <td class="essential" style="border:none;">
                         <a href="${entryURL}"><spring:message code="label.details" text="Details" /> <i class="fa fa-edit"></i></a>
                     </td>
                     <td>
-                        <c:forEach var="category" items="${portlet.parentCategories}">
+                        <c:forEach var="category" items="${portlet.marketplacePortletDefinition.parentCategories}">
                             ${category.name}
                         </c:forEach>
                     </td>

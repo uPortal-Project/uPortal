@@ -1305,6 +1305,12 @@
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!-- caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
+        not serializable, so don't overflow to disk.  -->
+    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
+           eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
     
     <!-- ********************************************************** -->
     <!-- ***************** Event Hibernate Caches ***************** -->

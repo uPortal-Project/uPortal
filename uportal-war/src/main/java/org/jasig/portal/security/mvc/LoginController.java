@@ -73,7 +73,6 @@ public class LoginController {
         this.portalUrlProvider = portalUrlProvider;
     }
 
-
     /**
      * Process the incoming HttpServletRequest
      * @param request
@@ -151,8 +150,5 @@ public class LoginController {
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);
         response.sendRedirect(encodedRedirectURL);
-
     }
-
-
 }

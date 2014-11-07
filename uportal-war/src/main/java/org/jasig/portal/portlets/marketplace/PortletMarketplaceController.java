@@ -58,6 +58,7 @@ import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlets.favorites.FavoritesUtils;
+import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -300,7 +301,7 @@ public class PortletMarketplaceController {
 
         Map<String,Set<?>> registry = new TreeMap<String,Set<?>>();
 
-        final Set<MarketplacePortletDefinition> visiblePortlets =
+        final Set<MarketplaceEntry> visiblePortlets =
                 this.marketplaceService.browseableMarketplaceEntriesFor(user);
         
         @SuppressWarnings("unchecked")

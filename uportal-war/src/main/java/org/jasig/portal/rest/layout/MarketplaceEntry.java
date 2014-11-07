@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.portlet.WindowState;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
@@ -61,6 +62,10 @@ public class MarketplaceEntry  implements Serializable {
         return pdef.getPortletDefinitionId().getStringId();
     }
 
+    public String getTitle() {
+        return pdef.getTitle();
+    }
+
     public String getName() {
         return pdef.getName();
     }
@@ -83,6 +88,11 @@ public class MarketplaceEntry  implements Serializable {
 
     public Set<String> getCategories() {
         return getPortletCategories(pdef);
+    }
+
+    @JsonIgnore
+    public MarketplacePortletDefinition getMarketplacePortletDefinition() {
+        return pdef;
     }
     
     public String getFaIcon() {
@@ -129,7 +139,11 @@ public class MarketplaceEntry  implements Serializable {
     public Double getRating() {
         return pdef.getRating() == null ? 0 : pdef.getRating();
     }
-    
+
+    public String getRenderUrl() {
+        return pdef.getRenderUrl();
+    }
+
     public Long getUserRated() {
         return pdef.getUsersRated();
     }

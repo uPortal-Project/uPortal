@@ -18,11 +18,14 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
+import java.util.concurrent.Future;
 
 /**
  * Marketplace service layer responsible for gathering and applying policy about what Marketplace entries
@@ -31,14 +34,34 @@ import java.util.Set;
  */
 public interface IMarketplaceService {
 
+
+    /**
+     * Load the list of marketplace entries for a user.  Will load entries async.
+     * This method is primarily intended for seeding data.  Most impls should call
+     * browseableMarketplaceEntriesFor() instead.
+     *
+     * Note:  Set is immutable since it is potentially shared between threads.  If
+     * the set needs mutability, be sure to consider the thread safety implications.
+     * No protections have been provided against modifying the MarketplaceEntry itself,
+     * so be careful when modifying the entities contained in the list.
+     *
+     * @param user the non-null user
+     * @return a Future that will resolve to a set of MarketplaceEntry objects
+     *      the requested user has browse access to.
+     * @throws java.lang.IllegalArgumentException if user is null
+     * @since 4.2
+     */
+    Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user);
+
+
     /**
      * Return the Marketplace entries visible to the user.
      * Marketplace entries are visible to the user when the user enjoys permission for the
      * UP_PORTLET_SUBSCRIBE.BROWSE or UP_PORTLET_PUBLISH.MANAGE activity on the portlet entity.
      * @throws IllegalArgumentException when passed in user is null
-     * @since uPortal 4.1
+     * @since uPortal 4.2
      */
-    Set<MarketplacePortletDefinition> browseableMarketplaceEntriesFor(IPerson user);
+    ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user);
 
     /**
      * Return the potentially empty Set of portlet categories such that
