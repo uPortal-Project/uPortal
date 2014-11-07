@@ -33,9 +33,7 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="uportal.cache.manager"/></h2>
         <div class="toolbar" role="toolbar">
-            <ul>
-                <li><a class="button btn" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" /></span></a></li>
-            </ul>
+            <a class="button btn btn-primary" href="${flushAllUrl}"><span><spring:message code="empty.all.caches" />&nbsp;&nbsp;<i class="fa fa-refresh"></i></span></a>
         </div>
     </div> <!-- end: portlet-titlebar -->
     
@@ -52,7 +50,7 @@
       <div class="content">
         <p class="note" role="note"><spring:message code="select.cache.to.view.stats.and.clear.content"/></p>
       
-        <table class="portlet-table table-hover cache-table">
+        <table class="portlet-table table-hover cache-table table table-condensed table-striped">
             <thead>
                 <tr>
                     <th><spring:message code="name"/></th>

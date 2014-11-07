@@ -29,8 +29,8 @@
         <h2 class="title" role="heading"><spring:message code="export.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
             <ul class="btn-group">
-                <li class="btn"><a class="button" href="<portlet:renderURL/>"><spring:message code="import"/></a></li>
-                <li class="btn"><a class="button" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/></a></li>
+                <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL/>"><spring:message code="import"/> <i class="fa fa-upload"></i></a></li>
+                <li class="btn"><a class="button btn btn-default" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></a></li>
             </ul>
         </div>
     </div>
@@ -44,33 +44,24 @@
         </div>
         
         <div class="portlet-form">
-            <form id="${n}form" method="POST" action="javascript:;">
-                
-                <table class="purpose-layout">
-                    <tr>
-                    <td class="label">
-                        <label class="portlet-form-label" for="${n}entityType"><spring:message code="type"/>:</label>
-                    </td>
-                    <td>
-                        <select id="${n}entityType" name="entityType">
-                            <option>[<spring:message code="select.type"/>]</option>
-                            <c:forEach items="${supportedTypes}" var="type">
-                                <option value="${fn:escapeXml(type.typeId)}"><spring:message code="${type.titleCode}"/></option>
-                            </c:forEach>
-                        </select>
-                    </td>
-                    </tr>
-                    <tr>
-                        <td class="label">
-                            <label class="portlet-form-label" for="${n}sysid"><spring:message code="id"/>:</label>
-                        </td>
-                        <td>
-                            <input type="text" id="${n}sysid" name="sysid"/>
-                        </td>
-                    </tr>
-                </table>
-                <div class="buttons">
-                    <a id="${n}exportLink" class="button btn primary" target="_blank" href=""><spring:message code="export"/></a>
+            <form id="${n}form" method="POST" class="form-inline" action="javascript:;">
+                <div class="form-group">
+                    <label class="portlet-form-label" for="${n}entityType"><spring:message code="type"/>:</label>
+                    <select id="${n}entityType" class="form-control" name="entityType">
+                        <option>[<spring:message code="select.type"/>]</option>
+                        <c:forEach items="${supportedTypes}" var="type">
+                            <option value="${fn:escapeXml(type.typeId)}"><spring:message code="${type.titleCode}"/></option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="portlet-form-label" for="${n}sysid"><spring:message code="id"/>:</label>
+                    <input type="text" id="${n}sysid" class="form-control" name="sysid"/>
+                </div>
+                <div class="form-group">
+                    <div class="buttons">
+                        <a id="${n}exportLink" class="button btn btn-primary" target="_blank" href=""><spring:message code="export"/> <i class="fa fa-download"></i></a>
+                    </div>
                 </div>
             </form>
         </div>
