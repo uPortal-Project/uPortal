@@ -88,7 +88,12 @@ Notes
 - Log messages for uPortal appear in @tomcat.name@/logs/uPortal.log .
 - Log files for Tomcat appear in @tomcat.name@/logs
 
+Documentation
+--------------------------------------------------------------------------------
 
+The uPortal product manual is maintained as an online wiki at
+
+ https://wiki.jasig.org/display/UPM41/Home
 
 
 Contact
