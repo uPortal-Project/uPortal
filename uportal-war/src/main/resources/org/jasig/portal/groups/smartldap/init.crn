@@ -21,7 +21,7 @@
 
 <ldap-search 
         context-source="${ldapContext}" 
-        base-dn="${baseDn}" 
+        base-dn="${baseGroupDn}"
         filter="${filter}" 
         scope="${groovy(javax.naming.directory.SearchControls.SUBTREE_SCOPE)}" 
         attributes-mapper="${attributesMapper}" 
