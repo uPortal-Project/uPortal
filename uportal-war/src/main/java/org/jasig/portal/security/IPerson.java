@@ -21,7 +21,6 @@ package  org.jasig.portal.security;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -121,12 +120,6 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
   public void setAttributes (Map<String, List<Object>> attrs);
 
   public Map<String,List<Object>> getAttributeMap();
-  
-  /**
-   * Returns the names of all of the attributes stored for the user
-   * @return names of all of the attributes stored for the user
-   */
-  public Enumeration<String> getAttributeNames ();
 
   /**
    * Associates a security context object with the user

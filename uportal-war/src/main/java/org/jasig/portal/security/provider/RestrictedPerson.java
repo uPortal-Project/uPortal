@@ -19,7 +19,6 @@
 
 package org.jasig.portal.security.provider;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -49,10 +48,6 @@ public class RestrictedPerson implements IPerson {
 
     public Object[] getAttributeValues(String key) {
         return this.person.getAttributeValues(key);
-    }
-
-    public Enumeration<String> getAttributeNames() {
-        return this.person.getAttributeNames();
     }
     
     public Map<String,List<Object>> getAttributeMap() {

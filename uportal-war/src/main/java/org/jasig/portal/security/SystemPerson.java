@@ -20,7 +20,6 @@
 package org.jasig.portal.security;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -145,14 +144,6 @@ public final class SystemPerson implements IPerson {
     @Override
     public Map<String, List<Object>> getAttributeMap() {
         return Collections.emptyMap();
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#getAttributeNames()
-     */
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        return Collections.enumeration(Collections.<String>emptySet());
     }
 
     /* (non-Javadoc)

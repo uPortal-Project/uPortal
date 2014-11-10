@@ -21,7 +21,6 @@ package org.jasig.portal.security.provider;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -107,19 +106,6 @@ public class PersonImpl implements IPerson {
     public Map<String,List<Object>> getAttributeMap() {
         final Map<String,List<Object>> attrMap = this.userAttributes;
         return attrMap;
-    }
-
-    /**
-     * Returns an enumeration of all of the attribute names associated with the user
-     * @return enumeration of all of the attribute names associated with the user
-     */
-    public Enumeration<String> getAttributeNames() {
-        if (this.userAttributes == null) {
-            return null;
-        }
-        
-        final Set<String> names = this.userAttributes.keySet();
-        return Collections.enumeration(names);
     }
 
     /**
