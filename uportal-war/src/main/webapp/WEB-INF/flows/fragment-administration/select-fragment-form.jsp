@@ -37,15 +37,15 @@
             <portlet:param name="execution" value="${flowExecutionKey}" />
             <portlet:param name="_eventId" value="selectFragment"/>
         </portlet:actionURL>
-        <form method="post" name="fragmentAdminForm" action="${formUrl}">
-            <select id="fragmentOwner" name="impersonateUser" title="<spring:message code="choose.fragment.to.edit"/>">
+        <form method="post" name="fragmentAdminForm" class="form form-inline" action="${formUrl}">
+            <select id="fragmentOwner" class="form-control" name="impersonateUser" title="<spring:message code="choose.fragment.to.edit"/>">
             	<option value="NONE"> -- <spring:message code="fragments"/> -- </option>
                 <c:forEach items="${fragments}" var="item">
                 	<option value="${fn:escapeXml(item.key)}">${fn:escapeXml(item.value)}</option>
                 </c:forEach>
             </select>
             <%-- onclick="if (document.fragmentAdminForm.fragmentOwner.options[document.fragmentAdminForm.fragmentOwner.selectedIndex].value != 'NONE') document.fragmentAdminForm.submit()" --%>
-            <input class="button btn" type="submit" value="<spring:message code="go"/>" />
+            <input class="button btn btn-primary" type="submit" value="<spring:message code="go"/>" />
         </form>
 
 	</div> <!-- end: portlet-content -->
