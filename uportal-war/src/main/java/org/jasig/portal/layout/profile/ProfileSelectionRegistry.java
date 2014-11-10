@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.layout.profile;
 
+import org.jasig.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.profile.dao.IProfileSelectionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -50,6 +51,7 @@ public class ProfileSelectionRegistry
     }
 
     @Override
+    @BasePortalJpaDao.PortalTransactional
     public void registerUserProfileSelection(final String userName, final String profileFName) {
 
         Assert.notNull(userName, "Cannot register a profile selection for a null username.");
