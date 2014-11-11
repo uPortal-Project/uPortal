@@ -948,20 +948,36 @@
                 <groupId>org.lesscss</groupId>
                 <artifactId>lesscss-maven-plugin</artifactId>
                 <version>1.3.3</version>
-                <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/</outputDirectory>
-                    <compress>true</compress>
-                    <includes>
-                        <include>defaultSkin.less</include>
-                    </includes>
-                    <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
-                </configuration>
                 <executions>
                     <execution>
+                        <id>respondr-less</id>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>common-less</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/common/less</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/common/css</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

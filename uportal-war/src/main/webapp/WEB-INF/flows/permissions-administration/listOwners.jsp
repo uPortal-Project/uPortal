@@ -40,7 +40,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div class="fl-widget portlet prm-mgr view-listperms" role="section">
+<div class="fl-widget portlet prm-mgr view-listperms container-fluid" role="section">
     
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -49,17 +49,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- end: portlet-titlebar -->
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="fl-widget-content portlet-content row" role="main">
 	
     <div class="permission-lookup">  
-        <form id="${n}permissionLookupForm" action="${permissionLookupUrl}" method="POST">
-                        
-            <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
-            <div id="${n}principalSuggest" class="principal-input">
-                <input class="up-autocomplete-searchterm" type="text" name="principalDisplayName" value="John" autocomplete="off"/>
-                <input type="hidden" name="principal"/>
+        <form id="${n}permissionLookupForm" class="form-inline" action="${permissionLookupUrl}" method="POST">
+            <div id="${n}principalSuggest" class="principal-input form-group">
+                <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
+                <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="John" autocomplete="off"/>
+                <input class="form-control" type="hidden" name="principal"/>
+                <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
                 <div class="up-autocomplete-dropdown">
-                    <div class="up-autocomplete-noresults portlet-msg info" role="alert">
+                    <div class="up-autocomplete-noresults portlet-msg info alert alert-danger" role="alert">
                         <p><spring:message code="no.matches"/></p>
                     </div>
                     <ul class="up-autocomplete-matches">
@@ -73,13 +73,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
                 </div>
             </div>
-            
-            <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
-            <div id="${n}permissionSuggest" class="activity-input">
-                <input class="up-autocomplete-searchterm" type="text" name="activityDisplayName" value="<spring:message code="permission"/>" autocomplete="off"/>
+            <div id="${n}permissionSuggest" class="activity-input form-group">
+                <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission"/>" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
+                <span class="punctuation">?</span>
+                <input type="submit" class="btn btn-primary" value="<spring:message code="show.me"/>"/>
                 <div class="up-autocomplete-dropdown">
-                    <div class="up-autocomplete-noresults portlet-msg info" role="alert">
+                    <div class="up-autocomplete-noresults portlet-msg info alert alert-danger" role="alert">
                         <p><spring:message code="no.matches"/></p>
                     </div>
                     <ul class="up-autocomplete-matches">
@@ -89,14 +89,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </a>
                         </li>
                     </ul>
-                    <div class="up-autocomplete-loading"><span><spring:message code="loading"/></span></div>
+                    <div class="up-autocomplete-loading alert alert-success"><span><spring:message code="loading"/></span></div>
                     <div class="up-autocomplete-close"><a href="javascript:;"><spring:message code="close"/></a></div>
                 </div>
             </div>
-            <span class="punctuation">?</span>
-            <input type="submit" value="<spring:message code="show.me"/>"/>
-            <span class="permission-lookup-error-container" style="font-size: 13px; color: #dd7615;"></span>
         </form>
+        <span class="permission-lookup-error-container" style="font-size: 13px; color: #dd7615;"></span>
     </div>
   
   	<!-- Panel list -->
