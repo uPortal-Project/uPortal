@@ -277,6 +277,13 @@
 
         navMenuToggle();
       });
+
+      $(document).ready(function() {
+          if (up.lightboxConfig) {
+            up.lightboxConfig.init();
+          }
+      });
+
     })(up.jQuery);
   </script>
 </xsl:template>

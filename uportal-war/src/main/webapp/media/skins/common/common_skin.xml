@@ -49,5 +49,6 @@
   <js>javascript/uportal/up-ga.js</js>
   <js>javascript/uportal/up-rating-option.js</js>
   <js>javascript/uportal/up-favorite.js</js>
+  <js>javascript/uportal/up-config-lightbox.js</js>
 
 </resources>
