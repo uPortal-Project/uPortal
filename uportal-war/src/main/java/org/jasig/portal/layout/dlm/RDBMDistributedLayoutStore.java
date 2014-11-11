@@ -1880,6 +1880,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return "Missing channel";
         }
 
+        @Override public String getAlternativeMaximizedLink() {
+            return null;
+        }
+
         public String getFName() {
             return this.fname;
         }

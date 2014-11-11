@@ -72,6 +72,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Eric Dalquist
@@ -526,7 +527,23 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return title;
 	}
 
-	@Override
+    @Override
+    public String getAlternativeMaximizedLink() {
+        final IPortletDefinitionParameter alternativeMaximizedLinkParameter =
+            getParameter(ALT_MAX_LINK_PARAM);
+
+        if (null != alternativeMaximizedLinkParameter) {
+            final String alternativeMaximizedLink = alternativeMaximizedLinkParameter.getValue();
+
+            if (StringUtils.hasText(alternativeMaximizedLink)) {
+                return alternativeMaximizedLink;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public void setType(IPortletType portletType) {
 		this.portletType = portletType;
 	}

@@ -471,7 +471,12 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 		return this.portletDefinition.getTitle(locale);
 	}
 
-	@Override
+    @Override
+    public String getAlternativeMaximizedLink() {
+        return this.portletDefinition.getAlternativeMaximizedLink();
+    }
+
+    @Override
 	public void setFName(String fname){
 		this.portletDefinition.setFName(fname);
 	}
