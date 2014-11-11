@@ -110,30 +110,28 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
-
   <c:if test="${not empty statusMsgCode}">
-      <div class="alert alert-success alert-dismissable">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
-          <c:if test="${not empty layoutURL}">
-              <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
-          </c:if>
-      </div>
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
+      <c:if test="${not empty layoutURL}">
+        <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
+      </c:if>
+    </div>
   </c:if>
-
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
     <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
         <ul class="btn-group">
-          <li class="btn"><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
+          <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
         </ul>
       </div>
       <div class="fl-col fl-text-align-right datatable-search-view">
-        <form class="portlet-search-form" style="display:inline">
-            <label><spring:message code="search"/></label>
-            <input type="text" class="portlet-search-input"/>
+        <form class="portlet-search-form form-inline" style="display:inline">
+          <label><spring:message code="search"/></label>
+          <input type="text" class="portlet-search-input form-control"/>
         </form>
       </div>
     </div>
@@ -143,7 +141,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   <!-- Portlet Content -->
   <div class="fl-widget-content content portlet-content" role="main">
       <div>
-        <table id="${n}portletsList" class="portlet-table table table-bordered table-hover" style="width:100%;">
+        <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
           <thead>
             <tr>
               <th><spring:message code="name"/></th>
@@ -170,7 +168,7 @@ up.jQuery(function() {
             name: 0,
             type: 1,
             Lifecycle: 2,
-            placeHolderForEditLink: 3,
+            placeHolderForEditLink  : 3,
             placeHolderForDeleteLink: 4,
             categories: 5
         },
@@ -183,11 +181,11 @@ up.jQuery(function() {
     // Url generating helper functions
     var getEditURL = function(portletId) {
         var url = '${editPortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/></a>';
+        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-edit"></i></span></a>';
     };
     var getDeleteURL = function(portletId) {
         var url = '${removePortletUrl}'.replace("PORTLETID", portletId);
-        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/></a>';
+        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-trash-o"></i></span></a>';
     };
 
     // Created as its own 
@@ -271,7 +269,7 @@ up.jQuery(function() {
                 $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
@@ -291,7 +289,8 @@ up.jQuery(function() {
     });
     // Adding formatting to sDom
     $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
+    $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
+    $(".column-filter-widget select").addClass("form-control");
 
 });
 </script>
