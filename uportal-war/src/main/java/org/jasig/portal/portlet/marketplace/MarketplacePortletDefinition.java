@@ -304,15 +304,26 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     }
 
     /**
-     * Convenience method for getting a bookmarkable URL for rendering the defined portlet, addressed by fname.
-     * This method will *ONLY* work when invoked in the context of a Spring-managed HttpServletRequest available
-     * via RequestContextHolder.
-     * WARNING: This method does not consider whether the requesting user has permission to render the target portlet,
-     * so this might be getting a URL that the user can't actually use.
-     * @return
+     * Convenience method for getting a bookmarkable URL for rendering the defined portlet,
+     *
+     * Normally this is the portal rendering of the portlet, addressed by fname, and in that case
+     * this method will *ONLY* work when invoked in the context of a Spring-managed
+     * HttpServletRequest available via RequestContextHolder.
+     *
+     * When there is an alternativeMaximizedLink, this method returns that instead.
+     *
+     * WARNING: This method does not consider whether the requesting user has permission to render
+     * the target portlet, so this might be getting a URL that the user can't actually use.
+     *
+     * @return URL for rendering the portlet
      * @throws IllegalStateException when context does not allow computing the URL
      */
     public String getRenderUrl() {
+
+        final String alternativeMaximizedUrl = getAlternativeMaximizedLink();
+        if (null != alternativeMaximizedUrl) {
+            return alternativeMaximizedUrl;
+        }
 
         final String contextPath = PortalWebUtils.currentRequestContextPath();
 

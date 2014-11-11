@@ -61,4 +61,17 @@ public class MarketplacePortletDefinitionTest {
             marketplacePortletDefinition.getAlternativeMaximizedLink());
     }
 
+    /**
+     * Test that when there is an alternative maximized link, the render URL is that link.
+     */
+    @Test
+    public void testRenderUrlIsAlternativeMaximizedLinkWhenPresent() {
+
+        when(portletDefinition.getAlternativeMaximizedLink()).thenReturn("http://apereo.org");
+
+        assertEquals("http://apereo.org",
+            marketplacePortletDefinition.getRenderUrl());
+
+    }
+
 }
