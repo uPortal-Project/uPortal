@@ -26,6 +26,7 @@ public class LayoutPortlet {
     private String url;
     private String iconUrl;
     private String faIcon;
+    private String fname;
 
     public String getNodeId() {
         return nodeId;
@@ -73,6 +74,14 @@ public class LayoutPortlet {
 
     public void setFaIcon(String faIcon) {
         this.faIcon = faIcon;
+    }
+
+    public String getFname() {
+      return fname;
+    }
+
+    public void setFname(String fname) {
+      this.fname = fname;
     }
 
 }
