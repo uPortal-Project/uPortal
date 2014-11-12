@@ -343,7 +343,7 @@
                                                     </xsl:with-param>
                                                 </xsl:call-template>
                                             </xsl:variable>
-                                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@name" /></a></li>
+                                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
                                         </xsl:for-each>
                                     </ul>
                                 </div>

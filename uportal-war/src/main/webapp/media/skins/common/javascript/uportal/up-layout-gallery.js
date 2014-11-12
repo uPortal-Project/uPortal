@@ -175,6 +175,12 @@ var up = up || {};
                                                 data: row
                                             };
                                         }
+                                    },
+                                    {
+                                        type: 'attrs',
+                                        attributes: {
+                                            title: row.title + ' (' + row.name + ')'
+                                        }
                                     }
                                 ]
                             };
