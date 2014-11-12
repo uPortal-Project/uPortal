@@ -179,6 +179,21 @@
         <antcall target="db-hibernate-update" />
 	</target>
 
+    <target name="db-gen-update-script" description="Generates the SQL files for a database upgrade.">
+    	<!-- Check arguments -->
+        <fail message="'-DoutputDir=[output directory]' must be specified">
+            <condition>
+                <not>
+                    <isset property="outputDir" />
+                </not>
+            </condition>
+        </fail>
+    	
+        <antcall target="db-hibernate-gen-update-script">
+            <param name="outputDir" value="${outputDir}"/>
+        </antcall>
+    </target>
+
     <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
         <fail unless="ddlFile">
             You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
@@ -236,6 +251,23 @@
             <antcall target="db-hibernate-portal-update" />
             <antcall target="db-hibernate-raw-events-update" />
             <antcall target="db-hibernate-aggr-events-update" />
+        </up-shell-batch>
+    </target>
+
+	<target name="db-hibernate-gen-update-script" depends="prodPrompt" description="Generates hibernate update script for portal, raw events, and aggregator databases. Does not run updates.">
+		<property name="outputDir" value=" "/>
+        <up-shell-batch>
+            <antcall target="db-hibernate-gen-portal-update-script">
+                <param name="outputFile" value="${outputDir}/portalDb-update.sql" />
+            </antcall>
+        	<antcall target="db-hibernate-gen-portal-update-script">
+        		<param name="databaseQualifier" value="RawEventsDb" />
+                <param name="outputFile" value="${outputDir}/rawDb-update.sql" />
+            </antcall>
+	        <antcall target="db-hibernate-gen-portal-update-script">
+	        	<param name="databaseQualifier" value="AggrEventsDb" />
+                <param name="outputFile" value="${outputDir}/aggrDb-update.sql" />
+            </antcall>
         </up-shell-batch>
     </target>
 
@@ -303,6 +335,30 @@
             <param name="script" value="${portal-shell-script}" />
         </antcall>
     </target>
+	
+	<target name="db-hibernate-gen-portal-update-script" depends="prodPrompt" description="Generates script for hibernate updates. Does not run updates. Defaults to PortalDb.">
+	        <property name="databaseQualifier" value="PortalDb" />
+	        <property name="outputFile" value=" " />
+
+	        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+	        <echo>Creating HBM2DDL Update Script</echo>
+	        <echo file="${portal-shell-script}" append="true">
+	            logger.info("");
+	            logger.info("");
+	            logger.info("Generate Update Script for Database " + '${databaseQualifier}');
+	            
+	            //hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
+	            portalShellBuildHelper.hibernateGenerateScript(
+	        	    "db-hibernate-update",
+	                '${databaseQualifier}',
+	                /${outputFileEscaped}/);
+	        </echo>
+
+	        <antcall target="up-shell">
+	            <param name="script" value="${portal-shell-script}" />
+	        </antcall>
+	    </target>
 
     <target name="db-hibernate-stats" depends="prodPrompt">
         <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>

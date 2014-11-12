@@ -164,6 +164,24 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
         //TODO add upgrade-state to up_version table to handle a failure during the hbm2ddl update
         this.versionedDataUpdater.preUpdateDatabase(databaseQualifier);
         
+        updateScript(target, databaseQualifier, outputFile, export);
+        
+        this.versionedDataUpdater.postUpdateDatabase(databaseQualifier);
+    }
+    
+    @Override
+    public void hibernateGenerateScript(String target, String databaseQualifier, String outputFile) {
+        updateScript(target, databaseQualifier, outputFile, false);
+    }
+    
+    /**
+     * This runs a database update or just generates the script
+     * @param target the database to target
+     * @param databaseQualifier The Spring database qualifier
+     * @param outputFile The output file to utilize to generate the scripts
+     * @param runIt Do you want to run it, or just generate the script?
+     */
+    private void updateScript(String target, String databaseQualifier, String outputFile, boolean runIt) {
         final ISchemaExport schemaExportBean = this.getSchemaExport(databaseQualifier);
         if (schemaExportBean == null) {
             throw new RuntimeException(target + " could not find schemaExportBean " + databaseQualifier);
@@ -176,13 +194,11 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
 
             outputFile = StringUtils.trimToNull(outputFile);
 
-            schemaExportBean.update(export, outputFile, true);
+            schemaExportBean.update(runIt, outputFile, true);
         }
         catch (Exception e) {
             throw new RuntimeException(target + " for " + databaseQualifier + " failed", e);
         }
-        
-        this.versionedDataUpdater.postUpdateDatabase(databaseQualifier);
     }
 
     @Override
