@@ -179,7 +179,7 @@
         <antcall target="db-hibernate-update" />
 	</target>
 
-    <target name="db-gen-update-script" depends="prodPrompt" description="Generates the SQL files for a database upgrade.">
+    <target name="db-gen-update-script" description="Generates the SQL files for a database upgrade.">
     	<!-- Check arguments -->
         <fail message="'-DoutputDir=[output directory]' must be specified">
             <condition>
