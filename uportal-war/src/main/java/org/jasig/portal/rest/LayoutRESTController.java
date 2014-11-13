@@ -140,6 +140,7 @@ public class LayoutRESTController {
                     portlet.setTitle(attributes.getNamedItem("title").getNodeValue());
                     portlet.setDescription(attributes.getNamedItem("description").getNodeValue());
                     portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
+                    portlet.setFname(attributes.getNamedItem("fname").getNodeValue());
                     
                     IPortletDefinition def = portletDao.getPortletDefinitionByFname(attributes.getNamedItem("fname").getNodeValue());
                     
