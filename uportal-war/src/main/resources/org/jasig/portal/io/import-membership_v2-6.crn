@@ -30,7 +30,8 @@
  |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
  |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
  |
- | To debug, change log.debug to log.error (script classname is dynamic; e.g. Script1, Script 13, etc.)
+ | To debug, it is probably easier to change log.debug to log.error within this script because the script
+ | classname is dynamic; e.g. Script1, Script 13, etc., so it is a pain to have the right value in logback.xml.
  +-->
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
     <groovy>
