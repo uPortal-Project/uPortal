@@ -59,6 +59,7 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
@@ -67,6 +68,9 @@ import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.layout.IUserLayoutManager;
+import org.jasig.portal.layout.IUserLayoutStore;
+import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.PortletUtils;
@@ -75,13 +79,16 @@ import org.jasig.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.jasig.portal.portlet.url.PortletURLProviderImpl;
 import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.ParameterInputType;
@@ -105,10 +112,12 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
+import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.PortletDescriptor;
@@ -128,6 +137,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
+    private static final String DYNAMIC_RESPONDR_SKIN_PORTLET = "dynamic-respondr-skin";
 
 	private IGroupListHelper groupListHelper;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -141,6 +151,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
     private FragmentAdministrationHelper fragmentAdminHelper;
     private IPortalUrlProvider urlProvider;
     private IAuthorizationService authorizationService;
+    private IPortalUrlProvider portalUrlProvider;
+    private IPortletWindowRegistry portletWindowRegistry;
+    private IPortalRequestUtils portalRequestUtils;
 
 	@Override
     public void setServletContext(ServletContext servletContext) {
@@ -203,6 +216,39 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	@Autowired
 	public void setPortletChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao portletPublishingDefinitionDao) {
         this.portletPublishingDefinitionDao = portletPublishingDefinitionDao;
+    }
+
+    @Autowired
+    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
+        this.portletWindowRegistry = portletWindowRegistry;
+    }
+
+    @Autowired
+    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
+        this.portalUrlProvider = portalUrlProvider;
+    }
+
+    @Autowired
+    public void setPortalRequestUtils(final IPortalRequestUtils portalRequestUtils) {
+        this.portalRequestUtils = portalRequestUtils;
+    }
+
+    public String getDynamicRespondrSkinPortletURL(ExternalContext externalContext, WindowState windowState) {
+
+        PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
+        HttpServletRequest req = portalRequestUtils.getPortletHttpRequest(portletRequest);
+        IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(req, DYNAMIC_RESPONDR_SKIN_PORTLET);
+        if (portletWindow == null) {
+            return null;
+        }
+
+        IPortalUrlBuilder urlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(req, DYNAMIC_RESPONDR_SKIN_PORTLET, UrlType.RENDER);
+        IPortletUrlBuilder builder = urlBuilder.getPortletUrlBuilder(portletWindow.getPortletWindowId());
+        builder.setPortletMode(IPortletRenderer.CONFIG);
+        builder.setWindowState(windowState);
+
+        PortletURLProviderImpl provider = new PortletURLProviderImpl(builder);
+        return provider.toURL();
     }
 
     /**
@@ -1079,7 +1125,5 @@ public class PortletAdministrationHelper implements ServletContextAware {
             // Otherwise we must remove the MAINTENANCE flag, if present
             portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME);
         }
-
     }
-
 }

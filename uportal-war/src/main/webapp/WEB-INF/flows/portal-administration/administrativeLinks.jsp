@@ -57,6 +57,14 @@
                 <li>
                     <a href="<c:url value="/p/tenant-manager"/>">Manage Tenants</a>
                 </li>
+                <c:if test="${not empty respondrSkinConfigURL}">
+                    <li class="respondr-admin-link">
+                        <a href="${respondrSkinConfigURL}"
+                           data-lightbox-url="${respondrSkinConfigLightboxURL}"
+                           data-lightbox-title="Manage Respondr Skin">Manage Respondr Skin</a>
+                    </li>
+
+                </c:if>
             </ul>
         </div>
     </div>
