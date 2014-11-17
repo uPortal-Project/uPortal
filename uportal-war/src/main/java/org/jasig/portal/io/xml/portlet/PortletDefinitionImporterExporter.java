@@ -327,6 +327,12 @@ public class PortletDefinitionImporterExporter
                 permission.setActivity(SUBSCRIBER_ACTIVITY);
                 permission.setTarget(target);
                 permissions.add(permission);
+
+                IPermission browse = upm.newPermission(authPrincipal);
+                browse.setType(GRANT_PERMISSION_TYPE);
+                browse.setActivity(BROWSE_ACTIVITY);
+                browse.setTarget(target);
+                permissions.add(browse);
             }
     
             // If modifying the channel, remove the existing permissions before adding the new ones
