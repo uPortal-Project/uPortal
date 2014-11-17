@@ -464,7 +464,7 @@ border: thin solid #b1c6f2;
 .up .fl-reorderer-dropMarker { background: #0083CA; border: none; }
 
 /* footer */
-.up #portalPageFooter { padding: 25px 0; font-size: 11px; position: relative; top:-8px; }
+.up #portalPageFooter { padding: 15px 0px; font-size: 11px; position: relative; top:0px; }
 .up #portalPageFooter a:link { color: #666; }
 .up #portalPageFooter a:visited { color: #666; }
 .up #portalPageFooter a:hover { color: #666; }
