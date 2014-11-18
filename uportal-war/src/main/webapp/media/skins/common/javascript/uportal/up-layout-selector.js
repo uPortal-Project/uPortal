@@ -124,7 +124,8 @@ var up = up || {};
             wideNarrow: "Wide, narrow",
             narrowWideNarrow: "Narrow, wide, narrow",
             column: "Column",
-            columns: "Columns"
+            columns: "Columns",
+            sixColumn: "Narrow Columns"
         },
         layouts: [ 
             { nameKey: "fullWidth", columns: [ 100 ] },
@@ -133,7 +134,8 @@ var up = up || {};
             { nameKey: "wideNarrow", columns: [ 60, 40 ] },
             { nameKey: "even", columns: [ 33, 34, 33 ] },
             { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
-            { nameKey: "even", columns: [ 25, 25, 25, 25 ] }
+            { nameKey: "even", columns: [ 25, 25, 25, 25 ] },
+            { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
         ],
         imagePath: "test/",
         selectors: {
