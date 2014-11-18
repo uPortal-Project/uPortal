@@ -40,6 +40,15 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public static final String CONFIGURABLE_PARAM = "configurable";
     public static final String HAS_HELP_PARAM = "hasHelp";
     public static final String HAS_ABOUT_PARAM = "hasAbout";
+
+    /**
+     * The name of the portlet parameter that if present represents an alternative
+     * URL that ought to be used to "maximize" the defined portlet.
+     *
+     * This is useful for portlets that when maximized ought to instead be the external URL
+     * or web application that they're representing in the portal.
+     */
+    public static final String ALT_MAX_LINK_PARAM = "alternativeMaximizedLink";
     
     /**
      * @return The unique identifier for this portlet definition.
@@ -119,6 +128,19 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	public String getDescription(String locale);
 
 	public String getTitle(String locale);
+
+    /**
+     * Returns the alternative maximized link (URL) associated with this portlet definition,
+     * or null if none.
+     *
+     * Syntactic sugar for parsing potential alternative maximized link as a preferable alternative
+     * to directly parsing the portlet parameters elsewhere.
+     *
+     * @return String representing alternative max URL, or null if none.
+     *
+     * @since uPortal 4.2
+     */
+    public String getAlternativeMaximizedLink();
 
 	// Setter methods
 	public void setFName(String fname);

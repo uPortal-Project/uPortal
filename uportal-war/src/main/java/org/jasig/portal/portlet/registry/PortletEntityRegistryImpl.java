@@ -844,6 +844,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         public String getTitle(String locale) {
             return null;
         }
+
+        @Override
+        public String getAlternativeMaximizedLink() {
+            return null;
+        }
+
         @Override
         public String getTitle() {
             return null;

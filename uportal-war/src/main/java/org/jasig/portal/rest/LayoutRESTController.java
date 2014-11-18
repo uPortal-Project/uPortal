@@ -156,9 +156,9 @@ public class LayoutRESTController {
                     }
                     
                     //get alt max URL
-                    IPortletDefinitionParameter alternativeMaximizedLink = def.getParameter("alternativeMaximizedLink");
+                    String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
                     if( alternativeMaximizedLink != null) {
-                    	portlet.setUrl(alternativeMaximizedLink.getValue());
+                    	portlet.setUrl(alternativeMaximizedLink);
                     } else {
 	                    // get the maximized URL for this portlet
 	                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
