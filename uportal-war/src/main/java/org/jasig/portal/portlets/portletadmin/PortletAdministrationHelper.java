@@ -59,7 +59,6 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
@@ -68,9 +67,6 @@ import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlet.PortletUtils;
@@ -117,7 +113,6 @@ import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
-import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.PortletDescriptor;
@@ -139,98 +134,41 @@ public class PortletAdministrationHelper implements ServletContextAware {
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
     private static final String DYNAMIC_RESPONDR_SKIN_PORTLET = "dynamic-respondr-skin";
 
-	private IGroupListHelper groupListHelper;
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private IPortletCategoryRegistry portletCategoryRegistry;
-    private IPortletTypeRegistry portletTypeRegistry;
-    private PortalDriverContainerServices portalDriverContainerServices;
-    private IPortletPublishingService portletPublishingService; 
-    private PortletDelegationLocator portletDelegationLocator;
-    private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
-    private ServletContext servletContext;
+    /*
+     * Autowired beans listed alphabetically by type
+     */
+    @Autowired
     private FragmentAdministrationHelper fragmentAdminHelper;
-    private IPortalUrlProvider urlProvider;
+    @Autowired
     private IAuthorizationService authorizationService;
-    private IPortalUrlProvider portalUrlProvider;
-    private IPortletWindowRegistry portletWindowRegistry;
+    @Autowired
+    private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
+    @Autowired
+	private IGroupListHelper groupListHelper;
+    @Autowired
     private IPortalRequestUtils portalRequestUtils;
+    @Autowired
+    private IPortalUrlProvider urlProvider;
+    @Autowired
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    @Autowired
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired
+    private IPortletPublishingService portletPublishingService; 
+    @Autowired    
+    private IPortletTypeRegistry portletTypeRegistry;
+    @Autowired
+    private IPortletWindowRegistry portletWindowRegistry;
+    @Autowired
+    private PortalDriverContainerServices portalDriverContainerServices;
+    @Autowired
+    private PortletDelegationLocator portletDelegationLocator;
 
-	@Override
+    private ServletContext servletContext;
+
+    @Override
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
-    }
-	@Autowired
-    public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
-        this.portletDelegationLocator = portletDelegationLocator;
-    }
-	@Autowired
-    public void setGroupListHelper(IGroupListHelper groupListHelper) {
-		this.groupListHelper = groupListHelper;
-	}
-
-    @Autowired
-    public void setFragmentAdminHelper(final FragmentAdministrationHelper fragmentAdminHelper) {
-        this.fragmentAdminHelper = fragmentAdminHelper;
-    }
-
-    @Autowired
-    public void setUrlProvider(final IPortalUrlProvider urlProvider) {
-        this.urlProvider = urlProvider;
-    }
-
-    @Autowired
-    public void setAuthorizationService(final IAuthorizationService authorizationService) {
-        this.authorizationService = authorizationService;
-    }
-
-    /**
-	 * Set the portlet registry store
-	 * 
-	 * @param portletDefinitionRegistry
-	 */
-	@Autowired
-	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-		this.portletDefinitionRegistry = portletDefinitionRegistry;
-	}
-	
-	@Autowired
-	public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
-		this.portletCategoryRegistry = portletCategoryRegistry;
-	}
-	
-	@Autowired
-	public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
-		this.portletTypeRegistry = portletTypeRegistry;
-	}
-	
-	@Autowired
-	public void setPortalDriverContainerServices(
-			PortalDriverContainerServices portalDriverContainerServices) {
-		this.portalDriverContainerServices = portalDriverContainerServices;
-	}
-	@Autowired
-	public void setPortletPublishingService(
-			IPortletPublishingService portletPublishingService) {
-		this.portletPublishingService = portletPublishingService;
-	}
-	@Autowired
-	public void setPortletChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao portletPublishingDefinitionDao) {
-        this.portletPublishingDefinitionDao = portletPublishingDefinitionDao;
-    }
-
-    @Autowired
-    public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
-        this.portletWindowRegistry = portletWindowRegistry;
-    }
-
-    @Autowired
-    public void setPortalUrlProvider(IPortalUrlProvider portalUrlProvider) {
-        this.portalUrlProvider = portalUrlProvider;
-    }
-
-    @Autowired
-    public void setPortalRequestUtils(final IPortalRequestUtils portalRequestUtils) {
-        this.portalRequestUtils = portalRequestUtils;
     }
 
     public String getDynamicRespondrSkinPortletURL(ExternalContext externalContext, WindowState windowState) {
@@ -242,7 +180,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
             return null;
         }
 
-        IPortalUrlBuilder urlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(req, DYNAMIC_RESPONDR_SKIN_PORTLET, UrlType.RENDER);
+        IPortalUrlBuilder urlBuilder = urlProvider.getPortalUrlBuilderByPortletFName(req, DYNAMIC_RESPONDR_SKIN_PORTLET, UrlType.RENDER);
         IPortletUrlBuilder builder = urlBuilder.getPortletUrlBuilder(portletWindow.getPortletWindowId());
         builder.setPortletMode(IPortletRenderer.CONFIG);
         builder.setWindowState(windowState);
