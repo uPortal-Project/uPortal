@@ -979,5 +979,9 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         @Override
         public void setUsersRated(Long usersRated) {
         }
+        @Override
+        public String getTarget() {
+          return null;
+        }
     };
 }

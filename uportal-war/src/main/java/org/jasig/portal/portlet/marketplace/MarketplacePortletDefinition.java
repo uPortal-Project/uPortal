@@ -332,6 +332,22 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     }
 
+    /**
+     * Convenience method for getting a relative URL to the Marketplace **servlet** entry for this portlet.
+     *
+     * WARNING: This method does not consider whether the requesting user actually has permission to view the
+     * referenced marketplace entry, so this might be getting a URL that the user won't be able to actually use.
+     * @return relative URL to marketplace entry page for defined portlet
+     */
+    public String getMarketplaceEntryUrl() {
+
+        final String contextPath = PortalWebUtils.currentRequestContextPath();
+
+        // TODO: revisit where knowledge of how to compose marketplace servlet URLs ought to reside
+        return contextPath + "/api/marketplace/" + getFName();
+
+    }
+
     @Override
     public String getDataId() {
         return this.portletDefinition.getDataId();
@@ -642,5 +658,14 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public void setShortURL(String shortURL) {
         this.shortURL = shortURL;
+    }
+    
+    public IPortletDefinitionParameter getPortletDefinitionParameter(String parameterKey) {
+        return this.portletDefinition.getParameter(parameterKey);
+    }
+
+    @Override
+    public String getTarget() {
+      return this.portletDefinition.getTarget();
     }
 }

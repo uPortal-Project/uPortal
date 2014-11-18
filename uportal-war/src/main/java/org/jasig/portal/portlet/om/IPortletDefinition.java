@@ -51,6 +51,11 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public static final String ALT_MAX_LINK_PARAM = "alternativeMaximizedLink";
     
     /**
+     * A portlet parameter that specifies a target for the flyout, eg : _blank
+     */
+    public static final String TARGET_PARAM = "target";
+    
+    /**
      * @return The unique identifier for this portlet definition.
      */
     public IPortletDefinitionId getPortletDefinitionId();
@@ -141,6 +146,12 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
      * @since uPortal 4.2
      */
     public String getAlternativeMaximizedLink();
+    
+    /**
+     * Syntactic sugar for getting the target parameter from the portlet parameters.
+     * @return the target tab/window
+     */
+    public String getTarget();
 
 	// Setter methods
 	public void setFName(String fname);
