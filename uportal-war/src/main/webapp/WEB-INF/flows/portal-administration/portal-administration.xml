@@ -28,10 +28,6 @@
         | Useful portal administration links
         +-->
     <view-state id="administrativeLinks">
-        <on-entry>
-            <set name="flowScope.respondrSkinConfigURL" value="portletAdministrationHelper.getDynamicRespondrSkinPortletURL(externalContext, T(javax.portlet.WindowState).MAXIMIZED)"/>
-            <set name="flowScope.respondrSkinConfigLightboxURL" value="portletAdministrationHelper.getDynamicRespondrSkinPortletURL(externalContext, T(org.jasig.portal.portlet.rendering.IPortletRenderer).EXCLUSIVE)"/>
-        </on-entry>
     </view-state>
     
     <!-- End state -->
