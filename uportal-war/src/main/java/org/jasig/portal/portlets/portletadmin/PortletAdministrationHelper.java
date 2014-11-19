@@ -81,7 +81,6 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Parameter;
@@ -106,7 +105,6 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;
@@ -141,9 +139,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
     @Autowired
     private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
     @Autowired
-	private IGroupListHelper groupListHelper;
-    @Autowired
-    private IPortalRequestUtils portalRequestUtils;
+    private IGroupListHelper groupListHelper;
     @Autowired
     private IPortalUrlProvider urlProvider;
     @Autowired
@@ -154,8 +150,6 @@ public class PortletAdministrationHelper implements ServletContextAware {
     private IPortletPublishingService portletPublishingService; 
     @Autowired    
     private IPortletTypeRegistry portletTypeRegistry;
-    @Autowired
-    private IPortletWindowRegistry portletWindowRegistry;
     @Autowired
     private PortalDriverContainerServices portalDriverContainerServices;
     @Autowired
