@@ -240,54 +240,46 @@
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
           <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
+            <div class="up-portlet-wrapper-inner no-chrome">
+              <!-- ****** PORTLET TOOLBAR ****** -->
+              <div class="hover-toolbar">
+                <xsl:call-template name="portlet-toolbar"/>
+              </div>
               <!-- ****** START: PORTLET CONTENT ****** -->
               <div id="portletContent_{@ID}" class="up-portlet-content-wrapper"> <!-- Portlet content container. -->
-                <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
+                <div class="up-portlet-content-wrapper-inner"> <!-- Inner div for additional presentation/formatting options. -->
                   <xsl:call-template name="portlet-content"/>
                 </div>
               </div>
+            </div>
+
+            <script type="text/javascript">
+              up.jQuery(document).ready(function() {
+                var $ = up.jQuery;
+                  $('.no-chrome').hover(function() {
+                    $(this).find('.hover-toolbar').stop(true, true).show('slow');
+                  },
+                  function() {
+                    $(this).find('.hover-toolbar').stop(true, true).hide('slow');
+                });
+              });
+            </script>
           </xsl:when>
 
           <!-- ***** RENDER CHROME ***** -->
           <xsl:otherwise>
             <div class="up-portlet-wrapper-inner">
-
-            <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-            <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top"> <!-- Portlet toolbar. -->
-              <!--
-              Portlet Title
-              -->
-              <h2 class="portlet-title round-top">
-                <xsl:variable name="portletMaxUrl">
-                  <xsl:call-template name="portalUrl">
-                    <xsl:with-param name="url">
-                        <url:portal-url>
-                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                            <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-                        </url:portal-url>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </xsl:variable>
-                <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-                <a id="{@ID}" href="{$portletMaxUrl}">
-                    <xsl:value-of select="@title"/>
-                </a>
-
-                <xsl:call-template name="controls"/>
-              </h2>
-            </div>
-
-            <!-- ****** PORTLET CONTENT ****** -->
-            <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
-              <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
-                <xsl:call-template name="portlet-content"/>
+              <!-- ****** PORTLET TOOLBAR ****** -->
+              <xsl:call-template name="portlet-toolbar"/>
+              <!-- ****** PORTLET CONTENT ****** -->
+              <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
+                <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
+                  <xsl:call-template name="portlet-content"/>
+                </div>
               </div>
-            </div>
-
             </div>
           </xsl:otherwise>
         </xsl:choose>
-
     </section>
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
@@ -296,9 +288,29 @@
 
   <!-- ========== TEMPLATE: PORTLET CONTENT ========== -->
   <!-- ============================================== -->
-  <!--
-   | Renders the actual portlet content
-  -->
+  <!-- Renders the portlet toolbar -->
+  <xsl:template name="portlet-toolbar">
+    <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top"> <!-- Portlet toolbar. -->
+      <!-- Portlet Title -->
+      <h2 class="portlet-title round-top">
+        <xsl:variable name="portletMaxUrl">
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+              <url:portal-url>
+                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+              </url:portal-url>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:variable>
+        <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+        <a id="{@ID}" href="{$portletMaxUrl}"><xsl:value-of select="@title"/></a>
+        <xsl:call-template name="controls"/>
+      </h2>
+    </div>
+  </xsl:template>
+
+  <!-- Renders the portlet content -->
   <xsl:template name="portlet-content">
     <xsl:choose>
         <xsl:when test="name() = 'blocked-channel'">
