@@ -1483,11 +1483,6 @@
                     <groupId>org.jasig.maven</groupId>
                     <artifactId>sass-maven-plugin</artifactId>
                     <version>1.0.2</version>
-                    <configuration>
-                        <systemProperties>
-                            <java.awt.headless>true</java.awt.headless>
-                        </systemProperties>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jasig.portal</groupId>
