@@ -37,7 +37,6 @@
     <group>SSP_FACULTY</group>
     <group>SSP_MANAGER</group>
     <group>SSP_SUPPORT_STAFF</group>
-    <group>SSP_JOURNAL</group>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>

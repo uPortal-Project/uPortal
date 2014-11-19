@@ -29,7 +29,6 @@
         <attribute mode="deepMemberOf" name="SSP_FACULTY"/>
         <attribute mode="deepMemberOf" name="SSP_MANAGER"/>
         <attribute mode="deepMemberOf" name="SSP_SUPPORT_STAFF"/>
-        <attribute mode="deepMemberOf" name="SSP_JOURNAL"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>
