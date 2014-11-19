@@ -29,7 +29,8 @@ var uportal = uportal || {};
        { nameKey: "wideNarrow", columns: [ 60, 40 ] },
        { nameKey: "even", columns: [ 33, 34, 33 ] },
        { nameKey: "narrowWideNarrow", columns: [ 25, 50, 25 ] },
-       { nameKey: "even", columns: [ 25, 25, 25, 25 ] }
+       { nameKey: "even", columns: [ 25, 25, 25, 25 ] },
+       { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
    ];
 
 
