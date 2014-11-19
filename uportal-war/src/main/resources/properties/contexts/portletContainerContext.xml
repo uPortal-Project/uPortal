@@ -91,6 +91,7 @@
                 <value>EDIT</value>
                 <value>HELP</value>
                 <value>ABOUT</value>
+                <value>CONFIG</value>
             </set>
         </property>
         <property name="portalProperties">
