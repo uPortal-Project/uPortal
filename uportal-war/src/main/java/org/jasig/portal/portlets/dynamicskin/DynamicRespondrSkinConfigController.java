@@ -29,6 +29,8 @@ import javax.portlet.PortletModeException;
 import javax.portlet.PortletPreferences;
 import javax.portlet.ReadOnlyException;
 import javax.portlet.ValidatorException;
+import javax.portlet.WindowState;
+import javax.portlet.WindowStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +69,21 @@ public class DynamicRespondrSkinConfigController {
 
         prefs.store();
         log.debug("Saved updated configuration");
+
+        response.setPortletMode(PortletMode.VIEW);
     }
 
     @ActionMapping(params = "action=cancel")
     public void cancelUpdate(ActionResponse response)
-            throws IOException, ReadOnlyException, ValidatorException, PortletModeException {
+            throws IOException, ReadOnlyException, ValidatorException, PortletModeException, WindowStateException {
         response.setPortletMode(PortletMode.VIEW);
+
+        // When the config is displayed in a lightbox, need
+        // to make sure we break out of exclusive mode.  Normally,
+        // this is handled via the lightbox JS code.  The lightbox
+        // JS doesn't support rewriting URLs set via JS though.  So,
+        // instead just do it here.
+        response.setWindowState(WindowState.NORMAL);
     }
 
     /**

@@ -18,4 +18,16 @@
     under the License.
 
 --%>
-<!-- DynamicRespondrSkin/skinBody has rendered intentionally empty. -->
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+
+<!-- Generate a CONFIG URL where appropriate -->
+<c:if test="${canAccessSkinConfig}">
+<script type="text/javascript">
+up.jQuery(function() {
+    up.dynamicSkinManagement = {
+        'configUrl': '<portlet:renderURL portletMode="CONFIG" windowState="maximized" />',
+        'lightboxConfigUrl': '<portlet:renderURL portletMode="CONFIG" windowState="EXCLUSIVE" />'
+    };
+});
+</script>
+</c:if>
