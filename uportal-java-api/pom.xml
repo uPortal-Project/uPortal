@@ -11,7 +11,7 @@
     <groupId>org.jasig.ssp.platform</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>platform-java-api</artifactId>
-    <version>0.1.2-SNAPSHOT</version>
+    <version>0.1.2</version>
     <packaging>jar</packaging>
 
     <name>uPortal Java API</name>
@@ -22,7 +22,8 @@
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
         <url>https://github.com/Jasig/uPortal</url>
-    </scm>
+      <tag>ssp-platform-java-api-0-1-2</tag>
+  </scm>
 
     <properties>
         <project.build.sourceVersion>1.6</project.build.sourceVersion>
