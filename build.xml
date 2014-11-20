@@ -532,6 +532,7 @@
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
                                 <arg value="${script}" />
@@ -542,6 +543,7 @@
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />
                             </java>
                         </else>
@@ -1646,6 +1648,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <exec executable="${mvnExecutable}" dir="${pomDir}" failonerror="true">
             <arg value="${windowsCmdArg1}"/>
             <arg value="${windowsCmdArg2}"/>
+            <arg value="-Djava.awt.headless=true"/>
             <arg value="-s${maven.settings}" />
             <arg value="-B"/>
             <arg value="${test.skip}" />
