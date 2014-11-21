@@ -1313,6 +1313,8 @@
         </plugins>
         <pluginManagement>
             <plugins>
+                <!-- Set the java.awt.headless flag so that the build doesn't
+                    steal focus on OS-X. UP-4275 -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
