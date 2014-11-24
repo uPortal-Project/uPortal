@@ -54,6 +54,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -730,10 +731,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public String toString() {
-        return "PortletDefinition [" +
-        		"portletDefinitionId=" + this.portletDefinitionId + ", " +
-				"fname=" + this.fname + ", " +
-				"portletDescriptorKey=" + this.portletDescriptorKey + ", " +
-				"portletType=" + this.portletType + "]";
+
+        ToStringBuilder toStringBuilder = new ToStringBuilder(this)
+            .append("definitionId", portletDefinitionId)
+            .append("fname", fname)
+            .append("descriptorKey", portletDescriptorKey)
+            .append("type", portletType);
+
+        return toStringBuilder.toString();
     }
 }
