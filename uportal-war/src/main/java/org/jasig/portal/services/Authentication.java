@@ -155,8 +155,8 @@ public class Authentication {
                 if (addInfo instanceof IPerson) {
                     final IPerson newPerson = (IPerson) addInfo;
                     person.setFullName(newPerson.getFullName());
-                    for (final Enumeration<String> e = newPerson.getAttributeNames(); e.hasMoreElements();) {
-                        final String attributeName = e.nextElement();
+                    
+                    for (final String attributeName : newPerson.getAttributeMap().keySet()) {
                         person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
                     }
                     this.resetEntityIdentifier(person, newPerson);

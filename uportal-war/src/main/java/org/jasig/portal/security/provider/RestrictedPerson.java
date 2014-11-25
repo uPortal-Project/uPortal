@@ -19,7 +19,6 @@
 
 package org.jasig.portal.security.provider;
 
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ import org.jasig.portal.security.ISecurityContext;
 /**
  * An IPerson object that wraps another IPerson
  * object and prevents access to the
- * underlying sercurity context.
+ * underlying security context.
  * @author Ken Weiner, kweiner@unicon.net
  * @version $Revision$
  */
@@ -49,14 +48,6 @@ public class RestrictedPerson implements IPerson {
 
     public Object[] getAttributeValues(String key) {
         return this.person.getAttributeValues(key);
-    }
-
-    public Enumeration<String> getAttributeNames() {
-        return this.person.getAttributeNames();
-    }
-
-    public Enumeration<List<Object>> getAttributes() {
-        return this.person.getAttributes();
     }
     
     public Map<String,List<Object>> getAttributeMap() {
@@ -122,10 +113,6 @@ public class RestrictedPerson implements IPerson {
 
     public EntityIdentifier getEntityIdentifier() {
         return this.person.getEntityIdentifier();
-    }
-
-    public void setEntityIdentifier(final EntityIdentifier ei) {
-    	// Nothing to do
     }
 
     public String getName() {

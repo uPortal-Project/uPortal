@@ -20,7 +20,6 @@
 package org.jasig.portal.security;
 
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -140,27 +139,11 @@ public final class SystemPerson implements IPerson {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#getAttributes()
-     */
-    @Override
-    public Enumeration<List<Object>> getAttributes() {
-        return null;
-    }
-
-    /* (non-Javadoc)
      * @see org.jasig.portal.security.IPerson#getAttributeMap()
      */
     @Override
     public Map<String, List<Object>> getAttributeMap() {
         return Collections.emptyMap();
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#getAttributeNames()
-     */
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        return Collections.enumeration(Collections.<String>emptySet());
     }
 
     /* (non-Javadoc)
@@ -185,14 +168,6 @@ public final class SystemPerson implements IPerson {
     @Override
     public boolean isGuest() {
         return false;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#setEntityIdentifier(org.jasig.portal.EntityIdentifier)
-     */
-    @Override
-    public void setEntityIdentifier(EntityIdentifier ei) {
-        throw new UnsupportedOperationException();
     }
 
 }

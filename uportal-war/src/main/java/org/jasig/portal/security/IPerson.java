@@ -21,16 +21,13 @@ package  org.jasig.portal.security;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @version $Revision$
  */
 public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity, Serializable {
 
@@ -121,19 +118,7 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    */
   public void setAttributes (Map<String, List<Object>> attrs);
 
-  /**
-   * Gets all of the attributes associated with the user
-   * @return all of the attributes associated with the user
-   */
-  public Enumeration<List<Object>> getAttributes ();
-
   public Map<String,List<Object>> getAttributeMap();
-  
-  /**
-   * Returns the names of all of the attributes stored for the user
-   * @return names of all of the attributes stored for the user
-   */
-  public Enumeration<String> getAttributeNames ();
 
   /**
    * Associates a security context object with the user
@@ -153,13 +138,6 @@ public interface IPerson extends Principal, IAdditionalDescriptor, IBasicEntity,
    */
   public boolean isGuest ();
 
-  /**
-   * Explicitly set the entity identifier
-   * The default implementation enforces a one time setting
-   * so that the value can't be changed once explicitly set.
-   * @param ei
-   */
-  public void setEntityIdentifier(EntityIdentifier ei);
 }
 
 

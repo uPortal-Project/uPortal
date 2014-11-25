@@ -1624,14 +1624,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         public void setAttributes(Map attrs) {
         }
 
-        public Enumeration getAttributes() {
-            return null;
-        }
-
-        public Enumeration getAttributeNames() {
-            return null;
-        }
-
         public boolean isGuest() {
             return (false);
         }
@@ -1645,9 +1637,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
         public EntityIdentifier getEntityIdentifier() {
             return null;
-        }
-
-        public void setEntityIdentifier(EntityIdentifier ei) {
         }
 
         public String getName() {
