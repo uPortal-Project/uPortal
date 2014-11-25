@@ -127,6 +127,13 @@
     #${n} .carousel-container {
         margin: 0 auto;
     }
+
+    #${n} .marketplace_carousel_inner .carousel-caption {
+        background-color: rgba(32, 32, 32, 0.2);
+        border-radius: 25px;
+        -moz-border-radius: 25px;
+        -webkit-border-radius: 25px;
+    }
     
     #${n} .marketplace_carousel_inner img {
         max-height : 20em;
@@ -298,6 +305,52 @@
     {% }); %}
 </script>
 
+<script type="text/template" id="${n}screen-shots">
+    {% if (screenShots.length > 0) { %}
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <spring:message code="screenshots.cap" text="Screenshots/Videos"/>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-3 col-xs-6">
+                <div class="carousel-container">
+                    <div id="${n}marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
+                        <div class="carousel-inner marketplace_carousel_inner" role="listbox">
+                            {% _(screenShots).each(function(screen, idx) { %}
+                                <div class="item marketplace_screen_shots {% if (idx === 0) { %} active {% } %}">
+                                    <img src="{%= screen.url %}" alt="screenshot for portlet">
+                                        {% _(screen.captions).each(function(caption) { %}
+                                            <div class="carousel-caption">
+                                                <h3>{%- caption %}</h3>
+                                            </div>
+                                        {% }); %}
+                                    </img>
+                                </div>
+                            {% }); %}
+                        </div>
+                        {% if (screenShots.length > 1) { %}
+                            <ol class="carousel-indicators marketplace_carousel_indicators">
+                                {% _(screenShots).each(function(screen, idx) { %}
+                                    <li data-target="#${n}marketplace_screenshots_and_videos" data-slide-to="{%= idx %}"></li>
+                                {% }); %}
+                            </ol>
+                            <a class="left carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        {% } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% } %}
+</script>
+
 <div id="${n}">
     <div>
         <div class="row">
@@ -341,69 +394,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">
-                <%-- Now let's add some Preferences --%>
-                <%-- Start with Screen shots and what not --%>
-                <%--TODO replace carousel with more accessibility friendly element --%>
-                <c:if test="${not empty portlet.screenShots}">
-                    <c:set var="validUrlCount" value="0"/>
-                    <c:forEach var="screenShot" items="${portlet.screenShots}">
-                        <c:set var="imageUrl" value="${screenShot.url}" />
-                        <%-- todo:  replace this with a less expensive test -- preferably client side --%>
-                        <%--<c:if test="${up:isValidUrl(imageUrl)}">--%>
-                        <c:set var="validUrlCount" value="${validUrlCount + 1}" />
-                        <%--If validUrlCount is 1 then we can make a header--%>
-                        <c:if test="${validUrlCount==1}">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h1><spring:message code="screenshots.cap" text="Screenshots/Videos"/></h1>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-offset-3 col-xs-6">
-                                    <div class="carousel-container">
-                                        <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
-                                            <%--Adds a carousel inner div --%>
-                                            <div class="carousel-inner marketplace_carousel_inner">
-                        </c:if>
-                        <div class="item marketplace_screen_shots">
-                            <img src="${imageUrl}" alt="screenshot for portlet">
-                            <c:if test="${not empty screenShot.captions}">
-                                <div class="carousel-caption">
-                                    <c:forEach var="portletCaption" items="${screenShot.captions}">
-                                        <h3>${portletCaption}</h3>
-                                    </c:forEach>
-                                </div>
-                            </c:if>
-                        </div>
-                        <%--<c:if/>--%>
-                    </c:forEach>
-                    <%--Closes the carousel-inner marketplace_carousel_inner div --%>
-                    <c:if test="${validUrlCount gt 0}">
-                        </div>
-                    </c:if>
-                    <%--Only add the little prev/next arrows when screenshots>1 --%>
-                    <c:if test="${validUrlCount gt 1}">
-                        <ol class="carousel-indicators marketplace_carousel_indicators">
-                            <c:forEach var="i" begin="0" end="${validUrlCount-1}">
-                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
-                            </c:forEach>
-                        </ol>
-                        <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                        <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                    </c:if>
-                    <c:if test="${validUrlCount gt 0}">
-                        <%--Closes the marketplace_screenshots_and_videos div--%>
-                        </div>
-                        <%--Closes the col div --%>
-                        </div>
-                        <%--Closes the container div --%>
-                        </div>
-                        <%--Closes the row div --%>
-                        </div>
-                    </c:if>
-                </c:if>
-            </div>
+            <div class="col-sm-12 screen-shot-section"></div>
         </div>
         <div class="row">
             <div class="col-xs-12">
@@ -592,19 +583,19 @@
             }
         });
 
+        var templateSettings = {
+            evaluate: /{%([\s\S]+?)%}/g,
+            interpolate: /{%=([\s\S]+?)%}/g,
+            escape: /{%-([\s\S]+?)%}/g
+        };
+
         var MenuController = Backbone.View.extend({
             events: {
                 'click .marketplace_add_to_tab_link': 'addPortlet',
                 'click .marketplace_add_favorite': 'addFavorite',
                 'click .marketplace_remove_favorite': 'removeFavorite'
             },
-            template: _.template($('#${n}options-menu').text(), null, {
-                // use jinja style templates instead of the up default (mustache style)
-                // Mostly... I just find these easier to read!
-                evaluate: /{%([\s\S]+?)%}/g,
-                interpolate: /{%=([\s\S]+?)%}/g,
-                escape: /{%-([\s\S]+?)%}/g
-            }),
+            template: _.template($('#${n}options-menu').text(), null, templateSettings),
             options: {
                 portletChannelId: '${portlet.portletDefinitionId}'
             },
@@ -766,6 +757,99 @@
 
         updateOptionsMenu();
 
+        var screenShots = [
+            <c:forEach var="screenShot" items="${portlet.screenShots}">
+            {
+                url: '${screenShot.url}',
+                captions: [
+                    <c:forEach var="caption" items="${screenShot.captions}">
+                        '${caption}',
+                    </c:forEach>
+                ]
+            },
+            </c:forEach>
+        ];
+
+        var ScreenShotModel = Backbone.Model.extend({
+            defaults: {
+                url: null,
+                captions: []
+            }
+        });
+        var screenShotCollection = new Backbone.Collection(screenShots, { model: ScreenShotModel });
+
+        var ScreenShotController = Backbone.View.extend({
+            template: _.template($('#${n}screen-shots').text(), null, templateSettings),
+            selectors: {
+                firstIndicator: '.marketplace_carousel_indicators > li:first-child'
+            },
+            collection: undefined,
+
+            initialize: function(options) {
+                var self, promises, allResolved;
+
+                self = this;
+
+                // kick off validation of each screen shot...
+                promises = self.collection.map(function(screenShot) {
+                    return self._validateScreenShot(screenShot);
+                });
+
+                // after all image URL have been checked, update the collection
+                // with just the valid screenshots...
+                allResolved = $.when.apply($, promises);
+                allResolved.then(function() {
+                    var valid;
+
+                    valid = _.filter(arguments, function(screenShot) {
+                        return screenShot != null;
+                    });
+
+                    // update the collection...
+                    self.collection.reset(valid);
+                });
+
+                // after the model updates, re-render...
+                self.listenTo(self.collection, 'reset', self.render);
+            },
+
+
+            render: function() {
+                var self = this;
+
+                this.$el.html(this.template({
+                    screenShots: self.collection.toJSON()
+                }));
+                this.$(self.selectors.firstIndicator).addClass("active");
+
+                return this.$el;
+            },
+
+
+            _validateScreenShot: function(screenShot) {
+                var image, defer;
+
+                defer = $.Deferred();
+                image = new Image();
+                image.onload = function() {
+                    defer.resolve(screenShot);
+                };
+                image.onerror = function() {
+                    defer.resolve(null);
+                };
+                image.src = screenShot.get('url');
+
+                // return a deferred that always resolves successfully and
+                // resolves to a screenshot object or null
+                return defer.promise();
+            }
+        });
+
+        // instantiate the actual screenshot controller.
+        var screenShotController = new ScreenShotController({
+            el: $('.screen-shot-section'),
+            collection: screenShotCollection
+        });
 
         var updateCharactersRemaining = function(){
             if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit){
@@ -784,7 +868,6 @@
             $("#${n}marketplace_rating_instructions").text(messageText);
         }
         $(".marketplace_screen_shots:first").addClass("active");
-        $(".marketplace_carousel_indicators>li:first-child").addClass("active");
         $(".marketplace_release_notes>li:nth-child(-n+"+
                 defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
         $('#${n}copy-modal').modal('hide');
