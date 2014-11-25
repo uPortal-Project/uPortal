@@ -30,7 +30,7 @@ import org.jasig.portal.io.xml.IPortalData;
 
 
 /**
- * A portlet definition is equivalant to a published ChannelDefinition. 
+ * A portlet definition is equivalent to a published ChannelDefinition.
  * 
  * @author Eric Dalquist
  * @version $Revision$
