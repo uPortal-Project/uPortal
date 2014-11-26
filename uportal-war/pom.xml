@@ -754,43 +754,20 @@
         <plugins>
             <!-- Compile groovy classes -->
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.2</version>
                 <executions>
                     <execution>
-                        <id>compile</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <target>
-                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
-                                    <classpath refid="maven.compile.classpath" />
-                                </taskdef>
-                                <mkdir dir="${project.build.outputDirectory}" />
-                                <groovyc srcdir="${basedir}/src/main/groovy" destdir="${project.build.outputDirectory}" encoding="${project.build.sourceEncoding}">
-                                    <classpath refid="maven.compile.classpath" />
-                                </groovyc>
-                            </target>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <target>
-                                <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc">
-                                    <classpath refid="maven.test.classpath" />
-                                </taskdef>
-                                <mkdir dir="${project.build.testOutputDirectory}" />
-                                <groovyc srcdir="${basedir}/src/test/groovy" destdir="${project.build.testOutputDirectory}" encoding="${project.build.sourceEncoding}">
-                                    <classpath refid="maven.test.classpath" />
-                                </groovyc>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>testGenerateStubs</goal>
+                            <goal>testCompile</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>
