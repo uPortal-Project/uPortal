@@ -19,6 +19,9 @@
 
 package org.jasig.portal.xml.stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -37,6 +40,9 @@ import javax.xml.stream.util.EventReaderDelegate;
  * @version $Revision$
  */
 public abstract class BaseXMLEventReader extends EventReaderDelegate {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private XMLEvent previousEvent;
     
     public BaseXMLEventReader(XMLEventReader reader) {
