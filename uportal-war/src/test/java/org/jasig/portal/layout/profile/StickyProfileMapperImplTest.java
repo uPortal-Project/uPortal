@@ -126,6 +126,22 @@ public class StickyProfileMapperImplTest {
     }
 
     /**
+     * Test that when the underlying registry throws in the course of handling profile selection event,
+     * failure does not propagate out of the event handling method.
+     */
+    @Test
+    public void testFailsEventHandlingGracefully() {
+
+        doThrow(RuntimeException.class).when(registry).registerUserProfileSelection("bobby", "profileFName1");
+
+        final ProfileSelectionEvent selectionEvent = new ProfileSelectionEvent(this, "validKey1", person, request);
+
+        stickyMapper.onApplicationEvent(selectionEvent);
+
+        verify(registry).registerUserProfileSelection("bobby", "profileFName1");
+    }
+
+    /**
      * Test that when the identity is swapped, ignores profile selection requests.
      */
     @Test

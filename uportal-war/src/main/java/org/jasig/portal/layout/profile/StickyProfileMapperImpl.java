@@ -94,37 +94,43 @@ public class StickyProfileMapperImpl
     @Override
     public void onApplicationEvent(ProfileSelectionEvent event) {
 
-        final String userName = event.getPerson().getUserName();
+        try {
 
-        if (identitySwapperManager.isImpersonating(event.getRequest())) {
-            logger.debug("Ignoring selection of profile by key {} in the context of user {} because impersonated.",
-                    event.getRequestedProfileKey(), userName );
-            return;
+            final String userName = event.getPerson().getUserName();
+
+            if (identitySwapperManager.isImpersonating(event.getRequest())) {
+                logger.debug("Ignoring selection of profile by key {} in the context of user {} because impersonated.",
+                        event.getRequestedProfileKey(), userName);
+                return;
+            }
+
+            if (profileKeyForNoSelection != null
+                    && profileKeyForNoSelection.equals(event.getRequestedProfileKey())) {
+
+                logger.trace("Translating {} selection of profile key {} to apathy about profile selection.",
+                        userName, event.getRequestedProfileKey());
+                profileSelectionRegistry.registerUserProfileSelection(userName, null);
+
+                return;
+
+            }
+
+            if (!immutableMappings.containsKey(event.getRequestedProfileKey())) {
+                logger.warn("User desired a profile by a key {} that does not map to any profile fname.  Ignoring.",
+                        event.getRequestedProfileKey());
+                return;
+            }
+
+
+            final String profileFName = immutableMappings.get(event.getRequestedProfileKey());
+
+            logger.trace("Storing {} selection of profile fname {} (keyed by profile key {})",
+                    userName, profileFName, event.getRequestedProfileKey());
+            profileSelectionRegistry.registerUserProfileSelection(userName, profileFName);
+
+        } catch (final Exception e) {
+            logger.error("Something went wrong handling profile selection event " + event);
         }
-
-        if (profileKeyForNoSelection != null
-                && profileKeyForNoSelection.equals(event.getRequestedProfileKey())) {
-
-            logger.trace("Translating {} selection of profile key {} to apathy about profile selection.",
-                    userName, event.getRequestedProfileKey());
-            profileSelectionRegistry.registerUserProfileSelection(userName, null);
-
-            return;
-
-        }
-
-        if (!immutableMappings.containsKey(event.getRequestedProfileKey())) {
-            logger.warn("User desired a profile by a key {} that does not map to any profile fname.  Ignoring.",
-                    event.getRequestedProfileKey());
-            return;
-        }
-
-
-        final String profileFName = immutableMappings.get(event.getRequestedProfileKey());
-
-        logger.trace("Storing {} selection of profile fname {} (keyed by profile key {})",
-                userName, profileFName, event.getRequestedProfileKey());
-        profileSelectionRegistry.registerUserProfileSelection(userName, profileFName);
     }
 
     @Override
