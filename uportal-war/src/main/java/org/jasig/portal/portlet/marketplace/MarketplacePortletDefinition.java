@@ -45,6 +45,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Marketplace portlet definitions add Marketplace-specific features upon an underlying
+ * IPortletDefinition.
+ *
+ * @since uPortal 4.1
+ */
 public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public static final String MARKETPLACE_FNAME = "portletmarketplace";
