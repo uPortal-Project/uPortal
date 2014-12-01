@@ -269,10 +269,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         return this.parentCategories;
     }
 
-    private void setRelatedPortlets(Set<MarketplacePortletDefinition> relatedPortlets){
-        this.relatedPortlets = relatedPortlets;
-    }
-
     /**
      * 
      * @return a set of portlets that include all portlets in this portlets immediate categories and children categories
