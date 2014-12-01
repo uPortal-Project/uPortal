@@ -157,22 +157,38 @@ public class PortalPreAuthenticatedProcessingFilter
          * is useful.
          */
         if (loginPath.equals(currentPath)) {
-            // clear out the current security context so we can re-establish
-            // it once the new session is established
+
             SecurityContextHolder.clearContext();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
+                " so we can re-establish it once the new session is established.");
+            }
+
             this.doPortalAuthentication((HttpServletRequest)request);
             chain.doFilter(request, response);
         }
         
         else if (logoutPath.equals(currentPath)) {
-            // clear out the current security context so we can re-establish
-            // it once the new session is established
+
             SecurityContextHolder.clearContext();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Path [" + currentPath + "] is logoutPath, so cleared security context" +
+                        " so can re-establish it once the new session is established.");
+            }
+
+
             chain.doFilter(request, response);
         }
         
         // otherwise, call the base class logic
         else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
+                        " so no uPortal-custom filtering.");
+            }
+
             super.doFilter(request, response, chain);
         }
         
@@ -215,7 +231,14 @@ public class PortalPreAuthenticatedProcessingFilter
         String originalEventSessionId = null;
         boolean swap = false;
         String swapperProfile = null;
+
+        final String requestedSessionId = request.getRequestedSessionId();
+
         if (request.isRequestedSessionIdValid()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("doPortalAuthentication for valid requested session id " + requestedSessionId);
+            }
+
             try {
                 HttpSession s = request.getSession(false);
                 
@@ -236,11 +259,20 @@ public class PortalPreAuthenticatedProcessingFilter
                 }
                 //Original person in session so this must be an un-swap request
                 else {
+                    if (logger.isDebugEnabled()) {
+                        logger.trace("This is an un-swap request swapping back from impersonated " + targetUid
+                                + " to original user " + originalUid + ".");
+                    }
+
                     final IPerson person = personManager.getPerson(request);
                     targetUid = person.getName();
                 }
 
                 if (s != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Invalidating the impersonated session in un-swapping.");
+                    }
+
                     s.invalidate();
                 }
             }
@@ -252,6 +284,12 @@ public class PortalPreAuthenticatedProcessingFilter
                     logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
                 }
             }
+        } else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Requested session id " + requestedSessionId + " was not valid " +
+                        "so no attempt to apply swapping rules.");
+            }
+
         }
 
         //  Create the user's session

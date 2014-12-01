@@ -149,6 +149,11 @@ public class LoginController {
         }
 
         final String encodedRedirectURL = response.encodeRedirectURL(redirectTarget);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Redirecting to " + redirectTarget);
+        }
+
         response.sendRedirect(encodedRedirectURL);
     }
 }

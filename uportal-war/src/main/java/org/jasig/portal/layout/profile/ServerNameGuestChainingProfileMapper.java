@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,5 +100,12 @@ public class ServerNameGuestChainingProfileMapper implements IProfileMapper, Ini
     public void setAuthorizedServerNames(Map<String, String> authorizedServerNames) {
 		this.authorizedServerNames = authorizedServerNames;
 	}
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                     .append("defaultProfileName", this.defaultProfileName)
+                     .append("subMappers", this.subMappers).toString();
+    }
 
 }

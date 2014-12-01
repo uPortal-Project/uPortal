@@ -131,9 +131,13 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
 
                 this.clearRedirectCount(request, response);
                 logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestURI, canonicalUri, redirectCount});
-            }
-            else if (redirectCount > 0) {
-                this.clearRedirectCount(request, response);
+            } else {
+                logger.trace("Requested URI {} is the canonical URL {}, " +
+                        "so no (further?) redirect is necessary (after {} redirects).",
+                        requestURI, canonicalUri, redirectCount);
+                if (redirectCount > 0) {
+                    this.clearRedirectCount(request, response);
+                }
             }
         }
         

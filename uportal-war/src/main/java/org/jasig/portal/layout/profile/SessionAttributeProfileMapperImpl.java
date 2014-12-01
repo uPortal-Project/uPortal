@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.portal.security.IPerson;
 
 import org.slf4j.Logger;
@@ -78,6 +80,7 @@ public class SessionAttributeProfileMapperImpl
     public String getProfileFname(IPerson person, HttpServletRequest request) {
         final HttpSession session = request.getSession(false);
         if (session == null) {
+            logger.debug("Cannot get a session-stored profile fname from a null session, so returning null.");
             return null;
         }
         
@@ -85,10 +88,19 @@ public class SessionAttributeProfileMapperImpl
         if (requestedProfileKey != null) {
             final String profileName = mappings.get(requestedProfileKey);
             if (profileName != null) {
+                logger.debug("The stored requested profile key {} mapped to profile fname {}.",
+                        requestedProfileKey, profileName);
                 return profileName;
+            } else {
+                logger.warn("The stored requested profile key {} does not map to any profile fname.",
+                        requestedProfileKey);
             }
+        } else {
+            logger.trace("There is no requested profile key stored at session attribute {}.",
+                    attributeName);
         }
 
+        logger.trace("Falling back on default profile name {} .", defaultProfileName);
         return defaultProfileName;
     }
 
@@ -118,9 +130,10 @@ public class SessionAttributeProfileMapperImpl
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " which considers session attribute [" + this.attributeName +
-                "] as key to mappings [" + this.mappings +
-                "], falling back on default [" + this.defaultProfileName + "] .";
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                     .append("attributeName", this.attributeName)
+                     .append("mappings", this.mappings)
+                     .append("defaultProfileName", this.defaultProfileName).toString();
     }
 
 }
