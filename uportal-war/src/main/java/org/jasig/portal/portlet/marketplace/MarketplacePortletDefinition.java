@@ -180,8 +180,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     /**
      * Initialize related portlets.
-     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related portlets off of a
-     * MarketplacePortletDefinition do not always intantiate their related MarketplacePortletDefinitions, ad infinitem.
+     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related
+     * portlets off of a MarketplacePortletDefinition do not always instantiate their related
+     * MarketplacePortletDefinitions, ad infinitem.
      */
     private void initRelatedPortlets(){
         final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
