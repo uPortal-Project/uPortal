@@ -25,9 +25,13 @@
     }
 
     .hover-toolbar {
-        display: none;
         z-index: 1000;
         position: absolute;
+        opacity: 0;
+        transition: opacity 0.25s ease-in-out;
+        -moz-transition: opacity 0.25s ease-in-out;
+        -webkit-transition: opacity 0.25s ease-in-out;
+
 
         .up-portlet-titlebar {
             background-color: @grayscale2;
@@ -49,6 +53,13 @@
                     right: auto !important;
                 }
             }
+        }
+    }
+
+    &:hover {
+        .hover-toolbar {
+            opacity: 1.0;
+
         }
     }
 }
