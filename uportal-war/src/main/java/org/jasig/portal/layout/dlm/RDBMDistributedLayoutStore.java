@@ -1883,6 +1883,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         @Override public String getAlternativeMaximizedLink() {
             return null;
         }
+        
+        @Override
+        public String getTarget() {
+          return null;
+        }
 
         public String getFName() {
             return this.fname;

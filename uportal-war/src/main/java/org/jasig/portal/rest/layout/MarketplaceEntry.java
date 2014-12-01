@@ -5,20 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.portlet.WindowState;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
 import org.jasig.portal.portlet.marketplace.ScreenShot;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletCategory;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MarketplaceEntry  implements Serializable {
     
@@ -154,6 +148,10 @@ public class MarketplaceEntry  implements Serializable {
 
     public void setCanAdd(boolean canAdd) {
         this.canAdd = canAdd;
+    }
+    
+    public String getTarget() {
+      return pdef.getTarget();
     }
 
 }

@@ -27,6 +27,7 @@ public class LayoutPortlet {
     private String iconUrl;
     private String faIcon;
     private String fname;
+    private String target;
 
     public String getNodeId() {
         return nodeId;
@@ -82,6 +83,14 @@ public class LayoutPortlet {
 
     public void setFname(String fname) {
       this.fname = fname;
+    }
+
+    public String getTarget() {
+      return target;
+    }
+
+    public void setTarget(String target) {
+      this.target = target;
     }
 
 }

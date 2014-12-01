@@ -643,4 +643,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     public void setShortURL(String shortURL) {
         this.shortURL = shortURL;
     }
+    
+    public IPortletDefinitionParameter getPortletDefinitionParameter(String parameterKey) {
+        return this.portletDefinition.getParameter(parameterKey);
+    }
+
+    @Override
+    public String getTarget() {
+      return this.portletDefinition.getTarget();
+    }
 }

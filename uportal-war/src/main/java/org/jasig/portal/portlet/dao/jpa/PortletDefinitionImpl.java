@@ -548,6 +548,22 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
         return null;
     }
+    
+    @Override
+    public String getTarget() {
+        final IPortletDefinitionParameter targetParameter =
+            getParameter(TARGET_PARAM);
+
+        if (null != targetParameter) {
+            final String target = targetParameter.getValue();
+
+            if (StringUtils.hasText(target)) {
+                return target;
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public void setType(IPortletType portletType) {

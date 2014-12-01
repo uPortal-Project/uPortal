@@ -155,6 +155,8 @@ public class LayoutRESTController {
                         portlet.setFaIcon(faIconParam.getValue());
                     }
                     
+                    portlet.setTarget(def.getTarget());
+                    
                     //get alt max URL
                     String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
                     if( alternativeMaximizedLink != null) {
