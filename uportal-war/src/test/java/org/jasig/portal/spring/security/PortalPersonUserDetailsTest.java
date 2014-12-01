@@ -41,8 +41,9 @@ public class PortalPersonUserDetailsTest {
     
     @Test
     public void testUserDetails() {
-        UserDetails details = new PortalPersonUserDetails(person);
+        PortalPersonUserDetails details = new PortalPersonUserDetails(person);
         assertEquals("testuser", details.getUsername());
+        assertEquals(person, details.getIPerson());
     }
     
 }

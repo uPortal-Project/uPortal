@@ -44,6 +44,16 @@ public class PortalPersonUserDetails implements UserDetails {
         this.person = person;
     }
 
+    /**
+     * Returns the wrapped IPerson.
+     * @return the wrapped IPerson.
+     *
+     * @since uPortal 4.2
+     */
+    public IPerson getIPerson() {
+        return this.person;
+    }
+
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return Collections.<GrantedAuthority>emptyList();
