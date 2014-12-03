@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -671,6 +672,14 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     public String getTarget() {
       return this.portletDefinition.getTarget();
     }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFName())
+            .toString();
+    }
+
     /*
      * Marketplace portlet definitions are definitively identified by the fname of their underlying
      * portlet publication, so only the fname contributes to the hashcode.
