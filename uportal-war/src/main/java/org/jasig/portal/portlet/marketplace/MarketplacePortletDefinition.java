@@ -671,4 +671,31 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     public String getTarget() {
       return this.portletDefinition.getTarget();
     }
+    /*
+     * Marketplace portlet definitions are definitively identified by the fname of their underlying
+     * portlet publication, so only the fname contributes to the hashcode.
+     * @since uPortal 4.2
+     */
+    @Override
+    public int hashCode() {
+        return getFName().hashCode();
+    }
+
+    /*
+     * Equal where the other object is a MarketplacePortletDefinition with the same fname.
+     * This is important so that Set operations work properly.
+     * @since uPortal 4.2
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (null == other) { return false; }
+        if (this == other) { return true; }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        final MarketplacePortletDefinition otherDefinition = (MarketplacePortletDefinition) other;
+        if (getFName() == otherDefinition.getFName()) { return true; }; // both null fname case
+
+        return getFName().equals(otherDefinition.getFName());
+    }
 }

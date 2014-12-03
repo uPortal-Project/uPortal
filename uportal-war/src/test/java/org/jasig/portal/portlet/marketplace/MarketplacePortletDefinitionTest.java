@@ -25,6 +25,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -34,6 +36,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class MarketplacePortletDefinitionTest {
 
     @Mock IPortletDefinition portletDefinition;
+    @Mock IPortletDefinition anotherPortletDefinition;
 
     @Mock IPortletCategoryRegistry categoryRegistry;
 
@@ -73,6 +76,39 @@ public class MarketplacePortletDefinitionTest {
 
         assertEquals("http://apereo.org",
             marketplacePortletDefinition.getRenderUrl());
+
+    }
+
+
+    /**
+     * Test implementation of equals().
+     */
+    @Test
+    public void testEquals() {
+
+        assertFalse(marketplacePortletDefinition.equals(null));
+
+        assertFalse(marketplacePortletDefinition.equals("SomeStringObject"));
+
+        final MarketplacePortletDefinition anotherMarketplacePortletDefinition =
+            new MarketplacePortletDefinition(anotherPortletDefinition, service, categoryRegistry);
+
+        //fnames of both are null, so they are equal
+        assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+
+        when(portletDefinition.getFName()).thenReturn("snooper");
+
+        assertFalse(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+
+        when(anotherPortletDefinition.getFName()).thenReturn("snooper");
+
+        assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+        assertEquals(marketplacePortletDefinition.hashCode(),
+            anotherMarketplacePortletDefinition.hashCode());
+
+        when(anotherPortletDefinition.getFName()).thenReturn("marketplace");
+
+        assertFalse(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
 
     }
 
