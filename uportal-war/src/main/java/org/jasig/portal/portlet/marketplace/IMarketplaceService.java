@@ -64,6 +64,36 @@ public interface IMarketplaceService {
     ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user);
 
     /**
+     * Return the Marketplace portlet definitions browseable by the given user.
+     * Marketplace portlet definitions are visible to the user when the user enjoys permission for
+     * UP_PORTLET_SUBSCRIBE.BROWSE or UP_PORTLET_PUBLISH.MANAGE activity on the portlet entity.
+     *
+     * @param user non-null person for whom the definitions are browseable
+     * @return non-null potentially empty Set of definitions browseable by the user.
+     * @throws RuntimeException when cannot determine result
+     * @since uPortal 4.2
+     */
+    public ImmutableSet<MarketplacePortletDefinition>
+        marketplacePortletDefinitionsBrowseableBy(IPerson user);
+
+    /**
+     * Return the Marketplace portlet definitions related to the given MarketplacePortletDefinition,
+     * regardless of whether those Definitions are BROWSEable by the principal served in the current
+     * execution context.
+     *
+     * Currently, Marketplace portlet definition A is considered related to portlet definition
+     * B when A is a member of at least one category or (extended) sub-category of a category of
+     * which B is a member.
+     *
+     * @param definition a non-null Definition to which the returned Defintions are related.
+     * @return a potentially empty non-null Set of related Definitions
+     * @throws RuntimeException when cannot determine related definitions.
+     * @since uPortal 4.2
+     */
+    public ImmutableSet<MarketplacePortletDefinition>
+        marketplacePortletDefinitionsRelatedTo(MarketplacePortletDefinition definition);
+
+    /**
      * Return the potentially empty Set of portlet categories such that
      * 1. the user has BROWSE (or MANAGE implying BROWSE) permission on the **category**, and
      * 2. the user has BROWSE (or MANAGE implying BROWSE) permission on at least one portlet in that category.

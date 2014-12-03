@@ -18,13 +18,21 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -38,15 +46,36 @@ public class MarketplacePortletDefinitionTest {
 
     @Mock IPortletCategoryRegistry categoryRegistry;
 
+    @Mock IMarketplaceService marketplaceService;
+
     MarketplacePortletDefinition marketplacePortletDefinition;
+
+    @Mock MarketplacePortletDefinition browseableDefinition1;
+    @Mock MarketplacePortletDefinition browseableDefinition2;
+    @Mock MarketplacePortletDefinition browseableRelatedDefinition1;
+    @Mock MarketplacePortletDefinition browseableRelatedDefinition2;
+    @Mock MarketplacePortletDefinition relatedDefinition1;
+    @Mock MarketplacePortletDefinition relatedDefinition2;
+
+    @Mock IPerson person;
+    @Mock IPerson anotherPerson;
 
     @Before
     public void setUp() {
         initMocks(this);
 
         marketplacePortletDefinition =
-            new MarketplacePortletDefinition(portletDefinition, categoryRegistry);
+            new MarketplacePortletDefinition(portletDefinition, person,
+                marketplaceService, categoryRegistry);
 
+        final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
+        allRelatedPortlets.add(this.browseableRelatedDefinition1);
+        allRelatedPortlets.add(this.browseableRelatedDefinition2);
+        allRelatedPortlets.add(this.relatedDefinition1);
+        allRelatedPortlets.add(this.relatedDefinition2);
+
+        when(marketplaceService.marketplacePortletDefinitionsRelatedTo
+            (marketplacePortletDefinition)).thenReturn(ImmutableSet.copyOf(allRelatedPortlets));
     }
 
     /**
@@ -75,19 +104,113 @@ public class MarketplacePortletDefinitionTest {
 
     }
 
-
     /**
-     * Test implementation of equals().
+     * Test that MarketplacePortletDefinitions instantiated without a user have no related portlets.
      */
     @Test
-    public void testEquals() {
+    public void testNoUserNoRelatedPortlets() {
+
+        MarketplacePortletDefinition userlessDefinition =
+            new MarketplacePortletDefinition(portletDefinition, /* no person! , */
+                marketplaceService, categoryRegistry);
+
+        assertTrue(userlessDefinition.getRelatedPortlets().isEmpty());
+
+    }
+
+    /**
+     * Test that when asked about related portlets, filters to browseable.
+     */
+    @Test
+    public void testRelatedPortletsFiltersToBrowseable() {
+
+        final Set<MarketplacePortletDefinition> allBrowseablePortlets = new HashSet<>();
+        allBrowseablePortlets.add(this.browseableRelatedDefinition1);
+        allBrowseablePortlets.add(this.browseableRelatedDefinition2);
+        allBrowseablePortlets.add(this.browseableDefinition1);
+        allBrowseablePortlets.add(this.browseableDefinition2);
+
+        when(marketplaceService.marketplacePortletDefinitionsBrowseableBy(person))
+            .thenReturn(ImmutableSet.copyOf(allBrowseablePortlets));
+
+        final Set<MarketplacePortletDefinition> expectedBrowseableRelated = new HashSet<>();
+        expectedBrowseableRelated.add(this.browseableRelatedDefinition1);
+        expectedBrowseableRelated.add(this.browseableRelatedDefinition2);
+
+        assertEquals(expectedBrowseableRelated,
+            marketplacePortletDefinition.getRelatedPortlets());
+
+    }
+
+    /**
+     * Test that MarketplacePortletDefinitions instantiated without a user
+     * have no random related portlets.
+     */
+    @Test
+    public void testNoUserNoRandomRelatedPortlets() {
+
+        MarketplacePortletDefinition userlessDefinition =
+            new MarketplacePortletDefinition(portletDefinition, /* no person! , */
+                marketplaceService, categoryRegistry);
+
+        assertTrue(userlessDefinition.getRandomSamplingRelatedPortlets().isEmpty());
+
+    }
+
+    /**
+     * Test that when asked about random related portlets, if underlying failure, that failure is
+     * not propagated and instead manifests as empty set of related portlets.
+     */
+    @Test
+    public void testRandomRelatedPortletsFailsGracefully() {
+
+        when(marketplaceService.marketplacePortletDefinitionsBrowseableBy(any(IPerson.class)))
+            .thenThrow(RuntimeException.class);
+
+        assertTrue(marketplacePortletDefinition.getRandomSamplingRelatedPortlets().isEmpty());
+    }
+
+    /**
+     * Test that random related portlets filters to those portlets browseable by the current user.
+     */
+    @Test
+    public void testRandomRelatedPortletsFiltersToBrowseable() {
+
+        final Set<MarketplacePortletDefinition> allBrowseablePortlets = new HashSet<>();
+        allBrowseablePortlets.add(this.browseableRelatedDefinition1);
+        allBrowseablePortlets.add(this.browseableRelatedDefinition2);
+        allBrowseablePortlets.add(this.browseableDefinition1);
+        allBrowseablePortlets.add(this.browseableDefinition2);
+
+        when(marketplaceService.marketplacePortletDefinitionsBrowseableBy(person))
+            .thenReturn(ImmutableSet.copyOf(allBrowseablePortlets));
+
+        final Set<MarketplacePortletDefinition> expectedBrowseableRelated = new HashSet<>();
+        expectedBrowseableRelated.add(this.browseableRelatedDefinition1);
+        expectedBrowseableRelated.add(this.browseableRelatedDefinition2);
+
+        assertEquals(expectedBrowseableRelated,
+            marketplacePortletDefinition.getRandomSamplingRelatedPortlets());
+
+    }
+
+    /**
+     * Test implementation of equals() for MarketplacePortletDefinitions not tailored to a person.
+     */
+    @Test
+    public void testEqualsNoPerson() {
+
+        marketplacePortletDefinition =
+            new MarketplacePortletDefinition(portletDefinition, /* no person! , */
+                marketplaceService, categoryRegistry);
 
         assertFalse(marketplacePortletDefinition.equals(null));
 
         assertFalse(marketplacePortletDefinition.equals("SomeStringObject"));
 
-        MarketplacePortletDefinition anotherMarketplacePortletDefinition =
-            new MarketplacePortletDefinition(anotherPortletDefinition, categoryRegistry);
+        final MarketplacePortletDefinition anotherMarketplacePortletDefinition =
+            new MarketplacePortletDefinition(anotherPortletDefinition, /* no person! */
+                marketplaceService, categoryRegistry);
 
         //fnames of both are null, so they are equal
         assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
@@ -102,10 +225,62 @@ public class MarketplacePortletDefinitionTest {
         assertEquals(marketplacePortletDefinition.hashCode(),
             anotherMarketplacePortletDefinition.hashCode());
 
+        final MarketplacePortletDefinition definitionWithAPerson =
+            new MarketplacePortletDefinition(anotherPortletDefinition, person,
+                marketplaceService, categoryRegistry);
+
+        assertFalse(marketplacePortletDefinition.equals(definitionWithAPerson));
+
         when(anotherPortletDefinition.getFName()).thenReturn("marketplace");
 
         assertFalse(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+    }
 
+    /**
+     * Test implementation of equals() for MarketplacePortletDefinitions tailored to a person.
+     */
+    @Test
+    public void testEqualsWithPerson() {
+
+        marketplacePortletDefinition =
+            new MarketplacePortletDefinition(portletDefinition, person /* with a person! */,
+                marketplaceService, categoryRegistry);
+
+        assertFalse(marketplacePortletDefinition.equals(null));
+
+        assertFalse(marketplacePortletDefinition.equals("SomeStringObject"));
+
+        final MarketplacePortletDefinition anotherMarketplacePortletDefinition =
+            new MarketplacePortletDefinition(anotherPortletDefinition, person, /* with a person! */
+                marketplaceService, categoryRegistry);
+
+        assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+
+        when(portletDefinition.getFName()).thenReturn("snooper");
+
+        assertFalse(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+
+        when(anotherPortletDefinition.getFName()).thenReturn("snooper");
+
+        assertTrue(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
+        assertEquals(marketplacePortletDefinition.hashCode(),
+            anotherMarketplacePortletDefinition.hashCode());
+
+        final MarketplacePortletDefinition definitionWithoutAPerson =
+            new MarketplacePortletDefinition(anotherPortletDefinition, /* no person! */
+                marketplaceService, categoryRegistry);
+
+        assertFalse(marketplacePortletDefinition.equals(definitionWithoutAPerson));
+
+        final MarketplacePortletDefinition definitionWithDifferentPerson =
+            new MarketplacePortletDefinition(portletDefinition, anotherPerson,
+                marketplaceService, categoryRegistry);
+
+        assertFalse(marketplacePortletDefinition.equals(definitionWithDifferentPerson));
+
+        when(anotherPortletDefinition.getFName()).thenReturn("marketplace");
+
+        assertFalse(marketplacePortletDefinition.equals(anotherMarketplacePortletDefinition));
     }
 
 }

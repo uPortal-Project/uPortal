@@ -100,6 +100,34 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         }
     }
 
+    @Async
+    private  Future<ImmutableSet<MarketplacePortletDefinition>>
+      loadMarketplacePortletDefinitionsFor(final IPerson user) {
+
+        final List<IPortletDefinition> allPortletDefinitions =
+            this.portletDefinitionRegistry.getAllPortletDefinitions();
+
+        final Set<MarketplacePortletDefinition> browseablePortletDefinitions = new HashSet<>();
+
+        for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
+
+            if (mayBrowsePortlet(user, portletDefinition)) {
+                final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
+                browseablePortletDefinitions.add(marketplacePortletDefinition);
+            }
+
+        }
+
+        logger.trace("These portlet definitions {} are browseable by {}.",
+            browseablePortletDefinitions, user.getUserName());
+
+        Future<ImmutableSet<MarketplacePortletDefinition>> future = new AsyncResult<>(ImmutableSet
+            .copyOf(browseablePortletDefinitions));
+
+        // TODO: cache
+
+        return future;
+    }
 
     @Async
     public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user) {
@@ -149,6 +177,45 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
             logger.error(e.getMessage(), e);
             return ImmutableSet.of();
         }
+    }
+
+    @Override
+    public ImmutableSet<MarketplacePortletDefinition> marketplacePortletDefinitionsBrowseableBy(
+        final IPerson user) {
+
+        final Future<ImmutableSet<MarketplacePortletDefinition>> future =
+            loadMarketplacePortletDefinitionsFor(user);
+
+        try {
+            return future.get();
+
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to read asynch load MarketplacePortletDefinitions "
+                + "for this user.", e);
+        }
+    }
+
+    @Override
+    public ImmutableSet<MarketplacePortletDefinition>
+        marketplacePortletDefinitionsRelatedTo(final MarketplacePortletDefinition definition) {
+
+        final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
+
+        for (final PortletCategory parentCategory:
+            portletCategoryRegistry.getParentCategories(definition)) {
+
+            final Set<IPortletDefinition> portletsInCategory =
+                portletCategoryRegistry.getAllChildPortlets(parentCategory);
+
+            for (final IPortletDefinition portletDefinition : portletsInCategory) {
+                allRelatedPortlets.add(
+                    new MarketplacePortletDefinition(portletDefinition,
+                        this, portletCategoryRegistry));
+            }
+        }
+
+        allRelatedPortlets.remove(definition);
+        return ImmutableSet.copyOf(allRelatedPortlets);
     }
 
     @Override
@@ -223,7 +290,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
         Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
         if (element == null) {
-            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, portletCategoryRegistry);
+            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, this, portletCategoryRegistry);
             element = new Element(portletDefinition.getFName(), mpd);
             this.marketplacePortletDefinitionCache.put(element);
         }

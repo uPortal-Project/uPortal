@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class MarketplaceSearchService implements IPortalSearchService {
 
+    private IMarketplaceService marketplaceService;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
@@ -82,6 +83,11 @@ public class MarketplaceSearchService implements IPortalSearchService {
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
+
+    @Autowired
+    public void setMarketplaceService(IMarketplaceService marketplaceService) {
+        this.marketplaceService = marketplaceService;
+    }
     
     /**
      * Returns a list of search results that pertain to the marketplace
@@ -99,7 +105,8 @@ public class MarketplaceSearchService implements IPortalSearchService {
         
         final SearchResults results =  new SearchResults();
         for (IPortletDefinition portlet : portlets) {
-            if (this.matches(queryString, new MarketplacePortletDefinition(portlet, this.portletCategoryRegistry))) {
+            if (this.matches(queryString, new MarketplacePortletDefinition(portlet,
+                this.marketplaceService, this.portletCategoryRegistry))) {
                 final SearchResult result = new SearchResult();
                 result.setTitle(portlet.getTitle());
                 result.setSummary(portlet.getDescription());
