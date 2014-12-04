@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -26,7 +25,6 @@ import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
-import java.util.concurrent.Future;
 
 /**
  * Marketplace service layer responsible for gathering and applying policy about what Marketplace entries
