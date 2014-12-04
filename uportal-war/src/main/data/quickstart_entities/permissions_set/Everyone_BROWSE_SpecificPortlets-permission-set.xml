@@ -46,4 +46,10 @@
     <target permission-type="GRANT">
         <group>News</group>
     </target>
+    <target permission-type="GRANT">
+        <group>uPortal</group>
+    </target>
+    <target permission-type="GRANT">
+        <group>Featured</group>
+    </target>
 </permission-set>
