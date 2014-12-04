@@ -106,13 +106,20 @@
         </xs:sequence>
     </xs:complexType>
 
+    <!-- Portlet specific grants:
+      - system:  The permission manager name
+      - activity: The name of the permission to grant
+      - group:  the list of groups that will be granted the permission
+      -->
     <xs:complexType name="externalPermissionMemberList">
         <xs:sequence>
             <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="type" type="xs:string" use="required"/>
+        <xs:attribute name="system" type="xs:string" use="required"/>
+        <xs:attribute name="activity" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <!-- optional top level permissions tag -->
     <xs:complexType name="externalPermissions">
         <xs:sequence>
             <xs:element name="permission" type="externalPermissionMemberList" minOccurs="0" maxOccurs="unbounded"/>

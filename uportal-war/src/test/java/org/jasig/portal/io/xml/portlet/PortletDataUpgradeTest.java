@@ -46,7 +46,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 PortletPortalDataType.IMPORT_26_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/faculty-feature_31-32_expected.channel.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/faculty-feature_32-40_expected.channel.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
     
     @Test
@@ -83,7 +83,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 PortletPortalDataType.IMPORT_31_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/test-portlet-1_32.channel.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/test-portlet-1_32-40_expected.channel.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
     
     @Test
@@ -120,7 +120,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 PortletPortalDataType.IMPORT_31_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32.channel.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/groupsmanager_32-40_expected.channel.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 PortletPortalDataType.IMPORT_31_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/IdentitySwapper_32.channel.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/IdentitySwapper_32-40_expected.channel.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
 
     @Test
@@ -167,6 +167,6 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 PortletPortalDataType.IMPORT_31_DATA_KEY, 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_31-32_expected.channel.xml"), 
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/mywebspace-demo_32-40_expected.channel.xml"),
-                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.0.xsd"));
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
 }

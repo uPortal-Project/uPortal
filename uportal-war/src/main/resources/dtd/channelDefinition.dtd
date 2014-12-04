@@ -33,7 +33,8 @@
 
 <!ELEMENT permissions (permission)>
 <!ELEMENT permission (group)*>
-<!ATTLIST permission type CDATA #REQUIRED>
+<!ATTLIST permission system CDATA #REQUIRED>
+<!ATTLIST permission activity CDATA #REQUIRED>
 
 <!ELEMENT portletPreferences (portletPreference)*>
 <!ELEMENT portletPreference (name, read-only?, values?)>

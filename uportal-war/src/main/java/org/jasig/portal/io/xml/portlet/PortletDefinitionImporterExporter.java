@@ -22,16 +22,17 @@ package org.jasig.portal.io.xml.portlet;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.IEntity;
@@ -43,6 +44,7 @@ import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.io.xml.portlettype.ExternalPermissionDefinition;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
@@ -72,8 +74,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortletDefinitionImporterExporter 
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
         implements IPortletPublishingService {
-
-    private static final String[] SUPPORTED_PERMISSIONS = { SUBSCRIBER_ACTIVITY, BROWSE_ACTIVITY };
 
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
@@ -163,16 +163,20 @@ public class PortletDefinitionImporterExporter
 
         
         final String fname = portletRep.getFname();
-        final Map<String, List<IGroupMember>> permissions = new HashMap<>();
-        final List<IGroupMember> subscribeMembers = toGroupMembers(portletRep.getGroups(), fname);
-        permissions.put(SUBSCRIBER_ACTIVITY, subscribeMembers);
+        final Map<ExternalPermissionDefinition, Set<IGroupMember>> permissions = new HashMap<>();
+        final Set<IGroupMember> subscribeMembers = toGroupMembers(portletRep.getGroups(), fname);
+        permissions.put(ExternalPermissionDefinition.SUBSCRIBE, subscribeMembers);
 
         if (portletRep.getPermissions() != null && portletRep.getPermissions().getPermissions() != null) {
             for (ExternalPermissionMemberList perm : portletRep.getPermissions().getPermissions()) {
-                List<IGroupMember> members = toGroupMembers(perm.getGroups(), fname);
-                String permName = toPermissionName(perm.getType());
+                Set<IGroupMember> members = toGroupMembers(perm.getGroups(), fname);
+                ExternalPermissionDefinition permDef = toExternalPermissionDefinition(perm.getSystem(), perm.getActivity());
 
-                permissions.put(permName, members);
+                if (permissions.containsKey(permDef)) {
+                    permissions.get(permDef).addAll(members);
+                } else {
+                    permissions.put(permDef, members);
+                }
             }
         }
 
@@ -284,8 +288,8 @@ public class PortletDefinitionImporterExporter
      */
     @Override
     public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {
-        Map<String, List<IGroupMember>> permissions = new HashMap<>();
-        permissions.put(SUBSCRIBER_ACTIVITY, groupMembers);
+        Map<ExternalPermissionDefinition, Set<IGroupMember>> permissions = new HashMap<>();
+        permissions.put(ExternalPermissionDefinition.SUBSCRIBE, new HashSet<>(groupMembers));
         IPortletDefinition def = savePortletDefinition(definition, publisher, categories, permissions);
         return def;
     }
@@ -300,7 +304,7 @@ public class PortletDefinitionImporterExporter
      * @param permissionMap a map of permission name -> list of groups who are granted that permission
      *                      (Note: for now, only grant is supported and only for the FRAMEWORK_OWNER perm manager)
      */
-    private IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, Map<String, List<IGroupMember>> permissionMap) {
+    private IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, Map<ExternalPermissionDefinition, Set<IGroupMember>> permissionMap) {
         final IPortletDefinitionId portletDefinitionId = definition.getPortletDefinitionId();
         boolean newChannel = (portletDefinitionId == null);
 
@@ -336,28 +340,39 @@ public class PortletDefinitionImporterExporter
             final AuthorizationService authService = AuthorizationService.instance();
             final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);
 
-            final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
-            final List<IPermission> permissions = new ArrayList<IPermission>();
-            for (Map.Entry<String, List<IGroupMember>> permission : permissionMap.entrySet()) {
+            // Loop over the affected permission managers...
+            Map<String, Collection<ExternalPermissionDefinition>> permissionsBySystem = getPermissionsBySystem(permissionMap.keySet());
+            for (String system : permissionsBySystem.keySet()) {
+                Collection<ExternalPermissionDefinition> systemPerms = permissionsBySystem.get(system);
 
-                for (final IGroupMember member : permission.getValue()) {
-                    final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
-                    final IPermission permEntity = upm.newPermission(authPrincipal);
-                    permEntity.setType(GRANT_PERMISSION_TYPE);
-                    permEntity.setActivity(permission.getKey());
-                    permEntity.setTarget(target);
-                    permissions.add(permEntity);
-                }
-            }
+                // get the permission manager for this system...
+                final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(system);
+                final List<IPermission> permissions = new ArrayList<>();
 
-            // If modifying the channel, remove the existing permissions before adding the new ones
-            if (!newChannel) {
-                for (String permissionName : permissionMap.keySet()) {
-                    IPermission[] oldPermissions = upm.getPermissions(permissionName, target);
-                    upm.removePermissions(oldPermissions);
+                // add activity grants for each permission..
+                for (ExternalPermissionDefinition permissionDef : systemPerms) {
+
+                    Set<IGroupMember> members = permissionMap.get(permissionDef);
+                    for (final IGroupMember member : members) {
+
+                        final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
+                        final IPermission permEntity = upm.newPermission(authPrincipal);
+                        permEntity.setType(GRANT_PERMISSION_TYPE);
+                        permEntity.setActivity(permissionDef.getActivity());
+                        permEntity.setTarget(target);
+                        permissions.add(permEntity);
+                    }
                 }
+
+                // If modifying the channel, remove the existing permissions before adding the new ones
+                if (!newChannel) {
+                    for (ExternalPermissionDefinition permissionName : permissionMap.keySet()) {
+                        IPermission[] oldPermissions = upm.getPermissions(permissionName.getActivity(), target);
+                        upm.removePermissions(oldPermissions);
+                    }
+                }
+                upm.addPermissions(permissions.toArray(new IPermission[permissions.size()]));
             }
-            upm.addPermissions(permissions.toArray(new IPermission[permissions.size()]));
         }
 
         if (logger.isDebugEnabled()) {
@@ -485,21 +500,21 @@ public class PortletDefinitionImporterExporter
         // handle the SUBSCRIBER_ACTIVITY perm separately...
         final List<String> groupList = rep.getGroups();
         final List<String> userList = rep.getUsers();
-        exportPermission(def, FRAMEWORK_OWNER, SUBSCRIBER_ACTIVITY, groupList, userList);
+        exportPermission(def, ExternalPermissionDefinition.SUBSCRIBE, groupList, userList);
 
         // handle other supported perms (currently just BROWSE)
         ExternalPermissions externalPermissions = new ExternalPermissions();
-        for (String permName : SUPPORTED_PERMISSIONS) {
-            // handled separately...
-            if (permName.equals(SUBSCRIBER_ACTIVITY)) {
+        for (ExternalPermissionDefinition perm : ExternalPermissionDefinition.values()) {
+            if (!perm.getExportForPortletDef()) {
                 continue;
             }
 
             ExternalPermissionMemberList members = new ExternalPermissionMemberList();
-            members.setType(permName);
+            members.setSystem(perm.getSystem());
+            members.setActivity(perm.getActivity());
             List<String> groups = members.getGroups();
 
-            boolean found = exportPermission(def, FRAMEWORK_OWNER, permName, groups, null);
+            boolean found = exportPermission(def, perm, groups, null);
             if (found) {
                 externalPermissions.getPermissions().add(members);
             }
@@ -512,11 +527,11 @@ public class PortletDefinitionImporterExporter
         return rep;
     }
 
-    private boolean exportPermission(IPortletDefinition def, String permissionManagerOwner, String permissionName, List<String> groupList, List<String> userList) {
+    private boolean exportPermission(IPortletDefinition def, ExternalPermissionDefinition permDef, List<String> groupList, List<String> userList) {
         final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
-        final IPermissionManager pm = authService.newPermissionManager(permissionManagerOwner);
+        final IPermissionManager pm = authService.newPermissionManager(permDef.getSystem());
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
-        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(permissionName, portletTargetId);
+        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(permDef.getActivity(), portletTargetId);
         boolean permAdded = false;
 
         for (IAuthorizationPrincipal principal : principals) {
@@ -553,8 +568,8 @@ public class PortletDefinitionImporterExporter
      * @param groupNames the list of group names
      * @return the list of groups.
      */
-    private List<IGroupMember> toGroupMembers(List<String> groupNames, String fname) {
-        final List<IGroupMember> groups = new ArrayList<IGroupMember>();
+    private Set<IGroupMember> toGroupMembers(List<String> groupNames, String fname) {
+        final Set<IGroupMember> groups = new HashSet<>();
         for (String groupName : groupNames) {
             EntityIdentifier[] gs = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
             IGroupMember group;
@@ -578,18 +593,40 @@ public class PortletDefinitionImporterExporter
 
     /**
      * Check that a permission type from the XML file matches with a real permission.
-     * @param permName the permission type from the XML file
+     * @param system The name of the permission manager
+     * @param activity The name of the permission to search for.
      * @return the permission type string to use
      * @throws IllegalArgumentException if an unsupported permission type is specified
      */
-    private String toPermissionName(String permName) {
-        for (String s : SUPPORTED_PERMISSIONS) {
-            if (s.equalsIgnoreCase(permName)) {
-                return s;
-            }
+    private ExternalPermissionDefinition toExternalPermissionDefinition(String system, String activity) {
+        ExternalPermissionDefinition def = ExternalPermissionDefinition.find(system, activity);
+        if (def != null) {
+            return def;
         }
 
-        String perms = StringUtils.join(SUPPORTED_PERMISSIONS, ", ");
-        throw new IllegalArgumentException("Permission type " + permName + " is not supported.  The only supported permissions at this time are: " + perms);
+        String delim = "";
+        StringBuilder buffer = new StringBuilder();
+        for (ExternalPermissionDefinition perm : ExternalPermissionDefinition.values()) {
+            buffer.append(delim);
+            buffer.append(perm.toString());
+            delim = ", ";
+        }
+
+        throw new IllegalArgumentException("Permission type " + system + "." + activity + " is not supported.  " +
+                "The only supported permissions at this time are: " + buffer.toString());
+    }
+
+
+    private Map<String, Collection<ExternalPermissionDefinition>> getPermissionsBySystem(Set<ExternalPermissionDefinition> perms) {
+        Map<String, Collection<ExternalPermissionDefinition>> mappedPerms = new HashMap<>();
+        for (ExternalPermissionDefinition perm : perms) {
+            if (!mappedPerms.containsKey(perm.getSystem())) {
+                mappedPerms.put(perm.getSystem(), new ArrayList<ExternalPermissionDefinition>());
+            }
+
+            mappedPerms.get(perm.getSystem()).add(perm);
+        }
+
+        return mappedPerms;
     }
 }
