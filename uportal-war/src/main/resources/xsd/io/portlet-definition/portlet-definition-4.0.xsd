@@ -56,6 +56,7 @@
                         <xs:element name="category" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="user" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        <xs:element name="permissions" type="externalPermissions" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="parameter" type="externalPortletParameter" minOccurs="0" maxOccurs="unbounded"/>
                         <xs:element name="portlet-preference" type="externalPortletPreference" minOccurs="0"
                             maxOccurs="unbounded"/>
@@ -83,6 +84,10 @@
             <xs:selector xpath="portlet-preference"/>
             <xs:field xpath="name"/>
         </xs:unique>
+        <xs:unique name="unique-permission-group">
+            <xs:selector xpath="permissions/permission/group"/>
+            <xs:field xpath="group"/>
+        </xs:unique>
     </xs:element>
 
     <xs:complexType name="externalPortletParameter">
@@ -98,6 +103,19 @@
             <xs:element name="name" type="xs:string"/>
             <xs:element name="readOnly" type="xs:boolean" default="false" minOccurs="0"/>
             <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="externalPermissionMemberList">
+        <xs:sequence>
+            <xs:element name="group" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="externalPermissions">
+        <xs:sequence>
+            <xs:element name="permission" type="externalPermissionMemberList" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

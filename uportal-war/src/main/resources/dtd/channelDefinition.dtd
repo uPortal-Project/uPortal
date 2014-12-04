@@ -19,7 +19,7 @@
 
 -->
 
-<!ELEMENT channel-definition (channelId?,title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, parameters?, portletPreferences?, makeFNameAccessibleOnly? )>
+<!ELEMENT channel-definition (channelId?,title, name, fname, desc, type, class, timeout, hasedit, hashelp, hasabout, secure, locale, categories, groups, users?, permissions?, parameters?, portletPreferences?, makeFNameAccessibleOnly? )>
 <!ATTLIST channel-definition script CDATA #IMPLIED>
 
 <!ELEMENT categories (category)*>
@@ -30,6 +30,10 @@
 
 <!ELEMENT parameters (parameter)*>
 <!ELEMENT parameter (name, value, description, ovrd)>
+
+<!ELEMENT permissions (permission)>
+<!ELEMENT permission (group)*>
+<!ATTLIST permission type CDATA #REQUIRED>
 
 <!ELEMENT portletPreferences (portletPreference)*>
 <!ELEMENT portletPreference (name, read-only?, values?)>

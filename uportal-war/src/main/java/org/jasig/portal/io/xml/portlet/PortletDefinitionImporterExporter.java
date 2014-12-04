@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.IEntity;
@@ -69,7 +72,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortletDefinitionImporterExporter 
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
         implements IPortletPublishingService {
-	
+
+    private static final String[] SUPPORTED_PERMISSIONS = { SUBSCRIBER_ACTIVITY, BROWSE_ACTIVITY };
+
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionDao portletDefinitionDao;
@@ -156,26 +161,21 @@ public class PortletDefinitionImporterExporter
             categories.add(category);
         }
 
-        final List<IGroupMember> groups = new ArrayList<IGroupMember>();
-        for (String groupName : portletRep.getGroups()) {
-            EntityIdentifier[] gs = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
-            IGroupMember group;
-            if (gs != null && gs.length > 0) {
-                group = GroupService.findGroup(gs[0].getKey());
-            } else {
-                // An actual group key might be specified, so try looking up group directly
-                group = GroupService.findGroup(groupName);
-            }
-            
-            if (group == null) {
-                throw new IllegalArgumentException("No group '" + groupName + "' found when importing portlet: " + portletRep.getFname());
-            }
-            
-            groups.add(group);
-        }
-        
         
         final String fname = portletRep.getFname();
+        final Map<String, List<IGroupMember>> permissions = new HashMap<>();
+        final List<IGroupMember> subscribeMembers = toGroupMembers(portletRep.getGroups(), fname);
+        permissions.put(SUBSCRIBER_ACTIVITY, subscribeMembers);
+
+        if (portletRep.getPermissions() != null && portletRep.getPermissions().getPermissions() != null) {
+            for (ExternalPermissionMemberList perm : portletRep.getPermissions().getPermissions()) {
+                List<IGroupMember> members = toGroupMembers(perm.getGroups(), fname);
+                String permName = toPermissionName(perm.getType());
+
+                permissions.put(permName, members);
+            }
+        }
+
         IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
             def = portletDefinitionDao.createPortletDefinition(
@@ -253,7 +253,7 @@ public class PortletDefinitionImporterExporter
         }
         def.setPortletPreferences(preferenceList);
         
-        savePortletDefinition(def, PersonFactory.createSystemPerson(), categories, groups);
+        savePortletDefinition(def, PersonFactory.createSystemPerson(), categories, permissions);
     }
 
     /**
@@ -276,13 +276,31 @@ public class PortletDefinitionImporterExporter
 	}
 
     private final Object groupUpdateLock = new Object();
-    
-	/*
+
+
+    /*
      * (non-Javadoc)
      * @see org.jasig.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinition, org.jasig.portal.security.IPerson, org.jasig.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.jasig.portal.groups.IGroupMember[])
      */
     @Override
     public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {
+        Map<String, List<IGroupMember>> permissions = new HashMap<>();
+        permissions.put(SUBSCRIBER_ACTIVITY, groupMembers);
+        IPortletDefinition def = savePortletDefinition(definition, publisher, categories, permissions);
+        return def;
+    }
+
+
+    /**
+     * Save a portlet definition.
+     *
+     * @param definition the portlet definition
+     * @param publisher the person publishing the portlet
+     * @param categories the list of categories for the portlet
+     * @param permissionMap a map of permission name -> list of groups who are granted that permission
+     *                      (Note: for now, only grant is supported and only for the FRAMEWORK_OWNER perm manager)
+     */
+    private IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, Map<String, List<IGroupMember>> permissionMap) {
         final IPortletDefinitionId portletDefinitionId = definition.getPortletDefinitionId();
         boolean newChannel = (portletDefinitionId == null);
 
@@ -317,28 +335,27 @@ public class PortletDefinitionImporterExporter
             // Set groups
             final AuthorizationService authService = AuthorizationService.instance();
             final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);
-    
-            final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
-            final List<IPermission> permissions = new ArrayList<IPermission>(groupMembers.size());
-            for (final IGroupMember member : groupMembers) {
-                final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
-                final IPermission permission = upm.newPermission(authPrincipal);
-                permission.setType(GRANT_PERMISSION_TYPE);
-                permission.setActivity(SUBSCRIBER_ACTIVITY);
-                permission.setTarget(target);
-                permissions.add(permission);
 
-                IPermission browse = upm.newPermission(authPrincipal);
-                browse.setType(GRANT_PERMISSION_TYPE);
-                browse.setActivity(BROWSE_ACTIVITY);
-                browse.setTarget(target);
-                permissions.add(browse);
+            final IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
+            final List<IPermission> permissions = new ArrayList<IPermission>();
+            for (Map.Entry<String, List<IGroupMember>> permission : permissionMap.entrySet()) {
+
+                for (final IGroupMember member : permission.getValue()) {
+                    final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
+                    final IPermission permEntity = upm.newPermission(authPrincipal);
+                    permEntity.setType(GRANT_PERMISSION_TYPE);
+                    permEntity.setActivity(permission.getKey());
+                    permEntity.setTarget(target);
+                    permissions.add(permEntity);
+                }
             }
-    
+
             // If modifying the channel, remove the existing permissions before adding the new ones
             if (!newChannel) {
-                IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
-                upm.removePermissions(oldPermissions);
+                for (String permissionName : permissionMap.keySet()) {
+                    IPermission[] oldPermissions = upm.getPermissions(permissionName, target);
+                    upm.removePermissions(oldPermissions);
+                }
             }
             upm.addPermissions(permissions.toArray(new IPermission[permissions.size()]));
         }
@@ -464,17 +481,44 @@ public class PortletDefinitionImporterExporter
             categoryList.add(category.getName());
         }
         Collections.sort(categoryList);
-        
-         
-         
+
+        // handle the SUBSCRIBER_ACTIVITY perm separately...
         final List<String> groupList = rep.getGroups();
         final List<String> userList = rep.getUsers();
-        
+        exportPermission(def, FRAMEWORK_OWNER, SUBSCRIBER_ACTIVITY, groupList, userList);
+
+        // handle other supported perms (currently just BROWSE)
+        ExternalPermissions externalPermissions = new ExternalPermissions();
+        for (String permName : SUPPORTED_PERMISSIONS) {
+            // handled separately...
+            if (permName.equals(SUBSCRIBER_ACTIVITY)) {
+                continue;
+            }
+
+            ExternalPermissionMemberList members = new ExternalPermissionMemberList();
+            members.setType(permName);
+            List<String> groups = members.getGroups();
+
+            boolean found = exportPermission(def, FRAMEWORK_OWNER, permName, groups, null);
+            if (found) {
+                externalPermissions.getPermissions().add(members);
+            }
+        }
+
+        if (!externalPermissions.getPermissions().isEmpty()) {
+            rep.setPermissions(externalPermissions);
+        }
+
+        return rep;
+    }
+
+    private boolean exportPermission(IPortletDefinition def, String permissionManagerOwner, String permissionName, List<String> groupList, List<String> userList) {
         final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
-        final IPermissionManager pm = authService.newPermissionManager("UP_PORTLET_SUBSCRIBE");
+        final IPermissionManager pm = authService.newPermissionManager(permissionManagerOwner);
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
-        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals("SUBSCRIBE", portletTargetId);
-         
+        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(permissionName, portletTargetId);
+        boolean permAdded = false;
+
         for (IAuthorizationPrincipal principal : principals) {
             IGroupMember member = authService.getGroupMember(principal);
             if (member.isGroup()) {
@@ -482,18 +526,70 @@ public class PortletDefinitionImporterExporter
                 final IEntityNameFinder nameFinder = entityNameFinderService.getNameFinder(member.getType());
                 try {
                     groupList.add(nameFinder.getName(member.getKey()));
+                    permAdded = true;
                 }
                 catch (Exception e) {
                     throw new RuntimeException("Could not find group name for entity: " + member.getKey(), e);
                 }
             } else {
-                userList.add(member.getKey());
+                if (userList != null) {
+                    userList.add(member.getKey());
+                    permAdded = true;
+                }
             }
         }
-        
+
         Collections.sort(groupList);
-        Collections.sort(userList);
-         
-        return rep;
+        if (userList != null) {
+            Collections.sort(userList);
+        }
+
+        return permAdded;
+    }
+
+
+    /**
+     * Convert a list of group names to a list of groups.
+     * @param groupNames the list of group names
+     * @return the list of groups.
+     */
+    private List<IGroupMember> toGroupMembers(List<String> groupNames, String fname) {
+        final List<IGroupMember> groups = new ArrayList<IGroupMember>();
+        for (String groupName : groupNames) {
+            EntityIdentifier[] gs = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
+            IGroupMember group;
+            if (gs != null && gs.length > 0) {
+                group = GroupService.findGroup(gs[0].getKey());
+            } else {
+                // An actual group key might be specified, so try looking up group directly
+                group = GroupService.findGroup(groupName);
+            }
+
+            if (group == null) {
+                throw new IllegalArgumentException("No group '" + groupName + "' found when importing portlet: " + fname);
+            }
+
+            groups.add(group);
+        }
+
+        return groups;
+    }
+
+
+    /**
+     * Check that a permission type from the XML file matches with a real permission.
+     * @param permName the permission type from the XML file
+     * @return the permission type string to use
+     * @throws IllegalArgumentException if an unsupported permission type is specified
+     */
+    private String toPermissionName(String permName) {
+        for (String s : SUPPORTED_PERMISSIONS) {
+            if (s.equalsIgnoreCase(permName)) {
+                return s;
+            }
+        }
+
+        String perms = StringUtils.join(SUPPORTED_PERMISSIONS, ", ");
+        throw new IllegalArgumentException("Permission type " + permName + " is not supported.  The only supported permissions at this time are: " + perms);
     }
 }
