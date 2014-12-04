@@ -174,7 +174,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      * Asynchronously load a Set of marketplace entries for a user.
      *
      * This method is primarily intended for seeding data.  Most impls should call
-     * browseableMarketplaceEntriesFor() instead.
+     * marketplaceEntriesBrowseableBy() instead.
      *
      * Note:  The returned Set is immutable since it is potentially shared between threads.  If
      * clients of this Service need to mutate the Set, make a copy. No protections have been
@@ -238,7 +238,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(final IPerson user) {
+    public ImmutableSet<MarketplaceEntry> marketplaceEntriesBrowseableBy(final IPerson user) {
 
         final Future<ImmutableSet<MarketplaceEntry>> futureEntries =
             asyncMarketplaceEntriesBrowseableBy(user);
@@ -297,13 +297,13 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user) {
+    public Set<PortletCategory> nonEmptyPortletCategoriesBrowseableBy(final IPerson user) {
 
         Validate.notNull(user, "Cannot compute browseable categories for a null user.");
 
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = marketplaceEntriesBrowseableBy(user);
 
         final Set<PortletCategory> browseableCategories = new HashSet<PortletCategory>();
 
@@ -364,7 +364,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         Validate.notNull(user.getUserName(),
             "Cannot determine relevant featured portelts for user with null username.");
 
-        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = marketplaceEntriesBrowseableBy(user);
         final Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<>();
 
         for (final MarketplaceEntry entry : browseablePortlets) {

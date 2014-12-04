@@ -271,11 +271,11 @@ public class PortletMarketplaceController {
         Validate.notNull(user, "Cannot set up view for null person.");
 
         final Set<MarketplaceEntry> browseablePortlets =
-            marketplaceService.browseableMarketplaceEntriesFor(user);
+            marketplaceService.marketplaceEntriesBrowseableBy(user);
         model.addAttribute("channelBeanList", browseablePortlets);
 
         final Set<PortletCategory> categoryList =
-            marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
+            marketplaceService.nonEmptyPortletCategoriesBrowseableBy(user);
 
         final Set<MarketplacePortletDefinition> featuredPortlets =
             marketplaceService.featuredPortletsForUser(user);

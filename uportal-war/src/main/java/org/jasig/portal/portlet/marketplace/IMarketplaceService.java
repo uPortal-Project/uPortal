@@ -42,7 +42,7 @@ public interface IMarketplaceService {
      * @throws IllegalArgumentException when passed in user is null
      * @since uPortal 4.2
      */
-    ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(IPerson user);
+    ImmutableSet<MarketplaceEntry> marketplaceEntriesBrowseableBy(IPerson user);
 
     /**
      * Return the Marketplace portlet definitions browseable by the given user.
@@ -82,9 +82,9 @@ public interface IMarketplaceService {
      *
      * @param user non-null user
      * @return potentially empty non-null Set of browseable categories
-     * @since uPortal 4.1
+     * @since uPortal 4.2
      */
-    Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(IPerson user);
+    Set<PortletCategory> nonEmptyPortletCategoriesBrowseableBy(IPerson user);
 
     /**
      * Answers whether the given user may browse the portlet marketplace entry for the given portlet definition.

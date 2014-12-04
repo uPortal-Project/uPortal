@@ -50,7 +50,8 @@ public class MarketplaceRESTController {
     public ModelAndView marketplaceEntriesFeed(HttpServletRequest request) {
         final IPerson user = personManager.getPerson(request);
 
-        Set<MarketplaceEntry> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> marketplaceEntries =
+            marketplaceService.marketplaceEntriesBrowseableBy(user);
 
         return new ModelAndView("json", "portlets", marketplaceEntries);
     }
