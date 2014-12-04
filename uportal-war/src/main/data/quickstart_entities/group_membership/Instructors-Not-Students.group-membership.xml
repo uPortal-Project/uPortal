@@ -20,11 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Instructors</name>
+  <name>Instructors-Not-Students</name>
+    <!-- Demonstrates that a group can be DENYed permission on a subcategory of a category on which
+    they enjoy the permission.  Namely, Students are not permitted to BROWSE this sub-category. -->
   <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
   <creator>system</creator>
-  <description>Instructor Portlets</description>
-  <children>
-      <group>Instructors-Not-Students</group>
-  </children>
+  <description>Instructor Portlets that Students are not permitted to BROWSE.</description>
+  <children/>
 </group>
