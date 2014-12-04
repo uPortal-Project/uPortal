@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
 import org.jasig.portal.portlet.marketplace.ScreenShot;
@@ -152,6 +155,39 @@ public class MarketplaceEntry  implements Serializable {
     
     public String getTarget() {
       return pdef.getTarget();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != getClass()) {
+            return false;
+        }
+        MarketplaceEntry rhs = (MarketplaceEntry) other;
+
+        return new EqualsBuilder()
+            .append(getMarketplacePortletDefinition(), rhs.getMarketplacePortletDefinition())
+            .append(isCanAdd(), rhs.isCanAdd())
+            .append(generateRelatedPortlets, rhs.generateRelatedPortlets)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(getMarketplacePortletDefinition())
+            .append(isCanAdd())
+            .append(generateRelatedPortlets)
+            .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFname())
+            .toString();
     }
 
 }
