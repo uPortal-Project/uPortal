@@ -1,7 +1,5 @@
 package org.jasig.portal.rest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +8,6 @@ import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.marketplace.IMarketplaceService;
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.rest.layout.MarketplaceEntryRating;
 import org.jasig.portal.security.IPerson;
