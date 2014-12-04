@@ -36,32 +36,31 @@ public class ProfileSelectionDaoImpl
     extends BasePortalJpaDao
     implements IProfileSelectionDao {
 
-
     @Override
     @PortalTransactional
-    public IProfileSelection createProfileSelection(final String userName, final String profileFName) {
-
+    public IProfileSelection createOrUpdateProfileSelection(final String userName, final String profileFName){
         Validate.notEmpty(userName, "Cannot create a profile selection for an empty userName");
         Validate.notEmpty(profileFName,
                 "Cannot create profile selection with empty profile fname " +
                         "(instead delete any selection for this user.)");
 
         final ProfileSelection jpaProfileSelection = new ProfileSelection(userName, profileFName);
-
-        getEntityManager().persist(jpaProfileSelection);
-
-        return jpaProfileSelection;
+        return this.createOrUpdateProfileSelection(jpaProfileSelection);
     }
 
     @Override
     @PortalTransactional
-    public IProfileSelection updateProfileSelection(final IProfileSelection profileSelection) {
+    public IProfileSelection createOrUpdateProfileSelection(final IProfileSelection profileSelection){
 
         Validate.notNull(profileSelection);
-
-        getEntityManager().persist(profileSelection);
-
-        return profileSelection;
+        
+        if(!getEntityManager().contains(profileSelection)){
+            //Entity is not managed
+            return getEntityManager().merge(profileSelection);
+        }else{
+            getEntityManager().persist(profileSelection);
+            return profileSelection;
+        }
     }
 
     @Override
