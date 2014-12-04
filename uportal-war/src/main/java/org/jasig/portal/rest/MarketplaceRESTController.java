@@ -61,7 +61,10 @@ public class MarketplaceRESTController {
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
     public ModelAndView getUserRating(HttpServletRequest request, @PathVariable String fname) {
         Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");
-        IMarketplaceRating tempRating = marketplaceRatingDAO.getRating(request.getRemoteUser(), marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname));
+        final IPerson user = personManager.getPerson(request);
+        final IMarketplaceRating tempRating =
+            marketplaceRatingDAO.getRating(request.getRemoteUser(),
+            marketplaceService.marketplacePortletDefinitionByFname(fname, user));
         if(tempRating != null) {
             return new ModelAndView("json", "rating", new MarketplaceEntryRating(tempRating.getRating(), tempRating.getReview()));
         }
@@ -75,10 +78,13 @@ public class MarketplaceRESTController {
             @RequestParam(required = false) String review) {
         Validate.notNull(rating, "Please supply a rating - should not be null");
         Validate.notNull(fname, "Please supply a portlet to rate - should not be null");
+
+        final IPerson person = personManager.getPerson(request);
+
         marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
             request.getRemoteUser(),
             review,
-            marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname));
+            marketplaceService.marketplacePortletDefinitionByFname(fname, person));
         return new ModelAndView("json", "rating", new MarketplaceEntryRating(Integer.parseInt(rating), review));
     }
 

@@ -49,6 +49,13 @@ import java.util.concurrent.Future;
 
 /**
  * Service layer implementation for Marketplace.
+ *
+ * The Service is responsible for policy application (so, users can only lay hands on
+ * MarketplacePortletDefinitions for portlets they can browse, portlet definitions can be
+ * asynchronously loaded for a user on login, etc.)
+ *
+ * An underlying Registry handles Marketplace portlet definition instantiation and caching.
+ *
  * @since uPortal 4.1
  */
 @Service
@@ -59,14 +66,12 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
 
+    private IMarketplaceRegistry marketplaceRegistry;
+
     private IPortletCategoryRegistry portletCategoryRegistry;
     
     private IAuthorizationService authorizationService;
     private boolean enableMarketplacePreloading = false;
-
-    @Autowired
-    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
-    private Cache marketplacePortletDefinitionCache;
     
     @Autowired
     public void setAuthorizationService(IAuthorizationService service) {
@@ -74,11 +79,20 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     /**
-     * Cache of Username -> Future<Set<MarketplaceEntry>
+     * Cache of String Username -> Future<Map<String fname, MarketplacePortletDefinition>.
      */
     @Autowired
-    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
-    private Cache marketplaceUserPortletDefinitionCache;
+    @Qualifier(
+        "org.jasig.portal.portlet.marketplace.MarketplaceService.perUserMarketplacePortletDefinitionsFutureCache")
+    private Cache perUserMarketplacePortletDefinitionsFutureCache;
+
+    /**
+     * Cache of String Username --> Future<Map<String fname, MarketplaceEntry>.
+     */
+    @Autowired
+    @Qualifier(
+        "org.jasig.portal.portlet.marketplace.MarketplaceService.perUserMarketplaceEntriesFutureCache")
+    private Cache perUserMarketplaceEntriesFutureCache;
 
     @Value("${org.jasig.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
     public void setLoadMarketplaceOnLogin(final boolean enableMarketplacePreloading) {
@@ -95,42 +109,99 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Override
     public void onApplicationEvent(LoginEvent loginEvent) {
         if (enableMarketplacePreloading) {
-            IPerson person = loginEvent.getPerson();
-            loadMarketplaceEntriesFor(person);
+            final IPerson person = loginEvent.getPerson();
+            asyncMarketplaceEntriesBrowseableBy(person);
+            asyncMarketplacePortletDefinitionsBrowseableBy(person);
         }
     }
 
+    /**
+     * Asynchronous.  Returns a Future conveying an Immutable Map from String fname to
+     * MarketplacePortletDefinition, with the Map containing only entries representing portlets
+     * the given user may BROWSE.
+     * @param user
+     * @return
+     */
     @Async
     private  Future<ImmutableSet<MarketplacePortletDefinition>>
-      loadMarketplacePortletDefinitionsFor(final IPerson user) {
+      asyncMarketplacePortletDefinitionsBrowseableBy(final IPerson user) {
+
+        Validate.notNull(user, "Cannot compute portlet definitions browseable by a null user.");
+        Validate.notNull(user.getUserName(),
+            "Cannot compute portlet definitions browseable by a user with a null username.");
+
+        final Element cachedFutureElement =
+            this.perUserMarketplacePortletDefinitionsFutureCache.get(user.getUserName());
+
+        if (cachedFutureElement != null) {
+            return (Future<ImmutableSet<MarketplacePortletDefinition>>)
+                cachedFutureElement.getObjectValue();
+        }
+
 
         final List<IPortletDefinition> allPortletDefinitions =
             this.portletDefinitionRegistry.getAllPortletDefinitions();
 
-        final Set<MarketplacePortletDefinition> browseablePortletDefinitions = new HashSet<>();
+        final Set<MarketplacePortletDefinition> browseablePortletDefinitions =
+            new HashSet<>();
 
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 
             if (mayBrowsePortlet(user, portletDefinition)) {
-                final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
+                final MarketplacePortletDefinition marketplacePortletDefinition =
+                    marketplacePortletDefinitionFor(portletDefinition, user);
                 browseablePortletDefinitions.add(marketplacePortletDefinition);
+            } else {
+                logger.trace(
+                    "User {} may not browse {} so omitting it from browseable set for user.",
+                    user.getUserName(), portletDefinition.getFName());
             }
 
         }
 
-        logger.trace("These portlet definitions {} are browseable by {}.",
+        logger.debug("These portlet definitions {} are browseable by {}.",
             browseablePortletDefinitions, user.getUserName());
 
-        Future<ImmutableSet<MarketplacePortletDefinition>> future = new AsyncResult<>(ImmutableSet
-            .copyOf(browseablePortletDefinitions));
+        final Future<ImmutableSet<MarketplacePortletDefinition>> future =
+            new AsyncResult<>(ImmutableSet.copyOf(browseablePortletDefinitions));
 
-        // TODO: cache
+        perUserMarketplacePortletDefinitionsFutureCache.put(new Element(user.getUserName(), future));
 
         return future;
     }
 
+    /**
+     * Asynchronously load a Set of marketplace entries for a user.
+     *
+     * This method is primarily intended for seeding data.  Most impls should call
+     * browseableMarketplaceEntriesFor() instead.
+     *
+     * Note:  The returned Set is immutable since it is potentially shared between threads.  If
+     * clients of this Service need to mutate the Set, make a copy. No protections have been
+     * provided against modifying the MarketplaceEntry itself, so be careful when modifying the
+     * entities contained in the list.
+     *
+     * @param user the non-null user
+     * @return a Future that will resolve to a Set of MarketplaceEntry objects
+     *      the requested user has browse access to.
+     * @throws java.lang.IllegalArgumentException if user is null
+     * @since 4.2
+     */
     @Async
-    public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user) {
+    private Future<ImmutableSet<MarketplaceEntry>>
+      asyncMarketplaceEntriesBrowseableBy(final IPerson user) {
+
+        Validate.notNull(user, "Cannot compute Marketplace entries browseable by a null user");
+        Validate.notNull(user.getUserName(),
+            "Cannot compute Marketplace entries browseable by a user with a null usernane.");
+
+        final Element cachedFuture = perUserMarketplaceEntriesFutureCache.get(user.getUserName());
+
+        if (cachedFuture != null) {
+            return (Future<ImmutableSet<MarketplaceEntry>>) cachedFuture.getObjectValue();
+        }
+
+
         final List<IPortletDefinition> allPortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
 
@@ -139,7 +210,9 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 
             if (mayBrowsePortlet(user, portletDefinition)) {
-                final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
+
+                final MarketplacePortletDefinition marketplacePortletDefinition =
+                    marketplacePortletDefinitionFor(portletDefinition, user);
                 MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition);
 
                 // flag whether this use can add the portlet...
@@ -147,31 +220,31 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                 entry.setCanAdd(canAdd);
 
                 visiblePortletDefinitions.add(entry);
+            } else {
+                logger.trace("User {} may not browse {} so omitting it from browseable entries.",
+                    user.getUserName(), portletDefinition);
             }
         }
 
-        logger.trace("These portlet definitions {} are browseable by {}.", visiblePortletDefinitions, user);
+        logger.debug("These portlet definitions {} are browseable by {}.",
+            visiblePortletDefinitions, user.getUserName());
 
-        Future<ImmutableSet<MarketplaceEntry>> result = new AsyncResult<>(ImmutableSet.copyOf(visiblePortletDefinitions));
-        Element cacheElement = new Element(user.getUserName(), result);
-        marketplaceUserPortletDefinitionCache.put(cacheElement);
+        final Future<ImmutableSet<MarketplaceEntry>> result =
+            new AsyncResult<>(ImmutableSet.copyOf(visiblePortletDefinitions));
+        final Element cacheElement = new Element(user.getUserName(), result);
+        perUserMarketplaceEntriesFutureCache.put(cacheElement);
 
         return result;
     }
 
     @Override
     public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(final IPerson user) {
-        Element cacheElement = marketplaceUserPortletDefinitionCache.get(user.getUserName());
-        Future<ImmutableSet<MarketplaceEntry>> future = null;
-        if (cacheElement == null) {
-            // not in cache, load it and cache the results...
-            future = loadMarketplaceEntriesFor(user);
-        } else {
-            future = (Future<ImmutableSet<MarketplaceEntry>>)cacheElement.getObjectValue();
-        }
+
+        final Future<ImmutableSet<MarketplaceEntry>> futureEntries =
+            asyncMarketplaceEntriesBrowseableBy(user);
 
         try {
-            return future.get();
+            return futureEntries.get();
 
         } catch (InterruptedException | ExecutionException e) {
             logger.error(e.getMessage(), e);
@@ -184,14 +257,15 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         final IPerson user) {
 
         final Future<ImmutableSet<MarketplacePortletDefinition>> future =
-            loadMarketplacePortletDefinitionsFor(user);
+            asyncMarketplacePortletDefinitionsBrowseableBy(user);
 
         try {
-            return future.get();
-
+            ImmutableSet<MarketplacePortletDefinition> browseablePortlets = future.get();
+            logger.trace("User {} may browse {}.", user.getUserName(), browseablePortlets);
+            return browseablePortlets;
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Failed to read asynch load MarketplacePortletDefinitions "
-                + "for this user.", e);
+                + "for user " + user + ".", e);
         }
     }
 
@@ -209,17 +283,24 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
 
             for (final IPortletDefinition portletDefinition : portletsInCategory) {
                 allRelatedPortlets.add(
-                    new MarketplacePortletDefinition(portletDefinition,
-                        this, portletCategoryRegistry));
+                    this.marketplaceRegistry.marketplacePortletDefinition(
+                        portletDefinition.getFName(), definition.getPerson()));
             }
         }
 
         allRelatedPortlets.remove(definition);
+
+        logger.trace("Definition {} has related definitions {}.",
+            definition, allRelatedPortlets);
+
         return ImmutableSet.copyOf(allRelatedPortlets);
     }
 
     @Override
     public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user) {
+
+        Validate.notNull(user, "Cannot compute browseable categories for a null user.");
+
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
         final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
@@ -241,7 +322,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                             "which is not browseable by that user.  " +
                             "This may be as intended, " +
                             "or it may be that that portlet category ought to be more widely browseable.",
-                            portletDefinition, user, category);
+                            portletDefinition, user.getUserName(), category.getName());
                 }
             }
         }
@@ -255,19 +336,33 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Override
     public boolean mayBrowsePortlet(final IPerson user, final IPortletDefinition portletDefinition) {
         Validate.notNull(user, "Cannot determine if null users can browse portlets.");
-        Validate.notNull(portletDefinition, "Cannot determine whether a user can browse a null portlet definition.");
+        Validate.notNull(user.getUserName(),
+            "Cannot determine if null username user can browse portlets.");
+        Validate.notNull(portletDefinition,
+            "Cannot determine whether a user can browse a null portlet definition.");
 
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
         final String portletPermissionEntityId = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
 
-        return mayBrowse(principal, portletPermissionEntityId);
+        boolean mayBrowse = mayBrowse(principal, portletPermissionEntityId);
+
+        if (mayBrowse) {
+            logger.trace("User {} may browse {}.", user.getUserName(), portletDefinition);
+        } else {
+            logger.trace("User {} may NOT browse {}.", user.getUserName(), portletDefinition);
+        }
+
+        return mayBrowse;
 
     }
 
     @Override
     public Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user) {
+        // TODO: caching
         Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
+        Validate.notNull(user.getUserName(),
+            "Cannot determine relevant featured portelts for user with null username.");
 
         final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
         final Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<>();
@@ -277,33 +372,42 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
             for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
 
                 if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
-                    featuredPortlets.add(getOrCreateMarketplacePortletDefinition(portletDefinition));
+                    featuredPortlets.add(marketplacePortletDefinitionFor(portletDefinition, user));
                 }
 
             }
         }
 
+        logger.debug("User {} has featured portlets {}.", user.getUserName(), featuredPortlets);
+
         return featuredPortlets;
     }
 
     @Override
-    public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
-        Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
-        if (element == null) {
-            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, this, portletCategoryRegistry);
-            element = new Element(portletDefinition.getFName(), mpd);
-            this.marketplacePortletDefinitionCache.put(element);
-        }
-        return (MarketplacePortletDefinition) element.getObjectValue();
+    public MarketplacePortletDefinition marketplacePortletDefinitionFor(
+        final IPortletDefinition portletDefinition, final IPerson person) {
+
+        Validate.notNull(portletDefinition, "Marketplace portlet definitions "
+            + "cannot model portlets without an underlying IPortletDefinition");
+
+        return marketplacePortletDefinitionByFname(portletDefinition.getFName(), person);
     }
     
     @Override
-    public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname) {
-        IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
-        if(portletDefinition != null) {
-            return getOrCreateMarketplacePortletDefinition(portletDefinition);
+    public MarketplacePortletDefinition marketplacePortletDefinitionByFname(
+        final String fname, final IPerson person) {
+
+        Validate.notNull(fname, "Marketplace portlet definitions "
+            + "cannot model portlets without an fname.");
+
+        final MarketplacePortletDefinition definition =
+            this.marketplaceRegistry.marketplacePortletDefinition(fname, person);
+
+        if (person != null && !mayBrowsePortlet(person, definition)) {
+            throw new RuntimeException("User " + person + " may not BROWSE portlet " + fname);
         }
-        return null;
+
+        return definition;
     }
 
     // Private stateless static utility methods below here
@@ -352,6 +456,11 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     public void setPortletCategoryRegistry(final IPortletCategoryRegistry portletCategoryRegistry) {
         Validate.notNull(portletCategoryRegistry);
         this.portletCategoryRegistry = portletCategoryRegistry;
+    }
+
+    @Autowired
+    public void setMarketplaceRegistry(final IMarketplaceRegistry marketplaceRegistry) {
+        this.marketplaceRegistry = marketplaceRegistry;
     }
 
 }

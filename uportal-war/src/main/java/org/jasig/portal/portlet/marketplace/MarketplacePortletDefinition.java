@@ -96,33 +96,11 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private Set<MarketplacePortletDefinition> relatedPortlets;
 
     /**
-     * Constructs a Definition for use by no particular user, so with no related portlets.
-     *
-     * The resulting MarketplacePortletDefinition will have no
-     * related portlets since cannot filter by BROWSE permissions of the unspecified user.
-     *
-     * @param portletDefinition the portlet definition to make this MarketplacePD
-     * @param marketplaceService the Marketplace service
-     * @param registry the registry you want to use for categories and related apps
-     * Benefit: screenshot property is set if any are available.  This includes URL and caption
-     *
-     * @since uPortal 4.2
-     */
-    public MarketplacePortletDefinition(final IPortletDefinition portletDefinition,
-        final IMarketplaceService marketplaceService, final IPortletCategoryRegistry registry) {
-
-        Validate.notNull(marketplaceService,
-            "MarketplacePortletDefinition requires an IMarketplaceService.");
-
-        this.marketplaceService = marketplaceService;
-        this.portletCategoryRegistry = registry;
-        this.portletDefinition = portletDefinition;
-
-        this.initDefinitions();
-    }
-
-    /**
      * Constructs a Definition for use by a given user.
+     *
+     * Consider obtaining your MarketplacePortletDefinition instances from an
+     * IMarketplaceRegistry instead of directly accessing this constructor, in order to benefit
+     * from caching.
      *
      * The resulting MarketplacePortletDefinition will only have related portlets BROWSEable by the
      * given user.
@@ -140,6 +118,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
         Validate.notNull(marketplaceService,
             "MarketplacePortletDefinition requires an IMarketplaceService.");
+        Validate.notNull(person,
+            "MarketplacePortletDefinitions must be instantiated to serve a particular person.");
 
         this.marketplaceService = marketplaceService;
         this.portletCategoryRegistry = registry;
@@ -256,13 +236,13 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      */
     private Set<MarketplacePortletDefinition> computeRelatedPortlets(){
 
-        if (person == null) {
-            return new HashSet<>();
-        }
-
-        return Sets.intersection(
+        Set<MarketplacePortletDefinition> browseableRelatedPortlets = Sets.intersection(
             marketplaceService.marketplacePortletDefinitionsRelatedTo(this),
             marketplaceService.marketplacePortletDefinitionsBrowseableBy(person));
+
+        logger.trace("Computed browseable related portlets as {}.", browseableRelatedPortlets);
+
+        return browseableRelatedPortlets;
     }
 
     private void setScreenShots(List<ScreenShot> screenShots){
@@ -332,9 +312,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * Related currently means in the categories of this portlet, traversing those categories
      * deeply into child categories.
      *
-     * If this MarketplacePortletDefinition was constructed without specifying a user, then there
-     * are no related portlets.
-     *
      * @return a set of related MarketplacePortletDefinition s.
      * Will not return null. Will not include self in set.  Might return an empty set.
      */
@@ -350,10 +327,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * Returns a random set of up to QUANTITY_RELATED_PORTLETS_TO_SHOW related portlets that are
      * BROWSEable by the user for whom this MarketplacePortletDefinition was instantiated.
      *
-     * If this MarketplacePortletDefinition was not instantiated for any particular user, then
-     * returns empty Set since cannot filter to BROWSEable related portlets.
-     *
-     * (This method also returns different data randomly on each invocation.)
+     * (This method also different data randomly on each invocation.)
      *
      * Currently, related means contained in a category that this portlet is contained in, with
      * deep traversal of sub-categories.
@@ -363,13 +337,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * @return a non-null potentially empty Set of related BROWSEable portlets
      */
     public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(){
-
-        if (this.person == null) {
-            // MarketplacePortletDefinition instances instantiated for no particular person
-            // will have no sampling of related portlets because without a person cannot filter
-            // by BROWSE permission
-            return new HashSet<>();
-        }
 
         try {
 

@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.portlet.marketplace;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -30,28 +31,10 @@ import java.util.concurrent.Future;
 /**
  * Marketplace service layer responsible for gathering and applying policy about what Marketplace entries
  * and categories ought to be available to a given user.
+ *
  * @since uPortal 4.1
  */
 public interface IMarketplaceService {
-
-
-    /**
-     * Load the list of marketplace entries for a user.  Will load entries async.
-     * This method is primarily intended for seeding data.  Most impls should call
-     * browseableMarketplaceEntriesFor() instead.
-     *
-     * Note:  Set is immutable since it is potentially shared between threads.  If
-     * the set needs mutability, be sure to consider the thread safety implications.
-     * No protections have been provided against modifying the MarketplaceEntry itself,
-     * so be careful when modifying the entities contained in the list.
-     *
-     * @param user the non-null user
-     * @return a Future that will resolve to a set of MarketplaceEntry objects
-     *      the requested user has browse access to.
-     * @throws java.lang.IllegalArgumentException if user is null
-     * @since 4.2
-     */
-    Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user);
 
 
     /**
@@ -141,19 +124,34 @@ public interface IMarketplaceService {
     Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user);
 
     /**
-     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
+     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified
+     * portlet definition tailored for the given user.
      * Implementations of IMarketplaceService may cache these objects to-taste.
      * @param portletDefinition A valid {@link IPortletDefinition}
+     * @param user for whom the definition is to be tailored; may be null.
      * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition.
+     *
+     * @since uPortal 4.2
      */
-    MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition);
+    MarketplacePortletDefinition marketplacePortletDefinitionFor(
+        IPortletDefinition portletDefinition, IPerson user);
     
     /**
-     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
-     * Implementations of IMarketplaceService may cache these objects to-taste.
-     * @param fname a valid fname of a portlet
-     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition. 
+     * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified
+     * portlet definition, optionally as viewed by a given user.
+     *
+     * Enforces BROWSE permission iff a user is specified.
+     *
+     * @param fname a non-null String that might be the fname of a portlet (if not, returns null)
+     * @param user may be null, user for whom definition is being requested.
+     *
+     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition,
+     * or null if no portlet definition found by that fname.
+     *
+     * @throws RuntimeException if the user is not null and is not authorized to BROWSE the portlet.
+     *
+     * @since uPortal 4.2
      */
-    MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname);
+    MarketplacePortletDefinition marketplacePortletDefinitionByFname(String fname, IPerson user);
 
 }

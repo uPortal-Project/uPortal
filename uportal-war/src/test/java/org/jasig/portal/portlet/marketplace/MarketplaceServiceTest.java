@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,12 +22,17 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class MarketplaceServiceTest {
 
     @Mock IPortletCategoryRegistry categoryRegistry;
+    @Mock IMarketplaceRegistry marketplaceRegistry;
+
+    @Mock IPerson person;
 
     @Mock IPortletDefinition portletDefinition;
     @Mock IPortletDefinition anotherPortletDefinition;
     @Mock IPortletDefinition yetAnotherPortletDefinition;
 
     MarketplacePortletDefinition marketplacePortletDefinition;
+    MarketplacePortletDefinition anotherMarketplacePortletDefinition;
+    MarketplacePortletDefinition yetAnotherMarketplacePortletDefinition;
 
     PortletCategory categoryContainingThePortlet;
 
@@ -42,6 +48,7 @@ public class MarketplaceServiceTest {
 
         marketplaceService = new MarketplaceService();
         marketplaceService.setPortletCategoryRegistry(categoryRegistry);
+        marketplaceService.setMarketplaceRegistry(marketplaceRegistry);
 
         categoryContainingThePortlet = new PortletCategory("categoryContainingThePortlet");
 
@@ -49,8 +56,28 @@ public class MarketplaceServiceTest {
         when(anotherPortletDefinition.getFName()).thenReturn("anotherFname");
         when(yetAnotherPortletDefinition.getFName()).thenReturn("yetAnotherFname");
 
+        when(person.getUserName()).thenReturn("bucky");
+
         marketplacePortletDefinition =
-            new MarketplacePortletDefinition(portletDefinition, marketplaceService, categoryRegistry);
+            new MarketplacePortletDefinition(portletDefinition, person,
+                marketplaceService, categoryRegistry);
+
+        anotherMarketplacePortletDefinition =
+            new MarketplacePortletDefinition(anotherPortletDefinition, person,
+            marketplaceService, categoryRegistry);
+
+        yetAnotherMarketplacePortletDefinition =
+            new MarketplacePortletDefinition(yetAnotherPortletDefinition, person,
+            marketplaceService, categoryRegistry);
+
+
+        when(marketplaceRegistry.marketplacePortletDefinition("fname", person))
+            .thenReturn(marketplacePortletDefinition);
+        when(marketplaceRegistry.marketplacePortletDefinition("anotherFname", person))
+            .thenReturn(anotherMarketplacePortletDefinition);
+        when(marketplaceRegistry.marketplacePortletDefinition("yetAnotherFname", person))
+            .thenReturn(yetAnotherMarketplacePortletDefinition);
+
 
     }
 
@@ -117,7 +144,7 @@ public class MarketplaceServiceTest {
 
         final Set<MarketplacePortletDefinition> expectedRelatedPortlets = new HashSet<>();
         final MarketplacePortletDefinition expectedRelatedMarketplaceDefinition = new
-            MarketplacePortletDefinition(anotherPortletDefinition,
+            MarketplacePortletDefinition(anotherPortletDefinition, person,
             marketplaceService, categoryRegistry);
         expectedRelatedPortlets.add(expectedRelatedMarketplaceDefinition);
 
