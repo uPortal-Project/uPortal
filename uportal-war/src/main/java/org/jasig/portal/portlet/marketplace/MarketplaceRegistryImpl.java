@@ -116,7 +116,7 @@ public class MarketplaceRegistryImpl
 
     @Autowired
     @Qualifier
-        ("org.jasig.portal.marketplace.MarketplaceRegistryImpl.marketplacePortletDefinitionCache")
+        ("org.jasig.portal.portlet.marketplace.MarketplaceRegistryImpl.marketplacePortletDefinitionCache")
     public void setMarketplacePortletDefinitionCache(
         final Cache marketplacePortletDefinitionCache) {
         this.marketplacePortletDefinitionCache = marketplacePortletDefinitionCache;

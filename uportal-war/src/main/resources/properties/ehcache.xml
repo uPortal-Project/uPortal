@@ -1302,7 +1302,7 @@
 
     <!-- Caches MarketplacePortletDefinition instances;  not replicated -->
     <cache
-        name="org.jasig.portal.marketplace.MarketplaceRegistryImpl.marketplacePortletDefinitionCache"
+        name="org.jasig.portal.portlet.marketplace.MarketplaceRegistryImpl.marketplacePortletDefinitionCache"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="3600" memoryStoreEvictionPolicy="LRU"
         statistics="true" />
