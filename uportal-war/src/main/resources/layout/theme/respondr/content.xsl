@@ -378,20 +378,22 @@
           <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="hasFavorites">
-        <xsl:if test="//content/@hasFavorites = 'true'">true</xsl:if>
+        <xsl:if test="//content/@hasFavorites = 'true' and $AUTHENTICATED='true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="isInFavorites">
         <xsl:variable name="curFname" select="@fname" />
         <xsl:if test="/layout/favorites/favorite[@fname = $curFname]">true</xsl:if>
       </xsl:variable>
-        
-      <li>
-          <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
-              <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
-          </a>
-      </li>
 
-      <!-- Help Icon -->
+      <xsl:if test="$AUTHENTICATED='true'">
+          <li>
+              <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
+                  <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
+              </a>
+          </li>
+      </xsl:if>
+
+          <!-- Help Icon -->
       <xsl:if test="$hasHelp='true'">
         <xsl:variable name="portletHelpUrl">
           <xsl:call-template name="portalUrl">
