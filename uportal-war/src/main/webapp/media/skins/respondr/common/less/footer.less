@@ -36,12 +36,18 @@
             }
         }
 
-        h4 a {
-            color: @grayscale2;
-            margin: 0;
-
-            &:hover, &:focus {
+        h4 {
+            a {
                 color: @grayscale2;
+                margin: 0;
+
+                &:hover, &:focus {
+                    color: @grayscale2;
+                }
+            }
+            a.disabled {
+                pointer-events: none;
+                cursor: default;
             }
         }
 

@@ -433,14 +433,9 @@
         </li>
       </xsl:if>
 
-      <!-- Return from Focused Icon -->
-      <xsl:if test="//focused">
+      <!-- Return from Focused Icon. Don't display for transient portlets. -->
+      <xsl:if test="//focused and not(@transient='true')">
         <xsl:variable name="portletReturnUrl">
-          <xsl:choose>
-            <xsl:when test="@transient='true'">
-              <xsl:call-template name="portalUrl" />
-            </xsl:when>
-            <xsl:otherwise>
               <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
                   <url:portal-url>
@@ -449,8 +444,6 @@
                   </url:portal-url>
                 </xsl:with-param>
               </xsl:call-template>
-            </xsl:otherwise>
-          </xsl:choose>
         </xsl:variable>
         <li>
           <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>

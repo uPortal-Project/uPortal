@@ -320,17 +320,30 @@
                     <div class="row">
                         <xsl:for-each select="//navigation/tab">
                             <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+                                <xsl:variable name="NAV_TRANSIENT">
+                                    <xsl:choose>
+                                        <xsl:when test="@transient='true'">disabled</xsl:when>
+                                        <xsl:otherwise></xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
                                 <xsl:variable name="tabLinkUrl">
-                                    <xsl:call-template name="portalUrl">
-                                        <xsl:with-param name="url">
-                                            <url:portal-url>
-                                                <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-                                            </url:portal-url>
-                                        </xsl:with-param>
-                                    </xsl:call-template>
+                                    <!-- For a transient tab, attempting to calculate a tab URL generates an
+                                         exception because the tab is not in the layout so generate a safe URL. -->
+                                    <xsl:choose>
+                                        <xsl:when test="@transient='true'">javascript:;</xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:call-template name="portalUrl">
+                                                <xsl:with-param name="url">
+                                                    <url:portal-url>
+                                                        <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                    </url:portal-url>
+                                                </xsl:with-param>
+                                            </xsl:call-template>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:variable>
                                 <div class="col-md-3">
-                                    <h4><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
+                                    <h4><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
                                     <ul>
                                         <xsl:for-each select="tabChannel">
                                             <xsl:variable name="portletLinkUrl">

@@ -105,7 +105,7 @@ public class XsltPortalUrlProvider {
             return this.portalUrlProvider.getDefaultUrl(request);
         }
         catch (Exception e) {
-            this.logger.error("Faild to create IPortalUrlBuilder for fname='" + fname + "', layoutId='" + layoutId + "', type='" + type +"'. # will be returned instead.", e);
+            this.logger.error("Failed to create IPortalUrlBuilder for fname='" + fname + "', layoutId='" + layoutId + "', type='" + type +"'. # will be returned instead.", e);
             return new FailSafePortalUrlBuilder();
         }
     }
