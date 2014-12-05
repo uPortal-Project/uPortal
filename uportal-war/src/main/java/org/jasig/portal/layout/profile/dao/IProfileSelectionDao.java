@@ -30,15 +30,14 @@ import org.jasig.portal.layout.profile.IProfileSelection;
 public interface IProfileSelectionDao {
 
     /**
-     * Creates, initializes, and persists a new {@link org.jasig.portal.layout.profile.IProfileSelection}
-     * representing the given user's selection of the given profile.
+     * Updates a {@link IProfileSelection} or creates a new if one doesn't exist.
      * @param userName non-null username of user who has made the selection
      * @param profileFName fname of the selected profile, or null indicating no selection
-     * @return a newly created, initialized, and persisted {@link org.jasig.portal.layout.profile.IProfileSelection}
+     * @return a managed entity {@link IProfileSelection} representing the params
      * @throws IllegalArgumentException if userName is null
      * @throws org.springframework.dao.DataIntegrityViolationException if the user already has a profile selection.
      */
-    public IProfileSelection createProfileSelection(String userName, String profileFName);
+    public IProfileSelection createOrUpdateProfileSelection(String userName, String profileFName);
 
     /**
      * Get the {@link IProfileSelection} for the given user, or null if that user has no persisted selection.
@@ -49,12 +48,12 @@ public interface IProfileSelectionDao {
     public IProfileSelection readProfileSelectionForUser(String userName);
 
     /**
-     * Persists changes to a {@link IProfileSelection}.
+     * Updates a {@link IProfileSelection} or creates a new if one doesn't exist.
      * @param profileSelection non-null potentially changed profileSelection to be persisted.
-     * @return the same profile selection, with its change persisted.
+     * @return a managed entity
      * @throws java.lang.IllegalArgumentException if profileSelection is null
      */
-    public IProfileSelection updateProfileSelection(IProfileSelection profileSelection);
+    public IProfileSelection createOrUpdateProfileSelection(IProfileSelection profileSelection);
 
     /**
      * Removes the specified {@link IProfileSelection} from the persistent store.

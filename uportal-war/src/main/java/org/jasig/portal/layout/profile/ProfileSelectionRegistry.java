@@ -69,10 +69,10 @@ public class ProfileSelectionRegistry
             // non-null profileFName translates to creating or updating a Selection.
 
             if (null == existingSelection) {
-                this.profileSelectionDao.createProfileSelection(userName, profileFName);
+                this.profileSelectionDao.createOrUpdateProfileSelection(userName, profileFName);
             } else {
                 existingSelection.setProfileFName(profileFName);
-                this.profileSelectionDao.updateProfileSelection(existingSelection);
+                this.profileSelectionDao.createOrUpdateProfileSelection(existingSelection);
             }
 
         }
