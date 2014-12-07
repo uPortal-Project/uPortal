@@ -22,9 +22,7 @@ package org.jasig.portal.portlets.marketplace;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
@@ -130,7 +128,7 @@ public class PortletMarketplaceController {
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-	
+
 	@Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
@@ -167,15 +165,21 @@ public class PortletMarketplaceController {
 
     @RenderMapping(params="action=view")
     public String entryView(RenderRequest renderRequest, RenderResponse renderResponse, WebRequest webRequest, PortletRequest portletRequest, Model model){
-        IPortletDefinition result = this.portletDefinitionRegistry.getPortletDefinitionByFname(portletRequest.getParameter("fName"));
+
+        final HttpServletRequest servletRequest = this.portalRequestUtils
+            .getOriginalPortalRequest(webRequest);
+
+        final IPerson user = personManager.getPerson(servletRequest);
+        Validate.notNull(user, "Cannot set up view for null person.");
+
+        final IPortletDefinition result =
+            marketplaceService.marketplacePortletDefinitionByFname(
+                portletRequest.getParameter("fName"), user);
 
         if(result == null){
             this.setUpInitialView(webRequest, portletRequest, model, null);
             return "jsp/Marketplace/portlet/view";
         }
-
-        final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
-        final IPerson user = personManager.getPerson(servletRequest);
 
         if (! this.marketplaceService.mayBrowsePortlet(user, result)) {
             // TODO: provide an error experience
@@ -184,7 +188,8 @@ public class PortletMarketplaceController {
             return "jsp/Marketplace/portlet/view";
         }
 
-        MarketplacePortletDefinition mpDefinition = marketplaceService.getOrCreateMarketplacePortletDefinition(result);
+        final MarketplacePortletDefinition mpDefinition =
+            marketplaceService .marketplacePortletDefinitionFor(result, user);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
         model.addAttribute("marketplaceRating", tempRatingImpl);
@@ -253,21 +258,25 @@ public class PortletMarketplaceController {
 
 
     private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
-        final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
+        final HttpServletRequest portletServletRequest = this.portalRequestUtils
+            .getPortletHttpRequest(portletRequest);
+        final HttpServletRequest servletRequest = this.portalRequestUtils
+            .getOriginalPortalRequest(portletServletRequest);
         final PortletPreferences preferences = portletRequest.getPreferences();
         final boolean isLogLevelDebug = logger.isDebugEnabled();
 
         final IPerson user = personManager.getPerson(servletRequest);
+        Validate.notNull(user, "Cannot set up view for null person.");
 
-        final Map<String,Set<?>> registry = getRegistry(user);
-        @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
-        model.addAttribute("channelBeanList", portletList);
-        @SuppressWarnings("unchecked")
-        Set<PortletCategory> categoryList = (Set<PortletCategory>) registry.get("categories");
+        final Set<MarketplaceEntry> browseablePortlets =
+            marketplaceService.marketplaceEntriesBrowseableBy(user);
+        model.addAttribute("channelBeanList", browseablePortlets);
 
-        @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> featuredPortlets = (Set<MarketplacePortletDefinition>) registry.get("featured");
+        final Set<PortletCategory> categoryList =
+            marketplaceService.nonEmptyPortletCategoriesBrowseableBy(user);
+
+        final Set<MarketplacePortletDefinition> featuredPortlets =
+            marketplaceService.featuredPortletsForUser(user);
         model.addAttribute("featuredList", featuredPortlets);
         
         //Determine if the marketplace is going to show the root category
@@ -284,36 +293,6 @@ public class PortletMarketplaceController {
 
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("initialFilter", initialFilter);
-    }
-
-
-    /**
-     * Returns a set of MarketplacePortletDefinitions.  Supply a user to limit 
-     * the set to only portlets the user can use.  If user is null, this will
-     * return all portlets.  Setting user to null will superscede all other
-     * parameters.
-     *
-     * @param user - non-null user to limit results by. This will filter results to
-     *               only portlets that user can use.
-     * @return a set of portlets filtered that user can use, and other parameters
-    */
-    public Map<String,Set<?>> getRegistry(final IPerson user){
-
-        Map<String,Set<?>> registry = new TreeMap<String,Set<?>>();
-
-        final Set<MarketplaceEntry> visiblePortlets =
-                this.marketplaceService.browseableMarketplaceEntriesFor(user);
-        
-        @SuppressWarnings("unchecked")
-        final Set<PortletCategory> visibleCategories =
-                this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
-
-        Set<MarketplacePortletDefinition> featuredPortlets = this.marketplaceService.featuredPortletsForUser(user);
-
-        registry.put("portlets", visiblePortlets);
-        registry.put("categories", visibleCategories);
-        registry.put("featured", featuredPortlets);
-        return registry;
     }
 
 

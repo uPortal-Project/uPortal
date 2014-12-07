@@ -19,12 +19,19 @@
     under the License.
 
 -->
-<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Instructors</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
-  <creator>system</creator>
-  <description>Instructor Portlets</description>
-  <children>
-      <group>Instructors-Not-Students</group>
-  </children>
-</group>
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+    <owner>UP_PORTLET_SUBSCRIBE</owner>
+    <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+    <principal>
+        <!-- need to grant this directly to Students rather than Everyone because Students
+        have another path to Everyone than their Students group membership and that would break
+        the Students deny on browsing Instructors-Not-Students. -->
+        <group>Students</group>
+    </principal>
+    <activity>BROWSE</activity>
+    <!-- Enumerates the categories that staff and students
+        may browse in the Marketplace. -->
+    <target permission-type="GRANT">
+        <group>Instructors</group>
+    </target>
+</permission-set>

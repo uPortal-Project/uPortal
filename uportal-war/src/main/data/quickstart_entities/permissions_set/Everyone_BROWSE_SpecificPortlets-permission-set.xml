@@ -41,12 +41,15 @@
         <group>Information</group>
     </target>
     <target permission-type="GRANT">
-        <group>Instructors</group>
-    </target>
-    <target permission-type="GRANT">
         <group>Library</group>
     </target>
     <target permission-type="GRANT">
         <group>News</group>
+    </target>
+    <target permission-type="GRANT">
+        <group>uPortal</group>
+    </target>
+    <target permission-type="GRANT">
+        <group>Featured</group>
     </target>
 </permission-set>

@@ -28,6 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -38,6 +43,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -45,8 +51,26 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Marketplace portlet definitions provide user-specific views adding Marketplace-specific features
+ * upon an underlying IPortletDefinition.
+ *
+ * Since uPortal 4.2, a given MarketplacePortletDefinition is scoped to the user for whom it was
+ * instantiated.  Instances of MarketplacePortletDefinition MUST NOT be re-used between users
+ * because they will reflect state (namely, related portlets) that may not be appropriate for the
+ * subsequently serviced user.
+ *
+ * @since uPortal 4.1; substantially changed for uPortal 4.2.
+ */
 public class MarketplacePortletDefinition implements IPortletDefinition{
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    // This state underlies the Marketplace portlet definition instance.
+    private IPortletDefinition portletDefinition;
+    private IPerson person;
+
+    // static constants
     public static final String MARKETPLACE_FNAME = "portletmarketplace";
     public static final int QUANTITY_RELATED_PORTLETS_TO_SHOW = 5;
     private static final String INITIAL_RELEASE_DATE_PREFERENCE_NAME="Initial_Release_Date";
@@ -55,29 +79,55 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String MARKETPLACE_SHORT_LINK_PREF = "short_link";
     private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    // depended-upon injected services
+    private final IMarketplaceService marketplaceService;
     private IPortletCategoryRegistry portletCategoryRegistry;
-    private IPortletDefinition portletDefinition;
+
+    // state derived from the underlying IPortletDefinition.
     private List<ScreenShot> screenShots;
     private PortletReleaseNotes releaseNotes;
     private Set<PortletCategory> categories;
-
-    // that MarketplacePortletDefinition contains more MarketplacePortletDefinition is okay only so long as
-    // related portlets are lazy-initialized on access and are not always accessed.
-    private Set<MarketplacePortletDefinition> relatedPortlets;
     private Set<PortletCategory> parentCategories;
     private String shortURL = null;
 
+    // that MarketplacePortletDefinition contains more MarketplacePortletDefinition is okay only
+    // so long as related portlets are lazy-initialized on access and are not always accessed.
+    private Set<MarketplacePortletDefinition> relatedPortlets;
+
     /**
-     * 
+     * Constructs a Definition for use by a given user.
+     *
+     * Consider obtaining your MarketplacePortletDefinition instances from an
+     * IMarketplaceRegistry instead of directly accessing this constructor, in order to benefit
+     * from caching.
+     *
+     * The resulting MarketplacePortletDefinition will only have related portlets BROWSEable by the
+     * given user.
+     *
      * @param portletDefinition the portlet definition to make this MarketplacePD
+     * @param person the user for whom this Marketplace definition is tailored
+     * @param marketplaceService the Marketplace service
      * @param registry the registry you want to use for categories and related apps
-     * Benefit: screenshot property is set if any are available.  This includes URL and caption
+     *
+     * @since uPortal 4.2
      */
-    public MarketplacePortletDefinition(IPortletDefinition portletDefinition, IPortletCategoryRegistry registry){
+    public MarketplacePortletDefinition(
+        final IPortletDefinition portletDefinition, final IPerson person,
+        final IMarketplaceService marketplaceService, final IPortletCategoryRegistry registry) {
+
+        Validate.notNull(marketplaceService,
+            "MarketplacePortletDefinition requires an IMarketplaceService.");
+        Validate.notNull(person,
+            "MarketplacePortletDefinitions must be instantiated to serve a particular person.");
+
+        this.marketplaceService = marketplaceService;
         this.portletCategoryRegistry = registry;
         this.portletDefinition = portletDefinition;
-        this.initDefinitions();
+
+        this.person = person;
+
+        initDefinitions();
     }
 
     private void initDefinitions(){
@@ -180,25 +230,19 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     /**
      * Initialize related portlets.
-     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related portlets off of a
-     * MarketplacePortletDefinition do not always intantiate their related MarketplacePortletDefinitions, ad infinitem.
+     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related
+     * portlets off of a MarketplacePortletDefinition do not always instantiate their related
+     * MarketplacePortletDefinitions, ad infinitem.
      */
-    private void initRelatedPortlets(){
-        final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
+    private Set<MarketplacePortletDefinition> computeRelatedPortlets(){
 
-        for(PortletCategory parentCategory: this.portletCategoryRegistry.getParentCategories(this)){
+        Set<MarketplacePortletDefinition> browseableRelatedPortlets = Sets.intersection(
+            marketplaceService.marketplacePortletDefinitionsRelatedTo(this),
+            marketplaceService.marketplacePortletDefinitionsBrowseableBy(person));
 
-            final Set<IPortletDefinition> portletsInCategory =
-                    this.portletCategoryRegistry.getAllChildPortlets(parentCategory);
+        logger.trace("Computed browseable related portlets as {}.", browseableRelatedPortlets);
 
-            for (IPortletDefinition portletDefinition : portletsInCategory) {
-                allRelatedPortlets.add(
-                        new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
-            }
-        }
-
-        allRelatedPortlets.remove(this);
-        this.relatedPortlets = allRelatedPortlets;
+        return browseableRelatedPortlets;
     }
 
     private void setScreenShots(List<ScreenShot> screenShots){
@@ -262,45 +306,74 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         return this.parentCategories;
     }
 
-    private void setRelatedPortlets(Set<MarketplacePortletDefinition> relatedPortlets){
-        this.relatedPortlets = relatedPortlets;
-    }
-
     /**
-     * 
-     * @return a set of portlets that include all portlets in this portlets immediate categories and children categories
-     * Will not return null. Will not include self in list.  Might return an empty set.
+     * Gets a Set of BROWSEable definitions representing portlets related to this portlet.
+     *
+     * Related currently means in the categories of this portlet, traversing those categories
+     * deeply into child categories.
+     *
+     * @return a set of related MarketplacePortletDefinition s.
+     * Will not return null. Will not include self in set.  Might return an empty set.
      */
     public Set<MarketplacePortletDefinition> getRelatedPortlets() {
         // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
-            this.initRelatedPortlets();
+            this.relatedPortlets = computeRelatedPortlets();
         }
         return this.relatedPortlets;
     }
 
     /**
-     * Use to return a set of random related portlets
-     * if the number of related portlets is less than 
-     * QUANTITY_RELATED_PORTLETS_TO_SHOW,
-     * all related portlets will be returned
-     * @return a subset of related portlets
+     * Returns a random set of up to QUANTITY_RELATED_PORTLETS_TO_SHOW related portlets that are
+     * BROWSEable by the user for whom this MarketplacePortletDefinition was instantiated.
+     *
+     * (This method also different data randomly on each invocation.)
+     *
+     * Currently, related means contained in a category that this portlet is contained in, with
+     * deep traversal of sub-categories.
+     *
+     * On failure returns an empty Set rather than propagating an Exception.
+     *
+     * @return a non-null potentially empty Set of related BROWSEable portlets
      */
     public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(){
-        // lazy init is essential to avoid infinite recursion in graphing related portlets.
-        if(this.relatedPortlets==null){
-            this.initRelatedPortlets();
-        }
-        if(this.relatedPortlets.isEmpty()){
-            return this.relatedPortlets;
-        }
 
-        List<MarketplacePortletDefinition> tempList = new ArrayList<MarketplacePortletDefinition>(this.relatedPortlets);
-        Collections.shuffle(tempList);
-        final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
-        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>(tempList.subList(0, count));
+        try {
 
-        return rslt;
+            // lazy init is essential to avoid infinite recursion in graphing related portlets.
+            if (this.relatedPortlets==null) {
+               this.relatedPortlets = computeRelatedPortlets();
+            }
+            if (this.relatedPortlets.isEmpty()) {
+                return this.relatedPortlets;
+            }
+
+            final Set<MarketplacePortletDefinition> browseableMarketplacePortletDefinitions =
+                marketplaceService.marketplacePortletDefinitionsBrowseableBy(person);
+
+
+            final Set<MarketplacePortletDefinition> browseableRelatedPortlets =
+                Sets.intersection (browseableMarketplacePortletDefinitions, this.relatedPortlets);
+
+            List<MarketplacePortletDefinition> tempList = new ArrayList<>(browseableRelatedPortlets);
+            Collections.shuffle(tempList);
+
+            final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
+            return new HashSet<>(tempList.subList(0, count));
+
+        } catch (Exception e) {
+            logger.error("Problem computing random sampling of BROWSEable related portlets.", e);
+            // Behaving as if no related portlets is preferable to propagating failure.
+            return new HashSet<>();
+        }
+    }
+
+    /**
+     * Get the person for whom this Definition is tailored, or null if none.
+     * @return potentially null IPerson for whom this Definition is tailored
+     */
+    public IPerson getPerson() {
+        return person;
     }
 
     /**
@@ -652,4 +725,47 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     public String getTarget() {
       return this.portletDefinition.getTarget();
     }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFName())
+            .toString();
+    }
+
+    /*
+     * Marketplace portlet definitions are definitively identified by the fname of their underlying
+     * portlet publication and the user for whom they were instantiated, so the fname and the
+     * person contribute to the hash code.
+     * @since uPortal 4.2
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(getFName())
+            .append(getPerson())
+            .toHashCode();
+    }
+
+    /*
+     * Equal where the other object is a MarketplacePortletDefinition with the same fname AND
+     * is tailored to the same user if any.
+     * This is important so that Set operations work properly.
+     * @since uPortal 4.2
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (null == other) { return false; }
+        if (this == other) { return true; }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        final MarketplacePortletDefinition otherDefinition = (MarketplacePortletDefinition) other;
+        return new EqualsBuilder()
+            .append(getFName(), otherDefinition.getFName())
+            .append(getPerson(), otherDefinition.getPerson())
+            .isEquals();
+    }
+
+
 }
