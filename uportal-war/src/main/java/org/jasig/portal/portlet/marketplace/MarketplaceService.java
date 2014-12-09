@@ -223,7 +223,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
         Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
         if (element == null) {
-            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, portletCategoryRegistry);
+            final MarketplacePortletDefinition mpd =
+                new MarketplacePortletDefinition(portletDefinition, this, portletCategoryRegistry);
             element = new Element(portletDefinition.getFName(), mpd);
             this.marketplacePortletDefinitionCache.put(element);
         }

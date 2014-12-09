@@ -37,6 +37,8 @@ public class MarketplacePortletDefinitionTest {
 
     @Mock IPortletCategoryRegistry categoryRegistry;
 
+    @Mock IMarketplaceService service;
+
     MarketplacePortletDefinition marketplacePortletDefinition;
 
     @Before
@@ -44,7 +46,7 @@ public class MarketplacePortletDefinitionTest {
         initMocks(this);
 
         marketplacePortletDefinition =
-            new MarketplacePortletDefinition(portletDefinition, categoryRegistry);
+            new MarketplacePortletDefinition(portletDefinition, service, categoryRegistry);
 
     }
 

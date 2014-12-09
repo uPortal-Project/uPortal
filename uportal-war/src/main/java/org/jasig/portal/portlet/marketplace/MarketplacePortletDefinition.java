@@ -56,6 +56,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private static final String MARKETPLACE_SHORT_LINK_PREF = "short_link";
     private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private IMarketplaceService marketplaceService;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private IPortletDefinition portletDefinition;
     private List<ScreenShot> screenShots;
@@ -74,8 +75,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * @param registry the registry you want to use for categories and related apps
      * Benefit: screenshot property is set if any are available.  This includes URL and caption
      */
-    public MarketplacePortletDefinition(IPortletDefinition portletDefinition, IPortletCategoryRegistry registry){
+    public MarketplacePortletDefinition(final IPortletDefinition portletDefinition,
+        final IMarketplaceService service, final IPortletCategoryRegistry registry){
         this.portletCategoryRegistry = registry;
+        this.marketplaceService = service;
         this.portletDefinition = portletDefinition;
         this.initDefinitions();
     }
@@ -193,7 +196,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
             for (IPortletDefinition portletDefinition : portletsInCategory) {
                 allRelatedPortlets.add(
-                        new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
+                        new MarketplacePortletDefinition(portletDefinition,
+                            this.marketplaceService, this.portletCategoryRegistry));
             }
         }
 
