@@ -112,7 +112,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
 
             if (mayBrowsePortlet(user, portletDefinition)) {
                 final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
-                MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition);
+                final MarketplaceEntry entry =
+                    new MarketplaceEntry(marketplacePortletDefinition, user);
 
                 // flag whether this use can add the portlet...
                 boolean canAdd = mayAddPortlet(user, portletDefinition);

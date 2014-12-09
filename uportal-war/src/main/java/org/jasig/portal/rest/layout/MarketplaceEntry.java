@@ -13,6 +13,7 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.PortletCategory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jasig.portal.security.IPerson;
 
 public class MarketplaceEntry  implements Serializable {
     
@@ -35,21 +36,30 @@ public class MarketplaceEntry  implements Serializable {
     private Set<MarketplaceEntry> relatedEntries;
     private boolean generateRelatedPortlets = true;
     private boolean canAdd;
+
+    /**
+     * User for whom this MarketplaceEntity is tailored.
+     */
+    private IPerson user;
     
-    public MarketplaceEntry(MarketplacePortletDefinition pdef) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
+        this.user = user;
     }
 
-    public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = maxURL;
+        this.user = user;
     }
     
-    public MarketplaceEntry(MarketplacePortletDefinition pdef, boolean generateRelatedPortlets) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, boolean generateRelatedPortlets,
+        final IPerson user) {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
         this.generateRelatedPortlets = generateRelatedPortlets;
+        this.user = user;
     }
 
     public String getId() {
@@ -134,7 +144,7 @@ public class MarketplaceEntry  implements Serializable {
             relatedEntries = new HashSet<MarketplaceEntry>(MarketplacePortletDefinition.QUANTITY_RELATED_PORTLETS_TO_SHOW);
             Set<MarketplacePortletDefinition> randomSamplingRelatedPortlets = pdef.getRandomSamplingRelatedPortlets();
             for(MarketplacePortletDefinition def : randomSamplingRelatedPortlets) {
-                relatedEntries.add(new MarketplaceEntry(def, false));
+                relatedEntries.add(new MarketplaceEntry(def, false, user));
             }
         }
         return relatedEntries;
