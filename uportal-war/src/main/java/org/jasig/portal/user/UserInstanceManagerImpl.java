@@ -34,10 +34,10 @@ import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PortalSecurityException;
@@ -150,10 +150,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
 
         //Create the user layout manager and user instance object
         IUserLayoutManager userLayoutManager = userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
-        if (person.isGuest()) {
-            userLayoutManager = userLayoutManagerFactory.immutableUserLayoutManager(userLayoutManager);
-        }
-        
+
         final UserPreferencesManager userPreferencesManager = new UserPreferencesManager(person, userProfile, userLayoutManager);
         userInstance = new UserInstance(person, userPreferencesManager, localeManager);
         
