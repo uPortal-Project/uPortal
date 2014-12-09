@@ -93,6 +93,16 @@ public class MarketplaceEntry  implements Serializable {
         IPortletDefinitionParameter parameter = pdef.getParameter("faIcon");
         return parameter != null ? parameter.getValue() : null;
     }
+
+    /**
+     *
+     * @param parameterName
+     * @return
+     * @since uPortal 4.2
+     */
+    public IPortletDefinitionParameter getParameter(final String parameterName) {
+        return this.pdef.getParameter(parameterName);
+    }
     
     public String getMaxUrl() {
         return maxURL;
