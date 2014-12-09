@@ -187,9 +187,10 @@ public class PortletMarketplaceController {
         MarketplacePortletDefinition mpDefinition = marketplaceService.getOrCreateMarketplacePortletDefinition(result);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
+        final MarketplaceEntry marketplaceEntry = new MarketplaceEntry(mpDefinition, user);
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
-        model.addAttribute("portlet", mpDefinition);
+        model.addAttribute("marketplaceEntry", marketplaceEntry);
         model.addAttribute("shortURL",mpDefinition.getShortURL());
         return "jsp/Marketplace/portlet/entry";
     }
@@ -261,14 +262,17 @@ public class PortletMarketplaceController {
 
         final Map<String,Set<?>> registry = getRegistry(user);
         @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
-        model.addAttribute("channelBeanList", portletList);
+        final Set<MarketplaceEntry> marketplaceEntries =
+            (Set<MarketplaceEntry>) registry.get("portlets");
+        model.addAttribute("marketplaceEntries", marketplaceEntries);
         @SuppressWarnings("unchecked")
         Set<PortletCategory> categoryList = (Set<PortletCategory>) registry.get("categories");
 
         @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> featuredPortlets = (Set<MarketplacePortletDefinition>) registry.get("featured");
-        model.addAttribute("featuredList", featuredPortlets);
+        final Set<MarketplaceEntry> featuredPortlets =
+            (Set<MarketplaceEntry>) registry.get("featured");
+
+        model.addAttribute("featuredEntries", featuredPortlets);
         
         //Determine if the marketplace is going to show the root category
         String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE_NAME, "false");
@@ -308,7 +312,8 @@ public class PortletMarketplaceController {
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
-        Set<MarketplacePortletDefinition> featuredPortlets = this.marketplaceService.featuredPortletsForUser(user);
+        final Set<MarketplaceEntry> featuredPortlets =
+            this.marketplaceService.featuredEntriesForUser(user);
 
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);

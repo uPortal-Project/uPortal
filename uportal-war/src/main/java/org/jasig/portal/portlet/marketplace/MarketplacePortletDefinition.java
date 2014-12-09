@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -38,6 +39,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -284,13 +286,15 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     }
 
     /**
-     * Use to return a set of random related portlets
-     * if the number of related portlets is less than 
-     * QUANTITY_RELATED_PORTLETS_TO_SHOW,
-     * all related portlets will be returned
-     * @return a subset of related portlets
+     * Obtain up to QUANTITY_RELATED_PORTLETS_TO_SHOW random related portlets BROWSEable by the
+     * given user.
+     *
+     * @return a non-null potentially empty Set of related portlets BROWSEable by the user
      */
-    public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(){
+    public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(final IPerson user) {
+
+        Validate.notNull(user, "Cannot filter to BROWSEable by a null user");
+
         // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
             this.initRelatedPortlets();
@@ -302,7 +306,18 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         List<MarketplacePortletDefinition> tempList = new ArrayList<MarketplacePortletDefinition>(this.relatedPortlets);
         Collections.shuffle(tempList);
         final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
-        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>(tempList.subList(0, count));
+
+        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>();
+
+        for (final MarketplacePortletDefinition relatedPortlet : tempList) {
+
+            if (marketplaceService.mayBrowsePortlet(user, relatedPortlet)) {
+                rslt.add(relatedPortlet);
+            }
+
+            if (rslt.size() >= count) break; // escape the loop if we've hit our target quantity
+                                             // of related portlets
+        }
 
         return rslt;
     }

@@ -142,7 +142,8 @@ public class MarketplaceEntry  implements Serializable {
         }
         if(relatedEntries==null) {
             relatedEntries = new HashSet<MarketplaceEntry>(MarketplacePortletDefinition.QUANTITY_RELATED_PORTLETS_TO_SHOW);
-            Set<MarketplacePortletDefinition> randomSamplingRelatedPortlets = pdef.getRandomSamplingRelatedPortlets();
+            final Set<MarketplacePortletDefinition> randomSamplingRelatedPortlets =
+                pdef.getRandomSamplingRelatedPortlets(user);
             for(MarketplacePortletDefinition def : randomSamplingRelatedPortlets) {
                 relatedEntries.add(new MarketplaceEntry(def, false, user));
             }

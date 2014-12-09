@@ -295,10 +295,10 @@
         </div>
         <div class="row">
             <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
-            <c:forEach var="featuredPortlet" items="${featuredList}" varStatus="status">
+            <c:forEach var="featuredPortlet" items="${featuredEntries}" varStatus="status">
                 <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                     <portlet:param name="action" value="view"/>
-                    <portlet:param name="fName" value="${featuredPortlet.FName}"/>
+                    <portlet:param name="fName" value="${featuredPortlet.fname}"/>
                 </portlet:renderURL>
                 <div class="col-sm-6 col-lg-3">
                     <div class="panel panel-default">
@@ -391,7 +391,7 @@
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="portlet" items="${channelBeanList}">
+            <c:forEach var="portlet" items="${marketplaceEntries}">
                 <tr>
                     <td class="essential" style="white-space: nowrap; border:none;">
                         <strong><a href="${portlet.renderUrl}">${portlet.title} <i class="fa fa-external-link"></i></a></strong>
