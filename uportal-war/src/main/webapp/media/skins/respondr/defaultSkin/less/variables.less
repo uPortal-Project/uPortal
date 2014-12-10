@@ -27,15 +27,15 @@
  * Grayscale colors. 1 is lightest, 10 is darkest.
  */
 
-@grayscale1: #F5F5F5;
-@grayscale2: #E5E5E5;
-@grayscale3: #D8D8D8;
-@grayscale4: #CCCCCC;
-@grayscale5: #ADADAD;
-@grayscale6: #999999;
-@grayscale7: #8C8C8C;
-@grayscale8: #696969;
-@grayscale9: #404040;
+@grayscale1:  #F5F5F5;
+@grayscale2:  #E5E5E5;
+@grayscale3:  #D8D8D8;
+@grayscale4:  #CCCCCC;
+@grayscale5:  #ADADAD;
+@grayscale6:  #999999;
+@grayscale7:  #8C8C8C;
+@grayscale8:  #696969;
+@grayscale9:  #404040;
 @grayscale10: #333333;
 
 /*
@@ -92,22 +92,23 @@
 
 @border: 1px solid @grayscale3;
 
-@body-background-color: #fff;
+@body-background-color: @white;
 @body-background-image: url(./common/images/furley_bg.png);
 /* Using the furley pattern from http://subtlepatterns.com */
 
 /**
  * Link colors
  */
-@link-color: #f00;
-@footer-link-color: @link-color;
+@portal-link-color: @color2;
+@portal-link-hover-color: darken(@portal-link-color, 15%);
+@footer-link-color: @portal-link-color;
 
 /**
  * Region Styles
  */
 @header-background-color: @color1;
-@header-text-color: #FFFFFF;
-@header-link-color: #FFFFFF;
+@header-text-color: @white;
+@header-link-color: @white;
 
 
 /**
@@ -120,7 +121,7 @@
 /**
  * Theme based button styles
  */
-@btn-skin-text-color:             #fff;
+@btn-skin-text-color:             @white;
 @btn-skin-background-color:       @color2;
 
 @btn-skin-alt-text-color:         @grayscale10;
@@ -143,7 +144,6 @@
 @navbar-item-hover-background-color: @color1-light;
 
 @navbar-item-active-background-color: @color1-darker;
-// @navbar-item-active-hover-background-color: darken(@color1, 20%);
 @navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 5%);
 
 @navbar-item-active-text-color: #fff;
@@ -161,7 +161,7 @@
 /**
  * Search field
  */
-@search-button-text-color: #fff;
+@search-button-text-color: @white;
 @search-button-background-color: rgb(30, 77, 43);
 /**
  * Portlet Chrome Settings
@@ -186,8 +186,8 @@
 /*
  * Custom Mixins Settings
  */
-@contrasted-dark-default: #232323;
-@contrasted-light-default: #efefef;
+@contrasted-dark-default: @grayscale10;
+@contrasted-light-default: @grayscale2;
 @contrasted-lightness-threshold: 43%;
 
 
