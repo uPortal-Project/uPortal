@@ -22,11 +22,6 @@
  */
 package org.jasig.portal.url;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -36,6 +31,9 @@ import javax.portlet.PortletMode;
 import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
@@ -58,9 +56,12 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 /**
  * Test harness for {@link UrlSyntaxProviderImpl}.
@@ -946,4 +947,64 @@ public class UrlSyntaxProviderImplTest {
         assertNotNull(portletRequestInfoMap);
         assertEquals(0, portletRequestInfoMap.size());
     }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathSameUrl() {
+        assertFalse("identical paths should be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathSamePrimaryUrl() {
+        assertFalse("functionally identical paths should be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/welcome/p/uportal-links/max",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathSamePortletNoFolder() {
+        assertFalse("path without folder specified should be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/p/uportal-links/max",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathDifferentFolder() {
+        assertTrue("path with different folder should not be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/other/p/uportal-links/max",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    // Verifies ignores the state and url type.  Assumption is canonical path would have been properly derived
+    // from 1st path string so don't need to concern ourselves with the defaulting mechanism being correct in
+    // this test method.
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathNoStateOrType() {
+        assertFalse("functionally identical paths no state (matching defaults) should be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/welcome/p/uportal-links",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathDifferentFolderAndPortlet() {
+        assertTrue("path with different folder and portlet should not be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/other/p/other/max",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
+    @Test
+    public void testDoesRequestPathReferToSpecificAndDifferentContentVsCanonicalPathDifferentPortlet() {
+        assertTrue("path with different portlet should not be equal",
+                this.urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                        "/uPortal/f/welcome/p/other/max",
+                        "/uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP"));
+    }
+
 }

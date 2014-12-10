@@ -113,7 +113,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
 
                     IPerson person = personManager.getPerson(request);
                     if (/* #1 */ person.isGuest()
-                            && /* #2 */ urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(requestURI, canonicalUri)
+                            && /* #2 */ urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                                                  requestURI, canonicalUri)
                             && /* #3 */ loginRefUrlEncoder != null) {
                         encodedTargetUrl = loginRefUrlEncoder.encodeLoginAndRefUrl(request);
                     }
@@ -125,12 +126,14 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
                     }
 
                     response.sendRedirect(encodedTargetUrl);
-                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}", new Object[] {requestURI, canonicalUri, redirectCount});
+                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}",
+                            requestURI, canonicalUri, redirectCount);
                     return;
                 }
 
                 this.clearRedirectCount(request, response);
-                logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestURI, canonicalUri, redirectCount});
+                logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects",
+                        requestURI, canonicalUri, redirectCount);
             } else {
                 logger.trace("Requested URI {} is the canonical URL {}, " +
                         "so no (further?) redirect is necessary (after {} redirects).",
