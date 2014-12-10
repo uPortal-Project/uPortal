@@ -111,6 +111,18 @@ public interface IMarketplaceService {
     Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user);
 
     /**
+     * Provides the potentially empty non-null Set of featured Marketplace entries for the user.
+     *
+     * The user MUST have BROWSE permission on all members of the Set.
+     *
+     * @param user the non-null user for whom featured portlets are desired.
+     * @return non-null potentially empty Set of featured portlet MarketplaceEntries.
+     *
+     * @since uPortal 4.2
+     */
+    Set<MarketplaceEntry> featuredEntriesForUser(IPerson user);
+
+    /**
      * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
      * Implementations of IMarketplaceService may cache these objects to-taste.
      * @param portletDefinition A valid {@link IPortletDefinition}

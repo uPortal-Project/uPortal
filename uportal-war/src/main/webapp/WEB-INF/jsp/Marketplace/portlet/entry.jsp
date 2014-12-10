@@ -360,7 +360,8 @@
             </div>
             <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">
+                    <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
+                       class="btn btn-default marketplace_dropdown_button" role="button">
                         <spring:message code="go" text="Go"/>
                     </a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
@@ -376,20 +377,20 @@
             <div class="col-sm-1 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
-                        <c:when test="${empty portlet.getParameter('mobileIconUrl')}">
+                        <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
                             <img src="${defaultIcon}">
                         </c:when>
                         <c:otherwise>
-                            <img src="${portlet.getParameter('mobileIconUrl').value}">
+                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}">
                         </c:otherwise>
                 </c:choose>
             </div>
             <div class="col-sm-11">
                 <div class="marketplace_description_title">
-                    <h1>${portlet.title}</h1>
+                    <h1>${marketplaceEntry.title}</h1>
                 </div>
                 <div class="marketplace_description_body">
-                    <p>${portlet.description}</p>
+                    <p>${marketplaceEntry.description}</p>
                 </div>
             </div>
         </div>
@@ -401,11 +402,12 @@
                 <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
                 <div class="col-xs-3 marketplace_average_rating">
                     <div>
-                        <input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
+                        <input type="number" data-max="5" data-min="1" value="${marketplaceEntry.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
                     </div>
                 </div>
                 <div id="col-xs-9 marketplace_users_rated">
-                    <span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span>
+                    <span
+                            id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
                 </div>
             </div>
         </div>
@@ -431,27 +433,29 @@
 
             </div>
         </div>
-        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
+        <c:if test="${not empty  marketplaceEntry.portletReleaseNotes.releaseNotes}">
             <div class="row clearfix">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
                         <span class="marketplace_section_header"><spring:message code="whats.new" text="What's New"/></span>
-                        <c:if test="${not empty portlet.portletReleaseNotes.releaseDate}">
-                            <span class="marketplace_release_date"> (Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
+                        <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseDate}">
+                            <span class="marketplace_release_date"> (Released <joda:format value="${marketplaceEntry.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
                         
                     </p>
                     <p>
-                        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
+                        <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseNotes}">
                             <ul class="marketplace_release_notes">
-                                <c:forEach var="releaseNote" items="${portlet.portletReleaseNotes.releaseNotes}">
+                                <c:forEach var="releaseNote"
+                                           items="${marketplaceEntry.portletReleaseNotes.releaseNotes}">
                                     <li class="marketplace_release_note">- ${releaseNote}</li>
                                 </c:forEach>
                             </ul>
                         </c:if>
                     </p>
-                    <c:if test="${fn:length(portlet.portletReleaseNotes.releaseNotes) gt 3}">
+                    <c:if test="${fn:length(marketplaceEntry.portletReleaseNotes.releaseNotes) gt
+                    3}">
                         <span><a id="marketplace_show_more_less_link"><spring:message code="more" text="More"/></a></span>
                     </c:if>
                 </div>
@@ -460,7 +464,7 @@
 
         <div class="spacer clearfix"></div>
 
-        <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
+        <c:set var="relatedPortlets" value="${marketplaceEntry.relatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
             <h1><spring:message code="related.portlets" text="Related Portlets"/></h1>
             <div class="marketplace_section row clearfix">
@@ -468,7 +472,7 @@
                 <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                        <portlet:param name="fName" value="${relatedPortlet.fname}"/>
                     </portlet:renderURL>
                     <div class="col-sm-6 col-lg-3">
                         <div class="panel panel-default">
@@ -498,16 +502,16 @@
                 </c:forEach>
             </div>
         </c:if>
-        <c:set var="portletCategories" value="${portlet.parentCategories}"/>
+        <c:set var="portletCategories" value="${marketplaceEntry.categories}"/>
         <c:if test="${not empty portletCategories}">
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
-                            <portlet:param name="initialFilter" value="${portletCategory.name}"/>
+                            <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
-                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory.name}</a></li>
+                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
                     </c:forEach>
                 </div>
             </div>
@@ -537,7 +541,8 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep" value="${portlet.renderUrl}"></input>
+                        <input type="text" class="form-control" id="inputDeep"
+                               value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
                 <c:if test="${not empty shortURL }">
@@ -558,7 +563,7 @@
 </div>
 <portlet:resourceURL id="saveRating" var="saveRatingUrl" />
 <portlet:resourceURL id="layoutInfo" var="portletInfoUrl">
-    <portlet:param name="portletFName" value="${portlet.FName}"/>
+    <portlet:param name="portletFName" value="${marketplaceEntry.fname}"/>
 </portlet:resourceURL>
 
 <script type="text/javascript">
@@ -597,7 +602,7 @@
             },
             template: _.template($('#${n}options-menu').text(), null, templateSettings),
             options: {
-                portletChannelId: '${portlet.portletDefinitionId}'
+                portletChannelId: '${marketplaceEntry.id}'
             },
 
 
@@ -758,7 +763,7 @@
         updateOptionsMenu();
 
         var screenShots = [
-            <c:forEach var="screenShot" items="${portlet.screenShots}">
+            <c:forEach var="screenShot" items="${marketplaceEntry.marketplaceScreenshots}">
             {
                 url: '${screenShot.url}',
                 captions: [
@@ -896,20 +901,21 @@
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
-            arguments="${portlet.title}"
+            arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
             $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
         }else{
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
             text='You have not yet rated "{0}".'
-            arguments="${portlet.title}"
+            arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
         }
         updateCharactersRemaining();
         $("#${n}save_rating_form").submit(function (e) {
             $.ajax({
                 url: '${saveRatingUrl}',
-                data: {rating: $("#${n}marketplace_user_rating").val(), portletFName: "${portlet.FName}",
+                data: {rating: $("#${n}marketplace_user_rating").val(),
+                    portletFName: "${marketplaceEntry.fname}",
                     review: $("#${n}marketplace_user_review_input").val().trim()},
                 type: 'POST',
                 success: function(){
@@ -920,7 +926,7 @@
                     });
                     updateRatingInstructions('<spring:message code="rating.instructions.rated.now"
                      text='You have now rated "{0}"; update your rating if you wish.'
-                     arguments="${portlet.title}"
+                     arguments="${marketplaceEntry.title}"
                      htmlEscape="false"
                  />');
                 },
