@@ -174,5 +174,9 @@ public class MarketplaceEntry  implements Serializable {
     public String getTarget() {
       return pdef.getTarget();
     }
+    
+    public List<String> getKeywords() {
+      return pdef.getKeywords();
+    }
 
 }
