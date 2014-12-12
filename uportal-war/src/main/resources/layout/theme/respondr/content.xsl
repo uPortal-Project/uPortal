@@ -252,18 +252,6 @@
                 </div>
               </div>
             </div>
-
-            <script type="text/javascript">
-              up.jQuery(document).ready(function() {
-                var $ = up.jQuery;
-                  $('.no-chrome').hover(function() {
-                    $(this).find('.hover-toolbar').stop(true, true).show('slow');
-                  },
-                  function() {
-                    $(this).find('.hover-toolbar').stop(true, true).hide('slow');
-                });
-              });
-            </script>
           </xsl:when>
 
           <!-- ***** RENDER CHROME ***** -->
