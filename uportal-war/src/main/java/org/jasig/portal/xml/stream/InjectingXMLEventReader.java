@@ -47,12 +47,6 @@ public abstract class InjectingXMLEventReader extends BaseXMLEventReader {
         
         final XMLEvent event = this.getParent().nextEvent();
         this.additionalEvents = this.getAdditionalEvents(event);
-        if (this.additionalEvents != null) {
-            //Stick the current event at the bottom of the deque so it isn't forgotten
-            this.additionalEvents.offer(event);
-            return this.additionalEvents.pop();
-        }
-        
         return event;
     }
 

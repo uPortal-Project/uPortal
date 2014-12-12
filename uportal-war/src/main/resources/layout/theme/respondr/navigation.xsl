@@ -180,6 +180,12 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <xsl:variable name="NAV_TRANSIENT">
+      <xsl:choose>
+        <xsl:when test="@transient='true'">disabled</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
@@ -230,15 +236,21 @@
     </xsl:variable>
     <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
-        <xsl:call-template name="portalUrl">
-          <xsl:with-param name="url">
-            <url:portal-url>
-                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-            </url:portal-url>
-          </xsl:with-param>
-        </xsl:call-template>
+        <!-- For transient tabs, don't try to calculate an URL.  It display an exception in the logs. Use a safe URL. -->
+        <xsl:choose>
+            <xsl:when test="@transient='true'">javascript:;</xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="portalUrl">
+                    <xsl:with-param name="url">
+                        <url:portal-url>
+                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                        </url:portal-url>
+                    </xsl:with-param>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
       </xsl:variable>
-      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
+      <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE} {$NAV_TRANSIENT}">
         <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
           <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
         </span>
@@ -268,59 +280,6 @@
 
   </xsl:template>
   <!-- ========================================== -->
-
-
-  <!-- ========== TEMPLATE: PORTLET NAVIGATION ========== -->
-  <!-- ================================================== -->
-  <!--
-   | This template renders portlet navigation when a portlet is focused.
-  -->
-  <xsl:template name="portlet.navigation">
-    <div id="portletNavigation" class="fl-widget">
-        <div class="fl-widget-inner">
-        <div class="fl-widget-titlebar">
-            <h2><xsl:value-of select="upMsg:getMessage('jump.to', $USER_LANG)"/>:</h2>
-        </div>
-        <div class="fl-widget-content">
-            <ul class="fl-listmenu">
-            <li id="portletNavigationLinkHome">
-                <xsl:variable name="homeUrl">
-                  <xsl:call-template name="portalUrl"/>
-                </xsl:variable>
-                <a href="{$homeUrl}" title="{upMsg:getMessage('go.back.to.home', $USER_LANG)}">
-                <span>
-                    <xsl:value-of select="upMsg:getMessage('home', $USER_LANG)"/>
-                </span>
-              </a>
-            </li>
-          </ul>
-          <xsl:for-each select="//navigation/tab">
-            <xsl:variable name="TAB_POSITION" select="position()"/>
-            <h3><xsl:value-of select="@name"/></h3>
-            <ul class="fl-listmenu">
-              <xsl:for-each select="tabChannel">
-                <li>
-                  <xsl:variable name="tabLinkUrl">
-                    <xsl:call-template name="portalUrl">
-                        <xsl:with-param name="url">
-                          <url:portal-url>
-                              <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                          </url:portal-url>
-                        </xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:variable>
-                  <a href="{$tabLinkUrl}" title="{@name}">  <!-- Navigation item link. -->
-                    <span><xsl:value-of select="@name"/></span>
-                  </a>
-                </li>
-              </xsl:for-each>
-            </ul>
-          </xsl:for-each>
-            </div>
-      </div>
-    </div>
-  </xsl:template>
-  <!-- ================================================== -->
 
 
   <!-- ========== TEMPLATE: SUBNAVIGATION ========== -->

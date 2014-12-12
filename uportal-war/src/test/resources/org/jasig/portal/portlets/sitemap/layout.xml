@@ -21,8 +21,16 @@
 -->
 <?xml-stylesheet type="text/xsl" href="../../../../../../../main/resources/org/jasig/portal/portlets/sitemap/sitemap1.xsl" ?>
 <layout xmlns:dlm="http://www.uportal.org/layout/dlm" >
-  <folder ID="ft1" type="regular" hidden="true" unremovable="true" immutable="true" name="Transient Folder" width="100%" tabGroup="DEFAULT_TABGROUP"/>
   <folder ID="s1" hidden="false" immutable="false" locale="lv_LV" name="Root folder" type="root" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP">
+    <folder ID="ft1" name="About.com College Life" type="regular" hidden="false" unremovable="true" immutable="true" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:moveAllowed="false" dlm:precedence="100.0" transient="true" width="100%" tabGroup="DEFAULT_TABGROUP">
+      <channel ID="ctf1" typeID="2" hidden="false" unremovable="true" dlm:deleteAllowed="false" dlm:moveAllowed="false" name="About.com College Life" description="About.com College Life RSS feed" title="About.com College Life" chanID="95" fname="about-college-life" timeout="10000" transient="true" windowState="maximized" portletMode="view">
+        <parameter name="iconUrl" value="/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png"/>
+        <parameter name="hasHelp" value="true"/>
+        <parameter name="mobileIconUrl" value="/uPortal/media/skins/icons/mobile/feed.png"/>
+        <parameter name="editable" value="true"/>
+        <parameter name="disableDynamicTitle" value="true"/>
+      </channel>
+    </folder>
     <folder ID="u201l1s22" dlm:fragment="0" dlm:precedence="190.0" hidden="false" immutable="true" locale="lv_LV" name="Header folder" type="header" unremovable="true" width="100%" tabGroup="DEFAULT_TABGROUP"/>
     <folder ID="u201l1s4" dlm:fragment="0" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="Footer folder" type="footer" unremovable="false" width="100%" tabGroup="DEFAULT_TABGROUP"/>
     <folder ID="u201l1s5" dlm:addChildAllowed="false" dlm:deleteAllowed="false" dlm:editAllowed="false" dlm:fragment="0" dlm:moveAllowed="false" dlm:precedence="190.0" hidden="false" immutable="false" locale="lv_LV" name="RBS" type="regular" unremovable="false" width="100%" tabGroup="Start">
