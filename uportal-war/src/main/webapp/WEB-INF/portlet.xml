@@ -637,11 +637,23 @@
             </preference>
             <preference>
                 <name>PREFcolor2</name>
-                <value>#8AA9D8</value>
+                <value>#F68923</value>
             </preference>
             <preference>
                 <name>PREFcolor3</name>
-                <value>#F68923</value>
+                <value>#8AA9D8</value>
+            </preference>
+            <preference>
+                <name>PREFcolor4</name>
+                <value>#ADADAD</value>
+            </preference>
+            <preference>
+                <name>PREFcolor5</name>
+                <value>#333333</value>
+            </preference>
+            <preference>
+                <name>PREFcolor6</name>
+                <value>#E5E5E5</value>
             </preference>
         </portlet-preferences>
         
