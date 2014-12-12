@@ -36,6 +36,10 @@ import org.jasig.portal.portlet.om.PortletCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * User-specific representation of a Marketplace portlet definition suitable for JSON serialization
+ * and for use in view implementations.
+ */
 public class MarketplaceEntry  implements Serializable {
     
     private Set<String> getPortletCategories(MarketplacePortletDefinition pdef) {
