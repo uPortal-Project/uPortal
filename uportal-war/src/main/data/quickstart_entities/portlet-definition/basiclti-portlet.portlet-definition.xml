@@ -33,6 +33,11 @@
     <category>Academics</category>
     <category>Demonstration</category>
     <group>Authenticated Users</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Authenticated Users</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>alternate</name>
         <value>false</value>

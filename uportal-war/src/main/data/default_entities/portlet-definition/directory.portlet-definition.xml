@@ -32,6 +32,11 @@
     </portlet-descriptor>
     <category>Information</category>
     <group>Authenticated Users</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Authenticated Users</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>disableDynamicTitle</name>
         <value>true</value>
