@@ -641,7 +641,7 @@
             </preference>
             <preference>
                 <name>PREFcolor3</name>
-                <value>#8AA9D8</value>
+                <value>#428BCA</value>
             </preference>
             <preference>
                 <name>PREFcolor4</name>
@@ -656,7 +656,7 @@
                 <value>#E5E5E5</value>
             </preference>
         </portlet-preferences>
-        
+
         <container-runtime-option>
             <name>javax.portlet.renderHeaders</name>
             <value>true</value>
