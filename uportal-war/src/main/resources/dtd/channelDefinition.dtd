@@ -37,8 +37,16 @@
 
 <!ELEMENT makeFNameAccessibleOnly EMPTY>
 <!ELEMENT channelId (#PCDATA)>
+
+<!-- Portlet title.  This is the value that will appear in the portlet chrome and in navigational menus -->
 <!ELEMENT title (#PCDATA)>
+
+<!-- Portlet name.  This is an internal value that only appears in admin tools.  It can be used to distinguish between
+ different portlets that share a title.   Deprecation warning:  in the future this may be removed in favor of using
+ fname -->
 <!ELEMENT name (#PCDATA)>
+
+<!-- Functional name.  Unique identifier that is used internally to identify a portlet. -->
 <!ELEMENT fname (#PCDATA)>
 <!ELEMENT desc (#PCDATA)>
 <!ELEMENT type (#PCDATA)>
