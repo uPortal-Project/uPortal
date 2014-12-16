@@ -39,6 +39,8 @@ public class StickyProfileMapperImplTest {
 
     @Mock IPerson person;
 
+    @Mock IPerson guestPerson;
+
     @Mock HttpServletRequest request;
 
     @Mock IProfileSelectionRegistry registry;
@@ -65,6 +67,8 @@ public class StickyProfileMapperImplTest {
         stickyMapper.setProfileKeyForNoSelection("default");
 
         when(person.getUserName()).thenReturn("bobby");
+
+        when(guestPerson.isGuest()).thenReturn(true);
     }
 
     /**
@@ -123,6 +127,20 @@ public class StickyProfileMapperImplTest {
         // might have done weird unexpected things to the registry.
         verifyNoMoreInteractions(registry);
 
+    }
+
+    /**
+     * Test that does not store selections by guest user to registry.
+     */
+    @Test
+    public void testIngoresGuestUserProfileSelections() {
+
+        final ProfileSelectionEvent selectionEvent =
+            new ProfileSelectionEvent(this, "validKey1", guestPerson, request);
+
+        stickyMapper.onApplicationEvent(selectionEvent);
+
+        verifyZeroInteractions(registry);
     }
 
     /**

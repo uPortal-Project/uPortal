@@ -98,6 +98,13 @@ public class StickyProfileMapperImpl
 
             final String userName = event.getPerson().getUserName();
 
+            if (event.getPerson().isGuest()) {
+                logger.warn("Ignoring a profile selection event fired by guest user. "
+                    + "Should the Guest user be firing profile selections in your uPortal "
+                    + "implementation?  Likely not.");
+                return;
+            }
+
             if (identitySwapperManager.isImpersonating(event.getRequest())) {
                 logger.debug("Ignoring selection of profile by key {} in the context of user {} because impersonated.",
                         event.getRequestedProfileKey(), userName);
