@@ -56,6 +56,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
     private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String MARKETPLACE_SHORT_LINK_PREF = "short_link";
+    private static final String MARKETPLACE_KEYWORDS_PREF = "keywords";
     private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private IMarketplaceService marketplaceService;
@@ -70,6 +71,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private Set<MarketplacePortletDefinition> relatedPortlets;
     private Set<PortletCategory> parentCategories;
     private String shortURL = null;
+    private List<String> keywords = null;
 
     /**
      * 
@@ -90,9 +92,21 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.initPortletReleaseNotes();
         this.initCategories();
         this.initShortURL();
+        this.initKeywords();
 
         // deliberately does *not* init related portlets, to avoid infinite recursion of initing related portlets.
         // TODO: use a caching registry so that get some cache hits when referencing MarketplacePortletDefinitions
+    }
+
+    private void initKeywords() {
+      List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
+      for(IPortletPreference pref : portletPreferences) {
+          if(MARKETPLACE_KEYWORDS_PREF.equalsIgnoreCase(pref.getName())) {
+              this.keywords = new ArrayList<String>(Arrays.asList(pref.getValues()));
+              break;
+          }
+      }
+      
     }
 
     private void initShortURL() {
@@ -697,5 +711,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         if (getFName() == otherDefinition.getFName()) { return true; }; // both null fname case
 
         return getFName().equals(otherDefinition.getFName());
+    }
+
+    public List<String> getKeywords() {
+      return keywords;
     }
 }
