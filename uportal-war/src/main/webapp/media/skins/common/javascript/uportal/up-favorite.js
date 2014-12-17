@@ -56,42 +56,31 @@ var up = up || {};
     };
 
   up.moveStuff = function moveStuffFunction(tabOrPortlet, item, context) {
-    var insertNode = function(sourceID, destinationID, method){
-        var saveOrderURL = context + "/api/layout?action=move" + tabOrPortlet
-        + "&sourceID=" + sourceID
-        + "&elementID=" + destinationID
-        + "&method=" + method;
-        console.log(saveOrderURL);
-        $.ajax({
-            url: saveOrderURL,
-            type: "POST",
-            data: null,
-            dataType: "json",
-            async: false,
-            success: function (){
-              console.log("layout move successful. URL: " + saveOrderURL);
-            },
-            error: function(request, text, error) {
-              $('#up-notification').noty({text: request.response, type: 'error'});
-            }
-        });
-    };
+      var insertNode = function(sourceId, previousNodeId, nextNodeId){
+          var saveOrderURL = context + "/api/layout?action=movePortletAjax"
+          + "&sourceId=" + sourceId
+          + "&previousNodeId=" + previousNodeId
+          + "&nextNodeId=" + nextNodeId;
+          console.log(saveOrderURL);
+          $.ajax({
+              url: saveOrderURL,
+              type: "POST",
+              data: null,
+              dataType: "json",
+              async: true,
+              success: function (){
+                console.log("layout move successful.");
+              },
+              error: function(request, text, error) {
+                console.error("Error persisting move " + saveOrderURL);
+              }
+          });
+      };
+      
     var sourceID = $(item).attr('sourceid');
+    var nextId = $(item).next().length!=0 ? $(item).next().attr('sourceid') : "";
+    var prevId = $(item).prev().length !=0 ? $(item).prev().attr('sourceid') : "";
     //We need to insert item both before and after
-    
-    //Insert item before the next if next exists
-    if($(item).next().length!=0){
-        var siblingID = $(item).next().attr('sourceid');
-        insertNode(sourceID, siblingID, 'insertBefore');
-    }else{
-        //if next does not exist append item to the end
-        var siblingID = $(item).prev().attr('sourceid');
-        insertNode(sourceID, siblingID, 'appendAfter');
-    }
-    //Insert prev before item, if there is a previous
-    if($(item).prev().length !=0 ){
-        var siblingID = $(item).prev().attr('sourceid');
-        insertNode(siblingID, sourceID, 'insertBefore');
-    }
+    insertNode(sourceID, prevId, nextId);
   };
 })(jQuery);
