@@ -73,6 +73,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   #${n} .glyphicon-info-sign {
      color: #3a7eef;
   }
+
+  #${n} .name-title-mismatch-warn {
+      display: none;
+  }
 </style>
 
 <!-- Portlet -->
@@ -116,7 +120,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
           <div class="col-sm-9">
             <form:input path="title" type="text" class="form-control" id="portletTitle"/>
           </div>
-          
+        </div>
+        <div class="form-group name-title-mismatch-warn">
+            <div class="col-sm-offset-3 col-sm-9">
+                <div class="alert alert-info">
+                    <spring:message code="portlet.name.title.mismatch"/>
+                </div>
+            </div>
         </div>
         <div class="form-group">
           <span class="col-sm-3 control-label">
@@ -221,9 +231,161 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 </div> <!-- end: portlet -->
 
 <script type="application/javascript">
-    up.jQuery(function($) {
-        var selector = '#${n} .glyphicon-info-sign';
+    (function($, _, Backbone) {
+        var selector = '#${n} .glyphicon-info-sign',
+                titleSelector = '#portletTitle',
+                nameSelector = '#portletName',
+                fnameSelector = '#portletFname',
+                nameTitleMismatchSelector = '.name-title-mismatch-warn',
+                NameTitleModel,
+                nameTitleModel,
+                nameTitleMismatchTimer;
 
+        /**
+         * Define a backbone model to capture the name/title/fname values and
+         * orchestrate their updates.  Changes on the page should update the model
+         * and allow listeners attached to the model to handle propagating the changes
+         * to the appropriate places in the UI
+         */
+        NameTitleModel = Backbone.Model.extend({
+            defaults: {
+                name: '',
+                title: '',
+                titleWarn: false,
+                titleEdited: false,
+                fname: '',
+                fnameEdited: false,
+                timeout: '5000'
+            },
+
+
+            /**
+             * Initialize the model.
+             */
+            initialize: function() {
+                this.on('change:title', this._updateTitle, this);
+                this.on('change:name', this._updateName, this);
+                this.on('change:fname', this._updateFName, this);
+            },
+
+
+            /**
+             * import existing settings into the model.  Will attempt to determine if the
+             * title and name match and if the title and fname are in sync.  If so, it will
+             * enable auto-updates to those fields.  If not, changing title will not affect
+             * the fields that appear to have been modified.
+             */
+            import: function(name, title, fname) {
+                var calcFName;
+
+                if (title && name) {
+                    if (title !== name) {
+                        titleEdited = true;
+                    }
+                }
+
+                if (title && fname) {
+                    calcFName = this._toFName(title);
+                    if (fname !== calcFName) {
+                        fnameEdited = true;
+                    }
+                }
+            },
+
+
+            /**
+             * Do validation to check for name/title mismatches and set the 'titleWarn' attribute.
+             */
+            validate: function(attrs, options) {
+                var finalAttrs = _.extend({}, this.attributes, attrs);
+                this.set('titleWarn', finalAttrs.title !== finalAttrs.name);
+            },
+
+
+            /**
+             * Given a title, calculate the fname to use.
+             */
+            _toFName: function(name) {
+                var tmp = name.toLowerCase();
+                return tmp ? tmp.replace(/[^a-z]+/g, '-') : '';
+            },
+
+
+            /**
+             * Internal event for when 'title' changes.  Will try to update name and fname if
+             * they have not been edited.
+             */
+            _updateTitle: function(model, value) {
+                if (!model.get('nameEdited')) {
+                    model.set('name', value, {validate: true});
+                }
+
+                if (!model.get('fnameEdited')) {
+                    model.set('fname', this._toFName(value));
+                }
+            },
+
+
+            /**
+             * Internal event handler for when 'name' changes.
+             */
+            _updateName: function(model, value) {
+                model.attributes.nameEdited = !(model.get('title') === value);
+            },
+
+
+            /**
+             * Internal event handler for when fname changes.
+             */
+            _updateFName: function(model, value) {
+                var calcFName = this._toFName(model.get('title'));
+                model.attributes.fnameEdited = !(calcFName === value);
+            }
+        });
+
+        // instantiate the model...
+        nameTitleModel = new NameTitleModel();
+        nameTitleModel.import($(nameSelector).val(), $(titleSelector).val(), $(fnameSelector).val());
+
+        /* When the model changes, update the UI */
+        nameTitleModel.on('change:title', function(model, value) {
+            $(titleSelector).val(value);
+        });
+
+        nameTitleModel.on('change:name', function(model, value) {
+            $(nameSelector).val(value);
+        });
+
+        nameTitleModel.on('change:fname', function(model, value) {
+            $(fnameSelector).val(value);
+        });
+
+        nameTitleModel.on('change:titleWarn', function(model, value) {
+            clearTimeout(nameTitleMismatchTimer);
+            // don't re-render on every keystroke to avoid flashing.
+            nameTitleMismatchTimer = setTimeout(function() {
+                if (value) {
+                    $(nameTitleMismatchSelector).slideDown('slow');
+                } else {
+                    $(nameTitleMismatchSelector).slideUp('slow');
+                }
+            }, 500);
+        });
+
+        // When the user enters values, update the model...
+        $(titleSelector).keyup(function() {
+            nameTitleModel.set('title', $(titleSelector).val(), {validate: true});
+        });
+
+        $(nameSelector).keyup(function() {
+            nameTitleModel.set('name', $(nameSelector).val(), {validate: true});
+        });
+
+        $(fnameSelector).keyup(function() {
+            nameTitleModel.set('fname', $(fnameSelector).val());
+        });
+
+        /* Enable the help tooltips */
         $(selector).bootstrapTooltip({
             container: 'body',
             trigger: 'click'
@@ -240,5 +402,5 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 }
             });
         });
-    });
+    })(up.jQuery, up._, up.Backbone);
 </script>
