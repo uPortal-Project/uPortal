@@ -31,11 +31,6 @@
         <ns2:portletName>attachments</ns2:portletName>
     </portlet-descriptor>
     <group>Everyone</group>
-    <permissions>
-        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
-            <group>Everyone</group>
-        </permission>
-    </permissions>
     <parameter>
         <name>hasHelp</name>
         <value>false</value>
