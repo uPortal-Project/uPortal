@@ -69,8 +69,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     margin: 1em 0;
     padding: 1em 0;
   }
+
+  #${n} .glyphicon-info-sign {
+     color: #3a7eef;
+  }
 </style>
-    
+
 <!-- Portlet -->
 <div class="fl-widget portlet ptl-mgr view-basicinfo" id="${n}" role="section">
 
@@ -105,33 +109,48 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="content">
 
         <div class="form-group">
-          <label for="portletTitle" class="col-sm-2 control-label"><spring:message code="portlet.title"/></label>
-          <div class="col-sm-10">
-            <form:input path="title" type="text" class="form-control" id="portletTitle"/>  
+          <span class="col-sm-3 control-label">
+              <label for="portletTitle"><spring:message code="portlet.title"/></label>
+              <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.title.tooltip'/>" data-toggle="tooltip" data-placement="top"></span>
+          </span>
+          <div class="col-sm-9">
+            <form:input path="title" type="text" class="form-control" id="portletTitle"/>
           </div>
           
         </div>
         <div class="form-group">
-          <label for="portletName" class="col-sm-2 control-label"><spring:message code="portlet.name"/></label>
-          <div class="col-sm-10">
+          <span class="col-sm-3 control-label">
+              <label for="portletName"><spring:message code="portlet.name"/></label>
+                <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.name.tooltip'/>" data-toggle="tooltip" data-placement="top"></span>
+          </span>
+          <div class="col-sm-9">
             <form:input path="name" type="text" class="form-control" id="portletName"/>
           </div>
         </div>
         <div class="form-group">
-          <label for="portletFname" class="col-sm-2 control-label"><spring:message code="portlet.functional.name"/></label>
-          <div class="col-sm-10">
+            <span class="col-sm-3 control-label">
+              <label for="portletFname"><spring:message code="portlet.functional.name"/></label>
+              <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.functional.name.tooltip'/>" data-toggle="tooltip" data-placement="top"></span>
+            </span>
+          <div class="col-sm-9">
             <form:input path="fname" type="text" class="form-control" id="portletFname"/>
           </div>
         </div>
         <div class="form-group">
-          <label for="portletDescription" class="col-sm-2 control-label"><spring:message code="portlet.description"/></label>
-          <div class="col-sm-10">
+            <span class="col-sm-3 control-label">
+                <label for="portletDescription"><spring:message code="portlet.description"/></label>
+                <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.description.tooltip'/>" data-toggle="tooltip" data-placement="top"></span>
+            </span>
+          <div class="col-sm-9">
             <form:input path="description" type="text" class="form-control" id="portletDescription"/>
           </div>
         </div>
         <div class="form-group">
-          <label for="portletTimeout" class="col-sm-2 control-label"><spring:message code="portlet.timeout"/></label>
-          <div class="col-sm-10">
+            <span class="col-sm-3 control-label">
+                <label for="portletTimeout"><spring:message code="portlet.timeout"/></label>
+                <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>" data-toggle="tooltip" data-placement="top"></span>
+            </span>
+          <div class="col-sm-9">
             <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
           </div>
         </div>
@@ -147,8 +166,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <div class="content">
       
         <div class="form-group">
-          <label for="portletControls" class="col-sm-2 control-label"><spring:message code="portlet.controls"/></label>
-          <div class="col-sm-10">
+          <label for="portletControls" class="col-sm-3 control-label"><spring:message code="portlet.controls"/></label>
+          <div class="col-sm-9">
             <div class="checkbox">
               <label for="hasHelp">
                 <form:checkbox path="hasHelp"/>
@@ -181,7 +200,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     
     <!-- Buttons -->
     <div class="buttons form-group">
-      <div class="col-sm-10 col-sm-offset-2">
+      <div class="col-sm-9 col-sm-offset-3">
         <c:choose>
           <c:when test="${ completed }">
             <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
@@ -200,3 +219,26 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 	</div> <!-- end: portlet-content -->
         
 </div> <!-- end: portlet -->
+
+<script type="application/javascript">
+    up.jQuery(function($) {
+        var selector = '#${n} .glyphicon-info-sign';
+
+        $(selector).bootstrapTooltip({
+            container: 'body',
+            trigger: 'click'
+        });
+
+        // clicking anywhere on the page should dismiss the currently visible
+        // tooltip.
+        $('body').click(function(evt) {
+            var $target = $(evt.target);
+
+            $(selector).each(function(idx, el) {
+                if (!$(el).is($target)) {
+                    $(el).bootstrapTooltip('hide');
+                }
+            });
+        });
+    });
+</script>
