@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -47,6 +48,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Marketplace portlet definitions add Marketplace-specific features upon an underlying
+ * IPortletDefinition.
+ *
+ * @since uPortal 4.1
+ */
 public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public static final String MARKETPLACE_FNAME = "portletmarketplace";
@@ -199,8 +206,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     /**
      * Initialize related portlets.
-     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related portlets off of a
-     * MarketplacePortletDefinition do not always intantiate their related MarketplacePortletDefinitions, ad infinitem.
+     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related
+     * portlets off of a MarketplacePortletDefinition do not always instantiate their related
+     * MarketplacePortletDefinitions, ad infinitem.
      */
     private void initRelatedPortlets(){
         final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
@@ -685,6 +693,14 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     public String getTarget() {
       return this.portletDefinition.getTarget();
     }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFName())
+            .toString();
+    }
+
     /*
      * Marketplace portlet definitions are definitively identified by the fname of their underlying
      * portlet publication, so only the fname contributes to the hashcode.
