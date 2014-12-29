@@ -1,3 +1,21 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jasig.portal.rest.layout;
 
 import java.io.Serializable;
@@ -6,6 +24,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
 import org.jasig.portal.portlet.marketplace.ScreenShot;
@@ -15,6 +36,10 @@ import org.jasig.portal.portlet.om.PortletCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * User-specific representation of a Marketplace portlet definition suitable for JSON serialization
+ * and for use in view implementations.
+ */
 public class MarketplaceEntry  implements Serializable {
     
     private Set<String> getPortletCategories(MarketplacePortletDefinition pdef) {
@@ -177,6 +202,41 @@ public class MarketplaceEntry  implements Serializable {
     
     public List<String> getKeywords() {
       return pdef.getKeywords();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != getClass()) {
+            return false;
+        }
+        final MarketplaceEntry rhs = (MarketplaceEntry) other;
+
+        return new EqualsBuilder()
+            .append(getMarketplacePortletDefinition(), rhs.getMarketplacePortletDefinition())
+            .append(this.user, rhs.user)
+            .append(isCanAdd(), rhs.isCanAdd())
+            .append(generateRelatedPortlets, rhs.generateRelatedPortlets)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(getMarketplacePortletDefinition())
+            .append(user)
+            .append(isCanAdd())
+            .append(generateRelatedPortlets)
+            .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFname())
+            .toString();
     }
 
 }
