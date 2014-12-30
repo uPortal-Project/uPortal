@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>35</version>
+        <version>39</version>
     </parent>
     
     <prerequisites>
