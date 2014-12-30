@@ -322,12 +322,34 @@
    | These two templates render the focused portlet content.
   -->
   <xsl:template match="focused">
+    <!--
+        Check for the existance of the "focused" portlet in a region.  If one is found, prevent the portlet from rendering
+        in the content portion of the layout.  Test for a match against the fname, ID, and channel ID.
+    -->
+    <xsl:variable name="focusedFname">
+        <xsl:value-of select="//focused/channel/@fname"/>
+    </xsl:variable>  
+
+    <xsl:variable name="focusedChannelID">
+        <xsl:value-of select="//focused/channel/@chanID"/>
+    </xsl:variable>
+
+    <xsl:variable name="focusedID">
+        <xsl:value-of select="//focused/channel/@ID"/>
+    </xsl:variable>
+
+    <xsl:variable name="focusedMatchTest">
+        <xsl:value-of select="not(((//region/channel[@fname=$focusedFname]) and (//region/channel/@chanID=$focusedChannelID)) and (//region/channel[@ID=$focusedID]))"/>
+    </xsl:variable> 
+    
     <div class="fluid-row">
         <div class="col-md-12">
             <div id="portalPageBodyColumns" class="columns-1">
                 <div class="portal-page-column column-1">
                     <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-                    <xsl:apply-templates select="channel|blocked-channel"/>
+                        <xsl:if test="not($focusedMatchTest = 'false')">
+                            <xsl:apply-templates select="channel|blocked-channel"/>
+                        </xsl:if>
                   </div>
                 </div>
             </div>
