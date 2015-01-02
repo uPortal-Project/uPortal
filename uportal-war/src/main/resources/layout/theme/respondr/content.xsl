@@ -323,8 +323,9 @@
   -->
   <xsl:template match="focused">
     <!--
-        Check for the existance of the "focused" portlet in a region.  If one is found, prevent the portlet from rendering
+        Check for the existence of the "focused" portlet in a region.  If one is found, prevent the portlet from rendering
         in the content portion of the layout.  Test for a match against the fname, ID, and channel ID.
+        See UP-4369 for additional information.
     -->
     <xsl:variable name="focusedFname">
         <xsl:value-of select="//focused/channel/@fname"/>
@@ -338,8 +339,8 @@
         <xsl:value-of select="//focused/channel/@ID"/>
     </xsl:variable>
 
-    <xsl:variable name="focusedMatchTest">
-        <xsl:value-of select="not(((//region/channel[@fname=$focusedFname]) and (//region/channel/@chanID=$focusedChannelID)) and (//region/channel[@ID=$focusedID]))"/>
+    <xsl:variable name="focusedPortletPresentInRegion">
+        <xsl:value-of select="(((//region/channel[@fname=$focusedFname]) and (//region/channel/@chanID=$focusedChannelID)) and (//region/channel[@ID=$focusedID]))"/>
     </xsl:variable> 
     
     <div class="fluid-row">
@@ -347,7 +348,7 @@
             <div id="portalPageBodyColumns" class="columns-1">
                 <div class="portal-page-column column-1">
                     <div class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
-                        <xsl:if test="not($focusedMatchTest = 'false')">
+                        <xsl:if test="$focusedPortletPresentInRegion = 'false'">
                             <xsl:apply-templates select="channel|blocked-channel"/>
                         </xsl:if>
                   </div>
