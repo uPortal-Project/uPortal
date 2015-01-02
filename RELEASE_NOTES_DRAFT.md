@@ -36,7 +36,7 @@ Pull requests that were merged for inclusion in this release:
 * Rendering [pipeline](https://github.com/Jasig/uPortal/pull/432) [tricks](https://github.com/Jasig/uPortal/pull/435) [to](https://github.com/Jasig/uPortal/pull/434) [conditionally](https://github.com/Jasig/uPortal/pull/433) terminate in a [redirect](https://github.com/Jasig/uPortal/pull/436).
 * Better [Groovy compilation](https://github.com/Jasig/uPortal/pull/475) implementation in a [build process without focus stealing](https://github.com/Jasig/uPortal/pull/472)
 * [Unit testing that respondr.xsl compiles](https://github.com/Jasig/uPortal/pull/484), now that everyone is adopting it.
-* Updated [guidance for contributing](https://github.com/Jasig/uPortal/pull/461).  You should.
+* Updated [guidance for contributing](https://github.com/Jasig/uPortal/pull/461).  You should. Improved the facilities and process for [collaborating on release notes](https://github.com/Jasig/uPortal/pull/501).
 
 
 
