@@ -1559,13 +1559,13 @@
                         <maxmem>256m</maxmem>
                         <!-- aggregated reports for multi-module projects -->
                         <aggregate>true</aggregate>
-
-                        <excludes>
-                            <!-- Exclude generated classes -->
-                            <exclude>**/*_.class</exclude>
-                            <exclude>**/*_.java</exclude>
-                        </excludes>
-
+                        <instrumentation>
+                            <excludes>
+                                <!-- Exclude generated classes -->
+                                <exclude>**/*_.class</exclude>
+                                <exclude>**/*_.java</exclude>
+                            </excludes>
+                        </instrumentation>
                     </configuration>
                 </plugin>
             </plugins>
