@@ -1329,9 +1329,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 return false;
             }
 
-            // If only one of the folders is null, return true.  Otherwise if the folders are not the same,
+            // If either or both of the folders are null, return true.  Otherwise if the folders are not the same,
             // return false.
-            if (folder == null && other.folder != null || folder != null && other.folder == null) {
+            if (folder == null || other.folder == null) {
                 return true;
             }
             return folder.equals(other.folder);
