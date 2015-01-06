@@ -612,6 +612,7 @@
           (function($) {
               $(document).ready(function() {
                 $('#toolbar_menu_<xsl:value-of select="@ID"/>').has('li').removeClass('hidden');
+              });
           })(up.jQuery);
       </script>
   </xsl:template>
