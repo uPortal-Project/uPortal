@@ -340,7 +340,7 @@
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
-    <div id="toolbar_menu_{@ID}" class="btn-group hidden">
+    <div class="portlet-options-menu btn-group hidden">
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--
@@ -607,14 +607,6 @@
         </xsl:if>
         </ul>
     </div>
-      <!-- Unhide the portlet's options menu if there are option items to display. -->
-      <script type="text/javascript">
-          (function($) {
-              $(document).ready(function() {
-                $('#toolbar_menu_<xsl:value-of select="@ID"/>').has('li').removeClass('hidden');
-              });
-          })(up.jQuery);
-      </script>
   </xsl:template>
   
   <xsl:template name="focused-fragment-header">

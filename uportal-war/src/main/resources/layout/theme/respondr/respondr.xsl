@@ -281,6 +281,9 @@
           if (up.lightboxConfig) {
             up.lightboxConfig.init();
           }
+
+          // Unhide the portlet's options menu if there are option items to display.
+          $('portlet-options-menu').has('li').removeClass('hidden');
       });
 
     })(up.jQuery);
