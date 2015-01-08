@@ -283,7 +283,7 @@
           }
 
           // Unhide the portlet's options menu if there are option items to display.
-          $('portlet-options-menu').has('li').removeClass('hidden');
+          $('div.portlet-options-menu').has('li').removeClass('hidden');
       });
 
     })(up.jQuery);
