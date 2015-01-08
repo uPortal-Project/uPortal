@@ -49,6 +49,10 @@
             div > a:hover {
             	color: #699bc4;
             }
+		    div > a.disabled {
+			  pointer-events: none;
+			  cursor: default;
+		    }
             .fl-col {
             	margin-left: 0;
             	margin-right: 0.50%;

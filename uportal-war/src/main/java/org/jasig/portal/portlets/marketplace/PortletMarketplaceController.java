@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.marketplace;
 
 import java.util.ArrayList;
@@ -187,9 +186,10 @@ public class PortletMarketplaceController {
         MarketplacePortletDefinition mpDefinition = marketplaceService.getOrCreateMarketplacePortletDefinition(result);
         IMarketplaceRating tempRatingImpl = marketplaceRatingDAO.getRating(portletRequest.getRemoteUser(),
                 portletDefinitionDao.getPortletDefinitionByFname(result.getFName()));
+        final MarketplaceEntry marketplaceEntry = new MarketplaceEntry(mpDefinition, user);
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
-        model.addAttribute("portlet", mpDefinition);
+        model.addAttribute("marketplaceEntry", marketplaceEntry);
         model.addAttribute("shortURL",mpDefinition.getShortURL());
         return "jsp/Marketplace/portlet/entry";
     }
@@ -261,14 +261,17 @@ public class PortletMarketplaceController {
 
         final Map<String,Set<?>> registry = getRegistry(user);
         @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> portletList = (Set<MarketplacePortletDefinition>) registry.get("portlets");
-        model.addAttribute("channelBeanList", portletList);
+        final Set<MarketplaceEntry> marketplaceEntries =
+            (Set<MarketplaceEntry>) registry.get("portlets");
+        model.addAttribute("marketplaceEntries", marketplaceEntries);
         @SuppressWarnings("unchecked")
         Set<PortletCategory> categoryList = (Set<PortletCategory>) registry.get("categories");
 
         @SuppressWarnings("unchecked")
-        Set<MarketplacePortletDefinition> featuredPortlets = (Set<MarketplacePortletDefinition>) registry.get("featured");
-        model.addAttribute("featuredList", featuredPortlets);
+        final Set<MarketplaceEntry> featuredPortlets =
+            (Set<MarketplaceEntry>) registry.get("featured");
+
+        model.addAttribute("featuredEntries", featuredPortlets);
         
         //Determine if the marketplace is going to show the root category
         String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE_NAME, "false");
@@ -308,7 +311,8 @@ public class PortletMarketplaceController {
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
-        Set<MarketplacePortletDefinition> featuredPortlets = this.marketplaceService.featuredPortletsForUser(user);
+        final Set<MarketplaceEntry> featuredPortlets =
+            this.marketplaceService.featuredEntriesForUser(user);
 
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);

@@ -57,8 +57,6 @@
                 text-decoration: none;
                 padding: 8px 14px;
 
-                
-
                 &:hover, &:focus {
                     background: @navbar-item-hover-background-color;
                     color: @navbar-item-hover-text-color;
@@ -71,6 +69,12 @@
                     display: none;
                 }
             }
+
+            a.portal-navigation-link.disabled {
+                pointer-events: none;
+                cursor: default;
+            }
+
             a.portal-navigation-link i {
                     float: right;
                     margin-top: 2px;

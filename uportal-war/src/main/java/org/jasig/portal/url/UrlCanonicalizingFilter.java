@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.url;
 
 import java.io.IOException;
@@ -113,7 +112,8 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
 
                     IPerson person = personManager.getPerson(request);
                     if (/* #1 */ person.isGuest()
-                            && /* #2 */ urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(requestURI, canonicalUri)
+                            && /* #2 */ urlSyntaxProvider.doesRequestPathReferToSpecificAndDifferentContentVsCanonicalPath(
+                                                  requestURI, canonicalUri)
                             && /* #3 */ loginRefUrlEncoder != null) {
                         encodedTargetUrl = loginRefUrlEncoder.encodeLoginAndRefUrl(request);
                     }
@@ -125,15 +125,21 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
                     }
 
                     response.sendRedirect(encodedTargetUrl);
-                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}", new Object[] {requestURI, canonicalUri, redirectCount});
+                    logger.debug("Redirecting from {} to canonicalized URL {}, redirect {}",
+                            requestURI, canonicalUri, redirectCount);
                     return;
                 }
 
                 this.clearRedirectCount(request, response);
-                logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects", new Object[] {requestURI, canonicalUri, redirectCount});
-            }
-            else if (redirectCount > 0) {
-                this.clearRedirectCount(request, response);
+                logger.debug("Not redirecting from {} to canonicalized URL {} due to limit of {} redirects",
+                        requestURI, canonicalUri, redirectCount);
+            } else {
+                logger.trace("Requested URI {} is the canonical URL {}, " +
+                        "so no (further?) redirect is necessary (after {} redirects).",
+                        requestURI, canonicalUri, redirectCount);
+                if (redirectCount > 0) {
+                    this.clearRedirectCount(request, response);
+                }
             }
         }
         

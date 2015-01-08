@@ -1,19 +1,19 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
@@ -47,26 +47,44 @@
                 <form id="${n}dynSkinForm" role="form" class="form-horizontal" action="${ saveUrl }" method="POST">
 
                     <div class="form-group">
-                        <label for="{n}PREFdynamicSkinEnabled" class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.enabled"/></label>
+                        <label for="{n}PREFdynamicSkinEnabled" class="col-sm-4 control-label"><spring:message code="respondr.dynamic.skin.enabled"/></label>
                         <input type="checkbox" class="dynamicSelection" id="{n}PREFdynamicSkinEnabled" name="PREFdynamicSkinEnabled"
                                value="true" ${empty PREFdynamicSkinEnabled ? '' : 'checked'}/>
                     </div>
                     <div class="form-group">
-                        <label for="{n}PREFdynamicSkinName" class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.skinName"/></label>
+                        <label for="{n}PREFdynamicSkinName" class="col-sm-4 control-label"><spring:message code="respondr.dynamic.skin.skinName"/></label>
                         <input type="text" id="{n}PREFdynamicSkinName" name="PREFdynamicSkinName" value="${PREFdynamicSkinName}"/>
                     </div>
                     <div class="dynamicItems hidden">
-                        <div class="form-group">
-                            <label for="{n}PREFcolor1" class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color1"/></label>
-                            <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor1" name="PREFcolor1" value="${PREFcolor1}"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="{n}PREFcolor2" class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color2"/></label>
-                            <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor2" name="PREFcolor2" value="${PREFcolor2}"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="{n}PREFcolor3" class="col-sm-2 control-label"><spring:message code="respondr.dynamic.skin.color3"/></label>
-                            <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor3" name="PREFcolor3" value="${PREFcolor3}"/>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor1" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color1"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor1" name="PREFcolor1" value="${PREFcolor1}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor2" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color2"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor2" name="PREFcolor2" value="${PREFcolor2}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor3" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color3"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor3" name="PREFcolor3" value="${PREFcolor3}"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor4" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color4"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor4" name="PREFcolor4" value="${PREFcolor4}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor5" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color5"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor5" name="PREFcolor5" value="${PREFcolor5}"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{n}PREFcolor6" class="col-sm-8 control-label"><spring:message code="respondr.dynamic.skin.color6"/></label>
+                                    <input type="color" class="colorPicker dynamicItem" id="{n}PREFcolor6" name="PREFcolor6" value="${PREFcolor6}"/>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="buttons">

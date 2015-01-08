@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
@@ -129,80 +128,37 @@ public class PortletAdministrationHelper implements ServletContextAware {
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
 
-	private IGroupListHelper groupListHelper;
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private IPortletCategoryRegistry portletCategoryRegistry;
-    private IPortletTypeRegistry portletTypeRegistry;
-    private PortalDriverContainerServices portalDriverContainerServices;
-    private IPortletPublishingService portletPublishingService; 
-    private PortletDelegationLocator portletDelegationLocator;
-    private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
-    private ServletContext servletContext;
+    /*
+     * Autowired beans listed alphabetically by type
+     */
+    @Autowired
     private FragmentAdministrationHelper fragmentAdminHelper;
-    private IPortalUrlProvider urlProvider;
+    @Autowired
     private IAuthorizationService authorizationService;
+    @Autowired
+    private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
+    @Autowired
+    private IGroupListHelper groupListHelper;
+    @Autowired
+    private IPortalUrlProvider urlProvider;
+    @Autowired
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    @Autowired
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired
+    private IPortletPublishingService portletPublishingService; 
+    @Autowired    
+    private IPortletTypeRegistry portletTypeRegistry;
+    @Autowired
+    private PortalDriverContainerServices portalDriverContainerServices;
+    @Autowired
+    private PortletDelegationLocator portletDelegationLocator;
 
-	@Override
+    private ServletContext servletContext;
+
+    @Override
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
-    }
-	@Autowired
-    public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
-        this.portletDelegationLocator = portletDelegationLocator;
-    }
-	@Autowired
-    public void setGroupListHelper(IGroupListHelper groupListHelper) {
-		this.groupListHelper = groupListHelper;
-	}
-
-    @Autowired
-    public void setFragmentAdminHelper(final FragmentAdministrationHelper fragmentAdminHelper) {
-        this.fragmentAdminHelper = fragmentAdminHelper;
-    }
-
-    @Autowired
-    public void setUrlProvider(final IPortalUrlProvider urlProvider) {
-        this.urlProvider = urlProvider;
-    }
-
-    @Autowired
-    public void setAuthorizationService(final IAuthorizationService authorizationService) {
-        this.authorizationService = authorizationService;
-    }
-
-    /**
-	 * Set the portlet registry store
-	 * 
-	 * @param portletDefinitionRegistry
-	 */
-	@Autowired
-	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-		this.portletDefinitionRegistry = portletDefinitionRegistry;
-	}
-	
-	@Autowired
-	public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
-		this.portletCategoryRegistry = portletCategoryRegistry;
-	}
-	
-	@Autowired
-	public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
-		this.portletTypeRegistry = portletTypeRegistry;
-	}
-	
-	@Autowired
-	public void setPortalDriverContainerServices(
-			PortalDriverContainerServices portalDriverContainerServices) {
-		this.portalDriverContainerServices = portalDriverContainerServices;
-	}
-	@Autowired
-	public void setPortletPublishingService(
-			IPortletPublishingService portletPublishingService) {
-		this.portletPublishingService = portletPublishingService;
-	}
-	@Autowired
-	public void setPortletChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao portletPublishingDefinitionDao) {
-        this.portletPublishingDefinitionDao = portletPublishingDefinitionDao;
     }
 
     /**
@@ -1079,7 +1035,5 @@ public class PortletAdministrationHelper implements ServletContextAware {
             // Otherwise we must remove the MAINTENANCE flag, if present
             portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME);
         }
-
     }
-
 }

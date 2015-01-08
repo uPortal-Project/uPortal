@@ -5,7 +5,7 @@
  * Styles specific to navigation.
  */
 
-/* Portlet Navigation */
+/* Portal Navigation */
 .up {
 	#portalNavigation {
 		/* Main Navigation, rendered as a row of tabs. */
@@ -44,6 +44,10 @@
 			}
 			.portal-navigation-link, .fl-inlineEditContainer {
 			    padding: $navTabPadding;
+			}
+		    .portal-navigation-link.disabled {
+			  pointer-events: none;
+			  cursor: default;
 			}
 		}
 		.portal-navigation:hover, .portal-navigation:focus {

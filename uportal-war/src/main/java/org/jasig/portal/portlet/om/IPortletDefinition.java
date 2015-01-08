@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.om;
 
 import java.util.Date;
@@ -30,7 +29,7 @@ import org.jasig.portal.io.xml.IPortalData;
 
 
 /**
- * A portlet definition is equivalant to a published ChannelDefinition. 
+ * A portlet definition is equivalent to a published ChannelDefinition.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -40,6 +39,20 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public static final String CONFIGURABLE_PARAM = "configurable";
     public static final String HAS_HELP_PARAM = "hasHelp";
     public static final String HAS_ABOUT_PARAM = "hasAbout";
+
+    /**
+     * The name of the portlet parameter that if present represents an alternative
+     * URL that ought to be used to "maximize" the defined portlet.
+     *
+     * This is useful for portlets that when maximized ought to instead be the external URL
+     * or web application that they're representing in the portal.
+     */
+    public static final String ALT_MAX_LINK_PARAM = "alternativeMaximizedLink";
+    
+    /**
+     * A portlet parameter that specifies a target for the flyout, eg : _blank
+     */
+    public static final String TARGET_PARAM = "target";
     
     /**
      * @return The unique identifier for this portlet definition.
@@ -119,6 +132,25 @@ public interface IPortletDefinition extends IBasicEntity, IPortalData {
 	public String getDescription(String locale);
 
 	public String getTitle(String locale);
+
+    /**
+     * Returns the alternative maximized link (URL) associated with this portlet definition,
+     * or null if none.
+     *
+     * Syntactic sugar for parsing potential alternative maximized link as a preferable alternative
+     * to directly parsing the portlet parameters elsewhere.
+     *
+     * @return String representing alternative max URL, or null if none.
+     *
+     * @since uPortal 4.2
+     */
+    public String getAlternativeMaximizedLink();
+    
+    /**
+     * Syntactic sugar for getting the target parameter from the portlet parameters.
+     * @return the target tab/window
+     */
+    public String getTarget();
 
 	// Setter methods
 	public void setFName(String fname);

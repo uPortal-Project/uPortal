@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.groups.pags.dao;
 
 import java.lang.reflect.Constructor;
@@ -75,6 +74,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
+        logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
         GroupDefinition groupDef = convertEntityToGroupDef(group);
         if (member.isGroup()) 
         {
@@ -155,16 +155,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 }
                 
                 if (!testPassed && logger.isWarnEnabled()) {
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("PAGS group=").append(group.getKey());
-                    sb.append(" contained person=").append(member.getKey());
-                    sb.append(", but the person failed to be contained in ");
-                    sb.append("ancesters of this group");
-                    sb.append((parentGroup != null ? " (parentGroup="+parentGroup.getKey()+")" : ""));
-                    sb.append(". This may indicate a ");
-                    sb.append("misconfigured PAGS group ");
-                    sb.append("store. Please check PAGSGroupStoreConfig.xml.");
-                    logger.warn(sb.toString());
+                    logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
+                            + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
+                            +" Please check PAGSGroupStoreConfig.xml.", group.getKey(), member.getKey(),
+                            parentGroup != null ? parentGroup.getKey() : "no parent");
                 }
                 return testPassed;
             }
@@ -185,6 +179,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public Iterator<IEntityGroup> findContainingGroups(IGroupMember member) 
     throws GroupsException 
     {
+        logger.debug("finding containing groups for member key {}", member.getKey());
         return (member.isEntity()) 
           ? findContainingGroupsForEntity((IEntity)member)
           : findContainingGroupsForGroup((IEntityGroup)member);
@@ -192,6 +187,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     
     private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group)
     {
+        logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
          Set<IEntityGroup> parents = getContainingGroups(group.getName(), new HashSet<IEntityGroup>());
          return (parents !=null)
             ? parents.iterator()
@@ -347,9 +343,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
        }
     private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
     {
+        logger.debug("Looking up containing groups for {}", name);
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
-        Set<IPersonAttributesGroupDefinition> pagsParentGroups = pagsGroup.getParents();
+        Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
         for (IPersonAttributesGroupDefinition parent : pagsParentGroups) {
             if (!groups.contains(parent)) {
                 groups.add(convertPagsGroupToEntity(parent));

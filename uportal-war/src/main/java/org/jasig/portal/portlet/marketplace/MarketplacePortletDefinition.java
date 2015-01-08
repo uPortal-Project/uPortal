@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.marketplace;
 
 import java.util.ArrayList;
@@ -28,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -38,6 +39,7 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -45,6 +47,12 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Marketplace portlet definitions add Marketplace-specific features upon an underlying
+ * IPortletDefinition.
+ *
+ * @since uPortal 4.1
+ */
 public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public static final String MARKETPLACE_FNAME = "portletmarketplace";
@@ -54,8 +62,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private static final String RELEASE_NOTE_PREFERENCE_NAME="Release_Notes";
     private static final String RELEASE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String MARKETPLACE_SHORT_LINK_PREF = "short_link";
+    private static final String MARKETPLACE_KEYWORDS_PREF = "keywords";
     private static final DateTimeFormatter releaseDateFormatter = DateTimeFormat.forPattern(RELEASE_DATE_FORMAT);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private IMarketplaceService marketplaceService;
     private IPortletCategoryRegistry portletCategoryRegistry;
     private IPortletDefinition portletDefinition;
     private List<ScreenShot> screenShots;
@@ -67,6 +77,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private Set<MarketplacePortletDefinition> relatedPortlets;
     private Set<PortletCategory> parentCategories;
     private String shortURL = null;
+    private List<String> keywords = null;
 
     /**
      * 
@@ -74,8 +85,10 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
      * @param registry the registry you want to use for categories and related apps
      * Benefit: screenshot property is set if any are available.  This includes URL and caption
      */
-    public MarketplacePortletDefinition(IPortletDefinition portletDefinition, IPortletCategoryRegistry registry){
+    public MarketplacePortletDefinition(final IPortletDefinition portletDefinition,
+        final IMarketplaceService service, final IPortletCategoryRegistry registry){
         this.portletCategoryRegistry = registry;
+        this.marketplaceService = service;
         this.portletDefinition = portletDefinition;
         this.initDefinitions();
     }
@@ -85,9 +98,21 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         this.initPortletReleaseNotes();
         this.initCategories();
         this.initShortURL();
+        this.initKeywords();
 
         // deliberately does *not* init related portlets, to avoid infinite recursion of initing related portlets.
         // TODO: use a caching registry so that get some cache hits when referencing MarketplacePortletDefinitions
+    }
+
+    private void initKeywords() {
+      List<IPortletPreference> portletPreferences = this.portletDefinition.getPortletPreferences();
+      for(IPortletPreference pref : portletPreferences) {
+          if(MARKETPLACE_KEYWORDS_PREF.equalsIgnoreCase(pref.getName())) {
+              this.keywords = new ArrayList<String>(Arrays.asList(pref.getValues()));
+              break;
+          }
+      }
+      
     }
 
     private void initShortURL() {
@@ -180,8 +205,9 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     /**
      * Initialize related portlets.
-     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related portlets off of a
-     * MarketplacePortletDefinition do not always intantiate their related MarketplacePortletDefinitions, ad infinitem.
+     * This must be called lazily so that MarketplacePortletDefinitions instantiated as related
+     * portlets off of a MarketplacePortletDefinition do not always instantiate their related
+     * MarketplacePortletDefinitions, ad infinitem.
      */
     private void initRelatedPortlets(){
         final Set<MarketplacePortletDefinition> allRelatedPortlets = new HashSet<>();
@@ -193,7 +219,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
             for (IPortletDefinition portletDefinition : portletsInCategory) {
                 allRelatedPortlets.add(
-                        new MarketplacePortletDefinition(portletDefinition, this.portletCategoryRegistry));
+                        new MarketplacePortletDefinition(portletDefinition,
+                            this.marketplaceService, this.portletCategoryRegistry));
             }
         }
 
@@ -280,13 +307,15 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     }
 
     /**
-     * Use to return a set of random related portlets
-     * if the number of related portlets is less than 
-     * QUANTITY_RELATED_PORTLETS_TO_SHOW,
-     * all related portlets will be returned
-     * @return a subset of related portlets
+     * Obtain up to QUANTITY_RELATED_PORTLETS_TO_SHOW random related portlets BROWSEable by the
+     * given user.
+     *
+     * @return a non-null potentially empty Set of related portlets BROWSEable by the user
      */
-    public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(){
+    public Set<MarketplacePortletDefinition> getRandomSamplingRelatedPortlets(final IPerson user) {
+
+        Validate.notNull(user, "Cannot filter to BROWSEable by a null user");
+
         // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
             this.initRelatedPortlets();
@@ -298,21 +327,43 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         List<MarketplacePortletDefinition> tempList = new ArrayList<MarketplacePortletDefinition>(this.relatedPortlets);
         Collections.shuffle(tempList);
         final int count = Math.min(QUANTITY_RELATED_PORTLETS_TO_SHOW, tempList.size());
-        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>(tempList.subList(0, count));
+
+        final Set<MarketplacePortletDefinition> rslt = new HashSet<MarketplacePortletDefinition>();
+
+        for (final MarketplacePortletDefinition relatedPortlet : tempList) {
+
+            if (marketplaceService.mayBrowsePortlet(user, relatedPortlet)) {
+                rslt.add(relatedPortlet);
+            }
+
+            if (rslt.size() >= count) break; // escape the loop if we've hit our target quantity
+                                             // of related portlets
+        }
 
         return rslt;
     }
 
     /**
-     * Convenience method for getting a bookmarkable URL for rendering the defined portlet, addressed by fname.
-     * This method will *ONLY* work when invoked in the context of a Spring-managed HttpServletRequest available
-     * via RequestContextHolder.
-     * WARNING: This method does not consider whether the requesting user has permission to render the target portlet,
-     * so this might be getting a URL that the user can't actually use.
-     * @return
+     * Convenience method for getting a bookmarkable URL for rendering the defined portlet,
+     *
+     * Normally this is the portal rendering of the portlet, addressed by fname, and in that case
+     * this method will *ONLY* work when invoked in the context of a Spring-managed
+     * HttpServletRequest available via RequestContextHolder.
+     *
+     * When there is an alternativeMaximizedLink, this method returns that instead.
+     *
+     * WARNING: This method does not consider whether the requesting user has permission to render
+     * the target portlet, so this might be getting a URL that the user can't actually use.
+     *
+     * @return URL for rendering the portlet
      * @throws IllegalStateException when context does not allow computing the URL
      */
     public String getRenderUrl() {
+
+        final String alternativeMaximizedUrl = getAlternativeMaximizedLink();
+        if (null != alternativeMaximizedUrl) {
+            return alternativeMaximizedUrl;
+        }
 
         final String contextPath = PortalWebUtils.currentRequestContextPath();
 
@@ -471,7 +522,12 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 		return this.portletDefinition.getTitle(locale);
 	}
 
-	@Override
+    @Override
+    public String getAlternativeMaximizedLink() {
+        return this.portletDefinition.getAlternativeMaximizedLink();
+    }
+
+    @Override
 	public void setFName(String fname){
 		this.portletDefinition.setFName(fname);
 	}
@@ -626,5 +682,53 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public void setShortURL(String shortURL) {
         this.shortURL = shortURL;
+    }
+    
+    public IPortletDefinitionParameter getPortletDefinitionParameter(String parameterKey) {
+        return this.portletDefinition.getParameter(parameterKey);
+    }
+
+    @Override
+    public String getTarget() {
+      return this.portletDefinition.getTarget();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFName())
+            .toString();
+    }
+
+    /*
+     * Marketplace portlet definitions are definitively identified by the fname of their underlying
+     * portlet publication, so only the fname contributes to the hashcode.
+     * @since uPortal 4.2
+     */
+    @Override
+    public int hashCode() {
+        return getFName().hashCode();
+    }
+
+    /*
+     * Equal where the other object is a MarketplacePortletDefinition with the same fname.
+     * This is important so that Set operations work properly.
+     * @since uPortal 4.2
+     */
+    @Override
+    public boolean equals(Object other) {
+        if (null == other) { return false; }
+        if (this == other) { return true; }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        final MarketplacePortletDefinition otherDefinition = (MarketplacePortletDefinition) other;
+        if (getFName() == otherDefinition.getFName()) { return true; }; // both null fname case
+
+        return getFName().equals(otherDefinition.getFName());
+    }
+
+    public List<String> getKeywords() {
+      return keywords;
     }
 }

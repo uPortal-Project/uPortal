@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -38,6 +38,8 @@ public class StickyProfileMapperImplTest {
     StickyProfileMapperImpl stickyMapper;
 
     @Mock IPerson person;
+
+    @Mock IPerson guestPerson;
 
     @Mock HttpServletRequest request;
 
@@ -65,10 +67,12 @@ public class StickyProfileMapperImplTest {
         stickyMapper.setProfileKeyForNoSelection("default");
 
         when(person.getUserName()).thenReturn("bobby");
+
+        when(guestPerson.isGuest()).thenReturn(true);
     }
 
     /**
-     * Test that when the underlying service has a stored selection for a user, reflects that selection.
+     * Test that when the underlying registry has a stored selection for a user, reflects that selection.
      */
     @Test
     public void testReflectsStoredSelection() {
@@ -76,6 +80,33 @@ public class StickyProfileMapperImplTest {
         final String mappedFName = stickyMapper.getProfileFname(person, request);
 
         assertEquals("profileFNameFromRegistry", mappedFName);
+
+    }
+
+    /**
+     * Test that when the underlying registry has no stored selection for a user,
+     * maps to null (indicating no opinion about what profile ought to be mapped.)
+     */
+    @Test
+    public void testMapsToNullWhenNoStoredSelection() {
+
+        // over-ride the set-up specified behavior
+        when(registry.profileSelectionForUser("bobby")).thenReturn(null);
+
+        assertNull(stickyMapper.getProfileFname(person, request));
+    }
+
+    /**
+     * Test that when the underlying registry fails, translates this failure into a null mapping
+     * (indicating no available opinion about what profile ought to be mapped.)
+     */
+    @Test
+    public void testMapsToNullWhenUnderlyingRegistryThrows() {
+
+        // over-ride the set-up specified behavior
+        when(registry.profileSelectionForUser("bobby")).thenThrow(RuntimeException.class);
+
+        assertNull(stickyMapper.getProfileFname(person, request));
 
     }
 
@@ -96,6 +127,36 @@ public class StickyProfileMapperImplTest {
         // might have done weird unexpected things to the registry.
         verifyNoMoreInteractions(registry);
 
+    }
+
+    /**
+     * Test that does not store selections by guest user to registry.
+     */
+    @Test
+    public void testIngoresGuestUserProfileSelections() {
+
+        final ProfileSelectionEvent selectionEvent =
+            new ProfileSelectionEvent(this, "validKey1", guestPerson, request);
+
+        stickyMapper.onApplicationEvent(selectionEvent);
+
+        verifyZeroInteractions(registry);
+    }
+
+    /**
+     * Test that when the underlying registry throws in the course of handling profile selection event,
+     * failure does not propagate out of the event handling method.
+     */
+    @Test
+    public void testFailsEventHandlingGracefully() {
+
+        doThrow(RuntimeException.class).when(registry).registerUserProfileSelection("bobby", "profileFName1");
+
+        final ProfileSelectionEvent selectionEvent = new ProfileSelectionEvent(this, "validKey1", person, request);
+
+        stickyMapper.onApplicationEvent(selectionEvent);
+
+        verify(registry).registerUserProfileSelection("bobby", "profileFName1");
     }
 
     /**

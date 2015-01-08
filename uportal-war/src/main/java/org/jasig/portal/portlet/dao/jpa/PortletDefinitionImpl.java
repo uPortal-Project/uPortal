@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.dao.jpa;
 
 import java.util.Collections;
@@ -54,6 +53,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
@@ -72,6 +72,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Eric Dalquist
@@ -531,7 +532,39 @@ class PortletDefinitionImpl implements IPortletDefinition {
 		return title;
 	}
 
-	@Override
+    @Override
+    public String getAlternativeMaximizedLink() {
+        final IPortletDefinitionParameter alternativeMaximizedLinkParameter =
+            getParameter(ALT_MAX_LINK_PARAM);
+
+        if (null != alternativeMaximizedLinkParameter) {
+            final String alternativeMaximizedLink = alternativeMaximizedLinkParameter.getValue();
+
+            if (StringUtils.hasText(alternativeMaximizedLink)) {
+                return alternativeMaximizedLink;
+            }
+        }
+
+        return null;
+    }
+    
+    @Override
+    public String getTarget() {
+        final IPortletDefinitionParameter targetParameter =
+            getParameter(TARGET_PARAM);
+
+        if (null != targetParameter) {
+            final String target = targetParameter.getValue();
+
+            if (StringUtils.hasText(target)) {
+                return target;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
     public void setType(IPortletType portletType) {
 		this.portletType = portletType;
 	}
@@ -713,10 +746,13 @@ class PortletDefinitionImpl implements IPortletDefinition {
 
     @Override
     public String toString() {
-        return "PortletDefinition [" +
-        		"portletDefinitionId=" + this.portletDefinitionId + ", " +
-				"fname=" + this.fname + ", " +
-				"portletDescriptorKey=" + this.portletDescriptorKey + ", " +
-				"portletType=" + this.portletType + "]";
+
+        ToStringBuilder toStringBuilder = new ToStringBuilder(this)
+            .append("definitionId", portletDefinitionId)
+            .append("fname", fname)
+            .append("descriptorKey", portletDescriptorKey)
+            .append("type", portletType);
+
+        return toStringBuilder.toString();
     }
 }

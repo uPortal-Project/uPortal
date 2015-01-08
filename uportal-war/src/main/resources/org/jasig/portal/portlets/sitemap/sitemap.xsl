@@ -1,25 +1,24 @@
 <?xml version="1.0"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -119,17 +118,30 @@
   </xsl:template>
 
   <xsl:template match="folder" mode="tab">
+    <xsl:variable name="NAV_TRANSIENT">
+      <xsl:choose>
+        <xsl:when test="@transient='true'">disabled</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="tabLinkUrl">
-      <xsl:call-template name="portalUrl">
-        <xsl:with-param name="url">
-          <url:portal-url>
-            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-          </url:portal-url>
-        </xsl:with-param>
-      </xsl:call-template>
+        <!-- For a transient tab, attempting to calculate a tab URL generates an
+             exception because the tab is not in the layout so generate a safe URL. -->
+        <xsl:choose>
+            <xsl:when test="@transient='true'">javascript:;</xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="portalUrl">
+                <xsl:with-param name="url">
+                  <url:portal-url>
+                    <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                  </url:portal-url>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:variable>
     <div class="fl-col">
-      <div><a href="{$tabLinkUrl}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
+      <div><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></div>
       <ul><xsl:apply-templates select="folder" mode="column" /></ul>
     </div>
   </xsl:template>

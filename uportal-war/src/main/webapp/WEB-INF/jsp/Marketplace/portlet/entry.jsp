@@ -1,19 +1,19 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
@@ -126,6 +126,13 @@
 
     #${n} .carousel-container {
         margin: 0 auto;
+    }
+
+    #${n} .marketplace_carousel_inner .carousel-caption {
+        background-color: rgba(32, 32, 32, 0.2);
+        border-radius: 25px;
+        -moz-border-radius: 25px;
+        -webkit-border-radius: 25px;
     }
     
     #${n} .marketplace_carousel_inner img {
@@ -298,6 +305,52 @@
     {% }); %}
 </script>
 
+<script type="text/template" id="${n}screen-shots">
+    {% if (screenShots.length > 0) { %}
+        <div class="row">
+            <div class="col-md-12">
+                <h1>
+                    <spring:message code="screenshots.cap" text="Screenshots/Videos"/>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-3 col-xs-6">
+                <div class="carousel-container">
+                    <div id="${n}marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
+                        <div class="carousel-inner marketplace_carousel_inner" role="listbox">
+                            {% _(screenShots).each(function(screen, idx) { %}
+                                <div class="item marketplace_screen_shots {% if (idx === 0) { %} active {% } %}">
+                                    <img src="{%= screen.url %}" alt="screenshot for portlet">
+                                        {% _(screen.captions).each(function(caption) { %}
+                                            <div class="carousel-caption">
+                                                <h3>{%- caption %}</h3>
+                                            </div>
+                                        {% }); %}
+                                    </img>
+                                </div>
+                            {% }); %}
+                        </div>
+                        {% if (screenShots.length > 1) { %}
+                            <ol class="carousel-indicators marketplace_carousel_indicators">
+                                {% _(screenShots).each(function(screen, idx) { %}
+                                    <li data-target="#${n}marketplace_screenshots_and_videos" data-slide-to="{%= idx %}"></li>
+                                {% }); %}
+                            </ol>
+                            <a class="left carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="prev">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                            <a class="right carousel-control carousel-marketplace-control" href="#${n}marketplace_screenshots_and_videos" role="button" data-slide="next">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        {% } %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% } %}
+</script>
+
 <div id="${n}">
     <div>
         <div class="row">
@@ -307,7 +360,8 @@
             </div>
             <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
                 <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${portlet.renderUrl}" id="marketplace_go_button" class="btn btn-default marketplace_dropdown_button" role="button">
+                    <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
+                       class="btn btn-default marketplace_dropdown_button" role="button">
                         <spring:message code="go" text="Go"/>
                     </a>
                     <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
@@ -323,98 +377,37 @@
             <div class="col-sm-1 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
-                        <c:when test="${empty portlet.getParameter('mobileIconUrl')}">
+                        <c:when test="${empty marketplaceEntry.getParameter('mobileIconUrl')}">
                             <img src="${defaultIcon}">
                         </c:when>
                         <c:otherwise>
-                            <img src="${portlet.getParameter('mobileIconUrl').value}">
+                            <img src="${marketplaceEntry.getParameter('mobileIconUrl').value}">
                         </c:otherwise>
                 </c:choose>
             </div>
             <div class="col-sm-11">
                 <div class="marketplace_description_title">
-                    <h1>${portlet.title}</h1>
+                    <h1>${marketplaceEntry.title}</h1>
                 </div>
                 <div class="marketplace_description_body">
-                    <p>${portlet.description}</p>
+                    <p>${marketplaceEntry.description}</p>
                 </div>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">
-                <%-- Now let's add some Preferences --%>
-                <%-- Start with Screen shots and what not --%>
-                <%--TODO replace carousel with more accessibility friendly element --%>
-                <c:if test="${not empty portlet.screenShots}">
-                    <c:set var="validUrlCount" value="0"/>
-                    <c:forEach var="screenShot" items="${portlet.screenShots}">
-                        <c:set var="imageUrl" value="${screenShot.url}" />
-                        <%-- todo:  replace this with a less expensive test -- preferably client side --%>
-                        <%--<c:if test="${up:isValidUrl(imageUrl)}">--%>
-                        <c:set var="validUrlCount" value="${validUrlCount + 1}" />
-                        <%--If validUrlCount is 1 then we can make a header--%>
-                        <c:if test="${validUrlCount==1}">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h1><spring:message code="screenshots.cap" text="Screenshots/Videos"/></h1>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-offset-3 col-xs-6">
-                                    <div class="carousel-container">
-                                        <div id="marketplace_screenshots_and_videos" class="carousel slide" data-ride="carousel" data-interval="9000" data-wrap="true">
-                                            <%--Adds a carousel inner div --%>
-                                            <div class="carousel-inner marketplace_carousel_inner">
-                        </c:if>
-                        <div class="item marketplace_screen_shots">
-                            <img src="${imageUrl}" alt="screenshot for portlet">
-                            <c:if test="${not empty screenShot.captions}">
-                                <div class="carousel-caption">
-                                    <c:forEach var="portletCaption" items="${screenShot.captions}">
-                                        <h3>${portletCaption}</h3>
-                                    </c:forEach>
-                                </div>
-                            </c:if>
-                        </div>
-                        <%--<c:if/>--%>
-                    </c:forEach>
-                    <%--Closes the carousel-inner marketplace_carousel_inner div --%>
-                    <c:if test="${validUrlCount gt 0}">
-                        </div>
-                    </c:if>
-                    <%--Only add the little prev/next arrows when screenshots>1 --%>
-                    <c:if test="${validUrlCount gt 1}">
-                        <ol class="carousel-indicators marketplace_carousel_indicators">
-                            <c:forEach var="i" begin="0" end="${validUrlCount-1}">
-                                <li data-target="#marketplace_screenshots_and_videos" data-slide-to="${i}"></li>
-                            </c:forEach>
-                        </ol>
-                        <a class="left carousel-control" href="#marketplace_screenshots_and_videos" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                        <a class="right carousel-control" href="#marketplace_screenshots_and_videos" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                    </c:if>
-                    <c:if test="${validUrlCount gt 0}">
-                        <%--Closes the marketplace_screenshots_and_videos div--%>
-                        </div>
-                        <%--Closes the col div --%>
-                        </div>
-                        <%--Closes the container div --%>
-                        </div>
-                        <%--Closes the row div --%>
-                        </div>
-                    </c:if>
-                </c:if>
-            </div>
+            <div class="col-sm-12 screen-shot-section"></div>
         </div>
         <div class="row">
             <div class="col-xs-12">
                 <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
                 <div class="col-xs-3 marketplace_average_rating">
                     <div>
-                        <input type="number" data-max="5" data-min="1" value="${portlet.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
+                        <input type="number" data-max="5" data-min="1" value="${marketplaceEntry.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
                     </div>
                 </div>
                 <div id="col-xs-9 marketplace_users_rated">
-                    <span id="marketplace_average_rating_description">(${portlet.usersRated} reviews)</span>
+                    <span
+                            id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
                 </div>
             </div>
         </div>
@@ -440,27 +433,29 @@
 
             </div>
         </div>
-        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
+        <c:if test="${not empty  marketplaceEntry.portletReleaseNotes.releaseNotes}">
             <div class="row clearfix">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
                         <span class="marketplace_section_header"><spring:message code="whats.new" text="What's New"/></span>
-                        <c:if test="${not empty portlet.portletReleaseNotes.releaseDate}">
-                            <span class="marketplace_release_date"> (Released <joda:format value="${portlet.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
+                        <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseDate}">
+                            <span class="marketplace_release_date"> (Released <joda:format value="${marketplaceEntry.portletReleaseNotes.releaseDate}" pattern="dd-MM-yyyy" />)</span>
                         </c:if>
                         
                     </p>
                     <p>
-                        <c:if test="${not empty portlet.portletReleaseNotes.releaseNotes}">
+                        <c:if test="${not empty marketplaceEntry.portletReleaseNotes.releaseNotes}">
                             <ul class="marketplace_release_notes">
-                                <c:forEach var="releaseNote" items="${portlet.portletReleaseNotes.releaseNotes}">
+                                <c:forEach var="releaseNote"
+                                           items="${marketplaceEntry.portletReleaseNotes.releaseNotes}">
                                     <li class="marketplace_release_note">- ${releaseNote}</li>
                                 </c:forEach>
                             </ul>
                         </c:if>
                     </p>
-                    <c:if test="${fn:length(portlet.portletReleaseNotes.releaseNotes) gt 3}">
+                    <c:if test="${fn:length(marketplaceEntry.portletReleaseNotes.releaseNotes) gt
+                    3}">
                         <span><a id="marketplace_show_more_less_link"><spring:message code="more" text="More"/></a></span>
                     </c:if>
                 </div>
@@ -469,7 +464,7 @@
 
         <div class="spacer clearfix"></div>
 
-        <c:set var="relatedPortlets" value="${portlet.randomSamplingRelatedPortlets}"/>
+        <c:set var="relatedPortlets" value="${marketplaceEntry.relatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
             <h1><spring:message code="related.portlets" text="Related Portlets"/></h1>
             <div class="marketplace_section row clearfix">
@@ -477,7 +472,7 @@
                 <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
-                        <portlet:param name="fName" value="${relatedPortlet.FName}"/>
+                        <portlet:param name="fName" value="${relatedPortlet.fname}"/>
                     </portlet:renderURL>
                     <div class="col-sm-6 col-lg-3">
                         <div class="panel panel-default">
@@ -507,16 +502,16 @@
                 </c:forEach>
             </div>
         </c:if>
-        <c:set var="portletCategories" value="${portlet.parentCategories}"/>
+        <c:set var="portletCategories" value="${marketplaceEntry.categories}"/>
         <c:if test="${not empty portletCategories}">
             <div class="row">
             <div class = "col-xs-12 col-md-4">
                 <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
                     <c:forEach var="portletCategory" items="${portletCategories}">
                         <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
-                            <portlet:param name="initialFilter" value="${portletCategory.name}"/>
+                            <portlet:param name="initialFilter" value="${portletCategory}"/>
                         </portlet:renderURL>
-                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory.name}</a></li>
+                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
                     </c:forEach>
                 </div>
             </div>
@@ -546,7 +541,8 @@
                 <div class="form-group">
                     <label for="inputDeep" class="col-sm-2 control-label"><spring:message code="link" text="Link"/></label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputDeep" value="${portlet.renderUrl}"></input>
+                        <input type="text" class="form-control" id="inputDeep"
+                               value="${marketplaceEntry.renderUrl}"></input>
                     </div>
                 </div>
                 <c:if test="${not empty shortURL }">
@@ -567,7 +563,7 @@
 </div>
 <portlet:resourceURL id="saveRating" var="saveRatingUrl" />
 <portlet:resourceURL id="layoutInfo" var="portletInfoUrl">
-    <portlet:param name="portletFName" value="${portlet.FName}"/>
+    <portlet:param name="portletFName" value="${marketplaceEntry.fname}"/>
 </portlet:resourceURL>
 
 <script type="text/javascript">
@@ -592,21 +588,21 @@
             }
         });
 
+        var templateSettings = {
+            evaluate: /{%([\s\S]+?)%}/g,
+            interpolate: /{%=([\s\S]+?)%}/g,
+            escape: /{%-([\s\S]+?)%}/g
+        };
+
         var MenuController = Backbone.View.extend({
             events: {
                 'click .marketplace_add_to_tab_link': 'addPortlet',
                 'click .marketplace_add_favorite': 'addFavorite',
                 'click .marketplace_remove_favorite': 'removeFavorite'
             },
-            template: _.template($('#${n}options-menu').text(), null, {
-                // use jinja style templates instead of the up default (mustache style)
-                // Mostly... I just find these easier to read!
-                evaluate: /{%([\s\S]+?)%}/g,
-                interpolate: /{%=([\s\S]+?)%}/g,
-                escape: /{%-([\s\S]+?)%}/g
-            }),
+            template: _.template($('#${n}options-menu').text(), null, templateSettings),
             options: {
-                portletChannelId: '${portlet.portletDefinitionId}'
+                portletChannelId: '${marketplaceEntry.id}'
             },
 
 
@@ -766,6 +762,99 @@
 
         updateOptionsMenu();
 
+        var screenShots = [
+            <c:forEach var="screenShot" items="${marketplaceEntry.marketplaceScreenshots}">
+            {
+                url: '${screenShot.url}',
+                captions: [
+                    <c:forEach var="caption" items="${screenShot.captions}">
+                        '${caption}',
+                    </c:forEach>
+                ]
+            },
+            </c:forEach>
+        ];
+
+        var ScreenShotModel = Backbone.Model.extend({
+            defaults: {
+                url: null,
+                captions: []
+            }
+        });
+        var screenShotCollection = new Backbone.Collection(screenShots, { model: ScreenShotModel });
+
+        var ScreenShotController = Backbone.View.extend({
+            template: _.template($('#${n}screen-shots').text(), null, templateSettings),
+            selectors: {
+                firstIndicator: '.marketplace_carousel_indicators > li:first-child'
+            },
+            collection: undefined,
+
+            initialize: function(options) {
+                var self, promises, allResolved;
+
+                self = this;
+
+                // kick off validation of each screen shot...
+                promises = self.collection.map(function(screenShot) {
+                    return self._validateScreenShot(screenShot);
+                });
+
+                // after all image URL have been checked, update the collection
+                // with just the valid screenshots...
+                allResolved = $.when.apply($, promises);
+                allResolved.then(function() {
+                    var valid;
+
+                    valid = _.filter(arguments, function(screenShot) {
+                        return screenShot != null;
+                    });
+
+                    // update the collection...
+                    self.collection.reset(valid);
+                });
+
+                // after the model updates, re-render...
+                self.listenTo(self.collection, 'reset', self.render);
+            },
+
+
+            render: function() {
+                var self = this;
+
+                this.$el.html(this.template({
+                    screenShots: self.collection.toJSON()
+                }));
+                this.$(self.selectors.firstIndicator).addClass("active");
+
+                return this.$el;
+            },
+
+
+            _validateScreenShot: function(screenShot) {
+                var image, defer;
+
+                defer = $.Deferred();
+                image = new Image();
+                image.onload = function() {
+                    defer.resolve(screenShot);
+                };
+                image.onerror = function() {
+                    defer.resolve(null);
+                };
+                image.src = screenShot.get('url');
+
+                // return a deferred that always resolves successfully and
+                // resolves to a screenshot object or null
+                return defer.promise();
+            }
+        });
+
+        // instantiate the actual screenshot controller.
+        var screenShotController = new ScreenShotController({
+            el: $('.screen-shot-section'),
+            collection: screenShotCollection
+        });
 
         var updateCharactersRemaining = function(){
             if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit){
@@ -784,7 +873,6 @@
             $("#${n}marketplace_rating_instructions").text(messageText);
         }
         $(".marketplace_screen_shots:first").addClass("active");
-        $(".marketplace_carousel_indicators>li:first-child").addClass("active");
         $(".marketplace_release_notes>li:nth-child(-n+"+
                 defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
         $('#${n}copy-modal').modal('hide');
@@ -813,20 +901,21 @@
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
-            arguments="${portlet.title}"
+            arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
             $("#${n}marketplace_user_review_input").val(htmlDecode("<c:out value="${marketplaceRating.review}"/>"));
         }else{
             updateRatingInstructions('<spring:message code="rating.instructions.unrated"
             text='You have not yet rated "{0}".'
-            arguments="${portlet.title}"
+            arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
         }
         updateCharactersRemaining();
         $("#${n}save_rating_form").submit(function (e) {
             $.ajax({
                 url: '${saveRatingUrl}',
-                data: {rating: $("#${n}marketplace_user_rating").val(), portletFName: "${portlet.FName}",
+                data: {rating: $("#${n}marketplace_user_rating").val(),
+                    portletFName: "${marketplaceEntry.fname}",
                     review: $("#${n}marketplace_user_review_input").val().trim()},
                 type: 'POST',
                 success: function(){
@@ -837,7 +926,7 @@
                     });
                     updateRatingInstructions('<spring:message code="rating.instructions.rated.now"
                      text='You have now rated "{0}"; update your rating if you wish.'
-                     arguments="${portlet.title}"
+                     arguments="${marketplaceEntry.title}"
                      htmlEscape="false"
                  />');
                 },

@@ -33,6 +33,8 @@ This project includes:
   AntLR Parser Generator under BSD License
   ANTLR StringTemplate 4.0.2 under BSD licence
   AOP alliance under Public Domain
+  Apache Ant + ANTLR under The Apache Software License, Version 2.0
+  Apache Ant + JUnit under The Apache Software License, Version 2.0
   Apache Ant Core under The Apache Software License, Version 2.0
   Apache Ant Launcher under The Apache Software License, Version 2.0
   Apache Commons Codec under The Apache Software License, Version 2.0
@@ -78,6 +80,7 @@ This project includes:
   Groovy under The Apache Software License, Version 2.0
   Grouper Client under Apache 2
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Hibernate JPA 2 Metamodel Generator under Apache License, Version 2.0
@@ -127,12 +130,14 @@ This project includes:
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Neko HTML under The Apache Software License, Version 2.0
+  OAuth Core under The Apache Software License, Version 2.0
   Objenesis under Apache 2
   Official LESS CSS Compiler for Java under The Apache Software License, Version 2.0
   oro under Apache License, Version 2.0
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Portlet JDBC Utilities under Apache License Version 2.0
+  Portlet Web Service Utilities under Apache License Version 2.0
   quartz under The Apache Software License, Version 2.0
   Resource Server API under Apache License Version 2.0
   Resource Server Core under Apache License Version 2.0
@@ -144,6 +149,8 @@ This project includes:
   Spring LDAP Core under Apache License, Version 2.0
   Spring LDAP Java 5 support under Apache License, Version 2.0
   Spring Web Flow under Apache License, Version 2.0
+  Spring WS Core under The Apache Software License, Version 2.0
+  Spring XML under The Apache Software License, Version 2.0
   spring-aop under The Apache Software License, Version 2.0
   spring-asm under The Apache Software License, Version 2.0
   spring-aspects under The Apache Software License, Version 2.0
@@ -167,6 +174,7 @@ This project includes:
   standard under Apache License, Version 2.0
   Stax2 API under The BSD License
   StaxMate under BSD
+  Streaming API for XML under Sun Binary Code License
   tomcat-jdbc under Apache License, Version 2.0
   tomcat-juli under Apache License, Version 2.0
   Transaction 1.1 API under lgpl
@@ -176,6 +184,7 @@ This project includes:
   uPortal Search API under Apache License Version 2.0
   uPortal WAR under Apache License Version 2.0
   Woodstox under The Apache Software License, Version 2.0
+  WSDL4J under CPL
   XML Pull Parsing API under Public Domain
   XMLUnit for Java under BSD License
   XStream Core under BSD style

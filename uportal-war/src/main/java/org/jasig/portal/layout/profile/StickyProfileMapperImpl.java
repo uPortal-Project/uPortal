@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -53,6 +53,9 @@ import java.util.Map;
  *
  * Subsequent or upstream profile mappers can fall back on a default, see also ChainingProfileMapperImpl.
  *
+ * Fails gracefully.  If persisted profile selection if any cannot be determined, logs and returns null indicating no
+ * available opinion about desired profile mapping.
+ *
  * Typically this mapper will be in the profile mapping chain within a ChainingProfileMapperImpl.
  *
  * @since uPortal 4.2
@@ -91,37 +94,50 @@ public class StickyProfileMapperImpl
     @Override
     public void onApplicationEvent(ProfileSelectionEvent event) {
 
-        final String userName = event.getPerson().getUserName();
+        try {
 
-        if (identitySwapperManager.isImpersonating(event.getRequest())) {
-            logger.debug("Ignoring selection of profile by key {} in the context of user {} because impersonated.",
-                    event.getRequestedProfileKey(), userName );
-            return;
+            final String userName = event.getPerson().getUserName();
+
+            if (event.getPerson().isGuest()) {
+                logger.warn("Ignoring a profile selection event fired by guest user. "
+                    + "Should the Guest user be firing profile selections in your uPortal "
+                    + "implementation?  Likely not.");
+                return;
+            }
+
+            if (identitySwapperManager.isImpersonating(event.getRequest())) {
+                logger.debug("Ignoring selection of profile by key {} in the context of user {} because impersonated.",
+                        event.getRequestedProfileKey(), userName);
+                return;
+            }
+
+            if (profileKeyForNoSelection != null
+                    && profileKeyForNoSelection.equals(event.getRequestedProfileKey())) {
+
+                logger.trace("Translating {} selection of profile key {} to apathy about profile selection.",
+                        userName, event.getRequestedProfileKey());
+                profileSelectionRegistry.registerUserProfileSelection(userName, null);
+
+                return;
+
+            }
+
+            if (!immutableMappings.containsKey(event.getRequestedProfileKey())) {
+                logger.warn("User desired a profile by a key {} that does not map to any profile fname.  Ignoring.",
+                        event.getRequestedProfileKey());
+                return;
+            }
+
+
+            final String profileFName = immutableMappings.get(event.getRequestedProfileKey());
+
+            logger.trace("Storing {} selection of profile fname {} (keyed by profile key {})",
+                    userName, profileFName, event.getRequestedProfileKey());
+            profileSelectionRegistry.registerUserProfileSelection(userName, profileFName);
+
+        } catch (final Exception e) {
+            logger.error("Something went wrong handling profile selection event " + event);
         }
-
-        if (profileKeyForNoSelection != null
-                && profileKeyForNoSelection.equals(event.getRequestedProfileKey())) {
-
-            logger.trace("Translating {} selection of profile key {} to apathy about profile selection.",
-                    userName, event.getRequestedProfileKey());
-            profileSelectionRegistry.registerUserProfileSelection(userName, null);
-
-            return;
-
-        }
-
-        if (!immutableMappings.containsKey(event.getRequestedProfileKey())) {
-            logger.warn("User desired a profile by a key {} that does not map to any profile fname.  Ignoring.",
-                    event.getRequestedProfileKey());
-            return;
-        }
-
-
-        final String profileFName = immutableMappings.get(event.getRequestedProfileKey());
-
-        logger.trace("Storing {} selection of profile fname {} (keyed by profile key {})",
-                userName, profileFName, event.getRequestedProfileKey());
-        profileSelectionRegistry.registerUserProfileSelection(userName, profileFName);
     }
 
     @Override
@@ -133,8 +149,13 @@ public class StickyProfileMapperImpl
         final String userName = person.getUserName();
         Validate.notNull(userName, "Cannot get profile fname for a null username.");
 
-        return this.profileSelectionRegistry.profileSelectionForUser(userName);
+        try {
+            return this.profileSelectionRegistry.profileSelectionForUser(userName);
+        } catch (Exception e) {
+            logger.error("Failed to read persisted profile selection for user " + userName + " if any.  Ignoring.", e);
+        }
 
+        return null; // default to no opinion if registry lookup failed.
     }
 
 

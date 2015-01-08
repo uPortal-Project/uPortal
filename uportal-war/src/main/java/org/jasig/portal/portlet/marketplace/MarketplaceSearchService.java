@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.marketplace;
 
 import java.util.List;
@@ -56,6 +55,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
     private IPortalUrlProvider portalUrlProvider;
     private IPortletWindowRegistry portletWindowRegistry;
     private IPortalRequestUtils portalRequestUtils;
+    private IMarketplaceService marketplaceService;
     private IPortletCategoryRegistry portletCategoryRegistry;
 
     @Autowired
@@ -82,6 +82,11 @@ public class MarketplaceSearchService implements IPortalSearchService {
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
+
+    @Autowired
+    public void setMarketplaceService(final IMarketplaceService marketplaceService) {
+        this.marketplaceService = marketplaceService;
+    }
     
     /**
      * Returns a list of search results that pertain to the marketplace
@@ -99,7 +104,9 @@ public class MarketplaceSearchService implements IPortalSearchService {
         
         final SearchResults results =  new SearchResults();
         for (IPortletDefinition portlet : portlets) {
-            if (this.matches(queryString, new MarketplacePortletDefinition(portlet, this.portletCategoryRegistry))) {
+            if (this.matches(queryString,
+                new MarketplacePortletDefinition(portlet,
+                    this.marketplaceService, this.portletCategoryRegistry))) {
                 final SearchResult result = new SearchResult();
                 result.setTitle(portlet.getTitle());
                 result.setSummary(portlet.getDescription());

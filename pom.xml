@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>35</version>
+        <version>39</version>
     </parent>
     
     <prerequisites>
@@ -130,7 +130,7 @@
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.1.1-M1</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>2.1.3</jasig-widget-portlets.version>
+        <jasig-widget-portlets.version>2.1.5</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.1.0</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.1.1</NotificationPortlet.version>
         <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
@@ -231,10 +231,9 @@
         <xstream.version>1.4.7</xstream.version>
 
         <!-- 
-         | uPortal uses this expression to determine whether the user is on a 
-         | mobile device, such as a phone or a tablet, or a desktop/laptop 
-         | browser;  users may also choose the mobile/non-mobile experience when 
-         | they log in. 
+         | When a user-agent profile mapping is enabled (see userContext.xml), uPortal uses this expression to
+         | determine whether the user is on a mobile device, such as a phone or a tablet, or a desktop/laptop
+         | browser;  users may also choose the mobile/non-mobile experience when they log in.
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
         
@@ -714,6 +713,11 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-jsr223</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-sql</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
@@ -1315,6 +1319,30 @@
         </plugins>
         <pluginManagement>
             <plugins>
+                <!-- Set the java.awt.headless flag so that the build doesn't
+                    steal focus on OS-X. UP-4275 -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <version>1.0-alpha-2</version>
+                    <executions>
+                        <execution>
+                            <id>set-headless</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>set-system-properties</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <properties>
+                            <property>
+                                <name>java.awt.headless</name>
+                                <value>true</value>
+                            </property>
+                        </properties>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>2.5</version>
@@ -1427,6 +1455,11 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.13</version>
+                    <configuration>
+                        <systemPropertyVariables>
+                            <java.awt.headless>true</java.awt.headless>
+                        </systemPropertyVariables>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-war-plugin</artifactId>
@@ -1526,13 +1559,13 @@
                         <maxmem>256m</maxmem>
                         <!-- aggregated reports for multi-module projects -->
                         <aggregate>true</aggregate>
-
-                        <excludes>
-                            <!-- Exclude generated classes -->
-                            <exclude>**/*_.class</exclude>
-                            <exclude>**/*_.java</exclude>
-                        </excludes>
-
+                        <instrumentation>
+                            <excludes>
+                                <!-- Exclude generated classes -->
+                                <exclude>**/*_.class</exclude>
+                                <exclude>**/*_.java</exclude>
+                            </excludes>
+                        </instrumentation>
                     </configuration>
                 </plugin>
             </plugins>

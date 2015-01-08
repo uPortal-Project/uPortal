@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -112,7 +112,8 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
 
             if (mayBrowsePortlet(user, portletDefinition)) {
                 final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
-                MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition);
+                final MarketplaceEntry entry =
+                    new MarketplaceEntry(marketplacePortletDefinition, user);
 
                 // flag whether this use can add the portlet...
                 boolean canAdd = mayAddPortlet(user, portletDefinition);
@@ -220,10 +221,33 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
+    public Set<MarketplaceEntry> featuredEntriesForUser(final IPerson user) {
+        Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
+
+        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> featuredPortlets = new HashSet<>();
+
+        for (final MarketplaceEntry entry : browseablePortlets) {
+            final IPortletDefinition portletDefinition = entry.getMarketplacePortletDefinition();
+            for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
+
+                if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
+                    featuredPortlets.add(entry);
+                }
+
+            }
+        }
+
+        return featuredPortlets;
+    }
+
+
+    @Override
     public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
         Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
         if (element == null) {
-            MarketplacePortletDefinition mpd = new MarketplacePortletDefinition(portletDefinition, portletCategoryRegistry);
+            final MarketplacePortletDefinition mpd =
+                new MarketplacePortletDefinition(portletDefinition, this, portletCategoryRegistry);
             element = new Element(portletDefinition.getFName(), mpd);
             this.marketplacePortletDefinitionCache.put(element);
         }

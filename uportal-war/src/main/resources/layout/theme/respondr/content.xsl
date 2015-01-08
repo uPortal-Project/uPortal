@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!--
  | This file determines the presentation of rows and portlet containers.
  | Portlet content is rendered outside of the theme, handled entirely by the portlet itself.
@@ -240,54 +239,34 @@
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
           <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
+            <div class="up-portlet-wrapper-inner no-chrome">
+              <!-- ****** PORTLET TOOLBAR ****** -->
+              <div class="hover-toolbar">
+                <xsl:call-template name="portlet-toolbar"/>
+              </div>
               <!-- ****** START: PORTLET CONTENT ****** -->
               <div id="portletContent_{@ID}" class="up-portlet-content-wrapper"> <!-- Portlet content container. -->
-                <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
+                <div class="up-portlet-content-wrapper-inner"> <!-- Inner div for additional presentation/formatting options. -->
                   <xsl:call-template name="portlet-content"/>
                 </div>
               </div>
+            </div>
           </xsl:when>
 
           <!-- ***** RENDER CHROME ***** -->
           <xsl:otherwise>
             <div class="up-portlet-wrapper-inner">
-
-            <!-- ****** PORTLET TITLE AND TOOLBAR ****** -->
-            <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top"> <!-- Portlet toolbar. -->
-              <!--
-              Portlet Title
-              -->
-              <h2 class="portlet-title round-top">
-                <xsl:variable name="portletMaxUrl">
-                  <xsl:call-template name="portalUrl">
-                    <xsl:with-param name="url">
-                        <url:portal-url>
-                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                            <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-                        </url:portal-url>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </xsl:variable>
-                <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-                <a id="{@ID}" href="{$portletMaxUrl}">
-                    <xsl:value-of select="@title"/>
-                </a>
-
-                <xsl:call-template name="controls"/>
-              </h2>
-            </div>
-
-            <!-- ****** PORTLET CONTENT ****** -->
-            <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
-              <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
-                <xsl:call-template name="portlet-content"/>
+              <!-- ****** PORTLET TOOLBAR ****** -->
+              <xsl:call-template name="portlet-toolbar"/>
+              <!-- ****** PORTLET CONTENT ****** -->
+              <div id="portletContent_{@ID}" class="fl-widget-content fl-fix up-portlet-content-wrapper round-bottom"> <!-- Portlet content container. -->
+                <div class="up-portlet-content-wrapper-inner">  <!-- Inner div for additional presentation/formatting options. -->
+                  <xsl:call-template name="portlet-content"/>
+                </div>
               </div>
-            </div>
-
             </div>
           </xsl:otherwise>
         </xsl:choose>
-
     </section>
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
 
@@ -296,9 +275,29 @@
 
   <!-- ========== TEMPLATE: PORTLET CONTENT ========== -->
   <!-- ============================================== -->
-  <!--
-   | Renders the actual portlet content
-  -->
+  <!-- Renders the portlet toolbar -->
+  <xsl:template name="portlet-toolbar">
+    <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top"> <!-- Portlet toolbar. -->
+      <!-- Portlet Title -->
+      <h2 class="portlet-title round-top">
+        <xsl:variable name="portletMaxUrl">
+          <xsl:call-template name="portalUrl">
+            <xsl:with-param name="url">
+              <url:portal-url>
+                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+              </url:portal-url>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:variable>
+        <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
+        <a id="{@ID}" href="{$portletMaxUrl}"><xsl:value-of select="@title"/></a>
+        <xsl:call-template name="controls"/>
+      </h2>
+    </div>
+  </xsl:template>
+
+  <!-- Renders the portlet content -->
   <xsl:template name="portlet-content">
     <xsl:choose>
         <xsl:when test="name() = 'blocked-channel'">
@@ -341,7 +340,7 @@
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
-    <div class="btn-group">
+    <div class="portlet-options-menu btn-group hidden">
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--
@@ -366,20 +365,22 @@
           <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="hasFavorites">
-        <xsl:if test="//content/@hasFavorites = 'true'">true</xsl:if>
+        <xsl:if test="//content/@hasFavorites = 'true' and $AUTHENTICATED='true'">true</xsl:if>
       </xsl:variable>
       <xsl:variable name="isInFavorites">
         <xsl:variable name="curFname" select="@fname" />
         <xsl:if test="/layout/favorites/favorite[@fname = $curFname]">true</xsl:if>
       </xsl:variable>
-        
-      <li>
-          <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
-              <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
-          </a>
-      </li>
 
-      <!-- Help Icon -->
+      <xsl:if test="$AUTHENTICATED='true'">
+          <li>
+              <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
+                  <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
+              </a>
+          </li>
+      </xsl:if>
+
+          <!-- Help Icon -->
       <xsl:if test="$hasHelp='true'">
         <xsl:variable name="portletHelpUrl">
           <xsl:call-template name="portalUrl">
@@ -421,14 +422,9 @@
         </li>
       </xsl:if>
 
-      <!-- Return from Focused Icon -->
-      <xsl:if test="//focused">
+      <!-- Return from Focused Icon. Don't display for transient portlets. -->
+      <xsl:if test="//focused and not(@transient='true')">
         <xsl:variable name="portletReturnUrl">
-          <xsl:choose>
-            <xsl:when test="@transient='true'">
-              <xsl:call-template name="portalUrl" />
-            </xsl:when>
-            <xsl:otherwise>
               <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
                   <url:portal-url>
@@ -437,8 +433,6 @@
                   </url:portal-url>
                 </xsl:with-param>
               </xsl:call-template>
-            </xsl:otherwise>
-          </xsl:choose>
         </xsl:variable>
         <li>
           <a href="{$portletReturnUrl}" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control return"><xsl:value-of select="upMsg:getMessage('return.to.dashboard', $USER_LANG)"/></a>

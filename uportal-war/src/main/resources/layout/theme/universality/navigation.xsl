@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!--
  | This file determines the presentation of the main navigation systems of the portal.
  | The file is imported by the base stylesheet universality.xsl.
@@ -218,6 +217,12 @@
             <xsl:otherwise></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
+        <xsl:variable name="NAV_TRANSIENT">
+            <xsl:choose>
+                <xsl:when test="@transient='true'">disabled</xsl:when>
+                <xsl:otherwise></xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
             <xsl:choose>
                 <xsl:when test="$AUTHENTICATED='true'">
@@ -271,15 +276,22 @@
         </xsl:variable>
         <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
           <xsl:variable name="tabLinkUrl">
-            <xsl:call-template name="portalUrl">
-              <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                </url:portal-url>
-              </xsl:with-param>
-            </xsl:call-template>
+              <!-- For a transient tab, attempting to calculate a tab URL generates an
+                   exception because the tab is not in the layout so generate a safe URL. -->
+              <xsl:choose>
+                  <xsl:when test="@transient='true'">javascript:;</xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="portalUrl">
+                      <xsl:with-param name="url">
+                        <url:portal-url>
+                            <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                        </url:portal-url>
+                      </xsl:with-param>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+              </xsl:choose>
           </xsl:variable>
-          <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE}">
+          <a id="tabLink_{@ID}" href="{$tabLinkUrl}" title="{@name}" class="portal-navigation-link {$NAV_INLINE_EDITABLE} {$NAV_TRANSIENT}">
             <span title="{$NAV_INLINE_EDIT_TITLE}" class="portal-navigation-label {$NAV_INLINE_EDIT_TEXT}">
               <xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>
             </span>

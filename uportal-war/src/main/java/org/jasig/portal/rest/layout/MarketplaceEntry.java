@@ -1,3 +1,21 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jasig.portal.rest.layout;
 
 import java.io.Serializable;
@@ -5,21 +23,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.portlet.WindowState;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
 import org.jasig.portal.portlet.marketplace.ScreenShot;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletCategory;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jasig.portal.security.IPerson;
+
+/**
+ * User-specific representation of a Marketplace portlet definition suitable for JSON serialization
+ * and for use in view implementations.
+ */
 public class MarketplaceEntry  implements Serializable {
     
     private Set<String> getPortletCategories(MarketplacePortletDefinition pdef) {
@@ -41,21 +61,30 @@ public class MarketplaceEntry  implements Serializable {
     private Set<MarketplaceEntry> relatedEntries;
     private boolean generateRelatedPortlets = true;
     private boolean canAdd;
+
+    /**
+     * User for whom this MarketplaceEntity is tailored.
+     */
+    private IPerson user;
     
-    public MarketplaceEntry(MarketplacePortletDefinition pdef) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
+        this.user = user;
     }
 
-    public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, String maxURL, final IPerson user) {
         this.pdef = pdef;
         this.maxURL = maxURL;
+        this.user = user;
     }
     
-    public MarketplaceEntry(MarketplacePortletDefinition pdef, boolean generateRelatedPortlets) {
+    public MarketplaceEntry(MarketplacePortletDefinition pdef, boolean generateRelatedPortlets,
+        final IPerson user) {
         this.pdef = pdef;
         this.maxURL = pdef.getRenderUrl();
         this.generateRelatedPortlets = generateRelatedPortlets;
+        this.user = user;
     }
 
     public String getId() {
@@ -99,6 +128,16 @@ public class MarketplaceEntry  implements Serializable {
         IPortletDefinitionParameter parameter = pdef.getParameter("faIcon");
         return parameter != null ? parameter.getValue() : null;
     }
+
+    /**
+     *
+     * @param parameterName
+     * @return
+     * @since uPortal 4.2
+     */
+    public IPortletDefinitionParameter getParameter(final String parameterName) {
+        return this.pdef.getParameter(parameterName);
+    }
     
     public String getMaxUrl() {
         return maxURL;
@@ -128,9 +167,10 @@ public class MarketplaceEntry  implements Serializable {
         }
         if(relatedEntries==null) {
             relatedEntries = new HashSet<MarketplaceEntry>(MarketplacePortletDefinition.QUANTITY_RELATED_PORTLETS_TO_SHOW);
-            Set<MarketplacePortletDefinition> randomSamplingRelatedPortlets = pdef.getRandomSamplingRelatedPortlets();
+            final Set<MarketplacePortletDefinition> randomSamplingRelatedPortlets =
+                pdef.getRandomSamplingRelatedPortlets(user);
             for(MarketplacePortletDefinition def : randomSamplingRelatedPortlets) {
-                relatedEntries.add(new MarketplaceEntry(def, false));
+                relatedEntries.add(new MarketplaceEntry(def, false, user));
             }
         }
         return relatedEntries;
@@ -154,6 +194,49 @@ public class MarketplaceEntry  implements Serializable {
 
     public void setCanAdd(boolean canAdd) {
         this.canAdd = canAdd;
+    }
+    
+    public String getTarget() {
+      return pdef.getTarget();
+    }
+    
+    public List<String> getKeywords() {
+      return pdef.getKeywords();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if (other == null) { return false; }
+        if (other == this) { return true; }
+        if (other.getClass() != getClass()) {
+            return false;
+        }
+        final MarketplaceEntry rhs = (MarketplaceEntry) other;
+
+        return new EqualsBuilder()
+            .append(getMarketplacePortletDefinition(), rhs.getMarketplacePortletDefinition())
+            .append(this.user, rhs.user)
+            .append(isCanAdd(), rhs.isCanAdd())
+            .append(generateRelatedPortlets, rhs.generateRelatedPortlets)
+            .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(getMarketplacePortletDefinition())
+            .append(user)
+            .append(isCanAdd())
+            .append(generateRelatedPortlets)
+            .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+            .append("fname", getFname())
+            .toString();
     }
 
 }
