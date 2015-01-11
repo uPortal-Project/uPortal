@@ -209,6 +209,15 @@ Available targets:
     kicks off the database server but then just keeps on running.
     You'll need to kill it manually, e.g. via control-C or via a stop build
     control in your IDE.
+
+Options you can pass to maven for building:
+
+    -Dmaven.test.skip=true - Don't run tests in the maven build process.
+
+    -Dmaven.quiet=true - Run maven with -q to produce less output (see
+        https://issues.jasig.org/browse/UP-4372 for examples).
+
+    -o - run maven in offline mode (won't download artifacts).
  
 
 Metadata about this file:
