@@ -33,6 +33,12 @@
     <category>uPortal</category>
     <group>Portal Developers</group>
     <group>Portal Administrators</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Portal Developers</group>
+            <group>Portal Administrators</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/system-users.png</value>

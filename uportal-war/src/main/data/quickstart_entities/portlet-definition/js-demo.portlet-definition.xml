@@ -32,6 +32,11 @@
     </portlet-descriptor>
     <category>Demonstration</category>
     <group>Everyone</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Everyone</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>configurable</name>
         <value>true</value>

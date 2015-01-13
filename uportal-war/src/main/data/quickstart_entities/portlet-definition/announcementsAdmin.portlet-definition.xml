@@ -32,6 +32,11 @@
     </portlet-descriptor>
     <category>Administration</category>
     <group>Portal System</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Portal System</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>alternate</name>
         <value>false</value>

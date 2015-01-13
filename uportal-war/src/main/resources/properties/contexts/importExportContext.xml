@@ -142,7 +142,7 @@
      +-->
     <bean id="portletDefinitionImporterExporter" class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.portlet" />
-        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.0.xsd" />
+        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.1.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
     </bean>
     <bean id="portletTypeImporterExporter" class="org.jasig.portal.io.xml.portlettype.PortletTypeImporterExporter">

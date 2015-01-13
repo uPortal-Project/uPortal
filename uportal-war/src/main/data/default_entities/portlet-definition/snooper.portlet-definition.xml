@@ -32,6 +32,11 @@
     </portlet-descriptor>
     <category>Development</category>
     <group>Portal Developers</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Portal Developers</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>
