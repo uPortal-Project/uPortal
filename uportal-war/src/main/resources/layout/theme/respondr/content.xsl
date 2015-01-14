@@ -241,7 +241,20 @@
           <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
             <div class="up-portlet-wrapper-inner no-chrome">
               <!-- ****** PORTLET TOOLBAR ****** -->
-              <div class="hover-toolbar">
+              <!-- If not movable, default to hidden so you have no grab region.
+                   jQuery may unhide though if there are menu options to display.  -->
+              <xsl:variable name="hideIfNotMovable">
+                  <xsl:choose>
+                      <!-- UP-4354 For some reason the test below doesn't work when in focus mode and I can't figure out why,
+                           so using the 2nd form since it works for both desktop view and focus view.  It appears the
+                           dlm namespace is not valid when in focus mode even though the namespace is defined in the
+                           input xml so all @dlm: references fail. Below works whether dlm namespace defined or not.
+                      <xsl:when test="@dlm:moveAllowed='false'">hidden</xsl:when> -->
+                      <xsl:when test="@*[local-name() = 'moveAllowed']='false'">hidden</xsl:when>
+                      <xsl:otherwise></xsl:otherwise>
+                  </xsl:choose>
+              </xsl:variable>
+              <div class="hover-toolbar {$hideIfNotMovable}">
                 <xsl:call-template name="portlet-toolbar"/>
               </div>
               <!-- ****** START: PORTLET CONTENT ****** -->
@@ -340,7 +353,7 @@
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
-    <div class="portlet-options-menu btn-group hidden">
+    <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--

@@ -284,6 +284,10 @@
 
           // Unhide the portlet's options menu if there are option items to display.
           $('div.portlet-options-menu').has('li').removeClass('hidden');
+
+          // If portlet chrome is configured to not show (shows on hover) and the portlet is not movable, the portlet chrome
+          // is hidden.  However if there are option items to display, allow the portlet chrome to show on hover.
+          $('div.hover-toolbar').filter('.hidden').has('li').removeClass('hidden');
       });
 
     })(up.jQuery);
