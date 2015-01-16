@@ -104,10 +104,14 @@
                                         <div class="search-results">
                                             <c:forEach items="${ results[tabKey] }" var="result">
                                                 <div class="search-result">
-                                                    <div>
-                                                        <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title"><a class="result_link" href="${result.second}"><span class="result_title"><i class="fa fa-external-link"></i> ${ result.first.title }</span></a></h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <p class="result_excerpt">${ result.first.summary }</p>
+                                                        </div>
                                                     </div>
-                                                    <div class="result_excerpt">${ result.first.summary }</div>
                                                 </div>
                                             </c:forEach>
                                         </div>
