@@ -21,19 +21,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <%@ taglib uri="/WEB-INF/tag/portletUrl.tld" prefix="pURL" %>
 <c:set var="n"><portlet:namespace/></c:set>
-
-<style>
-	.marketplace_entry_link{
-		font-family: 'Arial';
-		font-weight: 400;
-		color: #666666;
-		font-style: normal;
-		font-size: 13px;
-		text-align: left;
-		line-height: normal;
-	}
-</style>
-
 <portlet:actionURL var="formUrl"/>
 <portlet:resourceURL var="autocompleteUrl" id="retrieveSearchJSONResults"/>
 <c:set var="n"><portlet:namespace/></c:set>
@@ -41,91 +28,102 @@
 <!-- Portlet -->
 <div class="fl-widget portlet search-portlet" role="section">
 
-  <!-- Portlet Titlebar 
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading"><spring:message code="search"/></h2>
-  </div>
-  -->
-  
-  <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
-  
-    <!-- Portlet Section -->
-    <div id="${n}search" class="portlet-section" role="region">
-
-      <div class="portlet-section-body">
-
-        <form action="${ formUrl }" method="POST">
-            <input id="${n}searchInput" class="searchInput" name="query" value="${ fn:escapeXml(query )}"/>
-            <input type="submit" value="<spring:message code="search.submit"/>"/>
-        </form>
-        
-        <c:if test="${hitMaxQueries}">
-            <div>
-                <spring:message code="search.rate.limit.reached"/>
-            </div>
-        </c:if>
-
-        <c:if test="${not empty results}">
-
-            <div class="portlet-section" role="region">
-          
-                <div class="content">
-                    <div id="${n}searchResults" class="hidden">
-                        <ul class="searchTabsContainer">
-                            <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
-                            <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
-                                <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span></a></li>
-                            </c:forEach>
-                        </ul>
-
-                        <%--
-                         | result.first is the SearchResult object
-                         | result.second is the calculated URL
-                         +--%>
-                        
-                        <!-- Write out the default results tab -->
-                        <div id="${n}_DEFAULT_TAB">
-                          <div class="search-results">
-                            <c:forEach items="${ results[defaultTabKey] }" var="result">
-                              <div class="search-result">
-                                <div>
-                                  <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
-                                </div>
-                                <div class="result_excerpt">${ result.first.summary }</div>
-                                <%-- Start of display marketplace specific information --%>
-                                <c:if test="${up:contains(result.first.type, 'marketplace')}">
-                                	<a class="marketplace_entry_link" href="${pURL:getStringFromPortletUrl(result.first.portletUrl, pageContext.request)}">About this app</a>                             	
-                                </c:if>
-                                <%-- End of display marketplace specific information --%>
-                              </div>
-                            </c:forEach>
-                          </div>
-                        </div>
-                        
-                        <!-- write out each additional results tab -->
-                        <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
-                          <div id="${n}_${loopStatus.index}" class="${tabKey}">
-                            <div class="search-results">
-                              <c:forEach items="${ results[tabKey] }" var="result">
-                                <div class="search-result">
-                                  <div>
-                                    <a class="result_link" href="${result.second}"><span class="result_title">${ result.first.title }</span></a>
-                                  </div>
-                                  <div class="result_excerpt">${ result.first.summary }</div>
-                                </div>
-                              </c:forEach>
-                            </div>
-                          </div>
-                        </c:forEach>
-
-                    </div>
-                </div>
-            </div>
-        </c:if>
-      </div>
+    <!-- Portlet Titlebar
+        <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+        <h2 class="title" role="heading"><spring:message code="search"/></h2>
     </div>
-  </div>
+    -->
+
+    <!-- Portlet Body -->
+    <div class="fl-widget-content portlet-body" role="main">
+  
+        <!-- Portlet Section -->
+        <div id="${n}search" class="portlet-section" role="region">
+
+            <div class="portlet-section-body">
+
+                <form action="${ formUrl }" class="form-inline" style="margin-bottom:10px;" method="POST">
+                    <div class="form-group">
+                        <input id="${n}searchInput" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}"/>
+                        <input type="submit" class="btn btn-default" value="<spring:message code="search.submit"/>"/>
+                    </div>
+                </form>
+
+                <c:if test="${hitMaxQueries}">
+                    <div>
+                        <spring:message code="search.rate.limit.reached"/>
+                    </div>
+                </c:if>
+
+                <c:if test="${not empty results}">
+
+                    <div class="portlet-section" role="region">
+
+                        <div class="content">
+                            <div id="${n}searchResults" class="hidden">
+                                <ul class="searchTabsContainer">
+                                    <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
+                                    <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
+                                        <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span></a></li>
+                                    </c:forEach>
+                                </ul>
+
+                                <%--
+                                 | result.first is the SearchResult object
+                                 | result.second is the calculated URL
+                                 +--%>
+
+                                <!-- Write out the default results tab -->
+                                <div id="${n}_DEFAULT_TAB">
+                                    <div class="search-results">
+                                        <c:forEach items="${ results[defaultTabKey] }" var="result">
+                                            <div class="search-result">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading">
+                                                        <h3 class="panel-title"><a class="result_link" href="${result.second}"><span class="result_title"><i class="fa fa-arrow-circle-right"></i> ${ result.first.title }</span></a></h3>
+                                                    </div>
+                                                    <div class="panel-body">
+                                                        <p class="result_excerpt">${ result.first.summary }</p>
+                                                    </div>
+                                                    <%-- Start of display marketplace specific information --%>
+                                                    <c:if test="${up:contains(result.first.type, 'marketplace')}">
+                                                        <div class="panel-footer">
+                                                            <p><a class="marketplace_entry_link" href="${pURL:getStringFromPortletUrl(result.first.portletUrl, pageContext.request)}">About this app</a>
+                                                        </div>
+                                                    </c:if>
+                                                    <%-- End of display marketplace specific information --%>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+
+                                <!-- write out each additional results tab -->
+                                <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
+                                    <div id="${n}_${loopStatus.index}" class="${tabKey}">
+                                        <div class="search-results">
+                                            <c:forEach items="${ results[tabKey] }" var="result">
+                                                <div class="search-result">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title"><a class="result_link" href="${result.second}"><span class="result_title"><i class="fa fa-external-link"></i> ${ result.first.title }</span></a></h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <p class="result_excerpt">${ result.first.summary }</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
@@ -143,7 +141,7 @@ searchjQ["${n}"].jQuery = jQuery.noConflict(true);
 
 <%-- Only set prepopulateAutoSuggestUrl if the portlet preference is not empty. --%>
 <c:if test="${not empty portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}">
-<c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
+    <c:set var="prepopulateAutoSuggestUrl" value="${pageContext.request.contextPath}${portletPreferencesValues['prepopulateAutoSuggestUrl'][0]}"/>
 </c:if>
 
 searchjQ["${n}"].jQuery(document).ready(function() {
