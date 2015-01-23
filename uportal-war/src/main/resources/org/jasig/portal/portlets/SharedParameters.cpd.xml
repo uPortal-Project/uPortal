@@ -43,38 +43,19 @@
         </parameter>
 
         <parameter>
-            <name>showChrome</name>
-            <label>show.portlet.window.chrome</label>
-            <single-choice-parameter-input display="select">
-                <default>true</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
-            </single-choice-parameter-input>
-        </parameter>
-
-        <parameter>
             <name>alternativeMaximixedLink</name>
             <label>open.alternative.url.in.maximized.view</label>
             <single-text-parameter-input display="text"/>
         </parameter>
 
         <parameter>
-            <name>alternate</name>
-            <label>use.alternate.appearance</label>
-            <single-choice-parameter-input display="select">
-                <default>false</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
-            </single-choice-parameter-input>
-        </parameter>
-
-        <parameter>
-            <name>highlight</name>
-            <label>use.highlighted.appearance</label>
-            <single-choice-parameter-input display="select">
-                <default>false</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
+            <name>chromeStyle</name>
+            <label>chrome.style</label>
+            <single-choice-parameter-input>
+                <default>default</default>
+                <option value="default" label="default"/>
+                <option value="no-chrome" label="no-chrome"/>
+                <option value="highlighted" label="highlighted"/>
             </single-choice-parameter-input>
         </parameter>
 
@@ -124,7 +105,7 @@
             <single-choice-parameter-input display="select">
                 <default>true</default>
                 <option value="true" label="true"/>
-                <option value="false" label="true"/>
+                <option value="false" label="false"/>
             </single-choice-parameter-input>
         </parameter>
 
