@@ -115,10 +115,10 @@ public class ApiUrlBuilderService implements UrlBuilderService {
 						new UrlTemplate("/p/ssp", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 				put("mygps",
-						new UrlTemplate("/p/mygps", Collections
+						new UrlTemplate("/p/my-gps", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 				put("reports",
-						new UrlTemplate("/p/reports", Collections
+						new UrlTemplate("/p/SSP_Reports", Collections
 								.unmodifiableMap(new HashMap<String, String>())));
 
 			}
