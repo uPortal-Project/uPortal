@@ -36,4 +36,13 @@ public interface IUserLoginRegistry {
      */
     public void storeUserLogin(String username, ReadableInstant momentOfLogin);
 
+    /**
+     * Retrieve from the registry the most recent login by a given username,
+     * or null if none.
+     *
+     * @param username non-null username of user who might have previously logged in
+     * @return the most recent login by the given user, or null if none.
+     */
+    public IUserLogin mostRecentLoginBy(String username);
+
 }

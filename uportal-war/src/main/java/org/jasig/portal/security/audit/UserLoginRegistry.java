@@ -45,6 +45,10 @@ public class UserLoginRegistry
 
     }
 
+    @Override public IUserLogin mostRecentLoginBy(final String username) {
+        return this.userLoginDao.readMostRecentUserLogin(username);
+    }
+
     @Autowired
     public void setUserLoginDao(final IUserLoginDao userLoginDao) {
         this.userLoginDao = userLoginDao;
