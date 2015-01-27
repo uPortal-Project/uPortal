@@ -39,4 +39,13 @@ public interface IAuditService {
      */
     public void recordLogin(String username, ReadableInstant momentOfLogin);
 
+    /**
+     * Get the timestamp at which the given user most recently logged in,
+     * or null if the given user is not known to have previously logged in.
+     *
+     * @param username non-null username
+     * @return instant of the most recent known login for user, or null if none.
+     */
+    public ReadableInstant timestampOfMostRecentLoginBy(String username);
+
 }

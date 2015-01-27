@@ -19,12 +19,17 @@
 
 package org.jasig.portal.security.audit;
 
+import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.joda.time.ReadableInstant;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -86,6 +91,43 @@ public class AuditServiceTest {
         final Instant oneMinuteIntoTheFuture = Instant.now().plus(60 * 1000);
 
         serviceUnderTest.recordLogin("someone", oneMinuteIntoTheFuture);
+    }
+
+    /**
+     * Test that the audit service reflects the timestamp of the most recent login as reported by
+     * the injected registry.
+     */
+    @Test
+    public void reportsMostRecentLogin() {
+
+        final ReadableInstant oneDayAgo = Instant.now().minus(Duration.standardDays(1));
+
+        final IUserLogin buckyRecentLogin = new IUserLogin() {
+            @Override public String getUserIdentifier() {
+                return "bucky_badger";
+            }
+
+            @Override public ReadableInstant getInstant() {
+                return oneDayAgo;
+            }
+        };
+
+        when(userLoginRegistry.mostRecentLoginBy("bucky_badger")).thenReturn(buckyRecentLogin);
+
+        assertEquals(oneDayAgo,  serviceUnderTest.timestampOfMostRecentLoginBy("bucky_badger"));
+
+    }
+
+    /**
+     * Test that the audit service returns null when no known last login for a user.
+     */
+    @Test
+    public void reportsNoKnownLastLogin() {
+
+        when(userLoginRegistry.mostRecentLoginBy("bucky_badger")).thenReturn(null);
+
+        assertNull(serviceUnderTest.timestampOfMostRecentLoginBy("bucky_badger"));
+
     }
 
 }

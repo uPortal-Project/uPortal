@@ -70,6 +70,17 @@ public class AuditService
 
     }
 
+    @Override public ReadableInstant timestampOfMostRecentLoginBy(final String username) {
+
+        final IUserLogin mostRecentLoginByUser = this.userLoginRegistry.mostRecentLoginBy(username);
+
+        if (null == mostRecentLoginByUser) {
+            return null;
+        }
+
+        return mostRecentLoginByUser.getInstant();
+    }
+
     @Autowired
     public void setUserLoginRegistry(final IUserLoginRegistry userLoginRegistry) {
         this.userLoginRegistry = userLoginRegistry;
