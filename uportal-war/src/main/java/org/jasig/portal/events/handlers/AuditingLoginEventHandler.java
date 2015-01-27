@@ -20,6 +20,7 @@
 package org.jasig.portal.events.handlers;
 
 import org.jasig.portal.events.LoginEvent;
+import org.jasig.portal.security.IdentitySwapperManager;
 import org.jasig.portal.security.audit.IAuditService;
 import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +38,25 @@ public class AuditingLoginEventHandler
     implements ApplicationListener<LoginEvent> {
 
     /**
+     * Uses this to determine if login event is the context of an impersonation.
+     * May be null since optionally auto-wired.
+     */
+    // autowired
+    private IdentitySwapperManager identitySwapperManager;
+
+    /**
      * Audit Service that this event handler apprises of logins.
      */
     private IAuditService auditService;
 
     @Override
     public void onApplicationEvent(final LoginEvent event) {
+
+        if (null != identitySwapperManager
+            && identitySwapperManager.isImpersonating(event.getPortalRequest())) {
+            // short circuit and do not record the impersonated login.
+            return;
+        }
 
         final String username = event.getPerson().getUserName();
         final Instant instant = new Instant(event.getTimestamp());
@@ -54,5 +68,10 @@ public class AuditingLoginEventHandler
     @Autowired
     public void setAuditService(final IAuditService auditService) {
         this.auditService = auditService;
+    }
+
+    @Autowired(required = false)
+    public void setIdentitySwapperManager(final IdentitySwapperManager identitySwapperManager) {
+        this.identitySwapperManager = identitySwapperManager;
     }
 }
