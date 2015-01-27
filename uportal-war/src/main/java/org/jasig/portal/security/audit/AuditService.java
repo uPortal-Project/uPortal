@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
  * Obvious implementation of IAuditService.
  * Service layer in the Service-Registry-DAO architecture.
  */
-@Service
+@Service("auditService")
 public class AuditService
     implements IAuditService {
 
