@@ -58,4 +58,16 @@ public class UserLoginRegistryTest {
         verify(userLoginDao).createUserLogin("username", now);
     }
 
+    /**
+     * Test that registered a guest user login does not yield a create call on the injected DAO.
+     */
+    @Test
+    public void ignoresGuestUserLogins() {
+        final Instant now = Instant.now();
+
+        registryUnderTest.storeUserLogin("guest", now);
+
+        verifyZeroInteractions(userLoginDao);
+    }
+
 }

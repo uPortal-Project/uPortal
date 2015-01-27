@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 /**
  * Obvious, DAO-backed implementation of IUserLoginRegistry.
  * Registry layer in the Service-Registry-DAO-JPA architecture.
+ * Applies the policy of not storing the login timestamp for the "guest" user.
+ * @since uPortal 4.2
  */
 @Component
 public class UserLoginRegistry
@@ -37,7 +39,9 @@ public class UserLoginRegistry
     @Override
     public void storeUserLogin(final String username, final ReadableInstant momentOfLogin) {
 
-        this.userLoginDao.createUserLogin(username, momentOfLogin);
+        if (!"guest".equals(username)) {
+            this.userLoginDao.createUserLogin(username, momentOfLogin);
+        }
 
     }
 
