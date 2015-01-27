@@ -74,7 +74,7 @@ public class AuditingLoginEventHandlerTest {
                 (List<String>) ImmutableList.of("student", "employee"));
 
         final LoginEvent loginEvent = new LoginEvent(groups, attributes,
-            "example.com", sessionId, SystemPerson.INSTANCE,  /* request */ null,
+            "example.com", sessionId, SystemPerson.INSTANCE,  request,
             /* source */ this);
 
 
