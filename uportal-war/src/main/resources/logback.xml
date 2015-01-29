@@ -146,11 +146,11 @@
   </logger>
   -->
   
-  <!-- Uncomment to see the XML at various stages in the rendering pipeline
+  <!-- Uncomment to see the XML at various stages in the rendering pipeline -->
   <logger name="org.jasig.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
-  -->
+  <!-- -->
 
   <!-- Uncomment to see fragment activation errors
   <logger name="org.jasig.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">

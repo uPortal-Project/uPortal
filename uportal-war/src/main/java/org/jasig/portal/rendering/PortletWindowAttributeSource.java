@@ -91,7 +91,7 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
         final Collection<Attribute> attributes = new LinkedList<Attribute>();
         
         //Add window state data
-        final WindowState windowState = portletWindow.getWindowState();
+        final WindowState windowState = getWindowState(request, portletWindow);
         final Attribute windowStateAttribute = xmlEventFactory.createAttribute("windowState", windowState.toString());
         attributes.add(windowStateAttribute);
         
@@ -121,5 +121,20 @@ public class PortletWindowAttributeSource implements AttributeSource, BeanNameAw
         }
         
         return cacheKeyBuilder.build();
+    }
+
+
+    /**
+     * Get the window state for the given IPortletWindow object.
+     *
+     * Extension point.  Used by the FixedWindowStateAttributeSource to render a theme specific
+     * window state instead of the actual window state specified by the portletWindow object.
+     *
+     * @param request the HTTP request
+     * @param window the portlet window to get the state for
+     * @return the window state to use for 'window'
+     */
+    protected WindowState getWindowState(HttpServletRequest request, IPortletWindow window) {
+        return window.getWindowState();
     }
 }
