@@ -11,8 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
- * Custom attribute source that ignore the actual window state of a portlet
- * and uses the window state specified in the theme, if present.
+ * Custom attribute source that can override the window state.
  *
  * This is intended for the JSON layout theme where it puts all the portlets
  * in minimized mode to reduce render cost.   It previously tried to set the
@@ -26,25 +25,22 @@ import javax.servlet.http.HttpServletRequest;
  *
  * See UP-4364
  *
+ * @since 4.2
+ *
  * @author Josh Helmer, jhelmer.unicon.net
  */
-public class FixedWindowStateAttributeSource extends PortletWindowAttributeSource {
-    private StylesheetAttributeSource stylesheetAttributeSource;
+public class WindowStateAttributeSource extends PortletWindowAttributeSource {
+    private WindowState windowState;
 
 
-
-    @Required
-    public void setStylesheetAttributeSource(StylesheetAttributeSource stylesheetAttributeSource) {
-        this.stylesheetAttributeSource = stylesheetAttributeSource;
+    public void setWindowState(final WindowState windowState) {
+        this.windowState = windowState;
     }
+
 
     @Override
     protected WindowState getWindowState(HttpServletRequest request, IPortletWindow window) {
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetAttributeSource.getStylesheetDescriptor(request);
-
-        final IStylesheetParameterDescriptor defaultWindowStateParam = stylesheetDescriptor.getStylesheetParameterDescriptor("dashboardForcedWindowState");
-        if (defaultWindowStateParam != null) {
-            WindowState windowState = PortletUtils.getWindowState(defaultWindowStateParam.getDefaultValue());
+        if (windowState != null) {
             return windowState;
         }
 

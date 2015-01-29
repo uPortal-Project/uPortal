@@ -82,8 +82,8 @@
     <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
         <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.FixedWindowStateAttributeSource">
-                <property name="stylesheetAttributeSource" ref="jsonThemeAttributeSource"/>
+            <bean class="org.jasig.portal.rendering.WindowStateAttributeSource">
+                <property name="windowState" value="#{T(javax.portlet.WindowState).MINIMIZED}"/>
             </bean>
         </property>
     </bean>
