@@ -49,45 +49,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 --%>
 
 <%-- Styles specific to this portlet --%>
-<style type="text/css">
-    #${n} .portlet-section {
-        margin-bottom: 2em;
-    }
 
-    #${n} .portlet-section .titlebar {
-        margin: 2em 0;
-    }
-
-    #${n} .portlet-section .titlebar .title {
-        background-color: #f5f6f7;
-        border-bottom: 2px solid #eee;
-        border-radius: 4px;
-        font-weight: 400;
-        margin: 0;
-        padding: 0.25em 1em;
-    }
-
-    #${n} .form-group label {
-        color: #000;
-    }
-
-    #${n} .buttons {
-        border-top: 1px dotted #ccc;
-        border-bottom: 1px dotted #ccc;
-        margin: 1em 0;
-        padding: 1em 0;
-    }
-
-    #${n} .glyphicon-info-sign {
-        color: #3a7eef;
-    }
-
-    #${n} .name-title-mismatch-warn {
-        display: none;
-    }
-</style>
-
-<form:form modelAttribute="portlet" action="${queryUrl}" method="POST" role="form" class="form-horizontal">
+<form:form modelAttribute="portlet" action="${queryUrl}" method="POST" role="form" class="form-horizontal portlet-config">
     <!-- Portlet -->
     <div class="fl-widget portlet ptl-mgr view-basicinfo" id="${n}" role="section">
 
@@ -96,8 +59,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <h2 class="title" role="heading">
                 <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
             </h2>
-        </div>
-        <!-- end: portlet-titlebar -->
+        </div> <!-- end: portlet-titlebar -->
 
         <!-- Portlet Content -->
         <div class="fl-widget-content content portlet-content" role="main">
@@ -115,143 +77,117 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
-                <div class="titlebar">
-                    <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
+                <div class="content row">
+                    <div class="col-md-6">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading"><spring:message code="summary.information"/></h3>
+                        </div>
+                        <div class="form-group">
+                            <span class="col-sm-4 control-label">
+                                <label for="portletTitle"><spring:message code="portlet.title"/></label>
+                                <span class="glyphicon glyphicon-info-sign"
+                        title="<spring:message code='portlet.title.tooltip'/>" data-toggle="tooltip"
+                        data-placement="top"></span>
+                            </span>
+                            <div class="col-sm-8">
+                                <form:input path="title" type="text" class="form-control" id="portletTitle"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <span class="col-sm-4 control-label">
+                                <label for="portletName"><spring:message code="portlet.name"/></label>
+                                <span class="glyphicon glyphicon-info-sign"
+                            title="<spring:message code='portlet.name.tooltip'/>" data-toggle="tooltip"
+                            data-placement="top"></span>
+                            </span>
+                            <div class="col-sm-8">
+                                <form:input path="name" type="text" class="form-control" id="portletName"/>
+                            </div>
+                        </div>
+                        <div class="form-group name-title-mismatch-warn">
+                            <div class="col-sm-12">
+                                <div class="alert alert-info">
+                                    <spring:message code="portlet.name.title.mismatch"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <span class="col-sm-4 control-label">
+                                <label for="portletFname"><spring:message code="portlet.functional.name"/></label>
+                                <span class="glyphicon glyphicon-info-sign"
+                                title="<spring:message code='portlet.functional.name.tooltip'/>" data-toggle="tooltip"
+                                data-placement="top"></span>
+                            </span>
+                            <div class="col-sm-8">
+                                <form:input path="fname" type="text" class="form-control" id="portletFname"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <span class="col-sm-4 control-label">
+                                <label for="portletDescription"><spring:message code="portlet.description"/></label>
+                                <span class="glyphicon glyphicon-info-sign"
+                                title="<spring:message code='portlet.description.tooltip'/>" data-toggle="tooltip"
+                                data-placement="top"></span>
+                            </span>
+                            <div class="col-sm-8">
+                                <form:input path="description" type="text" class="form-control" id="portletDescription"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <span class="col-sm-4 control-label">
+                                <label for="portletTimeout"><spring:message code="portlet.timeout"/></label>
+                                <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>"
+                                data-toggle="tooltip" data-placement="top"></span>
+                            </span>
+                            <div class="col-sm-8">
+                                <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="titlebar">
+                            <h3 class="title" role="heading"><spring:message code="controls"/></h3>
+                        </div>
+                        <div class="form-group">
+                            <label for="portletControls" class="col-sm-3 control-label"><spring:message
+                        code="portlet.controls"/></label>
+
+                            <div class="col-sm-9">
+                                <div class="checkbox">
+                                    <label for="hasHelp">
+                                        <form:checkbox path="hasHelp"/>
+                                        <spring:message code="hasHelp"/>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label for="editable">
+                                        <form:checkbox path="editable"/>
+                                        <spring:message code="editable"/>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label for="configurable">
+                                        <form:checkbox path="configurable"/>
+                                        <spring:message code="configurable"/>
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label for="hasAbout">
+                                        <form:checkbox path="hasAbout"/>
+                                        <spring:message code="hasAbout"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="content">
-                    <div class="form-group">
-                        <span class="col-sm-3 control-label">
-                            <label for="portletTitle"><spring:message code="portlet.title"/></label>
-                            <span class="glyphicon glyphicon-info-sign"
-                                  title="<spring:message code='portlet.title.tooltip'/>" data-toggle="tooltip"
-                                  data-placement="top"></span>
-                        </span>
-
-                        <div class="col-sm-9">
-                            <form:input path="title" type="text" class="form-control" id="portletTitle"/>
-                        </div>
-                    </div>
-                    <div class="form-group name-title-mismatch-warn">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <div class="alert alert-info">
-                                <spring:message code="portlet.name.title.mismatch"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <span class="col-sm-3 control-label">
-                            <label for="portletName"><spring:message code="portlet.name"/></label>
-                            <span class="glyphicon glyphicon-info-sign"
-                                  title="<spring:message code='portlet.name.tooltip'/>" data-toggle="tooltip"
-                                  data-placement="top"></span>
-                        </span>
-
-                        <div class="col-sm-9">
-                            <form:input path="name" type="text" class="form-control" id="portletName"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <span class="col-sm-3 control-label">
-                            <label for="portletFname"><spring:message code="portlet.functional.name"/></label>
-                            <span class="glyphicon glyphicon-info-sign"
-                                  title="<spring:message code='portlet.functional.name.tooltip'/>" data-toggle="tooltip"
-                                  data-placement="top"></span>
-                        </span>
-
-                        <div class="col-sm-9">
-                            <form:input path="fname" type="text" class="form-control" id="portletFname"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <span class="col-sm-3 control-label">
-                            <label for="portletDescription"><spring:message code="portlet.description"/></label>
-                            <span class="glyphicon glyphicon-info-sign"
-                                  title="<spring:message code='portlet.description.tooltip'/>" data-toggle="tooltip"
-                                  data-placement="top"></span>
-                        </span>
-
-                        <div class="col-sm-9">
-                            <form:input path="description" type="text" class="form-control" id="portletDescription"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <span class="col-sm-3 control-label">
-                            <label for="portletTimeout"><spring:message code="portlet.timeout"/></label>
-                            <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>"
-                                  data-toggle="tooltip" data-placement="top"></span>
-                        </span>
-
-                        <div class="col-sm-9">
-                            <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <!-- end: portlet-section -->
-
-            <!-- Portlet Section -->
-            <div class="portlet-section" role="region">
-                <div class="titlebar">
-                    <h3 class="title" role="heading"><spring:message code="controls"/></h3>
-                </div>
-                <div class="content">
-
-                    <div class="form-group">
-                        <label for="portletControls" class="col-sm-3 control-label"><spring:message
-                                code="portlet.controls"/></label>
-
-                        <div class="col-sm-9">
-                            <div class="checkbox">
-                                <label for="hasHelp">
-                                    <form:checkbox path="hasHelp"/>
-                                    <spring:message code="hasHelp"/>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="editable">
-                                    <form:checkbox path="editable"/>
-                                    <spring:message code="editable"/>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="configurable">
-                                    <form:checkbox path="configurable"/>
-                                    <spring:message code="configurable"/>
-                                </label>
-                            </div>
-                            <div class="checkbox">
-                                <label for="hasAbout">
-                                    <form:checkbox path="hasAbout"/>
-                                    <spring:message code="hasAbout"/>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <!-- end: portlet-section -->
-        </div>
-        <!-- end: portlet-content -->
-
-    </div>
-    <!-- end: portlet -->
-
-
-    <!-- ---------------------------------------------------------------------------------------------------------------------------------------------- -->
+            </div> <!-- end: portlet-section -->
+        </div> <!-- end: portlet-content -->
+    </div> <!-- end: portlet -->
 
     <!-- Portlet -->
     <div class="fl-widget portlet ptl-mgr view-setparameters" role="section">
-
-        <!-- Portlet Titlebar -->
-        <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-            <h2 class="title" role="heading">
-                <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
-            </h2>
-        </div>
-        <!-- end: portlet-titlebar -->
-
         <!-- Portlet Content -->
         <div class="fl-widget-content content portlet-content" role="main">
 
@@ -264,210 +200,178 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </p>
                 </div>
             </c:if>
-
-            <!-- Portlet.xml Preferences Section -->
-            <div class="portlet-section" role="region">
-                <div class="titlebar">
-                    <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
-                </div>
-                <div class="content">
-                    <p class="note" role="note"><spring:message
-                            code="default.preferences.provided.by.portlet.descriptor"/></p>
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                        <tr>
-                            <th><spring:message code="preferences"/></th>
-                            <th><spring:message code="values"/></th>
-                            <th><spring:message code="read.only.prevents.user.customization"/></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
-                            <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
-                                <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
-                                <td>
-                                    <c:forEach var="value" items="${ pref.values }">
-                                        <div>${ fn:escapeXml(value )}</div>
-                                    </c:forEach>
-                                </td>
-                                <td>${ fn:escapeXml(pref.readOnly )}</td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- END: Portlet.xml Preferences Section -->
-
-            <!-- Step Loop -->
-            <c:forEach items="${ cpd.steps }" var="step" varStatus="status">
-
-                <!-- Portlet Section -->
-                <div class="portlet-section" role="region">
-                    <div class="titlebar">
-                        <h3 class="title" role="heading">
-                            <spring:message code="${ step.name }" text="${ step.name }"/>
-                        </h3>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="portletConfigAccordionHeading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#portletConfigAccordion" aria-expanded="true" aria-controls="portletConfigAccordion">Advanced Options</a>
+                        </h4>
                     </div>
-                    <div class="content">
-                        <p class="note" role="note">${ fn:escapeXml(step.description )}</p>
+                    <div id="portletConfigAccordion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="portletConfigAccordionHeading">
+                        <div class="panel-body">
 
-                        <!-- Portlet Parameters -->
-                        <c:if test="${ fn:length(step.parameters) > 0 }">
-                            <table class="portlet-table table table-hover"
-                                   summary="<spring:message code="this.table.lists.portlet.parameters"/>">
-                                <thead>
-                                <tr>
-                                    <th><spring:message code="parameter"/></th>
-                                    <th><spring:message code="value"/></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <c:forEach items="${ step.parameters }" var="parameter">
-                                    <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
-                                    <c:choose>
-                                        <c:when test="${ parameter.parameterInput.value.display == 'HIDDEN' }">
-                                            <form:hidden path="${paramPath}"/>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tr>
-                                                <td><span class="uportal-label"><spring:message
-                                                        code="${ parameter.label }"
-                                                        text="${ parameter.label }"/>:</span>
-                                                </td>
-                                                <td>
-                                                    <editPortlet:parameterInput
-                                                            input="${ parameter.parameterInput.value }"
-                                                            path="${ paramPath }"/>
-                                                </td>
-                                            </tr>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </c:forEach>
-                                </tbody>
-                            </table>
-                        </c:if> <!-- End Portlet Parameters -->
-
-                        <c:if test="${ portlet.portlet }">
-                            <c:if test="${ fn:length(step.preferences) > 0 }">
-                                <div class="preference-options-section">
-                                    <table class="portlet-table table table-hover"
-                                           summary="<spring:message code="this.table.lists.portlet.parameters"/>">
-                                        <thead>
-                                        <tr>
-                                            <th><spring:message code="parameter"/></th>
-                                            <th><spring:message code="value"/></th>
-                                            <th><spring:message code="read.only.prevents.user.customization"/></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <c:forEach items="${ step.preferences }" var="preference">
-                                            <c:set var="paramPath"
-                                                   value="portletPreferences['${ preference.name }'].value"/>
-                                            <c:set var="overrideParamPath"
-                                                   value="portletPreferenceReadOnly['${ preference.name }'].value"/>
-                                            <c:choose>
-                                                <c:when test="${ preference.preferenceInput.value.display == 'HIDDEN' }">
-                                                    <c:set var="values"
-                                                           value="${ portlet.portletPreferences[preference.name].value }"/>
-                                                    <input type="hidden" name="${ fn:escapeXml(paramPath )}"
-                                                           value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <tr>
-                                                        <td class="preference-name"><span
-                                                                class="uportal-label"><spring:message
-                                                                code="${ preference.label }"
-                                                                text="${ preference.label }"/>:</span>
-                                                        </td>
-                                                        <td>
-                                                            <editPortlet:preferenceInput
-                                                                    input="${ preference.preferenceInput.value }"
-                                                                    path="${ paramPath }" name="${ preference.name }"
-                                                                    values="${ portlet.portletPreferences[preference.name].value }"/>
-                                                        </td>
-                                                        <td>
-                                                            <form:checkbox path="${overrideParamPath}" value="true"/>
-                                                        </td>
-                                                    </tr>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </c:forEach>
-                                        </tbody>
-                                    </table>
+                            <!-- Portlet.xml Preferences Section -->
+                            <div class="portlet-section" role="region">
+                                <div class="titlebar">
+                                    <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
                                 </div>
-                            </c:if>
-
-                            <c:if test="${ not empty step.arbitraryPreferences }">
-                                <div class="preference-options-section">
+                                <div class="content">
+                                    <p class="note" role="note"><spring:message
+                                    code="default.preferences.provided.by.portlet.descriptor"/></p>
                                     <table class="portlet-table table table-hover">
                                         <thead>
-                                        <tr>
-                                            <th><spring:message code="preference"/></th>
-                                            <th><spring:message code="value"/></th>
-                                            <th><spring:message code="read.only.prevents.user.customization"/></th>
-                                            <th></th>
-                                        </tr>
+                                            <tr>
+                                                <th width="40%"><spring:message code="preferences"/></th>
+                                                <th width="30%"><spring:message code="values"/></th>
+                                                <th width="30%"><spring:message code="read.only.prevents.user.customization"/></th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        <c:forEach items="${ arbitraryPreferenceNames }" var="name">
-                                            <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
-                                            <c:set var="overrideParamPath"
-                                                   value="portletPreferenceReadOnly['${ name }'].value"/>
-                                            <tr>
-                                                <td class="preference-name">${ fn:escapeXml(name) }</td>
-                                                <td>
-                                                    <c:forEach items="${ portlet.portletPreferences[name].value }"
-                                                               var="val">
-                                                        <div>
-                                                            <input name="portletPreferences['${fn:escapeXml(name)}'].value"
-                                                                   value="${ fn:escapeXml(val) }"/>
-                                                            <a class="delete-parameter-value-link" href="javascript:;">
-                                                                Remove
-                                                            </a>
-                                                        </div>
-                                                    </c:forEach>
-                                                    <input type="hidden"
-                                                           name="portletPreferences['${fn:escapeXml(name)}'].value"
-                                                           value=""/>
-                                                    <a class="add-parameter-value-link" href="javascript:;"
-                                                       paramName="${fn:escapeXml(name)}">Add value
-                                                    </a>
-                                                </td>
-                                                <td>
-                                                    <form:checkbox path="${overrideParamPath}" value="true"/>
-                                                </td>
-                                                <td>
-                                                    <a class="delete-parameter-link" href="javascript:;"><spring:message
-                                                            code="setParameters.deleteButton"/></a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
+                                            <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
+                                                <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
+                                                    <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
+                                                    <td>
+                                                        <c:forEach var="value" items="${ pref.values }">
+                                                            <div>${ fn:escapeXml(value )}</div>
+                                                        </c:forEach>
+                                                    </td>
+                                                    <td>${ fn:escapeXml(pref.readOnly )}</td>
+                                                </tr>
+                                            </c:forEach>
                                         </tbody>
                                     </table>
-                                    <p>
-                                        <a class="add-parameter-link" href="javascript:;"><spring:message
-                                                code="add.preference"/></a>
-                                    </p>
                                 </div>
-                            </c:if>
+                            </div> <!-- END: Portlet.xml Preferences Section -->
 
+                            <!-- Step Loop -->
+                            <c:forEach items="${ cpd.steps }" var="step" varStatus="status">
 
-                        </c:if> <!-- End Portlet Preferences -->
+                                <!-- Portlet Section -->
+                                <div class="portlet-section" role="region">
+                                    <div class="titlebar">
+                                        <h3 class="title" role="heading"><spring:message code="${ step.name }" text="${ step.name }"/></h3>
+                                    </div>
+                                    <div class="content">
+                                        <p class="note" role="note">${ fn:escapeXml(step.description )}</p>
 
-                    </div>
-                    <!-- end: content -->
+                                        <!-- Portlet Display Settings -->
+                                        <c:if test="${ fn:length(step.parameters) > 0 }">
+                                            <div class="portlet-table">
+                                                <table class=" table table-hover" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30%"><spring:message code="parameter"/></th>
+                                                            <th width="70%"><spring:message code="value"/></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:forEach items="${ step.parameters }" var="parameter">
+                                                            <c:set var="paramPath" value="parameters['${ parameter.name }'].value"/>
+                                                            <c:choose>
+                                                                <c:when test="${ parameter.parameterInput.value.display == 'HIDDEN' }">
+                                                                    <form:hidden path="${paramPath}"/>
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <tr>
+                                                                        <td class="text-right"><span class="uportal-label"><spring:message code="${ parameter.label }" text="${ parameter.label }"/>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+                                                                        <td><editPortlet:parameterInput input="${ parameter.parameterInput.value }" path="${ paramPath }"/></td>
+                                                                    </tr>
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </c:if> <!-- End Portlet Display Settings -->
 
-                </div>
-                <!-- end: portlet-section -->
+                                        <c:if test="${ portlet.portlet }">
+                                            <c:if test="${ fn:length(step.preferences) > 0 }">
+                                                <div class="preference-options-section">
+                                                    <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="40%"><spring:message code="parameter"/></th>
+                                                                <th width="30%"><spring:message code="value"/></th>
+                                                                <th width="30%"><spring:message code="read.only.prevents.user.customization"/></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <c:forEach items="${ step.preferences }" var="preference">
+                                                                <c:set var="paramPath" value="portletPreferences['${ preference.name }'].value"/>
+                                                                <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ preference.name }'].value"/>
+                                                                <c:choose>
+                                                                    <c:when test="${ preference.preferenceInput.value.display == 'HIDDEN' }">
+                                                                        <c:set var="values" value="${ portlet.portletPreferences[preference.name].value }"/>
+                                                                        <input type="hidden" name="${ fn:escapeXml(paramPath )}"  value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}"/>
+                                                                    </c:when>
+                                                                <c:otherwise>
+                                                                    <tr>
+                                                                        <td class="preference-name">
+                                                                            <span class="uportal-label"><spring:message code="${ preference.label }" text="${ preference.label }"/>:</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <editPortlet:preferenceInput input="${ preference.preferenceInput.value }" path="${ paramPath }" name="${ preference.name }" values="${ portlet.portletPreferences[preference.name].value }"/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <form:checkbox path="${overrideParamPath}" value="true"/>
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:otherwise>
+                                                                </c:choose>
+                                                            </c:forEach>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </c:if>
 
-            </c:forEach> <!-- End Step Loop -->
-        </div>
-        <!-- end: portlet-content -->
-    </div>
-    <!-- end: portlet -->
+                                            <c:if test="${ not empty step.arbitraryPreferences }">
+                                                <div class="preference-options-section">
+                                                    <table class="portlet-table table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th width="30%"><spring:message code="preference"/></th>
+                                                                <th width="30%"><spring:message code="value"/></th>
+                                                                <th width="30%"><spring:message code="read.only.prevents.user.customization"/></th>
+                                                                <th width="10%"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <c:forEach items="${ arbitraryPreferenceNames }" var="name">
+                                                                <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
+                                                                <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ name }'].value"/>
+                                                                <tr>
+                                                                    <td class="preference-name">${ fn:escapeXml(name) }</td>
+                                                                    <td>
+                                                                        <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
+                                                                            <div>
+                                                                                <input name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }"/>
+                                                                                <a class="delete-parameter-value-link btn btn-xs btn-default" href="javascript:;">Remove <i class="fa fa-minus-circle"></i></a>
+                                                                            </div>
+                                                                        </c:forEach>
+                                                                        <input type="hidden" class="form-control" name="portletPreferences['${fn:escapeXml(name)}'].value" value=""/>
+                                                                        <a class="add-parameter-value-link btn btn-xs btn-info" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value<i class="fa fa-plus-circle"></i></a>
+                                                                    </td>
+                                                                    <td><form:checkbox path="${overrideParamPath}" value="true"/></td>
+                                                                    <td><a class="delete-parameter-link btn btn-warning" href="javascript:;"><spring:message code="setParameters.deleteButton"/> <i class="fa fa-trash"></i></a></td>
+                                                                </tr>
+                                                            </c:forEach>
+                                                        </tbody>
+                                                    </table>
+                                                    <p><a class="add-parameter-link btn btn-primary" href="javascript:;"><spring:message code="add.preference"/>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></p>
+                                                </div>
+                                            </c:if>
+                                        </c:if> <!-- end: (portlet step test) -->
+                                    </div> <!-- end: content -->
+                                </div> <!-- end: portlet-section -->
+                            </c:forEach> <!-- end: (step loop) -->
+                        </div>  <!-- end: panel-body -->
+                    </div> <!-- end: panel-collapse -->
+                </div> <!-- end: panel -->
+            </div> <!-- end: accordion -->
+        </div> <!-- end: portlet-content -->
+    </div> <!-- end: portlet -->
 
-    <!-- ----------------------------------------------------------------------------------------------------------- -->
+    <!-- Portlet config parameters -->
     <div class="form-group">
         <label class="col-sm-3 control-label"><spring:message code="groups"/></label>
         <div class="col-sm-9">
@@ -482,7 +386,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
     </div>
 
-    <!-- ----------------------------------------------------------------------------------------------------------- -->
     <div class="form-group">
         <label class="col-sm-3 control-label"><spring:message code="categories"/></label>
         <div class="col-sm-9">
@@ -497,36 +400,23 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
     </div>
 
-    <!-- ---------------------------------------------------------------------------------------------------------------------------------------------- -->
-
-    <!-- Portlet -->
+    <!-- Portlet Lifecycle -->
     <div id="${n}PortletLifecycle" class="fl-widget portlet ptl-mgr view-lifecycle" role="section">
-
-        <!-- Portlet Titlebar -->
-        <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-            <h2 class="title" role="heading">
-                <spring:message code="${ completed ? 'edit.portlet' : 'register.new.portlet' }"/>
-            </h2>
-        </div>
-        <!-- end: portlet-titlebar -->
-
         <!-- Portlet Content -->
         <div class="fl-widget-content content portlet-content" role="main">
-
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
                     <h3 class="title" role="heading"><spring:message code="lifecycle.management"/></h3>
                 </div>
                 <div class="content">
-
                     <table class="portlet-table table table-hover" summary="">
                         <thead>
-                        <tr>
-                            <th><spring:message code="option"/></th>
-                            <th><spring:message code="state"/></th>
-                            <th><spring:message code="description"/></th>
-                        </tr>
+                            <tr>
+                                <th><spring:message code="option"/></th>
+                                <th><spring:message code="state"/></th>
+                                <th><spring:message code="description"/></th>
+                            </tr>
                         </thead>
                         <tfoot></tfoot>
                         <tbody>
@@ -603,70 +493,58 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <table class="portlet-table table table-hover"
                            summary="<spring:message code="publish.and.expiration.dates"/>">
                         <thead>
-                        <tr>
-                            <th><spring:message code="option"/></th>
-                            <th><spring:message code="setting"/></th>
-                        </tr>
+                            <tr>
+                                <th><spring:message code="option"/></th>
+                                <th><spring:message code="setting"/></th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
-                            <td>
-                                <form:input path="expirationDateString" size="10" cssClass="cal-datepicker"/>
-                     <span style="${ portlet.expirationDate == null ? 'display:none' : '' }">
-                     <form:select path="expirationHour">
-                         <c:forEach begin="1" end="12" var="hour">
-                             <form:option value="${ hour }"/>
-                         </c:forEach>
-                     </form:select>:<form:select path="expirationMinute">
-                         <c:forEach begin="0" end="59" var="min">
-                             <fmt:formatNumber var="m" value="${ min }" minIntegerDigits="2"/>
-                             <form:option value="${ m }"/>
-                         </c:forEach>
-                     </form:select>
-                     <form:select path="expirationAmPm">
-                         <form:option value="0" label="AM"/>
-                         <form:option value="1" label="PM"/>
-                     </form:select>
-                         (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
-                 </span>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="fl-text-align-right"><spring:message code="auto.expire.date.time"/></td>
+                                <td>
+                                    <form:input path="expirationDateString" size="10" cssClass="cal-datepicker"/>
+                                    <span style="${ portlet.expirationDate == null ? 'display:none' : '' }">
+                                        <form:select path="expirationHour">
+                                            <c:forEach begin="1" end="12" var="hour">
+                                                <form:option value="${ hour }"/>
+                                            </c:forEach>
+                                        </form:select>:
+                                        <form:select path="expirationMinute">
+                                            <c:forEach begin="0" end="59" var="min">
+                                                <fmt:formatNumber var="m" value="${ min }" minIntegerDigits="2"/>
+                                                <form:option value="${ m }"/>
+                                            </c:forEach>
+                                        </form:select>
+                                        <form:select path="expirationAmPm">
+                                            <form:option value="0" label="AM"/>
+                                            <form:option value="1" label="PM"/>
+                                        </form:select>
+                                        (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
+                                    </span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
-
                 </div>
-            </div>
-            <!-- end: portlet-section -->
+            </div> <!-- end: portlet-section -->
 
             <!-- Buttons -->
             <div class="buttons">
                 <c:if test="${supportsConfig}">
-                    <input class="button btn btn-primary" type="submit"
-                           value="<spring:message code="save.and.configure"/>" name="_eventId_saveAndConfig"/>
+                    <input class="button btn btn-primary" type="submit" value="<spring:message code="save.and.configure"/>" name="_eventId_saveAndConfig"/>
                 </c:if>
-                <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>"
-                       name="_eventId_save">
+                <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>"name="_eventId_save">
                 <c:choose>
                     <c:when test="${completed}">
-                        <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>"
-                               name="_eventId_cancel"/>
+                        <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                     </c:when>
                     <c:otherwise>
-                        <input class="button btn" type="submit" value="<spring:message code="back"/>"
-                               name="_eventId_back"/>
+                        <input class="button btn btn-default" type="submit" value="<spring:message code="back"/>"name="_eventId_back"/>
                     </c:otherwise>
                 </c:choose>
-
-            </div>
-            <!-- end: Portlet Buttons -->
-
-
-        </div>
-        <!-- end: portlet-content -->
-
-    </div>
-    <!-- end: portlet -->
+            </div><!-- end: Portlet Buttons -->
+        </div> <!-- end: portlet-content -->
+    </div><!-- end: portlet -->
 </form:form>
 
 
@@ -880,35 +758,38 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         $(document).ready(function () {
             $("div.parameter-options-section").each(function () {
                 up.ParameterEditor(this, {
-                            parameterNamePrefix: $(this).attr("prefix"),
-                            parameterBindName: 'parameters',
-                            auxiliaryBindName: 'parameterOverrides',
-                            useAuxiliaryCheckbox: true,
-                            dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
-                            multivalued: false,
-                            messages: {
-                                remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
-                                removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
-                                addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
-                            }
-                        }
-                );
+                    parameterNamePrefix: $(this).attr("prefix"),
+                    parameterBindName: 'parameters',
+                    auxiliaryBindName: 'parameterOverrides',
+                    useAuxiliaryCheckbox: true,
+                    dialog: $("#${n}addParameterDialog-" + $(this).attr("dialog")),
+                    multivalued: false,
+                    messages: {
+                        remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                        removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
+                        addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
+                    }
+                });
             });
             $("div.preference-options-section").each(function () {
                 up.ParameterEditor(this, {
-                            parameterBindName: 'portletPreferences',
-                            auxiliaryBindName: 'portletPreferenceReadOnly',
-                            useAuxiliaryCheckbox: true,
-                            dialog: $("#${n}addParameterDialog"),
-                            form: $("#${n}addParameterForm"),
-                            multivalued: true,
-                            messages: {
-                                remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
-                                removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
-                                addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
-                            }
-                        }
-                );
+                    displayClasses: {
+                        addValueLink: 'btn btn-xs btn-info',
+                        deleteValueLink: 'btn btn-xs btn-default',
+                        deleteItemLink: 'btn btn-warning'
+                    },
+                    parameterBindName: 'portletPreferences',
+                    auxiliaryBindName: 'portletPreferenceReadOnly',
+                    useAuxiliaryCheckbox: true,
+                    dialog: $("#${n}addParameterDialog"),
+                    form: $("#${n}addParameterForm"),
+                    multivalued: true,
+                    messages: {
+                        remove: '<spring:message code="remove" htmlEscape="false" javaScriptEscape="true"/>',
+                        removeParameter: '<spring:message code="setParameters.deleteButton" htmlEscape="false" javaScriptEscape="true"/>',
+                        addValue: '<spring:message code="add.value" htmlEscape="false" javaScriptEscape="true"/>'
+                    }
+                });
             });
         });
     });
