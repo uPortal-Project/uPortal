@@ -103,9 +103,9 @@ public class PortletsRESTController {
         LayoutPortlet portlet = new LayoutPortlet(portletDef);
         return new ModelAndView("json", "portlet", portlet);
       } else {
-        //throw some error code back to web call
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        return new ModelAndView("json");
       }
-      return new ModelAndView("json", "portlet", null);
     }
 
     private Set<String> getPortletCategories(IPortletDefinition pdef) {
