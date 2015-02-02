@@ -214,7 +214,16 @@
  | Template contents can be any valid XSL or XHTML.
  -->
 <xsl:template name="page.title">
-   <title><xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" /></title>
+    <title>
+        <xsl:choose>
+            <xsl:when test="//focused">
+                {up-portlet-title(<xsl:value-of select="//focused/channel/@ID" />)} | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/> | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
+            </xsl:otherwise>
+       </xsl:choose>
+   </title>
 </xsl:template>
 <!-- ========================================================================= -->
 
