@@ -18,7 +18,17 @@
  */
 package org.jasig.portal.rest.layout;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletPreference;
+
 public class LayoutPortlet {
+    private static final String CONTENT_PORTLET_PREFERENCE = "content";
+    private static final String PITHY_CONTENT_PORTLET_PREFERENCE = "pithyContent";
+    private static final String STATIC_CONTENT_PORTLET_WEBAPP_NAME = "/SimpleContentPortlet";
     private String nodeId;
     private String title;
     private String description;
@@ -27,6 +37,61 @@ public class LayoutPortlet {
     private String faIcon;
     private String fname;
     private String target;
+    private boolean isAltMaxUrl = false;
+
+    /**
+     * Fuller static content that you might display in a lightbox or so.
+     */
+    private String staticContent;
+
+    /**
+     * Pithy static content that you might display on a dashboard mosaic view or so.
+     */
+    private String pithyStaticContent;
+    
+    public LayoutPortlet() {
+      
+    }
+
+    public LayoutPortlet(IPortletDefinition portletDef) {
+      if(portletDef != null) {
+        
+        nodeId = "-1";
+        title = portletDef.getTitle();
+        description = portletDef.getDescription();
+        fname = portletDef.getFName();
+        url = portletDef.getAlternativeMaximizedLink(); //todo get normal URL if alt is missing
+        target = portletDef.getTarget();
+        isAltMaxUrl = StringUtils.isNotBlank(url);
+        IPortletDefinitionParameter iconParam = portletDef.getParameter("iconUrl");
+        if (iconParam != null) {
+            this.setIconUrl(iconParam.getValue());
+        }
+        
+        IPortletDefinitionParameter faIconParam = portletDef.getParameter("faIcon");
+        if(faIconParam != null) {
+            this.setFaIcon(faIconParam.getValue());
+        }
+        
+        boolean[] efficencyFlag = {false, false};
+        efficencyFlag[0] = !STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(portletDef.getPortletDescriptorKey().getWebAppName());
+        for(IPortletPreference pref : portletDef.getPortletPreferences()) {
+          if(!efficencyFlag[0] && CONTENT_PORTLET_PREFERENCE.equals(pref.getName()) && pref.getValues().length == 1) {
+              this.setStaticContent(pref.getValues()[0]);
+              efficencyFlag[0] = true;
+          } else if (PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
+              && 1 == pref.getValues().length) {
+              this.setPithyStaticContent(pref.getValues()[0]);
+              efficencyFlag[1] = true;
+          }
+          
+          if(efficencyFlag[0] && efficencyFlag[1]) {
+            break;
+          }
+      }
+        
+      }
+    }
 
     public String getNodeId() {
         return nodeId;
@@ -90,6 +155,30 @@ public class LayoutPortlet {
 
     public void setTarget(String target) {
       this.target = target;
+    }
+
+    public String getStaticContent() {
+      return staticContent;
+    }
+
+    public void setStaticContent(String staticContent) {
+      this.staticContent = staticContent;
+    }
+
+    public String getPithyStaticContent() {
+        return this.pithyStaticContent;
+    }
+
+    public void setPithyStaticContent(final String pithyStaticContent) {
+      this.pithyStaticContent = pithyStaticContent;
+    }
+
+    public boolean isAltMaxUrl() {
+      return isAltMaxUrl;
+    }
+
+    public void setAltMaxUrl(boolean isAltMaxUrl) {
+      this.isAltMaxUrl = isAltMaxUrl;
     }
 
 }

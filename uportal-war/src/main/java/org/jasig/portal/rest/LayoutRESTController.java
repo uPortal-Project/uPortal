@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
@@ -32,6 +34,7 @@ import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.rest.layout.LayoutPortlet;
 import org.jasig.portal.rest.layout.TabListOfNodes;
@@ -135,27 +138,12 @@ public class LayoutRESTController {
             for (int i = 0; i < portletNodes.getLength(); i++) {
                 try {
                     
-                    LayoutPortlet portlet = new LayoutPortlet();
+                    
                     NamedNodeMap attributes = portletNodes.item(i).getAttributes();
-                    portlet.setTitle(attributes.getNamedItem("title").getNodeValue());
-                    portlet.setDescription(attributes.getNamedItem("description").getNodeValue());
-                    portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
-                    portlet.setFname(attributes.getNamedItem("fname").getNodeValue());
-                    
                     IPortletDefinition def = portletDao.getPortletDefinitionByFname(attributes.getNamedItem("fname").getNodeValue());
+                    LayoutPortlet portlet = new LayoutPortlet(def);
                     
-                    //get icons
-                    IPortletDefinitionParameter iconParam = def.getParameter("iconUrl");
-                    if (iconParam != null) {
-                        portlet.setIconUrl(iconParam.getValue());
-                    }
-                    
-                    IPortletDefinitionParameter faIconParam = def.getParameter("faIcon");
-                    if(faIconParam != null) {
-                        portlet.setFaIcon(faIconParam.getValue());
-                    }
-                    
-                    portlet.setTarget(def.getTarget());
+                    portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
                     
                     //get alt max URL
                     String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
