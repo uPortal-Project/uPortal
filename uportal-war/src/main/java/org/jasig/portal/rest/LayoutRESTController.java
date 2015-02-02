@@ -94,6 +94,7 @@ public class LayoutRESTController {
         this.portletDao = portletDao;
     }
     
+    
     /**
      * A REST call to get a json feed of the current users layout
      * @param request The servlet request. Utilized to get the users instance and eventually there layout
@@ -160,15 +161,17 @@ public class LayoutRESTController {
                     String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
                     if( alternativeMaximizedLink != null) {
                     	portlet.setUrl(alternativeMaximizedLink);
+                    	portlet.setAltMaxUrl(true);
                     } else {
-	                    // get the maximized URL for this portlet
-	                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
-	                    final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
-	                    if (targetPortletWindowId != null) {
-	                        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
-	                        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
-	                    }
-	                    portlet.setUrl(portalUrlBuilder.getUrlString());
+                        // get the maximized URL for this portlet
+                        final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
+                        final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
+                        if (targetPortletWindowId != null) {
+                            final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
+                            portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+                        }
+                        portlet.setUrl(portalUrlBuilder.getUrlString());
+                        portlet.setAltMaxUrl(false);
                     }
                     portlets.add(portlet);
 
