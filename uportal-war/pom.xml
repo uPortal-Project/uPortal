@@ -981,22 +981,6 @@
                 <version>${resource-server.version}</version>
                 <executions>
                     <execution>
-                        <id>aggregate-universality-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>batch-aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
-                            <includes>
-                                <include>media/skins/universality/**/skin.xml</include>
-                            </includes>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>aggregate-muniversality-skins</id>
                         <phase>prepare-package</phase>
                         <goals>

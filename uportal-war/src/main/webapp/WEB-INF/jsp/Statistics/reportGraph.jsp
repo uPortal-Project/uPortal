@@ -67,7 +67,7 @@
             </div>
             <p id="${n}_chartLoading" class="portlet-msg-info" style="display: none">
                 <spring:message var="loadingStr" code="loading" />
-                <img alt="${loadingStr} ..." src="${renderRequest.contextPath}/media/skins/universality/common/images/loading.gif">
+                <img alt="${loadingStr} ..." src="${renderRequest.contextPath}/media/skins/common/images/loading.gif">
                 <span> ${loadingStr} ${reportNameStr}</span>
             </p>
             <div id="${n}_chart" class="chart"></div>
