@@ -201,10 +201,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </c:if>
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div class="panel-heading" role="tab" id="portletConfigAccordionHeading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#portletConfigAccordion" aria-expanded="true" aria-controls="portletConfigAccordion">Advanced Options</a>
+                            <i class="fa fa-chevron-up"></i> <a data-toggle="collapse" data-parent="#accordion" href="#portletConfigAccordion" aria-expanded="true" aria-controls="portletConfigAccordion">Advanced Options</a>
                         </h4>
                     </div>
                     <div id="portletConfigAccordion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="portletConfigAccordionHeading">
@@ -371,33 +371,53 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div> <!-- end: portlet-content -->
     </div> <!-- end: portlet -->
 
-    <!-- Portlet config parameters -->
-    <div class="form-group">
-        <label class="col-sm-3 control-label"><spring:message code="groups"/></label>
-        <div class="col-sm-9">
-            <p class="form-control-static">
-                <c:forEach items="${ portlet.groups }" var="group">
-                    <a class="label label-info" href="${ chooseGroupUrl }">${ fn:escapeXml(group.name )}</a>
-                </c:forEach>
-            </p>
-        </div>
-        <div class="col-sm-offset-3">
-            <input class="button btn" type="submit" value="<spring:message code="edit.groups"/>" name="_eventId_chooseGroup"/>
-        </div>
-    </div>
+    <!-- Portlet config groups and categories -->
+    <div id="${n}PortletGroupsCategories" class="fl-widget portlet ptl-mgr view-groups-cats" role="section">
+        <!-- Portlet Content -->
+        <div class="fl-widget-content content portlet-content" role="main">
+            <!-- Portlet Section -->
+            <div class="portlet-section" role="region">
+                <div class="titlebar">
+                    <h3 class="title" role="heading">Groups and Categories</h3>
+                </div>
+                <div class="content row">
 
-    <div class="form-group">
-        <label class="col-sm-3 control-label"><spring:message code="categories"/></label>
-        <div class="col-sm-9">
-            <p class="form-control-static">
-                <c:forEach items="${ portlet.categories }" var="category">
-                    <a class="label label-info" href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a>
-                </c:forEach>
-            </p>
-        </div>
-        <div class="col-sm-offset-3">
-            <input class="button btn" type="submit" value="<spring:message code="edit.categories"/>" name="_eventId_chooseCategory"/>
-        </div>
+                    <!-- Portlet groups -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label h3"><spring:message code="groups"/></label>
+                            <div class="col-sm-offset-4">
+                                <button type="submit" class="button btn btn-primary" name="_eventId_chooseGroup"><spring:message code="edit.groups"/>&nbsp;&nbsp;<i class="fa fa-users"></i></button>
+                            </div>
+                            <div class="col-sm-offset-4">
+                                <ul class="config-list">
+                                    <c:forEach items="${ portlet.groups }" var="group">
+                                        <li><a href="${ chooseGroupUrl }">${ fn:escapeXml(group.name )}</a></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> <!-- end: portlet groups -->
+
+                    <!-- Portlet categories -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label h3"><spring:message code="categories"/></label>
+                            <div class="col-sm-offset-4">
+                                <button type="submit" class="button btn btn-primary" name="_eventId_chooseCategory"><spring:message code="edit.categories"/>&nbsp;&nbsp;<i class="fa fa-folder-open"></i></button>
+                            </div>
+                            <div class="col-sm-offset-4">
+                                <ul class="config-list">
+                                    <c:forEach items="${ portlet.categories }" var="category">
+                                        <li><a href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a></li>
+                                    </c:forEach>
+                                </ul>
+                            </div>
+                        </div>
+                    </div> <!-- end: portlet categories -->
+                </div>
+            </div>
+        </div> <!-- end: portlet config groups and categories -->
     </div>
 
     <!-- Portlet Lifecycle -->
@@ -410,29 +430,30 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <h3 class="title" role="heading"><spring:message code="lifecycle.management"/></h3>
                 </div>
                 <div class="content">
-                    <table class="portlet-table table table-hover" summary="">
-                        <thead>
-                            <tr>
-                                <th><spring:message code="option"/></th>
-                                <th><spring:message code="state"/></th>
-                                <th><spring:message code="description"/></th>
-                            </tr>
-                        </thead>
-                        <tfoot></tfoot>
-                        <tbody>
-                        <c:forEach items="${ lifecycleStates }" var="lifecycleState">
-                            <tr>
-                                <td align="center">
-                                    <form:radiobutton path="lifecycleState" value="${ lifecycleState }"
-                                                      cssClass="portlet-form-input-field lifecycle-state"/>
-                                </td>
-                                <td><spring:message code="lifecycle.name.${ lifecycleState }"/></td>
-                                <td><spring:message code="lifecycle.description.${ lifecycleState }"/></td>
-                            </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-
+                    <div class="preference-options-section">
+                        <table class="portlet-table table table-hover" summary="">
+                            <thead>
+                                <tr>
+                                    <th><spring:message code="option"/></th>
+                                    <th><spring:message code="state"/></th>
+                                    <th><spring:message code="description"/></th>
+                                </tr>
+                            </thead>
+                            <tfoot></tfoot>
+                            <tbody>
+                            <c:forEach items="${ lifecycleStates }" var="lifecycleState">
+                                <tr>
+                                    <td align="center">
+                                        <form:radiobutton path="lifecycleState" value="${ lifecycleState }"
+                                                          cssClass="portlet-form-input-field lifecycle-state"/>
+                                    </td>
+                                    <td><spring:message code="lifecycle.name.${ lifecycleState }"/></td>
+                                    <td><spring:message code="lifecycle.description.${ lifecycleState }"/></td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <!-- end: portlet-section -->
@@ -539,7 +560,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                     </c:when>
                     <c:otherwise>
-                        <input class="button btn btn-default" type="submit" value="<spring:message code="back"/>"name="_eventId_back"/>
+                        <input class="button btn" type="submit" value="<spring:message code="back"/>"name="_eventId_back"/>
                     </c:otherwise>
                 </c:choose>
             </div><!-- end: Portlet Buttons -->
@@ -815,5 +836,14 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             });
             updateOptionalInputs();
         });
+
+        function toggleChevron(e) {
+            $(e.target)
+            .prev('.panel-heading')
+            .find("i.fa")
+            .toggleClass('fa-chevron-down fa-chevron-up');
+            }
+        $('#accordion').on('hidden.bs.collapse', toggleChevron);
+        $('#accordion').on('shown.bs.collapse', toggleChevron);
     });
 </script>
