@@ -273,7 +273,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-content -->
   
 </div> <!-- end: portlet -->
-<script src="media/skins/universality/common/javascript/uportal/up-parameter-editor.js" language="JavaScript" type="text/javascript"></script>
+<script src="media/skins/common/javascript/uportal/up-parameter-editor.js" language="JavaScript" type="text/javascript"></script>
 <script type="text/javascript">
 	up.jQuery(function() {
 			var $ = up.jQuery;
