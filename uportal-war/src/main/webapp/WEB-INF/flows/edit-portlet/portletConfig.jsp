@@ -50,9 +50,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <%-- Styles specific to this portlet --%>
 
+<div class="fl-widget portlet ptl-mgr" id="${n}">
+
 <form:form modelAttribute="portlet" action="${queryUrl}" method="POST" role="form" class="form-horizontal portlet-config">
     <!-- Portlet -->
-    <div class="fl-widget portlet ptl-mgr view-basicinfo" id="${n}" role="section">
+    <div class="view-basicinfo" role="section">
 
         <!-- Portlet Titlebar -->
         <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
@@ -104,7 +106,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <form:input path="name" type="text" class="form-control" id="portletName"/>
                             </div>
                         </div>
-                        <div class="form-group name-title-mismatch-warn">
+                        <div class="form-group name-title-mismatch-warn" style="display: none">
                             <div class="col-sm-12">
                                 <div class="alert alert-info">
                                     <spring:message code="portlet.name.title.mismatch"/>
@@ -131,16 +133,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             </span>
                             <div class="col-sm-8">
                                 <form:input path="description" type="text" class="form-control" id="portletDescription"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <span class="col-sm-4 control-label">
-                                <label for="portletTimeout"><spring:message code="portlet.timeout"/></label>
-                                <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>"
-                                data-toggle="tooltip" data-placement="top"></span>
-                            </span>
-                            <div class="col-sm-8">
-                                <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
                             </div>
                         </div>
                     </div>
@@ -209,39 +201,62 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     </div>
                     <div id="portletConfigAccordion" class="panel-collapse collapse" role="tabpanel" aria-labelledby="portletConfigAccordionHeading">
                         <div class="panel-body">
-
-                            <!-- Portlet.xml Preferences Section -->
                             <div class="portlet-section" role="region">
                                 <div class="titlebar">
-                                    <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
+                                    <h3 class="title" role="heading"><spring:message code="portlet.options" text="Portlet Options"/></h3>
                                 </div>
-                                <div class="content">
-                                    <p class="note" role="note"><spring:message
-                                    code="default.preferences.provided.by.portlet.descriptor"/></p>
-                                    <table class="portlet-table table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th width="40%"><spring:message code="preferences"/></th>
-                                                <th width="30%"><spring:message code="values"/></th>
-                                                <th width="30%"><spring:message code="read.only.prevents.user.customization"/></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
-                                                <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
-                                                    <td class="preference-name">${ fn:escapeXml(pref.name )}</td>
-                                                    <td>
-                                                        <c:forEach var="value" items="${ pref.values }">
-                                                            <div>${ fn:escapeXml(value )}</div>
-                                                        </c:forEach>
-                                                    </td>
-                                                    <td>${ fn:escapeXml(pref.readOnly )}</td>
+                                <div class="portlet-section" role="region">
+                                    <div class="form-group">
+                                        <span class="col-sm-2 control-label">
+                                            <label for="portletTimeout"><spring:message code="portlet.timeout"/></label>
+                                            <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>"
+                                                  data-toggle="tooltip" data-placement="top"></span>
+                                        </span>
+                                        <div class="col-sm-4">
+                                            <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Portlet.xml Preferences Section -->
+                            <c:if test="${not empty portletDescriptor.portletPreferences.portletPreferences}">
+                                <div class="portlet-section" role="region">
+                                    <div class="titlebar">
+                                        <h3 class="title" role="heading"><spring:message code="portlet.xml.preferences"/></h3>
+                                    </div>
+                                    <div class="content">
+                                        <p class="note" role="note"><spring:message
+                                        code="default.preferences.provided.by.portlet.descriptor"/></p>
+                                        <table class="portlet-table table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th width="40%"><spring:message code="preferences"/></th>
+                                                    <th width="30%"><spring:message code="values"/></th>
+                                                    <th width="30%"><spring:message code="read.only.prevents.user.customization"/></th>
                                                 </tr>
-                                            </c:forEach>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div> <!-- END: Portlet.xml Preferences Section -->
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach items="${ portletDescriptor.portletPreferences.portletPreferences }" var="pref">
+                                                    <tr class="${ up:containsKey(portlet.portletPreferences, pref.name) ? 'override-preference' : '' }">
+                                                        <td class="preference-name">
+                                                            <div class="control-label">
+                                                                ${ fn:escapeXml(pref.name )}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <c:forEach var="value" items="${ pref.values }">
+                                                                <div>${ fn:escapeXml(value )}</div>
+                                                            </c:forEach>
+                                                        </td>
+                                                        <td>${ fn:escapeXml(pref.readOnly )}</td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div> <!-- END: Portlet.xml Preferences Section -->
+                            </c:if>
 
                             <!-- Step Loop -->
                             <c:forEach items="${ cpd.steps }" var="step" varStatus="status">
@@ -273,8 +288,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <tr>
-                                                                        <td class="text-right"><span class="uportal-label"><spring:message code="${ parameter.label }" text="${ parameter.label }"/>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
-                                                                        <td><editPortlet:parameterInput input="${ parameter.parameterInput.value }" path="${ paramPath }"/></td>
+                                                                        <td class="text-right"><span class="uportal-label">
+                                                                            <div class="control-label">
+                                                                                ${ fn:escapeXml(parameter.label )}
+                                                                                <c:if test="${not empty parameter.description}">
+                                                                                    <span class="glyphicon glyphicon-info-sign"
+                                                                                          title="${fn:escapeXml(parameter.description)}"
+                                                                                          data-toggle="tooltip"
+                                                                                          data-placement="top">
+                                                                                    </span>
+                                                                                </c:if>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td><editPortlet:parameterInput input="${ parameter.parameterInput.value }" path="${ paramPath }" cssClass="form-control"/></td>
                                                                     </tr>
                                                                 </c:otherwise>
                                                             </c:choose>
@@ -307,7 +333,16 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                 <c:otherwise>
                                                                     <tr>
                                                                         <td class="preference-name">
-                                                                            <span class="uportal-label"><spring:message code="${ preference.label }" text="${ preference.label }"/>:</span>
+                                                                            <div class="control-label">
+                                                                                <spring:message code="${ preference.label }" text="${ preference.label }"/>
+                                                                                <c:if test="${not empty preference.description}">
+                                                                                    <span class="glyphicon glyphicon-info-sign"
+                                                                                          title="${fn:escapeXml(preference.description)}"
+                                                                                          data-toggle="tooltip"
+                                                                                          data-placement="top">
+                                                                                    </span>
+                                                                                </c:if>
+                                                                            </div>
                                                                         </td>
                                                                         <td>
                                                                             <editPortlet:preferenceInput input="${ preference.preferenceInput.value }" path="${ paramPath }" name="${ preference.name }" values="${ portlet.portletPreferences[preference.name].value }"/>
@@ -340,11 +375,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                 <c:set var="paramPath" value="portletPreferences['${ name }'].value"/>
                                                                 <c:set var="overrideParamPath" value="portletPreferenceReadOnly['${ name }'].value"/>
                                                                 <tr>
-                                                                    <td class="preference-name">${ fn:escapeXml(name) }</td>
+                                                                    <td class="preference-name">
+                                                                        <div class="control-label">
+                                                                            ${ fn:escapeXml(name) }
+                                                                        </div>
+                                                                    </td>
                                                                     <td>
                                                                         <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
                                                                             <div>
-                                                                                <input name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }"/>
+                                                                                <input class="form-control parameter-editor-value" name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }"/>
                                                                                 <a class="delete-parameter-value-link btn btn-xs btn-default" href="javascript:;">Remove <i class="fa fa-minus-circle"></i></a>
                                                                             </div>
                                                                         </c:forEach>
@@ -582,12 +621,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
     </div>
 </div>
+</div>
 
 <script src="media/skins/universality/common/javascript/uportal/up-parameter-editor.js" language="JavaScript" type="text/javascript"></script>
 <script type="text/javascript">
     (function ($, _, Backbone) {
-        var selector = '#${n} .glyphicon-info-sign',
-                titleSelector = '#portletTitle',
+        var titleSelector = '#portletTitle',
                 nameSelector = '#portletName',
                 fnameSelector = '#portletFname',
                 nameTitleMismatchSelector = '.name-title-mismatch-warn',
@@ -753,9 +792,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         $(titleSelector).keyup(nameChangedFn).focus(nameChangedFn);
         $(nameSelector).keyup(titleChangedFn).focus(titleChangedFn);
         $(fnameSelector).keyup(fnameChangedFn).focus(fnameChangedFn);
+    })(up.jQuery, up._, up.Backbone);
+
+
+    up.jQuery(function () {
+        var $ = up.jQuery,
+                helpIconSelector = '#${n} .glyphicon-info-sign';
 
         /* Enable the help tooltips */
-        $(selector).bootstrapTooltip({
+        $(helpIconSelector).bootstrapTooltip({
             container: 'body',
             trigger: 'click'
         });
@@ -765,17 +810,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         $('body').click(function (evt) {
             var $target = $(evt.target);
 
-            $(selector).each(function (idx, el) {
+            $(helpIconSelector).each(function (idx, el) {
                 if (!$(el).is($target)) {
                     $(el).bootstrapTooltip('hide');
                 }
             });
         });
-    })(up.jQuery, up._, up.Backbone);
 
-
-    up.jQuery(function () {
-        var $ = up.jQuery;
         $(document).ready(function () {
             $("div.parameter-options-section").each(function () {
                 up.ParameterEditor(this, {
@@ -795,9 +836,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             $("div.preference-options-section").each(function () {
                 up.ParameterEditor(this, {
                     displayClasses: {
-                        addValueLink: 'btn btn-xs btn-info',
-                        deleteValueLink: 'btn btn-xs btn-default',
-                        deleteItemLink: 'btn btn-warning'
+                        addValueLinkExtraClass: 'btn btn-xs btn-info',
+                        deleteValueLinkExtraClass: 'btn btn-xs btn-default',
+                        deleteItemLinkExtraClass: 'btn btn-warning',
+                        inputElementExtraClass: "form-control parameter-editor-value"
                     },
                     parameterBindName: 'portletPreferences',
                     auxiliaryBindName: 'portletPreferenceReadOnly',
