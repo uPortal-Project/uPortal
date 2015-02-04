@@ -24,6 +24,7 @@
 <%@ attribute name="input"   required="true" type="org.jasig.portal.portletpublishing.xml.ParameterInputType" %>
 <%@ attribute name="path"    required="true" %>
 <%@ attribute name="name"    required="false" %>
+<%@ attribute name="cssClass" required="false" %>
 
 <c:choose>
 
@@ -32,11 +33,11 @@
     <c:choose>
       <c:when test="${ input.display == 'TEXTAREA' }">
         <!-- Textarea -->
-        <form:textarea path="${ path }"/>
+        <form:textarea class="${cssClass}" path="${ path }"/>
       </c:when>
       <c:otherwise>
         <!-- Text input -->
-        <form:input path="${ path }" />
+        <form:input class="${cssClass}" path="${ path }" />
       </c:otherwise>
     </c:choose>
   </c:when>
@@ -50,7 +51,7 @@
       </c:when>
       <c:otherwise>
       <!-- Select menu -->
-        <form:select path="${ path }" multiple="false" items="${ input.options }" itemLabel="label" itemValue="value"/>
+        <form:select class="${cssClass}" path="${ path }" multiple="false" items="${ input.options }" itemLabel="label" itemValue="value"/>
       </c:otherwise>
     </c:choose>
   </c:when>
