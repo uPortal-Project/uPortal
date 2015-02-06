@@ -176,6 +176,27 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ========== TEMPLATE: MEZZANINE ========== -->
+    <!-- ======================================== -->
+    <!--
+     | This template renders portlets prior to the content across the entire width.
+    -->
+    <xsl:template name="region.mezzanine">
+        <xsl:if test="//region[@name='mezzanine']/channel">
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            <div id="region-mezzanine" class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <xsl:for-each select="//region[@name='mezzanine']/channel">
+                            <xsl:call-template name="regions.portlet.decorator" />
+                        </xsl:for-each>
+                    </div>
+                </div>
+            </div>
+            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+        </xsl:if>
+    </xsl:template>
+
     <!-- ========== TEMPLATE: SIDEBAR-LEFT ========== -->
     <!-- =========================================== -->
     <!--

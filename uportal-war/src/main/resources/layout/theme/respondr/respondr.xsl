@@ -676,6 +676,7 @@
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                 <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
                     <xsl:call-template name="region.customize" />
+                    <xsl:call-template name="region.mezzanine" />
                     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     <div class="container-fluid">
                         <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
