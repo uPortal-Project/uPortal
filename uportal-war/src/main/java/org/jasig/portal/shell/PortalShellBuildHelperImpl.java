@@ -227,7 +227,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     }
 
     @Override
-    public void dataExport(String target, String dataDir, String type, String sysid, String logDir) {
+    public void dataExport(String target, String dataDir, String type, String sysid, String logDir, boolean printErrors) {
         PortalShell.LOGGER.info("");
         PortalShell.LOGGER.info("");
 
@@ -256,7 +256,9 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
 
                 portalDataHandlerService.exportAllDataOfType(types,
                         dataDirFile,
-                        new IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
+                        new IPortalDataHandlerService.BatchExportOptions()
+                                .setLogDirectoryParent(logDir)
+                                .setPrintErrorsToStderr(printErrors));
             }
             catch (Exception e) {
                 throw new RuntimeException(target + " to " + dataDir + " of " + type + " failed", e);
@@ -266,7 +268,9 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             try {
                 PortalShell.LOGGER.info("Exporting All Data to: " + dataDir);
                 portalDataHandlerService.exportAllData(dataDirFile,
-                        new IPortalDataHandlerService.BatchExportOptions().setLogDirectoryParent(logDir));
+                        new IPortalDataHandlerService.BatchExportOptions()
+                                .setLogDirectoryParent(logDir)
+                                .setPrintErrorsToStderr(printErrors));
             }
             catch (Exception e) {
                 throw new RuntimeException(target + " to " + dataDir + " failed", e);
@@ -275,12 +279,12 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     }
     
     @Override
-    public void dataImport(String target, String dataDir, String pattern, String file, String logDir) {
-        dataImport(target, dataDir, pattern, file, null, logDir);
+    public void dataImport(String target, String dataDir, String pattern, String file, String logDir, boolean printErrors) {
+        dataImport(target, dataDir, pattern, file, null, logDir, printErrors);
     }
 
     @Override
-    public void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir) {
+    public void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir, boolean printErrors) {
         PortalShell.LOGGER.info("");
         PortalShell.LOGGER.info("");
 
@@ -297,7 +301,9 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             PortalShell.LOGGER.info("Importing Data from: " + archive);
             try {
                 portalDataHandlerService.importDataArchive(new FileSystemResource(archive),
-                        new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+                        new IPortalDataHandlerService.BatchImportOptions()
+                                .setLogDirectoryParent(logDir)
+                                .setPrintErrorsToStderr(printErrors));
             }
             catch (Exception e) {
                 throw new RuntimeException(target + " for " + archive + " failed", e);
@@ -311,7 +317,9 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             try {
                 portalDataHandlerService.importData(new File(dataDir),
                         pattern,
-                        new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+                        new IPortalDataHandlerService.BatchImportOptions()
+                                .setLogDirectoryParent(logDir)
+                                .setPrintErrorsToStderr(printErrors));
             }
             catch (Exception e) {
                 if (pattern != null) {

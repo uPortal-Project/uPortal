@@ -40,7 +40,7 @@ public interface IPortalDataHandlerService {
     public class BatchImportOptions extends BatchOptions {
         private boolean recursive = true;
         private boolean ignoreNonDataFiles = true;
-        
+
         
         public BatchImportOptions setRecursive(boolean recursive) {
             this.recursive = recursive;
@@ -78,6 +78,12 @@ public interface IPortalDataHandlerService {
         public final boolean isIngoreNonDataFiles() {
             return this.ignoreNonDataFiles;
         }
+
+        @Override
+        public BatchImportOptions setPrintErrorsToStderr(boolean printErrorsToStderr) {
+            super.setPrintErrorsToStderr(printErrorsToStderr);
+            return this;
+        }
     }
     /**
      * Options that control behavior of batch export operations
@@ -98,6 +104,13 @@ public interface IPortalDataHandlerService {
             super.setLogDirectoryParent(logDirectoryParent);
             return this;
         }
+
+
+        @Override
+        public BatchExportOptions setPrintErrorsToStderr(boolean printErrorsToStderr) {
+            super.setPrintErrorsToStderr(printErrorsToStderr);
+            return this;
+        }
     }
     /**
      * Options that control behavior of batch operations
@@ -105,7 +118,8 @@ public interface IPortalDataHandlerService {
     public class BatchOptions {
         private boolean failOnError = true;
         private File logDirectoryParent = null;
-        
+        private boolean printErrorsToStderr = false;
+
         public BatchOptions setFailOnError(boolean failOnError) {
             this.failOnError = failOnError;
             return this;
@@ -130,6 +144,22 @@ public interface IPortalDataHandlerService {
          */
         public final File getLogDirectoryParent() {
             return logDirectoryParent;
+        }
+
+        /**
+         * Should errors be printed to stderr.
+         * @return defaults to false
+         */
+        public boolean getPrintErrorsToStderr() {
+            return printErrorsToStderr;
+        }
+
+        /**
+         * Set whether errors should print to stderr.
+         */
+        public BatchOptions setPrintErrorsToStderr(boolean printErrorsToStderr) {
+            this.printErrorsToStderr = printErrorsToStderr;
+            return this;
         }
     }
     
