@@ -22,10 +22,10 @@
 <skins>
   
   <skin>
-    <skin-key>iphone</skin-key>
-    <skin-name>iphone</skin-name>
+    <skin-key>mobileSkin</skin-key>
+    <skin-name>mobileSkin</skin-name>
     <skin-description>
-      iPhone theme and skin.
+        Mobile skin theme.
     </skin-description>
   </skin>
   
