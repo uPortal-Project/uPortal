@@ -186,4 +186,4 @@ Options you can pass to maven for building:
     -o - run maven in offline mode (won't download artifacts).
  
 
-********** Run 'ant help | more' to make this document easier to read **********
+********** Run 'ant help | less' to make this document easier to read **********
