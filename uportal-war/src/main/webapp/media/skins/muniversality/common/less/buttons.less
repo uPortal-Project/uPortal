@@ -1,0 +1,28 @@
+/* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
+ * With SASS, truly separates the presentation from the content:
+ * no color classes needed in the markup.
+ * Pass in the desired type of button based on the context.
+ */
+
+/* Apply baseline button styling once to every kind of button. */
+.up {
+    .ui-btn {
+        border: 1px solid;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
+}
+
+.button-variant(@btn-border-color, @btn-background-color, @btn-text-color, @btn-text-shadow, @btn-gradient-color1, @btn-gradient-color2, @btn-gradient-color3, @ui-link-inherit-color) {
+    border-color: @btn-border-color;
+        background: @btn-background-color;
+        color: @btn-text-color;
+        text-shadow	: 0 -1px 0 @btn-text-shadow;
+        .gradient(@btn-gradient-color1, @btn-gradient-color2, @btn-gradient-color3);
+
+        a.ui-link-inherit {
+            color: @ui-link-inherit-color;
+        }
+}
