@@ -46,10 +46,17 @@
         text-shadow	: 0 -1px 0 @black;
         .gradient(@c2light, @c2light, @c2dark);
 
-        .ui-btn {
+        .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
             .button-variant(@c3darker, @c3, @white, @black, @c3, @c3, @c3darker, @white);
         }
 
+        .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+            .button-variant(@c3darker, @c3light, @white, @black, @c3light, @c3light, @c3dark, @white);
+        }
+
+        .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+            .button-variant(@c3darker, @c3, @white, @black, @c3dark, @c3dark, @c3light, @white);
+        }
     }
 
     .portlet-titlebar {
@@ -59,11 +66,20 @@
         text-shadow	: 0 -1px 0 @black;
         .gradient(@c1, @c1, @c1darker);
 
-        .button-variant(@c1darker, @c1, @white, @black, @c1, @c1, @c1darker, @white);
+        .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+            .button-variant(@c1darker, @c1, @white, @black, @c1, @c1, @c1darker, @white);
+        }
+
+        .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+            .button-variant(@c3darker, @c1light, @white, @black, @c1lighter, @c1lighter, @c1darker, @white);
+        }
+
+        .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+            .button-variant(@c1darker, @c1, @white, @black, @c1darker, @c1darker, @c1, @white);
+        }
     }
 
     .portlet-content {
-        .button-variant(@graylight, @graylightest, @text, @white, @white, @white, @graylightest, @graydarkest);
 
         .titlebar {
             .title, .subtitle {
@@ -103,7 +119,18 @@
         }
 
         .utilities {
-            .button-variant(@c3dark, @c3light, @white, @black, @c3lighter, @c3lighter, @c3dark, @white);
+
+            .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+                .button-variant(@graylight, @graylightest, @text, @white, @white, @white, @graylightest, @graydarkest);
+            }
+
+            .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+                .button-variant(@c3dark, @c3light, @white, @black, @c3lighter, @c3lighter, @c3dark, @white);
+            }
+
+            .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+                .button-variant(@c3darker, @c3, @white, @black, @c3dark, @c3dark, @c3light, @white);
+            }
         }
     }
 
@@ -131,6 +158,8 @@
         display:none;
     }
 }
+
+
 
 
 /* retina icons */
