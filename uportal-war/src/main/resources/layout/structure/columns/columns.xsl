@@ -37,25 +37,9 @@
 
     <!-- Used to build the tabGroupsList:  discover tab groups, add each to the list ONLY ONCE -->
     <xsl:key name="tabGroupKey" match="layout/folder/folder[@hidden='false' and @type='regular']" use="@tabGroup"/>
-    <!-- Used to build the sidebarGroupsList:  discover sidebar groups, add each to the list ONLY ONCE -->
+    <!-- Used to build the sidebarGroupsList:  discover sidebar groups, add each to the list ONLY ONCE.
+         Deprecated - Universality feature that should be able to be removed (used by mUniversality?). -->
     <xsl:key name="sidebarGroupKey" match="layout/folder/folder[@hidden='false' and @type='sidebar']" use="@name"/>
-
-    <xsl:variable name="activeTabIdx">
-        <!-- if the activeTab is a number then it is the active tab index -->
-        <!-- otherwise it is the ID of the active tab. If it is the ID -->
-        <!-- then check to see if that tab is still in the layout and -->
-        <!-- if so use its index. if not then default to an index of 1. -->
-        <xsl:choose>
-            <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
-                <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$defaultTab" />
-            </xsl:otherwise> <!-- if not found, use first tab -->
-        </xsl:choose>
-    </xsl:variable>
-
-    <xsl:variable name="activeTabID" select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
 
     <!-- focusedFolderId is the focusedTabID param IF (1) that value points to a
          folder of type 'favorite_collection' AND (2) the user is not focusing on
@@ -67,6 +51,36 @@
                 <xsl:value-of select="/layout/folder/folder[@ID=$focusedTabID and @type!='regular']/@ID"/>
             </xsl:when>
             <xsl:otherwise>none</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="activeTabIdx">
+        <!-- If focusing on a favorite_collection, the activeTabInx is 1 (the favorite collection). -->
+        <!-- Else if the activeTab is a number then it is the active tab index -->
+        <!-- otherwise it is the ID of the active tab. If it is the ID -->
+        <!-- then check to see if that tab is still in the layout and -->
+        <!-- if so use its index. if not then default to an index of 1. -->
+        <xsl:choose>
+            <xsl:when test="$focusedFolderId!='none'">1</xsl:when>
+            <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
+                <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$defaultTab" />
+            </xsl:otherwise> <!-- if not found, use first tab -->
+        </xsl:choose>
+    </xsl:variable>
+
+    <!-- If focused on a favorite_collection, the activeTabID is the ID of the favorite_collection.
+         Otherwise it is the selected tab. -->
+    <xsl:variable name="activeTabID">
+        <xsl:choose>
+            <xsl:when test="$focusedFolderId != 'none'">
+                <xsl:value-of select="$focusedFolderId"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="/layout/folder/folder[@type='regular'and @hidden='false'][position() = $activeTabIdx]/@ID"/>
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
 
@@ -304,14 +318,20 @@
         </navigation>
     </xsl:template>
 
+    <!-- Focusing on a tab not on user's normal layout; e.g. a favorite collection -->
     <xsl:template name="tabListfocusedFolder">
         <navigation>
             <!-- signals that add-tab prompt is not appropriate in the context of this navigation -->
             <xsl:attribute name="allowAddTab">false</xsl:attribute>
 
-            <!-- just the one focused-on tab -->
+            <!-- First the one focused-on tab (favorite collection) -->
             <xsl:for-each select="/layout/folder/folder[@ID = $focusedFolderId]">
                 <xsl:call-template name="tab"/>
+            </xsl:for-each>
+
+            <!-- When the focused tab is a folder_collection, include the other tabs in the navigation. -->
+            <xsl:for-each select="/layout/folder/folder[@type='regular' and @hidden='false']">
+                <xsl:call-template name="tab" />
             </xsl:for-each>
         </navigation>
     </xsl:template>
@@ -352,7 +372,7 @@
 
     <xsl:template match="folder[@type!='root' and @hidden='false']">
         <xsl:attribute name="type">regular</xsl:attribute>
-        <xsl:if test="$activeTabID = @ID or $focusedFolderId = @ID">
+        <xsl:if test="$activeTabID = @ID">
             <xsl:if test="child::folder">
                 <xsl:for-each select="folder">
                     <column>
@@ -411,12 +431,9 @@
             <xsl:choose>
                 <xsl:when test="$activeTabID = @ID">
                     <xsl:attribute name="activeTab">true</xsl:attribute>
-                    <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabID"/></xsl:attribute>
-                </xsl:when>
-                <xsl:when test="$focusedFolderId = @ID">
-                    <xsl:attribute name="activeTab">true</xsl:attribute>
-                    <!-- the focused fragment will be the only tab, so index 1 is the position of the active tab -->
-                    <xsl:attribute name="activeTabPosition">1</xsl:attribute>
+                    <!-- JNW Changed from activeTabID to activeTabIdx as that seems right. However not referenced in OOTB theme so academic.
+                         Mark as deprecated and eligible for cleanup in future release 2/10/15 -->
+                    <xsl:attribute name="activeTabPosition"><xsl:value-of select="$activeTabIdx"/></xsl:attribute>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:attribute name="activeTab">false</xsl:attribute>
