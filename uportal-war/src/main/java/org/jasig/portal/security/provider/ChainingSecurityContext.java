@@ -92,7 +92,6 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   public synchronized void authenticate()  throws PortalSecurityException {
     int i;
     Enumeration e = mySubContexts.elements();
-    boolean error = false;
 
     while (e.hasMoreElements()) {
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
@@ -102,9 +101,8 @@ public abstract class ChainingSecurityContext implements ISecurityContext
               ((IParentAwareSecurityContext) sctx).authenticate(this);
           } else {
               sctx.authenticate();
-          }        
+          }
       } catch (Exception ex) {
-        error = true;
         log.error("Exception authenticating subcontext " + sctx, ex);
       }
       // Stop attempting to authenticate if authenticated and if the property flag is set
@@ -119,7 +117,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
          this.myOpaqueCredentials.credentialstring[i] = 0;
        myOpaqueCredentials.credentialstring = null;
     }
-    if (error && !this.isauth) throw new PortalSecurityException("One of the security subcontexts threw an exception");
+
     return;
   }
 
