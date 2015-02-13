@@ -153,6 +153,7 @@
 
     <xsl:variable name="PORTLET_CHROME"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
+        <xsl:when test="./parameter[@name='chromeStyle']/@value='no-chrome'">no-chrome</xsl:when>
         <xsl:when test="./parameter[@name='showChrome']/@value='false'">no-chrome</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
@@ -160,7 +161,8 @@
 
     <xsl:variable name="PORTLET_HIGHLIGHT"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
-        <xsl:when test="./parameter[@name='highlight']/@value='true'">highlight</xsl:when>
+          <xsl:when test="./parameter[@name='chromeStyle']/@value='highlighted'">highlight</xsl:when>
+          <xsl:when test="./parameter[@name='highlight']/@value='true'">highlight</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
@@ -238,7 +240,7 @@
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
-          <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
+          <xsl:when test="$PORTLET_CHROME = 'no-chrome'">
             <div class="up-portlet-wrapper-inner no-chrome">
               <!-- ****** PORTLET TOOLBAR ****** -->
               <!-- If not movable, default to hidden so you have no grab region.

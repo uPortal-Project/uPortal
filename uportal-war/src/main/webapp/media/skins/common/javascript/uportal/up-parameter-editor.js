@@ -1,4 +1,4 @@
-/*
+    /*
  * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ var up = up || {};
         // add the parameter name
         tr.append($(document.createElement("td")).text(name));
 
-        // create a new cell for the paramter value(s) and add it to our new row
+        // create a new cell for the parameter value(s) and add it to our new row
         td = $(document.createElement("td"));
         tr.append(td);
         
@@ -54,11 +54,13 @@ var up = up || {};
             
             // add a link for adding multiple parameter values
             td.append(
-                $(document.createElement("a")).attr("href", "javascript:;")
+                $(document.createElement("a"))
+                    .attr("href", "javascript:;")
+                    .attr("paramName", name)
                     .addClass(that.options.displayClasses.addValueLink)
                     .text(that.options.messages.addValue)
-                    .attr("paramName", name)
                     .click(function(){ addValue($(this), that); })
+                    .append("&nbsp;&nbsp;<i class=\"fa fa-plus-circle\"></i>")
                     .append(
                         $(document.createElement("input")).attr({"name" : getParameterPath(name, that), "type" : "text" }).hide()
                      )
@@ -85,6 +87,7 @@ var up = up || {};
             $(document.createElement("a")).text(that.options.messages.removeParameter)
                 .addClass(that.options.displayClasses.deleteItemLink)
                 .attr("href", "javascript:;")
+                .append("&nbsp;&nbsp;<i class=\"fa fa-trash-o\"></i>")
                 .click(function(){ removeParameter($(this), that); })
         ));
         
@@ -106,10 +109,11 @@ var up = up || {};
         link.before($(document.createElement("div"))
             .append(
                 $(document.createElement("input")).attr({"name" : paramPath, "type" : "text"})
-            ).append(" ").append(
+            ).append("  ").append(
                 $(document.createElement("a")).attr("href", "javascript:;")
                     .addClass(that.options.displayClasses.deleteValueLink)
                     .text(that.options.messages.remove)
+                    .append("&nbsp;&nbsp;<i class=\"fa fa-minus-circle\"></i>")
                     .click(function(){ removeValue($(this), that); })
             )
         );
