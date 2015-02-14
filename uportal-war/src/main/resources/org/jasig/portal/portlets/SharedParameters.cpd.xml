@@ -33,54 +33,41 @@
         <parameter>
             <name>iconUrl</name>
             <label>display.icon.url</label>
+            <description>URL of the icon to use in the standard portlet</description>
             <single-text-parameter-input display="text"/>
         </parameter>
 
         <parameter>
             <name>mobileIconUrl</name>
             <label>display.mobile.icon.url</label>
+            <description>URL of the icon to use on Mobile devices</description>
             <single-text-parameter-input display="text"/>
-        </parameter>
-
-        <parameter>
-            <name>showChrome</name>
-            <label>show.portlet.window.chrome</label>
-            <single-choice-parameter-input display="select">
-                <default>true</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
-            </single-choice-parameter-input>
         </parameter>
 
         <parameter>
             <name>alternativeMaximixedLink</name>
             <label>open.alternative.url.in.maximized.view</label>
+            <description>Alternate URL to display when the portlet is in MAXIMIZED mode.</description>
             <single-text-parameter-input display="text"/>
         </parameter>
 
         <parameter>
-            <name>alternate</name>
-            <label>use.alternate.appearance</label>
-            <single-choice-parameter-input display="select">
-                <default>false</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
-            </single-choice-parameter-input>
-        </parameter>
-
-        <parameter>
-            <name>highlight</name>
-            <label>use.highlighted.appearance</label>
-            <single-choice-parameter-input display="select">
-                <default>false</default>
-                <option value="false" label="false"/>
-                <option value="true" label="true"/>
+            <name>chromeStyle</name>
+            <label>chrome.style</label>
+            <description>The display style for the portlet border.</description>
+            <single-choice-parameter-input>
+                <default>default</default>
+                <option value="default" label="default"/>
+                <option value="no-chrome" label="no-chrome"/>
+                <option value="highlighted" label="highlighted"/>
+                <option value="alternate" label="alternate"/>
             </single-choice-parameter-input>
         </parameter>
 
         <parameter>
             <name>hideFromMobile</name>
             <label>hide.in.mobile.theme</label>
+            <description>Should this portlet be hidden when in mobile view</description>
             <single-choice-parameter-input display="select">
                 <default>false</default>
                 <option value="false" label="false"/>
@@ -91,6 +78,7 @@
         <parameter>
             <name>blockImpersonation</name>
             <label>hide.in.impersonation.view</label>
+            <description>Should this portlet be hidden when doing impersonation.</description>
             <single-choice-parameter-input display="select">
                 <default>false</default>
                 <option value="false" label="false"/>
@@ -108,6 +96,7 @@
         <parameter>
             <name>printable</name>
             <label>portlet.print.enable</label>
+            <description>Print enabled</description>
             <single-choice-parameter-input display="select">
                 <default>false</default>
                 <option value="false" label="false"/>
@@ -124,7 +113,7 @@
             <single-choice-parameter-input display="select">
                 <default>true</default>
                 <option value="true" label="true"/>
-                <option value="false" label="true"/>
+                <option value="false" label="false"/>
             </single-choice-parameter-input>
         </parameter>
 

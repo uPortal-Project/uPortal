@@ -1,4 +1,4 @@
-/*
+    /*
  * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -45,7 +45,7 @@ var up = up || {};
         // add the parameter name
         tr.append($(document.createElement("td")).text(name));
 
-        // create a new cell for the paramter value(s) and add it to our new row
+        // create a new cell for the parameter value(s) and add it to our new row
         td = $(document.createElement("td"));
         tr.append(td);
         
@@ -54,13 +54,19 @@ var up = up || {};
             
             // add a link for adding multiple parameter values
             td.append(
-                $(document.createElement("a")).attr("href", "javascript:;")
-                    .addClass(that.options.displayClasses.addValueLink)
-                    .text(that.options.messages.addValue)
+                $(document.createElement("a"))
+                    .attr("href", "javascript:;")
                     .attr("paramName", name)
+                    .addClass(that.options.displayClasses.addValueLink)
+                    .addClass(that.options.displayClasses.addValueLinkExtraClass)
+                    .text(that.options.messages.addValue)
                     .click(function(){ addValue($(this), that); })
+                    .append("&nbsp;&nbsp;<i class=\"fa fa-plus-circle\"></i>")
                     .append(
-                        $(document.createElement("input")).attr({"name" : getParameterPath(name, that), "type" : "text" }).hide()
+                        $(document.createElement("input"))
+                                .attr({"name" : getParameterPath(name, that), "type" : "text" })
+                                .addClass(that.options.displayClasses.inputElementExtraClass)
+                                .hide()
                      )
             );
 
@@ -69,7 +75,9 @@ var up = up || {};
 
         } else {
             td.append(
-                $(document.createElement("input")).attr({"name" : paramPath, "type" : "text" })
+                $(document.createElement("input"))
+                        .attr({"name" : paramPath, "type" : "text" })
+                        .addClass(that.options.displayClasses.inputElementExtraClass)
             );
         }
 
@@ -84,7 +92,9 @@ var up = up || {};
         tr.append($(document.createElement("td")).append(
             $(document.createElement("a")).text(that.options.messages.removeParameter)
                 .addClass(that.options.displayClasses.deleteItemLink)
+                .addClass(that.options.displayClasses.deleteItemLinkExtraClass)
                 .attr("href", "javascript:;")
+                .append("&nbsp;&nbsp;<i class=\"fa fa-trash-o\"></i>")
                 .click(function(){ removeParameter($(this), that); })
         ));
         
@@ -105,11 +115,15 @@ var up = up || {};
         paramPath = getParameterPath(link.attr("paramName"), that);
         link.before($(document.createElement("div"))
             .append(
-                $(document.createElement("input")).attr({"name" : paramPath, "type" : "text"})
-            ).append(" ").append(
+                $(document.createElement("input"))
+                        .attr({"name" : paramPath, "type" : "text"})
+                        .addClass(that.options.displayClasses.inputElementExtraClass)
+            ).append("  ").append(
                 $(document.createElement("a")).attr("href", "javascript:;")
                     .addClass(that.options.displayClasses.deleteValueLink)
+                    .addClass(that.options.displayClasses.deleteValueLinkExtraClass)
                     .text(that.options.messages.remove)
+                    .append("&nbsp;&nbsp;<i class=\"fa fa-minus-circle\"></i>")
                     .click(function(){ removeValue($(this), that); })
             )
         );
@@ -170,9 +184,14 @@ var up = up || {};
         multivalued: false,
         displayClasses: {
             deleteItemLink: "delete-parameter-link",
+            deleteItemLinkExtraClass: '',
             deleteValueLink: "delete-parameter-value-link",
+            deleteValueLinkExtraClass: '',
             addItemLink: "add-parameter-link",
-            addValueLink: "add-parameter-value-link"
+            addItemLinkExtraClass: '',
+            addValueLink: "add-parameter-value-link",
+            addValueLinkExtraClass: '',
+            inputElementExtraClass: ""
         },
         messages: {
             remove: 'Remove',
