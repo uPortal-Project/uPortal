@@ -36,6 +36,8 @@
 <c:set var="defaultTextCols" value="40"/>
 <c:set var="defaultTextRows" value="10"/>
 
+<spring:message var="amLabel" code="time.am" text="AM"/>
+<spring:message var="pmLabel" code="time.pm" text="PM"/>
 
 <%--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -384,11 +386,17 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                         <c:forEach items="${ portlet.portletPreferences[name].value }" var="val">
                                                                             <div>
                                                                                 <input class="form-control parameter-editor-value" name="portletPreferences['${fn:escapeXml(name)}'].value" value="${ fn:escapeXml(val) }"/>
-                                                                                <a class="delete-parameter-value-link btn btn-xs btn-default" href="javascript:;">Remove <i class="fa fa-minus-circle"></i></a>
+                                                                                <a class="delete-parameter-value-link btn btn-xs btn-default" href="javascript:;">
+                                                                                    <spring:message code="remove" text="Remove"/>
+                                                                                    <i class="fa fa-minus-circle"></i>
+                                                                                </a>
                                                                             </div>
                                                                         </c:forEach>
                                                                         <input type="hidden" class="form-control" name="portletPreferences['${fn:escapeXml(name)}'].value" value=""/>
-                                                                        <a class="add-parameter-value-link btn btn-xs btn-info" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value<i class="fa fa-plus-circle"></i></a>
+                                                                        <a class="add-parameter-value-link btn btn-xs btn-info" href="javascript:;" paramName="${fn:escapeXml(name)}">
+                                                                            <spring:message code="add.value" text="Add value"/>
+                                                                            <i class="fa fa-plus-circle"></i>
+                                                                        </a>
                                                                     </td>
                                                                     <td><form:checkbox path="${overrideParamPath}" value="true"/></td>
                                                                     <td><a class="delete-parameter-link btn btn-warning" href="javascript:;"><spring:message code="setParameters.deleteButton"/> <i class="fa fa-trash"></i></a></td>
@@ -417,7 +425,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
-                    <h3 class="title" role="heading">Groups and Categories</h3>
+                    <h3 class="title" role="heading">
+                        <spring:message code="groups.and.categories" text="Groups and Categories"/>
+                    </h3>
                 </div>
                 <div class="content row">
 
@@ -529,8 +539,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                        </c:forEach>
                                     </form:select>
                                      <form:select path="publishAmPm">
-                                         <form:option value="0" label="AM"/>
-                                         <form:option value="1" label="PM"/>
+                                         <form:option value="0" label="${am}"/>
+                                         <form:option value="1" label="${pm}"/>
                                      </form:select>
                              (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                          </span>
@@ -576,8 +586,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                             </c:forEach>
                                         </form:select>
                                         <form:select path="expirationAmPm">
-                                            <form:option value="0" label="AM"/>
-                                            <form:option value="1" label="PM"/>
+                                            <form:option value="0" label="${am}"/>
+                                            <form:option value="1" label="${pm}"/>
                                         </form:select>
                                         (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                                     </span>
@@ -651,7 +661,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 titleEdited: false,
                 fname: '',
                 fnameEdited: false,
-                timeout: '5000'
+                timeout: '10000'
             },
 
 

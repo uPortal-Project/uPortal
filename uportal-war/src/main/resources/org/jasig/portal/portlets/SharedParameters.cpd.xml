@@ -60,6 +60,7 @@
                 <option value="default" label="default"/>
                 <option value="no-chrome" label="no-chrome"/>
                 <option value="highlighted" label="highlighted"/>
+                <option value="alternate" label="alternate"/>
             </single-choice-parameter-input>
         </parameter>
 

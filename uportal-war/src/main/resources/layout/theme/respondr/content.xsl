@@ -169,6 +169,7 @@
 
     <xsl:variable name="PORTLET_ALTERNATE"> <!-- Test to determine if the portlet has been given the alternate flag. -->
       <xsl:choose>
+        <xsl:when test="./parameter[@name='chromeStyle']/@value='alternate'">alternate</xsl:when>
         <xsl:when test="./parameter[@name='alternate']/@value='true'">alternate</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>

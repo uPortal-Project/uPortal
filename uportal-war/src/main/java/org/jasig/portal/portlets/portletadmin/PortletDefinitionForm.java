@@ -563,7 +563,7 @@ public class PortletDefinitionForm implements Serializable {
 
 
 	/**
-	 * Get the expiration date as a string.  This is
+	 * Get the expiration date as a string.  This is just  webflow workaround.
 	 * @return the expiration date as a string
 	 */
 	public String getExpirationDateString() {

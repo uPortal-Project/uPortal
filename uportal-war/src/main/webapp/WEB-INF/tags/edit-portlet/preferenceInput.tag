@@ -32,10 +32,16 @@
     <c:forEach items="${ values }" var="val">
       <div>
          <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" class="form-control" />
-         <a class="delete-parameter-value-link btn btn-xs btn-info" href="javascript:;">Remove&nbsp;&nbsp;<i class="fa fa-minus-circle"></i></a>
+         <a class="delete-parameter-value-link btn btn-xs btn-info" href="javascript:;">
+             <spring:message code="remove" text="Remove"/>&nbsp;&nbsp;
+             <i class="fa fa-minus-circle"></i>
+         </a>
       </div>
     </c:forEach>
-    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a>
+    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+        <spring:message code="add.value" text="Add Value"/>&nbsp;&nbsp;
+        <i class="fa fa-plus-circle"></i>
+    </a>
   </c:when>
 
   <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput') }">
