@@ -115,4 +115,16 @@
             ${up:json(obj)}
         </example>
     </function>
+    <function>
+        <description>
+            URL encodes a single path segment.  Intended for building RESTful URLs where
+            variable values may contain illegal characters.
+        </description>
+        <name>encodePathSegment</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>java.lang.String encodePathSegment(java.lang.String)</function-signature>
+        <example>
+            ${up:urlEncode("www.example.com/image.png")}
+        </example>
+    </function>
 </taglib>
