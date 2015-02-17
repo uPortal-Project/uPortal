@@ -292,7 +292,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                     <tr>
                                                                         <td class="text-right"><span class="uportal-label">
                                                                             <div class="control-label">
-                                                                                ${ fn:escapeXml(parameter.label )}
+                                                                                <spring:message code="${parameter.label}"/>
                                                                                 <c:if test="${not empty parameter.description}">
                                                                                     <span class="glyphicon glyphicon-info-sign"
                                                                                           title="${fn:escapeXml(parameter.description)}"
