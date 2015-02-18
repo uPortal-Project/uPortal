@@ -198,7 +198,8 @@ public class GroupListHelperImpl implements IGroupListHelper {
                 // We need to make some sort of determination as to the best
                 // root group to send back.  With luck there aren't many matches.
                 for (IPermission p : permissionsOfRelevantActivity) {
-                    final JsonEntityBean candidate = getEntity(groupType, p.getTarget(), true);
+                    IEntityGroup groupMember = GroupService.findGroup(p.getTarget());
+                    final JsonEntityBean candidate = getEntity(groupMember);
                     // Pass on any matches of the wrong groupType...
                     if (!candidate.getEntityTypeAsString().equalsIgnoreCase(groupType)) {
                         continue;

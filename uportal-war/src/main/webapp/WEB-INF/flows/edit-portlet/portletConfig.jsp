@@ -609,7 +609,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
                     </c:when>
                     <c:otherwise>
-                        <input class="button btn" type="submit" value="<spring:message code="back"/>"name="_eventId_back"/>
+                        <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
                     </c:otherwise>
                 </c:choose>
             </div><!-- end: Portlet Buttons -->
