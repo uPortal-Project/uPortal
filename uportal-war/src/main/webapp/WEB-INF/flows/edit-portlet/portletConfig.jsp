@@ -603,7 +603,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <c:if test="${supportsConfig}">
                     <input class="button btn btn-primary" type="submit" value="<spring:message code="save.and.configure"/>" name="_eventId_saveAndConfig"/>
                 </c:if>
-                <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>"name="_eventId_save">
+                <input class="button btn btn-primary" type="submit" value="<spring:message code="save"/>"name="_eventId_save">
                 <c:choose>
                     <c:when test="${completed}">
                         <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
