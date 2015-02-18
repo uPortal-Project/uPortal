@@ -337,17 +337,19 @@ public class PortletDefinitionForm implements Serializable {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
+    public void setApplicationId(String applicationId) {
+        // Be careful not to pass on extra whitespace
+        this.applicationId = applicationId.trim();
+    }
 
 	public String getPortletName() {
 		return portletName;
 	}
 
-	public void setPortletName(String portletName) {
-		this.portletName = portletName;
-	}
+    public void setPortletName(String portletName) {
+        // Be careful not to pass on extra whitespace
+        this.portletName = portletName.trim();
+    }
 
 	public boolean isFramework() {
 		return framework;
