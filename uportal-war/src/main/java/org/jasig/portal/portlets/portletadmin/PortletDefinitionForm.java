@@ -19,9 +19,7 @@
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -650,5 +648,5 @@ public class PortletDefinitionForm implements Serializable {
 			this.setExpirationAmPm(cal.get(Calendar.AM_PM));
 		}
 	}
-	
+
 }
