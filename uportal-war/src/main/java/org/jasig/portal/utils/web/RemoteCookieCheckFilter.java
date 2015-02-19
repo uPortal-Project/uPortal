@@ -21,7 +21,10 @@ package org.jasig.portal.utils.web;
 /**
  * @author Chris Waymire <cwaymire@unicon.net>
  */
-import org.jasig.portal.rest.RemoteCookieCheckController;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,16 +32,19 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import java.io.IOException;
+import org.jasig.portal.rest.RemoteCookieCheckController;
 
 public class RemoteCookieCheckFilter implements Filter {
     public static final String COOKIE_NAME = "JSESSIONID";
     public static final String REFERER_ATTRIBUTE = "COOKIE_CHECK_REFERER";
+
+    // Set of User-Agent header values that will not be forced through the cookie check.
+    private Set<String> ignoredUserAgents = new HashSet<>();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -60,7 +66,8 @@ public class RemoteCookieCheckFilter implements Filter {
                 }
             }
 
-            if (!cookieFound) {
+            String userAgent = ((HttpServletRequest) request).getHeader("User-Agent");
+            if (!cookieFound && !ignoredUserAgents.contains(userAgent)) {
                 final HttpSession session = httpServletRequest.getSession(true);
                 
                 String requestURI = httpServletRequest.getRequestURI();
@@ -81,5 +88,9 @@ public class RemoteCookieCheckFilter implements Filter {
 
     @Override
     public void destroy() {
+    }
+
+    public void setIgnoredUserAgents(Set<String> ignoredUserAgents) {
+        this.ignoredUserAgents = ignoredUserAgents;
     }
 }
