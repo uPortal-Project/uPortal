@@ -45,7 +45,7 @@
         <name>Edit user attribute</name>
         <fname>EDIT_USER_ATTRIBUTE</fname>
         <desc>Edit a specific user attribute.  This permission applies to that attribute for all editable users</desc>
-        <targetProvider>peopleAndGroupsTargetProvider</targetProvider>
+        <targetProvider>userAttributesTargetProvider</targetProvider>
     </activity>
     <activity>
         <name>Edit users</name>
