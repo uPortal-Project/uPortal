@@ -32,8 +32,6 @@ import java.util.TreeSet;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlets.search.DisplayNameComparator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -42,6 +40,8 @@ import org.jasig.portal.services.AuthorizationService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.NamedPersonImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -51,7 +51,7 @@ import org.springframework.webflow.context.ExternalContext;
  * @version $Revision$
  */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private IPersonAttributeDao personAttributeDao;
     
@@ -186,21 +186,38 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             return Collections.emptyList();
         }
 
-        // for each returned match, check to see if the current user has 
-        // permissions to view this user
+        // To improve efficiency and not do as many permission checks, if all people in the returned set
+        // of personAttributes have a displayName, pre-sort the set and stop when we have maxResults.
+        // The typical use case is that LDAP returns results that have the displayName populated.
+
+        boolean preSortedList = false;
+        List<IPersonAttributes> peopleList = new ArrayList<>(people);
+        if (allListItemsHaveDisplayName(peopleList)) {
+            // sort the list by display name
+            Collections.sort(peopleList, new DisplayNameComparator());
+            preSortedList = true;
+            logger.debug("All items contained displayName; pre-sorting list of size {}", peopleList.size());
+        }
+
+        // for each returned match, check to see if the current user has permission to view this user
         List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();
-        for (IPersonAttributes person : people) {
+        for (IPersonAttributes person : peopleList) {
             // if the current user has permission to view this person, construct
             // a new representation of the person limited to attributes the
             // searcher has permissions to view
             final IPersonAttributes visiblePerson = getVisiblePerson(principal, person, permittedAttributes);
             if (visiblePerson != null) {
                 list.add(visiblePerson);
+                if (preSortedList && list.size() >= maxResults) {
+                    break;
+                }
             }
         }
         
-        // sort the list by display name
-        Collections.sort(list, new DisplayNameComparator());
+        // If not sorted, sort the list by display name
+        if (!preSortedList) {
+            Collections.sort(list, new DisplayNameComparator());
+        }
         
         // limit the list to a maximum of 10 returned results
         if (list.size() > maxResults) {
@@ -208,6 +225,15 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         }
         
         return list;
+    }
+
+    private boolean allListItemsHaveDisplayName(List<IPersonAttributes> people) {
+        for (IPersonAttributes person : people) {
+            if (person.getAttributeValue("displayName") == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /* (non-Javadoc)
