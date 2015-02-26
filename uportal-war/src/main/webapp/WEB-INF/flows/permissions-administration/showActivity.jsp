@@ -43,12 +43,12 @@
 </portlet:actionURL>
 <portlet:actionURL var="deleteUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="deletePermission"/>
+  <portlet:param name="_eventId" value="delete"/>
   <portlet:param name="owner" value="OWNER"/>
-  <portlet:param name="principalType" value="PRINCIPALTYPE"/>
+  <portlet:param name="principalKey" value="PRINCIPALKEY"/>
   <portlet:param name="principalName" value="PRINCIPALNAME"/>
   <portlet:param name="activity" value="ACTIVITY"/>
-  <portlet:param name="target" value="TARGET"/>
+  <portlet:param name="targetName" value="TARGET"/>
   <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
 </portlet:actionURL>
 
@@ -186,9 +186,9 @@ up.jQuery(function() {
     };
 
     // delete anchor tag generating helper function
-    var getDeleteAnchorTag = function(owner, principalType, principalKey, activity, target, permissionType) {
+    var getDeleteAnchorTag = function(owner, principalName, principalKey, activity, target, permissionType) {
         var url = "${deleteUrl}".replace("OWNER", owner)
-                                .replace("PRINCIPALTYPE", principalType)
+                                .replace("PRINCIPALNAME", principalName)
                                 .replace("PRINCIPALKEY", principalKey)
                                 .replace("ACTIVITY", activity)
                                 .replace("TARGET", target)
@@ -258,12 +258,12 @@ up.jQuery(function() {
             },
             // Add links to the proper columns after we get the data
             fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-            	// Get edit anchor tag
+                // Get edit anchor tag
                 $('td:eq(3)', nRow).html( getEditAnchorTag(aData.owner, aData.activity, aData.target) );
 
                 // Get delete anchor tag
                 $('td:eq(4)', nRow).html( getDeleteAnchorTag(aData.owner,
-                                                             aData.principalType,
+                                                             aData.principalName,
                                                              aData.principalKey,
                                                              aData.activity,
                                                              aData.target,
