@@ -230,7 +230,12 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // To improve efficiency and not do as many permission checks or person directory searches,
         // if we have too many results and all people in the returned set of personAttributes have
         // a displayName, pre-sort the set and limit it to maxResults. The typical use case is that
-        // LDAP returns results that have the displayName populated.
+        // LDAP returns results that have the displayName populated.  Note that a disadvantage of this
+        // approach is that the smaller result set may have entries that permissions prevent the
+        // current users from viewing the person and thus reduce the number of final results, but
+        // that is rare (typical use case is users can't view administrative internal accounts or the
+        // system account, none of which tend to be in LDAP).  We could retain a few more than maxResults
+        // to offset that chance, but IMHO not worth the cost of extra external queries.
 
         List<IPersonAttributes> peopleList = new ArrayList<>(people);
         if (peopleList.size() > maxResults && allListItemsHaveDisplayName(peopleList)) {
