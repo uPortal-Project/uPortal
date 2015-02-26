@@ -28,7 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import javax.annotation.PostConstruct;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
@@ -42,6 +50,8 @@ import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.webflow.context.ExternalContext;
 
 /**
@@ -67,7 +77,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
 
-    private int maxResults;
+    private int maxResults = 10;
 
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
@@ -75,6 +85,37 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
 
     public int getMaxResults() {
         return maxResults;
+    }
+
+    private int searchThreadCount = 10;
+
+    // Default to a high enough value that it doesn't cause issues during a load test
+    private long searchThreadTimeoutSeconds = 60;
+
+    /**
+     * Set the number of concurrent threads process person search results in parallel.
+     * @param searchThreadCount number of concurrent threads for processing search results
+     */
+    public void setSearchThreadCount(int searchThreadCount) {
+        this.searchThreadCount = searchThreadCount;
+    }
+
+    /**
+     * Set the max number of seconds the threads doing the person search results should wait for a result.
+     * <br/>
+     * TODO This is to prevent waiting indefinitely on a hung worker thread.  In the future, would be nice
+     * to get the portlet's timeout value and set this to a second or two fewer.
+     * @param searchThreadTimeoutSeconds Maximum number of seconds to wait for thread to respond
+     */
+    public void setSearchThreadTimeoutSeconds(long searchThreadTimeoutSeconds) {
+        this.searchThreadTimeoutSeconds = searchThreadTimeoutSeconds;
+    }
+
+    private ExecutorService executor;
+
+    @PostConstruct
+    public void initializeSearchExecutor() {
+        executor = Executors.newFixedThreadPool(searchThreadCount);
     }
 
     /* (non-Javadoc)
@@ -186,40 +227,27 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
             return Collections.emptyList();
         }
 
-        // To improve efficiency and not do as many permission checks, if all people in the returned set
-        // of personAttributes have a displayName, pre-sort the set and stop when we have maxResults.
-        // The typical use case is that LDAP returns results that have the displayName populated.
+        // To improve efficiency and not do as many permission checks or person directory searches,
+        // if we have too many results and all people in the returned set of personAttributes have
+        // a displayName, pre-sort the set and limit it to maxResults. The typical use case is that
+        // LDAP returns results that have the displayName populated.
 
-        boolean preSortedList = false;
         List<IPersonAttributes> peopleList = new ArrayList<>(people);
-        if (allListItemsHaveDisplayName(peopleList)) {
+        if (peopleList.size() > maxResults && allListItemsHaveDisplayName(peopleList)) {
+            logger.debug("All items contained displayName; pre-sorting list of size {} and truncating to",
+                    peopleList.size(), maxResults);
             // sort the list by display name
             Collections.sort(peopleList, new DisplayNameComparator());
-            preSortedList = true;
-            logger.debug("All items contained displayName; pre-sorting list of size {}", peopleList.size());
+            peopleList = peopleList.subList(0, maxResults);
         }
+        // Construct a new representation of the persons limited to attributes the searcher
+        // has permissions to view.  Will change order of the list.
+        List<IPersonAttributes> list = getVisiblePersons(principal, permittedAttributes, peopleList);
 
-        // for each returned match, check to see if the current user has permission to view this user
-        List<IPersonAttributes> list = new ArrayList<IPersonAttributes>();
-        for (IPersonAttributes person : peopleList) {
-            // if the current user has permission to view this person, construct
-            // a new representation of the person limited to attributes the
-            // searcher has permissions to view
-            final IPersonAttributes visiblePerson = getVisiblePerson(principal, person, permittedAttributes);
-            if (visiblePerson != null) {
-                list.add(visiblePerson);
-                if (preSortedList && list.size() >= maxResults) {
-                    break;
-                }
-            }
-        }
-        
-        // If not sorted, sort the list by display name
-        if (!preSortedList) {
-            Collections.sort(list, new DisplayNameComparator());
-        }
-        
-        // limit the list to a maximum of 10 returned results
+        // Sort the list by display name
+        Collections.sort(list, new DisplayNameComparator());
+
+        // limit the list to a maximum number of returned results
         if (list.size() > maxResults) {
             list = list.subList(0, maxResults);
         }
@@ -227,6 +255,89 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         return list;
     }
 
+    /**
+     * Returns a list of the personAttributes that this principal has permission to view.  This
+     * implementation does the check on the list items in parallel because personDirectory is consulted
+     * for non-admin principals to get the person attributes which is really slow if done on N entries in parallel
+     * because personDirectory often goes out to LDAP or another external source for additional attributes.
+     * This processing will not retain list order.
+     * @param principal user performing the search
+     * @param permittedAttributes set of attributes the principal has permission to view
+     * @param peopleList list of people returned from the search
+     * @return UNORDERED list of visible persons
+     */
+    private List<IPersonAttributes> getVisiblePersons(final IAuthorizationPrincipal principal,
+                                                     final Set<String> permittedAttributes,
+                                                     List<IPersonAttributes> peopleList) {
+        List<Future<IPersonAttributes>> futures = new ArrayList<>();
+        List<IPersonAttributes> list = new ArrayList<>();
+
+        // Ugly.  PersonDirectory requires RequestContextHolder to be set for each thread, so pass it
+        // into the callable.
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        // For each person in the list, check to see if the current user has permission to view this user
+        for (IPersonAttributes person : peopleList) {
+            Callable<IPersonAttributes> worker = new GetVisiblePerson(principal, person, permittedAttributes,
+                    requestAttributes);
+            Future<IPersonAttributes> task = executor.submit(worker);
+            futures.add(task);
+        }
+        for (Future<IPersonAttributes> future : futures) {
+            try {
+                final IPersonAttributes visiblePerson = future.get(searchThreadTimeoutSeconds, TimeUnit.SECONDS);
+                if (visiblePerson != null) {
+                    list.add(visiblePerson);
+                }
+            } catch (InterruptedException e) {
+                logger.error("Processing person search interrupted", e);
+            } catch (ExecutionException e) {
+                logger.error("Error Processing person search", e);
+            } catch (TimeoutException e) {
+                future.cancel(true);
+                logger.warn("Exceeded {} ms waiting for getVisiblePerson to return result", searchThreadTimeoutSeconds);
+            }
+        }
+        logger.debug("Found {} results", list.size());
+        return list;
+    }
+
+    /**
+     * Utility class for executor framework for search persons processing.  Ugly - person directory needs
+     * the requestAttributes in the RequestContextHolder set for each thread from the caller.
+     */
+    private class GetVisiblePerson implements Callable<IPersonAttributes> {
+        private IAuthorizationPrincipal principal;
+        private IPersonAttributes person;
+        private Set<String> permittedAttributes;
+        private RequestAttributes requestAttributes;
+
+        public GetVisiblePerson(IAuthorizationPrincipal principal, IPersonAttributes person,
+                                Set<String> permittedAttributes, RequestAttributes requestAttributes) {
+            this.principal = principal;
+            this.person = person;
+            this.permittedAttributes = permittedAttributes;
+            this.requestAttributes = requestAttributes;
+        }
+
+        /**
+         * If the current user has permission to view this person, construct a new representation of the
+         * person limited to attributes the searcher has permissions to view, else return null if user
+         * cannot view.
+         * @return person attributes user can view.  Null if user can't view person.
+         * @throws Exception
+         */
+        @Override
+        public IPersonAttributes call() throws Exception {
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            return getVisiblePerson(principal, person, permittedAttributes);
+        }
+    }
+
+    /**
+     * Utility class to determine if all items in the list of people have a displayName.
+     * @param people list of personAttributes
+     * @return true if all list items have an attribute displayName
+     */
     private boolean allListItemsHaveDisplayName(List<IPersonAttributes> people) {
         for (IPersonAttributes person : people) {
             if (person.getAttributeValue("displayName") == null) {
@@ -318,7 +429,10 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected IPersonAttributes getVisiblePerson(final IAuthorizationPrincipal principal,
             final IPersonAttributes person, final Set<String> permittedAttributes) {
 
-        // first check to see if the principal has permission to view this user
+        // first check to see if the principal has permission to view this person.  Unfortunately for
+        // non-admin users, this will result in a call to PersonDirectory (which may go out to LDAP or
+        // other external systems) to find out what groups the person is in to see if the principal
+        // has permission or deny through one of the contained groups.
         if (person.getName() != null && principal.hasPermission(USERS_OWNER, VIEW_USER_PERMISSION, person.getName())) {
             
             // if the user has permission, filter the person attributes according
