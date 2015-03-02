@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.orm.jpa.JpaAccessor;
-import org.springframework.orm.jpa.JpaInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
