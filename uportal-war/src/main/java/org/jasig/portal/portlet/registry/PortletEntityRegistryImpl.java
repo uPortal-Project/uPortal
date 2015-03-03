@@ -69,7 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
@@ -318,7 +318,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
                     try {
                         this.portletEntityDao.updatePortletEntity(persistentEntity);
                     }
-                    catch (HibernateOptimisticLockingFailureException e) {
+                    catch (OptimisticLockingFailureException e) {
                         //Check if this exception is from the entity being deleted from under us.
                         final boolean exists = this.portletEntityDao.portletEntityExists(persistentEntity.getPortletEntityId());
                         if (!exists) {
@@ -518,7 +518,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             try {
                 this.portletEntityDao.deletePortletEntity(persistentEntity);
             }
-            catch (HibernateOptimisticLockingFailureException e) {
+            catch (OptimisticLockingFailureException e) {
                 this.logger.warn("This persistent portlet has already been deleted: " + persistentEntity + ", trying to find and delete by layout node and user.");
                 final IPortletEntity existingPersistentEntity = this.portletEntityDao.getPortletEntity(persistentEntity.getLayoutNodeId(), persistentEntity.getUserId());
                 if (existingPersistentEntity != null) {
