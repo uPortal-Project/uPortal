@@ -205,7 +205,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         protected IPerson createSingleton(Object... args) {
             // be sure we only do this once...
             // Load the "system" user id from the database
-            final int systemUserId = jdbcOperations.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'");
+            final int systemUserId = jdbcOperations.queryForObject("SELECT USER_ID FROM UP_USER WHERE USER_NAME = 'system'", Integer.class);
             logger.info("Found user id {} for the 'system' user.", systemUserId);
             return new SystemUser(systemUserId);
         }

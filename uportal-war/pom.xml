@@ -554,11 +554,6 @@
         </dependency>
         
         <!-- ===== Runtime Dependencies ======================================= -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.jasig.ehcache</groupId>

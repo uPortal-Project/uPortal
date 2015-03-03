@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadFactory;
  *
  * @author Scott Battaglia
  * @version $Revision$ $Date$
- * @deprecated Use {@link org.springframework.scheduling.concurrent.CustomizableThreadFactory} instead
+ * @deprecated Use native JDK 6 concurrent support instead
  */
 @Deprecated
 public class PriorityThreadFactory implements ThreadFactory {

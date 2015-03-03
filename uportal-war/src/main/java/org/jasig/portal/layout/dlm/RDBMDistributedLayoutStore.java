@@ -385,7 +385,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         final int struct_count = this.jdbcOperations
-                .queryForInt("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", person.getID());
+                .queryForObject("SELECT COUNT(*) FROM up_layout_struct WHERE user_id = ?", Integer.class, person.getID());
         return struct_count == 0 ? false : true;
 
     }
