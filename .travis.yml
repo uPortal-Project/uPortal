@@ -1,8 +1,5 @@
 language: java
 sudo: false
-cache:
-    directories:
-        - $HOME/.m2
 
 before_install:
   - unset GEM_PATH
