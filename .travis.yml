@@ -2,7 +2,7 @@ language: java
 sudo: false
 cache:
     directory:
-        - $HOME/.m2/repository
+        - $HOME/.m2
 
 before_install:
   - unset GEM_PATH
