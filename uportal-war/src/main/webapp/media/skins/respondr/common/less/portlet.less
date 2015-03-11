@@ -107,3 +107,42 @@
     }
 }
 
+/* Favorites Portlet */
+.favorites {
+
+    .navbar {
+        background: none;
+        border: none;
+        margin: 0;
+
+        .navbar-collapse {
+            padding: 0;
+
+            .list-group {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+/* Display only for desktop */
+@media only screen and (min-width: 769px) {
+    .favorites {
+
+        /* Hide the navbar-brand text */
+        .navbar-brand {
+            display: none;
+        }
+    }
+}
+
+/* Display only for mobile */
+@media only screen and (max-width: 769px) {
+    .favorites {
+
+        /* Show a border around the navbar */
+        .navbar {
+            border: 1px solid #e7e7e7;
+        }
+    }
+}
