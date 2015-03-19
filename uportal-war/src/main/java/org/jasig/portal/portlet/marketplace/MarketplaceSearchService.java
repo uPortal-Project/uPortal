@@ -113,29 +113,30 @@ public class MarketplaceSearchService implements IPortalSearchService {
                 result.getType().add("marketplace");
 
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, portlet.getFName());
+                // Result is null if user does not have access to portlet.
                 if (portletWindow != null) {
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                     final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpServletRequest, portlet.getFName(), UrlType.RENDER);
                     final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
                     portletUrlBuilder.setWindowState(PortletUtils.getWindowState("maximized"));
-                    result.setExternalUrl(portalUrlBuilder.getUrlString());                    
+                    result.setExternalUrl(portalUrlBuilder.getUrlString());
+
+                    PortletUrl url = new PortletUrl();
+                    url.setType(PortletUrlType.RENDER);
+                    url.setPortletMode("VIEW");
+                    url.setWindowState("maximized");
+                    PortletUrlParameter actionParam = new PortletUrlParameter();
+                    actionParam.setName("action");
+                    actionParam.getValue().add("view");
+                    url.getParam().add(actionParam);
+                    PortletUrlParameter fNameParam = new PortletUrlParameter();
+                    fNameParam.setName("fName");
+                    fNameParam.getValue().add(portlet.getFName());
+                    url.getParam().add(fNameParam);
+                    result.setPortletUrl(url);
+                    //Add the result to list to return
+                    results.getSearchResult().add(result);
                 }
-                
-                PortletUrl url = new PortletUrl();
-                url.setType(PortletUrlType.RENDER);
-                url.setPortletMode("VIEW");
-                url.setWindowState("maximized");
-                PortletUrlParameter actionParam = new PortletUrlParameter();
-                actionParam.setName("action");
-                actionParam.getValue().add("view");
-                url.getParam().add(actionParam);
-                PortletUrlParameter fNameParam = new PortletUrlParameter();
-                fNameParam.setName("fName");
-                fNameParam.getValue().add(portlet.getFName());
-                url.getParam().add(fNameParam);
-                result.setPortletUrl(url);
-                //Add the result to list to return
-                results.getSearchResult().add(result);
             }
     	}
         return results;
