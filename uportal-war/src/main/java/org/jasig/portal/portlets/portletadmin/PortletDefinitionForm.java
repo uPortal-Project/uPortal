@@ -337,7 +337,7 @@ public class PortletDefinitionForm implements Serializable {
 
     public void setApplicationId(String applicationId) {
         // Be careful not to pass on extra whitespace
-        this.applicationId = applicationId.trim();
+        this.applicationId = StringUtils.isNotBlank(applicationId) ? applicationId.trim() : applicationId;
     }
 
 	public String getPortletName() {
