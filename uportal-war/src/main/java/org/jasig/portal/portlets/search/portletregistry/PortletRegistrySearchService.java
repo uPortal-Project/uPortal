@@ -89,6 +89,7 @@ public class PortletRegistrySearchService implements IPortalSearchService {
                 result.getType().add(searchResultType);
 
                 final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(httpServletRequest, portlet.getFName());
+                // Result is null if user does not have access to portlet.
                 if (portletWindow != null) {
                     final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
                     final IPortalUrlBuilder portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletFName(httpServletRequest, portlet.getFName(), UrlType.RENDER);
