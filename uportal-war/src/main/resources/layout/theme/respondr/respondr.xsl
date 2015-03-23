@@ -63,8 +63,8 @@
 
 <!-- To allow &nbsp; in document. See http://www.onjava.com/pub/a/oreilly/java/news/javaxslt_0801.html -->
 <!DOCTYPE xsl:stylesheet [
-    <!ENTITY nbsp "&#160;">
-    ]>
+        <!ENTITY nbsp "&#160;">
+        ]>
 <!-- ========================================================================= -->
 <!-- ========== STYLESHEET DELCARATION ======================================= -->
 <!-- ========================================================================= -->
@@ -72,459 +72,458 @@
  | RED
  | This statement defines this document as XSL.
  -->
-<xsl:stylesheet 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
-    xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
-    xsi:schemaLocation="
+<xsl:stylesheet
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:dlm="http://www.uportal.org/layout/dlm"
+        xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
+        xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
+        xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+        xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
+        xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
+        xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg" 
-    version="1.0">
+        exclude-result-prefixes="url upAuth upGroup upMsg"
+        version="1.0">
 
-<!-- ========================================================================= -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== IMPORTS ====================================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | RED
- | Imports are the XSL files that build the theme.
- | Import statments and the XSL files they refer to should not be modified.
- -->
-<xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
-<xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
-<xsl:import href="navigation.xsl" />
-<xsl:import href="regions.xsl" />     <!-- Templates for areas (regions) on the page in which non-tab/column portlets may be placed -->
-<xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
-<!-- ========================================================================= -->
+    <!-- ========================================================================= -->
 
 
-<!-- ========================================= -->
-<!-- ========== OUTPUT DELCARATION =========== -->
-<!-- ========================================= -->
-<!-- 
- | RED
- | This statement instructs the XSL how to output.
- -->
-<xsl:output method="xml" indent="yes" media-type="text/html" doctype-system="EMPTY"/>
-<!-- ========================================= -->
-
-<!-- ============================================== -->
-<!-- ========== VARIABLES and PARAMETERS ========== -->
-<!-- ============================================== -->
-<!-- 
- | YELLOW - GREEN
- | These variables and parameters provide flexibility and customization of the user interface.
- | Changing the values of the variables and parameters signals the theme to reconfigure use 
- | and location of user interface components. Most text used within the theme is localized.  
- -->
+    <!-- ========================================================================= -->
+    <!-- ========== IMPORTS ====================================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | RED
+     | Imports are the XSL files that build the theme.
+     | Import statments and the XSL files they refer to should not be modified.
+     -->
+    <xsl:import href="../resourcesTemplates.xsl" />  <!-- Templates for Skin Resource generation -->
+    <xsl:import href="../urlTemplates.xsl" />        <!-- Templates for URL generation -->
+    <xsl:import href="navigation.xsl" />
+    <xsl:import href="regions.xsl" />     <!-- Templates for areas (regions) on the page in which non-tab/column portlets may be placed -->
+    <xsl:import href="content.xsl" />     <!-- Templates for content elements (rows and portlets) -->
+    <!-- ========================================================================= -->
 
 
-<!-- ****** XSL UTILITY PARAMETERS ****** -->
-<!-- 
-| RED
-| Parameters used by XSL->Java Callbacks
--->
-<xsl:param name="CURRENT_REQUEST" />
-<xsl:param name="RESOURCES_ELEMENTS_HELPER" />
-<xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
+    <!-- ========================================= -->
+    <!-- ========== OUTPUT DELCARATION =========== -->
+    <!-- ========================================= -->
+    <!--
+     | RED
+     | This statement instructs the XSL how to output.
+     -->
+    <xsl:output method="xml" indent="yes" media-type="text/html" doctype-system="EMPTY"/>
+    <!-- ========================================= -->
+
+    <!-- ============================================== -->
+    <!-- ========== VARIABLES and PARAMETERS ========== -->
+    <!-- ============================================== -->
+    <!--
+     | YELLOW - GREEN
+     | These variables and parameters provide flexibility and customization of the user interface.
+     | Changing the values of the variables and parameters signals the theme to reconfigure use
+     | and location of user interface components. Most text used within the theme is localized.
+     -->
 
 
-<!-- ****** SKIN SETTINGS ****** -->
-<!-- 
-| YELLOW
-| Skin Settings can be used to change the location of skin files.
--->
-<xsl:param name="userImpersonating">false</xsl:param>
-<xsl:param name="skin">defaultSkin</xsl:param>
-<xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
-<xsl:variable name="SKIN" select="$skin"/>
-<xsl:variable name="MEDIA_PATH">media/skins/respondr</xsl:variable>
-<xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
-<xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
-<xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
-<xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
-<xsl:variable name="FOCUSED_CLASS">
-    <xsl:choose>
-        <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
-        <xsl:otherwise>dashboard</xsl:otherwise>
-    </xsl:choose>
-</xsl:variable>
-<!-- ======================================== -->
+    <!-- ****** XSL UTILITY PARAMETERS ****** -->
+    <!--
+    | RED
+    | Parameters used by XSL->Java Callbacks
+    -->
+    <xsl:param name="CURRENT_REQUEST" />
+    <xsl:param name="RESOURCES_ELEMENTS_HELPER" />
+    <xsl:param name="XSLT_PORTAL_URL_PROVIDER" />
 
 
-<!-- ****** LOCALIZATION SETTINGS ****** -->
-<!-- 
- | GREEN
- | Localization Settings can be used to change the localization of the theme.
- -->
-<xsl:param name="USER_LANG">en</xsl:param>
-<!-- ======================================== -->
-
-
-<!-- ****** PORTAL SETTINGS ****** -->
-<!-- 
- | YELLOW
- | Portal Settings should generally not be (and not need to be) modified.
- -->
-<xsl:param name="AUTHENTICATED" select="'false'"/>
-<xsl:param name="HOST_NAME"></xsl:param>
-<xsl:param name="USER_ID">guest</xsl:param>
-<xsl:param name="userName">Guest User</xsl:param>
-<xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
-<xsl:param name="uP_productAndVersion">uPortal</xsl:param>
-<xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
-<xsl:param name="baseActionURL">render.uP</xsl:param>
-<xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-<xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
-<xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
-  <xsl:choose>
-    <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
-    <xsl:otherwise>false</xsl:otherwise>
-  </xsl:choose>
-</xsl:variable>
-<xsl:param name="USE_AJAX" select="'true'"/>
-<xsl:param name="JS_LIBRARY_SKIN">
-    <xsl:choose>
-      <xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
-      <xsl:otherwise></xsl:otherwise>
-    </xsl:choose>
-</xsl:param>
-
-<!-- ****** PORTLET SETTINGS ****** -->
-<!--
- | GREEN
- | Portlet Settings can be used to change aspects of the portlet chrome.
- -->
-<xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
-
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE TITLE ========================================= -->
-<!-- ========================================================================= -->
-<!--
- | GREEN
- | This template renders the page title in the <head>.
- | Template contents can be any valid XSL or XHTML.
- -->
-<xsl:template name="page.title">
-    <title>
+    <!-- ****** SKIN SETTINGS ****** -->
+    <!--
+    | YELLOW
+    | Skin Settings can be used to change the location of skin files.
+    -->
+    <xsl:param name="userImpersonating">false</xsl:param>
+    <xsl:param name="skin">defaultSkin</xsl:param>
+    <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
+    <xsl:variable name="SKIN" select="$skin"/>
+    <xsl:variable name="MEDIA_PATH">media/skins/respondr</xsl:variable>
+    <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
+    <xsl:variable name="SKIN_RESOURCES_PATH" select="concat('/',$MEDIA_PATH,'/',$SKIN,'/skin.xml')"/>
+    <xsl:variable name="SKIN_PATH" select="concat($ABSOLUTE_MEDIA_PATH,'/',$SKIN)"/>
+    <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
+    <xsl:variable name="FOCUSED_CLASS">
         <xsl:choose>
-            <xsl:when test="//focused">
-                {up-portlet-title(<xsl:value-of select="//focused/channel/@ID" />)} | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/> | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
-            </xsl:otherwise>
-       </xsl:choose>
-   </title>
-</xsl:template>
-<!-- ========================================================================= -->
+            <xsl:when test="//content/focused">focused <xsl:value-of select="//content/focused/channel/@fname"/></xsl:when>
+            <xsl:otherwise>dashboard</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <!-- ======================================== -->
 
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE META ========================================== -->
-<!-- ========================================================================= -->
-<!--
- | GREEN
- | This template renders keywords and descriptions in the <head>.
- | Template contents can be any valid XSL or XHTML.
- -->
-<xsl:template name="page.meta">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
-    <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
-</xsl:template>
-<!-- ========================================================================= -->
+    <!-- ****** LOCALIZATION SETTINGS ****** -->
+    <!--
+     | GREEN
+     | Localization Settings can be used to change the localization of the theme.
+     -->
+    <xsl:param name="USER_LANG">en</xsl:param>
+    <!-- ======================================== -->
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | YELLOW
- | This template initializes portal-wide JavaScript and cleans up the global namespace.
- -->
-<xsl:template name="page.js">
-  <script type="text/javascript">
-    var up = up || {};
-    up.jQuery = jQuery.noConflict(true);
-    up.fluid = fluid;
-    fluid = null;
-    fluid_1_5 = null;
-    up._ = _.noConflict();
-    up._.templateSettings = {
-      interpolate : /{{=(.+?)}}/g,
-      evaluate    : /{{(.+?)}}/g,
-      escape: /{{-([\s\S]+?)}}/g
-    };
-    up.Backbone = Backbone.noConflict();
 
-    (function($) {
-      $(function() {
-        var navMenuToggle = function() {
-          var menu = $(".portal-nav .menu"), menuToggle = $(".portal-nav .menu-toggle");
-          // Toggle the menu visibility when the button is clicked.
-          menuToggle.click(function() {
+    <!-- ****** PORTAL SETTINGS ****** -->
+    <!--
+     | YELLOW
+     | Portal Settings should generally not be (and not need to be) modified.
+     -->
+    <xsl:param name="AUTHENTICATED" select="'false'"/>
+    <xsl:param name="HOST_NAME"></xsl:param>
+    <xsl:param name="USER_ID">guest</xsl:param>
+    <xsl:param name="userName">Guest User</xsl:param>
+    <xsl:param name="USER_NAME"><xsl:value-of select="$userName"/></xsl:param>
+    <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
+    <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
+    <xsl:param name="baseActionURL">render.uP</xsl:param>
+    <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
+    <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
+    <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
+        <xsl:choose>
+            <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
+            <xsl:otherwise>false</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:param name="USE_AJAX" select="'true'"/>
+    <xsl:param name="JS_LIBRARY_SKIN">
+        <xsl:choose>
+            <xsl:when test="$USE_AJAX='true'">jqueryui</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+        </xsl:choose>
+    </xsl:param>
+
+    <!-- ****** PORTLET SETTINGS ****** -->
+    <!--
+     | GREEN
+     | Portlet Settings can be used to change aspects of the portlet chrome.
+     -->
+    <xsl:param name="USE_PORTLET_MINIMIZE_CONTENT" select="'true'" /> <!-- Sets the use of a content show/hide control.  Values are 'true' or 'false'. -->
+
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: PAGE TITLE ========================================= -->
+    <!-- ========================================================================= -->
+    <!--
+     | GREEN
+     | This template renders the page title in the <head>.
+     | Template contents can be any valid XSL or XHTML.
+     -->
+    <xsl:template name="page.title">
+        <title>
+            <xsl:choose>
+                <xsl:when test="//focused">
+                    {up-portlet-title(<xsl:value-of select="//focused/channel/@ID" />)} | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/> | <xsl:value-of select="upMsg:getMessage('portal.page.title', $USER_LANG)" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </title>
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: PAGE META ========================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | GREEN
+     | This template renders keywords and descriptions in the <head>.
+     | Template contents can be any valid XSL or XHTML.
+     -->
+    <xsl:template name="page.meta">
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
+        <meta name="keywords" content="{upMsg:getMessage('portal.page.meta.keywords', $USER_LANG)}" />
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: PAGE JAVASCRIPT ==================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | YELLOW
+     | This template initializes portal-wide JavaScript and cleans up the global namespace.
+     -->
+    <xsl:template name="page.js">
+        <script type="text/javascript">
+            var up = up || {};
+            up.jQuery = jQuery.noConflict(true);
+            up.fluid = fluid;
+            fluid = null;
+            fluid_1_5 = null;
+            up._ = _.noConflict();
+            up._.templateSettings = {
+            interpolate : /{{=(.+?)}}/g,
+            evaluate    : /{{(.+?)}}/g,
+            escape: /{{-([\s\S]+?)}}/g
+            };
+            up.Backbone = Backbone.noConflict();
+
+            (function($) {
+            $(function() {
+            var navMenuToggle = function() {
+            var menu = $(".portal-nav .menu"), menuToggle = $(".portal-nav .menu-toggle");
+            // Toggle the menu visibility when the button is clicked.
+            menuToggle.click(function() {
             //alert("Handler for .click() called.");
             menu.toggleClass("show");
             return false;
-          });
-          // Console for debugging.
-          console.log("menu", menu, "menuToggle", menuToggle);
-        }
+            });
+            // Console for debugging.
+            console.log("menu", menu, "menuToggle", menuToggle);
+            }
 
-        navMenuToggle();
-      });
+            navMenuToggle();
+            });
 
-      $(document).ready(function() {
-          if (up.lightboxConfig) {
+            $(document).ready(function() {
+            if (up.lightboxConfig) {
             up.lightboxConfig.init();
-          }
+            }
 
-          // Unhide the portlet's options menu if there are option items to display.
-          $('div.portlet-options-menu').has('li').removeClass('hidden');
+            // Unhide the portlet's options menu if there are option items to display.
+            $('div.portlet-options-menu').has('li').removeClass('hidden');
 
-          // If portlet chrome is configured to not show (shows on hover) and the portlet is not movable, the portlet chrome
-          // is hidden.  However if there are option items to display, allow the portlet chrome to show on hover.
-          $('div.hover-toolbar').filter('.hidden').has('li').removeClass('hidden');
-      });
+            // If portlet chrome is configured to not show (shows on hover) and the portlet is not movable, the portlet chrome
+            // is hidden.  However if there are option items to display, allow the portlet chrome to show on hover.
+            $('div.hover-toolbar').filter('.hidden').has('li').removeClass('hidden');
+            });
 
-    })(up.jQuery);
-  </script>
-</xsl:template>
-<!-- ========================================================================= -->
+            })(up.jQuery);
+        </script>
+    </xsl:template>
+    <!-- ========================================================================= -->
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: FOOTER NAV ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | YELLOW
- | This template renders the tabs at the top of the page.
- -->
-<xsl:template name="footer.nav">
-    <footer class="portal-footer-nav" role="contentinfo">
-        <div class="container-fluid">
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: FOOTER NAV ==================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | YELLOW
+     | This template renders the tabs at the top of the page.
+     -->
+    <xsl:template name="footer.nav">
+        <footer class="portal-footer-nav" role="contentinfo">
+            <div class="container-fluid">
 
-            <!--
-             | Tab layout:
-             | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
-             |   -portlet1     -portlet5     -portlet7     -portlet8
-             |   -portlet2     -portlet6                   -portlet9
-             |   -portlet3                                 -portlet10
-             |   -portlet4
-             |
-             | Tab5 ....
-             +-->
+                <!--
+                 | Tab layout:
+                 | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
+                 |   -portlet1     -portlet5     -portlet7     -portlet8
+                 |   -portlet2     -portlet6                   -portlet9
+                 |   -portlet3                                 -portlet10
+                 |   -portlet4
+                 |
+                 | Tab5 ....
+                 +-->
 
-            <a name="sitemap"></a>
-            <xsl:variable name="TAB_WRAP_COUNT" select="4" />
+                <a name="sitemap"></a>
+                <xsl:variable name="TAB_WRAP_COUNT" select="4" />
 
-            <xsl:for-each select="//navigation/tab">
-                <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
-                    <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
-                    <div class="row">
-                        <xsl:for-each select="//navigation/tab">
-                            <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
-                                <xsl:variable name="NAV_TRANSIENT">
-                                    <xsl:choose>
-                                        <xsl:when test="@transient='true'">disabled</xsl:when>
-                                        <xsl:otherwise></xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:variable>
-                                <xsl:variable name="tabLinkUrl">
-                                    <!-- For a transient tab, attempting to calculate a tab URL generates an
-                                         exception because the tab is not in the layout so generate a safe URL. -->
-                                    <xsl:choose>
-                                        <xsl:when test="@transient='true'">javascript:;</xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:call-template name="portalUrl">
-                                                <xsl:with-param name="url">
-                                                    <url:portal-url>
-                                                        <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-                                                    </url:portal-url>
-                                                </xsl:with-param>
-                                            </xsl:call-template>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:variable>
-                                <div class="col-md-3">
-                                    <h4><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
-                                    <ul>
-                                        <xsl:for-each select="tabChannel">
-                                            <xsl:variable name="portletLinkUrl">
+                <xsl:for-each select="//navigation/tab">
+                    <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
+                        <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
+                        <div class="row">
+                            <xsl:for-each select="//navigation/tab">
+                                <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+                                    <xsl:variable name="NAV_TRANSIENT">
+                                        <xsl:choose>
+                                            <xsl:when test="@transient='true'">disabled</xsl:when>
+                                            <xsl:otherwise></xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <xsl:variable name="tabLinkUrl">
+                                        <!-- For a transient tab, attempting to calculate a tab URL generates an
+                                             exception because the tab is not in the layout so generate a safe URL. -->
+                                        <xsl:choose>
+                                            <xsl:when test="@transient='true'">javascript:;</xsl:when>
+                                            <xsl:otherwise>
                                                 <xsl:call-template name="portalUrl">
                                                     <xsl:with-param name="url">
                                                         <url:portal-url>
                                                             <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-                                                            <url:portlet-url state="MAXIMIZED" />
                                                         </url:portal-url>
                                                     </xsl:with-param>
                                                 </xsl:call-template>
-                                            </xsl:variable>
-                                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
-                                        </xsl:for-each>
-                                    </ul>
-                                </div>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </div>
-                </xsl:if>
-            </xsl:for-each>
-
-        </div>
-    </footer>
-</xsl:template>
-<!-- ========================================================================= -->
-
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: PAGE DIALOGS ==================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | YELLOW
- | This template renders dialog windows used by certain behaviors in the portal.
- -->
-<xsl:template name="page.dialogs">
-
-    <xsl:choose>
-        <!-- The normal/usual case:  Dashboard (non-focused) mode -->
-        <xsl:when test="not(//focused)">
-            <xsl:call-template name="page.dialogs.dashboard" />
-        </xsl:when>
-        <!-- UseIt use case:  We are focused on a portlet that is (1) not currently
-             in the user's layout and (2) not a "hidden" portlet.  (Portlets that 
-             are not a member of any category are hidden.) -->
-        <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
-            <xsl:call-template name="page.dialogs.useit" />
-        </xsl:when>
-        <xsl:otherwise>
-            <!-- Currently no up.LayoutPreferences JS to initialize when (1) user is focused (2) on a portlet already in his layout. -->
-        </xsl:otherwise>
-    </xsl:choose>
-
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ================================================================================ -->
-<!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
-<!-- ================================================================================ -->
-<!-- 
- | YELLOW
- | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
- -->
-<xsl:template name="page.dialogs.dashboard">
-
-    <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-        <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-                    <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
-                </div>
-                <div class="fl-widget-content content portlet-content" role="main">
-                    <div class="portlet-section" role="region">
-                        <div class="titlebar">
-                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <div class="col-md-3">
+                                        <h4><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
+                                        <ul>
+                                            <xsl:for-each select="tabChannel">
+                                                <xsl:variable name="portletLinkUrl">
+                                                    <xsl:call-template name="portalUrl">
+                                                        <xsl:with-param name="url">
+                                                            <url:portal-url>
+                                                                <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                                <url:portlet-url state="MAXIMIZED" />
+                                                            </url:portal-url>
+                                                        </xsl:with-param>
+                                                    </xsl:call-template>
+                                                </xsl:variable>
+                                                <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </div>
+                                </xsl:if>
+                            </xsl:for-each>
                         </div>
-                        <div class="content">
-                            <form>
-                                <p>
-                                    <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
-                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.tab', $USER_LANG)"/><br />
-                                    <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.page.properties', $USER_LANG)"/><br />
-                                    <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
-                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
-                                </p>
-                                <div class="buttons">
-                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                    </xsl:if>
+                </xsl:for-each>
             </div>
-        </div>
-        <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-                    <h2 class="title" role="heading"></h2>
-                </div>
-                <div class="fl-widget-content content portlet-content" role="main">
-                    <form>
-                        <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
-                        <p>
-                            <input type="hidden" name="nodeId" value=""/>
-                            <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.column', $USER_LANG)"/><br />
-                            <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.column.properties', $USER_LANG)"/><br />
-                            <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
-                            <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
-                        </p>
-                        <div class="buttons">
-                            <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
-            <div class="fl-widget portlet">
-                <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-                    <h2 class="title" role="heading"></h2>
-                </div>
-                <div class="fl-widget-content content portlet-content" role="main">
-                    <div class="portlet-section" role="region">
-                        <div class="titlebar">
-                            <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
-                        </div>
-                        <div class="content">
-                            <form>
-                                <p>
-                                    <input type="hidden" name="nodeId"/>
-                                    <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
-                                    <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
-                                </p>
-                                <div class="buttons">
-                                    <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
-                                </div>
-                            </form>
+        </footer>
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: PAGE DIALOGS ==================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | YELLOW
+     | This template renders dialog windows used by certain behaviors in the portal.
+     -->
+    <xsl:template name="page.dialogs">
+
+        <xsl:choose>
+            <!-- The normal/usual case:  Dashboard (non-focused) mode -->
+            <xsl:when test="not(//focused)">
+                <xsl:call-template name="page.dialogs.dashboard" />
+            </xsl:when>
+            <!-- UseIt use case:  We are focused on a portlet that is (1) not currently
+                 in the user's layout and (2) not a "hidden" portlet.  (Portlets that
+                 are not a member of any category are hidden.) -->
+            <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
+                <xsl:call-template name="page.dialogs.useit" />
+            </xsl:when>
+            <xsl:otherwise>
+                <!-- Currently no up.LayoutPreferences JS to initialize when (1) user is focused (2) on a portlet already in his layout. -->
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+
+    <!-- ================================================================================ -->
+    <!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
+    <!-- ================================================================================ -->
+    <!--
+     | YELLOW
+     | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
+     -->
+    <xsl:template name="page.dialogs.dashboard">
+
+        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+            <div class="edit-page-permissions-dialog" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                <div class="fl-widget portlet">
+                    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                        <h2 class="title" role="heading"><xsl:value-of select="/layout/navigation/tab[@activeTab='true']/@name"/></h2>
+                    </div>
+                    <div class="fl-widget-content content container-fluid" role="main">
+                        <div class="portlet-section" role="region">
+                            <div class="titlebar">
+                                <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
+                            </div>
+                            <div class="content">
+                                <form>
+                                    <p>
+                                        <input type="hidden" name="nodeId" value="{/layout/navigation/tab[@activeTab='true']/@ID}"/>
+                                        <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.tab', $USER_LANG)"/><br />
+                                        <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.page.properties', $USER_LANG)"/><br />
+                                        <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.columns', $USER_LANG)"/><br />
+                                        <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.tab', $USER_LANG)"/><br />
+                                    </p>
+                                    <div class="buttons">
+                                        <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="edit-column-permissions-dialog" title="{upMsg:getMessage('edit.column.permissions', $USER_LANG)}">
+                <div class="fl-widget portlet">
+                    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                        <h2 class="title" role="heading"></h2>
+                    </div>
+                    <div class="fl-widget-content content portlet-content" role="main">
+                        <form>
+                            <p><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</p>
+                            <p>
+                                <input type="hidden" name="nodeId" value=""/>
+                                <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.column', $USER_LANG)"/><br />
+                                <input type="checkbox" name="editable"/> <xsl:value-of select="upMsg:getMessage('edit.column.properties', $USER_LANG)"/><br />
+                                <input type="checkbox" name="addChildAllowed"/> <xsl:value-of select="upMsg:getMessage('add.portlets.to.this.column', $USER_LANG)"/><br />
+                                <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('delete.this.column', $USER_LANG)"/><br />
+                            </p>
+                            <div class="buttons">
+                                <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-portlet-permissions-dialog" title="{upMsg:getMessage('edit.portlet.permissions', $USER_LANG)}">
+                <div class="fl-widget portlet">
+                    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+                        <h2 class="title" role="heading"></h2>
+                    </div>
+                    <div class="fl-widget-content content portlet-content" role="main">
+                        <div class="portlet-section" role="region">
+                            <div class="titlebar">
+                                <h3 class="title" role="heading"><xsl:value-of select="upMsg:getMessage('allow.users.to', $USER_LANG)"/>:</h3>
+                            </div>
+                            <div class="content">
+                                <form>
+                                    <p>
+                                        <input type="hidden" name="nodeId"/>
+                                        <input type="checkbox" name="movable"/> <xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/><br />
+                                        <input type="checkbox" name="deletable"/> <xsl:value-of select="upMsg:getMessage('remove.this.portlet', $USER_LANG)"/><br />
+                                    </p>
+                                    <div class="buttons">
+                                        <input type="submit" class="button primary portlet-form-button" value="{upMsg:getMessage('update.permissions', $USER_LANG)}"/>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xsl:if><!-- End fragment admin dialogs -->
+
+        <div id="portalDropWarning" class="drop-warning" style="display:none;">
+            <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
         </div>
-    </xsl:if><!-- End fragment admin dialogs -->
 
-    <div id="portalDropWarning" class="drop-warning" style="display:none;">
-        <p><xsl:value-of select="upMsg:getMessage('portlet.cannot.be.moved.here.locked', $USER_LANG)"/></p>
-    </div>
+        <script type="text/javascript">
 
-    <script type="text/javascript">
-    
-        up.jQuery(document).ready(function() {
-        
+            up.jQuery(document).ready(function() {
+
             if(window.location.search.indexOf('redirectToDefault=true') > 0) {
-              up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessage('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
+            up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessage('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
             }
 
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-            up.FragmentPermissionsManager("body", {
+                up.FragmentPermissionsManager("body", {
                 savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
                 messages: {
-                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+                columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
                 }
-            });
+                });
             </xsl:if>
             <xsl:if test="$AUTHENTICATED='true'">
-            var options = {
+                var options = {
                 tabContext: '<xsl:value-of select="$TAB_CONTEXT"/>',
                 numberOfPortlets: '<xsl:value-of select="count(content/column/channel)"/>',
                 portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
@@ -536,262 +535,265 @@
                 subscribableTabUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/subscribableTabs.json',
                 columnWidthClassPattern: 'col-md-',
                 columnWidthClassFunction: function(column) {
-                    return 'col-md-' + Math.round(column / 8.3333);
+                return 'col-md-' + Math.round(column / 8.3333);
                 },
                 messages: {
-                    confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
-                    confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                    addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
-                    column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
-                    columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
-                    fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
-                    narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
-                    even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
-                    wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
-                    narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
-                    searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                    allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
-                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+                confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
+                confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
+                addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
+                column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
+                columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
+                fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
+                narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
+                even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
+                wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
+                narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
+                searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
+                allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
+                persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
                 }
-            };
-            var layoutPreferences = up.LayoutPreferences("body", options);
-            // For the portlet/Respondr version of the gallery control, 
-            // we must open it ourselves (if present) when the page loads.
-            if (layoutPreferences.components.gallery) {
+                };
+                var layoutPreferences = up.LayoutPreferences("body", options);
+                // For the portlet/Respondr version of the gallery control,
+                // we must open it ourselves (if present) when the page loads.
+                if (layoutPreferences.components.gallery) {
                 layoutPreferences.components.gallery.openGallery();
-            }
-            </xsl:if>
-        });
-    </script>
-
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ================================================================================ -->
-<!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
-<!-- ================================================================================ -->
-<!-- 
- | YELLOW
- | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
- -->
-<xsl:template name="page.dialogs.useit">
-
-    <div id="ajaxMenus" style="display:none;">
-        <!-- Add Portlet Menu -->
-        <div class="focused-content-dialog" title="{upMsg:getMessage('add.content', $USER_LANG)}">
-            <form>
-                <fieldset>
-                    <legend>
-                        <xsl:value-of select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
-                    </legend>
-                    <xsl:variable name="unlockedTab" select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']" />
-                    <xsl:choose>
-                      <xsl:when test="$unlockedTab">
-                        <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
-                            <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio" />
-                            <label for="targetTab{@ID}" class="portlet-form-field-label">
-                                <xsl:value-of select="@name" />
-                            </label>
-                            <br />
-                        </xsl:for-each>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of select="upMsg:getMessage('error.add.portlet.in.layout', $USER_LANG)" />
-                      </xsl:otherwise>
-                    </xsl:choose>
-                </fieldset>
-                <p>
-                    <input name="portletId" type="hidden" value="{//focused/channel/@chanID}" />
-                    <input type="submit" value="{upMsg:getMessage('add', $USER_LANG)}" class="portlet-form-button" />
-                    &#160;
-                </p>
-            </form>
-        </div>
-    </div>
-    <script type="text/javascript">
-        up.jQuery(document).ready(function() {
-            up.FocusedLayoutPreferences("body", {
-                portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
-                layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
-                messages: {
-                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
                 }
-            });
-        });
-    </script>
-
-</xsl:template>
-<!-- ========================================================================= -->
-
-
-<!-- ==================================================================================== -->
-<!-- ========== TEMPLATE: DOCUMENT NORMAL =============================================== -->
-<!-- ==================================================================================== -->
-<!-- 
- | RED
- | This approach to rendering is the standard portal experience.  This template 
- | defines the overall structure of the html markup.  Focused and Non-focused 
- | content is controlled through an xsl:choose statement.  Template contents can
- | be any valid XSL or XHTML.
- -->
-<xsl:template name="document.normal">
-    <html lang="{$USER_LANG}" class="respondr">
-        <head>
-            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <xsl:call-template name="page.title" />
-            <xsl:call-template name="page.meta" />
-            <xsl:call-template name="skinResources">
-                <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-            </xsl:call-template>
-            <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
-                <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
             </xsl:if>
-            <xsl:call-template name="page.js" />
-            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
-            <xsl:for-each select="//header/descendant::channel-header">
-                <xsl:copy-of select="."/>
-            </xsl:for-each>
-            <!-- Respondr:  Ignore channels in header section (legacy feature).  Respondr respects portlets
-                 using RENDER_HEADERS to include content in header area.
-            <xsl:for-each select="//header/descendant::channel">
-                <xsl:copy-of select="."/>
-            </xsl:for-each>
-            -->
-            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-        </head>
-        <body class="up dashboard portal fl-theme-mist">
-            <div id="up-notification"></div>
-            <div id="wrapper">
-                <xsl:call-template name="region.hidden-top" />
-                <xsl:call-template name="region.page-top" />
-                <header class="portal-header" role="banner">
-                    <div class="container-fluid">
-                        <div class="portal-global row">
-                            <xsl:call-template name="region.pre-header" />
-                        </div>
-                        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                        <div class="row">
-                            <xsl:call-template name="region.header-left" />
-                            <xsl:call-template name="region.header-right" />
-                        </div>
-                    </div>
-                    <xsl:call-template name="region.header-bottom" />
-                    <xsl:apply-templates select="layout/navigation" />
-                </header>
+            });
+        </script>
+
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+
+    <!-- ================================================================================ -->
+    <!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
+    <!-- ================================================================================ -->
+    <!--
+     | YELLOW
+     | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
+     -->
+    <xsl:template name="page.dialogs.useit">
+
+        <div id="ajaxMenus" style="display:none;">
+            <!-- Add Portlet Menu -->
+            <div class="focused-content-dialog" title="{upMsg:getMessage('add.content', $USER_LANG)}">
+                <form>
+                    <fieldset>
+                        <legend>
+                            <xsl:value-of select="upMsg:getMessage('add.to.page', $USER_LANG)" />:
+                        </legend>
+                        <xsl:variable name="unlockedTab" select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']" />
+                        <xsl:choose>
+                            <xsl:when test="$unlockedTab">
+                                <xsl:for-each select="/layout/navigation/tab[@dlm:hasColumnAddChildAllowed='true']">
+                                    <input name="targetTab" id="targetTab{@ID}" value="{@ID}" type="radio" />
+                                    <label for="targetTab{@ID}" class="portlet-form-field-label">
+                                        <xsl:value-of select="@name" />
+                                    </label>
+                                    <br />
+                                </xsl:for-each>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="upMsg:getMessage('error.add.portlet.in.layout', $USER_LANG)" />
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </fieldset>
+                    <p>
+                        <input name="portletId" type="hidden" value="{//focused/channel/@chanID}" />
+                        <input type="submit" value="{upMsg:getMessage('add', $USER_LANG)}" class="portlet-form-button" />
+                        &#160;
+                    </p>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            up.jQuery(document).ready(function() {
+            up.FocusedLayoutPreferences("body", {
+            portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
+            layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
+            messages: {
+            persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+            }
+            });
+            });
+        </script>
+
+    </xsl:template>
+    <!-- ========================================================================= -->
+
+
+    <!-- ==================================================================================== -->
+    <!-- ========== TEMPLATE: DOCUMENT NORMAL =============================================== -->
+    <!-- ==================================================================================== -->
+    <!--
+     | RED
+     | This approach to rendering is the standard portal experience.  This template
+     | defines the overall structure of the html markup.  Focused and Non-focused
+     | content is controlled through an xsl:choose statement.  Template contents can
+     | be any valid XSL or XHTML.
+     -->
+    <xsl:template name="document.normal">
+        <html lang="{$USER_LANG}" class="respondr">
+            <head>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
-                    <xsl:call-template name="region.customize" />
-                    <xsl:call-template name="region.mezzanine" />
+                <xsl:call-template name="page.title" />
+                <xsl:call-template name="page.meta" />
+                <xsl:call-template name="skinResources">
+                    <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+                </xsl:call-template>
+                <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
+                    <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
+                </xsl:if>
+                <xsl:call-template name="page.js" />
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
+                <xsl:for-each select="//header/descendant::channel-header">
+                    <xsl:copy-of select="."/>
+                </xsl:for-each>
+                <!-- Respondr:  Ignore channels in header section (legacy feature).  Respondr respects portlets
+                     using RENDER_HEADERS to include content in header area.
+                <xsl:for-each select="//header/descendant::channel">
+                    <xsl:copy-of select="."/>
+                </xsl:for-each>
+                -->
+                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            </head>
+            <body class="up dashboard portal fl-theme-mist">
+                <div id="up-notification"></div>
+                <div id="wrapper">
+                    <xsl:call-template name="region.hidden-top" />
+                    <xsl:call-template name="region.page-top" />
+                    <header class="portal-header" role="banner">
+                        <div class="container-fluid">
+                            <div class="portal-global row">
+                                <xsl:call-template name="region.pre-header" />
+                            </div>
+                            <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                            <div class="row">
+                                <xsl:call-template name="region.header-left" />
+                                <xsl:call-template name="region.header-right" />
+                            </div>
+                        </div>
+                        <xsl:call-template name="region.header-bottom" />
+                        <xsl:apply-templates select="layout/navigation" />
+                    </header>
                     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                    <div class="container-fluid">
-                        <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
-                            <xsl:call-template name="region.sidebar-left" />
-                            <!-- The following div must know how many columns are taken by sidebar-left and sidebar-right, if any -->
-                            <xsl:variable name="SIDEBAR_LEFT_COLUMNS">
-                                <xsl:choose>
-                                    <xsl:when test="//region[@name='sidebar-left']/channel">2</xsl:when>
-                                    <xsl:otherwise>0</xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:variable>
-                            <xsl:variable name="SIDEBAR_RIGHT_COLUMNS">
-                                <xsl:choose>
-                                    <xsl:when test="//region[@name='sidebar-right']/channel">2</xsl:when>
-                                    <xsl:otherwise>0</xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:variable>
-                            <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="12 - $SIDEBAR_LEFT_COLUMNS - $SIDEBAR_RIGHT_COLUMNS" /></xsl:variable>
-                            <div class="{$WIDTH_CSS_CLASS}">
-                                <!-- USE FLUID ROWS WITHIN HERE -->
-                                <xsl:call-template name="focused-fragment-header" />
-                                <xsl:call-template name="region.pre-content" />
-                                <!-- For editing page permissions in fragment-admin mode  -->
-                                <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                                    <div class="row">
-                                        <div class="col-md-9"></div>
-                                        <div class="col-md-3">
-                                            <div id="portalEditPagePermissions" class="fl-fix">
-                                                <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
-                                                    <i class="fa fa-align-justify"></i>
-                                                    <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
-                                                </a>
+                    <div id="portalPageBody" class="portal-content" role="main"><!-- #portalPageBody selector is used with BackgroundPreference framework portlet -->
+                        <xsl:call-template name="region.customize" />
+                        <xsl:call-template name="region.mezzanine" />
+                        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                        <div class="container-fluid">
+                            <div class="row"><!-- Fixed-grid row containing content (pre-, regular, and post-), plus optionally sidebar-left, sidebar-right, or both -->
+                                <xsl:call-template name="region.sidebar-left" />
+                                <!-- The following div must know how many columns are taken by sidebar-left and sidebar-right, if any -->
+                                <xsl:variable name="SIDEBAR_LEFT_COLUMNS">
+                                    <xsl:choose>
+                                        <xsl:when test="//region[@name='sidebar-left']/channel">2</xsl:when>
+                                        <xsl:otherwise>0</xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:variable name="SIDEBAR_RIGHT_COLUMNS">
+                                    <xsl:choose>
+                                        <xsl:when test="//region[@name='sidebar-right']/channel">2</xsl:when>
+                                        <xsl:otherwise>0</xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:variable>
+                                <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="12 - $SIDEBAR_LEFT_COLUMNS - $SIDEBAR_RIGHT_COLUMNS" /></xsl:variable>
+                                <div class="{$WIDTH_CSS_CLASS}">
+                                    <!-- USE FLUID ROWS WITHIN HERE -->
+                                    <xsl:call-template name="focused-fragment-header" />
+                                    <xsl:call-template name="region.pre-content" />
+                                    <!-- For editing page permissions in fragment-admin mode  -->
+                                    <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+                                        <div class="row">
+                                            <div class="col-md-9"></div>
+                                            <div class="col-md-3">
+                                                <div id="portalEditPagePermissions" class="fl-fix">
+                                                    <a class="button" id="editPagePermissionsLink" href="javascript:;" title="{upMsg:getMessage('edit.page.permissions', $USER_LANG)}">
+                                                        <i class="fa fa-align-justify"></i>
+                                                        <xsl:value-of select="upMsg:getMessage('edit.page.permissions', $USER_LANG)"/>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
+                                    </xsl:if>
+                                    <!-- Works with up-layout-preferences.js showMessage()  -->
+                                    <div class="row">
+                                        <div id="portalPageBodyMessage" class="col-md-12"></div>
                                     </div>
-                                </xsl:if>
-                                <!-- Works with up-layout-preferences.js showMessage()  -->
-                                <div class="row">
-                                    <div id="portalPageBodyMessage" class="col-md-12"></div>
+
+                                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                                    <xsl:choose>
+                                        <xsl:when test="$PORTAL_VIEW='focused'">
+                                            <!-- === FOCUSED VIEW === -->
+                                            <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:apply-templates select="layout/content" />
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+
+                                    <!-- /USE FLUID ROWS -->
                                 </div>
-
-                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                                <xsl:choose>
-                                    <xsl:when test="$PORTAL_VIEW='focused'">
-                                        <!-- === FOCUSED VIEW === -->
-                                        <xsl:apply-templates select="//focused"/> <!-- Templates located in content.xsl. -->
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:apply-templates select="layout/content" />
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-
-                                <!-- /USE FLUID ROWS -->
-                            </div>
-                            <xsl:call-template name="region.sidebar-right" />
-                        </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
+                                <xsl:call-template name="region.sidebar-right" />
+                            </div><!-- /Fixed-grid row, inclusive of sidebar-left and sidebar-right -->
+                        </div>
+                    </div> <!-- end: portal-content -->
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                    <div id="footer-container" class="clearfix">
+                        <xsl:call-template name="footer.nav" />
+                        <xsl:call-template name="region.footer.second" />
+                        <xsl:call-template name="region.page-bottom" />
+                        <xsl:call-template name="region.hidden-bottom" />
                     </div>
-                </div>
+
+                    <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+                </div> <!-- end: wrapper -->
+
+                <xsl:call-template name="page.dialogs" />
+
+                <script type="text/javascript">
+                    up.analytics = up.analytics || {};
+                    up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
+                    up.analytics.portletData = <portlet-analytics-data/>;
+                    up.analytics.pageData = <page-analytics-data/>;
+                </script>
+            </body>
+        </html>
+    </xsl:template>
+
+    <!-- ====================================================================================== -->
+    <!-- ========== TEMPLATE: DOCUMENT DETACHED =============================================== -->
+    <!-- ====================================================================================== -->
+    <!--
+     | RED
+     | This template displays one portlet at a time in detached window state.
+     -->
+    <xsl:template name="document.detached">
+        <html lang="{$USER_LANG}" class="respondr">
+            <head>
+                <xsl:call-template name="page.title" />
+                <xsl:call-template name="page.meta" />
+                <xsl:call-template name="skinResources">
+                    <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
+                </xsl:call-template>
+                <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
+                    <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
+                </xsl:if>
+                <xsl:call-template name="page.js" />
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                <xsl:call-template name="footer.nav" />
-                <xsl:call-template name="region.footer.second" />
-                <xsl:call-template name="region.page-bottom" />
-                <xsl:call-template name="region.hidden-bottom" />
-                <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            </div>
-
-            <xsl:call-template name="page.dialogs" />
-
-            <script type="text/javascript">
-                up.analytics = up.analytics || {};
-                up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
-                up.analytics.portletData = <portlet-analytics-data/>;
-                up.analytics.pageData = <page-analytics-data/>;
-            </script>
-        </body>
-    </html>
-</xsl:template>
-
-<!-- ====================================================================================== -->
-<!-- ========== TEMPLATE: DOCUMENT DETACHED =============================================== -->
-<!-- ====================================================================================== -->
-<!-- 
- | RED
- | This template displays one portlet at a time in detached window state.
- -->
-<xsl:template name="document.detached">
-  <html lang="{$USER_LANG}" class="respondr">
-    <head>
-        <xsl:call-template name="page.title" />
-        <xsl:call-template name="page.meta" />
-        <xsl:call-template name="skinResources">
-            <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
-        </xsl:call-template>
-        <xsl:if test="$PORTAL_SHORTCUT_ICON != ''">
-            <link rel="shortcut icon" href="{$PORTAL_SHORTCUT_ICON}" type="image/x-icon" />
-        </xsl:if>
-        <xsl:call-template name="page.js" />
-        <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-        <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
-        <xsl:for-each select="//header/descendant::channel-header">
-            <xsl:copy-of select="."/>
-        </xsl:for-each>
-    </head>
-    <body class="up dashboard portal fl-theme-mist detachedHeader">
-        <div id="wrapper">
-            <xsl:call-template name="region.hidden-top" />
-            <xsl:call-template name="region.page-top" />
+                <!-- Include the RENDER_HEADERS output of all channel-headers in header section -->
+                <xsl:for-each select="//header/descendant::channel-header">
+                    <xsl:copy-of select="."/>
+                </xsl:for-each>
+            </head>
+            <body class="up dashboard portal fl-theme-mist detachedHeader">
+                <div id="wrapper">
+                    <xsl:call-template name="region.hidden-top" />
+                    <xsl:call-template name="region.page-top" />
                     <div class="portal-sticky-header" id="portal-sticky-header">
                         <header class="portal-header" role="banner">
                             <div class="portal-global">
@@ -831,43 +833,43 @@
                             <div class="row">
                                 <div id="portalPageBodyMessage" class="col-md-12"></div>
                             </div>
-                            
+
                         </div>
                         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                         <xsl:copy-of select="/layout_fragment/content"/>
                         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                     </div>
-            <xsl:call-template name="region.page-bottom" />
-            <xsl:call-template name="region.hidden-bottom" />
-        </div>
-        <script type="text/javascript">
-        up.analytics = up.analytics || {};
-        up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
-        up.analytics.portletData = <portlet-analytics-data/>;
-        up.analytics.pageData = <page-analytics-data/>;
-        </script>
-    </body>
-  </html>
-</xsl:template>
+                    <xsl:call-template name="region.page-bottom" />
+                    <xsl:call-template name="region.hidden-bottom" />
+                </div>
+                <script type="text/javascript">
+                    up.analytics = up.analytics || {};
+                    up.analytics.host = '<xsl:value-of select="$HOST_NAME" />';
+                    up.analytics.portletData = <portlet-analytics-data/>;
+                    up.analytics.pageData = <page-analytics-data/>;
+                </script>
+            </body>
+        </html>
+    </xsl:template>
 
-<!-- ========================================================================= -->
-<!-- ========== TEMPLATE: ROOT =============================================== -->
-<!-- ========================================================================= -->
-<!-- 
- | RED
- | This is the root xsl template.  It chooses the basic nature of how the portal
- | will be displayed.  The options at this point are normal (dashboard or 
- | focused), or DETACHED.
- -->
-<xsl:template match="/">
-    <xsl:choose>
-        <xsl:when test="$PORTAL_VIEW = 'detached'">
-            <xsl:call-template name="document.detached"/>
-        </xsl:when>
-        <xsl:otherwise>
-            <xsl:call-template name="document.normal"/>
-        </xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: ROOT =============================================== -->
+    <!-- ========================================================================= -->
+    <!--
+     | RED
+     | This is the root xsl template.  It chooses the basic nature of how the portal
+     | will be displayed.  The options at this point are normal (dashboard or
+     | focused), or DETACHED.
+     -->
+    <xsl:template match="/">
+        <xsl:choose>
+            <xsl:when test="$PORTAL_VIEW = 'detached'">
+                <xsl:call-template name="document.detached"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="document.normal"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
 
 </xsl:stylesheet>

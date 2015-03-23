@@ -111,12 +111,13 @@
 .favorites {
 
     .navbar {
-        background: none;
         border: none;
         margin: 0;
 
         .navbar-collapse {
             padding: 0;
+            border: none;
+            max-height: 100%;
 
             .list-group {
                 margin-bottom: 0;
@@ -143,6 +144,20 @@
         /* Show a border around the navbar */
         .navbar {
             border: 1px solid #e7e7e7;
+
+            .list-group {
+
+                .list-group-item {
+                    border-left: none;
+                    border-right: none;
+                    &:first-child, &:last-child {
+                        border-radius: 0;
+                    }
+                    &:last-child {
+                        border-bottom: 0;
+                    }
+                }
+            }
         }
     }
 }

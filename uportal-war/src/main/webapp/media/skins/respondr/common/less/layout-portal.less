@@ -16,8 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+html, body {
+    height: 100%;
+}
+
 .portal-page-column {
     .portal-page-column-inner {
         min-height: 100px;
+    }
+}
+
+#wrapper {
+    min-height: 100%;
+    position: relative;
+    padding-bottom: @footer-height;
+}
+
+// Link color - uses defaultSkin/less/variables.less, not common/bootstrap/variables.less
+a {
+    color: @portal-link-color;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+        color: @portal-link-hover-color;
+        text-decoration: underline;
     }
 }
