@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -521,9 +521,12 @@ public class SearchPortletController {
         final Map<String,Object> model = new HashMap<String, Object>();
         model.put("query", query);
 
+        ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = new ConcurrentHashMap<>();
         final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
-        final ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = portalSearchResults.getResults();
-        model.put("results", results);
+        if (portalSearchResults != null) {
+            results = portalSearchResults.getResults();
+        }
+            model.put("results", results);
         model.put("defaultTabKey", this.defaultTabKey);
         model.put("tabKeys", this.tabKeys);
 
