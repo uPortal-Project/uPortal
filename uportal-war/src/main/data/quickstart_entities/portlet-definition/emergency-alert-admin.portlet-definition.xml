@@ -23,14 +23,16 @@
     <title>Emergency Alert Admin</title>
     <name>Emergency Alert Admin</name>
     <fname>emergency-alert-admin</fname>
-    <desc>Allows an administrator to enable or diable the demonstration of the Jasig Emergency Alert portlet</desc>
+    <desc>Allows an administrator to enable or disable the demonstration of the Apereo Emergency Alert portlet</desc>
     <type>Portlet</type>
     <timeout>20000</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/NotificationPortlet</ns2:webAppName>
         <ns2:portletName>EmergencyAlertAdmin</ns2:portletName>
     </portlet-descriptor>
-    <category>Demonstration</category>
+    <!-- Don't include in Demonstration category since Authenticated Users have BROWSE permission on it and
+         the portlet would show up in Customize, Marketplace, and search.
+    <category>Demonstration</category> -->
     <group>Portal Administrators</group>
     <permissions>
         <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">

@@ -23,7 +23,7 @@
     <title>Reset My Layout</title>
     <name>Reset My Layout</name>
     <fname>reset-my-layout</fname>
-    <desc>Provides a means reset your own layout</desc>
+    <desc>Provides a means reset your own layout to its default settings. Also deletes all portlet preference values.</desc>
     <type>Portlet</type>
     <timeout>50000</timeout>
     <portlet-descriptor>
@@ -31,7 +31,12 @@
         <ns2:portletName>ResetMyLayout</ns2:portletName>
     </portlet-descriptor>
     <category>Administration</category>
-    <group>Everyone</group>
+    <group>Authenticated Users</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Authenticated Users</group>
+        </permission>
+    </permissions>
     <parameter>
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>

@@ -363,6 +363,27 @@ throws AuthorizationException
     return canPrincipalSubscribe(principal, portletDefinitionId);
 }
 
+
+@Override
+@RequestCache
+public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId) {
+
+    // Retrieve the indicated portlet from the channel registry store.
+    IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
+    if (portlet == null){
+        return false;
+    }
+    return canPrincipalBrowse(principal, portlet);
+}
+
+@Override
+@RequestCache
+public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet) {
+    String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
+    return doesPrincipalHavePermission(principal, IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY,
+            target);
+}
+
 /**
  * Answers if the principal has permission to SUBSCRIBE to this Channel.
  * @return boolean
@@ -409,8 +430,12 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
 							+ portletDefinitionId);
     }
 
-    // test the appropriate permission
-    return doesPrincipalHavePermission(principal, owner, permission, target);
+    // Test the appropriate permission.  For subscribe activity permission, you could also have browse permission.
+    boolean allowed = doesPrincipalHavePermission(principal, owner, permission, target);
+    if (!allowed && permission == IPermission.PORTLET_SUBSCRIBER_ACTIVITY) {
+        return canPrincipalBrowse(principal, portlet);
+    }
+    return allowed;
 
 }
 

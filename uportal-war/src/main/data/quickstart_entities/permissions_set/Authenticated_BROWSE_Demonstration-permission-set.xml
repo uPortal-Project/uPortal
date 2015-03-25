@@ -25,11 +25,12 @@
     <principal>
         <group>Authenticated Users</group>
     </principal>
-    <!-- TODO: add syntactic sugar to importable portlet-definition
-        so as to allow declaring this permission grant there. -->
     <activity>BROWSE</activity>
     <!-- Authenticated users can browse the Demonstration group.  This demonstrates (ha ha) that
      one can differentiate the browseable set of marketplace entries for non-authenticated and authenticated users. -->
+    <!-- NOTE:  Be aware as of uPortal 4.2 adding BROWSE to category groups (category element in the portlet definition
+         files) means the portlets in the category will show up in the Customize drawer, search auto-suggest, search
+         results, and the Marketplace.  -->
     <target permission-type="GRANT">
         <group>Demonstration</group>
     </target>
