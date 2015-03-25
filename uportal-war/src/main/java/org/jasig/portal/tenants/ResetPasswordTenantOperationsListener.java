@@ -34,6 +34,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * 
  * <p>This behavior is completely optional.  You can add or remove it by
  * adjusting the 'tenantOperationsListeners' bean in servicesContext.xml.
+ *
+ * @since 4.1
+ * @author awills
  */
 public final class ResetPasswordTenantOperationsListener extends AbstractTenantOperationsListener {
 

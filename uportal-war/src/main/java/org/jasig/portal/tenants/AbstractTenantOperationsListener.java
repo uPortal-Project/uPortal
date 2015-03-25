@@ -23,6 +23,7 @@ package org.jasig.portal.tenants;
  * therefore serve as a base class for concrete listeners that need to override
  * some but not all of the methods.
  * 
+ * @since 4.1
  * @author awills
  */
 public abstract class AbstractTenantOperationsListener implements ITenantOperationsListener {
