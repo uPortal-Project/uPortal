@@ -25,15 +25,14 @@ package org.jasig.portal.layout.dlm;
  * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class Constants
-{
+public class Constants {
     public static final String RCS_ID = "@(#) $Header$";
 
     // define the namespace prefixe on dlm elements and attributes.
     public static final String NS = "dlm:";
     public static final String NS_DECL = "xmlns:dlm";
-    public static final String NS_URI ="http://www.uportal.org/layout/dlm";
-    
+    public static final String NS_URI = "http://www.uportal.org/layout/dlm";
+
     // the following variables are to support backwards compatibility for
     // users of the DLM functionality before it was rolled into the uPortal
     // baseline code. This provides for just-in-time migration of any database
@@ -41,10 +40,9 @@ public class Constants
     public static final String LEGACY_NS = "cp:";
     public static final String LEGACY_ATT_ORIGIN      = LEGACY_NS + "origin";
 
-    
     // define the names of attributes that hold layout adjustment permissions
     // LCL refers to the local name without a namespace prefix.
-       
+
     public static final String LCL_DELETE_ALLOWED     = "deleteAllowed";
     public static final String LCL_MOVE_ALLOWED       = "moveAllowed";
     public static final String LCL_EDIT_ALLOWED       = "editAllowed";
@@ -89,10 +87,10 @@ public class Constants
     public static final String ELM_PARAMETER           = "parameter";
     public static final String ELM_FOLDER              = "folder";
     public static final String ELM_CHANNEL             = "channel";
-    
+
     public static final String ELM_PARM_SET            = NS+"parmSet";
     public static final String ELM_PARM_EDIT           = NS+"parm";
-    
+
     public static final String PLF = "RDBMDistributedLayoutStore.PLF";
     public static final String STRUCTURE_PREFS
                                     = "StructureStylesheetUserPreferences";
@@ -103,6 +101,5 @@ public class Constants
     public static final String FRAGMENT_ID_USER_PREFIX = "u";
     public static final String FRAGMENT_ID_LAYOUT_PREFIX = "l";
 
-    
 }
 
