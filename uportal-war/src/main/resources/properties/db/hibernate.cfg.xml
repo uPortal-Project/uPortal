@@ -72,6 +72,7 @@
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
+        <mapping class="org.jasig.portal.security.audit.dao.jpa.MostRecentUserLogin" />
         <mapping class="org.jasig.portal.tenants.JpaTenant"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
         <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />

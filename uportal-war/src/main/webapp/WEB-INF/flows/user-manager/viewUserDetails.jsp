@@ -86,6 +86,32 @@
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
+                <h3 class="title" role="heading">
+                    <spring:message code="most.recent.login"
+                                    text="Most Recent Login" /></h3>
+            </div>
+
+            <c:choose>
+                <c:when test="${empty viewedUserLastLoginTimestamp}">
+                    <div><spring:message code="unknown.most.recent.login.timestamp"
+                                         text="The system does not know when this user last logged in." />
+                        </div>
+                </c:when>
+                <c:otherwise>
+                    <div>
+                    <%-- TODO: Improve this message to use a placeholder to interpolate the
+                    (formatted) date rather than assuming prefixing the message is good enough --%>
+                    <spring:message code="most.recent.login.at"
+                                         text="This user most recently logged in at"/>
+                        <fmt:formatDate pattern="yyyy-MM-dd hh:mm:ss a z (E)"
+                             value="${viewedUserLastLoginTimestamp.toInstant().toDate()}"/>.</div>
+                </c:otherwise>
+            </c:choose>
+        </div>
+
+        <!-- Portlet Section -->
+        <div class="portlet-section" role="region">
+            <div class="titlebar">
                 <h3 class="title" role="heading"><spring:message code="attributes" text="Attributes" /></h3>
             </div>
             <div class="portlet-content">

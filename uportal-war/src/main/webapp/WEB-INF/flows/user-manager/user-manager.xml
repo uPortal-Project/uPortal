@@ -51,6 +51,8 @@
                 value="personManager.getPerson(servletRequest)"/>
             <set name="flashScope.groupedAttributes" 
                 value="userAccountHelper.groupPersonAttributes(person, servletRequest)"/>
+            <set name="viewScope.viewedUserLastLoginTimestamp"
+                 value="auditService.timestampOfMostRecentLoginBy(person.name)" />
             <set name="viewScope.canEdit" value="userAccountHelper.canEditUser(user, person.name)"/>
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
             <set name="viewScope.canImpersonate" value="identitySwapperManager.canImpersonateUser(user, person.name)"/>

@@ -29,6 +29,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import org.jasig.portal.security.IPerson;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Scott Battaglia
@@ -63,6 +66,40 @@ public final class LoginEvent extends PortalEvent {
             attributesBuilder.put(attributeEntry.getKey(), ImmutableList.copyOf(attributeEntry.getValue()));
         }
         this.attributes = attributesBuilder.build();
+    }
+
+    /**
+     * Instantiate a new LoginEvent from its raw elements.
+     *
+     * @param groups non-null Set of String group names of which the user who logged in is member
+     * @param userAttributes non-null user attributes of the user who logged in
+     * @param source non-null source of the LoginEvent
+     * @param serverName non-null name of the server logged in to
+     * @param eventSessionId on-null id of the session the user logged in to
+     * @param person non-null person who has logged in
+     * @param portalRequest non-null request in which this login has happened
+     *
+     * @since uPortal 4.2
+     */
+    public LoginEvent (
+
+        // state specific to LoginEvent
+        final Set<String> groups, final Map<String, List<String>> userAttributes,
+
+        // state general to PortalEvent
+        final String serverName, final String eventSessionId, final IPerson person,
+        final HttpServletRequest portalRequest,
+
+        // state general to ApplicationEvent
+        final Object source
+        ) {
+
+        // packaging into PortalEventBuilder required by the superclass API
+        super(new PortalEventBuilder(source, serverName, eventSessionId, person, portalRequest));
+
+        this.groups = groups;
+        this.attributes = userAttributes;
+
     }
     
     /**
