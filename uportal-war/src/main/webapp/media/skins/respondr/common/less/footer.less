@@ -22,11 +22,18 @@
    Footer Nav
    ========================================================================== */
 
+#footer-container {
+    width: 100%;
+    height: @footer-height;
+    bottom: 0;
+    position: absolute;
+
     .portal-footer-nav {
         background: @footer-background-color;
         color: @footer-text-color;
         font-size: 80%;
         padding: 20px;
+        height: 70%;
 
         a {
             color: @footer-link-color;
@@ -59,15 +66,16 @@
         }
     }
 
-/* ==========================================================================
-   Footer Legal
-   ========================================================================== */
+    /* ==========================================================================
+       Footer Legal
+       ========================================================================== */
 
     #region-footer-second {
         background: @footer-secondary-background-color;
         color: @footer-text-color;
         font-size: 80%;
         padding: 5px 0;
+        height: 29%;
 
         .hover-option {
             font-size: 14px;
@@ -83,21 +91,22 @@
     }
 
 
-/* ==========================================================================
-   Responsive Design
-   ========================================================================== */
-/*
- * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
- */
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    /*
+     * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+     */
 
-@media only screen and (min-width: 769px) {
-    .portal-footer-legal, .portal-footer-nav {
-        padding: 20px 0;
-    }
+    @media only screen and (min-width: 769px) {
+        .portal-footer-legal, .portal-footer-nav {
+            padding: 20px 0;
+        }
 
-    .portal-footer-nav {
-        ul {
-            display: block;
+        .portal-footer-nav {
+            ul {
+                display: block;
+            }
         }
     }
 }
