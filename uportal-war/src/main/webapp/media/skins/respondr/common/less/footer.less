@@ -22,6 +22,11 @@
    Footer Nav
    ========================================================================== */
 
+#footer-container {
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+
     .portal-footer-nav {
         background: @footer-background-color;
         color: @footer-text-color;
@@ -59,9 +64,9 @@
         }
     }
 
-/* ==========================================================================
-   Footer Legal
-   ========================================================================== */
+    /* ==========================================================================
+       Footer Legal
+       ========================================================================== */
 
     #region-footer-second {
         background: @footer-secondary-background-color;
@@ -83,21 +88,22 @@
     }
 
 
-/* ==========================================================================
-   Responsive Design
-   ========================================================================== */
-/*
- * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
- */
+    /* ==========================================================================
+       Responsive Design
+       ========================================================================== */
+    /*
+     * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+     */
 
-@media only screen and (min-width: 769px) {
-    .portal-footer-legal, .portal-footer-nav {
-        padding: 20px 0;
-    }
+    @media only screen and (min-width: 769px) {
+        .portal-footer-legal, .portal-footer-nav {
+            padding: 20px 0;
+        }
 
-    .portal-footer-nav {
-        ul {
-            display: block;
+        .portal-footer-nav {
+            ul {
+                display: block;
+            }
         }
     }
 }

@@ -72,11 +72,8 @@
 }
 
 .portlet-title {
+
     .border-radiuses-top(5px);
-
-    .btn-group {
-
-    }
 }
 
 .portlet-content {
@@ -264,8 +261,11 @@ section.emergency-alert {
         display: block;
     }
 
+/** padding-bottom needs to be adjusted to the absolute height of the footer in order
+ ** to maintain it's "stickiness". This value is set in defaultSkin/less/variables.less
+ ** (Current default is 200px) **/
     .portal-content {
-        padding: 0 0 0 20px;
+        padding: 0 0 @footer-height 20px;
     }
 
     .portlet {

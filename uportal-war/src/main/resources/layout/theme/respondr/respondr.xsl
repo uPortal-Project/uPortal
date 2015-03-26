@@ -744,10 +744,12 @@
                     </div>
                 </div>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                <xsl:call-template name="footer.nav" />
-                <xsl:call-template name="region.footer.second" />
-                <xsl:call-template name="region.page-bottom" />
-                <xsl:call-template name="region.hidden-bottom" />
+                <div id="footer-container">
+                    <xsl:call-template name="footer.nav" />
+                    <xsl:call-template name="region.footer.second" />
+                    <xsl:call-template name="region.page-bottom" />
+                    <xsl:call-template name="region.hidden-bottom" />
+                </div>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
             </div>
 
