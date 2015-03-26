@@ -530,6 +530,12 @@
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
+                                <!--
+                                <jvmarg value="-Xnoagent"/>
+                                <jvmarg value="-Djava.compiler=NONE"/>
+                                <jvmarg value="-Xdebug"/>
+                                <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"/>
+                                -->
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />
@@ -573,18 +579,21 @@
 
         <property name="type" value=" " />
         <property name="sysid" value=" " />
+        <property name="showErrors" value="false"/>
 
         <groovy-safe-path property="dirFullEscaped" input="${dir}" />
         <groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
 
         <echo>Creating Data Export Script</echo>
         <echo file="${portal-shell-script}" append="true">
-            //dataExport(String target, String dataDir, String type, String sysid, String logDir)
+            def printErrors = /${showErrors}/.toBoolean();
+            //dataExport(String target, String dataDir, String type, String sysid, String logDir, boolean printErrorsToStderr)
             portalShellBuildHelper.dataExport("data-export", 
                 /${dirFullEscaped}/,
                 '${type}',
                 '${sysid}',
-                /${targetDirEscaped}/);
+                /${targetDirEscaped}/,
+                printErrors);
         </echo>
 
         <antcall target="up-shell">
@@ -627,6 +636,7 @@
         <property name="file" value=" " />
         <property name="dir" value=" " />
     	<property name="archive" value=" " />
+        <property name="showErrors" value="false"/>
 
         <groovy-safe-path property="dirFullEscaped" input="${dir}" />
         <groovy-safe-path property="fileFullEscaped" input="${file}" />
@@ -636,13 +646,15 @@
 
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
-            //dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir)
+            def printErrors = /${showErrors}/.toBoolean();
+            //dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir, boolean printErrors)
             portalShellBuildHelper.dataImport("data-import", 
                 /${dirFullEscaped}/,
                 /${pattern}/,
                 /${fileFullEscaped}/,
                 /${archiveFullEscaped}/,
-                /${targetDirEscaped}/);
+                /${targetDirEscaped}/,
+                printErrors);
         </echo>
 
         <antcall target="up-shell">

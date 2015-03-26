@@ -596,7 +596,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                     final Resource file = files.poll();
                     
 	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-	                final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, false);
+	                final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, false, options.getPrintErrorsToStderr());
 	                failedFutures.addAll(newFailed);
 	                
 	                final AtomicLong importTime = new AtomicLong(-1);
@@ -625,7 +625,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	            }
 	            
 	            //Wait for all of the imports on of this type to complete
-	            final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, true);
+	            final List<FutureHolder<?>> newFailed = waitForFutures(importFutures, reportWriter, logDirectory, true, options.getPrintErrorsToStderr());
                 failedFutures.addAll(newFailed);
                 
                 if (failOnError && !failedFutures.isEmpty()) {
@@ -979,7 +979,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	                final String dataId = data.getDataId();
 	
 	                //Check for completed futures on every iteration, needed to fail as fast as possible on an import exception
-	                final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, false);
+	                final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, false, options.getPrintErrorsToStderr());
 	                failedFutures.addAll(newFailed);
 	                
 	                final AtomicLong exportTime = new AtomicLong(-1);
@@ -1006,7 +1006,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
 	                exportFutures.offer(futureHolder);
 	            }
 	            
-	            final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, true);
+	            final List<FutureHolder<?>> newFailed = waitForFutures(exportFutures, reportWriter, logDirectory, true, options.getPrintErrorsToStderr());
                 failedFutures.addAll(newFailed);
                 
                 reportWriter.flush();
@@ -1078,7 +1078,8 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     protected List<FutureHolder<?>> waitForFutures(
             final Queue<? extends FutureHolder<?>> futures,
             final PrintWriter reportWriter, final File reportDirectory, 
-            final boolean wait) throws InterruptedException {
+            final boolean wait,
+            final boolean printErrors) throws InterruptedException {
         
         final List<FutureHolder<?>> failedFutures = new LinkedList<FutureHolder<?>>();
         
@@ -1121,6 +1122,11 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                             dataReportWriter.println("FAIL: " + futureHolder.getDataType() + " - " + futureHolder.getDataName());
                             dataReportWriter.println("--------------------------------------------------------------------------------");
                             e.getCause().printStackTrace(dataReportWriter);
+
+                            if (printErrors) {
+                                System.err.println("Error importing: " + futureHolder.getDataName());
+                                e.printStackTrace(System.err);
+                            }
                         }
                         finally {
                             IOUtils.closeQuietly(dataReportWriter);

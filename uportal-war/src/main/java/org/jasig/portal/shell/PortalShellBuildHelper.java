@@ -33,15 +33,15 @@ public interface PortalShellBuildHelper {
 
     void dataList(String target, String type);
 
-    void dataExport(String target, String dataDir, String type, String sysid, String logDir);
+    void dataExport(String target, String dataDir, String type, String sysid, String logDir, boolean printErrors);
 
     /**
      * @deprecated use {@link #dataImport(String, String, String, String, String, String)}
      */
     @Deprecated
-    void dataImport(String target, String dataDir, String pattern, String file, String logDir);
+    void dataImport(String target, String dataDir, String pattern, String file, String logDir, boolean printErrors);
 
-    void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir);
+    void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir, boolean printErrors);
 
     void dataDelete(String target, String type, String sysid);
 
