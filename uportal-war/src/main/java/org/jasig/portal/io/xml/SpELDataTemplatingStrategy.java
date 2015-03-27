@@ -74,7 +74,7 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
                     case org.w3c.dom.Node.ATTRIBUTE_NODE:
                         Attribute a = (Attribute) n;
                         inpt = a.getValue();
-                        otpt = processText(inpt, ctx);
+                        otpt = processText(inpt);
                         if (!otpt.equals(inpt)) {
                             a.setValue(otpt);
                         }
@@ -82,7 +82,7 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
                     case org.w3c.dom.Node.TEXT_NODE:
                         Text t = (Text) n;
                         inpt = t.getText();
-                        otpt = processText(inpt, ctx);
+                        otpt = processText(inpt);
                         if (!otpt.equals(inpt)) {
                             t.setText(otpt);
                         }
@@ -104,7 +104,7 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
      * Implementation
      */
 
-    private String processText(String text, EvaluationContext ctx) {
+    private String processText(String text) {
         String rslt = text;  // default
         Expression x = portalSpELService.parseExpression(text, PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
         rslt = x.getValue(ctx, String.class);
