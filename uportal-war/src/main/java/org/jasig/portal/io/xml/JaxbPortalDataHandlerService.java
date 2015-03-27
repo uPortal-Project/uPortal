@@ -97,9 +97,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -119,7 +117,7 @@ import com.google.common.io.InputSupplier;
  * @version $Revision$
  */
 @Service("portalDataHandlerService")
-public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, ResourceLoaderAware {
+public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     
 	/**
 	 * Tracks the base import directory to allow for easier to read logging when importing 
@@ -169,8 +167,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     private org.jasig.portal.utils.DirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
     private XmlUtilities xmlUtilities;
-    private ResourceLoader resourceLoader;
-    
+
     private long maxWait = -1;
     private TimeUnit maxWaitTimeUnit = TimeUnit.MILLISECONDS;
 
@@ -380,12 +377,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         this.portalDataUpgraders = Collections.unmodifiableMap(dataUpgraderMap);
     }
-    
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-    
+
     @Override
     public void importDataArchive(Resource archive, BatchImportOptions options) {
         try {
@@ -485,7 +477,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 }
             }
             
-            importData(tempDir, null, options);
+            importDataDirectory(tempDir, null, options);
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to extract data from '" +resource + "' to '" + tempDir + "' for batch import.", e);
@@ -531,7 +523,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public void importData(File directory, String pattern, final BatchImportOptions options) {
+    public void importDataDirectory(File directory, String pattern, final BatchImportOptions options) {
         if (!directory.exists()) {
             throw new IllegalArgumentException("The specified directory '" + directory + "' does not exist");
         }
@@ -671,23 +663,14 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         return logDirectory;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImportExportService#importData(java.lang.String)
-     */
-    @Override
-    public void importData(String resourceLocation) {
-        final Resource resource = this.resourceLoader.getResource(resourceLocation);
-        this.importData(resource);
-    }
-
     @Override
     public void importData(final Resource resource) {
         this.importData(resource, null);
     }
-    
+
     @Override
     public void importData(Source source) {
-		this.importData(source, null);
+        this.importData(source, null);
     }
 
     @Override
@@ -777,7 +760,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             this.logger.info("Imported : {}", getPartialSystemId(systemId));
             return;
         }
-        
+
         //No importer, see if there is an upgrader, if so upgrade
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {

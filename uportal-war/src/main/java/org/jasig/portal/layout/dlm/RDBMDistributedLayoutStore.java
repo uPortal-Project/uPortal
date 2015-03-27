@@ -417,7 +417,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                         if (layout == null) {
                             final org.dom4j.Document layoutDoc = new org.dom4j.DocumentFactory().createDocument();
                             layout = layoutDoc.addElement("layout");
-                            layout.addNamespace("dlm", "http://www.uportal.org/layout/dlm");
+                            layout.addNamespace("dlm", Constants.NS_URI);
                         }
                         preferencesElement = layout.addElement("preferences");
                     }
@@ -690,7 +690,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @Transactional
     public void importLayout(org.dom4j.Element layout) {
         if (layout.getNamespaceForPrefix("dlm") == null) {
-            layout.add(new Namespace("dlm", "http://www.uportal.org/layout/dlm"));
+            layout.add(new Namespace("dlm", Constants.NS_URI));
         }
 
         //Remove comments from the DOM they break import

@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * of hard-coded in {@link TenantService}, so it can be placed strategically in
  * the listener chain (often last).
  * 
+ * @since 4.1
  * @author awills
  */
 public final class JpaPersistenceTenantOperationsListener extends AbstractTenantOperationsListener {

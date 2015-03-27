@@ -309,7 +309,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             pattern = StringUtils.trimToNull(pattern);
 
             try {
-                portalDataHandlerService.importData(new File(dataDir),
+                portalDataHandlerService.importDataDirectory(new File(dataDir),
                         pattern,
                         new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
             }

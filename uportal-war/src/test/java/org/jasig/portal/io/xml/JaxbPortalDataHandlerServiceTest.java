@@ -201,7 +201,8 @@ public class JaxbPortalDataHandlerServiceTest {
         dataImporters.add(userDataImporter);
         dataImportExportService.setDataImporters(dataImporters);
         
-        dataImportExportService.importData("classpath:/org/jasig/portal/io/xml/user/test_3-2.user.xml");
+        final Resource resource = resourceLoader.getResource("classpath:/org/jasig/portal/io/xml/user/test_3-2.user.xml");
+        dataImportExportService.importData(resource);
         
         final ArgumentCaptor<ExternalUser> userArgumentCaptor = ArgumentCaptor.forClass(ExternalUser.class);
         verify(userDataImporter).importData(userArgumentCaptor.capture());

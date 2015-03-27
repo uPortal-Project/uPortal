@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.tenants;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,60 +27,45 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Node;
 import org.dom4j.QName;
-import org.dom4j.Text;
-import org.dom4j.io.DOMWriter;
 import org.dom4j.io.SAXReader;
+import org.jasig.portal.io.xml.IDataTemplatingStrategy;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
+import org.jasig.portal.io.xml.SpELDataTemplatingStrategy;
 import org.jasig.portal.io.xml.group.GroupMembershipPortalDataType;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.spring.spel.IPortalSpELService;
-import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
-import org.springframework.expression.EvaluationContext;
-import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.w3c.dom.DOMImplementation;
 
 /**
  * Uses Import/Export to create some basic portal data for a new tenant.  You
  * can add to, adjust, or pare-down tenant template data in
  * src/main/resources/org/jasig/portal/tenants/data.
  * 
+ * @since 4.1
  * @author awills
  */
 public final class TemplateDataTenantOperationsListener extends AbstractTenantOperationsListener implements ApplicationContextAware {
 
-    private static final String TEMPLATE_LOCATION = "classpath:/org/jasig/portal/tenants/data/**/*.xml";
-    private static final String ATTRIBUTE_XPATH = "//@*";
-    private static final String TEXT_XPATH = "//text()";
-    private static final String[] XPATH_EXPRESSIONS = new String[] { ATTRIBUTE_XPATH, TEXT_XPATH };
-
     private ApplicationContext applicationContext;
     private Resource[] templateResources;
-    private final SAXReader reader = new SAXReader();
-    private final DOMWriter writer = new DOMWriter();
-    private DOMImplementation domImpl;
+    private SAXReader reader = new SAXReader();
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Value("${org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/jasig/portal/tenants/data/**/*.xml}")
+    private String templateLocation;
 
     @Autowired
     private IPortalDataHandlerService dataHandlerService;
@@ -126,29 +110,16 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     @PostConstruct
     public void setup() throws Exception {
-        templateResources = applicationContext.getResources(TEMPLATE_LOCATION);
-
-        Map<String,String> nsPrefixes = new HashMap<String,String>();
-        nsPrefixes.put("dlm", FragmentDefinition.NAMESPACE_URI);
-        DocumentFactory factory = new DocumentFactory();
-        factory.setXPathNamespaceURIs(nsPrefixes);
-        reader.setDocumentFactory(factory);
-
-        DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
-        fac.setNamespaceAware(true);
-        domImpl = fac.newDocumentBuilder().getDOMImplementation();
+        templateResources = applicationContext.getResources(templateLocation);
     }
 
     @Override
     public void onCreate(final ITenant tenant) {
 
-        final StandardEvaluationContext ctx = new StandardEvaluationContext();
-        ctx.setRootObject(new RootObjectImpl(tenant));
-
         /*
          * First load dom4j Documents and sort the entity files into the proper order 
          */
-        final Map<PortalDataKey,Set<Document>> importQueue = new HashMap<PortalDataKey,Set<Document>>();
+        final Map<PortalDataKey,Set<BucketTuple>> importQueue = new HashMap<PortalDataKey,Set<BucketTuple>>();
         Resource rsc = null;
         try {
             for (Resource r : templateResources) {
@@ -159,22 +130,21 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                             + rsc.getFilename());
                 }
                 final Document doc = reader.read(rsc.getInputStream());
-                final QName qname = doc.getRootElement().getQName();
                 PortalDataKey atLeastOneMatchingDataKey = null;
                 for (PortalDataKey pdk : dataKeyImportOrder) {
-                    // Matching is tougher because it's dom4j <> w3c...
-                    boolean matches = qname.getName().equals(pdk.getName().getLocalPart())
-                            && qname.getNamespaceURI().equals(pdk.getName().getNamespaceURI());
+                    boolean matches = evaluatePortalDataKeyMatch(doc, pdk);
                     if (matches) {
                         // Found the right bucket...
+                        log.debug("Found PortalDataKey '{}' for data document {}", pdk, r.getURI());
                         atLeastOneMatchingDataKey = pdk;
-                        Set<Document> bucket = importQueue.get(atLeastOneMatchingDataKey);
+                        Set<BucketTuple> bucket = importQueue.get(atLeastOneMatchingDataKey);
                         if (bucket == null) {
                             // First of these we've seen;  create the bucket;
-                            bucket = new HashSet<Document>();
+                            bucket = new HashSet<BucketTuple>();
                             importQueue.put(atLeastOneMatchingDataKey, bucket);
                         }
-                        bucket.add(doc);
+                        BucketTuple tuple = new BucketTuple(rsc, doc);
+                        bucket.add(tuple);
                         /*
                          * At this point, we would normally add a break;
                          * statement, but group_membership.xml files need to
@@ -199,55 +169,25 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         /*
          * Now import the identified entities each bucket in turn 
          */
+        final StandardEvaluationContext ctx = new StandardEvaluationContext();
+        ctx.setRootObject(new RootObjectImpl(tenant));
+        IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx);
         Document doc = null;
-        org.w3c.dom.Document w3c = null;
         try {
             for (PortalDataKey pdk : dataKeyImportOrder) {
-                Set<Document> bucket = importQueue.get(pdk);
+                Set<BucketTuple> bucket = importQueue.get(pdk);
                 if (bucket != null) {
                     log.debug("Importing the specified PortalDataKey tenant '{}':  {}",
                             tenant.getName(), pdk.getName());
-                    for (Document d : bucket) {
-                        doc = d;
-                        log.trace("Importing document XML={}", doc.asXML());
-                        for (String xpath : XPATH_EXPRESSIONS) {
-                            @SuppressWarnings("unchecked")
-                            List<Node> nodes = doc.selectNodes(xpath);
-                            for (Node n : nodes) {
-                                String inpt, otpt;
-                                switch (n.getNodeType()) {
-                                    case org.w3c.dom.Node.ATTRIBUTE_NODE:
-                                        Attribute a = (Attribute) n;
-                                        inpt = a.getValue();
-                                        otpt = processText(inpt, ctx);
-                                        if (!otpt.equals(inpt)) {
-                                            a.setValue(otpt);
-                                        }
-                                        break;
-                                    case org.w3c.dom.Node.TEXT_NODE:
-                                        Text t = (Text) n;
-                                        inpt = t.getText();
-                                        otpt = processText(inpt, ctx);
-                                        if (!otpt.equals(inpt)) {
-                                            t.setText(otpt);
-                                        }
-                                        break;
-                                    default:
-                                        String msg = "Unsupported node type:  " + n.getNodeTypeName();
-                                        throw new RuntimeException(msg);
-                                }
-                            }
-                        }
-                        w3c = writer.write(doc, domImpl);
-                        Source source = new DOMSource(w3c);
-                        source.setSystemId(rsc.getFilename());  // must be set, else import chokes
-                        dataHandlerService.importData(source, pdk);
+                    for (BucketTuple tuple : bucket) {
+                        doc = tuple.getDocument();
+                        Source data = templating.processTemplates(doc, tuple.getResource().getURL().toString());
+                        dataHandlerService.importData(data, pdk);
                     }
                 }
             }
 
         } catch (Exception e) {
-            log.warn("w3c DOM="+this.nodeToString(w3c));
             throw new RuntimeException("Failed to process the specified template document:  " 
                                     + (doc != null ? doc.asXML() : ""), e);
         }
@@ -258,34 +198,66 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
      * Implementation
      */
 
-    private String processText(String text, EvaluationContext ctx) {
+    private boolean evaluatePortalDataKeyMatch(Document doc, PortalDataKey pdk) {
+        // Matching is tougher because it's dom4j <> w3c...
+        final QName qname = doc.getRootElement().getQName();
+        if (!qname.getName().equals(pdk.getName().getLocalPart()) ||
+                !qname.getNamespaceURI().equals(pdk.getName().getNamespaceURI())) {
+            // Rule these out straight off...
+            return false;
+        }
 
-        String rslt = text;  // default
+        // If the PortalDataKey declares a script
+        // (old method), the document must match it
+        final Attribute s = doc.getRootElement().attribute(PortalDataKey.SCRIPT_ATTRIBUTE_NAME.getLocalPart());
+        final String script = s != null ? s.getValue() : null;
+        if (pdk.getScript() != null) {
+            // If the pdk declares a script, the data document MUST match it...
+            if (pdk.getScript().equals(script)) {
+                /*
+                 * A data document that matches on script need not match on version
+                 * as well.  It appears that the pdk.version member is overloaded
+                 * with two purposes...
+                 * 
+                 *   - A numeric version (e.g. 4.0) indicates a match IN THE ABSENCE
+                 *     OF a script attribute (newer method, below)
+                 *   - A word (e.g. 'GROUP' or 'MEMBERS') indicates the type of data
+                 *     the pdk handles, where more than one pdk applies to the data
+                 *     document
+                 */
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-        Expression x = portalSpELService.parseExpression(text, PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
-        rslt = x.getValue(ctx, String.class);
+        // If the PortalDataKey declares a version BUT NOT a script (new
+        // method), the document must match it
+        final Attribute v = doc.getRootElement().attribute(PortalDataKey.VERSION_ATTRIBUTE_NAME.getLocalPart());
+        final String version = v != null ? v.getValue() : null;
+        if (pdk.getVersion() != null && pdk.getVersion().equals(version)) {
+            return true;
+        }
 
-        return rslt;
+        // This pdk is not a match
+        return false;
 
-    }
-
-    private String nodeToString(org.w3c.dom.Node node) {
-        try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(node);
-            transformer.transform(source, result);
-
-            String xmlString = result.getWriter().toString();
-            return xmlString;
-        } catch (Exception e) { throw new RuntimeException(e); }
     }
 
     /*
      * Nested Types
      */
+
+    private static final class BucketTuple {
+        private final Resource resource;
+        private final Document document;
+        public BucketTuple(Resource resource, Document document) {
+            this.resource = resource;
+            this.document = document;
+        }
+        public Resource getResource() { return resource; }
+        public Document getDocument() { return document; }
+    }
 
     private static final class RootObjectImpl {
         private final ITenant tenant;
