@@ -27,6 +27,8 @@ import org.jasig.portal.groups.IEntityGroupStoreFactory;
  * Factory class for Person Attributes Group Store
  * 
  * @author Al Wold
+ * @deprecated JPA (database) PAGS is required for a small but growing list of
+ * newer features.
  */
 public class PersonAttributesGroupStoreFactory implements IEntityGroupStoreFactory {
    private static IEntityGroupStore groupStore;
