@@ -38,29 +38,6 @@ class SpELDataTemplatingStrategyTest {
             getName: { 'Mordor' },
             getFname: { 'mordor'}
         ] as ITenant;
-
-        /*
-        new ITenant() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public int compareTo(ITenant o) { return 0; }
-            @Override
-            public long getId() { return 1L; }
-            @Override
-            public String getName() { return "Mordor"; }
-            @Override
-            public void setName(String name) {}
-            @Override
-            public String getFname() { return "mordor"; }
-            @Override
-            public void setFname(String fname) {}
-            @Override
-            public String getAttribute(String name) { return null; }
-            @Override
-            public void setAttribute(String name, String value) {}
-            @Override
-            public Map<String, String> getAttributesMap() { return Collections.emptyMap(); }
-        }; */
         StandardEvaluationContext ctx = new StandardEvaluationContext();
         ctx.setRootObject(new TemplateDataTenantOperationsListener.RootObjectImpl(tenant));
         IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx);
