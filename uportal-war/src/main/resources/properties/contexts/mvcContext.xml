@@ -34,9 +34,9 @@
     <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
 
     <bean id="remoteCookieCheckFilter" class="org.jasig.portal.utils.web.RemoteCookieCheckFilter">
-        <property name="ignoredUserAgents">
+        <property name="regexIgnoredUserAgents">
             <set>
-                <value>Googlebot</value>  <!-- Allow Google to index the guest page -->
+                <value>.*Googlebot.*</value>  <!-- Allow Google to index the guest page.  See https://support.google.com/webmasters/answer/1061943?hl=en -->
             </set>
         </property>
     </bean>

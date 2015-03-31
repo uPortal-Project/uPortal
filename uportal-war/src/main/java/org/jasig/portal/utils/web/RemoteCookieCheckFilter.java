@@ -25,6 +25,7 @@ package org.jasig.portal.utils.web;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -44,7 +45,7 @@ public class RemoteCookieCheckFilter implements Filter {
     public static final String REFERER_ATTRIBUTE = "COOKIE_CHECK_REFERER";
 
     // Set of User-Agent header values that will not be forced through the cookie check.
-    private Set<String> ignoredUserAgents = new HashSet<>();
+    private Set<Pattern> regexIgnoredUserAgents = new HashSet<>();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -67,7 +68,7 @@ public class RemoteCookieCheckFilter implements Filter {
             }
 
             String userAgent = ((HttpServletRequest) request).getHeader("User-Agent");
-            if (!cookieFound && !ignoredUserAgents.contains(userAgent)) {
+            if (!cookieFound && !userAgentInIgnoreList(userAgent)) {
                 final HttpSession session = httpServletRequest.getSession(true);
                 
                 String requestURI = httpServletRequest.getRequestURI();
@@ -86,11 +87,24 @@ public class RemoteCookieCheckFilter implements Filter {
         chain.doFilter(request,response);
     }
 
+    private boolean userAgentInIgnoreList(String userAgent) {
+        for (Pattern ignorePattern : regexIgnoredUserAgents) {
+            if (ignorePattern.matcher(userAgent).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void destroy() {
     }
 
-    public void setIgnoredUserAgents(Set<String> ignoredUserAgents) {
-        this.ignoredUserAgents = ignoredUserAgents;
+    public void setRegexIgnoredUserAgents(Set<String> regexIgnoredUserAgents) {
+        HashSet<Pattern> ignorePatterns = new HashSet<>();
+        for (String regex : regexIgnoredUserAgents) {
+            ignorePatterns.add(Pattern.compile(regex));
+        }
+        this.regexIgnoredUserAgents = ignorePatterns;
     }
 }
