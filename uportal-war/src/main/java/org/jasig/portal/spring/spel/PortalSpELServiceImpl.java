@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -150,6 +149,14 @@ public class PortalSpELServiceImpl implements IPortalSpELService, BeanFactoryAwa
     public Object getValue(Expression expression, WebRequest request) {
         final EvaluationContext evaluationContext = this.getEvaluationContext(request);
         return expression.getValue(evaluationContext);
+    }
+
+    @Override
+    public String getValue(String expressionString, Object spelEnvironment) {
+        final StandardEvaluationContext context = new StandardEvaluationContext(spelEnvironment);
+        context.setBeanResolver(this.beanResolver);
+        final Expression expression = this.parseCachedExpression(expressionString, TemplateParserContext.INSTANCE);
+        return expression.getValue(context, String.class);
     }
 
     /**
