@@ -1329,7 +1329,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                 if (fragmentDefinition.isApplicable(person)) {
                     final UserView userView = activator.getUserView(fragmentDefinition, locale);
-                    if (userView != null) {
+                    if (userView != null && userView.layout != null) {
                         applicables.add(userView.layout);
                     }
                     fragmentNames.add(fragmentDefinition.getName());

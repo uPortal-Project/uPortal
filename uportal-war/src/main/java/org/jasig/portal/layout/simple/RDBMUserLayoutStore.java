@@ -1247,6 +1247,12 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         final int userId = person.getID();
         final int profileId = profile.getProfileId();
 
+        // don't try to save null layouts.
+        if (layoutXML == null) {
+            logger.error("Invalid attempt to save NULL user layout for user " + person.getUserName() + ". Skipping!");
+            return;
+        }
+
         this.transactionOperations.execute(new TransactionCallback<Object>() {
             @Override
             public Object doInTransaction(TransactionStatus status) {

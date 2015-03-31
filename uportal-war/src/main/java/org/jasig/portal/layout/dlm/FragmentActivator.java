@@ -397,7 +397,7 @@ public class FragmentActivator
         }
         catch( Exception e )
         {
-            throw new RuntimeException(
+            LOG.error(
                   "Anomaly occurred while loading layout for fragment '" +
                   fragment.getName() +
                   "'. The fragment will not be " +
