@@ -90,7 +90,14 @@ public class UrlCanonicalizingFilter extends OncePerRequestFilter {
                 canonicalUri = canonicalUrl.substring(0, queryStringIndex);
             }
 
-            final String requestURI = request.getRequestURI();
+            String requestURI = request.getRequestURI();
+            // If cookies are disabled and Tomcat has appended the sessionId to the URL, remove the
+            // jsessionid for the purposes of comparing the request URI to the canonical URI.  This
+            // allows a search indexing engine such as Googlebot to access the guest view of a uportal
+            // page which typically renders OK (not guaranteed depending upon content).  See UP-4414.
+            if (requestURI.contains(";jsessionid")) {
+                requestURI = requestURI.substring(0, requestURI.indexOf(";"));
+            }
 
             final int redirectCount = this.getRedirectCount(request);
             if (!canonicalUri.equals(requestURI)) {
