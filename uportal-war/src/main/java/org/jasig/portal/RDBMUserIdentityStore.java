@@ -348,6 +348,8 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                 //If this is a new user and we can't create them
                 throw new AuthorizationException("No portal information exists for user " + userName);
             }
+        } catch (AuthorizationException e) {
+            throw e;
 
         } catch (Exception e) {
             final String msg = "Failed to obtain a portal user Id for the specified person:  " + person;
