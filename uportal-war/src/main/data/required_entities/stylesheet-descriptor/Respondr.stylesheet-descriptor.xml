@@ -21,7 +21,7 @@
 -->
 <stylesheet-descriptor xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
     <name>Respondr</name>
-    <description>** EXPERIMENTAL ** Theme for all devices classes based on Twitter Bootstrap and the principals of Responsive Design</description>
+    <description>Theme for all devices classes based on Twitter Bootstrap and the principals of Responsive Design</description>
     <uri>classpath:/layout/theme/respondr/respondr.xsl</uri>
     <stylesheet-parameter>
         <name>skin</name>
