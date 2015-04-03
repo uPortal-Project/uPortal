@@ -309,80 +309,78 @@
 <!-- ========================================================================= -->
 <!-- 
  | YELLOW
- | This template renders the tabs at the top of the page.
+ | This template renders site navigation at the bottom of the page.  CONVERT TO PORTLET
  -->
 <xsl:template name="footer.nav">
-    <footer class="portal-footer-nav" role="contentinfo">
-        <div class="container-fluid">
+    <div class="container-fluid">
 
-            <!--
-             | Tab layout:
-             | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
-             |   -portlet1     -portlet5     -portlet7     -portlet8
-             |   -portlet2     -portlet6                   -portlet9
-             |   -portlet3                                 -portlet10
-             |   -portlet4
-             |
-             | Tab5 ....
-             +-->
+        <!--
+         | Tab layout:
+         | Tab1          Tab2          Tab3          Tab4         (<== limited to $TAB_WRAP_COUNT)
+         |   -portlet1     -portlet5     -portlet7     -portlet8
+         |   -portlet2     -portlet6                   -portlet9
+         |   -portlet3                                 -portlet10
+         |   -portlet4
+         |
+         | Tab5 ....
+         +-->
 
-            <a name="sitemap"></a>
-            <xsl:variable name="TAB_WRAP_COUNT" select="4" />
+        <a name="sitemap"></a>
+        <xsl:variable name="TAB_WRAP_COUNT" select="4" />
 
-            <xsl:for-each select="//navigation/tab">
-                <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
-                    <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
-                    <div class="row">
-                        <xsl:for-each select="//navigation/tab">
-                            <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
-                                <xsl:variable name="NAV_TRANSIENT">
-                                    <xsl:choose>
-                                        <xsl:when test="@transient='true'">disabled</xsl:when>
-                                        <xsl:otherwise></xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:variable>
-                                <xsl:variable name="tabLinkUrl">
-                                    <!-- For a transient tab, attempting to calculate a tab URL generates an
-                                         exception because the tab is not in the layout so generate a safe URL. -->
-                                    <xsl:choose>
-                                        <xsl:when test="@transient='true'">javascript:;</xsl:when>
-                                        <xsl:otherwise>
+        <xsl:for-each select="//navigation/tab">
+            <xsl:if test="(position() mod $TAB_WRAP_COUNT)=1">
+                <xsl:variable name="ROW_NUM" select="ceiling(position() div $TAB_WRAP_COUNT)" />
+                <div class="row">
+                    <xsl:for-each select="//navigation/tab">
+                        <xsl:if test="ceiling(position() div $TAB_WRAP_COUNT) = $ROW_NUM">
+                            <xsl:variable name="NAV_TRANSIENT">
+                                <xsl:choose>
+                                    <xsl:when test="@transient='true'">disabled</xsl:when>
+                                    <xsl:otherwise></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <xsl:variable name="tabLinkUrl">
+                                <!-- For a transient tab, attempting to calculate a tab URL generates an
+                                     exception because the tab is not in the layout so generate a safe URL. -->
+                                <xsl:choose>
+                                    <xsl:when test="@transient='true'">javascript:;</xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:call-template name="portalUrl">
+                                            <xsl:with-param name="url">
+                                                <url:portal-url>
+                                                    <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                </url:portal-url>
+                                            </xsl:with-param>
+                                        </xsl:call-template>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <div class="col-md-3">
+                                <h4><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
+                                <ul>
+                                    <xsl:for-each select="tabChannel">
+                                        <xsl:variable name="portletLinkUrl">
                                             <xsl:call-template name="portalUrl">
                                                 <xsl:with-param name="url">
                                                     <url:portal-url>
                                                         <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
+                                                        <url:portlet-url state="MAXIMIZED" />
                                                     </url:portal-url>
                                                 </xsl:with-param>
                                             </xsl:call-template>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </xsl:variable>
-                                <div class="col-md-3">
-                                    <h4><a href="{$tabLinkUrl}" class="{$NAV_TRANSIENT}"><xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/></a></h4>
-                                    <ul>
-                                        <xsl:for-each select="tabChannel">
-                                            <xsl:variable name="portletLinkUrl">
-                                                <xsl:call-template name="portalUrl">
-                                                    <xsl:with-param name="url">
-                                                        <url:portal-url>
-                                                            <url:layoutId><xsl:value-of select="@ID" /></url:layoutId>
-                                                            <url:portlet-url state="MAXIMIZED" />
-                                                        </url:portal-url>
-                                                    </xsl:with-param>
-                                                </xsl:call-template>
-                                            </xsl:variable>
-                                            <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
-                                        </xsl:for-each>
-                                    </ul>
-                                </div>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </div>
-                </xsl:if>
-            </xsl:for-each>
+                                        </xsl:variable>
+                                        <li><a href="{$portletLinkUrl}"><xsl:value-of select="@title" /></a></li>
+                                    </xsl:for-each>
+                                </ul>
+                            </div>
+                        </xsl:if>
+                    </xsl:for-each>
+                </div>
+            </xsl:if>
+        </xsl:for-each>
 
-        </div>
-    </footer>
+    </div>
 </xsl:template>
 <!-- ========================================================================= -->
 
@@ -744,7 +742,7 @@
                     </div>
                 </div>
                 <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-                <xsl:call-template name="footer.nav" />
+                <xsl:call-template name="region.footer.first" />
                 <xsl:call-template name="region.footer.second" />
                 <xsl:call-template name="region.page-bottom" />
                 <xsl:call-template name="region.hidden-bottom" />

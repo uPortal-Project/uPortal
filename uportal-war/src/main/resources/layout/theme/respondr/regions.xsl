@@ -59,7 +59,7 @@
     version="1.0">
 
     <!-- ========== TEMPLATE: HIDDEN-TOP ========== -->
-    <!-- ======================================== -->
+    <!-- ========================================== -->
     <!--
      | This template renders portlets at the very top of the page, across the entire width.
     -->
@@ -158,7 +158,7 @@
     </xsl:template>
 
     <!-- ========== TEMPLATE: HEADER-BOTTOM ========== -->
-    <!-- ========================================= -->
+    <!-- ============================================= -->
     <!--
      | This template renders portlets at the bottom of the header area.
     -->
@@ -176,8 +176,31 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- ========== TEMPLATE: CUSTOMIZE ========== -->
+    <!-- ========================================= -->
+    <!--
+     | This template renders portlets in the top-left logo area.
+    -->
+    <xsl:template name="region.customize">
+        <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
+            <xsl:if test="//region[@name='customize']/channel">
+                <div id="region-customize" class="container-fluid hidden-xs">
+                    <div id="customizeOptionsWrapper">
+                        <div id="customizeOptions" class="collapse">
+                                <xsl:for-each select="//region[@name='customize']/channel">
+                                    <xsl:call-template name="regions.portlet.decorator" />
+                                </xsl:for-each>
+                        </div>
+                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#customizeOptions">CUSTOMIZE <i class="fa"></i></button>
+                    </div>
+                </div>
+            </xsl:if>
+        </xsl:if>
+    </xsl:template>
+
+
     <!-- ========== TEMPLATE: MEZZANINE ========== -->
-    <!-- ======================================== -->
+    <!-- ========================================= -->
     <!--
      | This template renders portlets prior to the content across the entire width.
     -->
@@ -198,7 +221,7 @@
     </xsl:template>
 
     <!-- ========== TEMPLATE: SIDEBAR-LEFT ========== -->
-    <!-- =========================================== -->
+    <!-- ============================================ -->
     <!--
      | This template renders portlets in the area left of the pre-content, content, and post-content regions.
     -->
@@ -232,7 +255,7 @@
     </xsl:template>
 
     <!-- ========== TEMPLATE: SIDEBAR-RIGHT ========== -->
-    <!-- =========================================== -->
+    <!-- ============================================= -->
     <!--
      | This template renders portlets in the area right of the pre-content, content, and post-content regions.
     -->
@@ -245,6 +268,46 @@
             </div>
         </xsl:if>
     </xsl:template>
+
+    <!-- ======================================================== -->
+    <!-- ========== TEMPLATE: FOOTER FIRST REGION =============== -->
+    <!-- ======================================================== -->
+    <!--
+     | This template renders region intended to hold the site navigation.
+     -->
+    <xsl:template name="region.footer.first">
+        <!-- Following condition should be '//region[@name='footer-first']/channel' 
+             but needs to be 'true()' as long as the footer.nav template is present
+             and desired -->
+        <xsl:if test="true()">
+            <footer id="region-footer-first">
+                <xsl:for-each select="//region[@name='footer-first']/channel">
+                    <xsl:call-template name="regions.portlet.decorator" />
+                </xsl:for-each>
+                <!-- TODO:  This XSLT template needs to be converted to a portlet somehow -->
+                <xsl:call-template name="footer.nav" />
+            </footer>
+        </xsl:if>
+    </xsl:template>
+
+
+    <!-- ========================================================================= -->
+    <!-- ========== TEMPLATE: FOOTER SECOND REGION (License links) =============== -->
+    <!-- ========================================================================= -->
+    <!--
+     | This template renders region intended to hold the license portlet.
+     | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
+     -->
+    <xsl:template name="region.footer.second">
+        <xsl:if test="//region[@name='footer-second']/channel">
+            <footer id="region-footer-second" role="contentinfo">
+                <xsl:for-each select="//region[@name='footer-second']/channel">
+                    <xsl:call-template name="regions.portlet.decorator" />
+                </xsl:for-each>
+            </footer>
+        </xsl:if>
+    </xsl:template>
+
 
     <!-- ========== TEMPLATE: PAGE-BOTTOM ========== -->
     <!-- =========================================== -->
@@ -266,7 +329,7 @@
     </xsl:template>
 
     <!-- ========== TEMPLATE: HIDDEN-BOTTOM ========== -->
-    <!-- =========================================== -->
+    <!-- ============================================= -->
     <!--
      | This template renders portlets at the very top of the page, across the entire width.
     -->
@@ -296,28 +359,6 @@
                 </div>
             </div>
         </div>
-    </xsl:template>
-
-    <!-- ========== TEMPLATE: CUSTOMIZE ========== -->
-    <!-- ======================================= -->
-    <!--
-     | This template renders portlets in the top-left logo area.
-    -->
-    <xsl:template name="region.customize">
-        <xsl:if test="upAuth:hasPermission('UP_SYSTEM', 'CUSTOMIZE', 'ALL')">
-            <xsl:if test="//region[@name='customize']/channel">
-                <div id="region-customize" class="container-fluid hidden-xs">
-                    <div id="customizeOptionsWrapper">
-                        <div id="customizeOptions" class="collapse">
-                                <xsl:for-each select="//region[@name='customize']/channel">
-                                    <xsl:call-template name="regions.portlet.decorator" />
-                                </xsl:for-each>
-                        </div>
-                        <button type="button" class="btn btn-default" data-toggle="collapse" data-target="#customizeOptions">CUSTOMIZE <i class="fa"></i></button>
-                    </div>
-                </div>
-            </xsl:if>
-        </xsl:if>
     </xsl:template>
 
 
@@ -408,24 +449,5 @@
             </script>
         </xsl:if>
     </xsl:template>
-
-
-    <!-- ========================================================================= -->
-    <!-- ========== TEMPLATE: FOOTER SECOND REGION (License links) =============== -->
-    <!-- ========================================================================= -->
-    <!--
-     | This template renders region intended to hold the license portlet.
-     | TODO:  Move footer.nav to footer.first and convert to a portlet (see UP-4103)
-     -->
-    <xsl:template name="region.footer.second">
-        <xsl:if test="//region[@name='footer-second']/channel">
-            <footer id="region-footer-second" role="contentinfo">
-                <xsl:for-each select="//region[@name='footer-second']/channel">
-                    <xsl:call-template name="regions.portlet.decorator" />
-                </xsl:for-each>
-            </footer>
-        </xsl:if>
-    </xsl:template>
-    <!-- ========================================================================= -->
 
 </xsl:stylesheet>
