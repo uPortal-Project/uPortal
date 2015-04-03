@@ -90,6 +90,7 @@ public interface IPortalSpELService {
      * @param expressionString SpEL expression string to parse
      * @param spelEnvironment environment context object with getter methods matching SpEL expression object names
      * @return value of parsed expression
+     * @since 4.2.0
      */
     public String getValue(String expressionString, Object spelEnvironment);
 }
