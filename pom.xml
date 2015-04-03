@@ -134,7 +134,7 @@
         <NewsReaderPortlet.version>3.1.0</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.1.1</NotificationPortlet.version>
         <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
-        <SimpleContentPortlet.version>1.2.0-M1</SimpleContentPortlet.version>
+        <SimpleContentPortlet.version>1.2.0-M4</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.1.1</WeatherPortlet.version>
         <WebProxyPortlet.version>2.0.0-M5</WebProxyPortlet.version>
 
