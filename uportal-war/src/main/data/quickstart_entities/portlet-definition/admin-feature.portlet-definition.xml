@@ -31,10 +31,10 @@
         <ns2:portletName>Image</ns2:portletName>
     </portlet-descriptor>
     <category>Administration</category>
-    <group>Everyone</group>
+    <group>Portal Administrators</group>
     <permissions>
         <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
-            <group>Everyone</group>
+            <group>Portal Administrators</group>
         </permission>
     </permissions>
     <parameter>

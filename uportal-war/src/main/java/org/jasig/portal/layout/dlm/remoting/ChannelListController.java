@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.layout.dlm.remoting;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
@@ -53,16 +55,17 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * <p>A Spring controller that returns a JSON or XML view of channels.  For
- * non-admins, this will only display the channels the user is allowed to
- * manage or subscribe to.  Admins have a choice of viewing manageable,
- * subscribable, or all channels by the "type" request parameter.</p>
+ * <p>A Spring controller that returns a JSON or XML view of portlets.</p>
+ *
+ * <p>As of uPortal 4.2, this will return the portlets the user is allowed to browse,
+ * regardless whether the portlet has a category (previously it returned portlets
+ * the user could subscribe to and left out portlets with no categories but this change
+ * makes this API in sync with search and the marketplace and uses the BROWSE permission
+ * properly without overloading the meaning of categories).</p>
+ *
  * <p>Request parameters:</p>
  * <ul>
- *   <li>xml: if "true", return an XML view of the channels rather than a
- *   JSON view</li>
- *   <li>type: "subscribe", "manage", or "all".  Displays subscribable,
- *   manageable, or all channels (admin only).  Default is subscribable.
+ *   <li>xml: if "true", return an XML view of the portlets rather than a JSON view</li>
  * </ul>
  *
  * @author Drew Mazurek
@@ -79,42 +82,50 @@ public class ChannelListController {
 	private IPortalSpELService spELService;
 	private ILocaleStore localeStore;
 	private MessageSource messageSource;
-	private static final String TYPE_SUBSCRIBE = "subscribe";
+    private IAuthorizationService authorizationService;
+
+    private static final String UNCATEGORIZED = "uncategorized";
+    private static final String UNCATEGORIZED_DESC = "uncategorized.description";
 
     /**
      * @deprecated Moved to PortletRESTController under /api/portlets.json
      */
     private static final String TYPE_MANAGE = "manage";
 
-	/**
+    /**
+     * @deprecated in uPortal 4.2.  Rather than using subscribe and categories <> null, returns portlets that user
+     * has BROWSE permission to regardless whether the portlet has a category to be consistent with Marketplace,
+     * Search, and the BROWSE permission.
+     */
+    private static final String TYPE_SUBSCRIBE = "subscribe";
+
+    /**
 	 * 
 	 * @param request
 	 * @param type
-	 * @param asXml
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView listChannels(WebRequest webRequest, HttpServletRequest request, @RequestParam(value="type",required=false) String type) {
-        type = type != null ? type : TYPE_SUBSCRIBE;
-        if(TYPE_MANAGE.equals(type)) {
+        if(type != null && TYPE_MANAGE.equals(type)) {
             throw new UnsupportedOperationException("Moved to PortletRESTController under /api/portlets.json");
         }
         IPerson user = personManager.getPerson(request);
 
-		Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, type);
+		Map<String,SortedSet<?>> registry = getRegistry(webRequest, user);
 
 		return new ModelAndView("jsonView", "registry", registry);
 	}
 	
-	private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user, String type) {
+	private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user) {
 		
 		// get a list of all channels 
 		List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
+        Set<IPortletDefinition> uncategorizedPortlets = new HashSet<>(allChannels);
 		
 		// construct a new channel registry
 		Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
 	    SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
-	    SortedSet<ChannelBean> channels = new TreeSet<ChannelBean>();
 
 	    // get user locale
 	    Locale[] locales = localeStore.getUserLocales(user);
@@ -123,36 +134,44 @@ public class ChannelListController {
 		
 		// add the root category and all its children to the registry
 		PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
-		categories.add(addChildren(request, rootCategory, allChannels, user, type, locale));
+		categories.add(addChildren(request, rootCategory, uncategorizedPortlets, user, locale));
 
 	    /*
-	     * uPortal historically has provided for a convention that channels
-	     * not in any category may potentially be viewed by users but may not
-	     * be subscribed to.  We'd like administrators to still be able to 
-	     * modify these channels through the portlet administration tool.  The
-	     * logic below takes any channels that have not already been identified
-	     * as belonging to a category and adds them to the top-level of the 
-	     * registry, assuming the current user has manage permissions.
+	     * uPortal historically has provided for a convention that portlets not in any category
+	     * may potentially be viewed by users but may not be subscribed to.
+	     *
+	     * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
+	     * that have not already been identified as belonging to a category and adds them to a category
+	     * called Uncategorized.
 	     */
 	    
 		EntityIdentifier ei = user.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    if (type.equals(TYPE_MANAGE)) {
-	        for (IPortletDefinition channel : allChannels) {
-	            if (ap.canManage(channel.getPortletDefinitionId().getStringId())) {
-	                channels.add(getChannel(channel, request, locale));
-	            }
-	        }
-	    }
-		
-	    registry.put("channels", channels);
+        // construct a new channel category bean for this category
+        String uncategorizedString = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
+        ChannelCategoryBean uncategorizedPortletsBean = new ChannelCategoryBean(new PortletCategory(uncategorizedString));
+        uncategorizedPortletsBean.setName(UNCATEGORIZED);
+        uncategorizedPortletsBean.setDescription(messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale));
+
+        for (IPortletDefinition portlet : uncategorizedPortlets) {
+            if (authorizationService.canPrincipalBrowse(ap, portlet)) {
+                // construct a new channel bean from this channel
+                ChannelBean channel = getChannel(portlet, request, locale);
+                uncategorizedPortletsBean.addChannel(channel);
+            }
+        }
+        // Add even if no portlets in category
+        categories.add(uncategorizedPortletsBean);
+
+        // Since type=manage was deprecated channels is always empty but retained for backwards compatibility
+	    registry.put("channels", new TreeSet<ChannelBean>());
 	    registry.put("categories", categories);
 	    
 		return registry;
 	}
 	
-	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, List<IPortletDefinition> allChannels, IPerson user, String type, Locale locale) {
+	private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, Set<IPortletDefinition> uncategorizedPortlets, IPerson user, Locale locale) {
 		
 		// construct a new channel category bean for this category
 		ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
@@ -162,29 +181,22 @@ public class ChannelListController {
 		Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);		
 		EntityIdentifier ei = user.getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-		boolean isManage = type.equals(TYPE_MANAGE);
-		
-		for(IPortletDefinition channelDef : portlets) {
+
+		for(IPortletDefinition portlet : portlets) {
 			
-			if ((isManage && ap.canManage(channelDef.getPortletDefinitionId()
-					.getStringId()))
-					|| (!isManage && ap.canSubscribe(channelDef
-							.getPortletDefinitionId().getStringId()))) {
+			if (authorizationService.canPrincipalBrowse(ap, portlet)) {
 				// construct a new channel bean from this channel
-				ChannelBean channel = getChannel(channelDef, request, locale);
+				ChannelBean channel = getChannel(portlet, request, locale);
 				categoryBean.addChannel(channel);
 			}
 			
-			// remove the channel of the list of all channels
-			allChannels.remove(channelDef);
+			// remove the portlet from the set of all portlets
+			uncategorizedPortlets.remove(portlet);
 		}
 
 		/* Now add child categories. */
 		for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
-			
-			// TODO subscribe check?
-			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, allChannels, user, type, locale);
-			
+			ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, uncategorizedPortlets, user, locale);
 			categoryBean.addCategory(childCategoryBean);
 		}
 		
@@ -212,7 +224,7 @@ public class ChannelListController {
 	}
 	
 	/**
-	 * @param channelRegistryStore
+	 * @param portletDefinitionRegistry
 	 */
 	@Autowired
 	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
@@ -246,5 +258,10 @@ public class ChannelListController {
 	@Autowired
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    @Autowired
+    public void setAuthorizationService(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 }
