@@ -80,6 +80,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.SpelParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -732,8 +733,9 @@ public class SearchPortletController {
             final SpELEnvironmentRoot spelEnvironment = new SpELEnvironmentRoot(portletDefinition);
             try {
                 result.setTitle(spELService.getValue(result.getTitle(), spelEnvironment));
-            } catch (SpelParseException e) {
-                result.setTitle("Invalid Spring EL expression '" + result.getTitle()+"'");
+            } catch (SpelParseException | SpelEvaluationException e) {
+                result.setTitle("(Invalid portlet title) - see details in log file");
+                logger.error("Invalid Spring EL expression {} in search result portlet title", result.getTitle(), e);
             }
         }
     }
