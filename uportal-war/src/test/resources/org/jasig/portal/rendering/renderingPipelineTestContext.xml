@@ -174,7 +174,7 @@
     
     <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
-    <bean class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
+    <bean id="testSpelService" class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
     
     <bean class="org.jasig.portal.url.PortalRequestUtilsImpl" />
     

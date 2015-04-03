@@ -81,4 +81,16 @@ public interface IPortalSpELService {
      * @see #getValue(Expression, WebRequest, Class)
      */
     public <T> T getValue(String expressionString, WebRequest request, Class<T> desiredResultType);
+
+    /**
+     * Parses an expression string against a provided SpEL environment.  The environment object should be a simple
+     * class that has objects and getXXXX methods where XXXX is the name of the object in the expression.
+     * For instance, to handle SpEL expressions of ${portlet.title} and ${user.name} you pass in an object
+     * that has getPortlet() and getUser() methods, assuming ${} is your expression token prefix and suffix.
+     * @param expressionString SpEL expression string to parse
+     * @param spelEnvironment environment context object with getter methods matching SpEL expression object names
+     * @return value of parsed expression
+     * @since 4.2.0
+     */
+    public String getValue(String expressionString, Object spelEnvironment);
 }
