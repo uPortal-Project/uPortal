@@ -33,23 +33,34 @@
 <with>
   <attribute key="personAttributesGroupImportHelper">${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}</attribute>
   <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+  <attribute key="GROUP_DESCRIPTION">${valueOf(description)}</attribute><!-- See NOTE on escaped characters below -->
   <subtasks>
     <choose>
       <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
         <groovy>
           <script>
-            personAttributesGroupImportHelper.addGroup(GROUP_NAME, '${valueOf(description)}');
+            personAttributesGroupImportHelper.addGroup(GROUP_NAME, GROUP_DESCRIPTION);
             personAttributesGroupImportHelper.dropTestGroupsAndTests(GROUP_NAME);
           </script>
         </groovy>
         <node-iterator xpath="selection-test/test-group">
           <with-attribute key="testGroup" value="${groovy(personAttributesGroupImportHelper.addTestGroup(GROUP_NAME))}">
             <node-iterator xpath="test">
-              <groovy>
-                <script>
-                  personAttributesGroupImportHelper.addTest(testGroup, '${valueOf(attribute-name)}', '${valueOf(tester-class)}', '${valueOf(test-value)}');
-                </script>
-              </groovy>
+              <with>
+                <!-- NOTE:  Pulling these values into variables before the groovy script
+                     to avoid writing them into the groovy script as String literals,
+                     which causes issues with characters that need to be escaped. -->
+                <attribute key="attributeName">${valueOf(attribute-name)}</attribute>
+                <attribute key="testerClass">${valueOf(tester-class)}</attribute>
+                <attribute key="testValue">${valueOf(test-value)}</attribute>
+                <subtasks>
+                  <groovy>
+                    <script>
+                      personAttributesGroupImportHelper.addTest(testGroup, attributeName, testerClass, testValue);
+                    </script>
+                  </groovy>
+                </subtasks>
+              </with>
             </node-iterator>
           </with-attribute>
         </node-iterator>
@@ -61,11 +72,13 @@
           </script>
         </groovy>
         <node-iterator xpath="members/member-name">
-          <groovy>
-            <script>
-              personAttributesGroupImportHelper.addGroupMember(GROUP_NAME, '${valueOf(.)}');
-            </script>
-          </groovy>
+          <with-attribute key="MEMBER_NAME" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
+            <groovy>
+              <script>
+                personAttributesGroupImportHelper.addGroupMember(GROUP_NAME, MEMBER_NAME);
+              </script>
+            </groovy>
+          </with-attribute>
         </node-iterator>
       </when>
     </choose>
