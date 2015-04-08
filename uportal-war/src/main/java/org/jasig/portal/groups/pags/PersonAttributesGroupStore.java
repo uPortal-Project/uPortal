@@ -56,7 +56,8 @@ import org.jasig.services.persondir.IPersonAttributes;
  * service.
  * 
  * @author Al Wold
- * @version $Revision$
+ * @deprecated JPA (database) PAGS is required for a small but growing list of
+ * newer features.
  */
 public class PersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
    private static final Log log = LogFactory.getLog(PersonAttributesGroupStore.class);

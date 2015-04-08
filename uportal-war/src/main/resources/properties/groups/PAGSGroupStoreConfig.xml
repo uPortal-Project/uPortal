@@ -22,6 +22,8 @@
 <!DOCTYPE Group-Store PUBLIC "-//uPortal//PAGSGroupStore/EN" "PAGSGroupStore.dtd">
 
 <!--
+    DEPRICATED:  Some newer features (uPortal 4.1 and later) require 'entity' (JPA) PAGS.  See compositeGroupServices.xml.
+
     PAGSGroupStoreConfig.xml is used to configure the person attributes group store when using the
     XML PAGS implementation (configured in compositeGroupService.xml).
     
