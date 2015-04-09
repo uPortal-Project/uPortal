@@ -24,5 +24,7 @@
   <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
   <creator>system</creator>
   <description>Instructor Portlets</description>
-  <children/>
+  <children>
+      <group>Instructors-Not-Students</group>
+  </children>
 </group>
