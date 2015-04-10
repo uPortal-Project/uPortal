@@ -514,6 +514,28 @@
         </antcall>
     </target>
 
+    <!-- Since uPortal 4.2.0 -->
+    <target name="pagsXmlToEntity" description="Script to convert PAGSGroupStoreConfig.xml to entity PAGS files">
+        <if>
+            <not>
+                    <isset property="dir" />
+            </not>
+            <then>
+                <fail>'-Ddir' output directory must be specified for PAGS conversion</fail>
+            </then>
+        </if>
+
+        <groovy-safe-path property="dirFullEscaped" input="${dir}" />
+
+        <echo>Executing PAGS Conversion Script</echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="utilities/scripts/xmlPagsToEntityPags.groovy" />
+            <param name="arg1" value="uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"/>
+            <param name="arg2" value="${dir}"/>
+        </antcall>
+    </target>
+
     <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
         <if>
             <not>
@@ -536,6 +558,8 @@
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
                                 <arg value="${script}" />
+                                <arg value="${arg1}"/>
+                                <arg value="${arg2}"/>
                             </java>
                         </then>
                         <else>
