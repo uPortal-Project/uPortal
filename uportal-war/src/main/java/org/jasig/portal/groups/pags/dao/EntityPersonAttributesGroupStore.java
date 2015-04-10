@@ -126,7 +126,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (groups.size() == 0) {
             logger.error("No PAGS group with name {} found. Check your PAGS group definitions for possible error"
-                + " in member group name");
+                + " in member group name", name);
             return null;
         }
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
