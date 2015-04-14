@@ -115,11 +115,15 @@ public abstract class BaseTransformerSource implements TransformerSource, Resour
      */
     protected abstract long getStylesheetDescriptorId(IUserPreferencesManager preferencesManager);
 
-    private Resource getStylesheetResource(HttpServletRequest request) {
+    protected IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final long stylesheetDescriptorId = this.getStylesheetDescriptorId(preferencesManager);
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetDescriptorId);
+        final long id = this.getStylesheetDescriptorId(preferencesManager);
+        return this.stylesheetDescriptorDao.getStylesheetDescriptor(id);
+    };
+
+    private Resource getStylesheetResource(HttpServletRequest request) {
+        final IStylesheetDescriptor stylesheetDescriptor = this.getStylesheetDescriptor(request);
         final String stylesheetResource = stylesheetDescriptor.getStylesheetResource();
         return this.resourceLoader.getResource(stylesheetResource);
     }
