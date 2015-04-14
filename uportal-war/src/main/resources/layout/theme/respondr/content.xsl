@@ -153,6 +153,7 @@
 
     <xsl:variable name="PORTLET_CHROME"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
+        <xsl:when test="./parameter[@name='chromeStyle']/@value='no-chrome'">no-chrome</xsl:when>
         <xsl:when test="./parameter[@name='showChrome']/@value='false'">no-chrome</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
@@ -160,13 +161,15 @@
 
     <xsl:variable name="PORTLET_HIGHLIGHT"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
-        <xsl:when test="./parameter[@name='highlight']/@value='true'">highlight</xsl:when>
+          <xsl:when test="./parameter[@name='chromeStyle']/@value='highlighted'">highlight</xsl:when>
+          <xsl:when test="./parameter[@name='highlight']/@value='true'">highlight</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
 
     <xsl:variable name="PORTLET_ALTERNATE"> <!-- Test to determine if the portlet has been given the alternate flag. -->
       <xsl:choose>
+        <xsl:when test="./parameter[@name='chromeStyle']/@value='alternate'">alternate</xsl:when>
         <xsl:when test="./parameter[@name='alternate']/@value='true'">alternate</xsl:when>
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
@@ -238,7 +241,7 @@
         <!-- PORTLET CHROME CHOICE -->
         <xsl:choose>
           <!-- ***** REMOVE CHROME ***** -->
-          <xsl:when test="parameter[@name = 'showChrome']/@value = 'false'">
+          <xsl:when test="$PORTLET_CHROME = 'no-chrome'">
             <div class="up-portlet-wrapper-inner no-chrome">
               <!-- ****** PORTLET TOOLBAR ****** -->
               <!-- If not movable, default to hidden so you have no grab region.
@@ -411,7 +414,10 @@
       </xsl:if>
 
       <!-- Remove Icon -->
-      <xsl:if test="@unremovable='false' and not(//focused) and /layout/navigation/tab[@activeTab='true']/@immutable='false'">
+      <!-- note: deleteAllowed will either be false or not present if set from
+           the admin ui;  not certain the last (3rd) criteria is needed or
+           appropriate -->
+      <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
         <!-- calls a layout api on click that removes the current node from the layout -->
         <li>
           <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>

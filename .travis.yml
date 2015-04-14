@@ -1,4 +1,6 @@
 language: java
+sudo: false
+
 before_install:
   - unset GEM_PATH
 

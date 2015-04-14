@@ -42,10 +42,10 @@
 
             <div class="portlet-section-body">
 
-                <form action="${ formUrl }" class="form-inline" style="margin-bottom:10px;" method="POST">
+                <form id="${n}searchForm" action="${ formUrl }" class="form-inline" style="margin-bottom:10px;" method="POST">
                     <div class="form-group">
                         <input id="${n}searchInput" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}"/>
-                        <input type="submit" class="btn btn-default" value="<spring:message code="search.submit"/>"/>
+                        <input id="${n}searchButton" type="submit" class="btn btn-default" value="<spring:message code="search.submit"/>"/>
                     </div>
                 </form>
 
@@ -158,6 +158,16 @@ searchjQ["${n}"].jQuery(document).ready(function() {
         searchjQ["${n}"].jQuery("#${n}searchResults .searchTabsContainer").addClass("hidden");
     </c:if>
     searchjQ["${n}"].jQuery("#${n}searchResults").removeClass("hidden"); // Unhide the search results now that the tabs are rendered
+});
+
+// Only search if the user entered some text to search for
+searchjQ["${n}"].jQuery( "#${n}searchForm" ).submit(function( event ) {
+    if ( searchjQ["${n}"].jQuery( "#${n}searchInput" ).val().trim().length == 0 ) {
+        event.preventDefault();
+    } else {
+        document.getElementById('${n}searchButton').disabled = 1;
+    }
+
 });
 
 </rs:compressJs></script>

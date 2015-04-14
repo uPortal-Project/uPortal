@@ -36,7 +36,8 @@ import org.w3c.dom.Text;
  * file format.
  *
  * @author Al Wold
- * @version $Revision$
+ * @deprecated JPA (database) PAGS is required for a small but growing list of
+ * newer features.
  */
 public class XMLPersonAttributesConfiguration
    implements IPersonAttributesConfiguration {

@@ -19,6 +19,7 @@
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
@@ -53,8 +56,9 @@ import org.jasig.portal.xml.PortletDescriptor;
 public class PortletDefinitionForm implements Serializable {
 
     private static final String FRAMEWORK_PORTLET_URL = "/uPortal";
+	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("M/d/yyyy");
 	
-	private static final long serialVersionUID = 892741367149099647L;
+	private static final long serialVersionUID = 892741367149099648L;
 	protected transient final Log log = LogFactory.getLog(getClass());
 	
 	/**
@@ -331,17 +335,19 @@ public class PortletDefinitionForm implements Serializable {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
+    public void setApplicationId(String applicationId) {
+        // Be careful not to pass on extra whitespace
+        this.applicationId = StringUtils.isNotBlank(applicationId) ? applicationId.trim() : applicationId;
+    }
 
 	public String getPortletName() {
 		return portletName;
 	}
 
-	public void setPortletName(String portletName) {
-		this.portletName = portletName;
-	}
+    public void setPortletName(String portletName) {
+        // Be careful not to pass on extra whitespace
+        this.portletName = portletName.trim();
+    }
 
 	public boolean isFramework() {
 		return framework;
@@ -555,6 +561,34 @@ public class PortletDefinitionForm implements Serializable {
 		return cal.getTime();
 	}
 
+
+	/**
+	 * Get the expiration date as a string.  This is just  webflow workaround.
+	 * @return the expiration date as a string
+	 */
+	public String getExpirationDateString() {
+		if (expirationDate == null) {
+			return null;
+		}
+
+		return dateFormat.format(expirationDate);
+	}
+
+
+	/**
+	 * Set the expiration date as a string.
+	 * @param date the date string
+	 * @throws ParseException if the string cannot be parsed
+	 */
+	public void setExpirationDateString(String date) throws ParseException {
+		if (StringUtils.isBlank(date)) {
+			expirationDate = null;
+			return;
+		}
+
+		expirationDate = dateFormat.parse(date);
+	}
+
 	public void setPublishDateTime(Date publish) {
 		if (publish != null) {
 			this.setPublishDate(publish);
@@ -569,7 +603,37 @@ public class PortletDefinitionForm implements Serializable {
 			this.setPublishAmPm(cal.get(Calendar.AM_PM));
 		}
 	}
-	
+
+
+	/**
+	 * Get the publish date as a string.
+	 * @return the publish date as a string
+	 */
+	public String getPublishDateString() {
+		if (publishDate == null) {
+			return null;
+		}
+
+		return dateFormat.format(publishDate);
+	}
+
+
+	/**
+	 * Set the publish date as a string.   This is just a webflow
+	 * workaround.
+	 *
+	 * @param date the date string
+	 * @throws ParseException if the date cannot be parsed
+	 */
+	public void setPublishDateString(String date) throws ParseException {
+		if (StringUtils.isBlank(date)) {
+			publishDate = null;
+			return;
+		}
+
+		publishDate = dateFormat.parse(date);
+	}
+
 	public void setExpirationDateTime(Date expire) {
 		if (expire != null) {
 			this.setExpirationDate(expire);
@@ -584,5 +648,5 @@ public class PortletDefinitionForm implements Serializable {
 			this.setExpirationAmPm(cal.get(Calendar.AM_PM));
 		}
 	}
-	
+
 }

@@ -22,18 +22,20 @@
 
     .menu-toggle {
         position: absolute;
-        top: 40px;
+        top: 100px;
         right: 20px;
         padding: 0.5rem 1rem;
         background: @menu-toggle-background-color;
-        .border-radius;
-        font-weight: inherit;
+        border: 1px solid @menu-toggle-border-color;
         color: @menu-toggle-text-color;
+        font-weight: inherit;
         text-decoration: none;
+        .border-radius;
 
         &:hover, &:focus {
             background: @menu-toggle-hover-background-color;
             color: @menu-toggle-hover-text-color;
+            border: 1px solid @menu-toggle-hover-border-color;
         }
 
         i {

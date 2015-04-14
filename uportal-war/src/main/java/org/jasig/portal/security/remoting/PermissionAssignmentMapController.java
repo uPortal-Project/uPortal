@@ -116,7 +116,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
-
+        
         JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
 
         if (bean != null) {
@@ -144,6 +144,53 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
         
         return getOwners(principals, owner, activity, target, request, response);
+    }
+    
+
+    /**
+     * Deletes a specific permission
+     * @param principal
+     * @param assignment
+     * @param owner
+     * @param activity
+     * @param target
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value="/deletePermission", method = RequestMethod.POST)
+    public void deletePermission(
+            @RequestParam("principal") String principal,
+            @RequestParam("owner") String owner,
+            @RequestParam("activity") String activity,
+            @RequestParam("target") String target, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        // ensure the current user is authorized to update and view permissions
+        final IPerson currentUser = personManager.getPerson((HttpServletRequest) request);
+
+        if (!permissionAdministrationHelper.canEditPermission(currentUser, target) || 
+                !permissionAdministrationHelper.canViewPermission(currentUser, target)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
+
+        if (bean != null) {
+            
+            IAuthorizationPrincipal p = groupListHelper.getPrincipalForEntity(bean);
+            
+            IPermission[] directPermissions = permissionStore.select(owner, p.getPrincipalString(), activity, target, null);
+            this.authorizationService.removePermissions(directPermissions);
+            
+        } else {
+            log.warn("Unable to resolve the following principal (will " +
+                    "be omitted from the list of assignments):  " + 
+                    principal);
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        return;
     }
 
     @RequestMapping(value="/permissionAssignmentMap", method = RequestMethod.GET)

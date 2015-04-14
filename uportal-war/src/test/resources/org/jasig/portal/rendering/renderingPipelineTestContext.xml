@@ -63,7 +63,7 @@
         <property name="wrappedComponent" ref="postStructureTransformLogger" />
         <property name="transformerSource">
             <bean class="org.jasig.portal.rendering.StaticTransformerSource">
-                <property name="stylesheet" value="classpath:/layout/theme/universality/universality.xsl" />
+                <property name="stylesheet" value="classpath:/layout/theme/respondr/respondr.xsl" />
             </bean>
         </property>
         <property name="xsltParameterSource">
@@ -174,7 +174,7 @@
     
     <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
-    <bean class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
+    <bean id="testSpelService" class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
     
     <bean class="org.jasig.portal.url.PortalRequestUtilsImpl" />
     

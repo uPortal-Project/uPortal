@@ -121,10 +121,6 @@
 
 @border: 1px solid @grayscale2;
 
-@body-background-color: @white;
-@body-background-image: url(./common/images/furley_bg.png);
-/* Using the furley pattern from http://subtlepatterns.com */
-
 /**
  * Link colors
  */
@@ -132,7 +128,12 @@
 @portal-link-hover-color: @color3-light;
 
 /**
- * Region Styles
+ * Main content Styles
+ */
+@content-background-color: @white;
+
+/**
+ * Region styles
  */
 @header-background-color: @color1;
 @header-text-color: @white;
@@ -143,6 +144,13 @@
 @footer-text-color: @color4;
 @footer-link-color: @color4-light;
 @footer-link-hover-color: @color4-lighter;
+
+/**
+ * Page-level styles
+ */
+@body-background-color: @footer-secondary-background-color;  // default to match footer-second;  prevents 'gaps' at the bottom of short pages
+@body-background-image: url(./common/images/furley_bg.png);
+/* Using the furley pattern from http://subtlepatterns.com */
 
 /**
  * User bar styles
@@ -185,10 +193,12 @@
 @navbar-controls-color: @grayscale10;
 @navbar-controls-hover-color: @white;
 
-@menu-toggle-background-color: @color2;
+@menu-toggle-background-color: @color1-dark;
+@menu-toggle-border-color: @color1-darker;
 @menu-toggle-text-color: @white;
 
-@menu-toggle-hover-background-color: @color3;
+@menu-toggle-hover-background-color: @color1-light;
+@menu-toggle-hover-border-color: @color1-lighter;
 @menu-toggle-hover-text-color: @white;
 
 /**

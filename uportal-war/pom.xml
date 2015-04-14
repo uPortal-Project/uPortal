@@ -554,11 +554,6 @@
         </dependency>
         
         <!-- ===== Runtime Dependencies ======================================= -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.jasig.ehcache</groupId>
@@ -897,10 +892,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
@@ -920,21 +911,6 @@
                         <goals>
                             <goal>assemble</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>sass-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>compile-sass-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>update-stylesheets</goal>
-                        </goals>
-                        <inherited>false</inherited>
                     </execution>
                 </executions>
             </plugin>
@@ -973,6 +949,21 @@
                             <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>mobile-less</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/muniversality/mobileSkin</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/mobileSkin</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -980,22 +971,6 @@
                 <artifactId>resource-server-plugin</artifactId>
                 <version>${resource-server.version}</version>
                 <executions>
-                    <execution>
-                        <id>aggregate-universality-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>batch-aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
-                            <includes>
-                                <include>media/skins/universality/**/skin.xml</include>
-                            </includes>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>aggregate-muniversality-skins</id>
                         <phase>prepare-package</phase>

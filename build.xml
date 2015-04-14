@@ -124,6 +124,7 @@
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
+    <property name="uportal.war.name" value="uPortal"/> <!-- Keep in sync with uportal.docbase in pom.xml and environment.build.uportal.context in filters/*.properties -->
 
     <import file="${bootstrap.dir}/build_includes.xml" />
 
@@ -1515,12 +1516,12 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
                 <fail message="Unable to find ${uportal-war.dir}/target/uPortal-classes.jar. Run ant deploy-war to rebuild uportal-war">
                     <condition>
                         <not>
-                            <available file="${uportal-war.dir}/target/uPortal-classes.jar"/>
+                            <available file="${uportal-war.dir}/target/${uportal.war.name}-classes.jar"/>
                         </not>
                     </condition>
                 </fail>
                 <path id="uportal-war-full.classpath">
-                    <path location="${uportal-war.dir}/target/uPortal-classes.jar" />
+                    <path location="${uportal-war.dir}/target/${uportal.war.name}-classes.jar" />
                     <path refid="uportal-war.classpath" />
                 </path>
 

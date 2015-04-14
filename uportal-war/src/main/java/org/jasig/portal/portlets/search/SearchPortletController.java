@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -68,6 +68,7 @@ import org.jasig.portal.search.SearchConstants;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
+import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -77,7 +78,10 @@ import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -124,7 +128,7 @@ public class SearchPortletController {
     // > 0 is higher priority, < 0 is lower priority.
     private Map<String, Integer> autocompleteResultTypeToPriorityMap = new HashMap<String, Integer>();
 
-    private Set<String> searchResultsLinkTextPortletTitleSubstitutionSet = new HashSet<>();
+    private IPortalSpELService spELService;
 
     // TODO: It would be better to revise the search event to have a set of ignored types and expect the
     // search event listeners to voluntarily ignore the search event if they are one of the ignored types (and
@@ -179,9 +183,10 @@ public class SearchPortletController {
         this.autocompleteIgnoreResultTypes = autocompleteIgnoreResultTypes;
     }
 
-    @Resource(name = "searchResultsLinkNamePortletTitleSubstitutionSet")
-    public void setSearchResultsLinkTextPortletTitleSubstitutionSet(Set<String> portletTypeSet) {
-        this.searchResultsLinkTextPortletTitleSubstitutionSet = portletTypeSet;
+    @Autowired
+    @Qualifier(value = "portalSpELServiceImpl")
+    public void setSpELService(IPortalSpELService spELService) {
+        this.spELService = spELService;
     }
 
     /**
@@ -521,9 +526,12 @@ public class SearchPortletController {
         final Map<String,Object> model = new HashMap<String, Object>();
         model.put("query", query);
 
+        ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = new ConcurrentHashMap<>();
         final PortalSearchResults portalSearchResults = this.getPortalSearchResults(request, queryId);
-        final ConcurrentMap<String, List<Tuple<SearchResult, String>>> results = portalSearchResults.getResults();
-        model.put("results", results);
+        if (portalSearchResults != null) {
+            results = portalSearchResults.getResults();
+        }
+            model.put("results", results);
         model.put("defaultTabKey", this.defaultTabKey);
         model.put("tabKeys", this.tabKeys);
 
@@ -719,12 +727,19 @@ public class SearchPortletController {
      */
     protected void modifySearchResultLinkTitle(SearchResult result, final HttpServletRequest httpServletRequest,
                                                final IPortletWindowId portletWindowId) {
-        if (result.getType().size() > 0 && searchResultsLinkTextPortletTitleSubstitutionSet.contains(result.getType().get(0))) {
-            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
+        // If the title contains a SpEL expression, parse it with the portlet definition in the evaluation context.
+        if (result.getType().size() > 0 && result.getTitle().contains("${")) {
+            final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest,
+                    portletWindowId);
             final IPortletEntity portletEntity = portletWindow.getPortletEntity();
             final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
-            String portletTitle = portletDefinition.getTitle();
-            result.setTitle(portletTitle);
+            final SpELEnvironmentRoot spelEnvironment = new SpELEnvironmentRoot(portletDefinition);
+            try {
+                result.setTitle(spELService.getValue(result.getTitle(), spelEnvironment));
+            } catch (SpelParseException | SpelEvaluationException e) {
+                result.setTitle("(Invalid portlet title) - see details in log file");
+                logger.error("Invalid Spring EL expression {} in search result portlet title", result.getTitle(), e);
+            }
         }
     }
     
@@ -786,5 +801,32 @@ public class SearchPortletController {
     public boolean isMobile(PortletRequest request) {
         String themeName = request.getProperty(ThemeNameRequestPropertiesManager.THEME_NAME_PROPERTY);
         return "UniversalityMobile".equals(themeName);
+    }
+
+    /**
+     * Limited-use POJO representing the root of a SpEL environment.  For Search we're only using
+     * the portlet object in the evaluation context.
+     */
+    @SuppressWarnings("unused")
+    private class SpELEnvironmentRoot {
+
+        private final IPortletDefinition portlet;
+
+        /**
+         * Create a new SpEL environment root for use in a SpEL evaluation context.
+         *
+         * @param portletDefinition  portlet definition
+         */
+        private SpELEnvironmentRoot(IPortletDefinition portletDefinition) {
+            this.portlet = portletDefinition;
+        }
+
+        /**
+         * Get the portlet associated with this environment root.
+         */
+        public IPortletDefinition getPortlet() {
+            return portlet;
+        }
+
     }
 }

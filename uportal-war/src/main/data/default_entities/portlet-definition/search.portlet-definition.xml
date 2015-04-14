@@ -44,4 +44,25 @@
         <name>mobileIconUrl</name>
         <value>/uPortal/media/skins/icons/mobile/search.png</value>
     </parameter>
+    <!-- By default the search auto-suggest should use the pre-populated portlet list since uPortal is currently
+         too slow in returning search results for auto-suggest. -->
+    <portlet-preference>
+        <name>autoSuggestResultsProcessor</name>
+        <readOnly>false</readOnly>
+        <value>portletListProcessor</value>
+    </portlet-preference>
+    <!-- By default the search auto-suggest should use the pre-populated portlet list since uPortal is currently
+         too slow in returning search results for auto-suggest. -->
+    <portlet-preference>
+        <name>prepopulateAutoSuggestUrl</name>
+        <readOnly>false</readOnly>
+        <value>/api/portletList</value>
+    </portlet-preference>
+    <!-- By default the search auto-suggest should use the pre-populated portlet list since uPortal is currently
+         too slow in returning search results for auto-suggest. -->
+    <portlet-preference>
+        <name>prepopulateUrlPattern</name>
+        <readOnly>false</readOnly>
+        <value>/p/$fname/max</value>
+    </portlet-preference>
 </portlet-definition>

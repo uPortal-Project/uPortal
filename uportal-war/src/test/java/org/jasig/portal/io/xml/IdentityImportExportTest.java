@@ -42,10 +42,10 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
@@ -99,14 +99,14 @@ public class IdentityImportExportTest extends BasePortalJpaDaoTest {
     
     @Autowired
     private ICounterStore counterStore;
-    private SimpleJdbcTemplate simpleJdbcTemplate;
+    private JdbcTemplate simpleJdbcTemplate;
     private int counter = 0;
     
     protected void runSql(final String sql) {
         if (simpleJdbcTemplate == null) {
-            simpleJdbcTemplate = new SimpleJdbcTemplate(dataSource);
+            simpleJdbcTemplate = new JdbcTemplate(dataSource);
         }
-        SimpleJdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(sql.getBytes()), false);
+        JdbcTestUtils.executeSqlScript(simpleJdbcTemplate, new ByteArrayResource(sql.getBytes()), false);
     }
 
     @Before

@@ -26,8 +26,10 @@
         <group>Everyone</group>
     </principal>
     <activity>BROWSE</activity>
-    <!-- Enumerates the categories that everyone,
-        including un-authenticated users, may browse in the Marketplace. -->
+    <!-- Enumerates the categories that everyone, including un-authenticated users, may browse in the
+         Marketplace.  NOTE:  Be aware that as of uPortal 4.2, adding BROWSE to category groups (category
+         element in the portlet definition files) means portlets in the category will show up in
+         the Customize drawer, search auto-suggest, search results, and the Marketplace.  -->
     <target permission-type="GRANT">
         <group>Academics</group>
     </target>

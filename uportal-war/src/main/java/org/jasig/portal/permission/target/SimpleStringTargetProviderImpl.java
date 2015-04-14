@@ -30,7 +30,7 @@ import java.util.Map;
  * SimpleStringTargetProviderImpl provides a basic target provider implementation
  * capable of registering static strings as targets.  This implementation is
  * appropriate for permission owners for which targets are simple static 
- * strings that are well-defeined and known in advance.
+ * strings that are well-defined and known in advance.
  * 
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$

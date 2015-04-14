@@ -145,12 +145,10 @@ public class PermissionImpl implements IPermission, Serializable {
  */
 public String toString() {
     StringBuffer buff = new StringBuffer("Permission on ");
-    buff.append(getOwner());
+    buff.append(getTarget());
     buff.append(" for ");
     buff.append(getPrincipal());
-    buff.append(" (");
-    buff.append(getActivity());
-    buff.append(")");
+    buff.append(" (").append(getOwner()).append("/").append(getActivity()).append(")");
     return buff.toString();
 }
 }

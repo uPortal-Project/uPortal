@@ -83,30 +83,30 @@
         <xsl:for-each select="folder[@type='root']">
             <layout>
                 <xsl:if test="/layout/@dlm:fragmentName">
-                	<xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
+                    <xsl:attribute name="dlm:fragmentName"><xsl:value-of select="/layout/@dlm:fragmentName"/></xsl:attribute>
                 </xsl:if>
-                
+
                 <!--header-->
                 <header>
                     <xsl:choose>
-        				<xsl:when test="$userLayoutRoot = 'root'">
-        					<!-- BEGIN display channel-headers for each channel visible on the page -->
-           					<xsl:for-each select="child::folder/descendant::channel">
-        						<channel-header ID="{@ID}"/>
-      						</xsl:for-each>
-      
-      						<xsl:for-each select="child::folder[@type='header']">
-          						<xsl:copy-of select=".//channel[not(parameter[@name='hideFromMobile']/@value = 'true')]"/>
-      						</xsl:for-each> 
-      						<!-- END display channel-headers for each channel visible on the page -->  
-        				</xsl:when>
-      					<xsl:otherwise>
-      						<!-- display only focused channel-header -->
-      						<channel-header ID="{$userLayoutRoot}"/>
-      					</xsl:otherwise>  
-     				</xsl:choose>
+                        <xsl:when test="$userLayoutRoot = 'root'">
+                            <!-- BEGIN display channel-headers for each channel visible on the page -->
+                            <xsl:for-each select="child::folder/descendant::channel[not(parameter[@name='hideFromMobile']/@value = 'true')]">
+                                <channel-header ID="{@ID}"/>
+                            </xsl:for-each>
+
+                            <xsl:for-each select="child::folder[@type='header']">
+                                <xsl:copy-of select=".//channel[not(parameter[@name='hideFromMobile']/@value = 'true')]"/>
+                            </xsl:for-each> 
+                            <!-- END display channel-headers for each channel visible on the page -->  
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <!-- display only focused channel-header -->
+                            <channel-header ID="{$userLayoutRoot}"/>
+                        </xsl:otherwise>  
+                     </xsl:choose>
                 </header>
-                
+
                 <!--mobile navigation-->
                 <content>
                     <xsl:apply-templates select="folder" mode="navigation" />
@@ -123,16 +123,14 @@
                                 <xsl:attribute name="detached">
                                     <xsl:value-of select="$detached"/>
                                 </xsl:attribute>
-                                
                                 <xsl:apply-templates select="//channel[@ID = $userLayoutRoot]"/>
-                                
                             </focused>
                         </xsl:when>
-                        
+
                         <!-- non-focused -->
                         <xsl:otherwise>
                             <navigation>
-                                <xsl:for-each select="child::folder[@type!='footer' and @type!='header']">
+                                <xsl:for-each select="child::folder[@type='regular']">
                                     <tab ID="{@ID}" name="{@name}" type="{@type}">
                                         <xsl:apply-templates select=".//channel"/>
                                     </tab>

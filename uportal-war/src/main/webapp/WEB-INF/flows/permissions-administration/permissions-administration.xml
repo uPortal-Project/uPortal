@@ -51,6 +51,13 @@
         <transition on="activities" to="listActivities"/>
         <transition on="createPermission" to="selectTarget"/>
         <transition on="editPermission" to="edit-permission"/>
+        <transition on="delete" to="deletePermission">
+            <set name="flowScope.principalName" value="requestParameters.principalName"/>
+            <set name="flowScope.permissionType" value="requestParameters.permissionType"/>
+            <set name="flowScope.principalKey" value="requestParameters.principalKey"/>
+            <set name="flowScope.targetName" value="requestParameters.targetName"/>
+            <set name="flowScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.targetName)"/>
+        </transition>
     </view-state>
     
     <!-- Select a new target on which to assign a permission -->
@@ -86,7 +93,7 @@
         <transition on="#{breadcrumb == 'listActivities'}" to="listActivities"/>
         <transition on="#{breadcrumb == 'showActivity'}" to="showActivity"/>
     </subflow-state>
-
+    
     <!-- VIEW PERMISSIONS view state -->    
     <view-state id="permissionLookupResult">
         <on-entry>
@@ -100,7 +107,24 @@
             <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
         </transition>
     </view-state>
-
+    
+    <!-- Delete Permission State -->
+    <view-state id="deletePermission">
+        
+        <on-entry>
+            <set name="viewScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
+            <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
+            <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
+            <set name="viewScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="viewScope.target" value="targetProvider.getTarget(requestParameters.targetName)"/>
+        </on-entry>
+        <transition on="remove" to="showActivity"/>
+        <transition on="cancel" to="showActivity"/>
+        <transition on="listOwners" to="listOwners"/>
+        <transition on="listActivities" to="listActivities"/>
+        <transition on="showActivity" to="showActivity"/>
+    </view-state>
     
     <!-- End state -->
     <end-state id="finishPermissionEdit" />

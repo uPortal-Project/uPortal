@@ -17,3 +17,4 @@ uportal-portlets-overlay/*/overlays
 uportal-platform-api/target/
 **/node_modules/
 npm-debug.log
+**/.DS_Store

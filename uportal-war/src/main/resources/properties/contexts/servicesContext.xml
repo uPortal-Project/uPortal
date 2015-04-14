@@ -150,15 +150,6 @@
     </util:map>
 
     <!--
-     | For search results create a set of search result types that will have the link text substituted with the
-     | search match's portlet title.  Allows changing static text such as "cms" to the portlet definition title
-     | so the results are more meaningful to the user.  UP-4266.
-     +-->
-    <util:set id="searchResultsLinkNamePortletTitleSubstitutionSet" value-type="java.lang.String">
-        <value>Portlet Content</value>  <!-- For SimpleCMS v1.08+ -->
-    </util:set>
-
-    <!--
      | Set of the search result types to exclude from search autocompletion.  The value is the set by the
      | various Search services in the SearchResult.type field.
      +-->
@@ -166,6 +157,23 @@
         <!--<value>${org.jasig.portal.portlets.directory.search.result.type}</value>-->
     </util:set>
 
+
+    <bean id="authorizationService" class="org.jasig.portal.security.provider.AuthorizationImpl">
+        <!-- Set of permissionTargetProviders that are not entities and permission checks on a target
+             string value do not need to search through groups or group member target names for a match.
+             See bean permissionTargetProviderRegistry. -->
+        <property name="nonEntityPermissionTargetProviders">
+            <set>
+                <value>errorChannelTargetProvider</value>
+                <value>portalSystemTargetProvider</value>
+                <value>userAttributesTargetProvider</value>
+            </set>
+        </property>
+    </bean>
+    <!--
+    | The permissionTargetProvider key names must be synchronized between src/main/data/default_entities/permission_owner/*.xml
+    | files, here, and authorizationService.
+    +-->
     <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">
             <map>

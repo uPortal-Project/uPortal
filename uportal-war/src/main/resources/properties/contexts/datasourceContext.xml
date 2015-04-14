@@ -36,7 +36,7 @@
       
         <property name="initialSize" value="1" />
         <property name="minIdle" value="1" />
-        <property name="maxActive" value="75" />
+        <property name="maxActive" value="100" />
         <property name="maxIdle" value="50" />
         <property name="maxWait" value="5000" /> <!-- 5 seconds -->
         <property name="maxAge" value="3600000" /> <!-- 1 hour -->

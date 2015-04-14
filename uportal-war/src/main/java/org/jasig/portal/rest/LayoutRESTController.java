@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
@@ -32,6 +34,7 @@ import org.jasig.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.rest.layout.LayoutPortlet;
 import org.jasig.portal.rest.layout.TabListOfNodes;
@@ -94,6 +97,7 @@ public class LayoutRESTController {
         this.portletDao = portletDao;
     }
     
+    
     /**
      * A REST call to get a json feed of the current users layout
      * @param request The servlet request. Utilized to get the users instance and eventually there layout
@@ -134,41 +138,28 @@ public class LayoutRESTController {
             for (int i = 0; i < portletNodes.getLength(); i++) {
                 try {
                     
-                    LayoutPortlet portlet = new LayoutPortlet();
+                    
                     NamedNodeMap attributes = portletNodes.item(i).getAttributes();
-                    portlet.setTitle(attributes.getNamedItem("title").getNodeValue());
-                    portlet.setDescription(attributes.getNamedItem("description").getNodeValue());
-                    portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
-                    portlet.setFname(attributes.getNamedItem("fname").getNodeValue());
-                    
                     IPortletDefinition def = portletDao.getPortletDefinitionByFname(attributes.getNamedItem("fname").getNodeValue());
+                    LayoutPortlet portlet = new LayoutPortlet(def);
                     
-                    //get icons
-                    IPortletDefinitionParameter iconParam = def.getParameter("iconUrl");
-                    if (iconParam != null) {
-                        portlet.setIconUrl(iconParam.getValue());
-                    }
-                    
-                    IPortletDefinitionParameter faIconParam = def.getParameter("faIcon");
-                    if(faIconParam != null) {
-                        portlet.setFaIcon(faIconParam.getValue());
-                    }
-                    
-                    portlet.setTarget(def.getTarget());
+                    portlet.setNodeId(attributes.getNamedItem("ID").getNodeValue());
                     
                     //get alt max URL
                     String alternativeMaximizedLink = def.getAlternativeMaximizedLink();
                     if( alternativeMaximizedLink != null) {
                     	portlet.setUrl(alternativeMaximizedLink);
+                    	portlet.setAltMaxUrl(true);
                     } else {
-	                    // get the maximized URL for this portlet
-	                    final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
-	                    final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
-	                    if (targetPortletWindowId != null) {
-	                        final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
-	                        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
-	                    }
-	                    portlet.setUrl(portalUrlBuilder.getUrlString());
+                        // get the maximized URL for this portlet
+                        final IPortalUrlBuilder portalUrlBuilder = urlProvider.getPortalUrlBuilderByLayoutNode(request, attributes.getNamedItem("ID").getNodeValue(), UrlType.RENDER);
+                        final IPortletWindowId targetPortletWindowId = portalUrlBuilder.getTargetPortletWindowId();
+                        if (targetPortletWindowId != null) {
+                            final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(targetPortletWindowId);
+                            portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+                        }
+                        portlet.setUrl(portalUrlBuilder.getUrlString());
+                        portlet.setAltMaxUrl(false);
                     }
                     portlets.add(portlet);
 

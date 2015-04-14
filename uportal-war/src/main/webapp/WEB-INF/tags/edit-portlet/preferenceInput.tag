@@ -31,11 +31,17 @@
   <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.MultiTextPreferenceInput') }">
     <c:forEach items="${ values }" var="val">
       <div>
-         <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" />
-         <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
+         <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" class="form-control" />
+         <a class="delete-parameter-value-link btn btn-xs btn-info" href="javascript:;">
+             <spring:message code="remove" text="Remove"/>&nbsp;&nbsp;
+             <i class="fa fa-minus-circle"></i>
+         </a>
       </div>
     </c:forEach>
-    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value</a>
+    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+        <spring:message code="add.value" text="Add Value"/>&nbsp;&nbsp;
+        <i class="fa fa-plus-circle"></i>
+    </a>
   </c:when>
 
   <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput') }">
@@ -45,7 +51,7 @@
       <!-- Textarea -->
         <c:choose>
             <c:when test="${ values != null }">
-                <textarea>${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
+                <textarea class="form-control">${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
             </c:when>
             <c:otherwise>
                 <form:textarea path="${path}"/>
@@ -56,7 +62,7 @@
       <!-- Text input -->
         <c:choose>
             <c:when test="${ values != null }">
-                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" />
+                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" class="form-control" />
             </c:when>
             <c:otherwise>
                 <form:input path="${path}"/>

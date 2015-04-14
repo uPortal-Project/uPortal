@@ -160,9 +160,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                     throw new IllegalArgumentException("CANNOT RESET LAYOUT FOR A GUEST USER");
                 }
 
-                final int userId = jdbcOperations.queryForInt("SELECT USER_ID FROM UP_USER WHERE USER_NAME=?", userName);
+                final int userId = jdbcOperations.queryForObject("SELECT USER_ID FROM UP_USER WHERE USER_NAME=?", Integer.class, userName);
 
-                final int type = jdbcOperations.queryForInt("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = ?", IPerson.class.getName());
+                final int type = jdbcOperations.queryForObject("SELECT ENTITY_TYPE_ID FROM UP_ENTITY_TYPE WHERE ENTITY_TYPE_NAME = ?", Integer.class, IPerson.class.getName());
 
                 jdbcOperations.update("DELETE FROM UP_PERMISSION WHERE PRINCIPAL_KEY=? AND PRINCIPAL_TYPE=?", userName, type);
 
@@ -298,7 +298,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     @Override
     @Cacheable(cacheName="org.jasig.portal.RDBMUserIdentityStore.isDefaultUser")
     public boolean isDefaultUser(String username) {
-        final int defaultUserCount = this.jdbcOperations.queryForInt(IS_DEFAULT_USER_QUERY, username);
+        final int defaultUserCount = this.jdbcOperations.queryForObject(IS_DEFAULT_USER_QUERY, Integer.class, username);
         return defaultUserCount > 0;
     }
 

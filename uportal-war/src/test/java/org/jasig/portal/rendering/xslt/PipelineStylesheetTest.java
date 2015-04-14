@@ -58,11 +58,6 @@ public class PipelineStylesheetTest {
     }
     
     @Test
-    public void testThemeUniversalityCompile() throws Exception {
-        this.testXslCompile("/layout/theme/universality/universality.xsl");
-    }
-    
-    @Test
     public void testThemeMuniversalityCompile() throws Exception {
         this.testXslCompile("/layout/theme/muniversality/muniversality.xsl");
     }

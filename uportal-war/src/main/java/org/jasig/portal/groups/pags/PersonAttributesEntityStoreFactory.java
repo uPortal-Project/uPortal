@@ -24,6 +24,8 @@ import org.jasig.portal.groups.IEntityStoreFactory;
 
 /**
  * @author Al Wold
+ * @deprecated JPA (database) PAGS is required for a small but growing list of
+ * newer features.
  */
 public class PersonAttributesEntityStoreFactory implements IEntityStoreFactory {
 

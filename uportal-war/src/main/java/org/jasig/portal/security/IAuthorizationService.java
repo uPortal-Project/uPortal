@@ -23,6 +23,7 @@ import java.util.Vector;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 
 /**
@@ -76,7 +77,24 @@ public interface IAuthorizationService
  */
     public boolean canPrincipalRender(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
-/**
+
+    /**
+     * True if the principal has permission to browse this portlet.
+     * @param principal principal
+     * @param portletDefinitionId Portlet definition string ID of the portlet to check
+     * @return True if the principal has permission to browse this portlet.
+     */
+    public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId);
+
+    /**
+     * True if the principal has permission to browse this portlet.
+     * @param principal principal
+     * @param portlet Portlet to check
+     * @return True if the principal has permission to browse this portlet.
+     */
+    public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet);
+
+    /**
  * Answers if the principal has permission to subscribe to this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
@@ -89,6 +107,9 @@ public interface IAuthorizationService
  * Answers if the owner has given the principal permission to perform the activity on
  * the target.  Params <code>owner</code> and <code>activity</code> must be non-null.
  * If <code>target</code> is null, then target is not checked.
+ * <br/>
+ * NOTE:  Do not invoke this method if there is a more specific method implemented.  The more specific method
+ * may have additional behavior.
  *
  * @return boolean
  * @param principal IAuthorizationPrincipal
@@ -249,7 +270,10 @@ public interface IAuthorizationService
  * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code> 
  * and <code>activity</code> must be non-null.  If <code>target</code> is null, then 
  * target is not checked.
- *
+ * <br/>
+ * NOTE:  Do not invoke this method if there is a more specific method implemented.  The more specific method
+ * may have additional behavior.
+p *
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String

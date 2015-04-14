@@ -32,7 +32,14 @@
     <bean id="requireValidSessionFilter" class="org.jasig.portal.url.RequireValidSessionFilter" />
     <bean id="urlCanonicalizingFilter" class="org.jasig.portal.url.UrlCanonicalizingFilter" />
     <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
-    <bean id="remoteCookieCheckFilter" class="org.jasig.portal.utils.web.RemoteCookieCheckFilter"/>
+
+    <bean id="remoteCookieCheckFilter" class="org.jasig.portal.utils.web.RemoteCookieCheckFilter">
+        <property name="regexIgnoredUserAgents">
+            <set>
+                <value>.*Googlebot.*</value>  <!-- Allow Google to index the guest page.  See https://support.google.com/webmasters/answer/1061943?hl=en -->
+            </set>
+        </property>
+    </bean>
     <bean id="multipartResolver"
         class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
     
@@ -74,12 +81,6 @@
 
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="order" value="0"/>
-        <property name="ignoreAcceptHeader" value="true"/>
-        <property name="mediaTypes">
-            <map>
-                <entry key="json" value="application/json" />
-            </map>
-        </property>
         <property name="defaultViews">
             <list>
                 <bean
@@ -90,6 +91,19 @@
                     </constructor-arg>
                 </bean>
             </list>
+        </property>
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json"/>
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
         </property>
     </bean>
   

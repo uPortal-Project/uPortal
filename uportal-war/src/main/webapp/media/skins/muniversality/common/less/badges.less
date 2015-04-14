@@ -1,0 +1,44 @@
+/* Badge styles.
+ * If needed, override badge style based on the context.
+ */
+
+.badge {
+    padding: 0.2em 6px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 2px solid;
+    text-shadow: 0 -1px 0 @black;
+    .rounded(1em);
+}
+
+.up {
+    .badge {
+    .badge();
+        border-color: @graylight;
+        background: @c5;
+        text-shadow: 0 -1px 0 @white;
+        .gradient(@white, @white, @graylightest);
+    }
+    .badge.new-item {
+        border-color: @white;
+        background: @c5;
+        color: @white;
+        text-shadow: 0 -1px 0 @white;
+        .gradient(@c5light, @c5light, @c5dark);
+    }
+    .badge.unread-item,
+    .portlet-content .ui-listview .ui-li-count {
+        background: @c1;
+        color: @white;
+        text-shadow: 0 -1px 0 @black;
+        .gradient(@c1light, @c1light, @c1dark);
+    }
+
+    .portal-nav .badge.new-item {
+        .box-shadow(0 2px 2px @black);
+    }
+
+    .portlet-content .ui-listview .ui-li-count {
+        padding: 0.2em 10px;
+    }
+}
