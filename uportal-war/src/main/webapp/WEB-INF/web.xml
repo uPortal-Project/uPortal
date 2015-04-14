@@ -414,6 +414,8 @@
 
     <servlet-mapping>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
+        <url-pattern>/layout/v2/layout.json</url-pattern>
+        <url-pattern>/layout/v1/layout.json</url-pattern>
         <url-pattern>/layout.json</url-pattern>
     </servlet-mapping>
 
