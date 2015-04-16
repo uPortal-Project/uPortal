@@ -30,9 +30,17 @@
         <member>All_Logged_In_Users</member>
     </audience>
     <creator>admin</creator>
-    <moderators></moderators>
-    <admins></admins>
-    <authors></authors>
+    <!-- Example to how how to add in other security roles
+    <moderators>
+        <moderator>All_Logged_In_Users</moderator>
+    </moderators>
+    <admins>
+        <admin>All_Logged_In_Users</admin>
+    </admins>
+    <authors>
+        <author>All_Logged_In_Users</author>
+    </authors>
+    -->
     <announcements>
         <announcement>
             <title>Open registration next month from the 1st to the 8th</title>
