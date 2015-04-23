@@ -39,22 +39,20 @@ import org.xml.sax.EntityResolver
 import org.xml.sax.InputSource
 import org.xml.sax.SAXException
 
-// Extra blank output in case script is invoked through ant to segregate it's output better
-println()
-println()
-
 // If groovy script is invoked from ant through uPortal's PortalShell, there will be 2 arguments
 // at the front we can ignore: -s scriptPath
 if (args.length != 2 && args.length != 4) {
-    println "Usage:  groovy xmlPagsToEntityPags.groovy pathToPAGSGroupStoreConfig.xml directoryToWriteEntityFilesTo"
-    println()
-    println "Typically:"
-    println "  pathToPAGSGroupStoreConfig.xml = ../../uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"
-    println "  directoryToWriteEntityFilesTo = ../../uportal-war/src/main/data/myInstitution/pags-group"
-    println "        where myInstitution is your modified copy of the quickstart data set"
-    println()
-    println "Some entities will exist in uportal-war/src/main/data/default_entities/pags-group"
-    println "but those created in your myInstitution will override them"
+    println """
+Usage:  groovy xmlPagsToEntityPags.groovy pathToPAGSGroupStoreConfig.xml directoryToWriteEntityFilesTo
+
+Typically:
+  pathToPAGSGroupStoreConfig.xml = ../../../uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml
+  directoryToWriteEntityFilesTo = ../../../uportal-war/src/main/data/myInstitution/pags-group
+        where myInstitution is your modified copy of the quickstart data set
+
+Some entities will exist in uportal-war/src/main/data/default_entities/pags-group
+but those created in your myInstitution will override them
+"""
     System.exit(1)
 }
 
@@ -76,7 +74,7 @@ xmlSlurper.setEntityResolver(new EntityResolver() {
         }
     }
 })
-// For some reason, must disallow doctype declarations when script is run in intelliJ
+// For some reason, must set disallow-doctype-decl=false when script is run in intelliJ for debugging purposes
 xmlSlurper.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false)
 
 def pagsXml = xmlSlurper.parse(new File(pagsFile))
@@ -89,6 +87,13 @@ pagsXml.group.each { group ->
 
 // Insure the target folder exists and is writable
 new File(entityDir).mkdirs()
+
+// Add a little output in case script is invoked from ant to help user's identify the output from this script.
+println """
+
+Running xmlPagsToEntityPags script
+----------------------------------
+"""
 
 // Build new entity PAGS xml files from the groups in the PAGSXml file
 
@@ -139,7 +144,7 @@ pagsXml.group.each { group ->
                                     'attribute-name'(testItem.'attribute-name'.text())
                                     'tester-class'(testItem.'tester-class'.text())
                                     'test-value'(testItem.'test-value'.text())
-                                }                                          pagsXmlToEntity
+                                }
                             }
                         }
                     }
@@ -150,16 +155,16 @@ pagsXml.group.each { group ->
     writer.close()
 }
 
-println()
-println "Typically you can optionally delete the generated XML files that have duplicates in"
-println "  uportal-war/src/main/data/default_entities/pags-group"
-println "EXCEPT PAGS_Root.pags-group.xml as it is needed to add your custom PAGS groups to the Root PAGS group."
+println """
+Typically you can optionally delete the generated XML files that have duplicates in
+  uportal-war/src/main/data/default_entities/pags-group
+EXCEPT PAGS_Root.pags-group.xml as it is needed to add your custom PAGS groups to the Root PAGS group.
 
-println()
-println "You will also need to update compositeGroupService.xml (see below)."
-println()
-println "If you were on uPortal 4.0 or prior, best bet is to init the DB after adjusting"
-println "your fragment-layout files to look good in the Respondr theme."
+You will also need to insure compositeGroupService.xml specifies Entity PAGS (see below).
+
+If you were on uPortal 4.0 or prior, best bet is to init the DB after adjusting
+your fragment-layout files to look good in the Respondr theme.
+"""
 
 // Now create a sql file in the current directory to help the user update their DB if they are
 // currently on uPortal 4.1+ and don't want to do an initdb
@@ -183,17 +188,16 @@ sqlWriter.close()
 // If invoked via ant, entityDir was 'groovy-safed' via a macro.  Clean it up for user display.
 def targetDir = entityDir.replaceAll("\\/", "/").replaceAll("\\\\","\\")
 
-println()
-println "If you have an existing uPortal 4.1+ database and you do not want to run initdb, you'll"
-println "also need to run the sql file ${sqlFile.absolutePath} on your database to update it."
-println()
-println "You're not done!  Don't forget:"
-println "1. pre uPortal 4.2.0: update uportal-war/src/main/resources/properties/groups/compositeGroupServices.xml to use"
-println "   entity PAGS instead of XML PAGS.  See comments in the file. Entity PAGS enabled by default in uPortal 4.2.0"
-println "2. do an ant initdb"
-println "   OR"
-println "   a) Import the created pags-entity files into your database"
-println "      ant -Dmaven.test.skip=true -Ddir=${targetDir} data-import"
-println "   b) If upgrading uPortal 4.1+ that used XML PAGS, run the SQL script ${sqlFile.absolutePath} on the db"
-println()
-println()
+println """
+If you have an existing uPortal 4.1+ database and you do not want to run initdb, you'll
+also need to run the sql file ${sqlFile.absolutePath} on your database to update it.
+
+You're not done!  Don't forget:
+1. pre uPortal 4.2.0: update uportal-war/src/main/resources/properties/groups/compositeGroupServices.xml to use
+   entity PAGS instead of XML PAGS.  See comments in the file. Entity PAGS enabled by default in uPortal 4.2.0
+2. do an ant initdb
+   OR
+   a) Import the created pags-entity files into your database
+      ant -Dmaven.test.skip=true -Ddir=${targetDir} data-import
+   b) If upgrading uPortal 4.1+ that used XML PAGS, run the SQL script ${sqlFile.absolutePath} on the db
+"""

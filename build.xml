@@ -530,7 +530,7 @@
         <echo>Executing PAGS Conversion Script</echo>
 
         <antcall target="up-shell">
-            <param name="script" value="utilities/scripts/xmlPagsToEntityPags.groovy" />
+            <param name="script" value="bootstrap/utilities/scripts/xmlPagsToEntityPags.groovy" />
             <param name="arg1" value="uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"/>
             <param name="arg2" value="${dir}"/>
         </antcall>
