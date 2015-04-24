@@ -1260,6 +1260,7 @@
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
+                        <exclude>**/jquerymobile-*.css</exclude>
                         <exclude>**/*.channel</exclude>
                         <exclude>**/*.channel-type</exclude>
                         <exclude>**/*.entity-type</exclude>
