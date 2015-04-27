@@ -25,7 +25,7 @@
     <fname>google-analytics-config</fname>
     <desc>Configuration and Script Rendering for Google Analytics</desc>
     <type>Portlet</type>
-    <timeout>1000</timeout>
+    <timeout>20000</timeout>
     <portlet-descriptor>
         <ns2:isFramework>true</ns2:isFramework>
         <ns2:portletName>GoogleAnalytics</ns2:portletName>
