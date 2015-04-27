@@ -216,14 +216,16 @@ public class RDBMServices {
      */
     @Deprecated
     public static void releaseConnection(final Connection con) {
-        try {
-            activeConnections.decrementAndGet();
+        // If we had failed allocating the connection, insure we don't try to count it or close it. UP-4446
+        if (con != null) {
+            try {
+                activeConnections.decrementAndGet();
 
-            con.close();
-        }
-        catch (Exception e) {
-            if (LOG.isWarnEnabled())
-                LOG.warn("Error closing Connection: " + con, e);
+                con.close();
+            } catch (Exception e) {
+                if (LOG.isWarnEnabled())
+                    LOG.warn("Error closing Connection: " + con, e);
+            }
         }
     }
 
