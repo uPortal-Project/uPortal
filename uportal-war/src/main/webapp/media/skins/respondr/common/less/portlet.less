@@ -17,7 +17,29 @@
  * under the License.
  */
 
-/* Portlets */
+/*
+ * This file is for LESS rules that apply to "framework portlets," which are
+ * portlets implemented in the uPortal webapp itself.  (Styles that apply
+ * specifically to non-framework portlets should ideally be managed in their
+ * respective projects.)  At a certain critical mass, these rules should
+ * probably be broken into separate files. 
+ */
+
+/* fragment-admin-exit */
+#portalFragAdminExit {
+    /* These colors are a bit drab, but safe
+       given the current system in variables.less */
+    background-color: @footer-background-color;
+    color: @footer-text-color;
+    padding: 8px;
+
+    h2 {
+        font-variant: small-caps;
+    }
+    #exitFragment {
+        margin-left: 12px;
+    }
+}
 
 /* Permissions Admin */
 .permission-owner {
