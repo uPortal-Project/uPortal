@@ -20,19 +20,20 @@
 
 -->
 <!--
-  Group pags_root: "PAGS Root"
-  IMPORTANT: The PAGS Root group is REQUIRED for uPortal to function. It Must be a member of the Everyone group in the
-  local group store
+  Group member_of_students: "Member of Students (PAGS)"
+  All IPersons that are in the Students Group are members of this group
 -->
 <pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
-  <name>PAGS Root</name>
-  <description>Root group for all PAGS groups.  Convenience for adding PAGS groups to a local group.</description>
-  <members>
-    <member-name>All Users (PAGS)</member-name>
-    <member-name>Authenticated Users</member-name>
-    <member-name>Desktop Device Access</member-name>
-    <member-name>Mobile Device Access</member-name>
-    <member-name>Respondr Theme Users</member-name>
-    <member-name>Member of Students (PAGS)</member-name>
-  </members>
+  <name>Member of Students (PAGS)</name>
+  <description>Member of Students group</description>
+  <selection-test>
+    <test-group>
+      <test>
+        <attribute-name>Member</attribute-name>
+        <tester-class>org.jasig.portal.groups.pags.testers.GroupMemberTester</tester-class>
+        <test-value>Students</test-value>
+      </test>
+    </test-group>
+  </selection-test>
 </pags-group>
+
