@@ -35,21 +35,24 @@
     <folder ID="s200" hidden="true" immutable="true" name="Customize folder" type="customize" unremovable="true">
       <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n210"/>
     </folder>
-    <folder ID="s300" hidden="false" immutable="true" name="Header Bottom folder" type="header-bottom" unremovable="true">
-      <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n310"/>
+    <folder ID="s300" hidden="false" immutable="true" name="Header Right folder" type="header-right" unremovable="true">
+      <channel fname="search-launcher" unremovable="false" hidden="false" immutable="false" ID="n310"/>
     </folder>
-    <folder ID="s400" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
-      <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n410"/>
+    <folder ID="s400" hidden="false" immutable="true" name="Header Bottom folder" type="header-bottom" unremovable="true">
+      <channel fname="emergency-alert" unremovable="false" hidden="false" immutable="false" ID="n410"/>
     </folder>
-    <folder ID="s500" hidden="false" immutable="true" name="Pre Content folder" type="pre-content" unremovable="true">
-      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n510"/>
+    <folder ID="s500" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
+      <channel fname="background-preference" unremovable="true" hidden="false" immutable="false" ID="n510"/>
     </folder>
-    <folder id="s600" hidden="false" immutable="true" name="Legal Footer" type="footer-second" unremovable="true">
-        <channel fname="legal-footer" unremovable="true" hidden="false" immutable="false" ID="n610"/>
+    <folder ID="s600" hidden="false" immutable="true" name="Pre Content folder" type="pre-content" unremovable="true">
+      <channel fname="tips" unremovable="false" hidden="false" immutable="false" ID="n610"/>
     </folder>
-    <folder ID="s700" hidden="false" immutable="true" name="Page Bottom folder" type="page-bottom" unremovable="true">
-      <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n710"/>
-      <channel fname="google-analytics-config" unremovable="true" hidden="false" immutable="false" ID="n720"/>
+    <folder id="s700" hidden="false" immutable="true" name="Legal Footer" type="footer-second" unremovable="true">
+        <channel fname="legal-footer" unremovable="true" hidden="false" immutable="false" ID="n710"/>
+    </folder>
+    <folder ID="s800" hidden="false" immutable="true" name="Page Bottom folder" type="page-bottom" unremovable="true">
+      <channel fname="attachments" unremovable="true" hidden="false" immutable="false" ID="n810"/>
+      <channel fname="google-analytics-config" unremovable="true" hidden="false" immutable="false" ID="n820"/>
     </folder>
   </folder>
 </layout>
