@@ -25,24 +25,25 @@ import org.jasig.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 /**
- * PAG Tester for membership in another group.
+ * PAGS Tester for inclusive/exclusive membership in a sets of groups.
  *
- * @author Benito J. Gonzalez
- * @version $Revision$
+ * @author Benito J. Gonzalez <bgonzalez@unicon.net>
  */
-public class GroupMemberTester implements IPersonTester {
+public final class AdHocGroupTester implements IPersonTester {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Set<String> currentPersons = new ConcurrentSkipListSet<String>();
     /* public since they are final and set in the constructor. */
-    public final String groupName;
-    public final boolean exclude;
+    private final String groupName;
+    private final boolean exclude;
 
-    public GroupMemberTester(String attribute, String value) {
+    public AdHocGroupTester(String attribute, String value) {
         logger.debug("constructor attribute: ", attribute);
         logger.debug("constructor value: ", value);
         String attributeLower = attribute.toLowerCase();
@@ -57,7 +58,12 @@ public class GroupMemberTester implements IPersonTester {
 
     @Override
     public boolean test(IPerson person) {
+        logger.warn("Person {}'s ID is {}", person.getUserName(), person.getEntityIdentifier().getKey());
+        if (currentPersons.contains(person.getEntityIdentifier().getKey()))
+            return false;
+        currentPersons.add(person.getEntityIdentifier().getKey());
         Set<String> personGroups = getPersonGroupMembership(person);
+        currentPersons.remove(person.getEntityIdentifier().getKey());
         logger.warn(personGroups.toString());
         return personGroups.contains(groupName) ^ exclude;
     }
@@ -71,8 +77,9 @@ public class GroupMemberTester implements IPersonTester {
         Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAllContainingGroups();
         Set<String> groupNames = new HashSet<String>();
         while (iterator.hasNext()) {
-            String groupKey = iterator.next().getKey();
-            logger.debug("Person {}/{} is a member of group {}", person.getUserName(), personKey, groupKey);
+            IGroupMember group = iterator.next();
+            String groupKey = group.getKey();
+            logger.warn("Person {}/{} is a member of group {}/{}", person.getUserName(), personKey, groupKey, group.toString());
             groupNames.add(groupKey);
         }
         return groupNames;

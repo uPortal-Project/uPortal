@@ -30,7 +30,7 @@
     <test-group>
       <test>
         <attribute-name>Member</attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.GroupMemberTester</tester-class>
+        <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
         <test-value>Students</test-value>
       </test>
     </test-group>
