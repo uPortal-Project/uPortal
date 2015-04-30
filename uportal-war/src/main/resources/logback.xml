@@ -118,7 +118,14 @@
   <logger name="org.jasig.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
     <appender-ref ref="TINCAN"/>
   </logger>
-  
+
+  <!--
+   | Turn up logging for AdHocGroupTester class
+   +-->
+  <logger name="org.jasig.portal.groups.pags.testers.AdHocGroupTester" additivity="false" level="DEBUG">
+    <appender-ref ref="PORTAL" />
+  </logger>
+
   <!-- Uncomment to monitor jGroups clustering
   <logger name="net.sf.ehcache.distribution" additivity="false" level="TRACE">
     <appender-ref ref="JG"/>
