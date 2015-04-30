@@ -40,10 +40,11 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public final class AdHocGroupTester implements IPersonTester {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(AdHocGroupTester.class);
     private static final Set<String> currentPersons = new ConcurrentSkipListSet<String>();
-    private static final Set<IEntityGroup> includes = new HashSet<>();
-    private static final Set<IEntityGroup> excludes = new HashSet<>();
+    private final Set<IEntityGroup> includes = new HashSet<>();
+    private final Set<IEntityGroup> excludes = new HashSet<>();
+    private final String hashcode;
 
     /**
      * Temporary constructor for testing group test before tackling import/export changes.
@@ -62,14 +63,34 @@ public final class AdHocGroupTester implements IPersonTester {
         } else {
             logger.warn("Could not find group {}", value);
         }
+        hashcode = calcHashcode();
+    }
+
+    /**
+     * Create a hashcode based on the includes/excludes groups.
+     *
+     * @return String hascode for this instance
+     */
+    private String calcHashcode() {
+        StringBuffer hash = new StringBuffer("__");
+        for (IEntityGroup group : includes) {
+            hash.append(group.getKey());
+        }
+        hash.append("^");
+        for (IEntityGroup group : excludes) {
+            hash.append(group.getKey());
+        }
+        hash.append("_#");
+        return hash.toString();
     }
 
     @Override
     public boolean test(IPerson person) {
-        logger.debug("ID of Person \"{}\" is {}", person.getUserName(), person.getEntityIdentifier().getKey());
-        if (currentPersons.contains(person.getEntityIdentifier().getKey()))
+        String personHash = person.getEntityIdentifier().getKey() + hashcode + Thread.currentThread().getId();
+        logger.debug(personHash);
+        if (currentPersons.contains(personHash))
             return false; // stop recursing
-        currentPersons.add(person.getEntityIdentifier().getKey());
+        currentPersons.add(personHash);
 
         IGroupMember gmPerson = findPersonAsGroupMember(person);
         boolean pass = true;
@@ -95,7 +116,7 @@ public final class AdHocGroupTester implements IPersonTester {
             }
         }
 
-        currentPersons.remove(person.getEntityIdentifier().getKey());
+        currentPersons.remove(personHash);
         return pass;
     }
 
@@ -124,7 +145,6 @@ public final class AdHocGroupTester implements IPersonTester {
      */
     private IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();
-        logger.warn(personKey);
         return GroupService.getEntity(personKey, IPerson.class);
     }
 }
