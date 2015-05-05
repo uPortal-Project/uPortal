@@ -62,6 +62,37 @@
                 </subtasks>
               </with>
             </node-iterator>
+            <node-iterator xpath="adhoc-group-test">
+              <with>
+                <attribute key="includeGroupSet">${groovy(personAttributesGroupImportHelper.createStringHashSet())}</attribute>
+                <attribute key="excludeGroupSet">${groovy(personAttributesGroupImportHelper.createStringHashSet())}</attribute>
+                <subtasks>
+                  <node-iterator xpath="include/group-name">
+                    <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
+                      <groovy>
+                        <script>
+                          includeGroupSet.add(groupName)
+                        </script>
+                      </groovy>
+                    </with-attribute>
+                  </node-iterator>
+                  <node-iterator xpath="exclude/group-name">
+                    <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
+                      <groovy>
+                        <script>
+                          excludeGroupSet.add(groupName)
+                        </script>
+                      </groovy>
+                    </with-attribute>
+                  </node-iterator>
+                  <groovy>
+                    <script>
+                      personAttributesGroupImportHelper.addAdHocGroupTest(testGroup, includeGroupSet, excludeGroupSet);
+                    </script>
+                  </groovy>
+                </subtasks>
+              </with>
+            </node-iterator>
           </with-attribute>
         </node-iterator>
       </when>
