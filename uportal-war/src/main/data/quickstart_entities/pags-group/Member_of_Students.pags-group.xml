@@ -28,11 +28,11 @@
   <description>Member of Students group</description>
   <selection-test>
     <test-group>
-      <test>
-        <attribute-name>Member</attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
-        <test-value>Students</test-value>
-      </test>
+      <adhoc-group-test>
+        <include>
+          <group-name>Students</group-name>
+        </include>
+      </adhoc-group-test>
     </test-group>
   </selection-test>
 </pags-group>
