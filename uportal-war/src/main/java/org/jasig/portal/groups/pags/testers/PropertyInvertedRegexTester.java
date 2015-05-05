@@ -19,6 +19,7 @@
 package org.jasig.portal.groups.pags.testers;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.properties.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +38,25 @@ public class PropertyInvertedRegexTester extends InvertedRegexTester {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public PropertyInvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+        final String propertyName = definition.getTestValue();
+        String regexExpression = PropertiesManager.getProperty
+                (propertyName, "");
+        if (StringUtils.isBlank(regexExpression)) {
+            logger.error("Unable to find property name {} in portal.properties or has empty value."
+                    + " PAGS PropertyInvertedRegexTester will always return true for attribute {}",
+                    propertyName, definition.getAttributeName());
+        }
+        setPattern(regexExpression);
+    }
+
     /**
      *
      * @param attribute Person attribute to test against
      * @param propertyName name of a property defined in portal.properties
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
      */
     public PropertyInvertedRegexTester(String attribute, String propertyName) {
         super(attribute, propertyName);

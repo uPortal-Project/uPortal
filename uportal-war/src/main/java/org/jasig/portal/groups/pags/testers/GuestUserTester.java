@@ -16,19 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
 
+/**
+ * {@link IPersonTester} implementation that evaluates whether the user is a
+ * guest (unauthenticated).
+ */
 public class GuestUserTester implements IPersonTester {
 
     public boolean guestValue;
 
+    public GuestUserTester(IPersonAttributesGroupTestDefinition definition) {
+        this.guestValue = Boolean.getBoolean(definition.getTestValue());
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
     public GuestUserTester(String attribute, String guestValue) {
         this.guestValue = Boolean.getBoolean(guestValue);
     }
-    
+
     public boolean test(IPerson person) {
         if (guestValue) {
             return person.isGuest();

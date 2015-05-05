@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * Tests an <code>IPerson</code> attribute for String equality and  
  * answers true if any of the possibly multiple values of the 
@@ -29,11 +31,19 @@ package org.jasig.portal.groups.pags.testers;
 
 public class StringEqualsTester extends StringTester {
 
-public StringEqualsTester(String attribute, String test) {
-    super(attribute, test);
-}
-public boolean test(String att) {
-    return att.equals(testValue);
-}
+    public StringEqualsTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    public StringEqualsTester(String attribute, String test) {
+        super(attribute, test);
+    }
+    public boolean test(String att) {
+        return att.equals(testValue);
+    }
 
 }
