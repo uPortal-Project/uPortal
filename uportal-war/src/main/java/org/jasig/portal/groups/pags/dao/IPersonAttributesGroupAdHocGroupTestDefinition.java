@@ -30,11 +30,9 @@ public interface IPersonAttributesGroupAdHocGroupTestDefinition extends IBasicEn
 
     long getId();
 
-    Set<String> getIncludedGroupNames();
-    void setIncludedGroupNames(Set<String> includedGroupNames);
-    Set<String> getExcludedGroupNames();
-    void setExcludedGroupNames(Set<String> excludedGroupNames);
-    
+    String getGroupName();
+    Boolean getIsExclude();
+
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
     void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
     void toElement(Element parent);
