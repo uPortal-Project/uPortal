@@ -62,24 +62,6 @@
                 </subtasks>
               </with>
             </node-iterator>
-            <node-iterator xpath="member-of-group">
-              <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
-                <groovy>
-                  <script>
-                    personAttributesGroupImportHelper.addMemberOfGroupTest(testGroup, groupName);
-                  </script>
-                </groovy>
-              </with-attribute>
-            </node-iterator>
-            <node-iterator xpath="not-member-of-group">
-              <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
-                <groovy>
-                  <script>
-                    personAttributesGroupImportHelper.addNotMemberOfGroupTest(testGroup, groupName);
-                  </script>
-                </groovy>
-              </with-attribute>
-            </node-iterator>
           </with-attribute>
         </node-iterator>
       </when>

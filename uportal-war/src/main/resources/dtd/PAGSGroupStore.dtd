@@ -36,24 +36,28 @@
   member entities.  
 -->
 
-<!ELEMENT test-group (test*,member-of-group*, not-member-of-group*)>
+<!ELEMENT test-group (test+)>
 <!-- 
   A test-group element is made up of 0 or more test elements with an optional
   adhoc-group-test whose results are AND-ed together.
 -->
 
-<!ELEMENT test (attribute-name,tester-class,test-value)>
+<!ELEMENT test (attribute-name?,tester-class,test-value?,includes*,excludes*)>
 <!-- 
   A test element contains the name of the attribute whose value is to be tested
   (attribute-name), the class that is to perform the test (tester-class), and the 
-  value to be compared to the attribute value (test-value).   
+  value to be compared to the attribute value (test-value).
+
+  Alternatively, a test element contains the class that is to perform the test
+  (test-class) and one or more group names to include (includes) or exclude (excludes)
+  from the test.
+
 -->
 <!ELEMENT attribute-name (#PCDATA)>
 <!ELEMENT tester-class (#PCDATA)>
 <!ELEMENT test-value (#PCDATA)>
-
-<!ELEMENT member-of-group (#PCDATA)>
-<!ELEMENT not-member-of-group (#PCDATA)>
+<!ELEMENT includes (#PCDATA)>
+<!ELEMENT excludes (#PCDATA)>
 
 <!ELEMENT members (member-key*)>
 <!-- The optional members element contains keys of member groups. -->

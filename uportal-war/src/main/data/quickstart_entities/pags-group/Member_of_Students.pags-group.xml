@@ -28,11 +28,13 @@
   <description>Member of Students group</description>
   <selection-test>
     <test-group>
-      <adhoc-group-test>
-        <include>
-          <group-name>Students</group-name>
-        </include>
-      </adhoc-group-test>
+      <test>
+          <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
+          <includes>Students</includes>
+          <includes>English Majors</includes>
+          <excludes>BannedStudents</excludes>
+          <excludes>SummerSessionStudents</excludes>
+      </test>
     </test-group>
   </selection-test>
 </pags-group>

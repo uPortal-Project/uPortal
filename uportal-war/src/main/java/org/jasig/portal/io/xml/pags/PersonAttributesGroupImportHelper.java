@@ -78,9 +78,8 @@ public class PersonAttributesGroupImportHelper {
         personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, attributeName, testerClass, testValue);
     }
 
-    public void addMemberOfGroupTest(IPersonAttributesGroupTestGroupDefinition testGroup, String groupName) {
-        logger.error("testGroup is {}", testGroup.getId());
-        logger.error("groupName is {}", groupName);
+    public HashSet<String> createStringHashSet() {
+        return new HashSet<String>();
     }
 
     public void addGroupMember(String groupName, String member) {

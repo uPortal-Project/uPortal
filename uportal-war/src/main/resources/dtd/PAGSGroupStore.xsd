@@ -71,11 +71,9 @@
         least a test or adhoc-test-group.
       </xs:documentation>
     </xs:annotation>
-    <xs:choice maxOccurs="unbounded">
-      <xs:element name="test" type="test"/>
-      <xs:element name="member-of-group" type="xs:string"/>
-      <xs:element name="not-member-of-group" type="xs:string"/>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="test" type="test" maxOccurs="unbounded"/>
+    </xs:sequence>
   </xs:complexType>
   
   <xs:complexType name="test">
@@ -84,13 +82,26 @@
         A test element contains the name of the attribute whose value is to be tested
         (attribute-name), the class that is to perform the test (tester-class), and the 
         value to be compared to the attribute value (test-value).
+
+        Alternatively, a test element contains the class that is to perform the test
+        (test-class) and one or more group names to include (includes) or exclude (excludes)
+        from the test.
       </xs:documentation>
     </xs:annotation>
-    <xs:sequence>
-      <xs:element name="attribute-name" type="xs:string"/>
-      <xs:element name="tester-class" type="xs:string"/>
-      <xs:element name="test-value" type="xs:string"/>
-    </xs:sequence>
+    <xs:choice>
+      <xs:sequence>
+        <xs:element name="attribute-name" type="xs:string"/>
+        <xs:element name="tester-class" type="xs:string"/>
+        <xs:element name="test-value" type="xs:string"/>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element name="tester-class" type="xs:string"/>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="includes" type="xs:string"/>
+          <xs:element name="excludes" type="xs:string"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:choice>
   </xs:complexType>
 
   <xs:complexType name="members">
