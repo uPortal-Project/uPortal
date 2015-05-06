@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.dao;
 
+import java.util.Set;
+
 import org.dom4j.Element;
 import org.jasig.portal.IBasicEntity;
 
@@ -27,14 +29,19 @@ import org.jasig.portal.IBasicEntity;
 public interface IPersonAttributesGroupTestDefinition extends IBasicEntity {
 
     long getId();
-    
+
     String getAttributeName();
     void setAttributeName(String attributeName);
     String getTesterClassName();
     void setTesterClassName(String className);
     String getTestValue();
     void setTestValue(String testValue);
-    
+
+    Set<String> getIncludes();
+    void setIncludes(Set<String> includes);
+    Set<String> getExcludes();
+    void setExcludes(Set<String> excludes);
+
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
     void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
     void toElement(Element parent);
