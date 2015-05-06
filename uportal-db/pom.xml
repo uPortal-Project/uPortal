@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.2.1-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -83,7 +83,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="pom.xml" tofile="target/uportal-db-${project.version}.pom"/>
+                                <copy file="pom.xml" tofile="target/uportal-db-${project.version}.pom" />
                             </tasks>
                         </configuration>
                         <goals>
