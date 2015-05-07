@@ -70,8 +70,11 @@ public class PersonAttributesGroupImportHelper {
     public void addTest(IPersonAttributesGroupTestGroupDefinition testGroup,
                              String attributeName,
                              String testerClass,
-                             String testValue) {
-        personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, attributeName, testerClass, testValue);
+                             String testValue,
+                             Set<String> includes,
+                             Set<String> excludes) {
+        personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(
+                testGroup, attributeName, testerClass, testValue, includes, excludes);
     }
     
     public void addGroupMember(String groupName, String member) {

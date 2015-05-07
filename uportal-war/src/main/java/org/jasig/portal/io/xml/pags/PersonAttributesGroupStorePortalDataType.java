@@ -37,34 +37,75 @@ import com.google.common.collect.ImmutableSet;
 public class PersonAttributesGroupStorePortalDataType extends AbstractPortalDataType {
     public static final QName PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME = new QName("pags-group");
 
+    /**
+     * @deprecated
+     */
+    @Deprecated
     public static final PortalDataKey IMPORT_PAGS_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
             "classpath://org/jasig/portal/io/import-pags-group_v4-1.crn",
             null);
+
+    public static final PortalDataKey IMPORT_PAGS_43_DATA_KEY = new PortalDataKey(
+            PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-pags-group_v4-3.crn",
+            null);
+
     /**
      * Pseudo type used to enforce the importing of all groups before any members
+     * 
+     * @deprecated
      */
+    @Deprecated
     public static final PortalDataKey IMPORT_PAGS_GROUP_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
             "classpath://org/jasig/portal/io/import-pags-group_v4-1.crn",
             "GROUP");
+
     /**
      * Pseudo type used to enforce the importing of all groups before any members
      */
+    public static final PortalDataKey IMPORT_PAGS_GROUP_43_DATA_KEY = new PortalDataKey(
+            PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-pags-group_v4-3.crn",
+            "GROUP");
+
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     * 
+     * @deprecated
+     */
+    @Deprecated
     public static final PortalDataKey IMPORT_PAGS_MEMBERS_41_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
             "classpath://org/jasig/portal/io/import-pags-group_v4-1.crn",
             "MEMBERS");
-    
+
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     */
+    public static final PortalDataKey IMPORT_PAGS_MEMBERS_43_DATA_KEY = new PortalDataKey(
+            PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
+            "classpath://org/jasig/portal/io/import-pags-group_v4-3.crn",
+            "MEMBERS");
+
     private static final List<PortalDataKey> PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS = Arrays.asList(
-            IMPORT_PAGS_41_DATA_KEY,
+            IMPORT_PAGS_41_DATA_KEY, IMPORT_PAGS_43_DATA_KEY,
+            IMPORT_PAGS_GROUP_41_DATA_KEY, IMPORT_PAGS_GROUP_43_DATA_KEY,
+            IMPORT_PAGS_MEMBERS_41_DATA_KEY, IMPORT_PAGS_MEMBERS_43_DATA_KEY);
+
+    /**
+     * @deprecated
+     */
+    @Deprecated
+    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_41_KEYS = ImmutableSet.of(
             IMPORT_PAGS_GROUP_41_DATA_KEY,
             IMPORT_PAGS_MEMBERS_41_DATA_KEY);
 
-    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_42_KEYS = ImmutableSet.of(
-            IMPORT_PAGS_GROUP_41_DATA_KEY,
-            IMPORT_PAGS_MEMBERS_41_DATA_KEY);
-    
+    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_43_KEYS = ImmutableSet.of(
+            IMPORT_PAGS_GROUP_43_DATA_KEY,
+            IMPORT_PAGS_MEMBERS_43_DATA_KEY);
+
     public PersonAttributesGroupStorePortalDataType() {
         super(PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME);
     }
@@ -73,7 +114,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     public List<PortalDataKey> getDataKeyImportOrder() {
         return PERSON_ATTRIBUTE_GROUP_STORE_DATA_KEYS;
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
      */
@@ -97,9 +138,14 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         if (IMPORT_PAGS_41_DATA_KEY.equals(portalDataKey)) {
             //Split the import into two phases
-            return PAGS_GROUP_MEMBERS_42_KEYS;
+            return PAGS_GROUP_MEMBERS_41_KEYS;
         }
-        
+        if (IMPORT_PAGS_43_DATA_KEY.equals(portalDataKey)) {
+            //Split the import into two phases
+            return PAGS_GROUP_MEMBERS_43_KEYS;
+        }
+
         return Collections.singleton(portalDataKey);
     }
+
 }

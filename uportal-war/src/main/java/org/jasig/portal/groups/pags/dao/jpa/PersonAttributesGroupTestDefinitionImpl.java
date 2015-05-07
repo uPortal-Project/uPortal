@@ -31,7 +31,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -70,12 +69,17 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     public PersonAttributesGroupTestDefinitionImpl() {
         super();
     }
-    public PersonAttributesGroupTestDefinitionImpl(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+    public PersonAttributesGroupTestDefinitionImpl(
+            IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName,
+            String testerClass, String testValue, Set<String> includes,
+            Set<String> excludes) {
         super();
         this.testGroup = testGroup;
         this.attributeName = attributeName;
         this.testerClass = testerClass;
         this.testValue = testValue;
+        this.includes = includes;
+        this.excludes = excludes;
     }
 
     @Id
@@ -203,6 +207,12 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
         elementTest.addElement("attribute-name").addText(this.getAttributeName());
         elementTest.addElement("tester-class").addText(this.getTesterClassName());
         elementTest.addElement("test-value").addText(this.getTestValue());
+        for (String incl : includes) {
+            elementTest.addElement("includes").addText(incl);
+        }
+        for (String excl : excludes) {
+            elementTest.addElement("excludes").addText(excl);
+        }
         parent.add(elementTest);
     }
 

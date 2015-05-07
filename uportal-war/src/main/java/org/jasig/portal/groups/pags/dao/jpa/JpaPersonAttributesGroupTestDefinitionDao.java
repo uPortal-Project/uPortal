@@ -101,8 +101,17 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
     
     @PortalTransactional
     @Override
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
-        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl((PersonAttributesGroupTestGroupDefinitionImpl)testGroup, attributeName, testerClass, testValue);
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(
+            IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName,
+            String testerClass, String testValue, Set<String> includes,
+            Set<String> excludes) {
+        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl(
+                (PersonAttributesGroupTestGroupDefinitionImpl)testGroup,
+                attributeName,
+                testerClass,
+                testValue,
+                includes,
+                excludes);
         this.getEntityManager().persist(personAttributesGroupTestDefinition);
         return personAttributesGroupTestDefinition;
     }
