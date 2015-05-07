@@ -31,6 +31,9 @@ public class GuestUserTester implements IPersonTester {
 
     public boolean guestValue;
 
+    /**
+     * @since 4.3
+     */
     public GuestUserTester(IPersonAttributesGroupTestDefinition definition) {
         this.guestValue = Boolean.getBoolean(definition.getTestValue());
     }
@@ -39,6 +42,7 @@ public class GuestUserTester implements IPersonTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public GuestUserTester(String attribute, String guestValue) {
         this.guestValue = Boolean.getBoolean(guestValue);
     }

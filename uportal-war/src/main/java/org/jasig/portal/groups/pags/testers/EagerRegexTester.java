@@ -58,6 +58,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  */
 public class EagerRegexTester extends RegexTester {
 
+    /**
+     * @since 4.3
+     */
     public EagerRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -66,6 +69,7 @@ public class EagerRegexTester extends RegexTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public EagerRegexTester(String attribute, String test) {
         super(attribute, test);
     }

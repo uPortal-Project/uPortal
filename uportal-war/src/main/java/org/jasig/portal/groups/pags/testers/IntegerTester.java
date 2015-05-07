@@ -32,6 +32,9 @@ import org.jasig.portal.security.IPerson;
 public abstract class IntegerTester extends BaseAttributeTester {
     protected int testInteger = Integer.MIN_VALUE;
 
+    /**
+     * @since 4.3
+     */
     public IntegerTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.testInteger = Integer.parseInt(definition.getTestValue());
@@ -41,6 +44,7 @@ public abstract class IntegerTester extends BaseAttributeTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public IntegerTester(String attribute, String test) {
         super(attribute, test); 
         testInteger = Integer.parseInt(test);

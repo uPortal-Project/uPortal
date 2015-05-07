@@ -37,17 +37,12 @@ import org.slf4j.LoggerFactory;
 public class PropertyRegexTester extends RegexTester {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * @since 4.3
+     */
     public PropertyRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
-        final String propertyName = definition.getTestValue();
-        String regexExpression = PropertiesManager.getProperty
-                (propertyName, "");
-        if (StringUtils.isBlank(regexExpression)) {
-            logger.error("Unable to find property name {} in portal.properties or has empty value."
-                + " PAGS PropertyRegexTester will always return false for attribute {}", propertyName,
-                definition.getAttributeName());
-        }
-        setPattern(regexExpression);
+        setPattern(definition.getAttributeName(), definition.getTestValue());
     }
 
     /**
@@ -57,19 +52,26 @@ public class PropertyRegexTester extends RegexTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public PropertyRegexTester(String attribute, String propertyName) {
         super(attribute, propertyName);
-        String regexExpression = PropertiesManager.getProperty
-                (propertyName, "");
-        if (StringUtils.isBlank(regexExpression)) {
-            logger.error("Unable to find property name {} in portal.properties or has empty value."
-                + " PAGS PropertyRegexTester will always return false for attribute {}", propertyName, attribute);
-        }
-        setPattern(regexExpression);
+        setPattern(attribute, propertyName);
     }
 
     @Override
     public boolean test(String att) {
         return pattern.matcher(att).matches();
     }
+
+    private void setPattern(String attribute, String propertyName) {
+        String regexExpression = PropertiesManager.getProperty
+                (propertyName, "");
+        if (StringUtils.isBlank(regexExpression)) {
+            logger.error("Unable to find property name {} in portal.properties or has empty value."
+                + " PAGS PropertyRegexTester will always return false for attribute {}",
+                propertyName, attribute);
+        }
+        setPattern(regexExpression);
+    }
+
 }

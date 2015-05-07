@@ -38,17 +38,12 @@ public class PropertyInvertedRegexTester extends InvertedRegexTester {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * @since 4.3
+     */
     public PropertyInvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
-        final String propertyName = definition.getTestValue();
-        String regexExpression = PropertiesManager.getProperty
-                (propertyName, "");
-        if (StringUtils.isBlank(regexExpression)) {
-            logger.error("Unable to find property name {} in portal.properties or has empty value."
-                    + " PAGS PropertyInvertedRegexTester will always return true for attribute {}",
-                    propertyName, definition.getAttributeName());
-        }
-        setPattern(regexExpression);
+        setPattern(definition.getAttributeName(), definition.getTestValue());
     }
 
     /**
@@ -58,8 +53,18 @@ public class PropertyInvertedRegexTester extends InvertedRegexTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public PropertyInvertedRegexTester(String attribute, String propertyName) {
         super(attribute, propertyName);
+        setPattern(attribute, propertyName);
+    }
+
+    @Override
+    public boolean test(String att) {
+        return !pattern.matcher(att).matches();
+    }
+
+    private void setPattern(String attribute, String propertyName) {
         String regexExpression = PropertiesManager.getProperty
                 (propertyName, "");
         if (StringUtils.isBlank(regexExpression)) {
@@ -70,8 +75,4 @@ public class PropertyInvertedRegexTester extends InvertedRegexTester {
         setPattern(regexExpression);
     }
 
-    @Override
-    public boolean test(String att) {
-        return !pattern.matcher(att).matches();
-    }
 }

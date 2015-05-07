@@ -61,6 +61,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 public class LowercasedRegexTester extends StringTester {
     protected Pattern pattern;
 
+    /**
+     * @since 4.3
+     */
     public LowercasedRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.pattern = Pattern.compile(definition.getTestValue());
@@ -70,6 +73,7 @@ public class LowercasedRegexTester extends StringTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public LowercasedRegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);

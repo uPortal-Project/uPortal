@@ -59,6 +59,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 public class InvertedRegexTester extends StringTester {
     protected Pattern pattern;
 
+    /**
+     * @since 4.3
+     */
     public InvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.pattern = Pattern.compile(definition.getTestValue());
@@ -68,6 +71,7 @@ public class InvertedRegexTester extends StringTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public InvertedRegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);

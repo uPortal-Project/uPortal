@@ -32,6 +32,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 public class StringEqualsIgnoreCaseTester extends StringTester {
 
+    /**
+     * @since 4.3
+     */
     public StringEqualsIgnoreCaseTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -40,6 +43,7 @@ public class StringEqualsIgnoreCaseTester extends StringTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public StringEqualsIgnoreCaseTester(String attribute, String test) {
         super(attribute, test);
     }

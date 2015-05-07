@@ -31,6 +31,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 public class IntegerGTTester extends IntegerTester {
 
+    /**
+     * @since 4.3
+     */
     public IntegerGTTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -39,6 +42,7 @@ public class IntegerGTTester extends IntegerTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public IntegerGTTester(String attribute, String test) {
         super(attribute, test); 
     }

@@ -32,6 +32,9 @@ public abstract class BaseAttributeTester implements IPersonTester {
     protected final String attributeName;
     protected final String testValue;
 
+    /**
+     * @since 4.3
+     */
     public BaseAttributeTester(IPersonAttributesGroupTestDefinition definition) {
         super();
         attributeName = definition.getAttributeName();
@@ -42,6 +45,7 @@ public abstract class BaseAttributeTester implements IPersonTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public BaseAttributeTester(String attribute, String test) {
         super();
         attributeName = attribute;

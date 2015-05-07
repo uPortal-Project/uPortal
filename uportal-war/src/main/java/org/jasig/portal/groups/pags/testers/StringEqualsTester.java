@@ -31,6 +31,9 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 public class StringEqualsTester extends StringTester {
 
+    /**
+     * @since 4.3
+     */
     public StringEqualsTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -39,6 +42,7 @@ public class StringEqualsTester extends StringTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public StringEqualsTester(String attribute, String test) {
         super(attribute, test);
     }

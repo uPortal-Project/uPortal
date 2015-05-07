@@ -31,6 +31,9 @@ import org.jasig.portal.security.IPerson;
 
 public abstract class StringTester extends BaseAttributeTester {
 
+    /**
+     * @since 4.3
+     */
     public StringTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -39,6 +42,7 @@ public abstract class StringTester extends BaseAttributeTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public StringTester(String attribute, String test) {
         super(attribute, test);
     }

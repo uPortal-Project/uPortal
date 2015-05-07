@@ -31,6 +31,9 @@ import org.jasig.portal.groups.pags.testers.StringTester;
  */
 public class ValueExistsTester extends StringTester {
 
+    /**
+     * @since 4.3
+     */
     public ValueExistsTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -39,6 +42,7 @@ public class ValueExistsTester extends StringTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public ValueExistsTester(String attribute, String test) {
         super(attribute, test);
     }

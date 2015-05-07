@@ -30,6 +30,9 @@ import org.jasig.portal.security.IPerson;
  */
 public class ValueMissingTester extends BaseAttributeTester {
 
+    /**
+     * @since 4.3
+     */
     public ValueMissingTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -38,6 +41,7 @@ public class ValueMissingTester extends BaseAttributeTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public ValueMissingTester(String attribute, String test) {
         super(attribute, test);
     }

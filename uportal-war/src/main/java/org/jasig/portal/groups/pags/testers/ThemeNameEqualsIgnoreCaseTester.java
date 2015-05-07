@@ -51,6 +51,9 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
     private final IUserLayoutStore userLayoutStore;
     private final IStylesheetDescriptorDao stylesheetDescriptorDao;
 
+    /**
+     * @since 4.3
+     */
     public ThemeNameEqualsIgnoreCaseTester(IPersonAttributesGroupTestDefinition definition) {
         final String themeTestValue = definition.getTestValue();
         assert StringUtils.isNotBlank(themeTestValue);
@@ -66,6 +69,7 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
      * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
      * the single-argument constructor.
      */
+    @Deprecated
     public ThemeNameEqualsIgnoreCaseTester(String attribute, String themeTestValue) {
         assert StringUtils.isNotBlank(themeTestValue);
         this.themeTestValue = themeTestValue;
@@ -119,4 +123,5 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
         }
         return testResult;
     }
+
 }
