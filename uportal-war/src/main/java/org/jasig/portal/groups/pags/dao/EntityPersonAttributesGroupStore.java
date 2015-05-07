@@ -318,6 +318,17 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             Set<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
             for(IPersonAttributesGroupTestDefinition test : tests) {
                 IPersonTester testerInst = initializeTester(test);
+                if (testerInst == null) {
+                    /*
+                     * A tester was intended that we cannot now recreate.  This
+                     * is a potentially dangerous situation, since tests in PAGS
+                     * are "or-ed" together;  a functioning group with a missing
+                     * test would have a wider membership, not narrower.  (And
+                     * remember -- permissions are tied to groups.)  We need to
+                     * play it safe and keep this group out of the mix.
+                     */
+                    return null;
+                }
                 tg.addTest(testerInst);
             }
             groupDef.addTestGroup(tg);
