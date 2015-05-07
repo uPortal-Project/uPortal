@@ -31,7 +31,6 @@
       <test>
           <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
           <includes>Students</includes>
-          <includes>English Majors</includes>
           <excludes>BannedStudents</excludes>
           <excludes>SummerSessionStudents</excludes>
       </test>

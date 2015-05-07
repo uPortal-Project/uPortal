@@ -18,10 +18,12 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.apache.commons.lang.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
@@ -46,24 +48,37 @@ public final class AdHocGroupTester implements IPersonTester {
     private final Set<IEntityGroup> excludes = new HashSet<>();
     private final String hashcode;
 
-    /**
-     * Temporary constructor for testing group test before tackling import/export changes.
-     *
-     * @param attribute not used
-     * @param value     group name
-     */
-    public AdHocGroupTester(String attribute, String value) {
-        logger.debug("constructor attribute: {}", attribute);
-        logger.debug("constructor value: {}", value);
-
-        // Get IEntityGroup for group value
-        IEntityGroup entityGroup = findGroupByName(value);
-        if (entityGroup != null) {
-            includes.add(entityGroup);
-        } else {
-            logger.warn("Could not find group {}", value);
-        }
+    public AdHocGroupTester(IPersonAttributesGroupTestDefinition definition) {
+        Validate.notNull(definition.getIncludes());
+        Validate.notNull(definition.getExcludes());
+        collectGroups(definition.getIncludes(), this.includes, true);
+        collectGroups(definition.getExcludes(), this.excludes, false);
         hashcode = calcHashcode();
+    }
+
+    /**
+     * Given a set of group names, find the entity groups and add them to the <code>groups</code> collection.
+     * If a group is not found, either log a warning or throw an <code>IllegalStateException</code> based on
+     * the <code>throwOnFail</code> parameter.
+     *
+     * @param groupNames    Set of group names
+     * @param groups        Set to add named groups from <code>GroupService</code>
+     * @param throwOnFail   flag to indicate whether to log or throw exception if a group is not found
+     */
+    private void collectGroups(Set<String> groupNames, Set<IEntityGroup> groups, boolean throwOnFail) {
+        for (String groupName : groupNames) {
+            IEntityGroup entityGroup = findGroupByName(groupName);
+            if (entityGroup != null) {
+                groups.add(entityGroup);
+            } else {
+                if (throwOnFail) {
+                    logger.error("Could not find group named {}", groupName);
+                    throw new IllegalArgumentException("Could not find group named " + groupName);
+                } else {
+                    logger.warn("Could not find group named {}", groupName);
+                }
+            }
+        }
     }
 
     /**
