@@ -23,9 +23,6 @@ import java.util.Set;
 
 import javax.xml.stream.XMLEventReader;
 
-import org.springframework.core.io.Resource;
-
-
 /**
  * Describes a type of portal data that can be imported, exported, or deleted via
  * the {@link IPortalDataHandlerService}
