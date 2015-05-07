@@ -30,6 +30,9 @@ public interface IPersonAttributesGroupTestDefinitionDao {
     public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition);
     public void deletePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition definition);
     public Set<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitions();
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue);
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(
+                IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName,
+                String testerClass, String testValue, Set<String> includes,
+                Set<String> excludes);
 
 }
