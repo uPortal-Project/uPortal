@@ -19,6 +19,7 @@
 package org.jasig.portal.groups.pags.dao.jpa;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Cacheable;
@@ -78,8 +79,8 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
         this.attributeName = attributeName;
         this.testerClass = testerClass;
         this.testValue = testValue;
-        this.includes = includes;
-        this.excludes = excludes;
+        this.includes = new HashSet<String>(includes);  // defensive copy
+        this.excludes = new HashSet<String>(excludes);      // defensive copy
     }
 
     @Id

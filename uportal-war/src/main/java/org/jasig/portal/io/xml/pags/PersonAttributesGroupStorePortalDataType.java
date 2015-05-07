@@ -46,6 +46,9 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
             "classpath://org/jasig/portal/io/import-pags-group_v4-1.crn",
             null);
 
+    /**
+     * @since 4.3
+     */
     public static final PortalDataKey IMPORT_PAGS_43_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
             "classpath://org/jasig/portal/io/import-pags-group_v4-3.crn",
@@ -64,6 +67,8 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
 
     /**
      * Pseudo type used to enforce the importing of all groups before any members
+     *
+     * @since 4.3
      */
     public static final PortalDataKey IMPORT_PAGS_GROUP_43_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
@@ -83,6 +88,8 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
 
     /**
      * Pseudo type used to enforce the importing of all groups before any members
+     *
+     * @since 4.3
      */
     public static final PortalDataKey IMPORT_PAGS_MEMBERS_43_DATA_KEY = new PortalDataKey(
             PERSON_ATTRIBUTE_GROUP_STORE_TYPE_QNAME, 
@@ -102,6 +109,9 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
             IMPORT_PAGS_GROUP_41_DATA_KEY,
             IMPORT_PAGS_MEMBERS_41_DATA_KEY);
 
+    /**
+     * @since 4.3
+     */
     private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_43_KEYS = ImmutableSet.of(
             IMPORT_PAGS_GROUP_43_DATA_KEY,
             IMPORT_PAGS_MEMBERS_43_DATA_KEY);
