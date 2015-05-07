@@ -20,6 +20,8 @@ package org.jasig.portal.groups.pags.testers;
 
 import java.util.regex.Pattern;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * A tester for matching the possibly multiple values of an attribute 
  * against a regular expression and returning true for a FAILURE to match.
@@ -57,6 +59,19 @@ import java.util.regex.Pattern;
 public class InvertedRegexTester extends StringTester {
     protected Pattern pattern;
 
+    /**
+     * @since 4.3
+     */
+    public InvertedRegexTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+        this.pattern = Pattern.compile(definition.getTestValue());
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public InvertedRegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);

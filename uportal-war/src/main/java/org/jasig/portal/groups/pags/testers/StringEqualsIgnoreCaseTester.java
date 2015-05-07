@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * Tests an <code>IPerson</code> attribute for String equality 
  * regardless of case and answers true if any of the possibly 
@@ -30,11 +32,23 @@ package org.jasig.portal.groups.pags.testers;
 
 public class StringEqualsIgnoreCaseTester extends StringTester {
 
-public StringEqualsIgnoreCaseTester(String attribute, String test) {
-    super(attribute, test);
-}
-public boolean test(String att) {
-    return att.equalsIgnoreCase(testValue);
-}
+    /**
+     * @since 4.3
+     */
+    public StringEqualsIgnoreCaseTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public StringEqualsIgnoreCaseTester(String attribute, String test) {
+        super(attribute, test);
+    }
+    public boolean test(String att) {
+        return att.equalsIgnoreCase(testValue);
+    }
 
 }

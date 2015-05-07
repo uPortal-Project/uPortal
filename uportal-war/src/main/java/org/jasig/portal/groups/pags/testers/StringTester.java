@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
@@ -30,30 +31,42 @@ import org.jasig.portal.security.IPerson;
 
 public abstract class StringTester extends BaseAttributeTester {
 
-public StringTester(String attribute, String test) {
-    super(attribute, test);
-}
+    /**
+     * @since 4.3
+     */
+    public StringTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
 
-public boolean test(IPerson person) {
-    boolean result = false;
-    Object[] atts = person.getAttributeValues(getAttributeName());
-    if ( atts != null )
-    {
-        for (int i=0; i<atts.length && result == false; i++)
-        { 
-            String att = (String)atts[i];
-            result = test(att); 
-            
-            // Assume that we should perform OR matching on multi-valued 
-            // attributes.  If the current attribute matches, return true
-            // for the person.
-            if (result) {
-                return true;
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public StringTester(String attribute, String test) {
+        super(attribute, test);
+    }
+
+    public boolean test(IPerson person) {
+        boolean result = false;
+        Object[] atts = person.getAttributeValues(getAttributeName());
+        if ( atts != null )
+        {
+            for (int i=0; i<atts.length && result == false; i++)
+            { 
+                String att = (String)atts[i];
+                result = test(att); 
+                
+                // Assume that we should perform OR matching on multi-valued 
+                // attributes.  If the current attribute matches, return true
+                // for the person.
+                if (result) {
+                    return true;
+                }
             }
         }
+        return result;
     }
-    return result;
-}
-public boolean test(String att) { return false; }
+    public boolean test(String att) { return false; }
 
 }

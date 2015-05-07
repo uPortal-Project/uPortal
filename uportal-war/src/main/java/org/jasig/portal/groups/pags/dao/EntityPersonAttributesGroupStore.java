@@ -317,7 +317,18 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             TestGroup tg = new TestGroup();
             Set<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
             for(IPersonAttributesGroupTestDefinition test : tests) {
-                IPersonTester testerInst = initializeTester(test.getTesterClassName(), test.getAttributeName(), test.getTestValue());
+                IPersonTester testerInst = initializeTester(test);
+                if (testerInst == null) {
+                    /*
+                     * A tester was intended that we cannot now recreate.  This
+                     * is a potentially dangerous situation, since tests in PAGS
+                     * are "or-ed" together;  a functioning group with a missing
+                     * test would have a wider membership, not narrower.  (And
+                     * remember -- permissions are tied to groups.)  We need to
+                     * play it safe and keep this group out of the mix.
+                     */
+                    return null;
+                }
                 tg.addTest(testerInst);
             }
             groupDef.addTestGroup(tg);
@@ -330,17 +341,19 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             groupDef.addMember(member.getName());
         }
     }
-    private IPersonTester initializeTester(String tester, String attribute, String value) {
-          try {
-             Class<?> testerClass = Class.forName(tester);
-             Constructor<?> c = testerClass.getConstructor(new Class[]{String.class, String.class});
-             Object o = c.newInstance(new Object[]{attribute, value});
-             return (IPersonTester)o;
-          } catch (Exception e) {
-             logger.error("Error in initializing tester class: {}", tester, e);
-             return null;
-          }
-       }
+
+    private IPersonTester initializeTester(IPersonAttributesGroupTestDefinition test) {
+        try {
+            Class<?> testerClass = Class.forName(test.getTesterClassName());
+            Constructor<?> c = testerClass.getConstructor(new Class[]{IPersonAttributesGroupTestDefinition.class});
+            Object o = c.newInstance(new Object[]{test});
+            return (IPersonTester) o;
+        } catch (Exception e) {
+            logger.error("Error in initializing tester class: {}", test.getTesterClassName(), e);
+            return null;
+        }
+   }
+
     private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
     {
         logger.debug("Looking up containing groups for {}", name);

@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.groups.pags.testers.BaseAttributeTester;
 import org.jasig.portal.security.IPerson;
 
@@ -29,6 +30,18 @@ import org.jasig.portal.security.IPerson;
  */
 public class ValueMissingTester extends BaseAttributeTester {
 
+    /**
+     * @since 4.3
+     */
+    public ValueMissingTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public ValueMissingTester(String attribute, String test) {
         super(attribute, test);
     }

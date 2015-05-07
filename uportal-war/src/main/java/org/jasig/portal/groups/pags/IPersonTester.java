@@ -16,17 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags;
 
 import org.jasig.portal.security.IPerson;
 
  /**
- * A very basic interface for examining <code>IPersons</code>.  
- * <p>
+ * A very basic interface for examining <code>IPersons</code>.
+ * <p/>
+ * Concrete implementations should provide a constructor that takes a single
+ * {@link PersonAttributesGroupTestDefinitionImpl} so that they can be properly
+ * instantiated and configured by the group store..
+ *
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
 public interface IPersonTester {
-    public boolean test(IPerson person);
+    boolean test(IPerson person);
 }

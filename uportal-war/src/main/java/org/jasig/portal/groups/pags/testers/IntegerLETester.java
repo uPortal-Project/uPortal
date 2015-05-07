@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 
 /**
  * Tests if any of the possibly multiple values of the attribute are GE
@@ -29,10 +31,22 @@ package org.jasig.portal.groups.pags.testers;
 
 public class IntegerLETester extends IntegerTester {
 
-public IntegerLETester(String attribute, String test) {
-    super(attribute, test); 
-}
-public boolean test(int attributeValue) {
-    return ! (attributeValue > testInteger);
-}
+    /**
+     * @since 4.3
+     */
+    public IntegerLETester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public IntegerLETester(String attribute, String test) {
+        super(attribute, test); 
+    }
+    public boolean test(int attributeValue) {
+        return ! (attributeValue > testInteger);
+    }
 }
