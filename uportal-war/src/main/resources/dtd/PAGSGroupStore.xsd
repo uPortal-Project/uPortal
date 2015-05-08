@@ -66,9 +66,8 @@
   <xs:complexType name="test-group">
     <xs:annotation>
       <xs:documentation>
-        A test-group element is made up of 0 or more test elements with an optional
-        adhoc-group-test whose results are AND-ed together. A test-group must have at
-        least a test or adhoc-test-group.
+        A test-group element is made up of 1 or more test elements whose results are 
+        AND-ed together. 
       </xs:documentation>
     </xs:annotation>
     <xs:sequence>
@@ -82,28 +81,15 @@
         A test element contains the name of the attribute whose value is to be tested
         (attribute-name), the class that is to perform the test (tester-class), and the 
         value to be compared to the attribute value (test-value).
-
-        Alternatively, a test element contains the class that is to perform the test
-        (test-class) and one or more group names to include (includes) or exclude (excludes)
-        from the test.
       </xs:documentation>
     </xs:annotation>
-    <xs:choice>
-      <xs:sequence>
-        <xs:element name="attribute-name" type="xs:string"/>
-        <xs:element name="tester-class" type="xs:string"/>
-        <xs:element name="test-value" type="xs:string"/>
-      </xs:sequence>
-      <xs:sequence>
-        <xs:element name="tester-class" type="xs:string"/>
-        <xs:choice maxOccurs="unbounded">
-          <xs:element name="includes" type="xs:string"/>
-          <xs:element name="excludes" type="xs:string"/>
-        </xs:choice>
-      </xs:sequence>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="attribute-name" type="xs:string"/>
+      <xs:element name="tester-class" type="xs:string"/>
+      <xs:element name="test-value" type="xs:string"/>
+    </xs:sequence>
   </xs:complexType>
-
+  
   <xs:complexType name="members">
     <xs:annotation>
       <xs:documentation>
