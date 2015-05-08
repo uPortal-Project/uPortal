@@ -36,14 +36,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * PAGS Tester for inclusive/exclusive membership in sets of groups.
+ * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups.
  *
- * @author Benito J. Gonzalez <bgonzalez@unicon.net>
+ * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
+ * @see     org.jasig.portal.groups.pags.IPersonTester
+ * @since   4.3
  */
 public final class AdHocGroupTester implements IPersonTester {
 
     private static final Logger logger = LoggerFactory.getLogger(AdHocGroupTester.class);
-    private static final Set<String> currentPersons = new ConcurrentSkipListSet<String>();
+    private static final Set<String> currentPersons = new ConcurrentSkipListSet<>();
     private final Set<IEntityGroup> includes = new HashSet<>();
     private final Set<IEntityGroup> excludes = new HashSet<>();
     private final String hashcode;
@@ -87,7 +89,7 @@ public final class AdHocGroupTester implements IPersonTester {
      * @return String hascode for this instance
      */
     private String calcHashcode() {
-        StringBuffer hash = new StringBuffer("__");
+        StringBuilder hash = new StringBuilder("__");
         for (IEntityGroup group : includes) {
             hash.append(group.getKey());
         }
