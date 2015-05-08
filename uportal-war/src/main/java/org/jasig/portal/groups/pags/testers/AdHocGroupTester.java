@@ -40,6 +40,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.IPersonTester
+ * @see     org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore
+ * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition
  * @since   4.3
  */
 public final class AdHocGroupTester implements IPersonTester {
@@ -63,8 +65,8 @@ public final class AdHocGroupTester implements IPersonTester {
      * If a group is not found, either log a warning or throw an <code>IllegalStateException</code> based on
      * the <code>throwOnFail</code> parameter.
      *
-     * @param groupNames    Set of group names
-     * @param groups        Set to add named groups from <code>GroupService</code>
+     * @param groupNames    Set of group names to find
+     * @param groups        Set to add named groups from {@link GroupService}
      * @param throwOnFail   flag to indicate whether to log or throw exception if a group is not found
      */
     private void collectGroups(Set<String> groupNames, Set<IEntityGroup> groups, boolean throwOnFail) {
@@ -86,7 +88,7 @@ public final class AdHocGroupTester implements IPersonTester {
     /**
      * Create a hashcode based on the includes/excludes groups.
      *
-     * @return String hascode for this instance
+     * @return String hashcode for this instance
      */
     private String calcHashcode() {
         StringBuilder hash = new StringBuilder("__");
