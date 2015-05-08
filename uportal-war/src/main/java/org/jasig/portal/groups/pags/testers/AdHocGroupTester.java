@@ -36,7 +36,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups.
+ * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups. To avoid infinite recursion,
+ * calls to {@code test()} are tracked by parameters plus thread ID.
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.IPersonTester
@@ -61,9 +62,9 @@ public final class AdHocGroupTester implements IPersonTester {
     }
 
     /**
-     * Given a set of group names, find the entity groups and add them to the <code>groups</code> collection.
-     * If a group is not found, either log a warning or throw an <code>IllegalStateException</code> based on
-     * the <code>throwOnFail</code> parameter.
+     * Given a set of group names, find the entity groups and add them to the {@code groups} collection.
+     * If a group is not found, either log a warning or throw an {@code IllegalArgumentException} based on
+     * the {@code throwOnFail} parameter.
      *
      * @param groupNames    Set of group names to find
      * @param groups        Set to add named groups from {@link GroupService}
@@ -88,7 +89,7 @@ public final class AdHocGroupTester implements IPersonTester {
     /**
      * Create a hashcode based on the includes/excludes groups.
      *
-     * @return String hashcode for this instance
+     * @return      hashcode for this instance
      */
     private String calcHashcode() {
         StringBuilder hash = new StringBuilder("__");
@@ -140,10 +141,11 @@ public final class AdHocGroupTester implements IPersonTester {
     }
 
     /**
-     * Find <code>IEntityGroup</code> from group name.
+     * Find {@link IEntityGroup} from group name.
      *
-     * @param groupName name of group
-     * @return IEntityGroup group object with given name
+     * @param groupName     name of group to search from {@code GroupService}
+     * @return              {@code IEntityGroup} with given name or null if no group with given name found
+     * @see                 org.jasig.portal.services.GroupService
      */
     private IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers = GroupService.searchForGroups(groupName, GroupService.IS, EntityEnum.GROUP.getClazz());
@@ -157,10 +159,11 @@ public final class AdHocGroupTester implements IPersonTester {
         return null;
     }
     /**
-     * Find <code>IPerson</code> as <code>IGroupMember</code>.
+     * Find {@link IPerson} as {@link IGroupMember}.
      *
-     * @param person <code>IPerson</code> to be tested
-     * @return IGroupMember person as <code>IGroupMember</code>
+     * @param person    {@code IPerson} with entity identifier key to look up
+     * @return          person as {@code IGroupMember}
+     * @see             org.jasig.portal.services.GroupService
      */
     private IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();
