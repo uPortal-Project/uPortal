@@ -66,20 +66,13 @@
   <xs:complexType name="test-group">
     <xs:annotation>
       <xs:documentation>
-        A test-group element is made up of 0 or more test elements with an optional
-        adhoc-group-test whose results are AND-ed together. A test-group must have at
-        least a test or adhoc-test-group.
+        A test-group element is made up of 1 or more test elements whose results are 
+        AND-ed together. 
       </xs:documentation>
     </xs:annotation>
-    <xs:choice>
-      <xs:sequence>
-        <xs:element name="test" type="test" maxOccurs="unbounded"/>
-      </xs:sequence>
-      <xs:sequence>
-        <xs:element name="test" type="test" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element name="adhoc-group-test" type="adhoc-group-test"/>
-      </xs:sequence>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="test" type="test" maxOccurs="unbounded"/>
+    </xs:sequence>
   </xs:complexType>
   
   <xs:complexType name="test">
@@ -96,31 +89,7 @@
       <xs:element name="test-value" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
-
-  <xs:complexType name="adhoc-group-test">
-    <xs:annotation>
-      <xs:documentation>
-        An adhoc-group-test element contains a set of included groups (include) and/or a
-        set of excluded groups (exclude).
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="include" type="adhoc-group" minOccurs="0"/>
-      <xs:element name="exclude" type="adhoc-group" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="adhoc-group">
-    <xs:annotation>
-      <xs:documentation>
-        Set of group names for the adhoc group test (adhoc-group-test) include/exclude sections.
-      </xs:documentation>
-    </xs:annotation>
-    <xs:sequence>
-      <xs:element name="group-name" type="xs:string" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
+  
   <xs:complexType name="members">
     <xs:annotation>
       <xs:documentation>

@@ -26,8 +26,6 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper class called from crn to handle the object creation and updates during PAGS import
@@ -35,8 +33,6 @@ import org.slf4j.LoggerFactory;
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public class PersonAttributesGroupImportHelper {
-
-    private static final Logger logger = LoggerFactory.getLogger(PersonAttributesGroupImportHelper.class);
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
     private IPersonAttributesGroupTestDefinitionDao personAttributesGroupTestDefinitionDao;
     private IPersonAttributesGroupTestGroupDefinitionDao personAttributesGroupTestGroupDefinitionDao;
@@ -70,25 +66,14 @@ public class PersonAttributesGroupImportHelper {
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
         return personAttributesGroupTestGroupDefinitionDao.createPersonAttributesGroupTestGroupDefinition(groups.iterator().next());
     }
-
+    
     public void addTest(IPersonAttributesGroupTestGroupDefinition testGroup,
                              String attributeName,
                              String testerClass,
                              String testValue) {
         personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, attributeName, testerClass, testValue);
     }
-
-    public void addAdHocGroupTest(IPersonAttributesGroupTestGroupDefinition testGroup, Set<String> includedGroupNames, Set<String> excludedGroupNames) {
-        logger.warn("adding AdHocGroupTest");
-        logger.warn("Testgroup is {}", testGroup.getId());
-        logger.warn("Included group names are '{}'", includedGroupNames.toString());
-        logger.warn("Excluded group names are '{}'", excludedGroupNames.toString());
-    }
-
-    public HashSet<String> createStringHashSet() {
-        return new HashSet<String>();
-    }
-
+    
     public void addGroupMember(String groupName, String member) {
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(groupName);
         Set<IPersonAttributesGroupDefinition> attemptingToAddMembers = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(member);

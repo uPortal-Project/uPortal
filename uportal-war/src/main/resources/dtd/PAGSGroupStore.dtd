@@ -36,10 +36,10 @@
   member entities.  
 -->
 
-<!ELEMENT test-group (test*,adhoc-group-test?)>
+<!ELEMENT test-group (test+)>
 <!-- 
-  A test-group element is made up of 0 or more test elements with an optional
-  adhoc-group-test whose results are AND-ed together.
+  A test-group element is made up of 1 or more test elements whose results are 
+  AND-ed together.  
 -->
 
 <!ELEMENT test (attribute-name,tester-class,test-value)>
@@ -51,14 +51,6 @@
 <!ELEMENT attribute-name (#PCDATA)>
 <!ELEMENT tester-class (#PCDATA)>
 <!ELEMENT test-value (#PCDATA)>
-
-<!ELEMENT adhoc-group-test (include?,exclude?)>
-<!--
-  An adhoc-group-test element contains a set of included groups (include) and/or a
-  set of excluded groups (exclude).
--->
-<!ELEMENT include (group-name+)>
-<!ELEMENT exclude (group-name+)>
 
 <!ELEMENT members (member-key*)>
 <!-- The optional members element contains keys of member groups. -->
