@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -47,8 +47,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public final class AdHocGroupTester implements IPersonTester {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdHocGroupTester.class);
     private static final Set<String> currentPersons = new ConcurrentSkipListSet<>();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Set<IEntityGroup> includes = new HashSet<>();
     private final Set<IEntityGroup> excludes = new HashSet<>();
     private final String hashcode;
@@ -56,21 +56,22 @@ public final class AdHocGroupTester implements IPersonTester {
     public AdHocGroupTester(IPersonAttributesGroupTestDefinition definition) {
         Validate.notNull(definition.getIncludes());
         Validate.notNull(definition.getExcludes());
-        collectGroups(definition.getIncludes(), this.includes, true);
-        collectGroups(definition.getExcludes(), this.excludes, false);
+        this.includes.addAll(collectGroups(definition.getIncludes(), true));
+        this.excludes.addAll(collectGroups(definition.getExcludes(), false));
         hashcode = calcHashcode();
     }
 
     /**
-     * Given a set of group names, find the entity groups and add them to the {@code groups} collection.
+     * Given a set of group names, find the entity groups and add them to the {@code groups} collection to be returned.
      * If a group is not found, either log a warning or throw an {@code IllegalArgumentException} based on
      * the {@code throwOnFail} parameter.
      *
-     * @param groupNames    Set of group names to find
-     * @param groups        Set to add named groups from {@link GroupService}
+     * @param groupNames    set of group names to find
      * @param throwOnFail   flag to indicate whether to log or throw exception if a group is not found
+     * @return              set of named groups from {@link GroupService}
      */
-    private void collectGroups(Set<String> groupNames, Set<IEntityGroup> groups, boolean throwOnFail) {
+    private Set<IEntityGroup> collectGroups(Set<String> groupNames, boolean throwOnFail) {
+        Set<IEntityGroup> groups = new HashSet<>();
         for (String groupName : groupNames) {
             IEntityGroup entityGroup = findGroupByName(groupName);
             if (entityGroup != null) {
@@ -84,6 +85,7 @@ public final class AdHocGroupTester implements IPersonTester {
                 }
             }
         }
+        return groups;
     }
 
     /**

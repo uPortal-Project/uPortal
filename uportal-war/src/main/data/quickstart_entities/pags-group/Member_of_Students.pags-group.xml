@@ -31,8 +31,8 @@
       <test>
           <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
           <includes>Students</includes>
-          <excludes>BannedStudents</excludes>
-          <excludes>SummerSessionStudents</excludes>
+          <excludes>Mobile Device Access</excludes>
+          <excludes>Staff</excludes>
       </test>
     </test-group>
   </selection-test>
