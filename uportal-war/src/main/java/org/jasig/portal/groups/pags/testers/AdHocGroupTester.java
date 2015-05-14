@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -57,15 +58,29 @@ public final class AdHocGroupTester implements IPersonTester {
         Validate.notNull(definition.getExcludes());
         this.includes.addAll(collectGroups(definition.getIncludes(), true));
         this.excludes.addAll(collectGroups(definition.getExcludes(), false));
-        groupsHash = calcGroupsHash();
+        groupsHash = calcGroupsHash(definition.getIncludes(), definition.getExcludes());
     }
 
+    /*
+     * At some point, a person is being tested for group membership. During that test, the thread hits an ad hoc group
+     * tester. When that tester calls isDeepMemberOf, a test for group membership is triggered. During this call stack,
+     * the second call the the ad hoc group tester returns false. Assuming the group hierarchy is not itself recursive
+     * for the group containing the ad hoc group test, the test returns a usable value.
+     *
+     * If there is no caching and the second person object only exists for the recursive call, then the implementation
+     * works.
+     *
+     * Also, if the person object is cached and used twice, then the group key with the ad hoc tester is not added to
+     * the containing group keys during the recursion but is added (or not) after the test call returns positive.
+     */
     @Override
     public boolean test(IPerson person) {
         String personHash = person.getEntityIdentifier().getKey() + groupsHash + Thread.currentThread().getId();
-        logger.debug(personHash);
-        if (currentPersons.contains(personHash))
+        logger.debug("Entering test() for {}", personHash);
+        if (currentPersons.contains(personHash)) {
+            logger.warn("Returning from test() for {} due to recusion for person = {}", personHash, person.toString());
             return false; // stop recursing
+        }
         currentPersons.add(personHash);
 
         IGroupMember gmPerson = findPersonAsGroupMember(person);
@@ -74,6 +89,7 @@ public final class AdHocGroupTester implements IPersonTester {
         Iterator<IEntityGroup> groups = includes.iterator();
         while (pass && groups.hasNext()) {
             IEntityGroup group = groups.next();
+            logger.debug("Checking if {} is a member of {}", person.getUserName(), group.getName());
             if (!gmPerson.isDeepMemberOf(group)) {
                 logger.debug("!! {} is not a member of {}", person.getUserName(), group.getDescription());
                 pass = false;
@@ -84,15 +100,17 @@ public final class AdHocGroupTester implements IPersonTester {
         groups = excludes.iterator();
         while (pass && groups.hasNext()) {
             IEntityGroup group = groups.next();
+            logger.debug("Checking if {} is NOT a member of {}", person.getUserName(), group.getName());
             if (gmPerson.isDeepMemberOf(group)) {
                 logger.debug("!! {} is a member of {}", person.getUserName(), group.getDescription());
                 pass = false;
             } else {
-                logger.debug("{} is a not member of {}", person.getUserName(), group.getDescription());
+                logger.debug("{} is not a member of {}", person.getUserName(), group.getDescription());
             }
         }
 
         currentPersons.remove(personHash);
+        logger.debug("Returning from test() for {}", personHash);
         return pass;
     }
 
@@ -124,18 +142,28 @@ public final class AdHocGroupTester implements IPersonTester {
     }
 
     /**
-     * Create a hash based on the includes/excludes groups.
+     * Create a hash based on the includes/excludes groups. This will be part of the call hash key
+     * used to detect recursive calls to the same test (although this may be a different instance).
+     * For consistency, the sets are sorted before the hash string is built.
+     * <p/>
+     * Format: _(_[include_group_names])*(^[exclude_group_names])*_#
+     * Example: for includes = "Students"+"Active" and excludes = "Hackers", "__Active_Students^Hackers_#"
      *
-     * @return      hash for this instance
+     * @param includes      {@String} collection of group names for member of tests
+     * @param excludes      {@String} collection of group names for NOT member of tests
+     * @return              hash for this test based on groups parameters
      */
-    private String calcGroupsHash() {
-        StringBuilder hash = new StringBuilder("__");
-        for (IEntityGroup group : includes) {
-            hash.append(group.getKey());
+    private static String calcGroupsHash(Set<String> includes, Set<String> excludes) {
+        Set<String> includesSorted = new TreeSet<>(includes);
+        Set<String> excludesSorted = new TreeSet<>(excludes);
+        StringBuilder hash = new StringBuilder("_");
+        for (String group : includesSorted) {
+            hash.append("_");
+            hash.append(group);
         }
-        hash.append("^");
-        for (IEntityGroup group : excludes) {
-            hash.append(group.getKey());
+        for (String group : excludesSorted) {
+            hash.append("^");
+            hash.append(group);
         }
         hash.append("_#");
         return hash.toString();
@@ -148,11 +176,9 @@ public final class AdHocGroupTester implements IPersonTester {
      * @return              {@code IEntityGroup} with given name or null if no group with given name found
      * @see                 org.jasig.portal.services.GroupService
      */
-    private IEntityGroup findGroupByName(String groupName) {
+    private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
-        logger.debug("Found {} indentifier(s) for group name {}", identifiers.length, groupName);
         for (EntityIdentifier entityIdentifier : identifiers) {
-            logger.debug(entityIdentifier.toString());
             if (entityIdentifier.getType().equals(IEntityGroup.class)) {
                 return GroupService.findGroup(entityIdentifier.getKey());
             }
@@ -167,8 +193,9 @@ public final class AdHocGroupTester implements IPersonTester {
      * @return          person as {@code IGroupMember}
      * @see             org.jasig.portal.services.GroupService
      */
-    private IGroupMember findPersonAsGroupMember(IPerson person) {
+    private static IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();
-        return GroupService.getEntity(personKey, IPerson.class);
+        IGroupMember personGM =  GroupService.getEntity(personKey, IPerson.class);
+        return personGM;
     }
 }
