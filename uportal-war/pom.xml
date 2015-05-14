@@ -239,8 +239,13 @@
         </dependency>
         
         <dependency>
-            <groupId>org.codehaus.staxmate</groupId>
+            <groupId>com.fasterxml.staxmate</groupId>
             <artifactId>staxmate</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
         </dependency>
 
         <dependency>
