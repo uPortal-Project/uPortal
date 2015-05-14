@@ -18,6 +18,9 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.apache.commons.lang3.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
@@ -26,14 +29,15 @@ import org.jasig.portal.groups.pags.IPersonTester;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups. To avoid infinite recursion,
@@ -47,7 +51,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public final class AdHocGroupTester implements IPersonTester {
 
-    private static final Set<String> currentPersons = new ConcurrentSkipListSet<>();
+    private final Cache currentTests;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Set<IEntityGroup> includes = new HashSet<>();
     private final Set<IEntityGroup> excludes = new HashSet<>();
@@ -58,7 +62,10 @@ public final class AdHocGroupTester implements IPersonTester {
         Validate.notNull(definition.getExcludes());
         this.includes.addAll(collectGroups(definition.getIncludes(), true));
         this.excludes.addAll(collectGroups(definition.getExcludes(), false));
-        groupsHash = calcGroupsHash(definition.getIncludes(), definition.getExcludes());
+        this.groupsHash = calcGroupsHash(definition.getIncludes(), definition.getExcludes());
+        ApplicationContext context = ApplicationContextLocator.getApplicationContext();
+        CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
+        this.currentTests = cacheManager.getCache("org.jasig.portal.groups.pags.testers.AdHocGroupTester");
     }
 
     /*
@@ -77,11 +84,12 @@ public final class AdHocGroupTester implements IPersonTester {
     public boolean test(IPerson person) {
         String personHash = person.getEntityIdentifier().getKey() + groupsHash + Thread.currentThread().getId();
         logger.debug("Entering test() for {}", personHash);
-        if (currentPersons.contains(personHash)) {
+        if (currentTests.getQuiet(personHash) != null) {
             logger.warn("Returning from test() for {} due to recusion for person = {}", personHash, person.toString());
             return false; // stop recursing
         }
-        currentPersons.add(personHash);
+        Element cacheEl = new Element(personHash, personHash);
+        currentTests.put(cacheEl);
 
         IGroupMember gmPerson = findPersonAsGroupMember(person);
         boolean pass = true;
@@ -109,7 +117,7 @@ public final class AdHocGroupTester implements IPersonTester {
             }
         }
 
-        currentPersons.remove(personHash);
+        currentTests.remove(personHash);
         logger.debug("Returning from test() for {}", personHash);
         return pass;
     }
@@ -149,8 +157,8 @@ public final class AdHocGroupTester implements IPersonTester {
      * Format: _(_[include_group_names])*(^[exclude_group_names])*_#
      * Example: for includes = "Students"+"Active" and excludes = "Hackers", "__Active_Students^Hackers_#"
      *
-     * @param includes      {@String} collection of group names for member of tests
-     * @param excludes      {@String} collection of group names for NOT member of tests
+     * @param includes      String collection of group names for member of tests
+     * @param excludes      String collection of group names for NOT member of tests
      * @return              hash for this test based on groups parameters
      */
     private static String calcGroupsHash(Set<String> includes, Set<String> excludes) {
@@ -195,7 +203,6 @@ public final class AdHocGroupTester implements IPersonTester {
      */
     private static IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();
-        IGroupMember personGM =  GroupService.getEntity(personKey, IPerson.class);
-        return personGM;
+        return GroupService.getEntity(personKey, IPerson.class);
     }
 }
