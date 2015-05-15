@@ -390,7 +390,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (pagsGroups.size() > 1) {
-            logger.warn("More than one PAGS group with name {} found.", name);
+            logger.error("More than one PAGS group with name {} found.", name);
         }
         return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
     }
