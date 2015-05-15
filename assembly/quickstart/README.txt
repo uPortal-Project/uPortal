@@ -54,8 +54,12 @@ Windows: ant.bat
 UNIX:    ant.sh
 
 'ant start' - Starts HSQL and then Tomcat, both are started in the background.
+  (That is, under a UNIX-style operating system this is `ant.sh start` ,
+   and under a Windows operating system this is `ant.bat` ).
 
 'ant stop' - Stops Tomcat then stops HSQL. 
+  (That is, under a UNIX-style operating system this is `ant.sh stop` ,
+   and under a Windows operating system this is `ant.bat stop` ).
 
 
 Using uPortal
