@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityImpl;
@@ -65,12 +68,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
-    private final ApplicationContext applicationContext;
-    
+    private final Cache groupDefCache;
+
     public EntityPersonAttributesGroupStore() {
-         super();
-         this.applicationContext = ApplicationContextLocator.getApplicationContext();
-         this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
+        super();
+        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
+        this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
+        CacheManager cacheManager = applicationContext.getBean("cacheManager", CacheManager.class);
+        this.groupDefCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore");
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
@@ -307,6 +312,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private GroupDefinition initGroupDef(IPersonAttributesGroupDefinition group) {
+        Element element = this.groupDefCache.get(group.getName());
+        if (element != null) {
+            return (GroupDefinition) element.getObjectValue();
+        }
         GroupDefinition groupDef = new GroupDefinition();
         groupDef.setKey(group.getName());
         groupDef.setName(group.getName());
@@ -333,6 +342,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             }
             groupDef.addTestGroup(tg);
         }
+        element = new Element(group.getName(), groupDef);
+        this.groupDefCache.put(element);
         return groupDef;
     }
 

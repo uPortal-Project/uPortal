@@ -1835,6 +1835,11 @@
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
+    <!-- PAGS Group Definition Cache, not replicated -->
+    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
     <!-- PAGS Store Cache, not replicated -->
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
