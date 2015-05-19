@@ -25,8 +25,10 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitio
 import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupDefinitionDao;
 import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestDefinitionDao;
 import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestGroupDefinitionDao;
+import org.jasig.portal.groups.pags.testers.AdHocGroupTester;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.RuntimeAuthorizationException;
 import org.jasig.portal.services.AuthorizationService;
@@ -55,12 +57,7 @@ import java.util.Set;
 @Service
 public final class PagsAdHocGroupAdministrationHelper {
     
-    public static final String GROUPS_OWNER = "UP_GROUPS";
-    public static final String CREATE_PERMISSION = "CREATE_GROUP";
-    public static final String DELETE_PERMISSION = "DELETE_GROUP";
-    public static final String EDIT_PERMISSION = "EDIT_GROUP";
-    public static final String VIEW_PERMISSION = "VIEW_GROUP";
-    private static final String AD_HOC_GROUP_TESTER = "org.jasig.portal.groups.pags.testers.AdHocGroupTester";
+    private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
     private static final String PARENT_NAME = "Ad Hoc Groups";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -141,8 +138,8 @@ public final class PagsAdHocGroupAdministrationHelper {
      */
     public void createGroup(PagsAdHocGroupForm form, IPerson user) {
         logger.debug("Creating group for group form [{}]", form.toString());
-        if (!hasPermission(user, CREATE_PERMISSION, PARENT_NAME)) {
-            throw new RuntimeAuthorizationException(user, CREATE_PERMISSION, form.getName());
+        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, PARENT_NAME)) {
+            throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
         }
         IPersonAttributesGroupDefinition group = this.pagsGroupDefDao.createPersonAttributesGroupDefinition(
                 form.getName(), form.getDescription());
@@ -168,8 +165,8 @@ public final class PagsAdHocGroupAdministrationHelper {
      */
     public void updateGroup(PagsAdHocGroupForm form, IPerson user) {
         logger.debug("Updating group for group form [{}]", form.toString());
-        if (!hasPermission(user, EDIT_PERMISSION, form.getName())) {
-            throw new RuntimeAuthorizationException(user, EDIT_PERMISSION, form.getName());
+        if (!hasPermission(user, IPermission.EDIT_GROUP_ACTIVITY, form.getName())) {
+            throw new RuntimeAuthorizationException(user, IPermission.EDIT_GROUP_ACTIVITY, form.getName());
         }
         IPersonAttributesGroupDefinition group = getPagsGroupDefByName(form.getName());
         assert(isManagedAdHocGroup(group));
@@ -190,8 +187,8 @@ public final class PagsAdHocGroupAdministrationHelper {
      */
     public void deleteGroup(String groupName, IPerson user) {
         logger.info("Deleting ad hoc PAGS group named {}", groupName);
-        if (!hasPermission(user, DELETE_PERMISSION, groupName)) {
-            throw new RuntimeAuthorizationException(user, DELETE_PERMISSION, groupName);
+        if (!hasPermission(user, IPermission.DELETE_GROUP_ACTIVITY, groupName)) {
+            throw new RuntimeAuthorizationException(user, IPermission.DELETE_GROUP_ACTIVITY, groupName);
         }
         IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
         assert(isManagedAdHocGroup(group));
@@ -209,7 +206,7 @@ public final class PagsAdHocGroupAdministrationHelper {
     private boolean hasPermission(IPerson person, String permission, String target) {
         EntityIdentifier ei = person.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return ap.hasPermission(GROUPS_OWNER, permission, target);
+        return ap.hasPermission(IPermission.PORTAL_GROUPS, permission, target);
     }
 
     /**

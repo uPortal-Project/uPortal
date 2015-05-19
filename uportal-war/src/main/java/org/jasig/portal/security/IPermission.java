@@ -91,6 +91,9 @@ public interface IPermission {
    */
 
   public static final String VIEW_GROUP_ACTIVITY = "VIEW_GROUP";
+  public static final String CREATE_GROUP_ACTIVITY = "CREATE_GROUP";
+  public static final String DELETE_GROUP_ACTIVITY = "DELETE_GROUP";
+  public static final String EDIT_GROUP_ACTIVITY = "EDIT_GROUP";
 
   /*
     Permission types.  At present only 2, but that could change.
