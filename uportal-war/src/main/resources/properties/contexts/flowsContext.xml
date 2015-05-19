@@ -54,9 +54,11 @@
     </bean>
      
     <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
-    
+
     <bean id="groupValidator" class="org.jasig.portal.portlets.groupadmin.GroupFormValidator"/>
-    
+
+    <bean id="adHocGroupValidator" class="org.jasig.portal.portlets.groupadmin.PagsAdHocGroupFormValidator"/>
+
     <bean id="portalConversionService"
         class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
     
