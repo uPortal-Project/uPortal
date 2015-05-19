@@ -103,7 +103,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @ManyToMany(mappedBy = "members", targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    private Set<IPersonAttributesGroupDefinition> parents;
+    private Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(0);
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
