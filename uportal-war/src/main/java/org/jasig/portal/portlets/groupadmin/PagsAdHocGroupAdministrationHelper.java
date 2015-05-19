@@ -35,6 +35,7 @@ import org.jasig.portal.services.AuthorizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -58,9 +59,11 @@ import java.util.Set;
 public final class PagsAdHocGroupAdministrationHelper {
     
     private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
-    private static final String PARENT_NAME = "Ad Hoc Groups";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${ad.hoc.group.parent:Ad Hoc Groups}")
+    private String adHocParentGroupName;
 
     @Autowired
     private IGroupListHelper groupListHelper;
@@ -138,7 +141,7 @@ public final class PagsAdHocGroupAdministrationHelper {
      */
     public void createGroup(PagsAdHocGroupForm form, IPerson user) {
         logger.debug("Creating group for group form [{}]", form.toString());
-        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, PARENT_NAME)) {
+        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, adHocParentGroupName)) {
             throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
         }
         IPersonAttributesGroupDefinition group = this.pagsGroupDefDao.createPersonAttributesGroupDefinition(
@@ -148,7 +151,7 @@ public final class PagsAdHocGroupAdministrationHelper {
                 testGroup, null, AD_HOC_GROUP_TESTER, null, form.getIncludes(), form.getExcludes());
 
         // add this group to the membership list for the specified parent
-        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(PARENT_NAME);
+        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(adHocParentGroupName);
         Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(1);
         parents.add(parentGroup);
         group.setParents(parents);
