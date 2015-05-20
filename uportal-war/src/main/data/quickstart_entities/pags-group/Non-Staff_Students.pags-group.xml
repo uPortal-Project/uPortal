@@ -20,19 +20,23 @@
 
 -->
 <!--
-  Group member_of_students: "Member of Students (PAGS)"
-  All IPersons that are in the Students Group are members of this group
+  Group non-staff_students: Non-Staff Students (PAGS)"
+  All IPersons that are in the Students Group and not in Staff Group
 -->
-<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
-  <name>Member of Students (PAGS)</name>
-  <description>Member of Students group</description>
+<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-3.crn">
+  <name>Non-Staff Students (PAGS)</name>
+  <description>Persons that are members of Students group but not members of Staff group</description>
   <selection-test>
     <test-group>
+        <test>
+            <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
+            <attribute>group-member</attribute>
+            <value>Students</value>
+        </test>
       <test>
           <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
-          <includes>Students</includes>
-          <excludes>Mobile Device Access</excludes>
-          <excludes>Staff</excludes>
+          <attribute>not-group-member</attribute>
+          <value>Staff</value>
       </test>
     </test-group>
   </selection-test>

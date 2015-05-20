@@ -24,13 +24,7 @@ class AdHocGroupTesterTest extends GroovyTestCase {
 
     @Test
     void testGroupsHash() {
-        String example = "__Active_Students^Bad^Hackers_#"
-        Set<String> includes = new HashSet<>()
-        includes.add("Students")
-        includes.add("Active")
-        Set<String> excludes = new HashSet<>()
-        excludes.add("Hackers")
-        excludes.add("Bad")
-        assertEquals(example, AdHocGroupTester.calcGroupsHash(includes, excludes))
+        assertEquals("_+Students_#", AdHocGroupTester.calcGroupHash("Students", false))
+        assertEquals("_^Hackers_#", AdHocGroupTester.calcGroupHash("Hackers", true))
     }
 }

@@ -21,7 +21,6 @@ package org.jasig.portal.groups.pags.testers;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.commons.lang3.Validate;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -34,35 +33,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Immutable PAGS Tester for inclusive/exclusive membership in sets of groups. To avoid infinite recursion,
  * calls to {@code test()} are tracked by parameters plus thread ID.
+ * <p/>
+ * {@code Attribute} should be either {@code group-member} or {@code not-group-member}.
+ * <p/>
+ * {@code Value} should be the group name as expected by {@code GroupService.searchForGroups}. {@code GroupService}
+ * is searched every test since groups can be added without restarting uPortal.
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.IPersonTester
  * @see     org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore
  * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition
+ * @see     org.jasig.portal.services.GroupService
  * @since   4.3
  */
 public final class AdHocGroupTester implements IPersonTester {
 
+    public static final String MEMBER_OF = "group-member";
+    public static final String NOT_MEMBER_OF = "not-group-member";
+
     private final Cache currentTests;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Set<IEntityGroup> includes = new HashSet<>();
-    private final Set<IEntityGroup> excludes = new HashSet<>();
-    private final String groupsHash;
+    private final String groupName;
+    private final boolean isNotTest;
+    private final String groupHash;
 
     public AdHocGroupTester(IPersonAttributesGroupTestDefinition definition) {
-        Validate.notNull(definition.getIncludes());
-        Validate.notNull(definition.getExcludes());
-        this.includes.addAll(collectGroups(definition.getIncludes(), true));
-        this.excludes.addAll(collectGroups(definition.getExcludes(), false));
-        this.groupsHash = calcGroupsHash(definition.getIncludes(), definition.getExcludes());
+        assert(definition.getAttributeName().equals(MEMBER_OF) || definition.getAttributeName().equals(NOT_MEMBER_OF));
+        this.isNotTest = (definition.getAttributeName().equals(NOT_MEMBER_OF));
+        this.groupName = definition.getTestValue();
+        this.groupHash = calcGroupHash(groupName, isNotTest);
         ApplicationContext context = ApplicationContextLocator.getApplicationContext();
         CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
         this.currentTests = cacheManager.getCache("org.jasig.portal.groups.pags.testers.AdHocGroupTester");
@@ -82,99 +86,41 @@ public final class AdHocGroupTester implements IPersonTester {
      */
     @Override
     public boolean test(IPerson person) {
-        String personHash = person.getEntityIdentifier().getKey() + groupsHash + Thread.currentThread().getId();
+        String personHash = person.getEntityIdentifier().getKey() + groupHash + Thread.currentThread().getId();
         logger.debug("Entering test() for {}", personHash);
+        IEntityGroup entityGroup = findGroupByName(groupName);
+        if (entityGroup == null) {
+            logger.error("Group named '{}' in ad hoc group tester definition not found!!", groupName);
+            return false;
+        }
+        IGroupMember gmPerson = findPersonAsGroupMember(person);
         if (currentTests.getQuiet(personHash) != null) {
-            logger.warn("Returning from test() for {} due to recusion for person = {}", personHash, person.toString());
+            logger.debug("Returning from test() for {} due to recusion for person = {}", personHash, person.toString());
             return false; // stop recursing
         }
         Element cacheEl = new Element(personHash, personHash);
         currentTests.put(cacheEl);
-
-        IGroupMember gmPerson = findPersonAsGroupMember(person);
-        boolean pass = true;
-
-        Iterator<IEntityGroup> groups = includes.iterator();
-        while (pass && groups.hasNext()) {
-            IEntityGroup group = groups.next();
-            logger.debug("Checking if {} is a member of {}", person.getUserName(), group.getName());
-            if (!gmPerson.isDeepMemberOf(group)) {
-                logger.debug("!! {} is not a member of {}", person.getUserName(), group.getDescription());
-                pass = false;
-            } else {
-                logger.debug("{} is a member of {}", person.getUserName(), group.getDescription());
-            }
-        }
-        groups = excludes.iterator();
-        while (pass && groups.hasNext()) {
-            IEntityGroup group = groups.next();
-            logger.debug("Checking if {} is NOT a member of {}", person.getUserName(), group.getName());
-            if (gmPerson.isDeepMemberOf(group)) {
-                logger.debug("!! {} is a member of {}", person.getUserName(), group.getDescription());
-                pass = false;
-            } else {
-                logger.debug("{} is not a member of {}", person.getUserName(), group.getDescription());
-            }
-        }
-
+        // method that potentially recurs
+        boolean isPersonGroupMember = gmPerson.isDeepMemberOf(entityGroup);
         currentTests.remove(personHash);
         logger.debug("Returning from test() for {}", personHash);
-        return pass;
+        return isPersonGroupMember ^ isNotTest;
     }
 
     /**
-     * Given a set of group names, find the entity groups and add them to the {@code groups} collection to be returned.
-     * If a group is not found, either log a warning or throw an {@code IllegalArgumentException} based on
-     * the {@code throwOnFail} parameter.
-     *
-     * @param groupNames    set of group names to find
-     * @param throwOnFail   flag to indicate whether to log or throw exception if a group is not found
-     * @return              set of named groups from {@link GroupService}
-     */
-    private Set<IEntityGroup> collectGroups(Set<String> groupNames, boolean throwOnFail) {
-        Set<IEntityGroup> groups = new HashSet<>();
-        for (String groupName : groupNames) {
-            IEntityGroup entityGroup = findGroupByName(groupName);
-            if (entityGroup != null) {
-                groups.add(entityGroup);
-            } else {
-                if (throwOnFail) {
-                    logger.error("Could not find group named {}", groupName);
-                    throw new IllegalArgumentException("Could not find group named " + groupName);
-                } else {
-                    logger.warn("Could not find group named {}", groupName);
-                }
-            }
-        }
-        return groups;
-    }
-
-    /**
-     * Create a hash based on the includes/excludes groups. This will be part of the call hash key
+     * Create a hash based on the group name and member-of/not-member-of test. This will be part of the call hash key
      * used to detect recursive calls to the same test (although this may be a different instance).
-     * For consistency, the sets are sorted before the hash string is built.
      * <p/>
-     * Format: _(_[include_group_names])*(^[exclude_group_names])*_#
-     * Example: for includes = "Students"+"Active" and excludes = "Hackers", "__Active_Students^Hackers_#"
+     * Format for member-of test: _+{@code groupName}_#
+     * Format for not-member-of test: _^{@code groupName}_#
+     * Example for member-of Students: _+Students_#
      *
-     * @param includes      String collection of group names for member of tests
-     * @param excludes      String collection of group names for NOT member of tests
-     * @return              hash for this test based on groups parameters
+     * @param groupName     group name to hash
+     * @param isNotTest     whether the test is for not-member-of
+     * @return              hash for this test based on group name and test type parameters
      */
-    private static String calcGroupsHash(Set<String> includes, Set<String> excludes) {
-        Set<String> includesSorted = new TreeSet<>(includes);
-        Set<String> excludesSorted = new TreeSet<>(excludes);
-        StringBuilder hash = new StringBuilder("_");
-        for (String group : includesSorted) {
-            hash.append("_");
-            hash.append(group);
-        }
-        for (String group : excludesSorted) {
-            hash.append("^");
-            hash.append(group);
-        }
-        hash.append("_#");
-        return hash.toString();
+    private static String calcGroupHash(String groupName, boolean isNotTest) {
+        return ( isNotTest ? "_^" : "_+" ) + groupName + "_#";
     }
 
     /**
@@ -182,7 +128,8 @@ public final class AdHocGroupTester implements IPersonTester {
      *
      * @param groupName     name of group to search from {@code GroupService}
      * @return              {@code IEntityGroup} with given name or null if no group with given name found
-     * @see                 org.jasig.portal.services.GroupService
+     * @see                 org.jasig.portal.services.GroupService#searchForEntities(String, int, Class)
+     * @see                 org.jasig.portal.services.GroupService#findGroup(String)
      */
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
@@ -199,7 +146,7 @@ public final class AdHocGroupTester implements IPersonTester {
      *
      * @param person    {@code IPerson} with entity identifier key to look up
      * @return          person as {@code IGroupMember}
-     * @see             org.jasig.portal.services.GroupService
+     * @see             org.jasig.portal.services.GroupService#getEntity(String, Class)
      */
     private static IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();
