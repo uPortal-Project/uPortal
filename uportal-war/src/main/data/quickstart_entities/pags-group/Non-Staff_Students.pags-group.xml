@@ -28,15 +28,15 @@
   <description>Persons that are members of Students group but not members of Staff group</description>
   <selection-test>
     <test-group>
-        <test>
-            <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
-            <attribute>group-member</attribute>
-            <value>Students</value>
-        </test>
       <test>
-          <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
-          <attribute>not-group-member</attribute>
-          <value>Staff</value>
+        <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
+        <attribute>group-member</attribute>
+        <value>Students</value>
+      </test>
+      <test>
+        <tester-class>org.jasig.portal.groups.pags.testers.AdHocGroupTester</tester-class>
+        <attribute>not-group-member</attribute>
+        <value>Staff</value>
       </test>
     </test-group>
   </selection-test>
