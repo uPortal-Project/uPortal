@@ -19,12 +19,7 @@
 package org.jasig.portal.portlets.groupadmin;
 
 import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
-import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestDefinitionDao;
-import org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestGroupDefinitionDao;
+import org.jasig.portal.groups.pags.dao.*;
 import org.jasig.portal.groups.pags.testers.AdHocGroupTester;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -49,9 +44,9 @@ import java.util.Set;
  * will not be allowed to set members or other PAGS tests beyond the ad hoc group tester.
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
- * @see     org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupDefinitionDao
- * @see     org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestDefinitionDao
- * @see     org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestGroupDefinitionDao
+ * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao
+ * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao
+ * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao
  * @see     org.jasig.portal.groups.pags.testers.AdHocGroupTester
  * @since   4.3
  */
@@ -60,22 +55,22 @@ public final class PagsAdHocGroupAdministrationHelper {
     
     private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Value("${ad.hoc.group.parent:Ad Hoc Groups}")
     private String adHocParentGroupName;
 
     @Autowired
     private IGroupListHelper groupListHelper;
-    
-    @Autowired
-    private JpaPersonAttributesGroupDefinitionDao pagsGroupDefDao;
 
     @Autowired
-    private JpaPersonAttributesGroupTestGroupDefinitionDao pagsTestGroupDefDao;
+    private IPersonAttributesGroupDefinitionDao pagsGroupDefDao;
 
     @Autowired
-    private JpaPersonAttributesGroupTestDefinitionDao pagsTestDefDao;
+    private IPersonAttributesGroupTestGroupDefinitionDao pagsTestGroupDefDao;
+
+    @Autowired
+    private IPersonAttributesGroupTestDefinitionDao pagsTestDefDao;
 
     /**
      * Verify that the group is one of the ad hoc groups that is eligible for management via this feature.
@@ -214,21 +209,21 @@ public final class PagsAdHocGroupAdministrationHelper {
 
     /**
      * Retrieve an implementation of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
-     * the JPA DAO. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
+     * the DAO bean. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
      * Second, that group names are unique. A warning will be logged if more than one group is found with the same name.
      *
      * @param name      group name used to search for group definition
      * @return          {@code IPersonAttributesGroupDefinition} of named group or null
-     * @see             JpaPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
+     * @see             IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
      * @see             IPersonAttributesGroupDefinition
      */
     private IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
        Set<IPersonAttributesGroupDefinition> pagsGroups = pagsGroupDefDao.getPersonAttributesGroupDefinitionByName(name);
        if (pagsGroups.size() > 1) {
-                logger.error("More than one PAGS group with name {} found.", name);
-            }
-         return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
-      }
+           logger.error("More than one PAGS group with name {} found.", name);
+       }
+       return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
+    }
 
     /**
      * Get the embedded test object from the group. Implementation assumes that the group has already been checked for
