@@ -78,16 +78,13 @@
         <property name="cache" ref="org.jasig.portal.rendering.STRUCTURE_TRANSFORM" />
     </bean>
     
-    <bean id="jsonDashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.WindowStateSettingsStAXComponent">
-        <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
-        <property name="stylesheetAttributeSource" ref="jsonThemeAttributeSource" />
-    </bean>
-    
     <!-- portlet window attribute incorporation -->
     <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonDashboardWindowStateSettingsStAXComponent" />
+        <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
         <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
+            <bean class="org.jasig.portal.rendering.WindowStateAttributeSource">
+                <property name="windowState" value="#{T(javax.portlet.WindowState).MINIMIZED}"/>
+            </bean>
         </property>
     </bean>
     
