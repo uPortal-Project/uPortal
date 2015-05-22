@@ -21,16 +21,19 @@
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:util="http://www.springframework.org/schema/util"       
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-           
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:component-scan base-package="org.jasig.portal.portlets.groupadmin"/>
+
     <!-- Generic Web-Flow helper beans -->
     <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
-                      
 
     <!-- Beans for the person-lookup flow -->       
     <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">

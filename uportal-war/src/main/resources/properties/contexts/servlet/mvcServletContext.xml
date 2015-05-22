@@ -39,17 +39,18 @@
         </property>
     </bean>
 
-	<!-- 
-	 | rest controllers require useDefaultSuffixPattern set to false
-	 -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-  		<property name="useDefaultSuffixPattern" value="false"/>
-	</bean>
+    <!--
+     | rest controllers require useDefaultSuffixPattern set to false
+     -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="useDefaultSuffixPattern" value="false"/>
+    </bean>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
     
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.jasig.portal.layout.dlm.remoting"/>
+    <context:component-scan base-package="org.jasig.portal.portlets.permissionsadmin"/>
     <context:component-scan base-package="org.jasig.portal.security.remoting"/>
     <context:component-scan base-package="org.jasig.portal.rest"/>
     <context:property-placeholder location="classpath:/properties/portal.properties"/>

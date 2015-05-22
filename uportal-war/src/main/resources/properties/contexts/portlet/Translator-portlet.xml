@@ -27,7 +27,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
            
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.translator"/>
+    <context:component-scan base-package="org.jasig.portal.portlets.translator, org.jasig.portal.portlets.localization"/>
     
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors">

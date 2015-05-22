@@ -20,20 +20,25 @@
 
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
-           
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <context:component-scan base-package="org.jasig.portal.portlets" use-default-filters="false">
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
+    </context:component-scan>
+
     <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
         <property name="httpClient" ref="httpClient"/>
     </bean>
     <bean id="clientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
         <property name="httpClient" ref="httpClient" />
     </bean>
-    
+
     <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
         <constructor-arg ref="httpConnectionManager" />
         <constructor-arg ref="httpParams"/>
@@ -57,7 +62,7 @@
         </constructor-arg>
         <property name="cookiePolicy" value="ignoreCookies"/>
     </bean>
-    
+
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <property name="messageConverters">
             <util:list>
@@ -81,42 +86,42 @@
         </property>
         <property name="requestFactory" ref="clientHttpRequestFactory" />
     </bean>
-    
+
     <util:set id="UsernameCacheTagPurger_IgnoredUsernames">
         <value>guest</value>
     </util:set>
-    
-    
+
+
     <util:list id="searchServices">
-        
+
         <!-- Uncomment and fill in your Google Custom Search ID to use
         <bean class="org.jasig.portal.portlets.search.google.GoogleCustomSearchService">
             <property name="customSearchId" value="" />
         </bean>
          -->
-         
+
         <!-- Uncomment and fill in your Google Search Appliance URL and Site to use
         <bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService">
             <property name="baseUrl" value="http://search.example.com"/>
             <property name="site" value="Site"/>
         </bean>
         -->
-        
+
         <!--Toggle one of the next two via comment
-        	Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
-        	portlet preferences marked as screen_capture_x and will include a link to the marketplace
-        	entry and possibly more to come
+            Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
+            portlet preferences marked as screen_capture_x and will include a link to the marketplace
+            entry and possibly more to come
          -->
-        
+
         <!--
         <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
         --> 
-         
+
         <bean class="org.jasig.portal.portlet.marketplace.MarketplaceSearchService" />
-		
-        
+
+
     </util:list>
-    
+
     <!-- 
      | Maps search resultType strings to tabs that are displayed in the results. If a resultType is not
      | mapped below its results go in the default tab.
