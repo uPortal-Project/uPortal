@@ -166,7 +166,11 @@
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
-  
+
+  <!-- Hide some useful Hibernate performance statistics that clutter the logs in dev.  Enable this to review
+       DB connection, flush, and cache times, # of objects flushed, etc. -->
+  <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" additivity="false" level="WARN"/>
+
   <!-- Hide some bad Hibernate log messages -->
   <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
   <logger name="org.hibernate.ejb.metamodel.MetadataContext" additivity="false" level="FATAL"/>
