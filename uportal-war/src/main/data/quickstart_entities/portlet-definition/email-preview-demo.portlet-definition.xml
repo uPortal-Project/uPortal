@@ -88,7 +88,7 @@
     <portlet-preference>
         <name>protocol</name>
         <readOnly>true</readOnly>
-        <value>IMAPS</value>
+        <value>imaps</value>
     </portlet-preference>
     <portlet-preference>
         <name>host</name>
