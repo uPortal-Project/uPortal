@@ -41,4 +41,8 @@
         <name>iconUrl</name>
         <value>${request.contextPath}/media/skins/icons/google.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/map_alt.png</value>
+    </parameter>
 </portlet-definition>

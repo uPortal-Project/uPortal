@@ -47,7 +47,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+        <value>/uPortal/media/skins/icons/mobile/media.png</value> <!--was feed.png before-->
     </parameter>
     <parameter>
         <name>editable</name>

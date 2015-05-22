@@ -75,6 +75,10 @@
         <name>blockImpersonation</name>
         <value>false</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/emergency.png</value>
+    </parameter>
     <portlet-preference>
         <name>EmergencyAlertController.usePortalJsLibs</name>
         <readOnly>false</readOnly>

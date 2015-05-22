@@ -73,4 +73,8 @@
         <name>showChrome</name>
         <value>true</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/campus_life.png</value>
+    </parameter>
 </portlet-definition>

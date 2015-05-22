@@ -77,6 +77,10 @@
         <name>showChrome</name>
         <value>true</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/announcements.png</value>
+    </parameter>
     <portlet-preference>
         <name>AnnouncementPreferences.filterItems</name>
         <readOnly>false</readOnly>

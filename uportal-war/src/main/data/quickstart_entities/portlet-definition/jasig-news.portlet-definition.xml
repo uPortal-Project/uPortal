@@ -43,6 +43,10 @@
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
     </parameter>
     <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/news.png</value>
+    </parameter>
+    <parameter>
         <name>hasHelp</name>
         <value>true</value>
     </parameter>

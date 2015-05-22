@@ -49,4 +49,8 @@
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/x-office-address-book.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/bookmarks.png</value>
+    </parameter>
 </portlet-definition>

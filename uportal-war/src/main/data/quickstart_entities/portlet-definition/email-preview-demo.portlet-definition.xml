@@ -83,7 +83,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/directory.png</value>
+        <value>/uPortal/media/skins/icons/mobile/email.png</value><!--directory.png was old icon-->
     </parameter>
     <portlet-preference>
         <name>protocol</name>
