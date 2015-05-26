@@ -77,7 +77,8 @@ public final class PagsAdHocGroupAdministrationHelper {
      * <ul>
      *     <li>Child of {@code ad hoc groups} group -- THIS NEEDED? -- check not implemented</li>
      *     <li>Single test group</li>
-     *     <li>Single ad hoc group tester</li>
+     *     <li>At least one ad hoc group tester</li>
+     *     <li>Only ad hoc group testers</li>
      *     <li>No group members</li>
      * </ul>
      *
@@ -93,21 +94,24 @@ public final class PagsAdHocGroupAdministrationHelper {
             return false;
         }
         Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
-        if (tests.size() != 1) {
+        if (tests.isEmpty()) {
             return false;
         }
-        IPersonAttributesGroupTestDefinition test = tests.iterator().next();
-        if (!test.getTesterClassName().equals(AD_HOC_GROUP_TESTER)) {
-            return false;
+        for (IPersonAttributesGroupTestDefinition test: tests) {
+            if (!AD_HOC_GROUP_TESTER.equals(test.getTesterClassName())) {
+                return false;
+            }
         }
-        return test.getIncludes().size() + test.getExcludes().size() > 0;
+        return group.getMembers().isEmpty();
     }
 
     /**
-     * Construct a group form for the group with the specified name.
+     * Construct a group form for the group with the specified name. Assume that the group meets the criteria for
+     * a managed ad hoc group.
      *
      * @param name      PAGS group name
      * @return          form version of specified group
+     * @see             #isManagedAdHocGroup(IPersonAttributesGroupDefinition)
      */
     public PagsAdHocGroupForm getGroupForm(String name) {
         // Should there be a view or edit check?
@@ -117,19 +121,21 @@ public final class PagsAdHocGroupAdministrationHelper {
         PagsAdHocGroupForm form = new PagsAdHocGroupForm();
         form.setName(group.getName());
         form.setDescription(group.getDescription());
-        IPersonAttributesGroupTestDefinition test = getPersonAttributesGroupTestDefinition(group);
-        for (String incGroup: test.getIncludes()) {
-            form.addIncludes(incGroup);
-        }
-        for (String excGroup: test.getExcludes()) {
-            form.addExcludes(excGroup);
+        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+        Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
+        for (IPersonAttributesGroupTestDefinition test: tests) {
+            // We already asserted that the tests were all AdHocGroupTester classes
+            if (test.getAttributeName().equals(AdHocGroupTester.MEMBER_OF)) {
+                form.addIncludes(test.getTestValue());
+            } else {
+                form.addExcludes(test.getTestValue());
+            }
         }
         return form;
     }
 
     /**
-     * Create a new group under the specified parent.  The new group will
-     * automatically be added to the parent group.
+     * Create a new group under the well-known ad hoc groups parent.
      *
      * @param form      form representing the new group configuration
      * @param user      user performing the update
@@ -142,8 +148,7 @@ public final class PagsAdHocGroupAdministrationHelper {
         IPersonAttributesGroupDefinition group = this.pagsGroupDefDao.createPersonAttributesGroupDefinition(
                 form.getName(), form.getDescription());
         IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
-        IPersonAttributesGroupTestDefinition test = this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
-                testGroup, null, AD_HOC_GROUP_TESTER, null, form.getIncludes(), form.getExcludes());
+        addAdHocTesters(testGroup, form.getIncludes(), form.getExcludes(), user);
 
         // add this group to the membership list for the specified parent
         IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(adHocParentGroupName);
@@ -170,9 +175,8 @@ public final class PagsAdHocGroupAdministrationHelper {
         assert(isManagedAdHocGroup(group));
         group.setName(form.getName());
         group.setDescription(form.getDescription());
-        IPersonAttributesGroupTestDefinition test = getPersonAttributesGroupTestDefinition(group);
-        test.setIncludes(form.getIncludes());
-        test.setExcludes(form.getExcludes());
+        IPersonAttributesGroupTestGroupDefinition testGroup = group.getTestGroups().iterator().next();
+        addAdHocTesters(testGroup, form.getIncludes(), form.getExcludes(), user);
         assert(isManagedAdHocGroup(group));
         this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
     }
@@ -191,6 +195,31 @@ public final class PagsAdHocGroupAdministrationHelper {
         IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
         assert(isManagedAdHocGroup(group));
         this.pagsGroupDefDao.deletePersonAttributesGroupDefinition(group);
+    }
+
+    /**
+     * Add test definitions to the test group for the given list of includes and excludes group lists.
+     *
+     * @param testGroup     target test group that is update with the group lists
+     * @param includes      set of group names to add ad hoc testers to test group
+     * @param excludes      set of group names to add ad hoc testers to test group with exclude set
+     * @param user          user to check permission for adding each group
+     */
+    private void addAdHocTesters(IPersonAttributesGroupTestGroupDefinition testGroup,
+                                 Set<String> includes, Set<String> excludes, IPerson user) {
+        for (String group: includes) {
+            if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
+                this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
+                        testGroup, AdHocGroupTester.MEMBER_OF, AD_HOC_GROUP_TESTER, group, null, null);
+            }
+        }
+        for (String group: excludes) {
+            if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
+                this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
+                        testGroup, AdHocGroupTester.NOT_MEMBER_OF, AD_HOC_GROUP_TESTER, group, null, null);
+            }
+        }
+
     }
 
     /**
@@ -223,17 +252,5 @@ public final class PagsAdHocGroupAdministrationHelper {
            logger.error("More than one PAGS group with name {} found.", name);
        }
        return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
-    }
-
-    /**
-     * Get the embedded test object from the group. Implementation assumes that the group has already been checked for
-     * a single ad hoc group test.
-     *
-     * @param group     group with the test
-     * @return          ad hoc group tester
-     */
-    private IPersonAttributesGroupTestDefinition getPersonAttributesGroupTestDefinition(IPersonAttributesGroupDefinition group) {
-        IPersonAttributesGroupTestGroupDefinition testGroup = group.getTestGroups().iterator().next();
-        return testGroup.getTests().iterator().next();
     }
 }
