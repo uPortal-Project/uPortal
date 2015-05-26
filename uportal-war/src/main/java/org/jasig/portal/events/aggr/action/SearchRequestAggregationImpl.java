@@ -51,7 +51,7 @@ import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 @Table(name = "UP_SEARCH_REQ_AGGR")
 @Inheritance(strategy= InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_SEARCH_REQ_LAYOUT_GEN",
+        name="UP_SEARCH_REQ_AGGR_GEN",
         sequenceName="UP_SEARCH_REQ_AGGR_SEQ",
         allocationSize=1000
 )
