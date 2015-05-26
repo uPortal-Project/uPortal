@@ -246,31 +246,16 @@
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_41_DATA_KEY"/>
         </property>
-        <!-- Elements found in the v4.1 XML are a subset of 4.3;  the v4-3 script is backwards-compatible. -->
-        <property name="task" ref="import-pags-group_v4-3-GROUP" />
+        <property name="task" ref="import-pags-group_v4-1-GROUP" />
     </bean>
     <bean id="pagsGroupMembershipMembers41Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
         <property name="threadSafe" value="false" />
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_MEMBERS_41_DATA_KEY"/>
         </property>
-        <!-- Elements found in the v4.1 XML are a subset of 4.3;  the v4-3 script is backwards-compatible. -->
-        <property name="task" ref="import-pags-group_v4-3-MEMBERS" />
+        <property name="task" ref="import-pags-group_v4-1-MEMBERS" />
     </bean>
-    <bean id="pagsGroupMembershipGroup43Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
-        <property name="threadSafe" value="false" />
-        <property name="dataKeys">
-            <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_43_DATA_KEY"/>
-        </property>
-        <property name="task" ref="import-pags-group_v4-3-GROUP" />
-    </bean>
-    <bean id="pagsGroupMembershipMembers43Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
-        <property name="threadSafe" value="false" />
-        <property name="dataKeys">
-            <util:constant static-field="org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_MEMBERS_43_DATA_KEY"/>
-        </property>
-        <property name="task" ref="import-pags-group_v4-3-MEMBERS" />
-    </bean>
+
     <bean id="membership26Importer" class="org.jasig.portal.io.xml.crn.CernunnosDataImporter">
         <property name="dataKeys">
             <util:constant static-field="org.jasig.portal.io.xml.group.MembershipPortalDataType.IMPORT_26_DATA_KEY"/>
@@ -497,8 +482,8 @@
             </util:map>
         </property>
     </bean>
-    <bean id="import-pags-group_v4-3-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-3.crn" />
+    <bean id="import-pags-group_v4-1-GROUP" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
@@ -510,8 +495,8 @@
             </util:map>
         </property>
     </bean>
-    <bean id="import-pags-group_v4-3-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-3.crn" />
+    <bean id="import-pags-group_v4-1-MEMBERS" class="org.danann.cernunnos.runtime.PojoTask">
+        <property name="location" value="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />

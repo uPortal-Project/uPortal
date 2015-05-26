@@ -49,7 +49,7 @@ public class PersonAttributesGroupStoreExporter extends AbstractDom4jExporter {
         
         final org.dom4j.Document pagsGroupDefDoc = new org.dom4j.DocumentFactory().createDocument();
         final Element pagsGroupDefElement = pagsGroupDefDoc.addElement("pags-group");
-        pagsGroupDefElement.addAttribute("script", "classpath://org/jasig/portal/io/import-pags-group_v4-3.crn");
+        pagsGroupDefElement.addAttribute("script", "classpath://org/jasig/portal/io/import-pags-group_v4-1.crn");
         personAttributesGroupDefinitions.iterator().next().toElement(pagsGroupDefElement);
         
         return pagsGroupDefElement;

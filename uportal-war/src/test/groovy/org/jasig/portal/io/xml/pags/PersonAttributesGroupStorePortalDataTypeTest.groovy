@@ -43,23 +43,14 @@ class PersonAttributesGroupStorePortalDataTypeTest {
             PersonAttributesGroupStorePortalDataType.PAGS_GROUP_MEMBERS_41_KEYS,
             keys41);
 
-        // v4.3 keys
-        Set<PortalDataKey> keys43 = portalDataType.postProcessPortalDataKey(
-            null,   // unused
-            PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_43_DATA_KEY,
-            null);  // unused
-        assertEquals('Incorrect output from postProcessPortalDataKey() -- ',
-            PersonAttributesGroupStorePortalDataType.PAGS_GROUP_MEMBERS_43_KEYS,
-            keys43);
-
         // Single, specific key
-        Set<PortalDataKey> groupKey43 = portalDataType.postProcessPortalDataKey(
+        Set<PortalDataKey> groupKey41 = portalDataType.postProcessPortalDataKey(
             null,   // unused
-            PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_43_DATA_KEY,
+            PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_41_DATA_KEY,
             null);  // unused
         assertEquals('Incorrect output from postProcessPortalDataKey() -- ',
-            Collections.singleton(PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_43_DATA_KEY),
-            groupKey43);
+            Collections.singleton(PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_GROUP_41_DATA_KEY),
+            groupKey41);
 
     }
 

@@ -40,11 +40,8 @@ import com.google.common.base.Function;
  */
 @Repository("personAttributesGroupTestDefinitionDao")
 public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao implements IPersonAttributesGroupTestDefinitionDao {
-
-    /* package-private*/ static final String TABLENAME_PREFIX = "UP_PAGS_TEST";
-
     private CriteriaQuery<PersonAttributesGroupTestDefinitionImpl> findAllDefinitions;
-
+    
     @Override
     public void afterPropertiesSet() throws Exception {
         this.findAllDefinitions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupTestDefinitionImpl>>() {
@@ -101,17 +98,8 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
     
     @PortalTransactional
     @Override
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(
-            IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName,
-            String testerClass, String testValue, Set<String> includes,
-            Set<String> excludes) {
-        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl(
-                (PersonAttributesGroupTestGroupDefinitionImpl)testGroup,
-                attributeName,
-                testerClass,
-                testValue,
-                includes,
-                excludes);
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+        final IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition = new PersonAttributesGroupTestDefinitionImpl((PersonAttributesGroupTestGroupDefinitionImpl)testGroup, attributeName, testerClass, testValue);
         this.getEntityManager().persist(personAttributesGroupTestDefinition);
         return personAttributesGroupTestDefinition;
     }

@@ -53,31 +53,10 @@
                 <attribute key="attributeName">${valueOf(attribute-name)}</attribute>
                 <attribute key="testerClass">${valueOf(tester-class)}</attribute>
                 <attribute key="testValue">${valueOf(test-value)}</attribute>
-                <attribute key="includes">${groovy(new java.util.HashSet())}</attribute>
-                <attribute key="excludes">${groovy(new java.util.HashSet())}</attribute>
                 <subtasks>
-                  <node-iterator xpath="includes">
-                    <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
-                      <groovy>
-                        <script>
-                          includes.add(groupName)
-                        </script>
-                      </groovy>
-                    </with-attribute>
-                  </node-iterator>
-                  <node-iterator xpath="excludes">
-                    <with-attribute key="groupName" value="${valueOf(.)}"><!-- See NOTE on escaped characters above -->
-                      <groovy>
-                        <script>
-                          excludes.add(groupName)
-                        </script>
-                      </groovy>
-                    </with-attribute>
-                  </node-iterator>
                   <groovy>
                     <script>
-                      personAttributesGroupImportHelper.addTest(testGroup, attributeName,
-                                            testerClass, testValue, includes, excludes);
+                      personAttributesGroupImportHelper.addTest(testGroup, attributeName, testerClass, testValue);
                     </script>
                   </groovy>
                 </subtasks>

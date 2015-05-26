@@ -16,52 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.groups.pags.dao;
-
-import java.util.Set;
 
 import org.dom4j.Element;
 import org.jasig.portal.IBasicEntity;
 
 /**
- * Defines an {@link IPersonTester} in PAGS.
- *
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributesGroupTestDefinition extends IBasicEntity {
 
     long getId();
-
+    
     String getAttributeName();
     void setAttributeName(String attributeName);
     String getTesterClassName();
     void setTesterClassName(String className);
     String getTestValue();
     void setTestValue(String testValue);
-
-    /**
-     * @since 4.3
-     */
-    Set<String> getIncludes();
-
-    /**
-     * @since 4.3
-     */
-    void setIncludes(Set<String> includes);
-
-    /**
-     * @since 4.3
-     */
-    Set<String> getExcludes();
-
-    /**
-     * @since 4.3
-     */
-    void setExcludes(Set<String> excludes);
-
+    
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
     void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
     void toElement(Element parent);
-
 }
