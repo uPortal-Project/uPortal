@@ -49,6 +49,10 @@
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/mimetypes/text-html.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/feedback.png</value>
+    </parameter>
     <portlet-preference>
         <name>content</name>
         <readOnly>false</readOnly>

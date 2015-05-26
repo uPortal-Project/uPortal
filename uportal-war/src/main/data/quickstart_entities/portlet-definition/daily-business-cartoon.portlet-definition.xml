@@ -46,6 +46,10 @@
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/emotes/face-smile.png</value>
     </parameter>
     <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+    </parameter>
+    <parameter>
         <name>hasHelp</name>
         <value>true</value>
     </parameter>

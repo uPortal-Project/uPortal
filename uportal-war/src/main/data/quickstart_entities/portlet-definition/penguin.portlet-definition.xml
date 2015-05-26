@@ -41,6 +41,10 @@
         <name>editable</name>
         <value>true</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/feed.png</value>
+    </parameter>
     <portlet-preference>
         <name>configuredUrl</name>
         <readOnly>false</readOnly>
