@@ -504,7 +504,7 @@
                 <entry key="IMPORT_ACTION" value="MEMBERS" />
                 <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="personAttributesGroupDefinitionDao" />
                 <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="personAttributesGroupTestDefinitionDao" />
-                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDpo" value-ref="personAttributesGroupTestGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="personAttributesGroupTestGroupDefinitionDao" />
             </util:map>
         </property>
     </bean>

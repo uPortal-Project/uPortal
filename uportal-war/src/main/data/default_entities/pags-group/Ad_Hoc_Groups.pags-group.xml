@@ -23,7 +23,7 @@
   Group ad_hoc_groups: "Ad Hoc Groups"
   IMPORTANT: Ad Hoc Groups is REQUIRED for the Ad Hoc Groups feature to function.
 -->
-<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-3.crn">
+<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
   <name>Ad Hoc Groups</name>
   <description>Parent of all ad hoc groups created through the ad hoc groups UI.</description>
 </pags-group>

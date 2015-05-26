@@ -23,7 +23,7 @@
   Group non-staff_students: Non-Staff Students (PAGS)"
   All IPersons that are in the Students Group and not in Staff Group
 -->
-<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-3.crn">
+<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
   <name>Non-Staff Students (PAGS)</name>
   <description>Persons that are members of Students group but not members of Staff group</description>
   <selection-test>

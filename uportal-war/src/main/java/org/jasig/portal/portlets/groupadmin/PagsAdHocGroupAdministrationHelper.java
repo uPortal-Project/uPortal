@@ -210,13 +210,13 @@ public final class PagsAdHocGroupAdministrationHelper {
         for (String group: includes) {
             if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
                 this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
-                        testGroup, AdHocGroupTester.MEMBER_OF, AD_HOC_GROUP_TESTER, group, null, null);
+                        testGroup, AdHocGroupTester.MEMBER_OF, AD_HOC_GROUP_TESTER, group);
             }
         }
         for (String group: excludes) {
             if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
                 this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
-                        testGroup, AdHocGroupTester.NOT_MEMBER_OF, AD_HOC_GROUP_TESTER, group, null, null);
+                        testGroup, AdHocGroupTester.NOT_MEMBER_OF, AD_HOC_GROUP_TESTER, group);
             }
         }
 
