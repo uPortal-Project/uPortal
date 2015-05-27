@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlets.groupadmin;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,13 +26,13 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 
 /**
- * Validates {@code PagsAdHocGroupForm} instances in the group editing
- * Spring Web Flow.
+ * Validates {@link AdHocPagsForm} instances in the group editing submitted from
+ * the special UI that exists for managing them..
  *
  * @author Benito J. Gonzalez <bgonzalez@unicon.net>
  * @since   4.3
  */
-public final class PagsAdHocGroupFormValidator {
+public final class AdHocPagsFormValidator {
 
     /**
      * Validate ad hoc groups form.
@@ -45,8 +46,8 @@ public final class PagsAdHocGroupFormValidator {
      * @param group        Group information submitted by the user
      * @param context   Validation messages to be sent back to the user
      */
-    public void validateEditDetails(PagsAdHocGroupForm group, MessageContext context) {
-        
+    public void validateEditDetails(AdHocPagsForm group, MessageContext context) {
+
         // check the group name is set
         if (StringUtils.isBlank(group.getName())) {
             context.addMessage(new MessageBuilder().error().source("name")
@@ -66,7 +67,7 @@ public final class PagsAdHocGroupFormValidator {
             context.addMessage(new MessageBuilder().error().source("includes")
                     .code("please.choose.at.least.one.group").build());
         }
-        
+
     }
 
 }

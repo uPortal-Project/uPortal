@@ -33,15 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Provides helper methods for PAGS ad hoc groups administration webflows.
- * Methods check user permissions.
- * <p/>
- * This implementation was designed with limitations. Groups managed by this feature
- * will not be allowed to set members or other PAGS tests beyond the ad hoc group tester.
+ * Provides helper methods for PAGS group administration webflows that also
+ * check user permissions.
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao
@@ -51,9 +49,11 @@ import java.util.Set;
  * @since   4.3
  */
 @Service
-public final class PagsAdHocGroupAdministrationHelper {
-    
+public final class PagsAdministrationHelper {
+
     private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
+    private static final Set<IPersonAttributesGroupTestDefinition> EMPTY_TESTS = 
+            Collections.emptySet();
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -73,6 +73,131 @@ public final class PagsAdHocGroupAdministrationHelper {
     private IPersonAttributesGroupTestDefinitionDao pagsTestDefDao;
 
     /**
+     * Construct an {@link AdHocPagsForm} for the specified group name.
+     *
+     * @param name      PAGS group name
+     * @return          form version of specified group
+     * @see             #isManagedAdHocGroup(IPersonAttributesGroupDefinition)
+     */
+    public AdHocPagsForm initializeAdHocPagsFormForUpdate(IPerson person, String name) {
+
+        logger.debug("Initializing group form for ad hoc PAGS group named {}", name);
+
+        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(name);
+        if (group == null) {
+            // The group does not exists
+            throw new IllegalArgumentException("Group not found:  " + name);
+        }
+        if (!isManagedAdHocGroup(group)) {
+            // The group is not one that we can manage with this form
+            final String msg = "The specified group is not manageable in this UI:  " + name;
+            throw new IllegalArgumentException(msg);
+        }
+
+        /*
+         * Verify the user has permission to edit this group;  we don't
+         * want to disclose the current details (in the UI) if not.
+         */
+        if (!this.hasPermission(person, IPermission.EDIT_GROUP_ACTIVITY, group.getEntityIdentifier().getKey())) {
+            throw new RuntimeAuthorizationException(person,
+                    IPermission.EDIT_GROUP_ACTIVITY,
+                    group.getEntityIdentifier().getKey());
+        }
+
+        final AdHocPagsForm rslt = new AdHocPagsForm();
+        rslt.setName(group.getName());  // Once set, the name field may not be changed
+        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
+        Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
+        for (IPersonAttributesGroupTestDefinition test : tests) {
+            // We already asserted that the tests were all AdHocGroupTester classes
+            switch (test.getAttributeName()) {
+                case AdHocGroupTester.MEMBER_OF:
+                    rslt.addIncludes(test.getTestValue());
+                    break;
+                case AdHocGroupTester.NOT_MEMBER_OF:
+                    rslt.addExcludes(test.getTestValue());
+                    break;
+                default:
+                    // Garbage...
+                    logger.warn("Invalid value for IPersonAttributesGroupTestDefinition.attributeName "
+                            + "'{}' where test class is AdHocGroupTester.", test.getAttributeName());
+                    break;
+            }
+        }
+        return rslt;
+    }
+
+    /**
+     * Create a new group under the well-known ad hoc groups parent.
+     *
+     * @param form      form representing the new group configuration
+     * @param user      user performing the update
+     */
+    public void createGroup(AdHocPagsForm form, IPerson user) {
+        logger.debug("Creating group for group form [{}]", form.toString());
+        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, adHocParentGroupName)) {
+            throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
+        }
+        IPersonAttributesGroupDefinition group = pagsGroupDefDao.createPersonAttributesGroupDefinition(
+                form.getName(), form.getDescription());
+        IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
+        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+
+        // add this group to the membership list for the specified parent
+        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(adHocParentGroupName);
+        Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(1);
+        parents.add(parentGroup);
+        group.setParents(parents);
+
+        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
+    }
+
+    /**
+     * Update includes/excludes lists for a group.
+     *
+     * @param user      user performing the update
+     * @param form      form representing the new group configuration
+     */
+    public void updateGroup(IPerson user, AdHocPagsForm form) {
+
+        logger.debug("Updating group for group form [{}]", form.toString());
+
+        // Note:  name of an existing group may not be changed on the form
+        final String groupName = form.getName();
+        if (!hasPermission(user, IPermission.EDIT_GROUP_ACTIVITY, groupName)) {
+            throw new RuntimeAuthorizationException(user, IPermission.EDIT_GROUP_ACTIVITY, groupName);
+        }
+
+        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+        group.setDescription(form.getDescription());  // Generated;  will be updated if includes/excludes change
+
+        IPersonAttributesGroupTestGroupDefinition testGroup = group.getTestGroups().iterator().next();
+        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+
+        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
+
+    }
+
+    /**
+     * Delete a named PAGS group from the group store, checking if the user has permission.
+     * 
+     * @param groupName     name of the group to be deleted
+     * @param user          performing the delete operation
+     */
+    public void deleteGroup(String groupName, IPerson user) {
+        logger.info("Deleting ad hoc PAGS group named {}", groupName);
+        if (!hasPermission(user, IPermission.DELETE_GROUP_ACTIVITY, groupName)) {
+            throw new RuntimeAuthorizationException(user, IPermission.DELETE_GROUP_ACTIVITY, groupName);
+        }
+        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+        this.pagsGroupDefDao.deletePersonAttributesGroupDefinition(group);
+    }
+
+    /*
+     * Implementation
+     */
+
+    /**
      * Verify that the group is one of the ad hoc groups that is eligible for management via this feature.
      * <ul>
      *     <li>Child of {@code ad hoc groups} group -- THIS NEEDED? -- check not implemented</li>
@@ -85,7 +210,7 @@ public final class PagsAdHocGroupAdministrationHelper {
      * @param group     PAGS group
      * @return          {@code true} if group meets the criteria to be managed by this UI feature; otherwise, {@code false}
      */
-    public boolean isManagedAdHocGroup(IPersonAttributesGroupDefinition group) {
+    private boolean isManagedAdHocGroup(IPersonAttributesGroupDefinition group) {
         if (group.getMembers().size() > 0) {
             return false;
         }
@@ -106,117 +231,38 @@ public final class PagsAdHocGroupAdministrationHelper {
     }
 
     /**
-     * Construct a group form for the group with the specified name. Assume that the group meets the criteria for
-     * a managed ad hoc group.
-     *
-     * @param name      PAGS group name
-     * @return          form version of specified group
-     * @see             #isManagedAdHocGroup(IPersonAttributesGroupDefinition)
-     */
-    public PagsAdHocGroupForm getGroupForm(String name) {
-        // Should there be a view or edit check?
-        logger.debug("Initializing group form for ad hoc PAGS group named {}", name);
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(name);
-        assert(isManagedAdHocGroup(group));
-        PagsAdHocGroupForm form = new PagsAdHocGroupForm();
-        form.setName(group.getName());
-        form.setDescription(group.getDescription());
-        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
-        Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
-        for (IPersonAttributesGroupTestDefinition test: tests) {
-            // We already asserted that the tests were all AdHocGroupTester classes
-            if (test.getAttributeName().equals(AdHocGroupTester.MEMBER_OF)) {
-                form.addIncludes(test.getTestValue());
-            } else {
-                form.addExcludes(test.getTestValue());
-            }
-        }
-        return form;
-    }
-
-    /**
-     * Create a new group under the well-known ad hoc groups parent.
-     *
-     * @param form      form representing the new group configuration
-     * @param user      user performing the update
-     */
-    public void createGroup(PagsAdHocGroupForm form, IPerson user) {
-        logger.debug("Creating group for group form [{}]", form.toString());
-        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, adHocParentGroupName)) {
-            throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
-        }
-        IPersonAttributesGroupDefinition group = this.pagsGroupDefDao.createPersonAttributesGroupDefinition(
-                form.getName(), form.getDescription());
-        IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
-        addAdHocTesters(testGroup, form.getIncludes(), form.getExcludes(), user);
-
-        // add this group to the membership list for the specified parent
-        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(adHocParentGroupName);
-        Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(1);
-        parents.add(parentGroup);
-        group.setParents(parents);
-
-        assert(isManagedAdHocGroup(group));
-        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
-    }
-
-    /**
-     * Update name, description, and includes/excludes lists for a group.
-     *
-     * @param form      form representing the new group configuration
-     * @param user      user performing the update
-     */
-    public void updateGroup(PagsAdHocGroupForm form, IPerson user) {
-        logger.debug("Updating group for group form [{}]", form.toString());
-        if (!hasPermission(user, IPermission.EDIT_GROUP_ACTIVITY, form.getName())) {
-            throw new RuntimeAuthorizationException(user, IPermission.EDIT_GROUP_ACTIVITY, form.getName());
-        }
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(form.getName());
-        assert(isManagedAdHocGroup(group));
-        group.setName(form.getName());
-        group.setDescription(form.getDescription());
-        IPersonAttributesGroupTestGroupDefinition testGroup = group.getTestGroups().iterator().next();
-        addAdHocTesters(testGroup, form.getIncludes(), form.getExcludes(), user);
-        assert(isManagedAdHocGroup(group));
-        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
-    }
-
-    /**
-     * Delete a named group from the group store, checking if the user has permission.
-     * 
-     * @param groupName     name of the group to be deleted
-     * @param user          performing the delete operation
-     */
-    public void deleteGroup(String groupName, IPerson user) {
-        logger.info("Deleting ad hoc PAGS group named {}", groupName);
-        if (!hasPermission(user, IPermission.DELETE_GROUP_ACTIVITY, groupName)) {
-            throw new RuntimeAuthorizationException(user, IPermission.DELETE_GROUP_ACTIVITY, groupName);
-        }
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
-        assert(isManagedAdHocGroup(group));
-        this.pagsGroupDefDao.deletePersonAttributesGroupDefinition(group);
-    }
-
-    /**
      * Add test definitions to the test group for the given list of includes and excludes group lists.
-     *
+     * @param user          user to check permission for adding each group
      * @param testGroup     target test group that is update with the group lists
      * @param includes      set of group names to add ad hoc testers to test group
      * @param excludes      set of group names to add ad hoc testers to test group with exclude set
-     * @param user          user to check permission for adding each group
      */
-    private void addAdHocTesters(IPersonAttributesGroupTestGroupDefinition testGroup,
-                                 Set<String> includes, Set<String> excludes, IPerson user) {
+    private void updateAdHocTesters(IPerson user, IPersonAttributesGroupTestGroupDefinition testGroup, Set<String> includes, Set<String> excludes) {
+
+        /* In case this is an existing group receiving edits,
+         * we need to clear the testGroup we've been sent.
+         */
+        testGroup.setTests(EMPTY_TESTS);
+
         for (String group: includes) {
             if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
                 this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
                         testGroup, AdHocGroupTester.MEMBER_OF, AD_HOC_GROUP_TESTER, group);
+            } else {
+                String msg = "User '" + user.getUserName() +"' does not have "
+                        + "permission to choose the specified group:  " + group;
+                throw new RuntimeAuthorizationException(msg);
             }
         }
+
         for (String group: excludes) {
             if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
                 this.pagsTestDefDao.createPersonAttributesGroupTestDefinition(
                         testGroup, AdHocGroupTester.NOT_MEMBER_OF, AD_HOC_GROUP_TESTER, group);
+            } else {
+                String msg = "User '" + user.getUserName() +"' does not have "
+                        + "permission to choose the specified group:  " + group;
+                throw new RuntimeAuthorizationException(msg);
             }
         }
 
@@ -237,7 +283,7 @@ public final class PagsAdHocGroupAdministrationHelper {
     }
 
     /**
-     * Retrieve an implementation of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
+     * Retrieve an instance of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
      * the DAO bean. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
      * Second, that group names are unique. A warning will be logged if more than one group is found with the same name.
      *
