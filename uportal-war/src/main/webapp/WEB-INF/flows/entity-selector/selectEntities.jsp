@@ -148,6 +148,53 @@
                                         </div>
                                     </div><!--end: search-->
                                 </div><!--end: entity-->
+                                <div id="${n}adHocGroups" class="entity-browser row" style="margin-top: 7px;">
+                                    <div class="content row">
+                                        <div>
+                                            <div class="col-md-8">
+                                                <h4>Ad Hoc Groups</h4>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <h5 class="title">Groups</h5>
+                                            <table class="table table-condensed table-striped">
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Authenticated Users</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Faculty Users</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Students</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div><!--end: ad hoc groups-->
                             </div>
                             <div class="fl-container-flex40 span4 col-md-4">
                                 <!--selection-->
