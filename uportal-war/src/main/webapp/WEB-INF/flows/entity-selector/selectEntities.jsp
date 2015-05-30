@@ -152,15 +152,15 @@
                                     <div class="content row">
                                         <div>
                                             <div class="col-md-8">
-                                                <h4>Ad Hoc Groups</h4>
+                                                <h5 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h5>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div id="${n}adHocCreate" class="col-md-4">
                                                 <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
                                             </div>
                                         </div>
-                                        <div class="col-md-12">
-                                            <h5 class="title">Groups</h5>
-                                            <table class="table table-condensed table-striped">
+                                        <div class="group col-md-12">
+                                            <div id="${n}adHocBreadcrumbs" class="breadcrumbs"></div>
+                                            <table id="${n}adHocMemberList" class="table table-condensed table-striped">
                                                 <tr>
                                                     <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Authenticated Users</a></td>
                                                     <td>
@@ -192,6 +192,7 @@
                                                     </td>
                                                 </tr>
                                             </table>
+                                            <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
                                         </div>
                                     </div>
                                 </div><!--end: ad hoc groups-->
@@ -384,6 +385,10 @@
                         searchResults: "#${n}searchResults",
                         searchResultsNoMembers: "#${n}searchResultsNoMembers",
                         searchLoader: "#${n}searchLoader",
+                        currentAdHocGroupName: "#${n}currentAdHocGroupName",
+                        adHocCreate: "#${n}adHocCreate",
+                        adHocBreadcrumbs: "#${n}adHocBreadcrumbs",
+                        adHocMemberList: "#${n}adHocMemberList",
                         buttonPanel: "#${n}buttonPanel",
                         buttonPrimary: "#${n}buttonPrimary"
                     },
