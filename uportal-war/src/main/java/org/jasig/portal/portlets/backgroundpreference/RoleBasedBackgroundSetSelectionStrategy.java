@@ -21,12 +21,16 @@ package org.jasig.portal.portlets.backgroundpreference;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.portlet.context.PortletWebRequest;
 
 /**
  * Determines set of images to display by checking to see if user is in a mobile user group as determined by the
@@ -76,6 +80,28 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+    private IPortalSpELService portalSpELService;
+
+    @Autowired
+    public void setPortalSpELService(IPortalSpELService portalSpELService) {
+        this.portalSpELService = portalSpELService;
+    }
+
+    /**
+     * Contructor of the object RoleBasedBackgroundSetSelectionStrategy.java.
+     */
+    public RoleBasedBackgroundSetSelectionStrategy() {
+        super();
+    }
+
+    /**
+     * Contructor of the object RoleBasedBackgroundSetSelectionStrategy.java.
+     */
+    public RoleBasedBackgroundSetSelectionStrategy(IPortalSpELService portalSpELService) {
+        super();
+        this.portalSpELService = portalSpELService;
+    }
+
     @Override
     public String[] getImageSet(PortletRequest req) {
         PreferenceNames names = PreferenceNames.getInstance(req);
@@ -109,11 +135,12 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
         PreferenceNames names = PreferenceNames.getInstance(req);
         PortletPreferences prefs = req.getPreferences();
+        final PortletWebRequest webRequest = new PortletWebRequest(req);
 
         if (StringUtils.isNotBlank(backgroundImage)) {
 
             // We are trying to choose a background;  first verify the requested image is actually in the set...
-            String[] images = prefs.getValues(names.getImageSetPreferenceName(), EMPTY_STRING_ARRAY);
+            String[] images = setPrefContextpath(prefs.getValues(names.getImageSetPreferenceName(), EMPTY_STRING_ARRAY), webRequest);
             if (Arrays.asList(images).contains(backgroundImage)) {
                 try {
                     prefs.setValue(names.getSelectedBackgroundImagePreferenceName(), backgroundImage);
@@ -135,6 +162,23 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
         }
 
+    }
+
+    protected String[] setPrefContextpath(String[] values, WebRequest request) {
+        if (values != null && values.length > 0) {
+            for (int i = 0; i < values.length; i++)
+                values[i] = this.setPrefContextpath(values[i], request);
+        }
+
+        return values;
+    }
+
+    protected String setPrefContextpath(String value, WebRequest request) {
+        if (value != null) {
+            return this.portalSpELService.parseString(value, request);
+        }
+
+        return value;
     }
 
 }

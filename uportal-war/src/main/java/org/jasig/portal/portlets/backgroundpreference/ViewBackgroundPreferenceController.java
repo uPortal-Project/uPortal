@@ -18,50 +18,73 @@
  */
 package org.jasig.portal.portlets.backgroundpreference;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.PortletPreferences;
+import javax.portlet.RenderRequest;
+
 import org.jasig.portal.rest.AjaxSuccessController;
+import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import javax.portlet.ActionRequest;
-
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
-
-import javax.portlet.ActionResponse;
-import javax.portlet.RenderRequest;
-import javax.portlet.PortletPreferences;
+import org.springframework.web.portlet.context.PortletWebRequest;
 
 @Controller
 @RequestMapping("VIEW")
 public class ViewBackgroundPreferenceController {
 
-    BackgroundSetSelectionStrategy imageSetSelectionStrategy = new RoleBasedBackgroundSetSelectionStrategy();
+    private BackgroundSetSelectionStrategy imageSetSelectionStrategy;
+
+    /**
+     * Getter of member imageSetSelectionStrategy.
+     * @return <code>BackgroundSetSelectionStrategy</code> the attribute imageSetSelectionStrategy
+     */
+    public BackgroundSetSelectionStrategy getImageSetSelectionStrategy() {
+        if (imageSetSelectionStrategy == null) {
+            imageSetSelectionStrategy = new RoleBasedBackgroundSetSelectionStrategy(this.portalSpELService);
+        }
+        return imageSetSelectionStrategy;
+    }
 
     public void setImageSetSelectionStrategy(BackgroundSetSelectionStrategy imageSetSelectionStrategy) {
         this.imageSetSelectionStrategy = imageSetSelectionStrategy;
     }
 
+    private IPortalSpELService portalSpELService;
+
+    @Autowired
+    public void setPortalSpELService(IPortalSpELService portalSpELService) {
+        this.portalSpELService = portalSpELService;
+    }
+
     /**
      * Display the main user-facing view of the portlet.
-     * 
+     *
      * @param request
      * @return
      */
     @RenderMapping
     public String getView(RenderRequest req, Model model) {
 
-        String[] images = imageSetSelectionStrategy.getImageSet(req);
-        model.addAttribute("images", images);
+        final PortletWebRequest webRequest = new PortletWebRequest(req);
 
-        String[] thumbnailImages = imageSetSelectionStrategy.getImageThumbnailSet(req);
-        model.addAttribute("thumbnailImages", thumbnailImages);
+        String[] images = getImageSetSelectionStrategy().getImageSet(req);
+        model.addAttribute("images", setPrefContextpath(images, webRequest));
 
-        String preferredBackgroundImage = imageSetSelectionStrategy.getSelectedImage(req);
-        model.addAttribute("backgroundImage", preferredBackgroundImage);
+        String[] thumbnailImages = getImageSetSelectionStrategy().getImageThumbnailSet(req);
+        model.addAttribute("thumbnailImages", setPrefContextpath(thumbnailImages, webRequest));
 
-        String backgroundContainerSelector = imageSetSelectionStrategy.getBackgroundContainerSelector(req);
-        model.addAttribute("backgroundContainerSelector", backgroundContainerSelector);
+        String preferredBackgroundImage = getImageSetSelectionStrategy().getSelectedImage(req);
+        model.addAttribute("backgroundImage", setPrefContextpath(preferredBackgroundImage, webRequest));
+
+        String backgroundContainerSelector = getImageSetSelectionStrategy().getBackgroundContainerSelector(req);
+        model.addAttribute("backgroundContainerSelector", setPrefContextpath(backgroundContainerSelector, webRequest));
 
         PortletPreferences prefs = req.getPreferences();
         model.addAttribute("applyOpacityTo", prefs.getValue("applyOpacityTo", null));
@@ -74,11 +97,28 @@ public class ViewBackgroundPreferenceController {
     public void savePreferences(ActionRequest req, ActionResponse res,
             @RequestParam(required=false) String backgroundImage) throws Exception {
 
-        imageSetSelectionStrategy.setSelectedImage(req, backgroundImage);
+        getImageSetSelectionStrategy().setSelectedImage(req, backgroundImage);
 
         // Reirect to a basic HTTP 200 success response to save a full page cycle
         res.sendRedirect(req.getContextPath() + "/api" + AjaxSuccessController.SUCCESS_URL);
 
+    }
+
+    protected String[] setPrefContextpath(String[] values, WebRequest request) {
+        if (values != null && values.length > 0) {
+            for (int i = 0; i < values.length; i++)
+                values[i] = this.setPrefContextpath(values[i], request);
+        }
+
+        return values;
+    }
+
+    protected String setPrefContextpath(String value, WebRequest request) {
+        if (value != null) {
+            return this.portalSpELService.parseString(value, request);
+        }
+
+        return value;
     }
 
 }
