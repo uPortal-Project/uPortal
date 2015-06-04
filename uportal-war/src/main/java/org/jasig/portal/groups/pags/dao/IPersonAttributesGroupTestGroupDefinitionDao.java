@@ -16,12 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.dao;
 
-import java.util.Set;
-
 /**
- * Provides APIs for creating, storing and retrieving {@link IPersonAttributesGroupTestGroupDefinition} objects.
+ * Provides APIs for creating, updating, and deleting {@link IPersonAttributesGroupTestGroupDefinition} objects.
  * 
  * @author Shawn Connolly, sconnolly@unicon.net
  */
@@ -30,7 +29,5 @@ public interface IPersonAttributesGroupTestGroupDefinitionDao {
     IPersonAttributesGroupTestGroupDefinition createPersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupDefinition group);
     IPersonAttributesGroupTestGroupDefinition updatePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition personAttributesGroupTestGroupDefinition);
     void deletePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition definition);
-
-    Set<IPersonAttributesGroupTestGroupDefinition> getPersonAttributesGroupTestGroupDefinitions();
 
 }

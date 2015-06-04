@@ -18,18 +18,15 @@
  */
 package org.jasig.portal.groups.pags.dao;
 
-import java.util.Set;
-
 /**
- * Provides APIs for creating, storing and retrieving {@link IPersonAttributesGroupTestDefinition} objects.
+ * Provides APIs for creating, editing, and deleting {@link IPersonAttributesGroupTestDefinition} objects.
  * 
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 public interface IPersonAttributesGroupTestDefinitionDao {
 
+    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue);
     public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition);
     public void deletePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition definition);
-    public Set<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitions();
-    public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue);
 
 }
