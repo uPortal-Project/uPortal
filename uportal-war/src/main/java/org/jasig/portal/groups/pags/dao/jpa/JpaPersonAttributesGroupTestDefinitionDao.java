@@ -16,15 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.dao.jpa;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
@@ -33,32 +28,17 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
-
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Repository("personAttributesGroupTestDefinitionDao")
 public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao implements IPersonAttributesGroupTestDefinitionDao {
-    private CriteriaQuery<PersonAttributesGroupTestDefinitionImpl> findAllDefinitions;
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.findAllDefinitions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupTestDefinitionImpl>>() {
-            @Override
-            public CriteriaQuery<PersonAttributesGroupTestDefinitionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PersonAttributesGroupTestDefinitionImpl> criteriaQuery = cb.createQuery(PersonAttributesGroupTestDefinitionImpl.class);
-                criteriaQuery.from(PersonAttributesGroupTestDefinitionImpl.class);
-                return criteriaQuery;
-            }
-        });
-    }
 
     @PortalTransactional
     @Override
     public IPersonAttributesGroupTestDefinition updatePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition personAttributesGroupTestDefinition) {
         Validate.notNull(personAttributesGroupTestDefinition, "personAttributesGroupTestDefinition can not be null");
-        
+
         final IPersonAttributesGroupTestDefinition persistentDefinition;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(personAttributesGroupTestDefinition)) {
@@ -66,7 +46,7 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
         } else {
             persistentDefinition = entityManager.merge(personAttributesGroupTestDefinition);
         }
-        
+
         this.getEntityManager().persist(persistentDefinition);
         return persistentDefinition;
     }
@@ -75,7 +55,7 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
     @Override
     public void deletePersonAttributesGroupTestDefinition(IPersonAttributesGroupTestDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
-        
+
         final IPersonAttributesGroupTestDefinition persistentDefinition;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(definition)) {
@@ -86,16 +66,6 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
         entityManager.remove(persistentDefinition);
     }
 
-    @Override
-    public Set<IPersonAttributesGroupTestDefinition> getPersonAttributesGroupTestDefinitions() {
-        final TypedQuery<PersonAttributesGroupTestDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        Set<IPersonAttributesGroupTestDefinition> tests = new HashSet<IPersonAttributesGroupTestDefinition>();
-        for(IPersonAttributesGroupTestDefinition test : query.getResultList()) {
-            tests.add(test);
-        }
-        return tests;
-    }
-    
     @PortalTransactional
     @Override
     public IPersonAttributesGroupTestDefinition createPersonAttributesGroupTestDefinition(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
@@ -103,4 +73,5 @@ public class JpaPersonAttributesGroupTestDefinitionDao extends BasePortalJpaDao 
         this.getEntityManager().persist(personAttributesGroupTestDefinition);
         return personAttributesGroupTestDefinition;
     }
+
 }

@@ -16,15 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.dao.jpa;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.jpa.BasePortalJpaDao;
@@ -33,32 +28,17 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
-
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
 @Repository("personAttributesGroupTestGroupDefinitionDao")
 public class JpaPersonAttributesGroupTestGroupDefinitionDao extends BasePortalJpaDao implements IPersonAttributesGroupTestGroupDefinitionDao {
-    private CriteriaQuery<PersonAttributesGroupTestGroupDefinitionImpl> findAllDefinitions;
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        this.findAllDefinitions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupTestGroupDefinitionImpl>>() {
-            @Override
-            public CriteriaQuery<PersonAttributesGroupTestGroupDefinitionImpl> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<PersonAttributesGroupTestGroupDefinitionImpl> criteriaQuery = cb.createQuery(PersonAttributesGroupTestGroupDefinitionImpl.class);
-                criteriaQuery.from(PersonAttributesGroupTestGroupDefinitionImpl.class);
-                return criteriaQuery;
-            }
-        });
-    }
 
     @PortalTransactional
     @Override
     public IPersonAttributesGroupTestGroupDefinition updatePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition personAttributesGroupTestGroupDefinition) {
         Validate.notNull(personAttributesGroupTestGroupDefinition, "personAttributesGroupTestGroupDefinition can not be null");
-        
+
         final IPersonAttributesGroupTestGroupDefinition persistentDefinition;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(personAttributesGroupTestGroupDefinition)) {
@@ -66,7 +46,7 @@ public class JpaPersonAttributesGroupTestGroupDefinitionDao extends BasePortalJp
         } else {
             persistentDefinition = entityManager.merge(personAttributesGroupTestGroupDefinition);
         }
-        
+
         this.getEntityManager().persist(persistentDefinition);
         return persistentDefinition;
     }
@@ -75,7 +55,7 @@ public class JpaPersonAttributesGroupTestGroupDefinitionDao extends BasePortalJp
     @Override
     public void deletePersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupTestGroupDefinition definition) {
         Validate.notNull(definition, "definition can not be null");
-        
+
         final IPersonAttributesGroupTestGroupDefinition persistentDefinition;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(definition)) {
@@ -86,16 +66,6 @@ public class JpaPersonAttributesGroupTestGroupDefinitionDao extends BasePortalJp
         entityManager.remove(persistentDefinition);
     }
 
-    @Override
-    public Set<IPersonAttributesGroupTestGroupDefinition> getPersonAttributesGroupTestGroupDefinitions() {
-        final TypedQuery<PersonAttributesGroupTestGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        Set<IPersonAttributesGroupTestGroupDefinition> testGroups = new HashSet<IPersonAttributesGroupTestGroupDefinition>();
-        for (IPersonAttributesGroupTestGroupDefinition testGroup : query.getResultList()) {
-            testGroups.add(testGroup);
-        }
-        return testGroups;
-    }
-    
     @PortalTransactional
     @Override
     public IPersonAttributesGroupTestGroupDefinition createPersonAttributesGroupTestGroupDefinition(IPersonAttributesGroupDefinition group) {
