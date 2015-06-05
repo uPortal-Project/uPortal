@@ -308,6 +308,54 @@
                                         </div>
                                     </div><!--end: search-->
                                 </div><!--end: entity-->
+                                <div id="${n}adHocGroups" class="entity-browser row" style="margin-top: 7px;">
+                                    <div class="content row">
+                                        <div>
+                                            <div class="col-md-8">
+                                                <h5 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h5>
+                                            </div>
+                                            <div id="${n}adHocCreate" class="col-md-4">
+                                                <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="group col-md-12">
+                                            <div id="${n}adHocBreadcrumbs" class="breadcrumbs"></div>
+                                            <table id="${n}adHocMemberList" class="table table-condensed table-striped">
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Authenticated Users</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Faculty Users</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Students</a></td>
+                                                    <td>
+                                                        <div class="btn-group pull-right" role= "group">
+                                                            <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+                                                            <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+                                                            <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                            <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
+                                        </div>
+                                    </div>
+                                </div><!--end: ad hoc groups-->
                             </div>
                             <div class="fl-container-flex40 span4 col-md-4">
                                 <!--selection-->
@@ -369,6 +417,8 @@
                     entityTypes: [<c:forEach items="${selectTypes}" var="type" varStatus="status">'<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${type}</spring:escapeBody>'${status.last ? '' : ','}</c:forEach>],
                     selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
                     initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
+                    enableAdHocGroups: ${not empty enableAdHocGroups ? enableAdHocGroups : false},
+                    initialAdHocEntity: '${adHocEntity.entityType}:${adHocEntity.id}',
                     selectMultiple: ${selectionMode},
                     requireSelection: ${ not empty requireSelection ? requireSelection : true },
                     selectors: {
@@ -385,6 +435,7 @@
                         searchResults: "#${n}searchResults",
                         searchResultsNoMembers: "#${n}searchResultsNoMembers",
                         searchLoader: "#${n}searchLoader",
+                        adHocGroups: "#${n}adHocGroups",
                         currentAdHocGroupName: "#${n}currentAdHocGroupName",
                         adHocCreate: "#${n}adHocCreate",
                         adHocBreadcrumbs: "#${n}adHocBreadcrumbs",

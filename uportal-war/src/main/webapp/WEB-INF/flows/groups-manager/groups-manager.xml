@@ -40,7 +40,9 @@
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="false"/>
         <input name="rootEntityId" value="rootEntity"/>
-        
+        <input name="enableAdHocGroups" value="groupType == 'group'"/>
+        <input name="adHocEntity" value="rootEntity"/>
+
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="true"/>
         <input name="saveButtonCode" value="'next'" />

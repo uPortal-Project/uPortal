@@ -57,7 +57,9 @@
         <input name="selectMultiple" value="true"/>
         <input name="requireSelection" value="true"/>
         <input name="rootEntity" value="rootEntity"/>
-        
+        <input name="enableAdHocGroups" value="true"/>
+        <input name="adHocEntity" value="rootEntity"/>
+
         <input name="showCancelButton" value="false"/>
         <input name="showBackButton" value="true"/>
         <input name="saveButtonCode" value="'submit'" />

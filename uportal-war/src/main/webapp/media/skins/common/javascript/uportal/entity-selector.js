@@ -95,27 +95,29 @@ var up = up || {};
             link.attr("title", currentEntityName);
         }
 
-        // Check ad hoc groups.
-        adHocMemberList = that.locate("adHocMemberList");
-        adHocMemberList.find("a").each(function() {
-            var a = $(this);
-            var button = a.parent().next().find("button.btn-select");
-            button.unbind("click");
-            var i = button.find("i");
-            if (selectionBasket.find("a[key='" + a.attr("id") + "']").size() > 0) {
-                button.text("Remove from Selection ").append("<i class='fa fa-minus-circle'></i>");
-                button.removeClass("btn-success").addClass("btn-danger");
-                button.bind('click', function(e) {
-                    deselectEntity(that, a.attr("id"));
-                });
-            } else {
-                button.text("Add to Selection ").append("<i class='fa fa-plus-circle'></i>");
-                button.removeClass("btn-danger").addClass("btn-success");
-                button.bind('click', function(e) {
-                    selectEntity(that, a.attr("id"));
-                });
-            }
-        });
+        if (that.options.enableAdHocGroups) {
+            // Check ad hoc groups.
+            adHocMemberList = that.locate("adHocMemberList");
+            adHocMemberList.find("a").each(function() {
+                var a = $(this);
+                var button = a.parent().next().find("button.btn-select");
+                button.unbind("click");
+                var i = button.find("i");
+                if (selectionBasket.find("a[key='" + a.attr("id") + "']").size() > 0) {
+                    button.text("Remove from Selection ").append("<i class='fa fa-minus-circle'></i>");
+                    button.removeClass("btn-success").addClass("btn-danger");
+                    button.bind('click', function(e) {
+                        deselectEntity(that, a.attr("id"));
+                    });
+                } else {
+                    button.text("Add to Selection ").append("<i class='fa fa-plus-circle'></i>");
+                    button.removeClass("btn-danger").addClass("btn-success");
+                    button.bind('click', function(e) {
+                        selectEntity(that, a.attr("id"));
+                    });
+                }
+            });
+        }
 
     };//end:function.
 
@@ -589,8 +591,12 @@ var up = up || {};
         // Browse to the designated default start entity.
         browseEntity(that, that.options.initialFocusedEntity);
 
-        // Browse to the designated start of ad hoc groups.
-        browseAdHocGroup(that, that.options.initialFocusedEntity);
+        if (that.options.enableAdHocGroups) {
+            // Browse to the designated start of ad hoc groups.
+            browseAdHocGroup(that, that.options.initialAdHocEntity);
+        } else {
+            that.locate("adHocGroups").hide();
+        }
         
         // Disable primary button.
         if (that.options.selected.length < 1 && that.options.requireSelection) {
@@ -638,6 +644,7 @@ var up = up || {};
         entityTypes: [],
         selected: [],
         initialFocusedEntity: 'group:local.0',
+        enableAdHocGroups: false,
         initialAdHocEntity: 'group:pags.Ad%20Hoc%20Groups',
         selectMultiple: true,
         requireSelection: true,
@@ -655,6 +662,7 @@ var up = up || {};
             searchResults: "#searchResults",
             searchResultsNoMembers: "#searchResultsNoMembers",
             searchLoader: "searchLoader",
+            adHocGroups: "#adHocGroups",
             currentAdHocGroupName: "#currentAdHocGroupName",
             adHocCreate: "#adHocCreate",
             adHocBreadcrumbs: "#adHocBreadcrumbs",
