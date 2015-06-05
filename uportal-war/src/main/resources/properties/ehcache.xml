@@ -1838,19 +1838,19 @@
     <!-- PAGS Store Cache, not replicated -->
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+           maxElementsInMemory="250" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
-           eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!-- ****************************************************************** -->
     <!-- ******************** uPortal Portlet Caches ******************** -->
