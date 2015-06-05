@@ -117,6 +117,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         entityManager.remove(persistentDefinition);
     }
 
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String name) {
         TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(groupDefinitionByNameQuery);
@@ -128,6 +129,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         return groups;
     }
 
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getParentPersonAttributesGroupDefinitions(IPersonAttributesGroupDefinition group) {
         TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(parentGroupDefinitionsQuery);
@@ -136,6 +138,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         return rslt;
     }
 
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions() {
         final TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitionsQuery);
