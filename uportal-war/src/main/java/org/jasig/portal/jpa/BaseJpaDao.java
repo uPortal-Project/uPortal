@@ -45,10 +45,9 @@ import org.springframework.transaction.support.TransactionOperations;
 import com.google.common.base.Function;
 
 /**
- * Base class for JPA DAOs in the portal that contains common functions
+ * Base class for JPA DAOs in the portal that contains common functions.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class BaseJpaDao implements InitializingBean, ApplicationContextAware {
     private static final String QUERY_SUFFIX = ".Query";
@@ -89,14 +88,21 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
         
         return criteriaBuilder.parameter(paramClass, name);
     }
-    
+
+    /**
+     * Factory method for creating a {@link CriteriaQuery} employing standards
+     * and best practices in general use within the portal.  Query objects
+     * returned from this method should normally be passed to
+     * {@link createCachedQuery};  this step is important for the sake of
+     * scalability.
+     */
     protected final <T> CriteriaQuery<T> createCriteriaQuery(Function<CriteriaBuilder, CriteriaQuery<T>> builder) {
         final EntityManager entityManager = this.getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
         final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
-        
+
         final CriteriaQuery<T> criteriaQuery = builder.apply(criteriaBuilder);
-        
+
         //Do in TX so the EM gets closed correctly
         final TransactionOperations transactionOperations = this.getTransactionOperations();
         transactionOperations.execute(new TransactionCallbackWithoutResult() {
@@ -105,10 +111,10 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
                 entityManager.createQuery(criteriaQuery); //pre-compile critera query to avoid race conditions when setting aliases
             }
         });
-        
+
         return criteriaQuery;
     }
-    
+
     /**
      * Common logic for creating and configuring JPA queries
      * 
@@ -119,9 +125,10 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
     }
 
     /**
-     * Common logic for creating and configuring JPA queries
+     * Important common logic for creating and configuring JPA queries cached in
+     * EhCache.   This step is important for the sake of scalability.
      * 
-     * @param criteriaQuery The criteria to create the query from
+     * @param criteriaQuery The criteria to create a cached query from
      */
     protected final <T> TypedQuery<T> createCachedQuery(CriteriaQuery<T> criteriaQuery) {
         final TypedQuery<T> query = this.getEntityManager().createQuery(criteriaQuery);
@@ -130,7 +137,7 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
         query.setHint("org.hibernate.cacheRegion", cacheRegion);
         return query;
     }
-    
+
     /**
      * Utility for creating queries based on naturalId. The caller MUST be annotated with {@link OpenEntityManager} or
      * {@link Transactional} so that the Hibernate specific extensions are available.
