@@ -86,10 +86,15 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Column(name = "ENTITY_VERSION")
     private long entityVersion;
 
-    @Column(name = "NAME", length=500, nullable = true)
+    /**
+     * Per rules for groups and entities in general, the name needs to be unique
+     * and non-null.  (In face it needs to be unique across all groups, not
+     * merely this table.)
+     */
+    @Column(name = "NAME", length=500, unique = true, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length=500, nullable = true)
+    @Column(name = "DESCRIPTION", length=500)
     private String description;
 
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.dao.jpa;
 
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import com.google.common.base.Function;
+
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
@@ -41,15 +43,43 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("personAttributesGroupDefinitionDao")
 public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao implements IPersonAttributesGroupDefinitionDao {
-    private CriteriaQuery<PersonAttributesGroupDefinitionImpl> findAllDefinitions;
+
+    private CriteriaQuery<PersonAttributesGroupDefinitionImpl> findAllDefinitionsQuery;
+    private CriteriaQuery<PersonAttributesGroupDefinitionImpl> groupDefinitionByNameQuery;
+    private CriteriaQuery<PersonAttributesGroupDefinitionImpl> parentGroupDefinitionsQuery;
+    private ParameterExpression<String> nameParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.findAllDefinitions = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
+        this.nameParameter = this.createParameterExpression(String.class, "name");
+
+        this.findAllDefinitionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
             @Override
             public CriteriaQuery<PersonAttributesGroupDefinitionImpl> apply(CriteriaBuilder cb) {
                 final CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery = cb.createQuery(PersonAttributesGroupDefinitionImpl.class);
                 criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
+                return criteriaQuery;
+            }
+        });
+
+        this.groupDefinitionByNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PersonAttributesGroupDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery = cb.createQuery(PersonAttributesGroupDefinitionImpl.class);
+                Root<PersonAttributesGroupDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
+                criteriaQuery.select(root).where(cb.equal(root.get("name"), nameParameter));
+                return criteriaQuery;
+            }
+        });
+
+        this.parentGroupDefinitionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<PersonAttributesGroupDefinitionImpl>>() {
+            @Override
+            public CriteriaQuery<PersonAttributesGroupDefinitionImpl> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery = cb.createQuery(PersonAttributesGroupDefinitionImpl.class);
+                Root<PersonAttributesGroupDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
+                Join<PersonAttributesGroupDefinitionImpl, PersonAttributesGroupDefinitionImpl> members =
+                        root.join(PersonAttributesGroupDefinitionImpl_.members);
+                criteriaQuery.where(cb.equal(members.get(PersonAttributesGroupDefinitionImpl_.name), nameParameter));
                 return criteriaQuery;
             }
         });
@@ -59,7 +89,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
     @Override
     public IPersonAttributesGroupDefinition updatePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition personAttributesGroupDefinition) {
         Validate.notNull(personAttributesGroupDefinition, "personAttributesGroupDefinition can not be null");
-        
+
         final IPersonAttributesGroupDefinition persistentDefinition;
         final EntityManager entityManager = this.getEntityManager();
         if (entityManager.contains(personAttributesGroupDefinition)) {
@@ -67,6 +97,7 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         } else {
             persistentDefinition = entityManager.merge(personAttributesGroupDefinition);
         }
+
         this.getEntityManager().persist(persistentDefinition);
         return persistentDefinition;
     }
@@ -86,64 +117,40 @@ public class JpaPersonAttributesGroupDefinitionDao extends BasePortalJpaDao impl
         entityManager.remove(persistentDefinition);
     }
 
-    @PortalTransactional
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String name) {
-        CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery = 
-                criteriaBuilder.createQuery(PersonAttributesGroupDefinitionImpl.class);
-        Root<PersonAttributesGroupDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
-        ParameterExpression<String> nameParameter = criteriaBuilder.parameter(String.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("name"), nameParameter));
-        TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
+        TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(groupDefinitionByNameQuery);
         query.setParameter(nameParameter, name);
-        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>();
-        for (IPersonAttributesGroupDefinition group: query.getResultList()) {
-            groups.add(group);
-        }
+        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>(query.getResultList());
         if(groups.size() > 1) {
             logger.error("More than one PAGS Group found for name: {}", name);
         }
         return groups;
     }
 
-    @PortalTransactional
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getParentPersonAttributesGroupDefinitions(IPersonAttributesGroupDefinition group) {
-        CriteriaBuilder criteriaBuilder = this.getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<PersonAttributesGroupDefinitionImpl> criteriaQuery =
-                criteriaBuilder.createQuery(PersonAttributesGroupDefinitionImpl.class);
-        Root<PersonAttributesGroupDefinitionImpl> root = criteriaQuery.from(PersonAttributesGroupDefinitionImpl.class);
-
-        Join<PersonAttributesGroupDefinitionImpl, PersonAttributesGroupDefinitionImpl> members =
-                root.join(PersonAttributesGroupDefinitionImpl_.members);
-        ParameterExpression<String> nameParameter = criteriaBuilder.parameter(String.class);
-        criteriaQuery.where(criteriaBuilder.equal(members.get(PersonAttributesGroupDefinitionImpl_.name), nameParameter));
-        TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.getEntityManager().createQuery(criteriaQuery);
+        TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(parentGroupDefinitionsQuery);
         query.setParameter(nameParameter, group.getName());
-
-        Set<IPersonAttributesGroupDefinition> parents = new HashSet<IPersonAttributesGroupDefinition>();
-        for (IPersonAttributesGroupDefinition parent : query.getResultList()) {
-            parents.add(parent);
-        }
-        return parents;
+        Set<IPersonAttributesGroupDefinition> rslt = new HashSet<IPersonAttributesGroupDefinition>(query.getResultList());
+        return rslt;
     }
 
-    @PortalTransactional
+    @PortalTransactionalReadOnly
     @Override
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions() {
-        final TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitions);
-        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>();
-        for (IPersonAttributesGroupDefinition group: query.getResultList()) {
-            groups.add(group);
-        }
+        final TypedQuery<PersonAttributesGroupDefinitionImpl> query = this.createCachedQuery(this.findAllDefinitionsQuery);
+        Set<IPersonAttributesGroupDefinition> groups = new HashSet<IPersonAttributesGroupDefinition>(query.getResultList());
         return groups;
     }
-    
+
     @PortalTransactional
     @Override
     public IPersonAttributesGroupDefinition createPersonAttributesGroupDefinition(String name, String description) {
         final IPersonAttributesGroupDefinition personAttributesGroupDefinition = new PersonAttributesGroupDefinitionImpl(name, description);
+
         this.getEntityManager().persist(personAttributesGroupDefinition);
         return personAttributesGroupDefinition;
     }
