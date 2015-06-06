@@ -64,7 +64,6 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.jasig.portal.xml.XmlUtilities;
@@ -169,7 +168,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        // Ensure a new layout gets loaded whenever a user logs in exceot for guest users
+        // Ensure a new layout gets loaded whenever a user logs in except for guest users
         if (!owner.isGuest()) {
             this.layoutCachingService.removeCachedLayout(owner, profile);
         }
