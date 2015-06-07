@@ -73,7 +73,8 @@ public class LoginController {
     }
 
     /**
-     * Process the incoming HttpServletRequest
+     * Process the incoming HttpServletRequest.  Note that this processing occurs after
+     * PortalPreAuthenticatedProcessingFilter has run and performed pre-processing.
      * @param request
      * @param response
      * @exception ServletException
