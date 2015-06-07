@@ -59,8 +59,8 @@ public class PersonDirNameFinderFactory implements IEntityNameFinderFactory {
     }
 
     /**
-     * Intantiates the static singleton field PERSON_DIR_NAME_FINDER_INSTANCE.
-     * Synchronized to guarantee singletonness of the field.
+     * Instantiates the static singleton field PERSON_DIR_NAME_FINDER_INSTANCE.
+     * Synchronized to guarantee singleton-ness of the field.
      */
     private synchronized static void storeSingleton() {
         // recheck that we need to run because field could have been 

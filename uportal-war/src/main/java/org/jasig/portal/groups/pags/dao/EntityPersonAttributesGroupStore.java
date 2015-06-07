@@ -157,7 +157,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 if (!testPassed && logger.isWarnEnabled()) {
                     logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
                             + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
-                            +" Please check PAGSGroupStoreConfig.xml.", group.getKey(), member.getKey(),
+                            +" Please check PAGS Entity Files", group.getKey(), member.getKey(),
                             parentGroup != null ? parentGroup.getKey() : "no parent");
                 }
                 return testPassed;
