@@ -70,7 +70,7 @@ public class PersonDirectoryCacheKeyGenerator implements CacheKeyGenerator {
 
     @Override
     public Serializable generateKey(MethodInvocation methodInvocation) {
-        //Determine the tareted CachableMethod
+        //Determine the targeted CachableMethod
         final CachableMethod cachableMethod = this.resolvedMethodCache.getUnchecked(methodInvocation.getMethod());
 
         //Use the resolved cachableMethod to determine the seed Map and then get the hash of the key elements
