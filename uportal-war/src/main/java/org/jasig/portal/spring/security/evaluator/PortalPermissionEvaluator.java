@@ -137,8 +137,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         if (entity != null && activityKey.equals("VIEW")) {
             final EntityEnum type = entity.getEntityType();
             if (type.isGroup()) {
-                return new AuthorizableActivity(GroupAdministrationHelper.GROUPS_OWNER,
-                            GroupAdministrationHelper.VIEW_PERMISSION);
+                return new AuthorizableActivity(IPermission.PORTAL_GROUPS,
+                            IPermission.VIEW_GROUP_ACTIVITY);
             } else if (type.equals(EntityEnum.PERSON)) {
                 return new AuthorizableActivity(IPersonLookupHelper.USERS_OWNER,
                         IPersonLookupHelper.VIEW_USER_PERMISSION);
