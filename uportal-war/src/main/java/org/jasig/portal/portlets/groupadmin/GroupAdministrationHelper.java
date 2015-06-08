@@ -29,6 +29,7 @@ import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.RuntimeAuthorizationException;
 import org.jasig.portal.services.AuthorizationService;
@@ -47,17 +48,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GroupAdministrationHelper {
-	
-	public static final String GROUPS_OWNER = "UP_GROUPS";
-	public static final String CREATE_PERMISSION = "CREATE_GROUP";
-	public static final String DELETE_PERMISSION = "DELETE_GROUP";
-	public static final String EDIT_PERMISSION = "EDIT_GROUP";
-	public static final String VIEW_PERMISSION = "VIEW_GROUP";
-	
-	protected final Log log = LogFactory.getLog(getClass()); 
 
-	private IGroupListHelper groupListHelper;
-	
+
+    protected final Log log = LogFactory.getLog(getClass()); 
+
+    private IGroupListHelper groupListHelper;
+
 	@Autowired(required = true)
 	public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
@@ -107,7 +103,7 @@ public class GroupAdministrationHelper {
 	public void deleteGroup(String key, IPerson deleter) {
 
         if (!canDeleteGroup(deleter, key)) {
-            throw new RuntimeAuthorizationException(deleter, DELETE_PERMISSION, key);
+            throw new RuntimeAuthorizationException(deleter, IPermission.DELETE_GROUP_ACTIVITY, key);
         }
 		
 		log.info("Deleting group with key " + key);
@@ -129,17 +125,17 @@ public class GroupAdministrationHelper {
 		group.delete();
 		
 	}
-	
-	/**
-	 * Update the title and description of an existing group in the group store.
-	 * 
-	 * @param groupForm Form representing the new group configuration
-	 * @param updater Updating user
-	 */
-	public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
+
+    /**
+     * Update the title and description of an existing group in the group store.
+     * 
+     * @param groupForm Form representing the new group configuration
+     * @param updater Updating user
+     */
+    public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-			throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(updater, IPermission.EDIT_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -157,16 +153,16 @@ public class GroupAdministrationHelper {
 
 	}
 
-	/**
-	 * Update the members of an existing group in the group store.
-	 * 
-	 * @param groupForm Form representing the new group configuration
-	 * @param updater   Updating user
-	 */
-	public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
+    /**
+     * Update the members of an existing group in the group store.
+     * 
+     * @param groupForm Form representing the new group configuration
+     * @param updater   Updating user
+     */
+    public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-            throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(updater, IPermission.EDIT_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -202,19 +198,19 @@ public class GroupAdministrationHelper {
 		group.updateMembers();
 
 	}
-	
-	/**
-	 * Create a new group under the specified parent.  The new group will 
-	 * automatically be added to the parent group.
-	 * 
-	 * @param groupForm		form object representing the new group
-	 * @param parent		parent group for this new group
-	 * @param creator		the uPortal user creating the new group
-	 */
-	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
-		
+
+    /**
+     * Create a new group under the specified parent.  The new group will 
+     * automatically be added to the parent group.
+     * 
+     * @param groupForm     form object representing the new group
+     * @param parent        parent group for this new group
+     * @param creator       the uPortal user creating the new group
+     */
+    public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
+
         if (!canCreateMemberGroup(creator, parent.getId())) {
-            throw new RuntimeAuthorizationException(creator, CREATE_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(creator, IPermission.CREATE_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -258,33 +254,29 @@ public class GroupAdministrationHelper {
 	}
 
     public boolean canEditGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, EDIT_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.EDIT_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canDeleteGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, DELETE_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.DELETE_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canCreateMemberGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, CREATE_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.CREATE_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canViewGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, VIEW_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.VIEW_GROUP_ACTIVITY, target));
     }
-    
+
     /**
      * Get the authorization principal matching the supplied IPerson.
      * 

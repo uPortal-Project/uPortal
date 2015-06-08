@@ -62,7 +62,7 @@ public final class AdHocGroupTester implements IPersonTester {
 
     public AdHocGroupTester(IPersonAttributesGroupTestDefinition definition) {
         assert(definition.getAttributeName().equals(MEMBER_OF) || definition.getAttributeName().equals(NOT_MEMBER_OF));
-        this.isNotTest = (definition.getAttributeName().equals(NOT_MEMBER_OF));
+        this.isNotTest = definition.getAttributeName().equals(NOT_MEMBER_OF);
         this.groupName = definition.getTestValue();
         this.groupHash = calcGroupHash(groupName, isNotTest);
         ApplicationContext context = ApplicationContextLocator.getApplicationContext();
