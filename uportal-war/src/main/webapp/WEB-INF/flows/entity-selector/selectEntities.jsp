@@ -405,6 +405,13 @@
             </c:choose>
         </div><!--end:portlet-content-->
     </div><!--end:portlet-->
+
+    <div class="btn-group adhoc-group-buttons pull-right" role= "group" style="display: none;">
+        <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
+        <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
+        <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
+    </div>
+
     <script type="text/javascript">
         up.jQuery(function() {
             var $ = up.jQuery;
