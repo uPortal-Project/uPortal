@@ -31,7 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -94,7 +94,7 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
-    @JsonIgnore
+    @JsonBackReference // Addresses infinite recursion by excluding from serialization
     private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
