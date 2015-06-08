@@ -37,7 +37,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -103,11 +102,11 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})
-    @JsonManagedReference
+    @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
     private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @ManyToMany(mappedBy = "members", targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    @JsonBackReference
+    @JsonBackReference // Addresses infinite recursion by excluding from serialization
     private Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(0);
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
