@@ -32,11 +32,13 @@ import java.util.TreeSet;
  * @author Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore
  * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition
+ * @see     org.jasig.portal.groups.pags.testers.AdHocGroupTester
  * @since   4.3
  */
 public final class AdHocPagsForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String DESCRIPTION_BRANCH = "Collection of ad hoc groups";
     private static final Object DESCRIPTION_PREAMBLE = "Users who";
     private static final Object DESCRIPTION_ARE = "are members of";
     private static final Object DESCRIPTION_BUT = "but";
@@ -57,9 +59,9 @@ public final class AdHocPagsForm implements Serializable {
      * @param name
      */
     public void setName(String name) {
-        if (name != null) {
+        if (this.name != null) {
             String msg = "Setting the group name only allowed for new Ad Hoc "
-                                        + "groups;  current name=" + name;
+                                        + "groups;  current name=" + this.name;
             throw new IllegalStateException(msg);
         }
         this.name = name;
@@ -71,6 +73,10 @@ public final class AdHocPagsForm implements Serializable {
          * field is generated.  It will be updated each time the group is
          * edited.
          */
+        if (includes.isEmpty() && excludes.isEmpty()) {
+            return DESCRIPTION_BRANCH;
+        }
+
         StringBuilder rslt = new StringBuilder();
         rslt.append(DESCRIPTION_PREAMBLE);
 

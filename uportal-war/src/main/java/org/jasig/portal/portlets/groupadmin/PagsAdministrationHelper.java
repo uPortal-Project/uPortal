@@ -27,6 +27,7 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.RuntimeAuthorizationException;
 import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,9 @@ import java.util.Set;
 public final class PagsAdministrationHelper {
 
     private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
-    private static final Set<IPersonAttributesGroupTestDefinition> EMPTY_TESTS = 
+    private static final Set<IPersonAttributesGroupTestGroupDefinition> EMPTY_TEST_GROUPS =
+            Collections.emptySet();
+    private static final Set<IPersonAttributesGroupTestDefinition> EMPTY_TESTS =
             Collections.emptySet();
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -107,21 +110,23 @@ public final class PagsAdministrationHelper {
         final AdHocPagsForm rslt = new AdHocPagsForm();
         rslt.setName(group.getName());  // Once set, the name field may not be changed
         Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
-        Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
-        for (IPersonAttributesGroupTestDefinition test : tests) {
-            // We already asserted that the tests were all AdHocGroupTester classes
-            switch (test.getAttributeName()) {
-                case AdHocGroupTester.MEMBER_OF:
-                    rslt.addIncludes(test.getTestValue());
-                    break;
-                case AdHocGroupTester.NOT_MEMBER_OF:
-                    rslt.addExcludes(test.getTestValue());
-                    break;
-                default:
-                    // Garbage...
-                    logger.warn("Invalid value for IPersonAttributesGroupTestDefinition.attributeName "
-                            + "'{}' where test class is AdHocGroupTester.", test.getAttributeName());
-                    break;
+        if (!testGroups.isEmpty()) {
+            Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
+            for (IPersonAttributesGroupTestDefinition test : tests) {
+                // We already asserted that the tests were all AdHocGroupTester classes
+                switch (test.getAttributeName()) {
+                    case AdHocGroupTester.MEMBER_OF:
+                        rslt.addIncludes(test.getTestValue());
+                        break;
+                    case AdHocGroupTester.NOT_MEMBER_OF:
+                        rslt.addExcludes(test.getTestValue());
+                        break;
+                    default:
+                        // Garbage...
+                        logger.warn("Invalid value for IPersonAttributesGroupTestDefinition.attributeName "
+                                + "'{}' where test class is AdHocGroupTester.", test.getAttributeName());
+                        break;
+                }
             }
         }
         return rslt;
@@ -133,27 +138,46 @@ public final class PagsAdministrationHelper {
      * @param form      form representing the new group configuration
      * @param user      user performing the update
      */
-    public void createGroup(AdHocPagsForm form, IPerson user) {
+    public void createGroup(String parentGroupName, AdHocPagsForm form, IPerson user) {
         logger.debug("Creating group for group form [{}]", form.toString());
-        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, adHocParentGroupName)) {
+        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(parentGroupName);
+        if (parentGroup == null) {
+            throw new IllegalArgumentException("Parent group does not exist: " + parentGroupName);
+        }
+        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, parentGroupName)) {
             throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
         }
-        IPersonAttributesGroupDefinition group = pagsGroupDefDao.createPersonAttributesGroupDefinition(
-                form.getName(), form.getDescription());
-        IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
-        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+        // Caching in GroupService causing issues
+        //EntityIdentifier[] ids = GroupService.searchForGroups(form.getName(), GroupService.IS, IPerson.class);
+        //if (ids != null) {
+        IPersonAttributesGroupDefinition group;
+        group = getPagsGroupDefByName(form.getName());
+        if (group != null) {
+            throw new IllegalArgumentException("Duplicate group names not allowed: " + form.getName());
+        }
+        group = pagsGroupDefDao.createPersonAttributesGroupDefinition(form.getName(), form.getDescription());
+        if (form.getIncludes().size() + form.getExcludes().size() > 0) {
+            IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
+            updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+        }
 
         // add this group to the membership list for the specified parent
-        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(adHocParentGroupName);
         Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(1);
         parents.add(parentGroup);
         group.setParents(parents);
 
         this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
+
+        // add group to parent members list. Adding to parents above did not update parent members.
+        Set<IPersonAttributesGroupDefinition> parentMembers = parentGroup.getMembers();
+        parentMembers.add(group);
+        parentGroup.setMembers(parentMembers);
+        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentGroup);
     }
 
     /**
-     * Update includes/excludes lists for a group.
+     * Update includes/excludes lists for a group. Changes to group name or parent/members lists
+     * are not supported.
      *
      * @param user      user performing the update
      * @param form      form representing the new group configuration
@@ -164,15 +188,29 @@ public final class PagsAdministrationHelper {
 
         // Note:  name of an existing group may not be changed on the form
         final String groupName = form.getName();
+        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Group not found:  " + groupName);
+        }
         if (!hasPermission(user, IPermission.EDIT_GROUP_ACTIVITY, groupName)) {
             throw new RuntimeAuthorizationException(user, IPermission.EDIT_GROUP_ACTIVITY, groupName);
         }
 
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
         group.setDescription(form.getDescription());  // Generated;  will be updated if includes/excludes change
 
-        IPersonAttributesGroupTestGroupDefinition testGroup = group.getTestGroups().iterator().next();
-        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+        if ((form.getIncludes().size() + form.getExcludes().size()) > 0) {
+            // we have tests
+            IPersonAttributesGroupTestGroupDefinition testGroup;
+            if (group.getTestGroups().isEmpty()) {
+                testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
+            } else {
+                testGroup = group.getTestGroups().iterator().next();
+            }
+            updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
+        } else if (!group.getTestGroups().isEmpty()) {
+            // tests removed; clear test groups
+            group.setTestGroups(EMPTY_TEST_GROUPS);
+        }
 
         this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
 
@@ -190,6 +228,18 @@ public final class PagsAdministrationHelper {
             throw new RuntimeAuthorizationException(user, IPermission.DELETE_GROUP_ACTIVITY, groupName);
         }
         IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Group not found:  " + groupName);
+        }
+
+        // add group to parent members list. Adding to parents above did not update parent members.
+        for (IPersonAttributesGroupDefinition parentGroup: group.getParents()) {
+            Set<IPersonAttributesGroupDefinition> parentMembers = parentGroup.getMembers();
+            parentMembers.remove(group);
+            parentGroup.setMembers(parentMembers);
+            this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentGroup);
+        }
+
         this.pagsGroupDefDao.deletePersonAttributesGroupDefinition(group);
     }
 
@@ -211,11 +261,14 @@ public final class PagsAdministrationHelper {
      * @return          {@code true} if group meets the criteria to be managed by this UI feature; otherwise, {@code false}
      */
     private boolean isManagedAdHocGroup(IPersonAttributesGroupDefinition group) {
-        if (group.getMembers().size() > 0) {
-            return false;
-        }
+        //if (group.getMembers().size() > 0) {
+        //    return false;
+        //}
         Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
-        if (testGroups.size() != 1) {
+        if (testGroups.size() == 0) {
+            return true; // No direct tests, so group is a branch node
+        }
+        if (testGroups.size() > 1) {
             return false;
         }
         Set<IPersonAttributesGroupTestDefinition> tests = testGroups.iterator().next().getTests();
@@ -227,7 +280,7 @@ public final class PagsAdministrationHelper {
                 return false;
             }
         }
-        return group.getMembers().isEmpty();
+        return true;
     }
 
     /**
@@ -274,7 +327,7 @@ public final class PagsAdministrationHelper {
      * @param person        current user to check permission against
      * @param permission    permission name to check
      * @param target        the key of the target
-     * @return              {@true} if the person has permission for the checked principal; otherwise, {@code false}
+     * @return              {@code true} if the person has permission for the checked principal; otherwise, {@code false}
      */
     private boolean hasPermission(IPerson person, String permission, String target) {
         EntityIdentifier ei = person.getEntityIdentifier();
@@ -292,7 +345,7 @@ public final class PagsAdministrationHelper {
      * @see             IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
      * @see             IPersonAttributesGroupDefinition
      */
-    private IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
+    public IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
        Set<IPersonAttributesGroupDefinition> pagsGroups = pagsGroupDefDao.getPersonAttributesGroupDefinitionByName(name);
        if (pagsGroups.size() > 1) {
            logger.error("More than one PAGS group with name {} found.", name);
