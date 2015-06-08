@@ -52,6 +52,9 @@
     <c:set var="selectionMode">${selectMultiple}</c:set>
 
     <link href="<c:url value="/media/skins/common/css/entity-selector.css"/>" rel="stylesheet" type="text/css" />
+    <link href="<c:url value="scripts/jstree/style.min.css"/>" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="<c:url value="scripts/jstree.min.js"/>"></script>
 
     <!--
     | PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
