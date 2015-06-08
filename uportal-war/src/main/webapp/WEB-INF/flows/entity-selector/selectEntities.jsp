@@ -315,7 +315,7 @@
                                                 <h5 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h5>
                                             </div>
                                             <div id="${n}adHocCreate" class="col-md-4">
-                                                <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                                <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
                                             </div>
                                         </div>
                                         <div class="group col-md-12">
@@ -406,11 +406,65 @@
         </div><!--end:portlet-content-->
     </div><!--end:portlet-->
 
-    <div class="btn-group adhoc-group-buttons pull-right" role= "group" style="display: none;">
-        <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
-        <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
-        <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
-    </div>
+    <!-- Adhoc-Group Modal -->
+    <div class="modal fade" id="adhocGroupModal" tabindex="-1" role="dialog" aria-labelledby="adhocGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Create/Edit Custom Group</h4>
+                </div> <!-- end .modal-header div -->
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="groupName" class="col-sm-4 control-label">Group Name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="groupName" placeholder="Group Name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="groupDesc" class="col-sm-4 control-label">Group Description</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="groupDesc" rows="3" placeholder="Group Description"></textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <h5>Group must <strong>INCLUDE</strong></h5>
+                                        <!-- Data Include Node Tree -->
+                                        <div id="data-include" class="demo"></div>
+                                        <hr/>
+                                        <ul>
+                                            <li>Root node/Child node 1</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <h5>Group must <strong>EXCLUDE</strong></h5>
+                                        <!-- Data Exclude Node Tree -->
+                                        <div id="data-exclude" class="demo"></div>
+                                        <hr/>
+                                        <ul>
+                                            <li>Root node/Child node 2</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div> <!-- end .modal-content div -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
+                    <button type="button" class="btn btn-primary">Save changes <i class="fa fa-save"></i></button>
+                </div> <!-- end .modal-footer div -->
+            </div> <!-- end .modal-content div -->
+        </div> <!-- end .modal-dialog div -->
+    </div> <!-- end #adhocGroupModal div -->
 
     <script type="text/javascript">
         up.jQuery(function() {
@@ -461,6 +515,36 @@
                         searchValue: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="please.enter.name"/></spring:escapeBody>'
                     }
                 });
+            });
+
+            $('#data-include').jstree({
+                'core' : {
+                    'data' : [
+                        { "text" : "Root node", "children" : [
+                            { "text" : "Child node 1" },
+                            { "text" : "Child node 2" }
+                        ]}
+                    ]
+                },
+                "checkbox" : {
+                    "keep_selected_style" : false
+                },
+                    "plugins" : [ "checkbox" ]
+                });
+
+                $('#data-exclude').jstree({
+                'core' : {
+                    'data' : [
+                        { "text" : "Root node", "children" : [
+                            { "text" : "Child node 1" },
+                            { "text" : "Child node 2" }
+                        ]}
+                    ]
+                    },
+                    "checkbox" : {
+                        "keep_selected_style" : false
+                    },
+                "plugins" : [ "checkbox" ]
             });
         });
     </script>
