@@ -85,6 +85,36 @@ h1.portal-logo a:hover {
  * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
  */
 
+
+@media only screen and (max-width: 768px) {
+    .portal-header {
+         .container {
+             padding: 0;
+    
+             .portal-user {
+                a {
+                    margin-left: 10px;
+                    display: none;
+                 }
+
+                 .notification-icon {
+                     margin-right: 10px;
+                     a {
+                         text-decoration: none;
+                         display: none;
+                     }
+                 }
+            }
+     }
+
+    #webSearchContainer {
+        margin-top: 24px;
+    }
+  }
+}
+
+
+
 @media only screen and (min-width: 769px) {
      .portal-header {
          .container {
@@ -106,7 +136,6 @@ h1.portal-logo a:hover {
         #webSearchContainer {
             margin-top: 24px;
         }
-
     }
 }
 
