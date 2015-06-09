@@ -52,9 +52,9 @@
     <c:set var="selectionMode">${selectMultiple}</c:set>
 
     <link href="<c:url value="/media/skins/common/css/entity-selector.css"/>" rel="stylesheet" type="text/css" />
-    <link href="<c:url value="scripts/jstree/style.min.css"/>" rel="stylesheet" type="text/css" />
+    <link href="<c:url value="/scripts/jstree/style.min.css"/>" rel="stylesheet" type="text/css" />
 
-    <script type="text/javascript" src="<c:url value="scripts/jstree.min.js"/>"></script>
+    <script type="text/javascript" src="<c:url value="/scripts/jstree/jstree.min.js"/>"></script>
 
     <!--
     | PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -155,7 +155,7 @@
                                     <div class="content row">
                                         <div>
                                             <div class="col-md-8">
-                                                <h5 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h5>
+                                                <h4 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h4>
                                             </div>
                                             <div id="${n}adHocCreate" class="col-md-4">
                                                 <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#myModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
@@ -315,7 +315,7 @@
                                     <div class="content row">
                                         <div>
                                             <div class="col-md-8">
-                                                <h5 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h5>
+                                                <h4 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h4>
                                             </div>
                                             <div id="${n}adHocCreate" class="col-md-4">
                                                 <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
@@ -518,9 +518,8 @@
                         searchValue: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="please.enter.name"/></spring:escapeBody>'
                     }
                 });
-            });
 
-            $('#data-include').jstree({
+                $('#data-include').jstree({
                 'core' : {
                     'data' : [
                         { "text" : "Root node", "children" : [
@@ -548,6 +547,7 @@
                         "keep_selected_style" : false
                     },
                 "plugins" : [ "checkbox" ]
+                });
             });
         });
     </script>
