@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
-import org.jasig.portal.portlets.groupadmin.GroupAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;

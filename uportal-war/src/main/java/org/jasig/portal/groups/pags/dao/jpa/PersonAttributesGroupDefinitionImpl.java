@@ -105,10 +105,6 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
     private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
 
-    @ManyToMany(mappedBy = "members", targetEntity=PersonAttributesGroupDefinitionImpl.class)
-    @JsonBackReference // Addresses infinite recursion by excluding from serialization
-    private Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(0);
-
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<IPersonAttributesGroupTestGroupDefinition> testGroups = new HashSet<IPersonAttributesGroupTestGroupDefinition>(0);
@@ -155,20 +151,6 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
         // to the collection itself;  otherwise we mess with Hibernate.
         this.members.clear();
         this.members.addAll(members);
-    }
-
-    @Override
-    public Set<IPersonAttributesGroupDefinition> getParents() {
-        // Defensive copy...
-        return new HashSet<IPersonAttributesGroupDefinition>(parents);
-    }
-
-    @Override
-    public void setParents(Set<IPersonAttributesGroupDefinition> parents) {
-        // We need to replace the contents of the collection, not the reference
-        // to the collection itself;  otherwise we mess with Hibernate.
-        this.parents.clear();
-        this.parents.addAll(parents);
     }
 
     @Override

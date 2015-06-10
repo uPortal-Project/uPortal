@@ -36,8 +36,6 @@ public interface IPersonAttributesGroupDefinition extends IBasicEntity {
 
     Set<IPersonAttributesGroupDefinition> getMembers();
     void setMembers(Set<IPersonAttributesGroupDefinition> members);
-    Set<IPersonAttributesGroupDefinition> getParents();
-    public void setParents(Set<IPersonAttributesGroupDefinition> parents);
     Set<IPersonAttributesGroupTestGroupDefinition> getTestGroups();
     void setTestGroups(Set<IPersonAttributesGroupTestGroupDefinition> testGroups);
 
