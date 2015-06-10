@@ -152,8 +152,8 @@
                                     <div class="col-md-8">
                                         <h4 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h4>
                                     </div>
-                                    <div id="${n}adHocCreate" class="col-md-4">
-                                        <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                    <div class="col-md-4">
+                                        <button id="${n}currentSelectBtn" type="button" class="btn btn-success pull-right">Add to Selection <i class="fa fa-plus-circle"></i></button>
                                     </div>
                                 </div>
                                 <div class="group col-md-12">
@@ -191,6 +191,9 @@
                                         </tr>
                                     </table>
                                     <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
+                                    <div id="${n}adHocCreate" class="col-md-4">
+                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         </div><!--end: ad hoc groups-->
@@ -261,7 +264,7 @@
                         <div class="form-group">
                             <label for="groupDesc" class="col-sm-4 control-label">Group Description</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" id="groupDesc" rows="3" placeholder="Group Description"></textarea>
+                                <textarea class="form-control" id="groupDesc" rows="3" placeholder="Group Description" readonly="readonly"></textarea>
                             </div>
                         </div>
                         <div class="row">
@@ -270,10 +273,9 @@
                                     <div class="panel-body">
                                         <h5>Group must <strong>INCLUDE</strong></h5>
                                         <!-- Data Include Node Tree -->
-                                        <div id="data-include" class="demo"></div>
+                                        <div id="${n}dataIncludes" class="demo"></div>
                                         <hr/>
-                                        <ul>
-                                            <li>Root node/Child node 1</li>
+                                        <ul id="${n}dataIncludesList">
                                         </ul>
                                     </div>
                                 </div>
@@ -283,10 +285,9 @@
                                     <div class="panel-body">
                                         <h5>Group must <strong>EXCLUDE</strong></h5>
                                         <!-- Data Exclude Node Tree -->
-                                        <div id="data-exclude" class="demo"></div>
+                                        <div id="${n}dataExcludes" class="demo"></div>
                                         <hr/>
-                                        <ul>
-                                            <li>Root node/Child node 2</li>
+                                        <ul id="${n}dataExcludesList">
                                         </ul>
                                     </div>
                                 </div>
@@ -296,48 +297,86 @@
                 </div> <!-- end .modal-content div -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
-                    <button type="button" class="btn btn-primary">Save changes <i class="fa fa-save"></i></button>
+                    <button id= "${n}saveAdHoc" type="button" class="btn btn-primary">Save changes <i class="fa fa-save"></i></button>
                 </div> <!-- end .modal-footer div -->
             </div> <!-- end .modal-content div -->
         </div> <!-- end .modal-dialog div -->
     </div> <!-- end #adhocGroupModal div -->
 
     <script type="text/javascript">
-        $('#data-include').jstree({
-        'core' : {
-            'data' : [
-                { "text" : "Root node", "children" : [
-                    { "text" : "Child node 1" },
-                    { "text" : "Child node 2" }
-                ]}
-            ]
-        },
-        "checkbox" : {
-            "keep_selected_style" : false
-        },
-            "plugins" : [ "checkbox" ]
-        });
-
-        $('#data-exclude').jstree({
-        'core' : {
-            'data' : [
-                { "text" : "Root node", "children" : [
-                    { "text" : "Child node 1" },
-                    { "text" : "Child node 2" }
-                ]}
-            ]
-            },
-            "checkbox" : {
-                "keep_selected_style" : false
-            },
-        "plugins" : [ "checkbox" ]
-        });
-</script>
+    </script>
 
     <script type="text/javascript">
+        var setGroupDescription = function() {
+            var includes, excludes, description;
+            descInput = $("#groupDesc");
+            includes = $("li", "#${n}dataIncludesList").map(function () { return $(this).text(); }).get();
+            excludes = $("li", "#${n}dataExcludesList").map(function () { return $(this).text(); }).get();
+
+            if (includes.length + excludes.length == 0) {
+                $("#groupDesc").val("Collection of ad hoc groups");
+                return;
+            }
+
+            description = "Users who";
+
+            if (includes.length > 0) {
+                description += " are members of ("
+                description += includes.toString();
+                description += ")";
+            }
+
+            if (excludes.length > 0) {
+                if (includes.length > 0) {
+                    description += " but";
+                }
+                description += " are not members of ("
+                description += excludes.toString();
+                //trim last ,
+                description += ")";
+            }
+
+            $("#groupDesc").val(description);
+        };
+
+        var setJSTreeEventListeners = function() {
+            $("#${n}dataIncludes").on("changed.jstree", function (e, data) {
+                var list = $("#${n}dataIncludesList");
+                list.empty();
+                $.each(data.selected, function (i, name) {
+                    var li = $("<li/>").text(data.instance.get_node(name).text).appendTo(list);
+                });
+                setGroupDescription();
+            });
+
+            $("#${n}dataExcludes").on("changed.jstree", function (e, data) {
+                var list = $("#${n}dataExcludesList");
+                list.empty();
+                $.each(data.selected, function (i, name) {
+                    var li = $("<li/>").text(data.instance.get_node(name).text).appendTo(list);
+                });
+                setGroupDescription();
+            });
+        };
+
+        $("#${n}saveAdHoc").bind("click", function (e) {
+            var groupName, groupDesc, parentKey, includes, excludes;
+            console.log("Saving ad hoc group ...");
+            groupName = $("#groupName").val();
+            console.log("groupName = " + groupName);
+            parentKey = $("#${n}currentAdHocGroupName").attr("key");
+            console.log("parentKey = " + parentKey);
+            groupDesc = $("#groupDesc").val();
+            console.log("groupDesc = " + groupDesc);
+            includes = $("li", "#${n}dataIncludesList").map(function () { return $(this).text(); }).get();
+            console.log( $("li", "#${n}dataIncludesList") );
+            console.log(includes);
+        });
+
+
         up.jQuery(function() {
             var $ = up.jQuery;
-            
+
             $(document).ready(function(){
                 up.entityselection("#${n}chooseGroupsBody", {
                     entityRegistry: {
@@ -366,9 +405,12 @@
                         searchLoader: "#${n}searchLoader",
                         adHocGroups: "#${n}adHocGroups",
                         currentAdHocGroupName: "#${n}currentAdHocGroupName",
+                        currentSelectBtn: "#${n}currentSelectBtn",
                         adHocCreate: "#${n}adHocCreate",
                         adHocBreadcrumbs: "#${n}adHocBreadcrumbs",
                         adHocMemberList: "#${n}adHocMemberList",
+                        dialogIncludesTree: '#${n}dataIncludes',
+                        dialogExcludesTree: '#${n}dataExcludes',
                         buttonPanel: "#${n}buttonPanel",
                         buttonPrimary: "#${n}buttonPrimary"
                     },
@@ -383,6 +425,9 @@
                         searchValue: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true"><spring:message code="please.enter.name"/></spring:escapeBody>'
                     }
                 });
+
+                setJSTreeEventListeners();
+                setGroupDescription();
             });
-        });
+       });
     </script>
