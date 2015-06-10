@@ -297,7 +297,7 @@
                 </div> <!-- end .modal-content div -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
-                    <button id= "${n}saveAdHoc" type="button" class="btn btn-primary">Save changes <i class="fa fa-save"></i></button>
+                    <button id= "${n}saveAdHoc" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
                 </div> <!-- end .modal-footer div -->
             </div> <!-- end .modal-content div -->
         </div> <!-- end .modal-dialog div -->
@@ -359,18 +359,37 @@
             });
         };
 
+        var createTestMaps = function (groupNames, testAttr) {
+            var tests = [];
+            $.each(groupNames, function (i, name) {
+                tests.push( { "testValue": name, "attributeName": testAttr,
+                              "testerClassName" : "org.jasig.portal.groups.pags.testers.AdHocGroupTester" } );
+            });
+            return tests;
+        };
+
         $("#${n}saveAdHoc").bind("click", function (e) {
-            var groupName, groupDesc, parentKey, includes, excludes;
-            console.log("Saving ad hoc group ...");
-            groupName = $("#groupName").val();
-            console.log("groupName = " + groupName);
-            parentKey = $("#${n}currentAdHocGroupName").attr("key");
-            console.log("parentKey = " + parentKey);
-            groupDesc = $("#groupDesc").val();
-            console.log("groupDesc = " + groupDesc);
+            var parentKey, includes, excludes, pagsGroup, json, xmlhttp;
+            //parentKey = $("#${n}currentAdHocGroupName").attr("key").split(":")[1];
+            parentKey = $("#${n}currentAdHocGroupName").attr("key").replace(/.*:.*\.(.*)/,"$1");
             includes = $("li", "#${n}dataIncludesList").map(function () { return $(this).text(); }).get();
-            console.log( $("li", "#${n}dataIncludesList") );
-            console.log(includes);
+            excludes = $("li", "#${n}dataExcludesList").map(function () { return $(this).text(); }).get();
+
+            tests = createTestMaps(includes, "group-member");
+            tests = tests.concat(createTestMaps(excludes, "not-group-member"));
+            pagsGroup = {};
+            pagsGroup["name"] = $("#groupName").val();
+            pagsGroup["description"] = $("#groupDesc").val();
+            pagsGroup["testGroups"] = [ {"tests": tests} ];
+            json = JSON.stringify(pagsGroup);
+            console.log(json);
+
+            xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                console.log(xmlhttp.responseText);
+            };
+            xmlhttp.open("POST", "<c:url value='/api/v4-3/pags/'/>" + parentKey + ".json", false);
+            xmlhttp.send(json);
         });
 
 
