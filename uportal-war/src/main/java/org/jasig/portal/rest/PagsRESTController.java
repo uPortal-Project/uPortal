@@ -16,14 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jasig.portal.portlets.groupadmin.AdHocPagsForm;
-import org.jasig.portal.portlets.groupadmin.PagsAdministrationHelper;
+
+import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.jasig.portal.groups.pags.dao.PagsService;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.RuntimeAuthorizationException;
+import org.jasig.portal.services.GroupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -47,7 +55,7 @@ public class PagsRESTController {
      */
 
     @Autowired
-    private PagsAdministrationHelper pagsAdministrationHelper;
+    private PagsService pagsService;
 
     @Autowired
     private IPersonManager personManager;
@@ -55,91 +63,94 @@ public class PagsRESTController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // Just for testing!
-    @RequestMapping(value = "/entities/pagstest/{pagsGroupName}.json", produces = {MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET)
-    public @ResponseBody String findPagsGroupDetails(HttpServletRequest request, HttpServletResponse response,
-                                              @PathVariable("pagsGroupName") String pagsGroupName) {
+    @SuppressWarnings("unused")
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-        try {
-            return objectMapper.writeValueAsString(pagsAdministrationHelper.getPagsGroupDefByName(pagsGroupName));
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("application/json");
-            return "{ 'error': '" + e.toString() + "' }";
-        }
-    }
-    @RequestMapping(value = "/entities/pags/{pagsGroupName}.json", produces = {MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET)
+    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = {MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET)
     public @ResponseBody String findPagsGroup(HttpServletRequest request, HttpServletResponse response,
                                               @PathVariable("pagsGroupName") String pagsGroupName) {
-
         IPerson person = personManager.getPerson(request);
-        return respondPagsGroupJson(response, pagsGroupName, person, HttpServletResponse.SC_FOUND);
+        IPersonAttributesGroupDefinition pagsGroup = this.pagsService.getPagsDefinitionByName(person, pagsGroupName);
+        return respondPagsGroupJson(response, pagsGroup, person, HttpServletResponse.SC_FOUND);
     }
 
-    @RequestMapping(value = "/entities/pags/{pagsParentName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @RequestMapping(value="/v4-3/pags/{parentGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public @ResponseBody String createPagsGroup(HttpServletRequest request,
-                                                HttpServletResponse response,
-                                                @PathVariable("pagsParentName") String pagsParentName,
+                                                HttpServletResponse res,
+                                                @PathVariable("parentGroupName") String parentGroupName,
                                                 @RequestBody String json) {
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        AdHocPagsForm group;
+        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IPersonAttributesGroupDefinition inpt;
         try {
-            group = objectMapper.readValue(json, AdHocPagsForm.class);
+            inpt = objectMapper.readValue(json, IPersonAttributesGroupDefinition.class);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
         }
         IPerson person = personManager.getPerson(request);
+        EntityIdentifier[] eids = GroupService.searchForGroups(parentGroupName, IGroupConstants.IS, IPerson.class);
+        if (eids.length == 0) {
+            throw new IllegalArgumentException("Parent group does not exist: " + parentGroupName);
+        }
+        IEntityGroup parentGroup = GroupService.findGroup(eids[0].toString());  // Names must be unique
+
+        IPersonAttributesGroupDefinition rslt;
         try {
-            pagsAdministrationHelper.createGroup(pagsParentName, group, person);
-        } catch (IllegalArgumentException iae) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "{ 'error': '" + iae.getMessage() + "' }"; // should be escaped
+            // A little weird that we need to do both;  need some PAGS DAO/Service refactoring
+            rslt = pagsService.createPagsDefinition(person, parentGroup, inpt.getName(), inpt.getDescription());
+            pagsService.updatePagsDefinition(person, rslt);
         } catch (RuntimeAuthorizationException rae) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
         }
-        return respondPagsGroupJson(response, group.getName(), person, HttpServletResponse.SC_CREATED);
+        return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_CREATED);
     }
 
-    @RequestMapping(value = "/entities/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
-    public @ResponseBody String updatePagsGroup(HttpServletRequest request,
-                                                HttpServletResponse response,
+    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
+    public @ResponseBody String updatePagsGroup(HttpServletRequest req,
+                                                HttpServletResponse res,
                                                 @PathVariable("pagsGroupName") String pagsGroupName,
                                                 @RequestBody String json) {
 
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        AdHocPagsForm group;
+        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        IPersonAttributesGroupDefinition inpt;
         try {
-            group = objectMapper.readValue(json, AdHocPagsForm.class);
+            inpt = objectMapper.readValue(json, IPersonAttributesGroupDefinition.class);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
         }
-        if (!pagsGroupName.equals(group.getName())) {
-             return "{ 'error': 'Group name in URL parameter must match name in JSON payload' }";
+        if (inpt == null) {
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "{ 'error': 'Not found' }";
         }
-        IPerson person = personManager.getPerson(request);
+        if (!pagsGroupName.equals(inpt.getName())) {
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "{ 'error': 'Group name in URL parameter must match name in JSON payload' }";
+        }
+
+        IPerson person = personManager.getPerson(req);
+        IPersonAttributesGroupDefinition rslt;
         try {
-            pagsAdministrationHelper.updateGroup(person, group);
+            rslt = pagsService.updatePagsDefinition(person, inpt);
         } catch (IllegalArgumentException iae) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': '" + iae.getMessage() + "' }"; // should be escaped
         } catch (RuntimeAuthorizationException rae) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
         }
-        return respondPagsGroupJson(response, group.getName(), person, HttpServletResponse.SC_ACCEPTED);
+        return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_ACCEPTED);
     }
 
-    @RequestMapping(value = "/entities/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
+    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public @ResponseBody String deletePagsGroup(HttpServletRequest request,
                                                 HttpServletResponse response,
                                                 @PathVariable("pagsGroupName") String pagsGroupName) {
@@ -150,7 +161,8 @@ public class PagsRESTController {
         result.append("', 'success': ");
         IPerson person = personManager.getPerson(request);
         try {
-            pagsAdministrationHelper.deleteGroup(pagsGroupName, person);
+            IPersonAttributesGroupDefinition group = pagsService.getPagsDefinitionByName(person, pagsGroupName);
+            pagsService.deletePagsDefinition(person, group);
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
             result.append("'true' }");
         } catch (IllegalArgumentException iae) {
@@ -167,23 +179,18 @@ public class PagsRESTController {
         return result.toString();
     }
 
-    private String respondPagsGroupJson(HttpServletResponse response, String pagsGroupName, IPerson person, int status) {
-        AdHocPagsForm group;
-        try {
-            group = pagsAdministrationHelper.initializeAdHocPagsFormForUpdate(person, pagsGroupName);
-        } catch (IllegalArgumentException iae) {
+    private String respondPagsGroupJson(HttpServletResponse response, IPersonAttributesGroupDefinition pagsGroup, IPerson person, int status) {
+        if (pagsGroup == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            return "{ 'error': '" + iae.getMessage() + "' }";
-        } catch (RuntimeAuthorizationException rae) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return "{ 'error': 'not authorized' }";
+            return "{ 'error': 'Not Found' }";
         }
         try {
             response.setStatus(status);
-            return objectMapper.writeValueAsString(group);
+            return objectMapper.writeValueAsString(pagsGroup);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }";
         }
     }
+
 }

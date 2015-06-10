@@ -16,9 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlets.groupadmin;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.pags.dao.*;
 import org.jasig.portal.groups.pags.testers.AdHocGroupTester;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
@@ -35,12 +38,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Provides helper methods for PAGS group administration webflows that also
- * check user permissions.
+ * Provides helper methods for PAGS group administration webflows.  Uses
+ * {@linkplain PagsService}, rather than the PAGS DAOs, so permission checking
+ * is not necessary (done at the service layer).
  *
  * @author  Benito J. Gonzalez <bgonzalez@unicon.net>
  * @see     org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao
@@ -53,8 +56,7 @@ import java.util.Set;
 public final class PagsAdministrationHelper {
 
     private static final String AD_HOC_GROUP_TESTER = AdHocGroupTester.class.getName();
-    private static final Set<IPersonAttributesGroupTestGroupDefinition> EMPTY_TEST_GROUPS =
-            Collections.emptySet();
+
     private static final Set<IPersonAttributesGroupTestDefinition> EMPTY_TESTS =
             Collections.emptySet();
 
@@ -66,45 +68,40 @@ public final class PagsAdministrationHelper {
     @Autowired
     private IGroupListHelper groupListHelper;
 
-    @Autowired
-    private IPersonAttributesGroupDefinitionDao pagsGroupDefDao;
-
+    /*
+     * It's a little weird (and regrettable) that we're using the DAOs directly
+     * for testGroups & tests;  use of the PagsService here gives us permissions
+     * checking and some business logic.  The JPA PAGS DAOs need some
+     * refactoring before we can stop using them.
+     */
     @Autowired
     private IPersonAttributesGroupTestGroupDefinitionDao pagsTestGroupDefDao;
-
     @Autowired
     private IPersonAttributesGroupTestDefinitionDao pagsTestDefDao;
+
+    @Autowired
+    private PagsService pagsService;
 
     /**
      * Construct an {@link AdHocPagsForm} for the specified group name.
      *
-     * @param name      PAGS group name
+     * @param groupName      PAGS group name
      * @return          form version of specified group
      * @see             #isManagedAdHocGroup(IPersonAttributesGroupDefinition)
      */
-    public AdHocPagsForm initializeAdHocPagsFormForUpdate(IPerson person, String name) {
+    public AdHocPagsForm initializeAdHocPagsFormForUpdate(IPerson person, String groupName) {
 
-        logger.debug("Initializing group form for ad hoc PAGS group named {}", name);
+        logger.debug("Initializing group form for ad hoc PAGS group named {}", groupName);
 
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(name);
+        IPersonAttributesGroupDefinition group = pagsService.getPagsDefinitionByName(person, groupName);
         if (group == null) {
-            // The group does not exists
-            throw new IllegalArgumentException("Group not found:  " + name);
+            // The group does not exists or this user can't see it
+            throw new IllegalArgumentException("Group not found:  " + groupName);
         }
         if (!isManagedAdHocGroup(group)) {
             // The group is not one that we can manage with this form
-            final String msg = "The specified group is not manageable in this UI:  " + name;
+            final String msg = "The specified group is not manageable in this UI:  " + groupName;
             throw new IllegalArgumentException(msg);
-        }
-
-        /*
-         * Verify the user has permission to edit this group;  we don't
-         * want to disclose the current details (in the UI) if not.
-         */
-        if (!this.hasPermission(person, IPermission.EDIT_GROUP_ACTIVITY, group.getEntityIdentifier().getKey())) {
-            throw new RuntimeAuthorizationException(person,
-                    IPermission.EDIT_GROUP_ACTIVITY,
-                    group.getEntityIdentifier().getKey());
         }
 
         final AdHocPagsForm rslt = new AdHocPagsForm();
@@ -139,40 +136,24 @@ public final class PagsAdministrationHelper {
      * @param user      user performing the update
      */
     public void createGroup(String parentGroupName, AdHocPagsForm form, IPerson user) {
+
         logger.debug("Creating group for group form [{}]", form.toString());
-        IPersonAttributesGroupDefinition parentGroup = getPagsGroupDefByName(parentGroupName);
-        if (parentGroup == null) {
+
+
+        EntityIdentifier[] eids = GroupService.searchForGroups(parentGroupName, IGroupConstants.IS, IPerson.class);
+        if (eids.length == 0) {
             throw new IllegalArgumentException("Parent group does not exist: " + parentGroupName);
         }
-        if (!hasPermission(user, IPermission.CREATE_GROUP_ACTIVITY, parentGroupName)) {
-            throw new RuntimeAuthorizationException(user, IPermission.CREATE_GROUP_ACTIVITY, form.getName());
-        }
-        // Caching in GroupService causing issues
-        //EntityIdentifier[] ids = GroupService.searchForGroups(form.getName(), GroupService.IS, IPerson.class);
-        //if (ids != null) {
-        IPersonAttributesGroupDefinition group;
-        group = getPagsGroupDefByName(form.getName());
-        if (group != null) {
-            throw new IllegalArgumentException("Duplicate group names not allowed: " + form.getName());
-        }
-        group = pagsGroupDefDao.createPersonAttributesGroupDefinition(form.getName(), form.getDescription());
-        if (form.getIncludes().size() + form.getExcludes().size() > 0) {
-            IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
-            updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
-        }
+        IEntityGroup parentGroup = GroupService.findGroup(eids[0].toString());  // Names must be unique
+        IPersonAttributesGroupDefinition group = pagsService.createPagsDefinition(user, parentGroup, form.getName(), form.getDescription());
 
-        // add this group to the membership list for the specified parent
-        Set<IPersonAttributesGroupDefinition> parents = new HashSet<>(1);
-        parents.add(parentGroup);
-        group.setParents(parents);
+        IPersonAttributesGroupTestGroupDefinition testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
+        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
 
-        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
+        // This is a bit of a mess, since this method will check for
+        //EDIT_GROUP permission (and we supposedly require CREATE_GROUP)
+        pagsService.updatePagsDefinition(user, group);  // Because we populated the testGroup
 
-        // add group to parent members list. Adding to parents above did not update parent members.
-        Set<IPersonAttributesGroupDefinition> parentMembers = parentGroup.getMembers();
-        parentMembers.add(group);
-        parentGroup.setMembers(parentMembers);
-        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentGroup);
     }
 
     /**
@@ -188,31 +169,22 @@ public final class PagsAdministrationHelper {
 
         // Note:  name of an existing group may not be changed on the form
         final String groupName = form.getName();
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+        IPersonAttributesGroupDefinition group = pagsService.getPagsDefinitionByName(user, groupName);
         if (group == null) {
             throw new IllegalArgumentException("Group not found:  " + groupName);
-        }
-        if (!hasPermission(user, IPermission.EDIT_GROUP_ACTIVITY, groupName)) {
-            throw new RuntimeAuthorizationException(user, IPermission.EDIT_GROUP_ACTIVITY, groupName);
         }
 
         group.setDescription(form.getDescription());  // Generated;  will be updated if includes/excludes change
 
-        if ((form.getIncludes().size() + form.getExcludes().size()) > 0) {
-            // we have tests
-            IPersonAttributesGroupTestGroupDefinition testGroup;
-            if (group.getTestGroups().isEmpty()) {
-                testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
-            } else {
-                testGroup = group.getTestGroups().iterator().next();
-            }
-            updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
-        } else if (!group.getTestGroups().isEmpty()) {
-            // tests removed; clear test groups
-            group.setTestGroups(EMPTY_TEST_GROUPS);
+        IPersonAttributesGroupTestGroupDefinition testGroup;
+        if (group.getTestGroups().isEmpty()) {
+            testGroup = this.pagsTestGroupDefDao.createPersonAttributesGroupTestGroupDefinition(group);
+        } else {
+            testGroup = group.getTestGroups().iterator().next();
         }
+        updateAdHocTesters(user, testGroup, form.getIncludes(), form.getExcludes());
 
-        this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(group);
+        pagsService.updatePagsDefinition(user, group);
 
     }
 
@@ -224,23 +196,13 @@ public final class PagsAdministrationHelper {
      */
     public void deleteGroup(String groupName, IPerson user) {
         logger.info("Deleting ad hoc PAGS group named {}", groupName);
-        if (!hasPermission(user, IPermission.DELETE_GROUP_ACTIVITY, groupName)) {
-            throw new RuntimeAuthorizationException(user, IPermission.DELETE_GROUP_ACTIVITY, groupName);
-        }
-        IPersonAttributesGroupDefinition group = getPagsGroupDefByName(groupName);
+
+        IPersonAttributesGroupDefinition group = pagsService.getPagsDefinitionByName(user, groupName);
         if (group == null) {
             throw new IllegalArgumentException("Group not found:  " + groupName);
         }
 
-        // add group to parent members list. Adding to parents above did not update parent members.
-        for (IPersonAttributesGroupDefinition parentGroup: group.getParents()) {
-            Set<IPersonAttributesGroupDefinition> parentMembers = parentGroup.getMembers();
-            parentMembers.remove(group);
-            parentGroup.setMembers(parentMembers);
-            this.pagsGroupDefDao.updatePersonAttributesGroupDefinition(parentGroup);
-        }
-
-        this.pagsGroupDefDao.deletePersonAttributesGroupDefinition(group);
+        pagsService.deletePagsDefinition(user, group);
     }
 
     /*
@@ -261,9 +223,9 @@ public final class PagsAdministrationHelper {
      * @return          {@code true} if group meets the criteria to be managed by this UI feature; otherwise, {@code false}
      */
     private boolean isManagedAdHocGroup(IPersonAttributesGroupDefinition group) {
-        //if (group.getMembers().size() > 0) {
-        //    return false;
-        //}
+        if (group.getMembers().size() > 0) {
+            return false;
+        }
         Set<IPersonAttributesGroupTestGroupDefinition> testGroups = group.getTestGroups();
         if (testGroups.size() == 0) {
             return true; // No direct tests, so group is a branch node
@@ -296,6 +258,12 @@ public final class PagsAdministrationHelper {
          * we need to clear the testGroup we've been sent.
          */
         testGroup.setTests(EMPTY_TESTS);
+
+        /*
+         * NOTE:  The "normal" permissions checks are handled by the PagesService
+         * bean;  the AdHocGroupTester is a special case, in that the group(s)
+         * selected for the tests need to require VIEW_GROUP permission as well.
+         */
 
         for (String group: includes) {
             if (hasPermission(user, IPermission.VIEW_GROUP_ACTIVITY, group)) {
@@ -335,21 +303,4 @@ public final class PagsAdministrationHelper {
         return ap.hasPermission(IPermission.PORTAL_GROUPS, permission, target);
     }
 
-    /**
-     * Retrieve an instance of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
-     * the DAO bean. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
-     * Second, that group names are unique. A warning will be logged if more than one group is found with the same name.
-     *
-     * @param name      group name used to search for group definition
-     * @return          {@code IPersonAttributesGroupDefinition} of named group or null
-     * @see             IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
-     * @see             IPersonAttributesGroupDefinition
-     */
-    public IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
-       Set<IPersonAttributesGroupDefinition> pagsGroups = pagsGroupDefDao.getPersonAttributesGroupDefinitionByName(name);
-       if (pagsGroups.size() > 1) {
-           logger.error("More than one PAGS group with name {} found.", name);
-       }
-       return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
-    }
 }
