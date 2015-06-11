@@ -50,7 +50,7 @@ public final class PagsService {
 
     // These 2 should be (public) constants on their respective service classes, not here
     private static final String SERVICE_NAME_LOCAL = "local";
-    private static final String SERVICE_NAME_PAGS = "pags";
+    public static final String SERVICE_NAME_PAGS = "pags";
 
     @Autowired
     private IPersonAttributesGroupDefinitionDao pagsGroupDefDao;
@@ -66,7 +66,7 @@ public final class PagsService {
     public Set<IPersonAttributesGroupDefinition> getPagsDefinitions(IPerson person) {
         Set<IPersonAttributesGroupDefinition> rslt = new HashSet<>();
         for (IPersonAttributesGroupDefinition def : pagsGroupDefDao.getPersonAttributesGroupDefinitions()) {
-            if (hasPermission(person, IPermission.VIEW_GROUP_ACTIVITY, def.getEntityIdentifier().getKey())) {
+            if (hasPermission(person, IPermission.VIEW_GROUP_ACTIVITY, def.getCompositeEntityIdentifierForGroup().getKey())) {
                 rslt.add(def);
             }
         }
@@ -86,7 +86,7 @@ public final class PagsService {
             // Better to produce exception?  I'm thinking not, but open-minded.
             return null;
         }
-        if (!hasPermission(person, IPermission.VIEW_GROUP_ACTIVITY, rslt.getEntityIdentifier().getKey())) {
+        if (!hasPermission(person, IPermission.VIEW_GROUP_ACTIVITY, rslt.getCompositeEntityIdentifierForGroup().getKey())) {
             throw new RuntimeAuthorizationException(person, IPermission.VIEW_GROUP_ACTIVITY, name);
         }
         logger.debug("Returning PAGS definition '{}' for user '{}'", rslt, person.getUserName());
@@ -121,7 +121,11 @@ public final class PagsService {
             // Should refactor this switch to instead choose a service and invoke a method on it
             switch (parent.getServiceName().toString()) {
                 case SERVICE_NAME_LOCAL:
-                    IEntityGroup member = GroupService.findGroup(rslt.getEntityIdentifier().toString());
+                    IEntityGroup member = GroupService.findGroup(rslt.getCompositeEntityIdentifierForGroup().getKey());
+                    if (member == null) {
+                        String msg = "The specified group was created, but is not present in the store:  " + rslt.getName();
+                        throw new RuntimeException(msg);
+                    }
                     parent.addMember(member);
                     parent.updateMembers();
                     break;
@@ -149,8 +153,8 @@ public final class PagsService {
             IPersonAttributesGroupDefinition pagsDef) {
 
         // Verify permission
-        if (!hasPermission(person, IPermission.EDIT_GROUP_ACTIVITY, pagsDef.getEntityIdentifier().getKey())) {
-            throw new RuntimeAuthorizationException(person, IPermission.EDIT_GROUP_ACTIVITY, pagsDef.getEntityIdentifier().getKey());
+        if (!hasPermission(person, IPermission.EDIT_GROUP_ACTIVITY, pagsDef.getCompositeEntityIdentifierForGroup().getKey())) {
+            throw new RuntimeAuthorizationException(person, IPermission.EDIT_GROUP_ACTIVITY, pagsDef.getCompositeEntityIdentifierForGroup().getKey());
         }
 
         IPersonAttributesGroupDefinition rslt = pagsGroupDefDao.updatePersonAttributesGroupDefinition(pagsDef);
@@ -164,8 +168,8 @@ public final class PagsService {
     public void deletePagsDefinition(IPerson person, IPersonAttributesGroupDefinition pagsDef) {
 
         // Verify permission
-        if (!hasPermission(person, IPermission.DELETE_GROUP_ACTIVITY, pagsDef.getEntityIdentifier().getKey())) {
-            throw new RuntimeAuthorizationException(person, IPermission.DELETE_GROUP_ACTIVITY, pagsDef.getEntityIdentifier().getKey());
+        if (!hasPermission(person, IPermission.DELETE_GROUP_ACTIVITY, pagsDef.getCompositeEntityIdentifierForGroup().getKey())) {
+            throw new RuntimeAuthorizationException(person, IPermission.DELETE_GROUP_ACTIVITY, pagsDef.getCompositeEntityIdentifierForGroup().getKey());
         }
 
         pagsGroupDefDao.deletePersonAttributesGroupDefinition(pagsDef);

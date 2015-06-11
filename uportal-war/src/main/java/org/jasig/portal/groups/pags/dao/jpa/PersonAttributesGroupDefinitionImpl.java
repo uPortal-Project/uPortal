@@ -49,6 +49,8 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
+import org.jasig.portal.groups.pags.dao.PagsService;
+import org.jasig.portal.security.IPerson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -122,8 +124,8 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
 
     @Override
     @JsonIgnore
-    public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.id), PersonAttributesGroupDefinitionImpl.class);
+    public EntityIdentifier getCompositeEntityIdentifierForGroup() {
+        return new EntityIdentifier(PagsService.SERVICE_NAME_PAGS + "." + this.getName(), IPerson.class);
     }
 
     @Override
