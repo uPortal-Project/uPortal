@@ -631,9 +631,13 @@ var up = up || {};
                 xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4) {
-                        console.log(xmlhttp.responseText);
-                        that.registry.removeEntity(parentKey);
-                        browseEntity(that, parentKey);
+                        //console.log(xmlhttp.responseText);
+                        if (xmlhttp.status >= 200 && xmlhttp.status <= 202) {
+                            that.registry.removeEntity(parentKey);
+                            browseEntity(that, parentKey);
+                            resetAdHocDialog();
+                        }
+                        displayResponseMessage(xmlhttp);
                     };
                 };
                 xmlhttp.open("POST", that.options.pagsApiUrl + parentName + ".json", true);
@@ -652,7 +656,7 @@ var up = up || {};
 
     /**
      * Creator function for the entityselection component.
-     * 
+     *
      * @param {Object} container - reference to DOM container.
      * @param {Object} options - reference to configuration object.
      */
@@ -665,22 +669,22 @@ var up = up || {};
         that.searchDropDown = that.locate("searchDropDown");
 
         that.registry = fluid.initSubcomponent(that, "entityRegistry", [container, fluid.COMPONENT_OPTIONS]);
-        
+
         /**
          * Public. Checks passed array's length property.
          * If the length of the array is 0 the array is
          * empty. Returns true if the array is empty.
-         * 
+         *
          * @param {Object} arr - reference to passed array object.
          */
         that.isEmptyArray = function (arr) {
             return ((arr.length > 0) ? false : true);
         };//end:function.
-        
+
         initialize(that);
         return that;
     };//end:component.
-    
+
     // Defaults.
     fluid.defaults("up.entityselection", {
         entityRegistry: {

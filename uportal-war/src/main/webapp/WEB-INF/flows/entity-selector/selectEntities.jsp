@@ -242,7 +242,7 @@
                     </form>
                 </div> <!-- end .modal-content div -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
+                    <button id="${n}cancelAdHocButton" type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
                     <button id="${n}saveAdHocButton" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
                 </div> <!-- end .modal-footer div -->
             </div> <!-- end .modal-content div -->
@@ -305,6 +305,9 @@
                 });
                 setGroupDescription();
             });
+
+            $("#${n}dataIncludes").on("loaded.jstree", resetAdHocDialog);
+            $("#${n}dataExcludes").on("loaded.jstree", resetAdHocDialog);
         };
 
         var createTestMaps = function (groupNames, testAttr) {
@@ -314,6 +317,30 @@
                               "testerClassName" : "org.jasig.portal.groups.pags.testers.AdHocGroupTester" } );
             });
             return tests;
+        };
+
+        var resetAdHocDialog = function () {
+            console.log("resetting ad hoc dialog");
+            $("#groupName").val("");
+
+            $(":jstree").each(function () {
+                $(this).jstree("deselect_all",false);
+                /* var node = $(this).jstree("get_node", "${rootEntity.entityType}:${rootEntity.id}"); */
+                $(this).jstree("open_node", "${rootEntity.entityType}:${rootEntity.id}");
+            });
+
+            /*
+            $("#${n}dataIncludesList").empty();
+            $("#${n}dataExcludesList").empty();
+            */
+            setGroupDescription();
+        };
+
+        $("#${n}cancelAdHocButton").bind("click", resetAdHocDialog);
+
+        var displayResponseMessage = function(xmlhttp) {
+            console.log("display response message");
+            console.log(xmlhttp.responseText);
         };
 
         up.jQuery(function() {
@@ -364,7 +391,6 @@
                 });
 
                 setJSTreeEventListeners();
-                setGroupDescription();
             });
        });
     </script>
