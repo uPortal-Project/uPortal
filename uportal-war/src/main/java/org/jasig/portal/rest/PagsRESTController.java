@@ -50,8 +50,6 @@ import javax.servlet.http.HttpServletResponse;
  * to provide a RESTful API for AJAX management of PAGS.
  * 
  * @author Benito Gonzalez, bgonzalez@unicon.net
- * @see org.jasig.portal.portlets.groupadmin.PagsAdministrationHelper
- * @see org.jasig.portal.portlets.groupadmin.AdHocPagsForm
  */
 @Controller
 public class PagsRESTController {
