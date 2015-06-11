@@ -292,7 +292,7 @@
             excludes = $("li", "#${n}dataExcludesList").map(function () { return $(this).text(); }).get();
 
             if (includes.length + excludes.length == 0) {
-                $("#groupDesc").val("Collection of ad hoc groups");
+                $("#groupDesc").val("");
                 return;
             }
 
