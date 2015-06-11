@@ -116,7 +116,7 @@ public class PagsRESTController {
         try {
             name = URLDecoder.decode(parentGroupName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return "{ 'error': '" + e.getMessage() + "' }";
         }
 
@@ -131,7 +131,8 @@ public class PagsRESTController {
         // Obtain a real reference to the parent group
         EntityIdentifier[] eids = GroupService.searchForGroups(name, IGroupConstants.IS, IPerson.class);
         if (eids.length == 0) {
-            throw new IllegalArgumentException("Parent group does not exist: " + name);
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return "{ 'error': 'Parent group does not exist: " + name + "' }";
         }
         IEntityGroup parentGroup = (IEntityGroup) GroupService.getGroupMember(eids[0]);  // Names must be unique
 
@@ -154,6 +155,9 @@ public class PagsRESTController {
         } catch (RuntimeAuthorizationException rae) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
+        } catch (IllegalArgumentException iae) {
+            res.setStatus(HttpServletResponse.SC_CONFLICT);
+            return "{ 'error': '" + iae.getMessage() + "' }";
         } catch (Exception e) {
             e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

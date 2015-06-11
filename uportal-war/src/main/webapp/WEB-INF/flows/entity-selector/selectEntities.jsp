@@ -74,6 +74,36 @@
             <h3 class="subtitle"><spring:message code="${pageSubtitleCode}" arguments="${pageSubtitleArgument}" text="${pageSubtitleText}"/></h3>
         </div>
         <!--content-->
+        <!-- If Adhoc group is created successfully -->
+        <div id="${n}alertSuccess" class="alert alert-success alert-dismissible" role="alert" style="display:none;">
+            <button type="button" class="close" onclick="$(this).parent().hide();" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p><i class="fa fa-check-circle">Adhoc group created successfully!</i></p>
+        </div>
+
+        <!-- Else if there is problem with the parent -->
+        <div id="${n}alertInvalidParent" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+            <button type="button" class="close" onclick="$(this).parent().hide();" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p><i class="fa fa-exclamation-circle">There is a problem with the parent group.</i></p>
+        </div>
+
+        <!-- Else if there is an existing group -->
+        <div id="${n}alertGroupExists" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+            <button type="button" class="close" onclick="$(this).parent().hide();" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p><i class="fa fa-exclamation-circle">There is a group that already exists with that name.</i></p>
+        </div>
+
+        <!-- Else if user is unauthorized -->
+        <div id="${n}alertUnauthorized" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+            <button type="button" class="close" onclick="$(this).parent().hide();" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p><i class="fa fa-exclamation-circle">You are unauthorized to to complete this process.</i></p>
+        </div>
+
+        <!-- Else if unknown error -->
+        <div id="${n}alertUnknown" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+            <button type="button" class="close" onclick="$(this).parent().hide();" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p><i class="fa fa-exclamation-circle">Unknown error. Contact your administrator.</i></p>
+        </div>
+
         <div id="${n}chooseGroupsBody" class="fl-widget-content content portlet-content container-fluid" role="main">
             <div class="${selectionMode ? 'view-multi-select' : 'view-single-select'}">
                 <div class="columns-2 row-fluid row">
@@ -191,65 +221,65 @@
                 </div>
             </div><!--end:view-select-->
 
-    <!-- Adhoc-Group Modal -->
-    <div class="modal fade" id="adhocGroupModal" tabindex="-1" role="dialog" aria-labelledby="adhocGroupModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Create/Edit Custom Group</h4>
-                </div> <!-- end .modal-header div -->
-                <div class="modal-body">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label for="groupName" class="col-sm-4 control-label">Group Name</label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="groupName" placeholder="Group Name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="groupDesc" class="col-sm-4 control-label">Group Description</label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control" id="groupDesc" rows="3" placeholder="Group Description" readonly="readonly"></textarea>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <h5>Group must <strong>INCLUDE</strong></h5>
-                                        <!-- Data Include Node Tree -->
-                                        <div id="${n}dataIncludes" class="demo"></div>
-                                        <hr/>
-                                        <ul id="${n}dataIncludesList">
-                                        </ul>
+            <!-- Adhoc-Group Modal -->
+            <div class="modal fade" id="adhocGroupModal" tabindex="-1" role="dialog" aria-labelledby="adhocGroupModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Create/Edit Custom Group</h4>
+                        </div> <!-- end .modal-header div -->
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label for="groupName" class="col-sm-4 control-label">Group Name</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="groupName" placeholder="Group Name">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <h5>Group must <strong>EXCLUDE</strong></h5>
-                                        <!-- Data Exclude Node Tree -->
-                                        <div id="${n}dataExcludes" class="demo"></div>
-                                        <hr/>
-                                        <ul id="${n}dataExcludesList">
-                                        </ul>
+                                <div class="form-group">
+                                    <label for="groupDesc" class="col-sm-4 control-label">Group Description</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control" id="groupDesc" rows="3" placeholder="Group Description" readonly="readonly"></textarea>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </form>
-                </div> <!-- end .modal-content div -->
-                <div class="modal-footer">
-                    <button id="${n}cancelAdHocButton" type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
-                    <button id="${n}saveAdHocButton" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
-                </div> <!-- end .modal-footer div -->
-            </div> <!-- end .modal-content div -->
-        </div> <!-- end .modal-dialog div -->
-    </div> <!-- end #content div -->
-        </div><!--end:portlet-content-->
-    </div><!--end:portlet-->
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <h5>Group must <strong>INCLUDE</strong></h5>
+                                                <!-- Data Include Node Tree -->
+                                                <div id="${n}dataIncludes" class="demo"></div>
+                                                <hr/>
+                                                <ul id="${n}dataIncludesList">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <h5>Group must <strong>EXCLUDE</strong></h5>
+                                                <!-- Data Exclude Node Tree -->
+                                                <div id="${n}dataExcludes" class="demo"></div>
+                                                <hr/>
+                                                <ul id="${n}dataExcludesList">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div> <!-- end .modal-content div -->
+                        <div class="modal-footer">
+                            <button id="${n}cancelAdHocButton" type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
+                            <button id="${n}saveAdHocButton" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
+                        </div> <!-- end .modal-footer div -->
+                    </div> <!-- end .modal-content div -->
+                </div> <!-- end .modal-dialog div -->
+            </div><!--end adhocGroupModal -->
+        </div> <!-- end #content div -->
+    </div><!--end portlet-->
 
     <script type="text/javascript">
     </script>
@@ -336,11 +366,35 @@
             setGroupDescription();
         };
 
+        $("#${n}adHocCreate").bind("click", function() {
+            $(".alert").hide();
+        });
+
         $("#${n}cancelAdHocButton").bind("click", resetAdHocDialog);
 
         var displayResponseMessage = function(xmlhttp) {
             console.log("display response message");
             console.log(xmlhttp.responseText);
+            switch(xmlhttp.status) {
+                case 200: // SC_OK
+                case 201: // SC_CREATED
+                case 202: // SC_ACCEPTED
+                    $("#${n}alertSuccess").show();
+                    break;
+                case 400: // SC_BAD_REQUEST -> bad parent
+                    $("#${n}alertInvalidParent").show();
+                    break;
+                case 409: // SC_CONFLICT -> group exists
+                    $("#${n}alertGroupExists").show();
+                    break;
+                case 401: // SC_UNAUTHORIZED
+                case 403: // SC_FORBIDDEN
+                    $("#${n}alertUnauthorized").show();
+                    break;
+                default:
+                    $("#${n}alertUnknown").show();
+                    break;
+            }
         };
 
         up.jQuery(function() {
