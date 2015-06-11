@@ -683,7 +683,41 @@ var up = up || {};
             // change this to just hide ad hoc create button when refactored to one section
             that.locate("adHocGroups").hide();
         }
-        
+
+        that.locate("saveAdHocButton").bind("click", function (e) {
+            var parentKey, parentName, includes, excludes, tests, pagsGroup, json, xmlhttp;
+            parentKey = that.locate("currentAdHocGroupName").attr("key");
+            parentName = that.locate("currentAdHocGroupName").text();
+            includes = [];
+            that.locate("dataIncludesList").find("li").each(function () {
+                includes.push( $(this).text() );
+            });
+            excludes = [];
+            that.locate("dataExcludesList").find("li").each(function () {
+                excludes.push( $(this).text() );
+            });
+
+            tests = createTestMaps(includes, "group-member");
+            tests = tests.concat(createTestMaps(excludes, "not-group-member"));
+            pagsGroup = {};
+            pagsGroup["name"] = $("#groupName").val();
+            pagsGroup["description"] = $("#groupDesc").val();
+            pagsGroup["testGroups"] = [ {"tests": tests} ];
+            json = JSON.stringify(pagsGroup);
+            console.log(json);
+
+            xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (xmlhttp.readyState == 4) {
+                    console.log(xmlhttp.responseText);
+                    that.registry.removeEntity(parentKey);
+                    browseAdHocGroup(that, parentKey);
+                };
+            };
+            xmlhttp.open("POST", that.options.pagsApiUrl + parentName + ".json", true);
+            xmlhttp.send(json);
+        });
+
         // Disable primary button.
         if (that.options.selected.length < 1 && that.options.requireSelection) {
             that.locate("buttonPrimary").attr("disabled", "disabled");
@@ -734,6 +768,7 @@ var up = up || {};
         initialAdHocEntity: 'group:pags.Ad%20Hoc%20Groups',
         selectMultiple: true,
         requireSelection: true,
+        pagsApiUrl: "/api/v4-3/pags/",
         selectors: {
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
@@ -755,7 +790,10 @@ var up = up || {};
             adHocBreadcrumbs: "#adHocBreadcrumbs",
             adHocMemberList: "#adHocMemberList",
             dialogIncludesTree: '#dataIncludes',
+            dataIncludesList: '#dataIncludesList',
             dialogExcludesTree: '#dataExcludes',
+            dataExcludesList: '#dataExcludesList',
+            saveAdHocButton: '#saveAdHocButton',
             buttonPanel: "#buttonPanel",
             buttonPrimary: "#buttonPrimary"
         },

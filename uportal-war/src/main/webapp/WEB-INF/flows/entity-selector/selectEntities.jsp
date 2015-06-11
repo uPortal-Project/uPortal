@@ -242,8 +242,6 @@
                     </div><!--end: content-->
                 </div>
             </div><!--end:view-select-->
-</div><!--end:portlet-content-->
-    </div><!--end:portlet-->
 
     <!-- Adhoc-Group Modal -->
     <div class="modal fade" id="adhocGroupModal" tabindex="-1" role="dialog" aria-labelledby="adhocGroupModalLabel" aria-hidden="true">
@@ -297,11 +295,13 @@
                 </div> <!-- end .modal-content div -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close <i class="fa fa-times"></i></button>
-                    <button id= "${n}saveAdHoc" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
+                    <button id="${n}saveAdHocButton" type="button" class="btn btn-primary" data-dismiss="modal">Save changes <i class="fa fa-save"></i></button>
                 </div> <!-- end .modal-footer div -->
             </div> <!-- end .modal-content div -->
         </div> <!-- end .modal-dialog div -->
     </div> <!-- end #adhocGroupModal div -->
+        </div><!--end:portlet-content-->
+    </div><!--end:portlet-->
 
     <script type="text/javascript">
     </script>
@@ -368,31 +368,6 @@
             return tests;
         };
 
-        $("#${n}saveAdHoc").bind("click", function (e) {
-            var parentKey, includes, excludes, pagsGroup, json, xmlhttp;
-            //parentKey = $("#${n}currentAdHocGroupName").attr("key").split(":")[1];
-            parentKey = $("#${n}currentAdHocGroupName").attr("key").replace(/.*:.*\.(.*)/,"$1");
-            includes = $("li", "#${n}dataIncludesList").map(function () { return $(this).text(); }).get();
-            excludes = $("li", "#${n}dataExcludesList").map(function () { return $(this).text(); }).get();
-
-            tests = createTestMaps(includes, "group-member");
-            tests = tests.concat(createTestMaps(excludes, "not-group-member"));
-            pagsGroup = {};
-            pagsGroup["name"] = $("#groupName").val();
-            pagsGroup["description"] = $("#groupDesc").val();
-            pagsGroup["testGroups"] = [ {"tests": tests} ];
-            json = JSON.stringify(pagsGroup);
-            console.log(json);
-
-            xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                console.log(xmlhttp.responseText);
-            };
-            xmlhttp.open("POST", "<c:url value='/api/v4-3/pags/'/>" + parentKey + ".json", false);
-            xmlhttp.send(json);
-        });
-
-
         up.jQuery(function() {
             var $ = up.jQuery;
 
@@ -408,6 +383,7 @@
                     initialAdHocEntity: '${adHocEntity.entityType}:${adHocEntity.id}',
                     selectMultiple: ${selectionMode},
                     requireSelection: ${ not empty requireSelection ? requireSelection : true },
+                    pagsApiUrl: "<c:url value='/api/v4-3/pags/'/>",
                     selectors: {
                         selectionBasket: "#${n}selectionBasket",
                         breadcrumbs: "#${n}entityBreadcrumbs",
@@ -429,7 +405,10 @@
                         adHocBreadcrumbs: "#${n}adHocBreadcrumbs",
                         adHocMemberList: "#${n}adHocMemberList",
                         dialogIncludesTree: '#${n}dataIncludes',
+                        dataIncludesList: '#${n}dataIncludesList',
                         dialogExcludesTree: '#${n}dataExcludes',
+                        dataExcludesList: '#${n}dataExcludesList',
+                        saveAdHocButton: '#${n}saveAdHocButton',
                         buttonPanel: "#${n}buttonPanel",
                         buttonPrimary: "#${n}buttonPrimary"
                     },
