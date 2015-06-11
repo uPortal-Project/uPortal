@@ -19,13 +19,18 @@
 
 package org.jasig.portal.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.jasig.portal.groups.pags.dao.PagsService;
+import org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.RuntimeAuthorizationException;
@@ -54,6 +59,11 @@ public class PagsRESTController {
       Tried to use ResponseEntities but the ran into conflicts when using <mvc:annotation-driven/>
      */
 
+    /**
+     * Help other Java classes use this API well.
+     */
+    public static final String URL_FORMAT_STRING = "/api/v4-3/pags/%s.json";
+
     @Autowired
     private PagsService pagsService;
 
@@ -67,11 +77,27 @@ public class PagsRESTController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = {MediaType.APPLICATION_JSON_VALUE}, method = RequestMethod.GET)
-    public @ResponseBody String findPagsGroup(HttpServletRequest request, HttpServletResponse response,
+    public @ResponseBody String findPagsGroup(HttpServletRequest request, HttpServletResponse res,
                                               @PathVariable("pagsGroupName") String pagsGroupName) {
+
+        res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        /*
+         * This step is necessary;  the incoming URLs will sometimes have '+'
+         * characters for spaces, and the @PathVariable magic doesn't convert them.
+         */
+        String name;
+        try {
+            name = URLDecoder.decode(pagsGroupName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "{ 'error': '" + e.toString() + "' }";
+        }
+
         IPerson person = personManager.getPerson(request);
-        IPersonAttributesGroupDefinition pagsGroup = this.pagsService.getPagsDefinitionByName(person, pagsGroupName);
-        return respondPagsGroupJson(response, pagsGroup, person, HttpServletResponse.SC_FOUND);
+        IPersonAttributesGroupDefinition pagsGroup = this.pagsService.getPagsDefinitionByName(person, name);
+        return respondPagsGroupJson(res, pagsGroup, person, HttpServletResponse.SC_FOUND);
+
     }
 
     @RequestMapping(value="/v4-3/pags/{parentGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
@@ -81,24 +107,49 @@ public class PagsRESTController {
                                                 @RequestBody String json) {
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        /*
+         * This step is necessary;  the incoming URLs will sometimes have '+'
+         * characters for spaces, and the @PathVariable magic doesn't convert them.
+         */
+        String name;
+        try {
+            name = URLDecoder.decode(parentGroupName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "{ 'error': '" + e.toString() + "' }";
+        }
+
         IPersonAttributesGroupDefinition inpt;
         try {
-            inpt = objectMapper.readValue(json, IPersonAttributesGroupDefinition.class);
+            inpt = objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
         }
-        IPerson person = personManager.getPerson(request);
-        EntityIdentifier[] eids = GroupService.searchForGroups(parentGroupName, IGroupConstants.IS, IPerson.class);
-        if (eids.length == 0) {
-            throw new IllegalArgumentException("Parent group does not exist: " + parentGroupName);
-        }
-        IEntityGroup parentGroup = GroupService.findGroup(eids[0].toString());  // Names must be unique
 
+        // Obtain a real reference to the parent group
+        EntityIdentifier[] eids = GroupService.searchForGroups(name, IGroupConstants.IS, IPerson.class);
+        if (eids.length == 0) {
+            throw new IllegalArgumentException("Parent group does not exist: " + name);
+        }
+        IEntityGroup parentGroup = (IEntityGroup) GroupService.getGroupMember(eids[0]);  // Names must be unique
+
+        IPerson person = personManager.getPerson(request);
         IPersonAttributesGroupDefinition rslt;
         try {
-            // A little weird that we need to do both;  need some PAGS DAO/Service refactoring
+            // A little weird that we need to do both;
+            // need some PAGS DAO/Service refactoring
             rslt = pagsService.createPagsDefinition(person, parentGroup, inpt.getName(), inpt.getDescription());
+            // NOTE:  We are also obligated to establish the backlink
+            // testGroupDef --> groupDef;  arguably this backlink serves
+            // little purpose and could be removed.
+            for (IPersonAttributesGroupTestGroupDefinition testGroupDef : inpt.getTestGroups()) {
+                // NOTE:  The deserializer handles testDef --> testGroupDef
+                testGroupDef.setGroup(rslt);
+            }
+            rslt.setTestGroups(inpt.getTestGroups());
+            rslt.setMembers(inpt.getMembers());
             pagsService.updatePagsDefinition(person, rslt);
         } catch (RuntimeAuthorizationException rae) {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -108,6 +159,7 @@ public class PagsRESTController {
             return "{ 'error': '" + e.toString() + "' }";
         }
         return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_CREATED);
+
     }
 
     @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
@@ -117,9 +169,22 @@ public class PagsRESTController {
                                                 @RequestBody String json) {
 
         res.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
+        /*
+         * This step is necessary;  the incoming URLs will sometimes have '+'
+         * characters for spaces, and the @PathVariable magic doesn't convert them.
+         */
+        String name;
+        try {
+            name = URLDecoder.decode(pagsGroupName, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "{ 'error': '" + e.toString() + "' }";
+        }
+
         IPersonAttributesGroupDefinition inpt;
         try {
-            inpt = objectMapper.readValue(json, IPersonAttributesGroupDefinition.class);
+            inpt = objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': '" + e.toString() + "' }"; // should be escaped
@@ -128,7 +193,7 @@ public class PagsRESTController {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': 'Not found' }";
         }
-        if (!pagsGroupName.equals(inpt.getName())) {
+        if (!name.equals(inpt.getName())) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return "{ 'error': 'Group name in URL parameter must match name in JSON payload' }";
         }
@@ -136,7 +201,27 @@ public class PagsRESTController {
         IPerson person = personManager.getPerson(req);
         IPersonAttributesGroupDefinition rslt;
         try {
-            rslt = pagsService.updatePagsDefinition(person, inpt);
+            IPersonAttributesGroupDefinition currentDef = pagsService.getPagsDefinitionByName(person, name);
+            if (currentDef == null) {
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return "{ 'error': 'Not found' }";
+            }
+            /*
+             * Copy over the information being passed in to the JPA-managed
+             * instance;  the following do not support updates (currently):
+             *   - Name
+             *   - Members
+             */
+            currentDef.setDescription(inpt.getDescription());
+            // NOTE:  We are also obligated to establish the backlink
+            // testGroupDef --> groupDef;  arguably this backlink serves
+            // little purpose and could be removed.
+            for (IPersonAttributesGroupTestGroupDefinition testGroupDef : inpt.getTestGroups()) {
+                // NOTE:  The deserializer handles testDef --> testGroupDef
+                testGroupDef.setGroup(currentDef);
+            }
+            currentDef.setTestGroups(inpt.getTestGroups());
+            rslt = pagsService.updatePagsDefinition(person, currentDef);
         } catch (IllegalArgumentException iae) {
             res.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return "{ 'error': '" + iae.getMessage() + "' }"; // should be escaped
@@ -150,34 +235,9 @@ public class PagsRESTController {
         return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_ACCEPTED);
     }
 
-    @RequestMapping(value="/v4-3/pags/{pagsGroupName}.json", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-    public @ResponseBody String deletePagsGroup(HttpServletRequest request,
-                                                HttpServletResponse response,
-                                                @PathVariable("pagsGroupName") String pagsGroupName) {
-
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        StringBuilder result = new StringBuilder("{ 'delete': '");
-        result.append(pagsGroupName);
-        result.append("', 'success': ");
-        IPerson person = personManager.getPerson(request);
-        try {
-            IPersonAttributesGroupDefinition group = pagsService.getPagsDefinitionByName(person, pagsGroupName);
-            pagsService.deletePagsDefinition(person, group);
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            result.append("'true' }");
-        } catch (IllegalArgumentException iae) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            result.append("'false', 'reason': '" + iae.getMessage() + "' }"); // should be escaped
-        } catch (RuntimeAuthorizationException rae) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            result.append("'false', 'reason': 'un-authorized' }");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            result.append("'false', 'reason': 'unknown exception' }");
-        }
-        return result.toString();
-    }
+    /*
+     * Implementation
+     */
 
     private String respondPagsGroupJson(HttpServletResponse response, IPersonAttributesGroupDefinition pagsGroup, IPerson person, int status) {
         if (pagsGroup == null) {

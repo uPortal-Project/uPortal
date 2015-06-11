@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.dao.jpa;
 
 import java.util.HashSet;
@@ -36,8 +37,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
@@ -50,6 +49,10 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
@@ -82,7 +85,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @Id
     @GeneratedValue(generator = "UP_PAGS_GROUP_GEN")
     @Column(name = "PAGS_GROUP_ID")
-    private long internalPersonAttributesGroupDefinitionId;
+    private long id = -1L;
 
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -102,21 +105,25 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @ManyToMany(cascade=CascadeType.ALL, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})
-    @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
+    @JsonSerialize(using=PagsDefinitionJsonUtils.DefinitionLinkJsonSerializer.class)
+    @JsonDeserialize(using=PagsDefinitionJsonUtils.DefinitionLinkJsonDeserializer.class)
     private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JsonDeserialize(using=PagsDefinitionJsonUtils.TestGroupJsonDeserializer.class)  // Auto-serialization of interface references works; deserialization doesn't (besides we have some extra work to do)
     private Set<IPersonAttributesGroupTestGroupDefinition> testGroups = new HashSet<IPersonAttributesGroupTestGroupDefinition>(0);
 
     @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupDefinitionId), PersonAttributesGroupDefinitionImpl.class);
+    @JsonIgnore
+    public long getId() {
+        return id;
     }
 
     @Override
-    public long getId() {
-        return internalPersonAttributesGroupDefinitionId;
+    @JsonIgnore
+    public EntityIdentifier getEntityIdentifier() {
+        return new EntityIdentifier(String.valueOf(this.id), PersonAttributesGroupDefinitionImpl.class);
     }
 
     @Override
