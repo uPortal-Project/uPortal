@@ -43,7 +43,10 @@ This list of component group services is processed by the composite, or "root" s
  | *.pags-group.xml files that are imported into the database.
  |
  | IMPORTANT: The pags service is REQUIRED for uPortal to correctly function.  Do not comment out
- | this service unless you uncomment the XML PAGS implementation below
+ | this service unless you uncomment the XML PAGS implementation below.
+ |
+ | Note: caching is disabled because group management does not go through this service. Relying on caching
+ | in the JPA layer.
  +-->
   <service>
     <name>pags</name>
