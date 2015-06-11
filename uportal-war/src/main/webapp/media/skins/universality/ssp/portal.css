@@ -86,7 +86,7 @@ border: thin solid #b1c6f2;
 
 .up #portalPageHeader .fl-widget .fl-widget-titlebar { display: none; }
 
-.up #portalPageHeader .fl-widget .fl-widget-content { margin: 0; padding: 0; background: transparent; }
+.up #portalPageHeader .fl-widget .fl-widget-content { margin: 0; padding: 0; background: transparent; overflow: hidden; } 
 
 .up #portalPageHeader #portalPageBar { /* A utility bar at the top of the portal page. */ padding: 0.3em 25px; text-align: right; }
 
@@ -104,7 +104,7 @@ border: thin solid #b1c6f2;
 
 .up .not-logged-in #portalPageHeader #portalLogo { /* The portal logo when not logged in (Guest View). The logo's physical size + padding gives the header its height. */ padding: 1.5em 0; }
 
-.up .not-logged-in #portalPageHeader #portalLogin { /* Login */ width: 10em; position: absolute; top: 1.5em; right: 25px; }
+.up .not-logged-in #portalPageHeader #portalLogin { /* Login */ width: 10em; position: absolute; top: 0.5em; right: 25px; } 
 
 /*====================================*/
 /* NAVIGATION */
