@@ -117,7 +117,7 @@ public class PagsRESTController {
             name = URLDecoder.decode(parentGroupName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "{ 'error': '" + e.toString() + "' }";
+            return "{ 'error': '" + e.getMessage() + "' }";
         }
 
         IPersonAttributesGroupDefinition inpt;
@@ -125,7 +125,7 @@ public class PagsRESTController {
             inpt = objectMapper.readValue(json, PersonAttributesGroupDefinitionImpl.class);
         } catch (Exception e) {
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "{ 'error': '" + e.toString() + "' }"; // should be escaped
+            return "{ 'error': '" + e.getMessage() + "' }"; // should be escaped
         }
 
         // Obtain a real reference to the parent group
@@ -155,8 +155,9 @@ public class PagsRESTController {
             res.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "{ 'error': 'not authorized' }";
         } catch (Exception e) {
+            e.printStackTrace();
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return "{ 'error': '" + e.toString() + "' }";
+            return "{ 'error': '" + e.getMessage() + "' }";
         }
         return respondPagsGroupJson(res, rslt, person, HttpServletResponse.SC_CREATED);
 
