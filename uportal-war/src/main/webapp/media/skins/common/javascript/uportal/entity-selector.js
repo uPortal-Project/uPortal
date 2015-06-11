@@ -105,48 +105,22 @@ var up = up || {};
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var updateSelectionStates = function (that) {
-        var currentEntityName, currentEntityKey, titleBar, link, adHocMemberList, selectionBasket;
+        var content, selectionBasket, button, key;
 
         // Get selections.
         selectionBasket = that.locate("selectionBasket");
 
-        // Check current entity.
-        currentEntityName = that.locate("currentEntityName");
-        currentEntityKey = currentEntityName.attr("key");
-        titleBar = that.locate("entityBrowserTitlebar");
-        link = that.locate("selectEntityLink");
-        link.unbind("click");
-        if (selectionBasket.find("a[key='" + currentEntityKey + "']").size() > 0) {
-            titleBar.addClass(that.options.styles.selected);
-            link.bind('click', function (e) {
-                deselectEntity(that, currentEntityKey);
-            });
-            link.attr("title", currentEntityName);
-        } else {
-            titleBar.removeClass(that.options.styles.selected);
-            link.bind('click', function (e) {
-                selectEntity(that, currentEntityKey);
-            });
-            link.attr("title", currentEntityName);
-        }
+        // Check current current entity.
+        button = that.locate("currentSelectBtn");
+        key = that.locate("currentEntityName").attr("key");
+        updateButtonState(button, selectionBasket, that, key);
 
-        if (that.options.enableAdHocGroups) {
-            var a, button, key;
-
-            // Check current ad hoc group.
-            button = that.locate("currentSelectBtn");
-            key = that.locate("currentAdHocGroupName").attr("key");
-            updateButtonState(button, selectionBasket, that, key);
-
-            // Check ad hoc groups table.
-            adHocMemberList = that.locate("adHocMemberList");
-            adHocMemberList.find("a").each(function() {
-                a = $(this);
-                button = a.parent().next().find("button.btn-select");
-                key = a.attr("id");
-                updateButtonState(button, selectionBasket, that, key);
-           });
-        }
+        // Check ad hoc groups table.
+        content = that.locate("entityBrowserContent");
+        content.find("button.btn-select").each(function() {
+            key = $(this).attr("key");
+            updateButtonState($(this), selectionBasket, that, key);
+        });
     };//end:function.
 
     /**
@@ -323,103 +297,56 @@ var up = up || {};
 
     /**
      * Private. Browse to a particular entity.
-     * 
-     * @param {Object} that - reference to an instance of the up.entityselection component.
-     * @param {String} key - reference to currently 'focused' entity. ex: group:local.17
-     */
-    var browseEntity = function (that, key) {
-    	console.log("browse");
-        var entity, currentEntityName, browsingInclude, entityBrowserContent, memberList;
-        
-        // Cache.
-        entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
-        that.currentEntity = entity;
-        currentEntityName = that.locate("currentEntityName");
-        browsingInclude = that.locate("browsingInclude");
-        entityBrowserContent = that.locate("entityBrowserContent");
-        memberList = entityBrowserContent.find("." + that.options.styles.memberList);
-        
-        // Set entity starting point / defaults.
-        updateBreadcrumbs(that, entity, "breadcrumbs", browseEntity);
-        currentEntityName.text(entity.name);
-        currentEntityName.attr("key", getKey(entity));
-        browsingInclude.text(entity.name);
-        memberList.html("").hide();
-        
-        // For each entity, create a member list.
-        $.each(entity.children, function (idx, obj) {
-            var li, list;
-            li = '<li class="' + obj.entityType + '"><a href="javascript:;"><span class="' + that.options.styles.memberLink + '" key="' + getKey(obj) + '">' + obj.name + '</span></a></li>';
-            list = entityBrowserContent.find("." + obj.entityType.toLowerCase()).find("." + that.options.styles.memberList);
-            list.append(li);
-            list.show();
-        });//end:loop.
-        that.container.find(".no-members").each(function (idx, obj) {
-        	obj = $(obj);
-        	if (obj.parent().find("li").size() > 0) {
-        		obj.hide();
-        	} else {
-        		obj.show();
-        	}
-        });
-        
-        // Register click event on member list links.
-        //entityBrowserContent.find("." + that.options.styles.memberLink).click(function () {
-        entityBrowserContent.find("a").click(function () {
-            browseEntity(that, $(this).find("span").attr("key"));
-        });//end:click.
-        
-        // Set selection states.
-        updateSelectionStates(that);
-    };//end:function.
-
-    /**
-     * Private. Browse to a particular ad hoc group.
      *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currently 'focused' group key. ex: group:pags.Ad%20Hoc%20Groups
      */
-    var browseAdHocGroup = function (that, key) {
-    	console.log("browse ad hoc");
-        var entity, currentAdHocGroupName, memberTable;
+    var browseEntity = function (that, key) {
+        console.log("browse ad hoc");
+        var entity, currentEntityName, content, memberTable;
 
         // Cache.
         entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
         that.currentAdHocGroup = entity;
 
         // Update title and breadcrumbs.
-        currentAdHocGroupName = that.locate("currentAdHocGroupName");
-        currentAdHocGroupName.text(entity.name);
-        currentAdHocGroupName.attr("key", getKey(entity));
-        updateBreadcrumbs(that, entity, "adHocBreadcrumbs", browseAdHocGroup);
+        currentEntityName = that.locate("currentEntityName");
+        currentEntityName.text(entity.name);
+        currentEntityName.attr("key", getKey(entity));
+        updateBreadcrumbs(that, entity, "breadcrumbs", browseEntity);
 
-        // Clear member table.
-        memberTable = that.locate("adHocMemberList");
-        memberTable.html("").hide();
+        // Clear member tables.
+        content = that.locate("entityBrowserContent");
+        content.find("table").each(function() {
+            $(this).html("").hide();
+        });
 
         // For each entity, create a member list item.
         $.each(entity.children, function (idx, obj) {
-            var tdChild, tdButtons, divButtons, selButton, selIcon, tr, table, img, a;
+            var tdChild, tdButtons, divButtons, selButton, selIcon, tr, table, a, objType;
 
-            // Create folder image.
-            img = document.createElement("img");
-            img.alt = "Folder icon";
-            img.src = "/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png";
+            objType = obj.entityType.toLowerCase();
 
             // Create entity name/link.
-            a = document.createElement('a');
-            a.href = "javascript:;";
-            a.id = getKey(obj);
-            a.text = obj.name;
+            if (objType == 'person' || objType == 'portlet') {
+                a = document.createElement('span');
+                a.textContent = obj.name;
+            } else {
+                a = document.createElement('a');
+                a.href = "javascript:;";
+                a.text = obj.name;
+                a.setAttribute("key", getKey(obj));
+            }
+            a.className = that.options.styles.memberLink;
 
             // Create entity td.
             tdChild = document.createElement("td");
-            tdChild.appendChild(img);
             tdChild.appendChild(a);
 
             // Create buttons, div and td.
             selButton = document.createElement('button');
             selButton.className = "btn btn-select btn-success btn-xs";
+            selButton.setAttribute("key", getKey(obj));
             selButton.appendChild(document.createTextNode("Add to Selection "));
             selIcon = document.createElement('i');
             selIcon.className = "fa fa-plus-circle";
@@ -439,24 +366,24 @@ var up = up || {};
             tr = document.createElement("tr");
             tr.appendChild(tdChild);
             tr.appendChild(tdButtons);
-            table = that.locate("adHocMemberList");
+            table = content.find("." + objType).find("." + that.options.styles.memberList);
             table.append(tr);
             table.show();
         });//end:loop.
 
         // Reset no-members.
         that.container.find(".no-members").each(function (idx, obj) {
-        	obj = $(obj);
-        	if (obj.parent().find("tr").size() > 0) {
-        		obj.hide();
-        	} else {
-        		obj.show();
-        	}
+            obj = $(obj);
+            if (obj.parent().find("tr").size() > 0) {
+                obj.hide();
+            } else {
+                obj.show();
+            }
         });
 
         // Register click event on member list links.
-        memberTable.find("a").click(function () {
-            browseAdHocGroup(that, $(this).attr("id"));
+        content.find("table").find("a").click(function () {
+            browseEntity(that, $(this).attr("key"));
         });//end:click.
 
         // Set selection states.
@@ -491,6 +418,7 @@ var up = up || {};
     var itemSelectionHandler = function (that, key) {
         // Cache.
         var entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
+        console.log(entity);
         
         // Selection.
         if ($.inArray(key, that.options.selected) !== -1) {
@@ -535,6 +463,7 @@ var up = up || {};
         // Assign default 'click' event.
         list.find("a").bind("click", function () {
             var span = $(this).find("span");
+            console.log(span.attr("key"));
             itemSelectionHandler(that, span.attr("key"));
         });//end:listener.
         
@@ -590,7 +519,7 @@ var up = up || {};
         });//end:listener.
         
         // Binds 'click' event to close button.
-        closeSearch.bind("click", function () {
+        closeSearch.find('a').bind("click", function () {
             searchDropDown.hide();
         });//end:listener.
         
@@ -616,13 +545,10 @@ var up = up || {};
             deselectEntity(that, $(this).attr("key"));
         });//end:click.
 
-        // Browse to the designated default start entity.
+        // Browse to the designated start of ad hoc groups.
         browseEntity(that, that.options.initialFocusedEntity);
 
         if (that.options.enableAdHocGroups) {
-            // Browse to the designated start of ad hoc groups.
-            browseAdHocGroup(that, that.options.initialAdHocEntity);
-
             var entityToJSTreeNode = function (entity) {
                 var child, childNodes;
                 childNodes = [];
@@ -659,64 +585,63 @@ var up = up || {};
             // Configure jstree data
             // Using 'jQuery' for jstree support
             jQuery(that.options.selectors.dialogIncludesTree).jstree({
-            "core" : {
-                "data" : callback
-            },
-            "checkbox" : {
-                "keep_selected_style" : false,
-                "three_state" : false
-            },
+                "core" : {
+                    "data" : callback
+                },
+                "checkbox" : {
+                    "keep_selected_style" : false,
+                    "three_state" : false
+                },
                 "plugins" : [ "checkbox" ]
             });
 
             jQuery(that.options.selectors.dialogExcludesTree).jstree({
-            "core" : {
-                "data" : callback
-            },
-            "checkbox" : {
-                "keep_selected_style" : false,
-                "three_state" : false
-            },
+                "core" : {
+                    "data" : callback
+                },
+                "checkbox" : {
+                    "keep_selected_style" : false,
+                    "three_state" : false
+                },
                 "plugins" : [ "checkbox" ]
             });
-         } else {
-            // change this to just hide ad hoc create button when refactored to one section
-            that.locate("adHocGroups").hide();
-        }
 
-        that.locate("saveAdHocButton").bind("click", function (e) {
-            var parentKey, parentName, includes, excludes, tests, pagsGroup, json, xmlhttp;
-            parentKey = that.locate("currentAdHocGroupName").attr("key");
-            parentName = that.locate("currentAdHocGroupName").text();
-            includes = [];
-            that.locate("dataIncludesList").find("li").each(function () {
-                includes.push( $(this).text() );
-            });
-            excludes = [];
-            that.locate("dataExcludesList").find("li").each(function () {
-                excludes.push( $(this).text() );
-            });
+            that.locate("saveAdHocButton").bind("click", function (e) {
+                var parentKey, parentName, includes, excludes, tests, pagsGroup, json, xmlhttp;
+                parentKey = that.locate("currentEntityName").attr("key");
+                parentName = that.locate("currentEntityName").text();
+                includes = [];
+                that.locate("dataIncludesList").find("li").each(function () {
+                    includes.push( $(this).text() );
+                });
+                excludes = [];
+                that.locate("dataExcludesList").find("li").each(function () {
+                    excludes.push( $(this).text() );
+                });
 
-            tests = createTestMaps(includes, "group-member");
-            tests = tests.concat(createTestMaps(excludes, "not-group-member"));
-            pagsGroup = {};
-            pagsGroup["name"] = $("#groupName").val();
-            pagsGroup["description"] = $("#groupDesc").val();
-            pagsGroup["testGroups"] = [ {"tests": tests} ];
-            json = JSON.stringify(pagsGroup);
-            console.log(json);
+                tests = createTestMaps(includes, "group-member");
+                tests = tests.concat(createTestMaps(excludes, "not-group-member"));
+                pagsGroup = {};
+                pagsGroup["name"] = $("#groupName").val();
+                pagsGroup["description"] = $("#groupDesc").val();
+                pagsGroup["testGroups"] = [ {"tests": tests} ];
+                json = JSON.stringify(pagsGroup);
+                console.log(json);
 
-            xmlhttp = new XMLHttpRequest();
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4) {
-                    console.log(xmlhttp.responseText);
-                    that.registry.removeEntity(parentKey);
-                    browseAdHocGroup(that, parentKey);
+                xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4) {
+                        console.log(xmlhttp.responseText);
+                        that.registry.removeEntity(parentKey);
+                        browseEntity(that, parentKey);
+                    };
                 };
-            };
-            xmlhttp.open("POST", that.options.pagsApiUrl + parentName + ".json", true);
-            xmlhttp.send(json);
-        });
+                xmlhttp.open("POST", that.options.pagsApiUrl + parentName + ".json", true);
+                xmlhttp.send(json);
+            });
+        } else {
+            that.locate("adHocCreate").hide();
+        }
 
         // Disable primary button.
         if (that.options.selected.length < 1 && that.options.requireSelection) {
@@ -765,7 +690,6 @@ var up = up || {};
         selected: [],
         initialFocusedEntity: 'group:local.0',
         enableAdHocGroups: false,
-        initialAdHocEntity: 'group:pags.Ad%20Hoc%20Groups',
         selectMultiple: true,
         requireSelection: true,
         pagsApiUrl: "/api/v4-3/pags/",
@@ -773,34 +697,25 @@ var up = up || {};
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
             currentEntityName: "#currentEntityName",
-            selectEntityLink: "#selectEntityLink",
             entityBrowserContent: "#entityBrowserContent",
-            entityBrowserTitlebar: "#entityBrowserTitlebar",
-            browsingInclude: "#browsingInclude",
             closeSearch: "closeDropDown",
             searchForm: "#searchForm",
             searchDropDown: "#searchDropDown",
             searchResults: "#searchResults",
             searchResultsNoMembers: "#searchResultsNoMembers",
             searchLoader: "searchLoader",
-            adHocGroups: "#adHocGroups",
-            currentAdHocGroupName: "#currentAdHocGroupName",
             currentSelectBtn: "#currentSelectBtn",
             adHocCreate: "#adHocCreate",
-            adHocBreadcrumbs: "#adHocBreadcrumbs",
-            adHocMemberList: "#adHocMemberList",
             dialogIncludesTree: '#dataIncludes',
             dataIncludesList: '#dataIncludesList',
             dialogExcludesTree: '#dataExcludes',
             dataExcludesList: '#dataExcludesList',
             saveAdHocButton: '#saveAdHocButton',
-            buttonPanel: "#buttonPanel",
             buttonPrimary: "#buttonPrimary"
         },
         styles: {
             memberList: "member-list",
             memberLink: "member-link",
-            adHocMemberList: "ad-hoc-member-list",
             selection: "selection",
             selected: "selected",
             last: "last",

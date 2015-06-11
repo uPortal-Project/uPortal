@@ -79,121 +79,69 @@
                 <div class="columns-2 row-fluid row">
                     <div class="fl-container-flex60 span8 col-md-8">
                         <!-- entity -->
-                        <div id="${n}entityBrowser" class="entity-browser row">
-                            <!--breadcrumb-->
-                            <div id="${n}entityBreadcrumb" class="link-breadcrumb col-md-12">
-                                <h5 class="title"><spring:message code="groups"/>:</h5>
-                                <div id="${n}entityBreadcrumbs" class="breadcrumbs"></div>
-                            </div><!--end: breadcrumb-->
-                            <!--titlebar-->
-                            <div id="${n}entityBrowserTitlebar" class="titlebar ui-helper-clearfix col-md-12">
-                                <h4 class="title" id="${n}currentEntityName"></h4>
-                                <a class="select" id="${n}selectEntityLink" href="javascript:;" title="<spring:message code="select"/>"><span><spring:message code="select"/></span></a>
-                            </div><!--end: titlebar-->
-                            <!--content-->
-                            <div id="${n}entityBrowserContent" class="content row">
-                                <!--includes-->
-                                <p class="col-md-12"><span id="${n}browsingInclude" class="current"></span> <spring:message code="includes"/>:</p>
-                                <!--members-->
-                                <c:forEach items="${selectTypes}" var="type">
-                                    <c:choose>
-                                        <c:when test="${type == 'group'}">
-                                            <div class="group col-md-12">
-                                                <h6 class="title"><spring:message code="groups"/></h6>
-                                                <ul class="member-list"></ul>
-                                                <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
-                                            </div>
-                                        </c:when>
-                                        <c:when test="${type == 'person'}">
-                                            <div class="person col-md-12">
-                                                <h6 class="title"><spring:message code="people"/></h6>
-                                                <ul class="member-list"></ul>
-                                                <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
-                                            </div>
-                                        </c:when>
-                                        <c:when test="${type == 'category'}">
-                                            <div class="category col-md-12">
-                                                <h6 class="title"><spring:message code="categories"/></h6>
-                                                <ul class="member-list"></ul>
-                                                <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
-                                            </div>
-                                        </c:when>
-                                        <c:when test="${type == 'portlet'}">
-                                            <div class="portlet col-md-12">
-                                                <h6 class="title"><spring:message code="portlets"/></h6>
-                                                <ul class="member-list"></ul>
-                                                <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
-                                            </div>
-                                        </c:when>
-                                    </c:choose>
-                                </c:forEach>
-                            </div><!--end: content-->
-                            <!--search-->
-                            <div id="${n}portletSearch" class="portlet-search">
-                                <form id="${n}searchForm" class="form-inline" role="form">
-                                    <input type="text" class="form-control" name="searchterm" value="<spring:message code="enter.name"/>"/>
-                                    <input type="submit" class="button btn" value="<spring:message code="go"/>" />
-                                </form>
-                                <div id="${n}searchDropDown" class="search-dropdown">
-                                    <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
-                                    <div id="${n}searchResultsNoMembers" class="portlet-msg info" role="alert"><p><spring:message code="no.members"/></p></div>
-                                        <ul id="${n}searchResults" class="search-list">
-                                            <li class="group">
-                                                <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
-                                            </li>
-                                        </ul>
-                                    <div id="${n}searchLoader" class="search-loader"><span>&nbsp;</span></div>
-                                </div>
-                            </div><!--end: search-->
-                        </div><!--end: entity-->
-                        <div id="${n}adHocGroups" class="entity-browser row" style="margin-top: 7px;">
+                        <div id="${n}entityBrowserContent" class="entity-browser row">
                             <div class="content row">
                                 <div>
-                                    <div class="col-md-8">
-                                        <h4 id="${n}currentAdHocGroupName" class="title">Ad Hoc Groups</h4>
+                                    <div class="col-md-6">
+                                        <h4 class="title">
+                                            <span id="${n}currentEntityName">Ad Hoc Groups</span>
+                                            <button id="${n}currentSelectBtn" type="button" class="btn btn-success btn-xs">Add to Selection <i class="fa fa-plus-circle"></i></button>
+                                        </h4>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button id="${n}currentSelectBtn" type="button" class="btn btn-success pull-right">Add to Selection <i class="fa fa-plus-circle"></i></button>
-                                    </div>
+                                    <div id="${n}portletSearch" class="portlet-search">
+                                        <form id="${n}searchForm" class="form-inline" role="form">
+                                            <input type="text" class="form-control" name="searchterm" value="<spring:message code="enter.name"/>"/>
+                                            <input type="submit" class="button btn" value="<spring:message code="go"/>" />
+                                        </form>
+                                        <div id="${n}searchDropDown" class="search-dropdown">
+                                            <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                            <div id="${n}searchResultsNoMembers" class="portlet-msg info" role="alert"><p><spring:message code="no.members"/></p></div>
+                                                <ul id="${n}searchResults" class="search-list">
+                                                    <li class="group">
+                                                        <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
+                                                    </li>
+                                                </ul>
+                                            <div id="${n}searchLoader" class="search-loader"><span>&nbsp;</span></div>
+                                        </div>
+                                    </div><!--end: search-->
                                 </div>
-                                <div class="group col-md-12">
-                                    <div id="${n}adHocBreadcrumbs" class="breadcrumbs"></div>
-                                    <table id="${n}adHocMemberList" class="table table-condensed table-striped">
-                                        <tr>
-                                            <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Authenticated Users</a></td>
-                                            <td>
-                                                <div class="btn-group pull-right" role= "group">
-                                                    <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
-                                                    <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Faculty Users</a></td>
-                                            <td>
-                                                <div class="btn-group pull-right" role= "group">
-                                                    <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
-                                                    <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="/ResourceServingWebapp/rs/famfamfam/silk/1.3/folder.png" alt="Folder icon"/> <a href="#">Custom Group for Students</a></td>
-                                            <td>
-                                                <div class="btn-group pull-right" role= "group">
-                                                    <button type="button" class="btn btn-success btn-xs">Add Group to Selection <i class="fa fa-plus-circle"></i></button>
-                                                    <button type="button" class="btn btn-info btn-xs">Edit Group <i class="fa fa-pencil"></i></button>
-                                                    <button type="button" class="btn btn-danger btn-xs">Delete Group <i class="fa fa-trash-o"></i></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
-                                    <div id="${n}adHocCreate" class="col-md-4">
-                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
-                                    </div>
+                                <div class="col-md-12">
+                                    <div id="${n}entityBreadcrumbs" class="breadcrumbs"></div>
+                                        <c:forEach items="${selectTypes}" var="type">
+                                            <c:choose>
+                                                <c:when test="${type == 'group'}">
+                                                    <div class="group col-md-12">
+                                                        <h6 class="title"><spring:message code="groups"/></h6>
+                                                        <table class="table table-condensed table-striped member-list"></table>
+                                                        <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
+                                                        <div id="${n}adHocCreate" class="col-md-4">
+                                                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="${type == 'person'}">
+                                                    <div class="person col-md-12">
+                                                        <h6 class="title"><spring:message code="people"/></h6>
+                                                        <table class="table table-condensed table-striped member-list"></table>
+                                                        <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="${type == 'category'}">
+                                                    <div class="category col-md-12">
+                                                        <h6 class="title"><spring:message code="categories"/></h6>
+                                                        <table class="table table-condensed table-striped member-list"></table>
+                                                        <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="${type == 'portlet'}">
+                                                    <div class="portlet col-md-12">
+                                                        <h6 class="title"><spring:message code="portlets"/></h6>
+                                                        <table class="table table-condensed table-striped member-list"></table>
+                                                        <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
+                                                    </div>
+                                                </c:when>
+                                            </c:choose>
+                                        </c:forEach>
                                 </div>
                             </div>
                         </div><!--end: ad hoc groups-->
@@ -299,7 +247,7 @@
                 </div> <!-- end .modal-footer div -->
             </div> <!-- end .modal-content div -->
         </div> <!-- end .modal-dialog div -->
-    </div> <!-- end #adhocGroupModal div -->
+    </div> <!-- end #content div -->
         </div><!--end:portlet-content-->
     </div><!--end:portlet-->
 
@@ -380,7 +328,6 @@
                     selected: [<c:forEach items="${groups}" var="group" varStatus="status">'<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${group.entityType}:${group.id}</spring:escapeBody>'${ status.last ? '' : ',' }</c:forEach>],
                     initialFocusedEntity: '${rootEntity.entityType}:${rootEntity.id}',
                     enableAdHocGroups: ${not empty enableAdHocGroups ? enableAdHocGroups : false},
-                    initialAdHocEntity: '${adHocEntity.entityType}:${adHocEntity.id}',
                     selectMultiple: ${selectionMode},
                     requireSelection: ${ not empty requireSelection ? requireSelection : true },
                     pagsApiUrl: "<c:url value='/api/v4-3/pags/'/>",
@@ -388,28 +335,20 @@
                         selectionBasket: "#${n}selectionBasket",
                         breadcrumbs: "#${n}entityBreadcrumbs",
                         currentEntityName: "#${n}currentEntityName",
-                        selectEntityLink: "#${n}selectEntityLink",
                         entityBrowserContent: "#${n}entityBrowserContent",
-                        entityBrowserTitlebar: "#${n}entityBrowserTitlebar",
-                        browsingInclude: "#${n}browsingInclude",
                         closeSearch: "#${n}closeDropDown",
                         searchForm: "#${n}searchForm",
                         searchDropDown: "#${n}searchDropDown",
                         searchResults: "#${n}searchResults",
                         searchResultsNoMembers: "#${n}searchResultsNoMembers",
                         searchLoader: "#${n}searchLoader",
-                        adHocGroups: "#${n}adHocGroups",
-                        currentAdHocGroupName: "#${n}currentAdHocGroupName",
                         currentSelectBtn: "#${n}currentSelectBtn",
                         adHocCreate: "#${n}adHocCreate",
-                        adHocBreadcrumbs: "#${n}adHocBreadcrumbs",
-                        adHocMemberList: "#${n}adHocMemberList",
                         dialogIncludesTree: '#${n}dataIncludes',
                         dataIncludesList: '#${n}dataIncludesList',
                         dialogExcludesTree: '#${n}dataExcludes',
                         dataExcludesList: '#${n}dataExcludesList',
                         saveAdHocButton: '#${n}saveAdHocButton',
-                        buttonPanel: "#${n}buttonPanel",
                         buttonPrimary: "#${n}buttonPrimary"
                     },
                     messages: {
