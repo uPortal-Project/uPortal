@@ -19,22 +19,21 @@
 package org.jasig.portal.groups.pags.dao;
 
 import org.dom4j.Element;
-import org.jasig.portal.IBasicEntity;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributesGroupTestDefinition extends IBasicEntity {
+public interface IPersonAttributesGroupTestDefinition {
 
     long getId();
-    
+
     String getAttributeName();
     void setAttributeName(String attributeName);
     String getTesterClassName();
     void setTesterClassName(String className);
     String getTestValue();
     void setTestValue(String testValue);
-    
+
     IPersonAttributesGroupTestGroupDefinition getTestGroup();
     void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup);
     void toElement(Element parent);
