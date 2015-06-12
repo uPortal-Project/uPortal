@@ -41,7 +41,7 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.groups.pags.GroupDefinition;
+import org.jasig.portal.groups.pags.PagsGroup;
 import org.jasig.portal.groups.pags.IPersonTester;
 import org.jasig.portal.groups.pags.TestGroup;
 import org.jasig.portal.security.IPerson;
@@ -80,7 +80,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
         logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
-        GroupDefinition groupDef = convertEntityToGroupDef(group);
+        PagsGroup groupDef = convertEntityToGroupDef(group);
         if (member.isGroup()) 
         {
            String key = ((IEntityGroup)member).getLocalKey();
@@ -110,7 +110,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
     }
 
-    private GroupDefinition convertEntityToGroupDef(IEntityGroup group) {
+    private PagsGroup convertEntityToGroupDef(IEntityGroup group) {
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
         return initGroupDef(pagsGroup);
@@ -135,14 +135,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             return null;
         }
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
-        GroupDefinition groupDef = initGroupDef(pagsGroup);
+        PagsGroup groupDef = initGroupDef(pagsGroup);
         IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
         group.setName(groupDef.getName());
         group.setDescription(groupDef.getDescription());
         return group;
     }
 
-    private boolean testRecursively(GroupDefinition groupDef, IPerson person, IGroupMember member)
+    private boolean testRecursively(PagsGroup groupDef, IPerson person, IGroupMember member)
         throws GroupsException {
             if ( ! groupDef.contains(person) )
                 { return false;}
@@ -155,7 +155,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 for (Iterator<IEntityGroup> i=allParents.iterator(); i.hasNext() && testPassed;)
                 {
                     parentGroup = i.next();
-                    GroupDefinition parentGroupDef = (GroupDefinition) convertEntityToGroupDef(parentGroup);
+                    PagsGroup parentGroupDef = (PagsGroup) convertEntityToGroupDef(parentGroup);
                     testPassed = parentGroupDef.test(person);
                 }
                 
@@ -221,7 +221,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
         List<String> keys = new ArrayList<String>();
-        GroupDefinition groupDef = convertEntityToGroupDef(group);
+        PagsGroup groupDef = convertEntityToGroupDef(group);
         if (groupDef != null)
         {
              for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 
@@ -311,12 +311,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return EMPTY_SEARCH_RESULTS;
     }
 
-    private GroupDefinition initGroupDef(IPersonAttributesGroupDefinition group) {
+    private PagsGroup initGroupDef(IPersonAttributesGroupDefinition group) {
         Element element = this.groupDefCache.get(group.getName());
         if (element != null) {
-            return (GroupDefinition) element.getObjectValue();
+            return (PagsGroup) element.getObjectValue();
         }
-        GroupDefinition groupDef = new GroupDefinition();
+        PagsGroup groupDef = new PagsGroup();
         groupDef.setKey(group.getName());
         groupDef.setName(group.getName());
         groupDef.setDescription(group.getDescription());
@@ -347,7 +347,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return groupDef;
     }
 
-    private void addMemberKeys(GroupDefinition groupDef, Set<IPersonAttributesGroupDefinition> members) {
+    private void addMemberKeys(PagsGroup groupDef, Set<IPersonAttributesGroupDefinition> members) {
         for(IPersonAttributesGroupDefinition member: members) {
             groupDef.addMember(member.getName());
         }

@@ -99,7 +99,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        
        for ( i=groupDefs.iterator(); i.hasNext(); )
        {
-           GroupDefinition groupDef = (GroupDefinition) i.next();
+           PagsGroup groupDef = (PagsGroup) i.next();
            IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
            group.setName(groupDef.getName());
            group.setDescription(groupDef.getDescription());
@@ -118,7 +118,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    public boolean contains(IEntityGroup group, IGroupMember member) 
    throws GroupsException 
    {
-      GroupDefinition groupDef = (GroupDefinition)groupDefinitions.get(group.getLocalKey());
+      PagsGroup groupDef = (PagsGroup)groupDefinitions.get(group.getLocalKey());
       if (member.isGroup()) 
       {
          String key = ((IEntityGroup)member).getLocalKey();
@@ -163,7 +163,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        List<IEntityGroup> parentGroupsList = new ArrayList<IEntityGroup>();
        for (i=groupDefinitions.values().iterator(); i.hasNext();)
        {
-           GroupDefinition groupDef = (GroupDefinition) i.next();
+           PagsGroup groupDef = (PagsGroup) i.next();
            if (! groupDef.getMembers().isEmpty())
                { parentGroupsList.add(cacheGet(groupDef.getKey())); }
        }
@@ -183,7 +183,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        }
    }
 
-   private boolean testRecursively(GroupDefinition groupDef, IPerson person,
+   private boolean testRecursively(PagsGroup groupDef, IPerson person,
        IGroupMember member)
    throws GroupsException {
        if ( ! groupDef.contains(person) )
@@ -197,8 +197,8 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
            for (Iterator<IEntityGroup> i=allParents.iterator(); i.hasNext() && testPassed;)
            {
                parentGroup = i.next();
-               GroupDefinition parentGroupDef = 
-                 (GroupDefinition) groupDefinitions.get(parentGroup.getLocalKey());
+               PagsGroup parentGroupDef = 
+                 (PagsGroup) groupDefinitions.get(parentGroup.getLocalKey());
                testPassed = parentGroupDef.test(person);               
            }
            
@@ -266,7 +266,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
 
    public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
       List<String> keys = new ArrayList<String>();
-      GroupDefinition groupDef = (GroupDefinition) groupDefinitions.get(group.getLocalKey());
+      PagsGroup groupDef = (PagsGroup) groupDefinitions.get(group.getLocalKey());
       if (groupDef != null)
       {
           for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 

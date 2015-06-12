@@ -59,14 +59,14 @@ public class XMLPersonAttributesConfiguration
       NodeList groupElements = groupStoreElement.getChildNodes();
       for (int i = 0; i < groupElements.getLength(); i++) {
          if (groupElements.item(i) instanceof Element) {
-            GroupDefinition groupDef = initGroupDef((Element) groupElements.item(i));
+            PagsGroup groupDef = initGroupDef((Element) groupElements.item(i));
             groupDefinitions.put(groupDef.getKey(), groupDef);
          }
       }
       return groupDefinitions;
    }
-   private GroupDefinition initGroupDef(Element groupElement) {
-      GroupDefinition groupDef = new GroupDefinition();
+   private PagsGroup initGroupDef(Element groupElement) {
+      PagsGroup groupDef = new PagsGroup();
       NodeList children = groupElement.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
          if (children.item(i) instanceof Element) {
@@ -127,7 +127,7 @@ public class XMLPersonAttributesConfiguration
       }
       return groupDef;
    }
-   private void addMemberKeys(GroupDefinition groupDef, Element members) {
+   private void addMemberKeys(PagsGroup groupDef, Element members) {
       NodeList children = members.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
          Node node = children.item(i);
