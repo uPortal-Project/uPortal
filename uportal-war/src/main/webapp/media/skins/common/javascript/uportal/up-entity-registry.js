@@ -75,6 +75,13 @@ var up = up || {};
     		return entity;
         };
 
+        that.removeEntity = function (key) {
+            if (that.state.entityCache[key]) {
+                delete that.state.entityCache[key];
+            }
+        };
+
+
         return that;
     };
 

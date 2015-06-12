@@ -489,9 +489,9 @@
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="IMPORT_ACTION" value="GROUP" />
-                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
-                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
-                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="personAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="personAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="personAttributesGroupTestGroupDefinitionDao" />
             </util:map>
         </property>
     </bean>
@@ -502,15 +502,12 @@
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="IMPORT_ACTION" value="MEMBERS" />
-                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="jpaPersonAttributesGroupDefinitionDao" />
-                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="jpaPersonAttributesGroupTestDefinitionDao" />
-                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="jpaPersonAttributesGroupTestGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupDefinitionDao" value-ref="personAttributesGroupDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestDefinitionDao" value-ref="personAttributesGroupTestDefinitionDao" />
+                <entry key="jpaPersonAttributesGroupTestGroupDefinitionDao" value-ref="personAttributesGroupTestGroupDefinitionDao" />
             </util:map>
         </property>
     </bean>
-    <bean id="jpaPersonAttributesGroupDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupDefinitionDao"/>
-    <bean id="jpaPersonAttributesGroupTestDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestDefinitionDao"/>
-    <bean id="jpaPersonAttributesGroupTestGroupDefinitionDao" class="org.jasig.portal.groups.pags.dao.jpa.JpaPersonAttributesGroupTestGroupDefinitionDao"/>
     <bean id="import-group_v2-6" class="org.danann.cernunnos.runtime.PojoTask">
         <property name="location" value="classpath://org/jasig/portal/io/import-group_v2-6.crn" />
         <property name="requestAttributes">

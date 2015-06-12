@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.groups.pags.dao;
+package org.jasig.portal.groups.pags.testers
 
-import java.util.Set;
+import org.junit.Test
 
-import org.dom4j.Element;
+class AdHocGroupTesterTest extends GroovyTestCase {
 
-/**
- * @author Shawn Connolly, sconnolly@unicon.net
- */
-public interface IPersonAttributesGroupTestGroupDefinition {
-
-    long getId();
-
-    Set<IPersonAttributesGroupTestDefinition> getTests();
-    void setTests(Set<IPersonAttributesGroupTestDefinition> tests);
-
-    IPersonAttributesGroupDefinition getGroup();
-    void setGroup(IPersonAttributesGroupDefinition group);
-    void toElement(Element parent);
+    @Test
+    void testGroupsHash() {
+        assertEquals("_+Students_#", AdHocGroupTester.calcGroupHash("Students", false))
+        assertEquals("_^Hackers_#", AdHocGroupTester.calcGroupHash("Hackers", true))
+    }
 }

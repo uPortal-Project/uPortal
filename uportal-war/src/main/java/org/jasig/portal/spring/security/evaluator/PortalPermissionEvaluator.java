@@ -22,7 +22,6 @@ import java.io.Serializable;
 
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
-import org.jasig.portal.portlets.groupadmin.GroupAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.lookup.IPersonLookupHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -137,8 +136,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         if (entity != null && activityKey.equals("VIEW")) {
             final EntityEnum type = entity.getEntityType();
             if (type.isGroup()) {
-                return new AuthorizableActivity(GroupAdministrationHelper.GROUPS_OWNER,
-                            GroupAdministrationHelper.VIEW_PERMISSION);
+                return new AuthorizableActivity(IPermission.PORTAL_GROUPS,
+                            IPermission.VIEW_GROUP_ACTIVITY);
             } else if (type.equals(EntityEnum.PERSON)) {
                 return new AuthorizableActivity(IPersonLookupHelper.USERS_OWNER,
                         IPersonLookupHelper.VIEW_USER_PERMISSION);

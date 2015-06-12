@@ -132,6 +132,7 @@
         <input name="selectMultiple" value="true"/>
         <input name="requireSelection" value="true"/>
         <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="false"/>
 
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="false"/>
@@ -164,6 +165,8 @@
         <input name="selectMultiple" value="true"/>
         <input name="requireSelection" value="true"/>
         <input name="rootEntity" value="rootEntity"/>
+        <input name="enableAdHocGroups" value="true"/>
+        <input name="adHocEntity" value="rootEntity"/>
 
         <input name="showCancelButton" value="true"/>
         <input name="showBackButton" value="false"/>

@@ -21,27 +21,43 @@ package org.jasig.portal.groups.pags.dao;
 import java.util.Set;
 
 import org.dom4j.Element;
-import org.jasig.portal.IBasicEntity;
+import org.jasig.portal.EntityIdentifier;
 
 /**
+ * Describes the definition of a group.  PAGS group definitions are used (at
+ * runtime) to create groups in the GaP (Groups & Permissions) subsystem.  An
+ * object of this type, therefore, is not itself a group;  it's a blueprint for
+ * an {@link IEntityGroup}.
+ *
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributesGroupDefinition extends IBasicEntity {
+public interface IPersonAttributesGroupDefinition {
 
     long getId();
+
+    /**
+     * Provides the {@link EntityIdentifier} that represents the
+     * {@link IEntityGroup} this definition produces in GaP.  This identifier
+     * will be available -- and identical -- whether the group has been created
+     * already or not.
+     */
+    EntityIdentifier getCompositeEntityIdentifierForGroup();
+
     String getName();
     void setName(String groupName);
+
     String getDescription();
     void setDescription(String groupDescription);
 
     Set<IPersonAttributesGroupDefinition> getMembers();
     void setMembers(Set<IPersonAttributesGroupDefinition> members);
-    Set<IPersonAttributesGroupDefinition> getParents();
-    public void setParents(Set<IPersonAttributesGroupDefinition> parents);
+
     Set<IPersonAttributesGroupTestGroupDefinition> getTestGroups();
     void setTestGroups(Set<IPersonAttributesGroupTestGroupDefinition> testGroups);
 
-    // Used for Exporting
+    /**
+     * Supports exporting.
+     */
     void toElement(Element parent);
 
 }
