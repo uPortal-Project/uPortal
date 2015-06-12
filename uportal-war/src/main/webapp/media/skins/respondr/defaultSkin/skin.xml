@@ -27,16 +27,20 @@
 
   <css included="plain">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.min.css</css>
-  
+
   <css included="plain">/ResourceServingWebapp/rs/fontawesome/4.0.3/css/font-awesome.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/fontawesome/4.0.3/css/font-awesome.min.css</css>
-  
+
   <css included="plain" resource="true">/rs/bootstrap-plugins/accessibility/1.0.2/css/bootstrap-accessibility.css</css>
   <css included="aggregated" resource="true">/rs/bootstrap-plugins/accessibility/1.0.2/css/bootstrap-accessibility.min.css</css>
-  
+
   <!-- Default jQuery UI theme.  Point this to a custom jQuery UI theme if desired. -->
   <css included="plain">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/jqueryui/1.10.3/theme/smoothness/jquery-ui-1.10.3-smoothness.min.css</css>
+
+  <!-- jsTree (entity-selector) -->
+  <css included="plain" resource="true">/scripts/jstree/style.css</css>
+  <css included="aggregated" resource="true">/scripts/jstree/style.min.css</css>
 
   <!--
    | The skin is applied in lieu of using the Dynamic Skin Portlet.  Follow configuration information in skinList.xml

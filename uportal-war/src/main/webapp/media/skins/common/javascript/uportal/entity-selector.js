@@ -20,7 +20,7 @@
 var up = up || {};
 
 (function ($, fluid) {
-    
+
     /**
      * Private. Returns type from key.
      * 
@@ -30,7 +30,7 @@ var up = up || {};
         var separatorIndex = key.indexOf(":");
         return key.substring(0, separatorIndex);
     };//end:function.
-    
+
     /**
      * Private. Returns ID.
      * 
@@ -48,8 +48,8 @@ var up = up || {};
      */
      var getKey = function (entity) {
         return entity.entityType + ':' + entity.id;
-     }
-    
+     };
+
     /**
      * Private. Outputs selection markup snippet.
      * 
@@ -57,8 +57,8 @@ var up = up || {};
      * @param {Object} entity - reference to currently selected entity object.
      */
     var buildSingleSelectionSnippet = function (that, entity, selected) {
-        var markup;
-        
+        var markup = undefined;
+
         switch (selected) {
         case false:
             markup = '<span class="selection" title="' + that.options.messages.nothingSelected + '">' + that.options.messages.nothingSelected + '</span>';
@@ -68,7 +68,7 @@ var up = up || {};
                      '<input type="hidden" name="groups" value="' + getKey(entity) + '"/>';
             break;
         }//end:switch.
-        
+
         return markup;
     };//end:function.
 
@@ -96,8 +96,8 @@ var up = up || {};
                 selectEntity(that, key);
             });
         }
-}
-    
+    };
+
     /**
      * Private. Update the visual selection states for the various selection links.
      * (Idempotent)
@@ -131,13 +131,13 @@ var up = up || {};
      */
     var deselectEntity = function (that, key) {
         var selectionBasket, entity, buttonPrimary, newselections;
-        
+
         // Cache & reset DOM references.
         selectionBasket = that.locate("selectionBasket");
         buttonPrimary = that.locate("buttonPrimary");
         entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
         newselections = [];
-        
+
         // Check component selection mode.
         switch (that.selectMultiple) {
         case false: // Single.
@@ -166,7 +166,7 @@ var up = up || {};
             buttonPrimary.attr("disabled", "disabled");
         }//end:if.
     };//end:function.
-    
+
     /**
      * Private. Add an entity to the selected list.
      * 
@@ -175,12 +175,12 @@ var up = up || {};
      */
     var selectEntity = function (that, key) {
         var selectionBasket, buttonPrimary, li, entity;
-        
+
         // Cache DOM elements.
         selectionBasket = that.locate("selectionBasket");
         buttonPrimary = that.locate("buttonPrimary");
         entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
-        
+
         // Check component selection mode.
         switch (that.selectMultiple) {
         case false: // Single.
@@ -215,13 +215,13 @@ var up = up || {};
             }//end:if.
             break;
         }//end:switch.
-        
+
         updateSelectionStates(that);
 
         // Enable submit.
         buttonPrimary.removeAttr("disabled");
     };//end:function.
-    
+
     /**
      * Private. Remove breadcrumb from breadcrumb lists.
      * 
@@ -231,18 +231,18 @@ var up = up || {};
      */
     var removeBreadCrumb = function (that, anchor, browseFn) {
         var crumb, next;
-        
+
         // Cache.
         crumb = anchor.parent();
         next = crumb.nextAll();
-        
+
         // Remove all crumbs to the right of the 'clicked' crumb.
         next.remove();
-        
+
         // Render view associated with the 'clicked' crumb.
         browseFn(that, anchor.attr("key"));
     };//end:function.
-    
+
     /**
      * Private. Builds mark-up string for breadCrumb.
      * 
@@ -255,13 +255,13 @@ var up = up || {};
         var breadcrumb;
         breadcrumb = '<span><a href="javascript:;" title="' + entityName + '" key="' + key + '">' + entityName + '</a> &gt; </span>';
         breadcrumbs.append(breadcrumb);
-        
+
         // Breadcrumb click event.
         breadcrumbs.find("a").unbind("click").click(function () {
             removeBreadCrumb(that, $(this), browseFn);
         });//end:click.
     };//end:function.
-    
+
     /**
      * Private. Update the breadcrumb trail.
      * 
@@ -272,11 +272,11 @@ var up = up || {};
      */
     var updateBreadcrumbs = function (that, entity, breadcrumbsSel, browseFn) {
         var breadcrumbs, key, isKey;
-        
+
         // Cache.
         breadcrumbs = that.locate(breadcrumbsSel);
         key = getKey(entity);
-        
+
         // Add breadcrumb.
         if (breadcrumbs.find('span').length > 0) {
             // Breadcrumbs do exist.
@@ -284,12 +284,12 @@ var up = up || {};
             if (!isKey) {
                 buildBreadCrumb(that, key, entity.name, breadcrumbs, browseFn);
             }//end:if.
-            
+
         } else {
             // No breadcrumbs exist.
             buildBreadCrumb(that, key, entity.name, breadcrumbs, browseFn);
         }//end:if.
-        
+
         // Add the '.last' class name to the last availble breadcrumb.
         breadcrumbs.find("." + that.options.styles.last).removeClass(that.options.styles.last).css("visibility", "visible");
         breadcrumbs.find("span:last").addClass(that.options.styles.last).css("visibility", "hidden");
@@ -303,7 +303,7 @@ var up = up || {};
      */
     var browseEntity = function (that, key) {
         console.log("browse ad hoc");
-        var entity, currentEntityName, content, memberTable;
+        var entity, currentEntityName, content;
 
         // Cache.
         entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
@@ -397,18 +397,18 @@ var up = up || {};
      */
     var updateSearchView = function (that) {
         var list;
-        
+
         // Cache.
         list = that.searchDropDown.find(that.options.selectors.searchResults);
         list.find("." + that.options.styles.selected).removeClass(that.options.styles.selected);
-        
+
         // Loop through selected array.
         $.each(that.options.selected, function (idx, obj) {
             var span = list.find('span[key="' + obj + '"]');
             span.parent().parent().addClass(that.options.styles.selected);
         });//end:loop.
     };//end:function.
-    
+
     /**
      * Private. Determines which action, selection or deselection, executes.
      * 
@@ -419,7 +419,7 @@ var up = up || {};
         // Cache.
         var entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
         console.log(entity);
-        
+
         // Selection.
         if ($.inArray(key, that.options.selected) !== -1) {
             // Key exists.
@@ -428,11 +428,11 @@ var up = up || {};
             // Key does not exist.
             selectEntity(that, getKey(entity));
         }//end:if.
-        
+
         // Update UI.
         updateSearchView(that);
     };//end:function.
-    
+
     /**
      * Private. Search for a specific entity.
      * 
@@ -441,74 +441,73 @@ var up = up || {};
      */
     var search = function (that, searchTerm, form) {
         var entities, list, listItem, searchResultsNoMembers, members;
-        
+
         // Filter searchTerm.
         if (searchTerm === that.options.messages.searchValue) {
             searchTerm = "";
         }//end:if.
-        
+
         // Cache.
         entities = that.registry.searchEntities(that.options.entityTypes, searchTerm);
         list = that.searchDropDown.find(that.options.selectors.searchResults);
         searchResultsNoMembers = that.locate("searchResultsNoMembers");
         list.html("");
         listItem = "";
-        
+
         // Loop through each entity. Build list items.
         $.each(entities, function (idx, obj) {
             listItem += '<li class="' + obj.entityType + '"><a href="javascript:;" title="' + obj.name + '"><span key="' + getKey(obj) + '">' + obj.name + '</span></a></li>';
         });//end:loop.
         list.html(listItem);
-        
+
         // Assign default 'click' event.
         list.find("a").bind("click", function () {
             var span = $(this).find("span");
             console.log(span.attr("key"));
             itemSelectionHandler(that, span.attr("key"));
         });//end:listener.
-        
+
         // Render 'No Members' when list is empty.
         members = list.find("li");
         if (members.length < 1) {
             searchResultsNoMembers.show();
             list.hide();
         } else {
-        	list.show();
-        	searchResultsNoMembers.hide();
+            list.show();
+            searchResultsNoMembers.hide();
         }
         //end:if.
-        
+
         // Update UI.
         updateSearchView(that);
-        
+
         return false;
     };//end:function.
-    
+
     /**
      * Private. Initializes search feature.
      * 
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var searchEntity = function (that) {
-        var portletSearch, closeSearch, searchForm, searchField, searchDropDown, loader;
-        
+        var closeSearch, searchForm, searchField, searchDropDown, loader;
+
         // Cache.
         closeSearch = that.locate("closeSearch");
         searchForm = that.locate("searchForm");
-        portletSearch = searchForm.parent();
         searchField = searchForm.find("input[type=text]");
         loader = that.locate("searchLoader");
         searchDropDown = that.locate("searchDropDown");
-        
+
         // Apply.
         searchField.val(that.options.messages.searchValue);
         searchDropDown.css({'top': searchField.outerHeight()});
-        
+
         // Binds 'click' & 'focus' events to input field.
         searchField.bind("click focus", function () {
             $(this).val("");
         });//end:listener.
-        
+
         // Binds 'submit' event.
         searchForm.submit(function () {
             up.showLoader(loader);
@@ -517,12 +516,12 @@ var up = up || {};
             up.hideLoader(loader);
             return false;
         });//end:listener.
-        
+
         // Binds 'click' event to close button.
         closeSearch.find('a').bind("click", function () {
             searchDropDown.hide();
         });//end:listener.
-        
+
         // Binds 'click' event listener to the document. Detects a 'click'
         // that occurs outside of the component.
         $(document).bind("click", function (e) {
@@ -531,6 +530,16 @@ var up = up || {};
             }//end:if.
         });//end:function.
     };//end:function.
+
+
+    var createTestMaps = function (groupNames, testAttr) {
+        var tests = [];
+        $.each(groupNames, function (i, name) {
+            tests.push( { "testValue": name, "attributeName": testAttr,
+                          "testerClassName" : "org.jasig.portal.groups.pags.testers.AdHocGroupTester" } );
+        });
+        return tests;
+    };
 
     /**
      * Private. Runs initialization functions.
@@ -552,8 +561,7 @@ var up = up || {};
             var entityToJSTreeNode = function (entity) {
                 var child, childNodes;
                 childNodes = [];
-                // Using 'jQuery' for jstree support
-                jQuery.each(entity.children, function (idx, obj) {
+                $.each(entity.children, function (idx, obj) {
                     // re-acquire child to get it's children
                     if (obj.entityType == "GROUP") {
                         child = that.registry.getEntity(obj.entityType, obj.id);
@@ -561,7 +569,7 @@ var up = up || {};
                     }
                 });
                 return { "id" : getKey(entity), "text" : entity.name, "children" : childNodes };
-            }
+            };
 
             var callback = function (obj, cb) {
                 var key, entity, childNodes;
@@ -569,8 +577,7 @@ var up = up || {};
                     key = obj.id;
                     entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
                     childNodes = [];
-                    // Using 'jQuery' for jstree support
-                    jQuery.each(entity.children, function (idx, obj) {
+                    $.each(entity.children, function (idx, obj) {
                         childNodes.push(entityToJSTreeNode(obj));
                     });
                 } else {
@@ -580,11 +587,10 @@ var up = up || {};
                     childNodes = [ entityToJSTreeNode(entity) ];
                 }
                 cb.call(this, childNodes);
-            }
+            };
 
             // Configure jstree data
-            // Using 'jQuery' for jstree support
-            jQuery(that.options.selectors.dialogIncludesTree).jstree({
+            $(that.options.selectors.dialogIncludesTree).jstree({
                 "core" : {
                     "data" : callback
                 },
@@ -595,7 +601,7 @@ var up = up || {};
                 "plugins" : [ "checkbox" ]
             });
 
-            jQuery(that.options.selectors.dialogExcludesTree).jstree({
+            $(that.options.selectors.dialogExcludesTree).jstree({
                 "core" : {
                     "data" : callback
                 },
