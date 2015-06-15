@@ -558,6 +558,7 @@ var up = up || {};
         browseEntity(that, that.options.initialFocusedEntity);
 
         if (that.options.enableAdHocGroups) {
+            var jsTreeIncludes = false, jsTreeExcludes = false;
             var entityToJSTreeNode = function (entity) {
                 var child, childNodes;
                 childNodes = [];
@@ -589,28 +590,30 @@ var up = up || {};
                 cb.call(this, childNodes);
             };
 
-            // Configure jstree data
-            $(that.options.selectors.dialogIncludesTree).jstree({
-                "core" : {
-                    "data" : callback
-                },
-                "checkbox" : {
-                    "keep_selected_style" : false,
-                    "three_state" : false
-                },
-                "plugins" : [ "checkbox" ]
-            });
-
-            $(that.options.selectors.dialogExcludesTree).jstree({
-                "core" : {
-                    "data" : callback
-                },
-                "checkbox" : {
-                    "keep_selected_style" : false,
-                    "three_state" : false
-                },
-                "plugins" : [ "checkbox" ]
-            });
+            var displayResponseMessage = function(xmlhttp) {
+                console.log("display response message");
+                console.log(xmlhttp.responseText);
+                switch(xmlhttp.status) {
+                    case 200: // SC_OK
+                    case 201: // SC_CREATED
+                    case 202: // SC_ACCEPTED
+                        $(that.options.selectors.alertSuccess).show();
+                        break;
+                    case 400: // SC_BAD_REQUEST -> bad parent
+                        $(that.options.selectors.alertInvalidParent).show();
+                        break;
+                    case 409: // SC_CONFLICT -> group exists
+                        $(that.options.selectors.alertGroupExists).show();
+                        break;
+                    case 401: // SC_UNAUTHORIZED
+                    case 403: // SC_FORBIDDEN
+                        $(that.options.selectors.alertUnauthorized).show();
+                        break;
+                    default:
+                        $(that.options.selectors.alertUnknown).show();
+                        break;
+                }
+            };
 
             that.locate("saveAdHocButton").bind("click", function (e) {
                 var parentKey, parentName, includes, excludes, tests, pagsGroup, json, xmlhttp;
@@ -641,13 +644,42 @@ var up = up || {};
                         if (xmlhttp.status >= 200 && xmlhttp.status <= 202) {
                             that.registry.removeEntity(parentKey);
                             browseEntity(that, parentKey);
-                            resetAdHocDialog();
                         }
                         displayResponseMessage(xmlhttp);
                     };
                 };
                 xmlhttp.open("POST", that.options.pagsApiUrl + parentName + ".json", true);
                 xmlhttp.send(json);
+            });
+
+            $(that.options.selectors.adHocGroupsModal).on('show.bs.modal', function() {
+                $(that.options.selectors.alerts).hide();
+
+                // Initialize jsTree widgets within this dialog only when shown and only once
+                if (!jsTreeIncludes) {
+                    $(that.options.selectors.dialogIncludesTree).jstree({
+                        "core" : {
+                            "data" : callback
+                        },
+                        "checkbox" : {
+                            "keep_selected_style" : false,
+                            "three_state" : false
+                        },
+                        "plugins" : [ "checkbox" ]
+                    });
+                }
+                if (!jsTreeExcludes) {
+                    $(that.options.selectors.dialogExcludesTree).jstree({
+                        "core" : {
+                            "data" : callback
+                        },
+                        "checkbox" : {
+                            "keep_selected_style" : false,
+                            "three_state" : false
+                        },
+                        "plugins" : [ "checkbox" ]
+                    });
+                }
             });
         } else {
             that.locate("adHocCreate").hide();
@@ -704,6 +736,12 @@ var up = up || {};
         requireSelection: true,
         pagsApiUrl: "/api/v4-3/pags/",
         selectors: {
+            alerts: ".alert",
+            alertSuccess: "#alertSuccess",
+            alertInvalidParent: "#alertInvalidParent",
+            alertGroupExists: "#alertGroupExists",
+            alertUnauthorized: "#alertUnauthorized",
+            alertUnknown: "#alertUnknown",
             selectionBasket: "#selectionBasket",
             breadcrumbs: "#entityBrowsingBreadcrumbs",
             currentEntityName: "#currentEntityName",
@@ -716,6 +754,7 @@ var up = up || {};
             searchLoader: "searchLoader",
             currentSelectBtn: "#currentSelectBtn",
             adHocCreate: "#adHocCreate",
+            adHocGroupsModal: "#adhocGroupModal",
             dialogIncludesTree: '#dataIncludes',
             dataIncludesList: '#dataIncludesList',
             dialogExcludesTree: '#dataExcludes',

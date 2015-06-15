@@ -21,7 +21,9 @@ package org.jasig.portal.groups.pags.dao;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
@@ -51,6 +53,11 @@ public final class PagsService {
     // These 2 should be (public) constants on their respective service classes, not here
     private static final String SERVICE_NAME_LOCAL = "local";
     public static final String SERVICE_NAME_PAGS = "pags";
+
+    private static final String GROUP_NAME_VALIDATOR_REGEX = "^[\\w ]{5,500}$";  // 5-500 characters
+    private static final Pattern GROUP_NAME_VALIDATOR_PATTERN = Pattern.compile(GROUP_NAME_VALIDATOR_REGEX);
+    private static final String GROUP_DESC_VALIDATOR_REGEX = "^[\\w ,\\.\\(\\)]{0,500}$";  // 0-500 characters
+    private static final Pattern GROUP_DESC_VALIDATOR_PATTERN = Pattern.compile(GROUP_DESC_VALIDATOR_REGEX);
 
     @Autowired
     private IPersonAttributesGroupDefinitionDao pagsGroupDefDao;
@@ -109,7 +116,20 @@ public final class PagsService {
             throw new RuntimeAuthorizationException(person, IPermission.CREATE_GROUP_ACTIVITY, target);
         }
 
-        // Verify we don't have a group by that name already
+        // VALIDATION STEP:  The group name & description are allowable
+        if (StringUtils.isBlank(groupName)) {
+            throw new IllegalArgumentException("Specified groupName is blank:  " + groupName);
+        }
+        if (!GROUP_NAME_VALIDATOR_PATTERN.matcher(groupName).matches()) {
+            throw new IllegalArgumentException("Specified groupName is too long, too short, or contains invalid characters:  " + groupName);
+        }
+        if (!StringUtils.isBlank(description)) {  // Blank description is allowable
+            if (!GROUP_DESC_VALIDATOR_PATTERN.matcher(description).matches()) {
+                throw new IllegalArgumentException("Specified description is too long or contains invalid characters:  " + description);
+            }
+        }
+
+        // VALIDATION STEP:  We don't have a group by that name already
         EntityIdentifier[] people = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPerson.class);
         EntityIdentifier[] portlets = GroupService.searchForGroups(groupName, IGroupConstants.IS, IPortletDefinition.class);
         if (people.length != 0 || portlets.length != 0) {

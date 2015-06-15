@@ -90,7 +90,7 @@
                             <div>
                                 <div class="col-md-6">
                                     <h4 class="title">
-                                        <span id="${n}currentEntityName">Ad Hoc Groups</span>
+                                        <span id="${n}currentEntityName"></span>
                                         <button id="${n}currentSelectBtn" type="button" class="btn btn-success btn-xs">Add to Selection <i class="fa fa-plus-circle"></i></button>
                                     </h4>
                                 </div>
@@ -113,44 +113,44 @@
                             </div>
                             <div class="col-md-12">
                                 <div id="${n}entityBreadcrumbs" class="breadcrumbs"></div>
-                                    <c:forEach items="${selectTypes}" var="type">
-                                        <c:choose>
-                                            <c:when test="${type == 'group'}">
-                                                <div class="group col-md-12">
-                                                    <h6 class="title"><spring:message code="groups"/></h6>
-                                                    <table class="table table-condensed table-striped member-list"></table>
-                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
-                                                    <div id="${n}adHocCreate" class="col-md-4">
-                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
-                                                    </div>
+                                <c:forEach items="${selectTypes}" var="type">
+                                    <c:choose>
+                                        <c:when test="${type == 'group'}">
+                                            <div class="group col-md-12">
+                                                <h6 class="title"><spring:message code="groups"/></h6>
+                                                <table class="table table-condensed table-striped member-list"></table>
+                                                <p class="no-members" style="display:none"><spring:message code="no.member.subgroups"/></p>
+                                                <div id="${n}adHocCreate" class="col-md-4">
+                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#adhocGroupModal">Add Custom Group <i class="fa fa-plus-circle"></i></button>
                                                 </div>
-                                            </c:when>
-                                            <c:when test="${type == 'person'}">
-                                                <div class="person col-md-12">
-                                                    <h6 class="title"><spring:message code="people"/></h6>
-                                                    <table class="table table-condensed table-striped member-list"></table>
-                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
-                                                </div>
-                                            </c:when>
-                                            <c:when test="${type == 'category'}">
-                                                <div class="category col-md-12">
-                                                    <h6 class="title"><spring:message code="categories"/></h6>
-                                                    <table class="table table-condensed table-striped member-list"></table>
-                                                    <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
-                                                </div>
-                                            </c:when>
-                                            <c:when test="${type == 'portlet'}">
-                                                <div class="portlet col-md-12">
-                                                    <h6 class="title"><spring:message code="portlets"/></h6>
-                                                    <table class="table table-condensed table-striped member-list"></table>
-                                                    <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
-                                                </div>
-                                            </c:when>
-                                        </c:choose>
-                                    </c:forEach>
+                                            </div>
+                                        </c:when>
+                                        <c:when test="${type == 'person'}">
+                                            <div class="person col-md-12">
+                                                <h6 class="title"><spring:message code="people"/></h6>
+                                                <table class="table table-condensed table-striped member-list"></table>
+                                                <p class="no-members" style="display:none"><spring:message code="no.direct.member.people"/></p>
+                                            </div>
+                                        </c:when>
+                                        <c:when test="${type == 'category'}">
+                                            <div class="category col-md-12">
+                                                <h6 class="title"><spring:message code="categories"/></h6>
+                                                <table class="table table-condensed table-striped member-list"></table>
+                                                <p class="no-members" style="display:none"><spring:message code="no.member.subcategories"/></p>
+                                            </div>
+                                        </c:when>
+                                        <c:when test="${type == 'portlet'}">
+                                            <div class="portlet col-md-12">
+                                                <h6 class="title"><spring:message code="portlets"/></h6>
+                                                <table class="table table-condensed table-striped member-list"></table>
+                                                <p class="no-members" style="display:none"><spring:message code="no.direct.member.portlets"/></p>
+                                            </div>
+                                        </c:when>
+                                    </c:choose>
+                                </c:forEach>
                             </div>
                         </div>
-                    </div><!--end: ad hoc groups-->
+                    </div><!--end: content row -->
                 </div>
                 <div class="fl-container-flex40 span4 col-md-4">
                     <!--selection-->
@@ -273,6 +273,12 @@
             requireSelection: ${ not empty requireSelection ? requireSelection : true },
             pagsApiUrl: "<c:url value='/api/v4-3/pags/'/>",
             selectors: {
+                alerts: ".alert",
+                alertSuccess: "#${n}alertSuccess",
+                alertInvalidParent: "#${n}alertInvalidParent",
+                alertGroupExists: "#${n}alertGroupExists",
+                alertUnauthorized: "#${n}alertUnauthorized",
+                alertUnknown: "#${n}alertUnknown",
                 selectionBasket: "#${n}selectionBasket",
                 breadcrumbs: "#${n}entityBreadcrumbs",
                 currentEntityName: "#${n}currentEntityName",
@@ -285,6 +291,7 @@
                 searchLoader: "#${n}searchLoader",
                 currentSelectBtn: "#${n}currentSelectBtn",
                 adHocCreate: "#${n}adHocCreate",
+                adHocGroupsModal: "#${n}chooseGroupsBody #adhocGroupModal",
                 dialogIncludesTree: '#${n}dataIncludes',
                 dataIncludesList: '#${n}dataIncludesList',
                 dialogExcludesTree: '#${n}dataExcludes',
@@ -358,9 +365,6 @@
                 });
                 setGroupDescription();
             });
-
-            $("#${n}dataIncludes").on("loaded.jstree", resetAdHocDialog);
-            $("#${n}dataExcludes").on("loaded.jstree", resetAdHocDialog);
         };
 
         var resetAdHocDialog = function () {
@@ -369,47 +373,13 @@
 
             $(":jstree").each(function () {
                 $(this).jstree("deselect_all",false);
-                /* var node = $(this).jstree("get_node", "${rootEntity.entityType}:${rootEntity.id}"); */
                 $(this).jstree("open_node", "${rootEntity.entityType}:${rootEntity.id}");
             });
 
-            /*
-            $("#${n}dataIncludesList").empty();
-            $("#${n}dataExcludesList").empty();
-            */
             setGroupDescription();
         };
 
-        $("#${n}adHocCreate").bind("click", function() {
-            $(".alert").hide();
-        });
-
-        $("#${n}cancelAdHocButton").bind("click", resetAdHocDialog);
-
-        var displayResponseMessage = function(xmlhttp) {
-            console.log("display response message");
-            console.log(xmlhttp.responseText);
-            switch(xmlhttp.status) {
-                case 200: // SC_OK
-                case 201: // SC_CREATED
-                case 202: // SC_ACCEPTED
-                    $("#${n}alertSuccess").show();
-                    break;
-                case 400: // SC_BAD_REQUEST -> bad parent
-                    $("#${n}alertInvalidParent").show();
-                    break;
-                case 409: // SC_CONFLICT -> group exists
-                    $("#${n}alertGroupExists").show();
-                    break;
-                case 401: // SC_UNAUTHORIZED
-                case 403: // SC_FORBIDDEN
-                    $("#${n}alertUnauthorized").show();
-                    break;
-                default:
-                    $("#${n}alertUnknown").show();
-                    break;
-            }
-        };
+        $('#${n}chooseGroupsBody #adhocGroupModal').on('shown.bs.modal', resetAdHocDialog);
 
         setJSTreeEventListeners();
    });
