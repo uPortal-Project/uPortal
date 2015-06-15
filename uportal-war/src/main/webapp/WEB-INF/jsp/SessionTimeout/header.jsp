@@ -21,9 +21,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jquery/1.10.2/jquery-1.10.2.min.js"/>"></script>
-<script type="text/javascript" src="<rs:resourceURL value="/rs/jqueryui/1.10.4/jquery-ui-1.10.4.min.js"/>"></script>
-
 <style type="text/css">
     #${n}session-timeout-dlg .modal-dialog {
         color: #000000;
@@ -61,18 +58,16 @@
     }
 </style>
 
-<script src="<c:url value='/scripts/session-timeout.js'/>"/></script>
+<script src="<c:url value='/scripts/session-timeout.js'/>"></script>
 <script>
     <rs:compressJs>
-        var config = {
+        up.SessionTimeout({
             enabled: ${enabled},
             sessionTimeoutMS: ${sessionTimeoutMS},
             dialogDisplayMS: ${dialogDisplayMS},
             dialogId: '${n}session-timeout-dlg',
             logoutURL: '<c:url value="${logoutURLFragment}"/>',
             resetSessionURL: '<c:url value="${resetSessionURLFragment}"/>'
-        };
-
-        up.SessionTimeout(config).startTimer();
+        }).startTimer();
     </rs:compressJs>
 </script>
