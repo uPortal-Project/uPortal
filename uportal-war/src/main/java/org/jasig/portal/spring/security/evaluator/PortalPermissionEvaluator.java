@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.spring.security.evaluator;
 
 import java.io.Serializable;
@@ -30,6 +31,7 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,16 +43,18 @@ import org.springframework.security.core.userdetails.UserDetails;
  * Security and will need future adjustment and expansion.
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class PortalPermissionEvaluator implements PermissionEvaluator {
 
     private IGroupListHelper groupListHelper;
-    
+
     @Autowired(required = true)
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
         this.groupListHelper = groupListHelper;
     }
+
+    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name}")
+    private String anonymousUsername;
 
     private AuthorizationService authorizationService;
 
@@ -59,10 +63,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         if (authorizationService == null) {
             authorizationService = AuthorizationService.instance();
         }
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        final IAuthorizationPrincipal principal = authorizationService.newPrincipal(
-                userDetails.getUsername(), IPerson.class);
+        final IAuthorizationPrincipal principal = getAuthorizationPrincipal(authentication);
 
         String targetId = null;
         if (targetDomainObject instanceof String) {
@@ -105,11 +107,8 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         if (authorizationService == null) {
             authorizationService = AuthorizationService.instance();
         }
-        
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        final IAuthorizationPrincipal principal = authorizationService.newPrincipal(
-                userDetails.getUsername(), IPerson.class);
+        final IAuthorizationPrincipal principal = getAuthorizationPrincipal(authentication);
 
         // if the permission is already an AuthorizableActivity, go ahead and 
         // use it
@@ -124,7 +123,7 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
             String activityName = (String) permission;
             activity = getViewActivity(activityName, (String) targetId);
         }
-        
+
         if (activity != null) {
             final boolean hasPermission = principal.hasPermission(activity.getOwnerFname(), activity.getActivityFname(), targetId.toString());
             return hasPermission;
@@ -133,7 +132,25 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         }
     }
 
-    protected AuthorizableActivity getViewActivity(final String activityKey, final JsonEntityBean entity) {
+    /*
+     * Implementation
+     */
+
+    /**
+     * Prepare a uPortal IAuthorizationPrincipal based in the Spring principal
+     */
+    private IAuthorizationPrincipal getAuthorizationPrincipal(Authentication authentication) {
+        String username = anonymousUsername;  // default -- unauthenticated user
+        Object authPrincipal = authentication.getPrincipal();
+        if (authPrincipal instanceof UserDetails) {
+            // User is authenticated
+            UserDetails userDetails = (UserDetails) authPrincipal;
+            username = userDetails.getUsername();
+        }
+        return authorizationService.newPrincipal(username, IPerson.class);
+    }
+
+    private AuthorizableActivity getViewActivity(final String activityKey, final JsonEntityBean entity) {
         if (entity != null && activityKey.equals("VIEW")) {
             final EntityEnum type = entity.getEntityType();
             if (type.isGroup()) {
@@ -148,10 +165,10 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         }
         return null;
     }
-    
-    protected AuthorizableActivity getViewActivity(final String activityKey, final String target) {
+
+    private AuthorizableActivity getViewActivity(final String activityKey, final String target) {
         final JsonEntityBean entity = groupListHelper.getEntityForPrincipal(target);
         return getViewActivity(activityKey, entity);
     }
-    
+
 }
