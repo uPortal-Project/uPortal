@@ -157,11 +157,8 @@ public class ChannelListController {
      * specified category, including all descendants, and <em>excluding</em>
      * uncategorized portlets.  If no 'categoryId' is provided, this method
      * returns the portlet registry beginning with 'All Categories' (the root)
-     * and <em>including</em> uncategorized portlets.
-     * 
-     * Always returns the entire contents
-     * of the Portlet Registry, including uncategorized portlets,  to which the
-     * user has access.  Access is based on the SUBSCRIBE permission.
+     * and <em>including</em> uncategorized portlets.  Access is based on the
+     * SUBSCRIBE permission.
      *
      * @since 4.3
      */
