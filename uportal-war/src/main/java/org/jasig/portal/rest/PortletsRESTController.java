@@ -74,8 +74,13 @@ public class PortletsRESTController {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
 
+    /**
+     * Provides information about all portlets in the portlet registry.  NOTE:  The response is
+     * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions.  The
+     * actual level of permission required is based on the current lifecycle state of the portlet.
+     */
     @RequestMapping(value="/portlets.json", method = RequestMethod.GET)
-    public ModelAndView getPortlets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView getManageablePortlets(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get a list of all channels
         List<IPortletDefinition> allPortlets = portletDefinitionRegistry.getAllPortletDefinitions();
         IPerson user = personManager.getPerson(request);
@@ -92,7 +97,11 @@ public class PortletsRESTController {
         return new ModelAndView("json", "portlets", rslt);
 
     }
-    
+
+    /**
+     * Provides information about a single portlet in the registry.  NOTE:  Access to this
+     * API enpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     */
     @RequestMapping(value="/portlet/{fname}.json", method = RequestMethod.GET)
     public ModelAndView getPortlet(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) throws Exception {
       IPerson user = personManager.getPerson(request);
