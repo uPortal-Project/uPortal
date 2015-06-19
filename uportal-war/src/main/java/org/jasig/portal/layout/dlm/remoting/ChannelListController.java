@@ -20,7 +20,6 @@
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -69,7 +68,6 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Jen Bourey, jbourey@unicon.net
  */
 @Controller
-@RequestMapping("/portletList")
 public class ChannelListController {
 
     private static final String UNCATEGORIZED = "uncategorized";
@@ -131,78 +129,127 @@ public class ChannelListController {
     }
 
     /**
-     * 
-     * @param request
-     * @param type
-     * @return
+     * Original, pre-4.3 version of this API.  Always returns the entire contents
+     * of the Portlet Registry, including uncategorized portlets,  to which the
+     * user has access.  Access is based on the SUBSCRIBE permission.
      */
-    @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView listChannels(WebRequest webRequest, HttpServletRequest request, @RequestParam(value="type",required=false) String type) {
+    @RequestMapping(value="/portletList", method=RequestMethod.GET)
+    public ModelAndView listChannels(WebRequest webRequest, HttpServletRequest request,
+            @RequestParam(value="type",required=false) String type) {
+
         if(type != null && TYPE_MANAGE.equals(type)) {
             throw new UnsupportedOperationException("Moved to PortletRESTController under /api/portlets.json");
         }
-        IPerson user = personManager.getPerson(request);
 
-        Map<String,SortedSet<?>> registry = getRegistry(webRequest, user);
+        final IPerson user = personManager.getPerson(request);
+        final PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
+        final Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, rootCategory, true);
+
+        // Since type=manage was deprecated channels is always empty but retained for backwards compatibility
+        registry.put("channels", new TreeSet<ChannelBean>());
 
         return new ModelAndView("jsonView", "registry", registry);
     }
 
-    private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user) {
+    /**
+     * Updated version of this API.  Supports an optional 'categoryId' parameter.
+     * If provided, this URL will return the portlet registry beginning with the
+     * specified category, including all descendants, and <em>excluding</em>
+     * uncategorized portlets.  If no 'categoryId' is provided, this method
+     * returns the portlet registry beginning with 'All Categories' (the root)
+     * and <em>including</em> uncategorized portlets.
+     * 
+     * Always returns the entire contents
+     * of the Portlet Registry, including uncategorized portlets,  to which the
+     * user has access.  Access is based on the SUBSCRIBE permission.
+     *
+     * @since 4.3
+     */
+    @RequestMapping(value="/v4-3/dlm/portletRegistry", method=RequestMethod.GET)
+    public ModelAndView getPortletRegistry(WebRequest webRequest, HttpServletRequest request,
+            @RequestParam(value="categoryId", required=false) String categoryId) {
 
-        // get a list of all channels 
-        List<IPortletDefinition> allChannels = portletDefinitionRegistry.getAllPortletDefinitions();
-        Set<IPortletDefinition> uncategorizedPortlets = new HashSet<>(allChannels);
+        final PortletCategory rootCategory = categoryId != null
+                ? portletCategoryRegistry.getPortletCategory(categoryId)
+                : portletCategoryRegistry.getTopLevelPortletCategory();
+        final boolean includeUncategorized = categoryId != null
+                ? false  // Don't provide uncategorized portlets
+                : true;  // if a specific category was requested
 
-        // construct a new channel registry
-        Map<String,SortedSet<?>> registry = new TreeMap<String,SortedSet<?>>();
-        SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
+        final IPerson user = personManager.getPerson(request);
+        final Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, rootCategory, includeUncategorized);
+
+        return new ModelAndView("jsonView", "registry", registry);
+    }
+
+    /*
+     * Implementation
+     */
+
+    /**
+     * Gathers and organizes the response based on the specified rootCategory
+     * and the permissions of the specified user.
+     */
+    private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user,
+            PortletCategory rootCategory, boolean includeUncategorized) {
 
         // get user locale
         Locale[] locales = localeStore.getUserLocales(user);
         LocaleManager localeManager = new LocaleManager(user, locales);
         Locale locale = localeManager.getLocales()[0];
 
-        // add the root category and all its children to the registry
-        PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
-        categories.add(addChildren(request, rootCategory, uncategorizedPortlets, user, locale));
-
         /*
-         * uPortal historically has provided for a convention that portlets not in any category
-         * may potentially be viewed by users but may not be subscribed to.
-         *
-         * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
-         * that have not already been identified as belonging to a category and adds them to a category
-         * called Uncategorized.
+         * This collection of all the portlets in the portal is for the sake of
+         * tracking which ones are uncategorized.  They will be added to the
+         * output if includeUncategorized=true.
          */
+        Set<IPortletDefinition> portletsNotYetCategorized = includeUncategorized
+                ? new HashSet<IPortletDefinition>(portletDefinitionRegistry.getAllPortletDefinitions())
+                : new HashSet<IPortletDefinition>();  // Not necessary to fetch them if we're not tracking them
 
-        EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        // construct a new channel registry
+        Map<String,SortedSet<?>> rslt = new TreeMap<String,SortedSet<?>>();
+        SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
 
-        // construct a new channel category bean for this category
-        String uncategorizedString = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
-        ChannelCategoryBean uncategorizedPortletsBean = new ChannelCategoryBean(new PortletCategory(uncategorizedString));
-        uncategorizedPortletsBean.setName(UNCATEGORIZED);
-        uncategorizedPortletsBean.setDescription(messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale));
+        // add the root category and all its children to the registry
+        categories.add(prepareCategoryBean(request, rootCategory, portletsNotYetCategorized, user, locale));
 
-        for (IPortletDefinition portlet : uncategorizedPortlets) {
-            if (authorizationService.canPrincipalBrowse(ap, portlet)) {
-                // construct a new channel bean from this channel
-                ChannelBean channel = getChannel(portlet, request, locale);
-                uncategorizedPortletsBean.addChannel(channel);
+        if (includeUncategorized) {
+            /*
+             * uPortal historically has provided for a convention that portlets not in any category
+             * may potentially be viewed by users but may not be subscribed to.
+             *
+             * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
+             * that have not already been identified as belonging to a category and adds them to a category
+             * called Uncategorized.
+             */
+
+            EntityIdentifier ei = user.getEntityIdentifier();
+            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+            // construct a new channel category bean for this category
+            String uncategorizedString = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
+            ChannelCategoryBean uncategorizedPortletsBean = new ChannelCategoryBean(new PortletCategory(uncategorizedString));
+            uncategorizedPortletsBean.setName(UNCATEGORIZED);
+            uncategorizedPortletsBean.setDescription(messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale));
+
+            for (IPortletDefinition portlet : portletsNotYetCategorized) {
+                if (authorizationService.canPrincipalBrowse(ap, portlet)) {
+                    // construct a new channel bean from this channel
+                    ChannelBean channel = getChannel(portlet, request, locale);
+                    uncategorizedPortletsBean.addChannel(channel);
+                }
             }
+            // Add even if no portlets in category
+            categories.add(uncategorizedPortletsBean);
         }
-        // Add even if no portlets in category
-        categories.add(uncategorizedPortletsBean);
 
-        // Since type=manage was deprecated channels is always empty but retained for backwards compatibility
-        registry.put("channels", new TreeSet<ChannelBean>());
-        registry.put("categories", categories);
-
-        return registry;
+        rslt.put("categories", categories);
+        return rslt;
     }
 
-    private ChannelCategoryBean addChildren(WebRequest request, PortletCategory category, Set<IPortletDefinition> uncategorizedPortlets, IPerson user, Locale locale) {
+    private ChannelCategoryBean prepareCategoryBean(WebRequest request, PortletCategory category,
+            Set<IPortletDefinition> portletsNotYetCategorized, IPerson user, Locale locale) {
 
         // construct a new channel category bean for this category
         ChannelCategoryBean categoryBean = new ChannelCategoryBean(category);
@@ -221,13 +268,17 @@ public class ChannelListController {
                 categoryBean.addChannel(channel);
             }
 
-            // remove the portlet from the set of all portlets
-            uncategorizedPortlets.remove(portlet);
+            /*
+             * Remove the portlet from the uncategorized collection;
+             * note -- this approach will not prevent portlets from
+             * appearing in multiple categories (as appropriate).
+             */
+            portletsNotYetCategorized.remove(portlet);
         }
 
         /* Now add child categories. */
         for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
-            ChannelCategoryBean childCategoryBean = addChildren(request, childCategory, uncategorizedPortlets, user, locale);
+            ChannelCategoryBean childCategoryBean = prepareCategoryBean(request, childCategory, portletsNotYetCategorized, user, locale);
             categoryBean.addCategory(childCategoryBean);
         }
 
