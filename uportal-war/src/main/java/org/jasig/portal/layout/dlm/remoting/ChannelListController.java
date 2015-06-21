@@ -162,7 +162,7 @@ public class ChannelListController {
      *
      * @since 4.3
      */
-    @RequestMapping(value="/v4-3/dlm/portletRegistry", method=RequestMethod.GET)
+    @RequestMapping(value="/v4-3/dlm/portletRegistry.json", method=RequestMethod.GET)
     public ModelAndView getPortletRegistry(WebRequest webRequest, HttpServletRequest request,
             @RequestParam(value="categoryId", required=false) String categoryId) {
 
