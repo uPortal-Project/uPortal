@@ -13,7 +13,7 @@
 	<artifactId>cas-filter-webapp</artifactId>
 	<packaging>war</packaging>
 	<name>CAS Filter Web App</name>
-	<description>A CAS Client Application for Inside/TRAINING folder</description>
+	<description>A CAS Client Application for protecting folders/files </description>
     <build>
         <finalName>cas-filter-webapp</finalName>
         <plugins>
