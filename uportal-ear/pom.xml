@@ -18,6 +18,12 @@
     <dependencies>
         <dependency>
             <groupId>org.jasig.portal</groupId>
+            <artifactId>cas-filter-webapp</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-war</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -204,6 +210,12 @@
                             <artifactId>uportal-war</artifactId>
                             <bundleFileName>${uportal.docbase}.war</bundleFileName>
                             <contextRoot>/${uportal.docbase}</contextRoot>
+                        </webModule>
+                        <webModule>
+                           <groupId>org.jasig.portal</groupId>
+                           <artifactId>cas-filter-webapp</artifactId>
+                           <bundleFileName>cas-filter-webapp.war</bundleFileName>
+                           <contextRoot>/cas-filter-webapp</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.jasig.resourceserver</groupId>

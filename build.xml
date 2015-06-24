@@ -1477,6 +1477,33 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </sequential>
     </macrodef>
 
+
+    <!--
+    | The task ensures the cas-filter-webapp pom is installed into the local repository for dependency resolution.
+    |
+    | The following are available in the cas-filter-webapp-sub-tasks element:
+    | properties from the uportal-parent-macro macrodef
+    | pom object   - cas-filter-webapp.pom                       - The Maven POM object for the cas-filter-webapp pom
+    | property     - cas-filter-webapp.artifact                  - The full path to the cas-filter-webapp WAR
+    | path         - cas-filter-webapp.classpath                 - The cas-filter-webapp classpath not including the cas-filter-webapp WAR
+    -->
+        <macrodef name="cas-filter-webapp-macro">
+            <element name="cas-filter-webapp-sub-tasks" optional="false" implicit="true" />
+            <sequential>
+                <uportal-parent-macro>
+                    <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+
+                    <maven-artifact-macro project-name="cas-filter-webapp-api" project-path="${cas-filter-webapp.dir}" checkfilesid="uportal-parent.pom.fsid">
+                        <!--
+                      | Execute the cas-filter-webapp-sub-tasks
+                      -->
+                        <cas-filter-webapp-sub-tasks />
+                    </maven-artifact-macro>
+                </uportal-parent-macro>
+            </sequential>
+        </macrodef>
+
+
     <!--
      | The task ensures the uportal-db pom is installed into the local repository for dependency resolution.
      |
