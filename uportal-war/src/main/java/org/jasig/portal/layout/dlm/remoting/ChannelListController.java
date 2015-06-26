@@ -76,6 +76,7 @@ public class ChannelListController {
 
     private static final String UNCATEGORIZED = "uncategorized";
     private static final String UNCATEGORIZED_DESC = "uncategorized.description";
+    private static final String ICON_URL_PARAMETER_NAME = "iconUrl";
 
     /**
      * @deprecated Moved to PortletRESTController under /api/portlets.json
@@ -291,10 +292,11 @@ public class ChannelListController {
         channel.setTitle(definition.getTitle(locale.toString()));
         channel.setTypeId(definition.getType().getId());
 
-        IPortletDefinitionParameter iconParameter = definition.getParameter("iconUrl");
+        // See api docs for postProcessIconUrlParameter() below 
+        IPortletDefinitionParameter iconParameter = definition.getParameter(ICON_URL_PARAMETER_NAME);
         if (iconParameter != null) {
-            String iconUrl = spELService.parseString(iconParameter.getValue(), request);
-            channel.setIconUrl(iconUrl);
+            IPortletDefinitionParameter evaluated = postProcessIconUrlParameter(iconParameter, request);
+            channel.setIconUrl(evaluated.getValue());
         }
 
         return channel;
@@ -344,8 +346,7 @@ public class ChannelListController {
             Set<PortletDefinitionBean> marketplacePortlets = new HashSet<>();
             for (IPortletDefinition portlet : portletsNotYetCategorized) {
                 if (authorizationService.canPrincipalBrowse(ap, portlet)) {
-                    MarketplacePortletDefinition mktpd = marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
-                    PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+                    PortletDefinitionBean pdb = preparePortletDefinitionBean(request, portlet, locale);
                     marketplacePortlets.add(pdb);
                 }
             }
@@ -385,8 +386,7 @@ public class ChannelListController {
         for(IPortletDefinition portlet : portlets) {
 
             if (authorizationService.canPrincipalBrowse(ap, portlet)) {
-                MarketplacePortletDefinition mktpd = marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
-                PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+                PortletDefinitionBean pdb = preparePortletDefinitionBean(req, portlet, locale);
                 marketplacePortlets.add(pdb);
             }
 
@@ -406,6 +406,20 @@ public class ChannelListController {
 
     }
 
+    private PortletDefinitionBean preparePortletDefinitionBean(WebRequest req, IPortletDefinition portlet, Locale locale) {
+        MarketplacePortletDefinition mktpd = marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
+        PortletDefinitionBean rslt = PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+
+        // See api docs for postProcessIconUrlParameter() below 
+        IPortletDefinitionParameter iconParameter = rslt.getParameters().get(ICON_URL_PARAMETER_NAME);
+        if (iconParameter != null) {
+            IPortletDefinitionParameter evaluated = postProcessIconUrlParameter(iconParameter, req);
+            rslt.putParameter(evaluated);
+        }
+
+        return rslt;
+    }
+
     /*
      * Implementation
      */
@@ -416,6 +430,51 @@ public class ChannelListController {
         LocaleManager localeManager = new LocaleManager(user, locales);
         Locale rslt = localeManager.getLocales()[0];
         return rslt;
+    }
+
+    /**
+     * TODO:  Clean this mess up some day;  there are a few portlet-definitions
+     * that start with ${request.contextPath} for the iconUrl parameter,
+     * presumably because uPortal can be deployed to a context other than
+     * /uPortal.  We should either...
+     * 
+     *   - Discontinue SpEL in publishing parameters entirely;  or
+     *   - Extend it to parameters beyond 'iconUrl'
+     *
+     * And if we continue using SpEL in parameters, we should evaluate it
+     * when they're read out of the database (long before now).
+     * 
+     * FWIW the /api/portlet/{fname}.json API does not process the SpEL and the
+     * '${request.contextPath}' is included in the JSON output.
+     */
+    private IPortletDefinitionParameter postProcessIconUrlParameter(final IPortletDefinitionParameter iconUrl, WebRequest req) {
+        if (!ICON_URL_PARAMETER_NAME.equals(iconUrl.getName())) {
+            String msg = "Only iconUrl should be processed this way;  parameter was:  " + iconUrl.getName();
+            throw new IllegalArgumentException(msg);
+        }
+        final String value = spELService.parseString(iconUrl.getValue(), req);
+        return new IPortletDefinitionParameter() {
+            @Override
+            public String getName() {
+                return ICON_URL_PARAMETER_NAME;
+            }
+            @Override
+            public String getValue() {
+                return value;
+            }
+            @Override
+            public String getDescription() {
+                return iconUrl.getDescription();
+            }
+            @Override
+            public void setValue(String value) {
+                throw new UnsupportedOperationException();
+            }
+            @Override
+            public void setDescription(String descr) {
+                throw new UnsupportedOperationException();
+            }
+        };
     }
 
 }

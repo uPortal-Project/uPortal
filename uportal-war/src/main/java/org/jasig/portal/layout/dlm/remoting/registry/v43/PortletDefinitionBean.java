@@ -21,6 +21,7 @@ package org.jasig.portal.layout.dlm.remoting.registry.v43;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -101,6 +102,10 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
         return parameters;
     }
 
+    public void putParameter(IPortletDefinitionParameter parameter) {
+        parameters.put(parameter.getName(), parameter);
+    }
+
     public List<String> getKeywords() {
         return keywords;
     }
@@ -142,7 +147,7 @@ public final class PortletDefinitionBean implements Comparable<PortletDefinition
         this.typeId = mpd.getType().getId();
         this.averageRating = mpd.getRating();
         this.ratingsCount = mpd.getUsersRated();
-        this.parameters = mpd.getParametersAsUnmodifiableMap();
+        this.parameters = new HashMap<>(mpd.getParametersAsUnmodifiableMap());
         this.keywords = mpd.getKeywords() != null
                 ? Collections.unmodifiableList(mpd.getKeywords())
                 : EMPTY_KEYWORDS;
