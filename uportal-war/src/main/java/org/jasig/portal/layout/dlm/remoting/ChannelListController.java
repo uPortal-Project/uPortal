@@ -34,6 +34,10 @@ import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
+import org.jasig.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;
+import org.jasig.portal.layout.dlm.remoting.registry.v43.PortletDefinitionBean;
+import org.jasig.portal.portlet.marketplace.IMarketplaceService;
+import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.PortletCategory;
@@ -85,6 +89,9 @@ public class ChannelListController {
     private ILocaleStore localeStore;
     private MessageSource messageSource;
     private IAuthorizationService authorizationService;
+
+    @Autowired
+    private IMarketplaceService marketplaceService;
 
     /**
      * @param portletDefinitionRegistry
@@ -142,8 +149,7 @@ public class ChannelListController {
         }
 
         final IPerson user = personManager.getPerson(request);
-        final PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
-        final Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, rootCategory, true);
+        final Map<String,SortedSet<?>> registry = getRegistryOriginal(webRequest, user);
 
         // Since type=manage was deprecated channels is always empty but retained for backwards compatibility
         registry.put("channels", new TreeSet<ChannelBean>());
@@ -174,72 +180,64 @@ public class ChannelListController {
                 : true;  // if a specific category was requested
 
         final IPerson user = personManager.getPerson(request);
-        final Map<String,SortedSet<?>> registry = getRegistry(webRequest, user, rootCategory, includeUncategorized);
+        final Map<String,SortedSet<?>> registry = getRegistry43(webRequest, user, rootCategory, includeUncategorized);
 
         return new ModelAndView("jsonView", "registry", registry);
     }
 
     /*
-     * Implementation
+     * Private methods that support the original (pre-4.3) version of the API
      */
 
     /**
      * Gathers and organizes the response based on the specified rootCategory
      * and the permissions of the specified user.
      */
-    private Map<String,SortedSet<?>> getRegistry(WebRequest request, IPerson user,
-            PortletCategory rootCategory, boolean includeUncategorized) {
-
-        // get user locale
-        Locale[] locales = localeStore.getUserLocales(user);
-        LocaleManager localeManager = new LocaleManager(user, locales);
-        Locale locale = localeManager.getLocales()[0];
+    private Map<String,SortedSet<?>> getRegistryOriginal(WebRequest request, IPerson user) {
 
         /*
          * This collection of all the portlets in the portal is for the sake of
-         * tracking which ones are uncategorized.  They will be added to the
-         * output if includeUncategorized=true.
+         * tracking which ones are uncategorized.
          */
-        Set<IPortletDefinition> portletsNotYetCategorized = includeUncategorized
-                ? new HashSet<IPortletDefinition>(portletDefinitionRegistry.getAllPortletDefinitions())
-                : new HashSet<IPortletDefinition>();  // Not necessary to fetch them if we're not tracking them
+        Set<IPortletDefinition> portletsNotYetCategorized = new HashSet<IPortletDefinition>(
+                portletDefinitionRegistry.getAllPortletDefinitions());
 
         // construct a new channel registry
         Map<String,SortedSet<?>> rslt = new TreeMap<String,SortedSet<?>>();
         SortedSet<ChannelCategoryBean> categories = new TreeSet<ChannelCategoryBean>();
 
         // add the root category and all its children to the registry
+        final PortletCategory rootCategory = portletCategoryRegistry.getTopLevelPortletCategory();
+        final Locale locale = getUserLocale(user);
         categories.add(prepareCategoryBean(request, rootCategory, portletsNotYetCategorized, user, locale));
 
-        if (includeUncategorized) {
-            /*
-             * uPortal historically has provided for a convention that portlets not in any category
-             * may potentially be viewed by users but may not be subscribed to.
-             *
-             * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
-             * that have not already been identified as belonging to a category and adds them to a category
-             * called Uncategorized.
-             */
+        /*
+         * uPortal historically has provided for a convention that portlets not in any category
+         * may potentially be viewed by users but may not be subscribed to.
+         *
+         * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
+         * that have not already been identified as belonging to a category and adds them to a category
+         * called Uncategorized.
+         */
 
-            EntityIdentifier ei = user.getEntityIdentifier();
-            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        EntityIdentifier ei = user.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-            // construct a new channel category bean for this category
-            String uncategorizedString = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
-            ChannelCategoryBean uncategorizedPortletsBean = new ChannelCategoryBean(new PortletCategory(uncategorizedString));
-            uncategorizedPortletsBean.setName(UNCATEGORIZED);
-            uncategorizedPortletsBean.setDescription(messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale));
+        // construct a new channel category bean for this category
+        String uncategorizedString = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
+        ChannelCategoryBean uncategorizedPortletsBean = new ChannelCategoryBean(new PortletCategory(uncategorizedString));
+        uncategorizedPortletsBean.setName(UNCATEGORIZED);
+        uncategorizedPortletsBean.setDescription(messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale));
 
-            for (IPortletDefinition portlet : portletsNotYetCategorized) {
-                if (authorizationService.canPrincipalBrowse(ap, portlet)) {
-                    // construct a new channel bean from this channel
-                    ChannelBean channel = getChannel(portlet, request, locale);
-                    uncategorizedPortletsBean.addChannel(channel);
-                }
+        for (IPortletDefinition portlet : portletsNotYetCategorized) {
+            if (authorizationService.canPrincipalBrowse(ap, portlet)) {
+                // construct a new channel bean from this channel
+                ChannelBean channel = getChannel(portlet, request, locale);
+                uncategorizedPortletsBean.addChannel(channel);
             }
-            // Add even if no portlets in category
-            categories.add(uncategorizedPortletsBean);
         }
+        // Add even if no portlets in category
+        categories.add(uncategorizedPortletsBean);
 
         rslt.put("categories", categories);
         return rslt;
@@ -300,6 +298,124 @@ public class ChannelListController {
         }
 
         return channel;
+    }
+
+    /*
+     * Private methods that support the 4.3 version of the API
+     */
+
+    /**
+     * Gathers and organizes the response based on the specified rootCategory
+     * and the permissions of the specified user.
+     */
+    private Map<String,SortedSet<?>> getRegistry43(WebRequest request, IPerson user,
+            PortletCategory rootCategory, boolean includeUncategorized) {
+
+        /*
+         * This collection of all the portlets in the portal is for the sake of
+         * tracking which ones are uncategorized.  They will be added to the
+         * output if includeUncategorized=true.
+         */
+        Set<IPortletDefinition> portletsNotYetCategorized = includeUncategorized
+                ? new HashSet<IPortletDefinition>(portletDefinitionRegistry.getAllPortletDefinitions())
+                : new HashSet<IPortletDefinition>();  // Not necessary to fetch them if we're not tracking them
+
+        // construct a new channel registry
+        Map<String,SortedSet<?>> rslt = new TreeMap<String,SortedSet<?>>();
+        SortedSet<PortletCategoryBean> categories = new TreeSet<PortletCategoryBean>();
+
+        // add the root category and all its children to the registry
+        final Locale locale = getUserLocale(user);
+        categories.add(preparePortletCategoryBean(request, rootCategory, portletsNotYetCategorized, user, locale));
+
+        if (includeUncategorized) {
+            /*
+             * uPortal historically has provided for a convention that portlets not in any category
+             * may potentially be viewed by users but may not be subscribed to.
+             *
+             * As of uPortal 4.2, the logic below now takes any portlets the user has BROWSE access to
+             * that have not already been identified as belonging to a category and adds them to a category
+             * called Uncategorized.
+             */
+
+            EntityIdentifier ei = user.getEntityIdentifier();
+            IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+            Set<PortletDefinitionBean> marketplacePortlets = new HashSet<>();
+            for (IPortletDefinition portlet : portletsNotYetCategorized) {
+                if (authorizationService.canPrincipalBrowse(ap, portlet)) {
+                    MarketplacePortletDefinition mktpd = marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
+                    PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+                    marketplacePortlets.add(pdb);
+                }
+            }
+
+            // construct a new channel category bean for this category
+            final String uncName = messageSource.getMessage(UNCATEGORIZED, new Object[] {}, locale);
+            final String uncDescription = messageSource.getMessage(UNCATEGORIZED_DESC, new Object[] {}, locale);
+            PortletCategory pc = new PortletCategory(uncName);  // Use of this String for Id matches earlier version of API
+            pc.setName(uncName);
+            pc.setDescription(uncDescription);
+            PortletCategoryBean unc = PortletCategoryBean.fromPortletCategory(pc, null, marketplacePortlets);
+
+            // Add even if no portlets in category
+            categories.add(unc);
+        }
+
+        rslt.put("categories", categories);
+        return rslt;
+    }
+
+    private PortletCategoryBean preparePortletCategoryBean(WebRequest req, PortletCategory category,
+            Set<IPortletDefinition> portletsNotYetCategorized, IPerson user, Locale locale) {
+
+        /* Prepare child categories. */
+        Set<PortletCategoryBean> subcategories = new HashSet<>();
+        for(PortletCategory childCategory : this.portletCategoryRegistry.getChildCategories(category)) {
+            PortletCategoryBean childBean = preparePortletCategoryBean(req, childCategory, portletsNotYetCategorized, user, locale);
+            subcategories.add(childBean);
+        }
+
+        // add the direct child channels for this category
+        Set<IPortletDefinition> portlets = portletCategoryRegistry.getChildPortlets(category);
+        EntityIdentifier ei = user.getEntityIdentifier();
+        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+
+        Set<PortletDefinitionBean> marketplacePortlets = new HashSet<>();
+        for(IPortletDefinition portlet : portlets) {
+
+            if (authorizationService.canPrincipalBrowse(ap, portlet)) {
+                MarketplacePortletDefinition mktpd = marketplaceService.getOrCreateMarketplacePortletDefinition(portlet);
+                PortletDefinitionBean pdb = PortletDefinitionBean.fromMarketplacePortletDefinition(mktpd, locale);
+                marketplacePortlets.add(pdb);
+            }
+
+            /*
+             * Remove the portlet from the uncategorized collection;
+             * note -- this approach will not prevent portlets from
+             * appearing in multiple categories (as appropriate).
+             */
+            portletsNotYetCategorized.remove(portlet);
+        }
+
+        // construct a new portlet category bean for this category
+        PortletCategoryBean categoryBean = PortletCategoryBean.fromPortletCategory(category, subcategories, marketplacePortlets);
+        categoryBean.setName(messageSource.getMessage(category.getName(), new Object[] {}, locale));
+
+        return categoryBean;
+
+    }
+
+    /*
+     * Implementation
+     */
+
+    private Locale getUserLocale(IPerson user) {
+        // get user locale
+        Locale[] locales = localeStore.getUserLocales(user);
+        LocaleManager localeManager = new LocaleManager(user, locales);
+        Locale rslt = localeManager.getLocales()[0];
+        return rslt;
     }
 
 }
