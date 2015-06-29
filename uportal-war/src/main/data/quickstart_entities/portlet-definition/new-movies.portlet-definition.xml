@@ -20,10 +20,10 @@
 
 -->
 <portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
-    <title>Movies.com New This Week in Theaters</title>
-    <name>Movies.com New This Week in Theaters</name>
+    <title>Fandango.com Top 10 Box Office Movies</title>
+    <name>Fandango.com Top 10 Box Office Movies</name>
     <fname>new-movies</fname>
-    <desc>New movies opening this week from Movies.com</desc>
+    <desc>Fandango’s Top 10 Box Office Movies!</desc>
     <type>RSS</type>
     <timeout>10000</timeout>
     <portlet-descriptor>
@@ -60,12 +60,12 @@
     <portlet-preference>
         <name>name</name>
         <readOnly>false</readOnly>
-        <value>Movies.com New in Theaters</value>
+        <value>Fandango’s Top 10 Box Office Movies!</value>
     </portlet-preference>
     <portlet-preference>
         <name>url</name>
         <readOnly>false</readOnly>
-        <value>http://movies.go.com/xml/rss/intheaters.xml</value>
+        <value>http://www.fandango.com/rss/top10boxoffice.rss</value>
     </portlet-preference>
     <portlet-preference>
         <name>summaryView</name>
