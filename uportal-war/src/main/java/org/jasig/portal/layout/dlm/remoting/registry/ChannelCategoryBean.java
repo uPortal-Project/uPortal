@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.layout.dlm.remoting.registry;
 
 import java.io.Serializable;
@@ -28,8 +29,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.jasig.portal.portlet.om.PortletCategory;
 
 public class ChannelCategoryBean implements Comparable<ChannelCategoryBean>, Serializable {
-	
-	private String id;
+
+    private static final long serialVersionUID = 1L;
+
+    private String id;
    	private String name;
    	private String description;
    	private SortedSet<ChannelCategoryBean> categories;
