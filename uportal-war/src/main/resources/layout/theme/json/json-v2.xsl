@@ -22,20 +22,20 @@
 <!-- ========================================================================= -->
 <!-- ========== README ======================================================= -->
 <!-- ========================================================================= -->
-<!-- 
- | The theme is written in XSL. For more information on XSL, refer to 
- | [http://www.w3.org/Style/XSL/].  Baseline XSL skill is strongly recommended before modifying 
+<!--
+ | The theme is written in XSL. For more information on XSL, refer to
+ | [http://www.w3.org/Style/XSL/].  Baseline XSL skill is strongly recommended before modifying
  | this file.
  |
- | This purpose of this file is to provide structure and theme data for use in 
+ | This purpose of this file is to provide structure and theme data for use in
  | javascript-driven rendering of the uPortal UI
  |
- | As such, this file has a mixture of code that should not be modified, and code that exists 
- | explicitly to be modified.  To help make clear what is what, a RED-YELLOW-GREEN legend has 
+ | As such, this file has a mixture of code that should not be modified, and code that exists
+ | explicitly to be modified.  To help make clear what is what, a RED-YELLOW-GREEN legend has
  | been added to all of the sections of the file.
  |
  | RED: Stop! Do not modify.
- | YELLOW: Warning, proceed with caution.  Modifications can be made, but should not generally be 
+ | YELLOW: Warning, proceed with caution.  Modifications can be made, but should not generally be
  |         necessary and may require more advanced skill.
  | GREEN: Go! Modify as desired.
 -->
@@ -43,16 +43,16 @@
 <!-- ========================================================================= -->
 <!-- ========== DOCUMENT DESCRIPTION ========================================= -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
  | Date: 04/01/2015
  | Company: Unicon, Inc.
  | uPortal Version: 4.2.0
  |
- | General Description: This file, json-v2.xsl, was developed for sending layout data to the UI 
- | for use in rendering the uPortal UI using Javascript.  The original json.xsl file is now 
- | considered 'version 1' and this new file is 'version 2'.  The original endpoint, 
- | "/uPortal/layout.json", has been preserved for backwards compatibility.  However, the same 
- | content is now also available at: "/uPortal/layout/v1/layout.json".  A new endpoint, 
+ | General Description: This file, json-v2.xsl, was developed for sending layout data to the UI
+ | for use in rendering the uPortal UI using Javascript.  The original json.xsl file is now
+ | considered 'version 1' and this new file is 'version 2'.  The original endpoint,
+ | "/uPortal/layout.json", has been preserved for backwards compatibility.  However, the same
+ | content is now also available at: "/uPortal/layout/v1/layout.json".  A new endpoint,
  | "/uPortal/layout/v2/layout.json", which utilizes this file, has been added.
 -->
 
@@ -60,13 +60,13 @@
 <!-- ========================================================================= -->
 <!-- ========== STYLESHEET DECLARATION ======================================= -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
  | RED
  | This statement defines this document as XSL.
 -->
-<xsl:stylesheet 
+<xsl:stylesheet
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
     xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
     xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
@@ -75,7 +75,7 @@
     xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
-    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle" 
+    exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle"
     version="1.0">
 
 <!-- ========================================================================= -->
@@ -84,7 +84,7 @@
 <!-- ========================================================================= -->
 <!-- ========== IMPORTS ====================================================== -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 | Imports are the XSL files that build the theme.
 | Import statments and the XSL files they refer to should not be modified.
@@ -97,7 +97,7 @@
 <!-- ========================================= -->
 <!-- ========== OUTPUT DELCARATION =========== -->
 <!-- ========================================= -->
-<!-- 
+<!--
     | RED
     | This statement instructs the XSL how to output.
 -->
@@ -107,16 +107,16 @@
 <!-- ============================================== -->
 <!-- ========== VARIABLES and PARAMETERS ========== -->
 <!-- ============================================== -->
-<!-- 
+<!--
 | YELLOW - GREEN
 | These variables and parameters provide flexibility and customization of the user interface.
-| Changing the values of the variables and parameters signals the theme to reconfigure use 
-| and location of user interface components. Most text used within the theme is localized.  
+| Changing the values of the variables and parameters signals the theme to reconfigure use
+| and location of user interface components. Most text used within the theme is localized.
 -->
-  
-  
+
+
 <!-- ****** XSL UTILITY PARAMETERS ****** -->
-<!-- 
+<!--
 | RED
 | Parameters used by XSL->Java Callbacks
 -->
@@ -126,10 +126,10 @@
 
 
 <!-- ****** SKIN SETTINGS ****** -->
-<!-- 
+<!--
 | YELLOW
 | Skin Settings can be used to change the location of skin files.
---> 
+-->
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
 <xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
 <xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
@@ -138,7 +138,7 @@
 
 
 <!-- ****** LOCALIZATION SETTINGS ****** -->
-<!-- 
+<!--
 | GREEN
 | Locatlization Settings can be used to change the localization of the theme.
 -->
@@ -148,7 +148,7 @@
 
 
 <!-- ****** PORTAL SETTINGS ****** -->
-<!-- 
+<!--
 | YELLOW
 | Portal Settings should generally not be (and not need to be) modified.
 -->
@@ -162,25 +162,25 @@
 <xsl:param name="WINDOW_STATE_FOR_PORTLET_URLS">EXCLUSIVE</xsl:param>
 <xsl:param name="baseActionURL">render.uP</xsl:param>
 <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-<!--  
-<xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param> 
+<!--
+<xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
 -->
 
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
-    
+
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: ROOT =============================================== -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
-| This is the root xsl template and it defines the overall structure of the html markup. 
+| This is the root xsl template and it defines the overall structure of the html markup.
 | Focused and Non-focused content is controlled through an xsl:choose statement.
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
     <layout><json/>{
     "user": "<xsl:value-of select="$USER_ID"/>",
-    "locale": "<xsl:value-of select="$USER_LANG"/>", 
+    "locale": "<xsl:value-of select="$USER_LANG"/>",
     "layout": {
         "globals": {
             <xsl:apply-templates select="layout/debug" />
@@ -206,7 +206,7 @@
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: PORTLET =============================================== -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 | This template defines the method for expressing the presence of a portlet within a layout.
 -->
@@ -231,6 +231,7 @@
         </xsl:choose>
     </xsl:variable>
                                         {
+                                            "_objectType": "portlet",
                                             "url": "<xsl:value-of select="$portletUrl"/>",
                                             "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                                             "iconUrl": "<xsl:value-of select="$iconUrl"/>",
@@ -249,7 +250,7 @@
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: DEBUG ============================================== -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 -->
 <xsl:template match="debug">
@@ -260,7 +261,7 @@
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: REGIONS ============================================ -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 -->
 <xsl:template match="regions">
@@ -277,7 +278,7 @@
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: NAVIGATION ========================================= -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 -->
 <xsl:template match="navigation">
@@ -311,9 +312,9 @@
                         </xsl:for-each>
                     ],
 -->
-                    "content": {
+                    "content": [
                         <xsl:apply-templates select="content" />
-                    }
+                    ]
                 }<xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
             ]
@@ -321,31 +322,48 @@
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: CONTENT ============================================ -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 -->
 <xsl:template match="content">
-                        <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
-                        </xsl:for-each>
-                        "columns": [
-                            <xsl:apply-templates select="column" />
-                        ]
+  <xsl:apply-templates select="folder" />
 </xsl:template>
 
-<xsl:template match="column">
+<xsl:template match="folder">
                             {
+                                 "_objectType": "folder",
                                 <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
                                 </xsl:for-each>
-                                "portlets": [
-                                <xsl:apply-templates select="channel" />
+                                "content": [
+                                <xsl:for-each select="*">
+                                    <xsl:call-template name="folderContent"/>
+                                </xsl:for-each>
+                                <!--
+                                  <xsl:if test="child::folder">
+                                    <xsl:apply-templates select="child::folder" />
+                                    <xsl:if test="child::channel">
+                                         ,
+                                    </xsl:if>
+                                  </xsl:if>
+                                  <xsl:apply-templates select="channel" />
+                                  -->
                                 ]
                             }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>
 
+<xsl:template name="folderContent">
+    <xsl:if test="self::folder">
+        <xsl:apply-templates select="self::folder" />
+    </xsl:if>
+    <xsl:if test="self::channel">
+        <xsl:apply-templates select="self::channel"/>
+    </xsl:if>
+    <xsl:if test="position() != last()">,</xsl:if>
+</xsl:template>
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: FAVORITES ========================================== -->
 <!-- ========================================================================= -->
-<!-- 
+<!--
 | RED
 -->
 <xsl:template match="favorites">

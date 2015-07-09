@@ -30,9 +30,9 @@
     <!-- structure attribute incorporation -->
     <bean id="jsonStructureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
-        <property name="attributeSource" ref="jsonStructureAttributeSource" />
+        <property name="attributeSource" ref="structureAttributeSource" />
     </bean>
-    <bean id="jsonStructureAttributeSource" class="org.jasig.portal.json.rendering.JsonStructureAttributeSource" />
+    <bean id="structureAttributeSource" class="org.jasig.portal.rendering.StructureAttributeSource" />
     
     <bean id="jsonPreStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonStructureAttributeIncorporationComponent" />
@@ -44,9 +44,7 @@
     <!-- structure transformation -->
     <bean id="jsonStructureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreStructureTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.json.rendering.JsonStructureTransformerSource"/>
-        </property>
+        <property name="transformerSource" ref="structureTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
@@ -96,9 +94,9 @@
     <!-- theme attribute incorporation -->
     <bean id="jsonThemeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonPortletRenderingInitiationComponent" />
-        <property name="attributeSource" ref="jsonThemeAttributeSource" />
+        <property name="attributeSource" ref="themeAttributeSource" />
     </bean>
-    <bean id="jsonThemeAttributeSource" class="org.jasig.portal.json.rendering.JsonThemeAttributeSource" />
+    <bean id="themeAttributeSource" class="org.jasig.portal.rendering.ThemeAttributeSource" />
 
     <bean id="jsonPreThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonThemeAttributeIncorporationComponent" />
@@ -110,9 +108,7 @@
     <!-- theme transformation -->
     <bean id="jsonThemeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="jsonPreThemeTransformLogger" />
-        <property name="transformerSource"> 
-            <bean class="org.jasig.portal.json.rendering.JsonThemeTransformerSource" />
-        </property>
+        <property name="transformerSource" ref="themeTransformSource"/> 
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">

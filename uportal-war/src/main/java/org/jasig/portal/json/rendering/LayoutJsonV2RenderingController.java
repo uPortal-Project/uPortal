@@ -23,6 +23,8 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
+import org.jasig.portal.layout.StylesheetUserPreferencesServiceImpl;
 
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
@@ -47,9 +49,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LayoutJsonV2RenderingController {
 
     private static final String STRUCTURE_STYLESHEET_NAME = "DLMTabsColumnsJS";
-
+    private static final String THEME_STYLESHEET_NAME = "JsonLayoutV2";
+    
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private IStylesheetUserPreferencesService stylesheetUserPrefService;
+    
     private IPortalRenderingPipeline portalRenderingPipeline;
     private IPortletWindowRegistry portletWindowRegistry;
 
@@ -75,22 +81,23 @@ public class LayoutJsonV2RenderingController {
 
     private void setStructureStylesheetNameForJavascriptDrivenContentRendering(
             final HttpServletRequest request) {
-        request.setAttribute(
-                JsonStructureAttributeSource.STYLESHEET_NAME_REQUEST_ATTRIBUTE,
-                STRUCTURE_STYLESHEET_NAME);
-        request.setAttribute(
-                JsonStructureTransformerSource.STYLESHEET_NAME_REQUEST_ATTRIBUTE,
-                STRUCTURE_STYLESHEET_NAME);
+        //request.setAttribute(
+        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STRUCTURE_STYLESHEET_NAME);
+        //request.setAttribute(
+        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STRUCTURE_STYLESHEET_NAME);
+        stylesheetUserPrefService.setStructureStylesheetOverride(request, STRUCTURE_STYLESHEET_NAME);
     }
 
     private void setThemeStylesheetVersionForJavascriptDrivenContentRendering(
             final HttpServletRequest request) {
-        request.setAttribute(
-                JsonThemeAttributeSource.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
-                "V2");
-        request.setAttribute(
-                JsonThemeTransformerSource.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
-                "V2");
+        //request.setAttribute(
+        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
+        //        THEME_STYLESHEET_NAME);
+        //request.setAttribute(
+        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
+        //        THEME_STYLESHEET_NAME);
+        stylesheetUserPrefService.setThemeStyleSheetOverride(request, THEME_STYLESHEET_NAME);
+        
     }
 
 }

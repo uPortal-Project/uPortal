@@ -23,6 +23,7 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
@@ -49,6 +50,9 @@ public class LayoutJsonV1RenderingController {
     private IPortletWindowRegistry portletWindowRegistry;
 
     @Autowired
+    private IStylesheetUserPreferencesService stylesheetUserPrefService;
+    
+    @Autowired
     @Qualifier("json")
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
         this.portalRenderingPipeline = portalRenderingPipeline;
@@ -73,10 +77,7 @@ public class LayoutJsonV1RenderingController {
     }
 
     private void setStylesheetName(final HttpServletRequest request) {
-        request.setAttribute(
-                JsonStructureAttributeSource.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STYLESHEET_NAME);
-        request.setAttribute(
-                JsonStructureTransformerSource.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STYLESHEET_NAME);
+        stylesheetUserPrefService.setStructureStylesheetOverride(request, STYLESHEET_NAME);
     }
 
 }

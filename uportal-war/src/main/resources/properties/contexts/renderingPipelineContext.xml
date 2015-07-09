@@ -70,11 +70,11 @@
     </bean>
     
     <!-- structure transformation -->
+    <bean id="structureTransformSource" class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+    
     <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="preStructureTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
-        </property>
+        <property name="transformerSource" ref="structureTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
@@ -127,11 +127,10 @@
     </bean>
      
     <!-- theme transformation -->
+    <bean id="themeTransformSource" class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
     <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="preThemeTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
-        </property>
+        <property name="transformerSource" ref="themeTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">

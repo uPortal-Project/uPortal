@@ -26,10 +26,10 @@
     Version: $Revision$
     @since uPortal 4.2
 
-    General Description:  This file was developed to support Javascript-driven rendering of the 
-    uPortal UI.  This file collects the necessary user layout data and exports xml that is then 
+    General Description:  This file was developed to support Javascript-driven rendering of the
+    uPortal UI.  This file collects the necessary user layout data and exports xml that is then
     organized and transformed into JSON using the json-v2.xsl file and a JSON-specific rendering
-    pipeline.  This file is based on the columns.xsl file, but has been updated to include 
+    pipeline.  This file is based on the columns.xsl file, but has been updated to include
     additional data.
 -->
 <!--=====END: DOCUMENT DESCRIPTION=====-->
@@ -101,18 +101,7 @@
 
     <xsl:template match="folder[@type!='root' and @hidden='false']">
         <xsl:attribute name="type">regular</xsl:attribute>
-        <xsl:if test="child::folder">
-            <xsl:for-each select="folder">
-                <xsl:call-template name="column" />
-            </xsl:for-each>
-        </xsl:if>
-        <xsl:if test="child::channel">
-            <xsl:call-template name="column" />
-        </xsl:if>
-        <!-- handle columns with no portlets -->
-        <xsl:if test="not(node()) and parent::folder[@type!='root']">
-            <xsl:call-template name="column" />
-        </xsl:if>
+        <xsl:call-template name="folder"/>
     </xsl:template>
 
     <xsl:template match="@*">
@@ -121,11 +110,25 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template name="column">
-                <column>
+    <xsl:template name="folder">
+                <folder>
                     <xsl:copy-of select="@*" />
-                    <xsl:apply-templates/>
-                </column>
+                    <xsl:for-each select="*">
+                        <xsl:if test="self::channel">
+                            <xsl:call-template name="channel"/>
+                        </xsl:if>
+                        <xsl:if test="self::folder">
+                            <xsl:call-template name="folder"/>
+                        </xsl:if>
+                    </xsl:for-each>
+                </folder>
+    </xsl:template>
+
+    <xsl:template name="channel">
+       <channel>
+         <xsl:copy-of select="@*" />
+         <xsl:apply-templates/>
+       </channel>
     </xsl:template>
 
     <xsl:template name="tab">
@@ -182,7 +185,7 @@
     </xsl:template>
 
     <xsl:template match="/layout/folder/folder[@type='favorite_collections']/folder">
-        <xsl:call-template name="column" />
+        <xsl:call-template name="folder" />
     </xsl:template>
 
 </xsl:stylesheet>

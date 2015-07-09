@@ -19,7 +19,10 @@
 package org.jasig.portal.rendering.xslt;
 
 import org.jasig.portal.IUserPreferencesManager;
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.jasig.portal.url.IPortalRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Return {@link IUserPreferencesManager#getStructureStylesheetDescriptorId()}
@@ -28,9 +31,17 @@ import org.jasig.portal.layout.om.IStylesheetDescriptor;
  * @version $Revision$
  */
 public class StructureTransformerSource extends BaseTransformerSource {
+    @Autowired
+    private IStylesheetUserPreferencesService stylesheetUserPrefService;
+    
+    @Autowired
+    private IPortalRequestUtils reqUtils;
     
     @Override
     protected long getStylesheetDescriptorId(IUserPreferencesManager preferencesManager) {
-        return preferencesManager.getStructureStylesheetDescriptorId();
+        IStylesheetDescriptor descriptor = stylesheetUserPrefService
+                .getStylesheetDescriptor( reqUtils.getCurrentPortalRequest(),
+                        IStylesheetUserPreferencesService.PreferencesScope.STRUCTURE);
+        return descriptor.getId();
     }
 }

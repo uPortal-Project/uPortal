@@ -72,4 +72,10 @@
         <description>Allows the theme to sort tabs into groups (optional feature)</description>
         <targetElement>folder</targetElement>
     </layout-attribute>
+    <layout-attribute>
+        <name>display</name>
+        <scope>PERSISTENT</scope>
+        <description>Identifies a folder as a row</description>
+        <targetElement>folder</targetElement>
+    </layout-attribute>
 </stylesheet-descriptor>
