@@ -16,9 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
  * A tester for examining <code>IPerson</code> attributes.  
@@ -26,48 +28,64 @@ import org.jasig.portal.groups.pags.IPersonTester;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-
 public abstract class BaseAttributeTester implements IPersonTester {
-    protected String attributeName;
-    protected String testValue;
+    protected final String attributeName;
+    protected final String testValue;
 
-public BaseAttributeTester(String attribute, String test) {
-    super();
-    attributeName = attribute;
-    testValue = test;
-}
-/**
- * @return String
- */
-public String getAttributeName() {
-    return attributeName;
-}
-/**
- * @return String
- */
-public String getTestValue() {
-    return testValue;
-}
-/**
- * return String
- */
-public String asString(Object o) {
-    String result = null;
-    if ( o instanceof String )
-        { result = (String)o; } 
-    else
-    {
-        if ( o instanceof String[] ) 
-        {
-            String[] sa = (String[])o;
-            if ( sa.length > 0 )
-                { result = sa[0]; } 
+    /**
+     * @since 4.3
+     */
+    public BaseAttributeTester(IPersonAttributesGroupTestDefinition definition) {
+        super();
+        attributeName = definition.getAttributeName();
+        testValue = definition.getTestValue();
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public BaseAttributeTester(String attribute, String test) {
+        super();
+        attributeName = attribute;
+        testValue = test;
+    }
+
+    /**
+     * @return String
+     */
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    /**
+     * @return String
+     */
+    public String getTestValue() {
+        return testValue;
+    }
+
+    /**
+     * return String
+     */
+    public String asString(Object o) {
+        String result = null;
+        if (o instanceof String) {
+            result = (String) o;
+        } else {
+            if (o instanceof String[]) {
+                String[] sa = (String[]) o;
+                if (sa.length > 0) {
+                    result = sa[0];
+                }
+            }
         }
-    }      
-    return result;
-}
-public String toString() {
-    return "Tester for " + getAttributeName() + " : " + getTestValue();
-}
+        return result;
+    }
+
+    public String toString() {
+        return "Tester for " + getAttributeName() + " : " + getTestValue();
+    }
 
 }

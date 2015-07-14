@@ -193,4 +193,4 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
     };
 
     return that;
-} (jQuery));
+} (up.jQuery));

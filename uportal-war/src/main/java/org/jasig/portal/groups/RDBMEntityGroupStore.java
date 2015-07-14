@@ -1658,10 +1658,15 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         finally
         {
-            try { setAutoCommit(conn, true); }
-            catch (SQLException sqle)
-            { throw new GroupsException(sqle); }
-            finally { RDBMServices.releaseConnection(conn); }
+            if (conn != null) {
+                try {
+                    setAutoCommit(conn, true);
+                } catch (SQLException sqle) {
+                    throw new GroupsException(sqle);
+                } finally {
+                    RDBMServices.releaseConnection(conn);
+                }
+            }
         }
     }
 
@@ -1696,26 +1701,35 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
             finally
             {
-                try { setAutoCommit(conn, true); }
-                catch (SQLException sqle)
-                { throw new GroupsException(sqle); }
-                finally { RDBMServices.releaseConnection(conn); }
+                if (conn != null) {
+                    try {
+                        setAutoCommit(conn, true);
+                    } catch (SQLException sqle) {
+                        throw new GroupsException(sqle);
+                    } finally {
+                        RDBMServices.releaseConnection(conn);
+                    }
+                }
             }
     }
 
     private static final void close(final Statement statement) {
-        try {
-            statement.close();
-        } catch (SQLException e) {
-            log.warn("problem closing statement", e);
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                log.warn("problem closing statement", e);
+            }
         }
     }
 
     private static final void close(final ResultSet resultset) {
-        try {
-            resultset.close();
-        } catch (SQLException e) {
-            log.warn("problem closing resultset", e);
+        if (resultset != null) {
+            try {
+                resultset.close();
+            } catch (SQLException e) {
+                log.warn("problem closing resultset", e);
+            }
         }
     }
 }

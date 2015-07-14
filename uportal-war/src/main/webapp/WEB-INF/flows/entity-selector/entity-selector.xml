@@ -28,6 +28,8 @@
     <input name="selectMultiple" type="boolean" required="false"/> <!-- Can multiple entries be selected? -->
     <input name="rootEntity" type="org.jasig.portal.layout.dlm.remoting.JsonEntityBean" required="false"/> <!-- Search base -->
     <input name="requireSelection" type="boolean" required="false"/>
+    <input name="enableAdHocGroups" type="boolean" required="false"/>
+    <input name="adHocEntity" type="org.jasig.portal.layout.dlm.remoting.JsonEntityBean" required="false"/> <!-- Search base -->
 
     <input name="showCancelButton" type="boolean" required="false" />
     <input name="showBackButton" type="boolean" required="false"/>

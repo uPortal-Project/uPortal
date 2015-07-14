@@ -16,19 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AlwaysTrueTester implements IPersonTester {
-    
-    public AlwaysTrueTester(String attribute, String test) {
-    }
+
+    /**
+     * @since 4.3
+     */
+    public AlwaysTrueTester(IPersonAttributesGroupTestDefinition definition) {}
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public AlwaysTrueTester(String attribute, String test) {}
 
     /* (non-Javadoc)
      * @see org.jasig.portal.groups.pags.IPersonTester#test(org.jasig.portal.security.IPerson)

@@ -24,7 +24,7 @@ import java.util.Vector;
 
 import org.jasig.portal.security.IPerson;
 
-public class GroupDefinition {
+public class PagsGroup {
 
     private String key;
     private String name;
@@ -32,7 +32,7 @@ public class GroupDefinition {
     private List<String> members;
     private List<TestGroup> testGroups;
     
-    public GroupDefinition() {
+    public PagsGroup() {
         members = new Vector<String>();
         testGroups = new Vector<TestGroup>();
     }

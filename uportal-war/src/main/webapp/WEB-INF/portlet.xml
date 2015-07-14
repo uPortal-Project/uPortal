@@ -937,7 +937,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>mobileBackgroundContainerSelector</name>
-                <value>#page-inner</value>
+                <value>#portalPageBody</value>
             </preference>
             <preference>
                 <name>mobileBackgroundImages</name>

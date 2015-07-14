@@ -20,12 +20,18 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
+<style type="text/css">
+    .fl-uploader-queue-footer td {
+        padding: 6px;
+    }
+</style>
+
 <!-- Portlet -->
 <div class="fl-widget portlet imp-exp view-import" role="section">
     
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="import.portlet.entities"/></h2>
+        <h2 class="title" role="heading"><spring:message code="manage.portlet.entities"/></h2>
         <div class="toolbar" role="toolbar">
             <ul class="btn-group">
                 <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/> <i class="fa fa-download"></i></a></li>
@@ -33,15 +39,11 @@
             </ul>
         </div>
     </div>
-    
+
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
-        
-        <!-- Note -->
-        <div class="portlet-note" role="note">
-            <p><spring:message code="upload.an.entity.to.be.imported"/></p>
-        </div>
-        
+
+        <h2 class="title" role="heading"><spring:message code="upload.an.entity.to.be.imported"/></h2>
         <div id="uploader-contents">
             
             <!-- This is the markup for the Fluid Uploader component itself. -->
@@ -54,12 +56,6 @@
                     <!-- Top of the queue -->
                     <div class="fl-uploader-queue-header">
                         <table  class="table" cellspacing="0" cellpadding="0" summary="Headers for the file queue." role="presentation">
-                            <caption><spring:message code="file.upload.queue"/>:</caption>
-                            <tr>
-                                <th scope="col" class="fl-uploader-file-name"><spring:message code="file.name"/></th>
-                                <th scope="col" class="fl-uploader-file-size"><spring:message code="size"/></th>
-                                <th scope="col" class="fl-uploader-file-actions">&nbsp;</th>
-                            </tr>
                         </table>
                     </div>
                     
@@ -67,6 +63,13 @@
                     <div class="flc-scroller fl-scroller">
                         <div class="fl-scroller-inner">
                             <table cellspacing="0" class="flc-uploader-queue fl-uploader-queue table table-condensed table-striped" summary="Queue of files to upload." role="presentation">
+                                <thead>
+                                <tr>
+                                    <th scope="col" class="fl-uploader-file-name"><spring:message code="file.name"/></th>
+                                    <th scope="col" class="fl-uploader-file-size"><spring:message code="size"/></th>
+                                    <th scope="col" class="fl-uploader-file-actions"><spring:message code="actions"/></th>
+                                </tr>
+                                </thead>
                                 <tbody>
                                     <!-- Rows will be rendered in here. -->
                                     
@@ -76,7 +79,7 @@
                                         <td class="flc-uploader-file-size fl-uploader-file-size">0 KB</td>
                                         <td class="fl-uploader-file-actions">
                                             <button type="button" class="flc-uploader-file-action fl-uploader-file-action btn btn-default" tabindex="-1">
-                                                <span class="fl-uploader-button-text fl-uploader-hidden">Remove file from queue </span> <i class="fa fa-close"></i>
+                                                <span class="fl-uploader-button-text fl-uploader-hidden"><spring:message code="remove.from.queue"/></span> <i class="fa fa-close"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -94,18 +97,18 @@
                     </div>
                     
                     <div class="flc-uploader-browse-instructions fl-uploader-browse-instructions">
-                        <p>Choose <em>Browse files</em> to add files to the queue</p>
+                        <p><spring:message htmlEscape="false" code="choose.files"/></p>
                     </div>
         
                     <!-- Foot of the queue -->
                     <div class="flc-uploader-queue-footer fl-uploader-queue-footer">
                         <table summary="Status of file queue." role="presentation">
                             <tr>
-                                <td class="flc-uploader-total-progress-text">
-                                    <p>Total: 0 files (0 KB)</p>
-                                </td>
                                 <td class=".fl-uploader-footer-buttons">
                                     <span class="flc-uploader-button-browse fl-uploader-browse"></span>
+                                </td>
+                                <td class="flc-uploader-total-progress-text">
+                                    <p>Total: 0 files (0 KB)</p>
                                 </td>
                             </tr>
                         </table>

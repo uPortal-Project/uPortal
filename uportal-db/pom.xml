@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -68,4 +68,30 @@
         </dependency>
 	    -->
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Kind of dumb but to avoid wasting time and always re-building uportal-db project since a
+                 pom packaging has no actual artifact, copy the pom.xml to
+                 target/uportal-db-${version}.pom so the ant build doesn't re-run this on this each build. -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="pom.xml" tofile="target/uportal-db-${project.version}.pom" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

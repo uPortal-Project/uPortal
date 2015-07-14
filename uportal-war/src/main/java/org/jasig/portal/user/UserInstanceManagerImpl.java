@@ -102,12 +102,11 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     public IUserInstance getUserInstance(HttpServletRequest request) throws PortalException {
         try {
             request = this.portalRequestUtils.getOriginalPortalRequest(request);
-        }
-        catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             //ignore, just means that this isn't a wrapped request
         }
         
-        //Use request attributes first for the fastest possible retrieval
+        // Use request attributes first for the fastest possible retrieval
         IUserInstance userInstance = (IUserInstance)request.getAttribute(KEY);
         if (userInstance != null) {
             return userInstance;
@@ -117,8 +116,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         try {
             // Retrieve the person object that is associated with the request
             person = this.personManager.getPerson(request);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Exception while retrieving IPerson!", e);
             throw new PortalSecurityException("Could not retrieve IPerson", e);
         }

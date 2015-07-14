@@ -29,6 +29,9 @@ public interface IPersonAttributesGroupDefinitionDao {
 
     public IPersonAttributesGroupDefinition updatePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition personAttributesGroupDefinition);
     public void deletePersonAttributesGroupDefinition(IPersonAttributesGroupDefinition definition);
+    /**
+     * TODO:  This method probably doesn't need to return a Set.  We should refactor it to return a single object.
+     */
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitionByName(String groupKey);
     public Set<IPersonAttributesGroupDefinition> getPersonAttributesGroupDefinitions();
     public IPersonAttributesGroupDefinition createPersonAttributesGroupDefinition(String name, String description);

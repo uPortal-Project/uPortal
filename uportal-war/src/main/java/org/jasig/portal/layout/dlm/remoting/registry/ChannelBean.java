@@ -26,6 +26,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public class ChannelBean implements Comparable<ChannelBean>, Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String description;
     private String fname;

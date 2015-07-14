@@ -36,6 +36,10 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
@@ -43,7 +47,6 @@ import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
@@ -78,7 +81,7 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
     @Id
     @GeneratedValue(generator = "UP_PAGS_TEST_GROUP_GEN")
     @Column(name = "PAGS_TEST_GROUP_ID")
-    private long internalPersonAttributesGroupTestGroupDefinitionId;
+    private long id = -1L;
 
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -86,19 +89,17 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_GROUP_ID", nullable = false)
+    @JsonBackReference // Addresses infinite recursion by excluding from serialization
     private IPersonAttributesGroupDefinition group;
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
+    @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
     private Set<IPersonAttributesGroupTestDefinition> tests = new HashSet<IPersonAttributesGroupTestDefinition>(0);
 
     @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupTestGroupDefinitionId), PersonAttributesGroupTestGroupDefinitionImpl.class);
-    }
-
-    @Override
+    @JsonIgnore
     public long getId() {
-        return internalPersonAttributesGroupTestGroupDefinitionId;
+        return id;
     }
 
     @Override

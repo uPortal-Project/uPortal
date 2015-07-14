@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 
 /**
  * Tests if any of the possibly multiple values of the attribute are GT
@@ -29,10 +31,22 @@ package org.jasig.portal.groups.pags.testers;
 
 public class IntegerGTTester extends IntegerTester {
 
-public IntegerGTTester(String attribute, String test) {
-    super(attribute, test); 
-}
-public boolean test(int attributeValue) {
-    return attributeValue > testInteger;
-}
+    /**
+     * @since 4.3
+     */
+    public IntegerGTTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public IntegerGTTester(String attribute, String test) {
+        super(attribute, test); 
+    }
+    public boolean test(int attributeValue) {
+        return attributeValue > testInteger;
+    }
 }

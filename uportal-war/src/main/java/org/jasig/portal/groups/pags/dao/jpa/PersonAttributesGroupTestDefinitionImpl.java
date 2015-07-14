@@ -31,14 +31,16 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalIdCache;
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 
@@ -75,7 +77,7 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     @Id
     @GeneratedValue(generator = "UP_PAGS_TEST_GEN")
     @Column(name = "PAGS_TEST_ID")
-    private long internalPersonAttributesGroupTestDefinitionId;
+    private long id = -1L;
 
     @Version
     @Column(name = "ENTITY_VERSION")
@@ -92,16 +94,13 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class)
     @JoinColumn(name = "PAGS_TEST_GROUP_ID", nullable = false)
+    @JsonBackReference // Addresses infinite recursion by excluding from serialization
     private IPersonAttributesGroupTestGroupDefinition testGroup;
 
     @Override
-    public EntityIdentifier getEntityIdentifier() {
-        return new EntityIdentifier(String.valueOf(this.internalPersonAttributesGroupTestDefinitionId), PersonAttributesGroupTestDefinitionImpl.class);
-    }
-
-    @Override
+    @JsonIgnore
     public long getId() {
-        return internalPersonAttributesGroupTestDefinitionId;
+        return id;
     }
 
     @Override
@@ -153,6 +152,7 @@ public class PersonAttributesGroupTestDefinitionImpl implements IPersonAttribute
     public void setTestGroup(IPersonAttributesGroupTestGroupDefinition testGroup) {
         this.testGroup = testGroup;
     }
+
     @Override
     public void toElement(org.dom4j.Element parent) {
 

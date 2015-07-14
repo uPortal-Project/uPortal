@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.groups.pags.IPersonTester;
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
@@ -40,6 +42,7 @@ import org.springframework.context.ApplicationContext;
  * @author Shawn Connolly, sconnolly@unicon.net
  **/
 public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
+
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private String themeTestValue;
     private final ApplicationContext applicationContext;
@@ -48,6 +51,25 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
     private final IUserLayoutStore userLayoutStore;
     private final IStylesheetDescriptorDao stylesheetDescriptorDao;
 
+    /**
+     * @since 4.3
+     */
+    public ThemeNameEqualsIgnoreCaseTester(IPersonAttributesGroupTestDefinition definition) {
+        final String themeTestValue = definition.getTestValue();
+        assert StringUtils.isNotBlank(themeTestValue);
+        this.themeTestValue = themeTestValue;
+        this.applicationContext = ApplicationContextLocator.getApplicationContext();
+        this.portalRequestUtils = applicationContext.getBean(IPortalRequestUtils.class);
+        this.profileMapper = applicationContext.getBean("profileMapper", IProfileMapper.class);
+        this.userLayoutStore = applicationContext.getBean("userLayoutStore", IUserLayoutStore.class);
+        this.stylesheetDescriptorDao = applicationContext.getBean("stylesheetDescriptorDao", IStylesheetDescriptorDao.class);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public ThemeNameEqualsIgnoreCaseTester(String attribute, String themeTestValue) {
         assert StringUtils.isNotBlank(themeTestValue);
         this.themeTestValue = themeTestValue;
@@ -101,4 +123,5 @@ public class ThemeNameEqualsIgnoreCaseTester implements IPersonTester {
         }
         return testResult;
     }
+
 }

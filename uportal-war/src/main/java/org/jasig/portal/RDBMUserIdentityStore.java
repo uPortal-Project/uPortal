@@ -180,7 +180,9 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                 // Delete from DeleteUser.java and place here
                 // must be made before delete user in UP_USER
                 for (final Integer groupId : groupIds) {
-                    jdbcOperations.update("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY=? AND GROUP_ID=?", userName, groupId);
+                    // GROUP_ID is a VARCHAR
+                    String gid = groupId.toString();
+                    jdbcOperations.update("DELETE FROM UP_GROUP_MEMBERSHIP WHERE MEMBER_KEY=? AND GROUP_ID=?", userName, gid);
                 }
 
                 jdbcOperations.update("DELETE FROM UP_USER            WHERE USER_ID = ?", userId);

@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * A tester for matching multiple values of an attribute 
  * against a regular expression.  The match function attempts to find the 
@@ -55,7 +57,19 @@ package org.jasig.portal.groups.pags.testers;
  * @see RegexTester
  */
 public class EagerRegexTester extends RegexTester {
-    
+
+    /**
+     * @since 4.3
+     */
+    public EagerRegexTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public EagerRegexTester(String attribute, String test) {
         super(attribute, test);
     }

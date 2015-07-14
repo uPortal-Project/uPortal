@@ -55,7 +55,7 @@ import org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl;
 @Table(name = "UP_PORTLET_LAYOUT_AGGR")
 @Inheritance(strategy= InheritanceType.JOINED)
 @SequenceGenerator(
-        name="UP_PORTLET_LAYOUT_LAYOUT_GEN",
+        name="UP_PORTLET_LAYOUT_AGGR_GEN",
         sequenceName="UP_PORTLET_LAYOUT_AGGR_SEQ",
         allocationSize=1000
 )

@@ -26,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.EntityImpl;
@@ -38,7 +41,7 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.groups.pags.GroupDefinition;
+import org.jasig.portal.groups.pags.PagsGroup;
 import org.jasig.portal.groups.pags.IPersonTester;
 import org.jasig.portal.groups.pags.TestGroup;
 import org.jasig.portal.security.IPerson;
@@ -65,17 +68,19 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
-    private final ApplicationContext applicationContext;
-    
+    private final Cache groupDefCache;
+
     public EntityPersonAttributesGroupStore() {
-         super();
-         this.applicationContext = ApplicationContextLocator.getApplicationContext();
-         this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
+        super();
+        ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
+        this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
+        CacheManager cacheManager = applicationContext.getBean("cacheManager", CacheManager.class);
+        this.groupDefCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore");
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
         logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
-        GroupDefinition groupDef = convertEntityToGroupDef(group);
+        PagsGroup groupDef = convertEntityToGroupDef(group);
         if (member.isGroup()) 
         {
            String key = ((IEntityGroup)member).getLocalKey();
@@ -105,7 +110,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
     }
 
-    private GroupDefinition convertEntityToGroupDef(IEntityGroup group) {
+    private PagsGroup convertEntityToGroupDef(IEntityGroup group) {
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
         return initGroupDef(pagsGroup);
@@ -130,14 +135,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             return null;
         }
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
-        GroupDefinition groupDef = initGroupDef(pagsGroup);
+        PagsGroup groupDef = initGroupDef(pagsGroup);
         IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
         group.setName(groupDef.getName());
         group.setDescription(groupDef.getDescription());
         return group;
     }
 
-    private boolean testRecursively(GroupDefinition groupDef, IPerson person, IGroupMember member)
+    private boolean testRecursively(PagsGroup groupDef, IPerson person, IGroupMember member)
         throws GroupsException {
             if ( ! groupDef.contains(person) )
                 { return false;}
@@ -150,14 +155,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 for (Iterator<IEntityGroup> i=allParents.iterator(); i.hasNext() && testPassed;)
                 {
                     parentGroup = i.next();
-                    GroupDefinition parentGroupDef = (GroupDefinition) convertEntityToGroupDef(parentGroup);
+                    PagsGroup parentGroupDef = (PagsGroup) convertEntityToGroupDef(parentGroup);
                     testPassed = parentGroupDef.test(person);
                 }
                 
                 if (!testPassed && logger.isWarnEnabled()) {
                     logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
                             + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
-                            +" Please check PAGSGroupStoreConfig.xml.", group.getKey(), member.getKey(),
+                            +" Please check PAGS Entity Files", group.getKey(), member.getKey(),
                             parentGroup != null ? parentGroup.getKey() : "no parent");
                 }
                 return testPassed;
@@ -216,7 +221,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
         List<String> keys = new ArrayList<String>();
-        GroupDefinition groupDef = convertEntityToGroupDef(group);
+        PagsGroup groupDef = convertEntityToGroupDef(group);
         if (groupDef != null)
         {
              for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 
@@ -306,8 +311,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return EMPTY_SEARCH_RESULTS;
     }
 
-    private GroupDefinition initGroupDef(IPersonAttributesGroupDefinition group) {
-        GroupDefinition groupDef = new GroupDefinition();
+    private PagsGroup initGroupDef(IPersonAttributesGroupDefinition group) {
+        Element element = this.groupDefCache.get(group.getName());
+        if (element != null) {
+            return (PagsGroup) element.getObjectValue();
+        }
+        PagsGroup groupDef = new PagsGroup();
         groupDef.setKey(group.getName());
         groupDef.setName(group.getName());
         groupDef.setDescription(group.getDescription());
@@ -317,30 +326,45 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             TestGroup tg = new TestGroup();
             Set<IPersonAttributesGroupTestDefinition> tests = testGroup.getTests();
             for(IPersonAttributesGroupTestDefinition test : tests) {
-                IPersonTester testerInst = initializeTester(test.getTesterClassName(), test.getAttributeName(), test.getTestValue());
+                IPersonTester testerInst = initializeTester(test);
+                if (testerInst == null) {
+                    /*
+                     * A tester was intended that we cannot now recreate.  This
+                     * is a potentially dangerous situation, since tests in PAGS
+                     * are "or-ed" together;  a functioning group with a missing
+                     * test would have a wider membership, not narrower.  (And
+                     * remember -- permissions are tied to groups.)  We need to
+                     * play it safe and keep this group out of the mix.
+                     */
+                    return null;
+                }
                 tg.addTest(testerInst);
             }
             groupDef.addTestGroup(tg);
         }
+        element = new Element(group.getName(), groupDef);
+        this.groupDefCache.put(element);
         return groupDef;
     }
 
-    private void addMemberKeys(GroupDefinition groupDef, Set<IPersonAttributesGroupDefinition> members) {
+    private void addMemberKeys(PagsGroup groupDef, Set<IPersonAttributesGroupDefinition> members) {
         for(IPersonAttributesGroupDefinition member: members) {
             groupDef.addMember(member.getName());
         }
     }
-    private IPersonTester initializeTester(String tester, String attribute, String value) {
-          try {
-             Class<?> testerClass = Class.forName(tester);
-             Constructor<?> c = testerClass.getConstructor(new Class[]{String.class, String.class});
-             Object o = c.newInstance(new Object[]{attribute, value});
-             return (IPersonTester)o;
-          } catch (Exception e) {
-             logger.error("Error in initializing tester class: {}", tester, e);
-             return null;
-          }
-       }
+
+    private IPersonTester initializeTester(IPersonAttributesGroupTestDefinition test) {
+        try {
+            Class<?> testerClass = Class.forName(test.getTesterClassName());
+            Constructor<?> c = testerClass.getConstructor(new Class[]{IPersonAttributesGroupTestDefinition.class});
+            Object o = c.newInstance(new Object[]{test});
+            return (IPersonTester) o;
+        } catch (Exception e) {
+            logger.error("Error in initializing tester class: {}", test.getTesterClassName(), e);
+            return null;
+        }
+   }
+
     private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
     {
         logger.debug("Looking up containing groups for {}", name);

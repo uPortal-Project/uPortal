@@ -33,7 +33,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.2.0-SNAPSHOT</version>
+    <version>4.3.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -128,9 +128,9 @@
         <CalendarPortlet.version>2.2.1</CalendarPortlet.version>
         <cas-server.version>3.5.2.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>2.1.1-M1</email-preview.version>
+        <email-preview.version>2.1.1-M4</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
-        <jasig-widget-portlets.version>2.1.7-M1</jasig-widget-portlets.version>
+        <jasig-widget-portlets.version>2.1.7-M2</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>3.1.0</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.1.1</NotificationPortlet.version>
         <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
@@ -173,7 +173,7 @@
         <guava.version>16.0.1</guava.version>
         <groovy.version>2.2.2</groovy.version>
         <grouperClient.version>1.6.3</grouperClient.version>
-        <hibernate.version>4.1.9.Final</hibernate.version>
+        <hibernate.version>4.2.19.Final</hibernate.version>
         <hibernate-jpamodelgen.version>1.2.0.Final</hibernate-jpamodelgen.version>
         <hibernate-jpa-api.version>1.0.1.Final</hibernate-jpa-api.version>
         <hsqldb.version>2.3.2</hsqldb.version>
@@ -206,7 +206,7 @@
         <org.springframework.webflow.version>2.3.2.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.6.0</person-directory.version>
+        <person-directory.version>1.7.1-M1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>2.2.1</quartz.version>
@@ -217,8 +217,7 @@
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
         <spring-security.version>3.1.3.RELEASE</spring-security.version>
         <standard.version>1.1.2</standard.version>
-        <stax-api.version>1.0.1</stax-api.version>
-        <staxmate.version>2.0.1</staxmate.version>
+        <staxmate.version>2.2.1</staxmate.version>
         <stringtemplate.version>4.0.2</stringtemplate.version>
         <tika.version>1.5</tika.version>
         <tomcat-jdbc.version>7.0.37</tomcat-jdbc.version>
@@ -731,19 +730,14 @@
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.staxmate</groupId>
+                <groupId>com.fasterxml.staxmate</groupId>
                 <artifactId>staxmate</artifactId>
                 <version>${staxmate.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>stax-api</artifactId>
-                        <groupId>stax</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <artifactId>stax-api</artifactId>
-                        <groupId>javax.xml.stream</groupId>
-                    </exclusion>
-                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>stax2-api</artifactId>
+                <version>3.1.4</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
@@ -1260,6 +1254,7 @@
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
+                        <exclude>**/jquerymobile-*.css</exclude>
                         <exclude>**/*.channel</exclude>
                         <exclude>**/*.channel-type</exclude>
                         <exclude>**/*.entity-type</exclude>

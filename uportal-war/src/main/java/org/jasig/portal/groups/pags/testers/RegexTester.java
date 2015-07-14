@@ -20,6 +20,8 @@ package org.jasig.portal.groups.pags.testers;
 
 import java.util.regex.Pattern;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * A tester for matching the possibly multiple values of an attribute 
  * against a regular expression.  The match function attempts to match the 
@@ -59,6 +61,19 @@ import java.util.regex.Pattern;
 public class RegexTester extends StringTester {
     protected Pattern pattern;
 
+    /**
+     * @since 4.3
+     */
+    public RegexTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+        this.pattern = Pattern.compile(definition.getTestValue());
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public RegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);

@@ -10,8 +10,8 @@ uPortal uses Travis-CI for lightweight continuous integration.  You can see buil
 [![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.png?branch=master)](https://travis-ci.org/Jasig/uPortal)
 
 ## Requirements
-* JDK 1.7 or later - Just a JRE is not sufficient, a full JDK is required
-* Servlet 3.0 Container - Tomcat 7.0 or later is required. There some configuration changes that
+* JDK 1.7 or later - The JRE alone is NOT sufficient, a full JDK is required
+* Servlet 3.0 Container - Tomcat 7.0 or later is required.  (NOTE:  Tomcat 8 is not yet supported.)  There some configuration changes that
 must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM41/Installing+Tomcat).
 * Maven 3.0.3 or later
 * Ant 1.8.2 or 1.9.3 or later.

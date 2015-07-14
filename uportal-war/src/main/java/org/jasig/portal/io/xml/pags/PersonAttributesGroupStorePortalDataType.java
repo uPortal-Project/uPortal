@@ -61,7 +61,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
             IMPORT_PAGS_GROUP_41_DATA_KEY,
             IMPORT_PAGS_MEMBERS_41_DATA_KEY);
 
-    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_42_KEYS = ImmutableSet.of(
+    private static final Set<PortalDataKey> PAGS_GROUP_MEMBERS_41_KEYS = ImmutableSet.of(
             IMPORT_PAGS_GROUP_41_DATA_KEY,
             IMPORT_PAGS_MEMBERS_41_DATA_KEY);
     
@@ -97,7 +97,7 @@ public class PersonAttributesGroupStorePortalDataType extends AbstractPortalData
     public Set<PortalDataKey> postProcessPortalDataKey(String systemId, PortalDataKey portalDataKey, XMLEventReader reader) {
         if (IMPORT_PAGS_41_DATA_KEY.equals(portalDataKey)) {
             //Split the import into two phases
-            return PAGS_GROUP_MEMBERS_42_KEYS;
+            return PAGS_GROUP_MEMBERS_41_KEYS;
         }
         
         return Collections.singleton(portalDataKey);

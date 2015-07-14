@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import java.io.Serializable;
@@ -30,19 +31,25 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.rest.layout.LayoutPortlet;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -55,32 +62,33 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PortletsRESTController {
 
+    @Autowired
     private IPortletDefinitionRegistry portletDefinitionRegistry;
+
+    @Autowired
     private IPortletCategoryRegistry portletCategoryRegistry;
+
+    @Autowired
     private IPersonManager personManager;
 
     @Autowired
-    public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-        this.portletDefinitionRegistry = portletDefinitionRegistry;
-    }
+    private IPortletWindowRegistry portletWindowRegistry;
 
     @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
-    }
+    private IPortletExecutionManager portletExecutionManager;
 
-    @Autowired
-    public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
-        this.portletCategoryRegistry = portletCategoryRegistry;
-    }
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Provides information about all portlets in the portlet registry.  NOTE:  The response is
+     * governed by the <code>IPermission.PORTLET_MANAGER_xyz</code> series of permissions.  The
+     * actual level of permission required is based on the current lifecycle state of the portlet.
+     */
     @RequestMapping(value="/portlets.json", method = RequestMethod.GET)
-    public ModelAndView getPortlets(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView getManageablePortlets(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // get a list of all channels
         List<IPortletDefinition> allPortlets = portletDefinitionRegistry.getAllPortletDefinitions();
-        IPerson user = personManager.getPerson(request);
-        EntityIdentifier ei = user.getEntityIdentifier();
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
 
         List<PortletTuple> rslt = new ArrayList<PortletTuple>();
         for (IPortletDefinition pdef : allPortlets) {
@@ -92,20 +100,67 @@ public class PortletsRESTController {
         return new ModelAndView("json", "portlets", rslt);
 
     }
-    
+
+    /**
+     * Provides information about a single portlet in the registry.  NOTE:  Access to this
+     * API enpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     */
     @RequestMapping(value="/portlet/{fname}.json", method = RequestMethod.GET)
     public ModelAndView getPortlet(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) throws Exception {
-      IPerson user = personManager.getPerson(request);
-      EntityIdentifier ei = user.getEntityIdentifier();
-      IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-      IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
-      if(portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
-        LayoutPortlet portlet = new LayoutPortlet(portletDef);
-        return new ModelAndView("json", "portlet", portlet);
-      } else {
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        return new ModelAndView("json");
-      }
+        IAuthorizationPrincipal ap = getAuthorizationPrincipal(request);
+        IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        if(portletDef != null && ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
+            LayoutPortlet portlet = new LayoutPortlet(portletDef);
+            return new ModelAndView("json", "portlet", portlet);
+        } else {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new ModelAndView("json");
+        }
+    }
+
+    /**
+     * Provides a single, fully-rendered portlet.  NOTE:  Access to this API
+     * enpoint requires only <code>IPermission.PORTAL_SUBSCRIBE</code> permission.
+     */
+    @RequestMapping(value="/v4-3/portlet/{fname}.html", method = RequestMethod.GET)
+    public @ResponseBody String getRenderedPortlet(HttpServletRequest req, HttpServletResponse res, @PathVariable String fname) throws Exception {
+
+        // Does the portlet exist in the registry?
+        final IPortletDefinition portletDef = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
+        if (portletDef == null) {
+            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "Portlet not found";
+        }
+
+        // Is the user permitted to access it?
+        final IAuthorizationPrincipal ap = getAuthorizationPrincipal(req);
+        if (!ap.canRender(portletDef.getPortletDefinitionId().getStringId())) {
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return "Access denied";
+        }
+
+        // Proceed...
+        try {
+            final IPortletWindow portletWindow = portletWindowRegistry.getOrCreateDefaultPortletWindow(req, portletDef.getPortletDefinitionId());
+            final String rslt = portletExecutionManager.getPortletOutput(portletWindow.getPortletWindowId(), req, res);
+            return rslt;
+        } catch (Exception e) {
+            logger.error("Failed to render the requested portlet '{}'", fname, e);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "Internal error";
+        }
+
+    }
+
+    /*
+     * Implementation
+     */
+
+    private IAuthorizationPrincipal getAuthorizationPrincipal(HttpServletRequest req) {
+        IPerson user = personManager.getPerson(req);
+        EntityIdentifier ei = user.getEntityIdentifier();
+        IAuthorizationPrincipal rslt = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        return rslt;
     }
 
     private Set<String> getPortletCategories(IPortletDefinition pdef) {

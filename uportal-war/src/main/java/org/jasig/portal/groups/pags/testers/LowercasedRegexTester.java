@@ -20,6 +20,8 @@ package org.jasig.portal.groups.pags.testers;
 
 import java.util.regex.Pattern;
 
+import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+
 /**
  * A tester for matching the possibly multiple values of an attribute (made lower case) against a regular expression.
  * The match function attempts to match the entire region against the pattern specified.
@@ -59,6 +61,19 @@ import java.util.regex.Pattern;
 public class LowercasedRegexTester extends StringTester {
     protected Pattern pattern;
 
+    /**
+     * @since 4.3
+     */
+    public LowercasedRegexTester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+        this.pattern = Pattern.compile(definition.getTestValue());
+    }
+
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
     public LowercasedRegexTester(String attribute, String test) {
         super(attribute, test);
         this.pattern = Pattern.compile(test);

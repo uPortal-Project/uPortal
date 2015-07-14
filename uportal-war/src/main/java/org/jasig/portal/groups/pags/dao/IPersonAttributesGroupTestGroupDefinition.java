@@ -21,12 +21,11 @@ package org.jasig.portal.groups.pags.dao;
 import java.util.Set;
 
 import org.dom4j.Element;
-import org.jasig.portal.IBasicEntity;
 
 /**
  * @author Shawn Connolly, sconnolly@unicon.net
  */
-public interface IPersonAttributesGroupTestGroupDefinition extends IBasicEntity {
+public interface IPersonAttributesGroupTestGroupDefinition {
 
     long getId();
 
