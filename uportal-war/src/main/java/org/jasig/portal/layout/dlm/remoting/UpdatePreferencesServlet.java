@@ -517,6 +517,32 @@ public class UpdatePreferencesServlet {
 
     }
 
+    @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
+    public ModelAndView addFolder(
+            HttpServletRequest req,
+            HttpServletResponse res,
+            @RequestParam String targetId) {
+        IUserLayoutManager ulm = userInstanceManager.getUserInstance(req).getPreferencesManager().getUserLayoutManager();
+
+        if (!ulm.getNode(targetId).isAddChildAllowed()) {
+            res.setStatus(403);
+            return null;
+        }
+
+        UserLayoutFolderDescription newFolder = new UserLayoutFolderDescription();
+        newFolder.setHidden(false);
+        newFolder.setImmutable(false);
+        newFolder.setAddChildAllowed(true);
+        newFolder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+
+        ulm.addNode(newFolder, targetId, null);
+
+        Map<String, Object> m = new HashMap<>();
+        m.put("folderId", newFolder.getId());
+        m.put("immutable", newFolder.isImmutable());
+        return new ModelAndView("jsonView", m);
+    }
+
     @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
     public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
         //setup
@@ -1134,10 +1160,9 @@ public class UpdatePreferencesServlet {
               ulm.moveNode(sourceId, col.getId(), null);
           }
 
-      } else if (ulm.getRootFolderId().equals(
-          // if the target is a column type node, we need to just move the portlet
-          // to the end of the column
-          ulm.getParentId(ulm.getParentId(destinationId)))) {
+      } else if (ulm.getNode(destinationId).getType().equals(IUserLayoutFolderDescription.REGULAR_TYPE)) {
+              // if the target is a column type node, we need to just move the portlet
+              // to the end of the folder
           ulm.moveNode(sourceId, destinationId, null);
 
       } else {
