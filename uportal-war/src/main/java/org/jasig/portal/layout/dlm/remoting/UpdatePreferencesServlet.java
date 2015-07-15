@@ -22,6 +22,7 @@ package org.jasig.portal.layout.dlm.remoting;
 import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,6 +40,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.beanutils.BeanPredicate;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
@@ -81,6 +83,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -889,10 +892,16 @@ public class UpdatePreferencesServlet {
      * @param request
      * @param response
      * @param targetId
+     * @param display - not required, set as a structure-attribute hint
+     * @param attributes - not required, parse the JSON name-value pairs in the body as the attributes of the folder.
      * @return
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
-    public ModelAndView addFolder(HttpServletRequest request, HttpServletResponse response, @RequestParam String targetId) {
+    public ModelAndView addFolder(HttpServletRequest request, 
+                                  HttpServletResponse response, 
+                                  @RequestParam("targetId") String targetId, 
+                                  @RequestParam(value="display", required=false) String display,
+                                  @RequestBody(required=false) Map<String, String> attributes) {
         IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
 
         if (!ulm.getNode(targetId).isAddChildAllowed()) {
@@ -905,6 +914,13 @@ public class UpdatePreferencesServlet {
         newFolder.setImmutable(false);
         newFolder.setAddChildAllowed(true);
         newFolder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+        
+        // Update the attributes based on the supplied JSON (optional request body name-value pairs)
+        if (attributes != null) {
+            setObjectAttributes(newFolder, attributes);
+        }
+        // Update the structure-attribute display
+        this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, newFolder.getId(), "display", display);
 
         ulm.addNode(newFolder, targetId, null);
         final Locale locale = RequestContextUtils.getLocale(request);
@@ -914,14 +930,29 @@ public class UpdatePreferencesServlet {
         } catch (Exception e) {
             log.warn("Error saving layout", e);
             return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Unable to add a new folder", locale)));
-        }
-        
+        }        
 
         Map<String, Object> model = new HashMap<>();
         model.put("response", getMessage("success.add.folder", "Added a new folder", locale));
         model.put("folderId", newFolder.getId());
         model.put("immutable", newFolder.isImmutable());
         return new ModelAndView("jsonView", model);
+    }
+    
+    /**
+     * Attempt to map the attribute values to the given object.
+     * @param object
+     * @param attributes
+     */
+    private void setObjectAttributes(Object object, Map<String, String> attributes) {
+        for(String name : attributes.keySet()) {
+          try {
+            BeanUtils.setProperty(object, name, attributes.get(name));
+            }
+            catch (IllegalAccessException | InvocationTargetException e) {
+                log.warn("Unable to set attribute: " + name + "on object of type: " + object.getClass());
+            }
+        }
     }
 
     /**
