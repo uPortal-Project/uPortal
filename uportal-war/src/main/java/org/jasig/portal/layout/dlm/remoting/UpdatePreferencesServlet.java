@@ -341,7 +341,7 @@ public class UpdatePreferencesServlet {
         // isn't actually relevant if we're appending the source element.
         String destinationId = request.getParameter("elementID");
 
-        if(moveElementInternal(request,sourceId, destinationId, method)) {
+        if(moveElementInternal(request, sourceId, destinationId, method)) {
           return new ModelAndView("jsonView",
               Collections.singletonMap("response", getMessage("success.move.portlet",
               "Portlet moved successfully", locale)));
@@ -1160,21 +1160,19 @@ public class UpdatePreferencesServlet {
               ulm.moveNode(sourceId, col.getId(), null);
           }
 
-      } else if (ulm.getNode(destinationId).getType().equals(IUserLayoutFolderDescription.REGULAR_TYPE)) {
-              // if the target is a column type node, we need to just move the portlet
-              // to the end of the folder
-          ulm.moveNode(sourceId, destinationId, null);
-
       } else {
-          // If we're moving this element before another one, we need
-          // to know what the target is. If there's no target, just
-          // assume we're moving it to the very end of the column.
-          String siblingId = null;
-          if (method.equals("insertBefore"))
-              siblingId = destinationId;
+          boolean isInsert = method.equals("insertBefore");
 
-          // move the node as requested and save the layout
-          ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId);
+          if (!(isInsert || ulm.getNode(destinationId).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER))) {
+              //If neither an insert or type folder
+              //Can't "insert into" non-folder
+              return false;
+          }
+
+          String siblingId = isInsert ? destinationId : null;
+          String target = isInsert ? ulm.getParentId(destinationId) : destinationId;
+
+          ulm.moveNode(sourceId, target, siblingId);
       }
 
       try {
