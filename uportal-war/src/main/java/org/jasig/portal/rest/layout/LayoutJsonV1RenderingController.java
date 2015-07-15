@@ -16,15 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.json.rendering;
+package org.jasig.portal.rest.layout;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.slf4j.Logger;
@@ -37,12 +37,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Controller
 public class LayoutJsonV1RenderingController {
 
     public static final String STYLESHEET_NAME = "DLMMobileColumns";
+    public static final String URL = "/v1/dlm/layout.json";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -63,7 +63,7 @@ public class LayoutJsonV1RenderingController {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    @RequestMapping(value={"/layout.json","/layout/v1/layout.json"}, method = RequestMethod.GET)
+    @RequestMapping(value=URL, method = RequestMethod.GET)
     public void v1RenderRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         this.internalRenderRequest(request, response);

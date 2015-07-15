@@ -16,16 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.json.rendering;
+package org.jasig.portal.rest.layout;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.StylesheetUserPreferencesServiceImpl;
 
+import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.rendering.IPortalRenderingPipeline;
 import org.slf4j.Logger;
@@ -41,12 +40,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * data is to support the Javascript-driven rendering of the uPortal UI.
  * 
  * @author Gary Roybal
- * @version $Revision$
- * @since uPortal 4.2
+ * @since uPortal 4.3
  */
 @Controller
-@RequestMapping("/layout/v2")
-public class LayoutJsonV2RenderingController {
+public class LayoutJsonV43RenderingController {
 
     private static final String STRUCTURE_STYLESHEET_NAME = "DLMTabsColumnsJS";
     private static final String THEME_STYLESHEET_NAME = "JsonLayoutV2";
@@ -70,7 +67,7 @@ public class LayoutJsonV2RenderingController {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    @RequestMapping(value="/layout.json", method = RequestMethod.GET)
+    @RequestMapping(value="/v4-3/dlm/layout.json", method = RequestMethod.GET)
     public void renderRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         this.setStructureStylesheetNameForJavascriptDrivenContentRendering(request);
@@ -81,21 +78,11 @@ public class LayoutJsonV2RenderingController {
 
     private void setStructureStylesheetNameForJavascriptDrivenContentRendering(
             final HttpServletRequest request) {
-        //request.setAttribute(
-        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STRUCTURE_STYLESHEET_NAME);
-        //request.setAttribute(
-        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_NAME_REQUEST_ATTRIBUTE, STRUCTURE_STYLESHEET_NAME);
         stylesheetUserPrefService.setStructureStylesheetOverride(request, STRUCTURE_STYLESHEET_NAME);
     }
 
     private void setThemeStylesheetVersionForJavascriptDrivenContentRendering(
             final HttpServletRequest request) {
-        //request.setAttribute(
-        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
-        //        THEME_STYLESHEET_NAME);
-        //request.setAttribute(
-        //        StylesheetUserPreferencesServiceImpl.STYLESHEET_VERSION_OVERRIDE_REQUEST_ATTRIBUTE_NAME,
-        //        THEME_STYLESHEET_NAME);
         stylesheetUserPrefService.setThemeStyleSheetOverride(request, THEME_STYLESHEET_NAME);
         
     }

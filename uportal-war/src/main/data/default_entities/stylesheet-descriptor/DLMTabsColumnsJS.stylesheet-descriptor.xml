@@ -35,17 +35,6 @@
         <scope>PERSISTENT</scope>
         <description>The number of the DLM tab that is initially active</description>
     </stylesheet-parameter>
-    <stylesheet-parameter>
-        <name>focusedTabID</name>
-        <scope>REQUEST</scope>
-        <description>The number of the DLM tab that is currently active</description>
-    </stylesheet-parameter>
-    <stylesheet-parameter>
-        <name>detached</name>
-        <default-value>false</default-value>
-        <scope>REQUEST</scope>
-        <description>If the request is for a detached portlet</description>
-    </stylesheet-parameter>
     <layout-attribute>
         <name>name</name>
         <scope>SESSION</scope>
@@ -75,7 +64,7 @@
     <layout-attribute>
         <name>display</name>
         <scope>PERSISTENT</scope>
-        <description>Identifies a folder as a row</description>
+        <description>Identifies a folder as having a non-column display strategy, such as a row</description>
         <targetElement>folder</targetElement>
     </layout-attribute>
 </stylesheet-descriptor>

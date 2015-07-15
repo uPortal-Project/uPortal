@@ -131,8 +131,6 @@
 | Skin Settings can be used to change the location of skin files.
 -->
 <xsl:param name="CONTEXT_PATH">/NOT_SET</xsl:param>
-<xsl:variable name="MEDIA_PATH">media/skins/muniversality</xsl:variable>
-<xsl:variable name="ABSOLUTE_MEDIA_PATH" select="concat($CONTEXT_PATH,'/',$MEDIA_PATH)"/>
 <xsl:variable name="PORTAL_SHORTCUT_ICON" select="concat($CONTEXT_PATH,'/favicon.ico')" />
 <!-- ======================================== -->
 
@@ -140,7 +138,7 @@
 <!-- ****** LOCALIZATION SETTINGS ****** -->
 <!--
 | GREEN
-| Locatlization Settings can be used to change the localization of the theme.
+| Localization Settings can be used to change the localization of the theme.
 -->
 <xsl:param name="MESSAGE_DOC_URL">messages.xml</xsl:param>
 <xsl:param name="USER_LANG">en</xsl:param>
@@ -159,13 +157,8 @@
 <xsl:param name="USE_SELECT_DROP_DOWN">true</xsl:param>
 <xsl:param name="uP_productAndVersion">uPortal</xsl:param>
 <xsl:param name="UP_VERSION"><xsl:value-of select="$uP_productAndVersion"/></xsl:param>
-<xsl:param name="WINDOW_STATE_FOR_PORTLET_URLS">EXCLUSIVE</xsl:param>
 <xsl:param name="baseActionURL">render.uP</xsl:param>
 <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
-<!--
-<xsl:param name="HOME_ACTION_URL"><xsl:value-of select="$BASE_ACTION_URL"/>?uP_root=root&amp;uP_reload_layout=true&amp;uP_sparam=targetRestriction&amp;targetRestriction=no targetRestriction parameter&amp;uP_sparam=targetAction&amp;targetAction=no targetAction parameter&amp;uP_sparam=selectedID&amp;selectedID=&amp;uP_cancel_targets=true&amp;uP_sparam=mode&amp;mode=view</xsl:param>
--->
-
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
 
 <!-- ========================================================================= -->
@@ -211,16 +204,7 @@
 | This template defines the method for expressing the presence of a portlet within a layout.
 -->
 <xsl:template match="channel">
-    <xsl:variable name="defaultPortletUrl">
-        <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url state="{$WINDOW_STATE_FOR_PORTLET_URLS}" />
-                </url:portal-url>
-            </xsl:with-param>
-        </xsl:call-template>
-    </xsl:variable>
+    <xsl:variable name="defaultPortletUrl"><xsl:value-of select="$CONTEXT_PATH"/>/api/v4-3/portlet/<xsl:value-of select="@fname"/></xsl:variable>
     <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
     <xsl:variable name="iconUrl">
         <xsl:choose>
@@ -233,7 +217,6 @@
                                         {
                                             "_objectType": "portlet",
                                             "url": "<xsl:value-of select="$portletUrl"/>",
-                                            "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                                             "iconUrl": "<xsl:value-of select="$iconUrl"/>",
                                             <xsl:for-each select="@*[local-name() != 'hidden' and local-name() != 'immutable' and local-name() != 'unremovable']">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
                                             </xsl:for-each>
@@ -302,18 +285,10 @@
                 {
                     <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
                     </xsl:for-each>
-<!--                     "tabChannels": [
-                        <xsl:for-each select="tabChannel">
-                        {
-                            <xsl:for-each select="@*">
-                                "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
-                            </xsl:for-each>
-                        }<xsl:if test="position() != last()">,</xsl:if>
-                        </xsl:for-each>
-                    ],
--->
                     "content": [
-                        <xsl:apply-templates select="content" />
+                    <xsl:for-each select="*">
+                        <xsl:call-template name="folderContent"/>
+                    </xsl:for-each>
                     ]
                 }<xsl:if test="position() != last()">,</xsl:if>
                 </xsl:for-each>
@@ -325,28 +300,15 @@
 <!--
 | RED
 -->
-<xsl:template match="content">
-  <xsl:apply-templates select="folder" />
-</xsl:template>
-
 <xsl:template match="folder">
                             {
                                  "_objectType": "folder",
                                 <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
                                 </xsl:for-each>
                                 "content": [
-                                <xsl:for-each select="*">
-                                    <xsl:call-template name="folderContent"/>
-                                </xsl:for-each>
-                                <!--
-                                  <xsl:if test="child::folder">
-                                    <xsl:apply-templates select="child::folder" />
-                                    <xsl:if test="child::channel">
-                                         ,
-                                    </xsl:if>
-                                  </xsl:if>
-                                  <xsl:apply-templates select="channel" />
-                                  -->
+                                    <xsl:for-each select="*">
+                                        <xsl:call-template name="folderContent"/>
+                                    </xsl:for-each>
                                 ]
                             }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>

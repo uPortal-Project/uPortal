@@ -26,19 +26,19 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-    
+
     <!-- structure attribute incorporation -->
     <bean id="jsonStructureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
         <property name="attributeSource" ref="structureAttributeSource" />
     </bean>
-    <bean id="structureAttributeSource" class="org.jasig.portal.rendering.StructureAttributeSource" />
-    
+
     <bean id="jsonPreStructureTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonStructureAttributeIncorporationComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="jsonPreStructureTransformLogger"/>
     </bean>
     
     <!-- structure transformation -->
@@ -69,6 +69,7 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="jsonPostStructureTransformLogger"/>
     </bean>
     
     <bean id="jsonStructureCachingComponent" class="org.jasig.portal.rendering.cache.CachingStAXPipelineComponent">
@@ -79,30 +80,28 @@
     <!-- portlet window attribute incorporation -->
     <bean id="jsonPortletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="jsonStructureCachingComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.WindowStateAttributeSource">
-                <property name="windowState" value="#{T(javax.portlet.WindowState).MINIMIZED}"/>
-            </bean>
-        </property>
+        <property name="attributeSource" ref="attributeSource"/>
     </bean>
-    
-    <!-- portlet rendering initiation -->
-    <bean id="jsonPortletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent">
-        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
-    </bean>
+
+
+    <!-- portlet rendering initiation.  Not needed for JSON layout.  We don't want to actually render the portlets
+         since we don't need to incorporate the portlet's output into the response.  -->
+    <!--<bean id="jsonPortletRenderingInitiationComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationStAXComponent">-->
+        <!--<property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />-->
+    <!--</bean>-->
     
     <!-- theme attribute incorporation -->
     <bean id="jsonThemeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonPortletRenderingInitiationComponent" />
+        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
         <property name="attributeSource" ref="themeAttributeSource" />
     </bean>
-    <bean id="themeAttributeSource" class="org.jasig.portal.rendering.ThemeAttributeSource" />
 
     <bean id="jsonPreThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonThemeAttributeIncorporationComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="jsonPreThemeTransformLogger"/>
     </bean>
      
     <!-- theme transformation -->
@@ -154,9 +153,10 @@
     <bean id="jsonPostThemeTransformLogger" class="org.jasig.portal.rendering.LoggingStAXComponent">
         <property name="wrappedComponent" ref="jsonThemeTransformComponent" />
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_THEME" />
-        <property name="logEvents" value="true" />
+        <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
         <property name="logFullDocumentAsHtml" value="true" />
+        <property name="stepIdentifier" value="jsonPostThemeTransformLogger"/>
     </bean>
     
     <!-- StAX to String serialization -->
@@ -184,9 +184,6 @@
                 </entry>
                 <entry key="\{up-portlet-help\(([^\)]+)\)\}">
                     <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
-                </entry>
-                <entry key="\{up-portlet-new-item-count\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletNewItemCountPlaceholderEventSource" />
                 </entry>
                 <entry key="\{up-portlet-link\(([^,]+),([^\)]+)\)\}">
                     <bean class="org.jasig.portal.character.stream.PortletLinkPlaceholderEventSource" />

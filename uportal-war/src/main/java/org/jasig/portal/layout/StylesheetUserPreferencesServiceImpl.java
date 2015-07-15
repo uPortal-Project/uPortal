@@ -123,8 +123,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
         
-        final int stylesheetId = prefScope.getStylesheetId(userProfile);
-        //final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
         final IStylesheetDescriptor stylesheetDescriptor = getStylesheetDescriptor(request, prefScope);
         
         return new StylesheetPreferencesKey(person, userProfile, stylesheetDescriptor);
@@ -256,7 +254,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
         if (outputPropertyDescriptor == null) {
-            logger.warn("Attempted to get output property '{}' but no such output property is defined in stylesheet descriptor '{}'. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to get output property '{}' but no such output property is defined in stylesheet descriptor '{}'. null will be returned",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
 
@@ -333,7 +332,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
         if (outputPropertyDescriptor == null) {
-            logger.warn("Attempted to remove output property [{}] but no such output property is defined in stylesheet descriptor [{}]. It will be ignored", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to remove output property '{}' but no such output property is defined in stylesheet descriptor '{}'. It will be ignored",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
         
@@ -461,7 +461,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
         if (stylesheetParameterDescriptor == null) {
-            logger.warn("Attempted to get stylesheet parameter [{}] but no such stylesheet parameter is defined in stylesheet descriptor {}. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to get stylesheet parameter '{}' but no such stylesheet parameter is defined in stylesheet descriptor '{}'. null will be returned",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
 
@@ -1138,7 +1139,13 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         request.setAttribute(
                 StylesheetUserPreferencesServiceImpl.STYLESHEET_THEME_OVERRIDE_REQUEST_ATTRIBUTE_NAME, override);
     }
-    
+
+    /**
+     * Returns the stylesheet name if overridden in the request object.
+     * @param request HttpRequest
+     * @param scope Scope (Structure or Theme)
+     * @return Stylesheet name if set as an override in the request, else null if it was not.
+     */
     protected String getStyleSheetName(final HttpServletRequest request, PreferencesScope scope) {
         final String stylesheetNameFromRequest;
         

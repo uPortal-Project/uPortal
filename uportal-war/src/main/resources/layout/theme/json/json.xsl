@@ -237,7 +237,6 @@
                         "title": "<xsl:value-of select="@title"/>",
                         "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
-                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                         "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>
