@@ -539,32 +539,6 @@ public class UpdatePreferencesServlet {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
-    public ModelAndView addFolder(
-            HttpServletRequest req,
-            HttpServletResponse res,
-            @RequestParam String targetId) {
-        IUserLayoutManager ulm = userInstanceManager.getUserInstance(req).getPreferencesManager().getUserLayoutManager();
-
-        if (!ulm.getNode(targetId).isAddChildAllowed()) {
-            res.setStatus(403);
-            return null;
-        }
-
-        UserLayoutFolderDescription newFolder = new UserLayoutFolderDescription();
-        newFolder.setHidden(false);
-        newFolder.setImmutable(false);
-        newFolder.setAddChildAllowed(true);
-        newFolder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
-
-        ulm.addNode(newFolder, targetId, null);
-
-        Map<String, Object> m = new HashMap<>();
-        m.put("folderId", newFolder.getId());
-        m.put("immutable", newFolder.isImmutable());
-        return new ModelAndView("jsonView", m);
-    }
-
     @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
     public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request) {
         //setup
