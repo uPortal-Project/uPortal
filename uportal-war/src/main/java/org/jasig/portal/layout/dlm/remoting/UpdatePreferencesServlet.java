@@ -1245,6 +1245,14 @@ public class UpdatePreferencesServlet {
         return null; //didn't find tab
     }
     
+    /**
+     * If the destination is a tab, the new element automatically goes to the end of the first column. 
+     * 
+     * Otherwise we check that the destination is a folder. If it is not and we aren't just trying to insert before it, 
+     * the operation fails. If we haven't failed, if the "method" param is "insertBefore", we insert before the destination
+     * node, otherwise it goes to the end of that folder.
+     * @return
+     */
     private boolean moveElementInternal(HttpServletRequest request, 
                                         String sourceId, 
                                         String destinationId, 
@@ -1284,9 +1292,9 @@ public class UpdatePreferencesServlet {
 
       } else {
           boolean isInsert = method.equals("insertBefore");
-
+   
+          // We can only perform an "insert before" operation OR insert into a folder.
           if (!(isInsert || ulm.getNode(destinationId).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER))) {
-              //If neither an insert nor type folder - Can't "insert into" non-folder
               return false;
           }
 
@@ -1297,7 +1305,6 @@ public class UpdatePreferencesServlet {
       }
 
       try {
-          // save the user's layout
           ulm.saveUserLayout();
       } catch (Exception e) {
           log.warn("Error saving layout", e);
