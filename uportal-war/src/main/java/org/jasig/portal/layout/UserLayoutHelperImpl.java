@@ -33,7 +33,7 @@ import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.core.simple.SimpleJdbcDaoSupport;
 
 /**
  * Helper class for reset-layout based web flows.
@@ -44,7 +44,7 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
  * @author Susan Bramhall, susan.bramhall@yale.edu
  *
  */
-public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutHelper {
+public class UserLayoutHelperImpl extends SimpleJdbcDaoSupport implements IUserLayoutHelper {
 
 	protected static final String DEFAULT_LAYOUT_FNAME = "default";
 	
