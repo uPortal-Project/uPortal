@@ -892,8 +892,13 @@ public class UpdatePreferencesServlet {
      * @param request
      * @param response
      * @param targetId
-     * @param display - not required, set as a structure-attribute hint
      * @param attributes - not required, parse the JSON name-value pairs in the body as the attributes of the folder.
+     * e.g. :
+     * {   
+     *      "structureAttributes" : {"display" : "row", "other" : "another" },
+     *      "attributes" : {"hidden": "true", "type" : "header-top" }
+     * }
+     * 
      * @return
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
@@ -901,7 +906,7 @@ public class UpdatePreferencesServlet {
                                   HttpServletResponse response, 
                                   @RequestParam("targetId") String targetId, 
                                   @RequestParam(value="display", required=false) String display,
-                                  @RequestBody(required=false) Map<String, String> attributes) {
+                                  @RequestBody(required=false) Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
 
         if (!ulm.getNode(targetId).isAddChildAllowed()) {
@@ -916,11 +921,9 @@ public class UpdatePreferencesServlet {
         newFolder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
         
         // Update the attributes based on the supplied JSON (optional request body name-value pairs)
-        if (attributes != null) {
-            setObjectAttributes(newFolder, attributes);
+        if (attributes != null && !attributes.isEmpty()) {
+            setObjectAttributes(newFolder, request, attributes);
         }
-        // Update the structure-attribute display
-        this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, newFolder.getId(), "display", display);
 
         ulm.addNode(newFolder, targetId, null);
         final Locale locale = RequestContextUtils.getLocale(request);
@@ -941,20 +944,71 @@ public class UpdatePreferencesServlet {
     
     /**
      * Attempt to map the attribute values to the given object.
-     * @param object
+     * @param node
+     * @param request
      * @param attributes
      */
-    private void setObjectAttributes(Object object, Map<String, String> attributes) {
-        for(String name : attributes.keySet()) {
-          try {
-            BeanUtils.setProperty(object, name, attributes.get(name));
+    private void setObjectAttributes(IUserLayoutNodeDescription node, HttpServletRequest request, Map<String, Map<String, String>> attributes) {
+        // Attempt to set the object attributes
+        for(String name : attributes.get("attributes").keySet()) {
+            try {
+              BeanUtils.setProperty(node, name, attributes.get(name));
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                log.warn("Unable to set attribute: " + name + "on object of type: " + object.getClass());
+                log.warn("Unable to set attribute: " + name + "on object of type: " + node.getType());
+            }
+        }
+        
+        // Set the structure-attributes, whatever they may be
+        Map<String, String> structureAttributes = attributes.get("structureAttributes");
+        if (structureAttributes != null) {
+            for(String name : structureAttributes.keySet()) {
+                this.stylesheetUserPreferencesService.setLayoutAttribute(request,
+                                                                         PreferencesScope.STRUCTURE, 
+                                                                         node.getId(), 
+                                                                         name, 
+                                                                         structureAttributes.get(name));
             }
         }
     }
 
+    /**
+     * Update the attributes for the node. Unrecognized attributes will log a warning, but are otherwise ignored.
+     * 
+     * @param request
+     * @param response
+     * @param targetId
+     * @param attributes - parse the JSON name-value pairs in the body as the attributes of the element.
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "action=updateAttributes")
+    public ModelAndView updateAttributes(HttpServletRequest request, 
+                                         HttpServletResponse response, 
+                                         @RequestParam("targetId") String targetId, 
+                                         @RequestBody Map<String, Map<String, String>> attributes) {
+        IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
+
+        if (!ulm.getNode(targetId).isAddChildAllowed()) {
+            response.setStatus(403);
+            return null;
+        }
+      
+        // Update the attributes based on the supplied JSON (request body name-value pairs)
+        IUserLayoutNodeDescription node = ulm.getNode(targetId);
+        setObjectAttributes(node, request, attributes);
+        
+        final Locale locale = RequestContextUtils.getLocale(request);        
+        try {
+            ulm.saveUserLayout();
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.attribute.change", "Unable to save attribute changes", locale)));
+        }        
+
+        Map<String, String> model = Collections.singletonMap("success", getMessage("success.element.update", "Updated element attributes", locale));
+        return new ModelAndView("jsonView", model);
+    }
+    
     /**
      * Rename a specified tab.
      *
