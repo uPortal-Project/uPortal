@@ -893,7 +893,7 @@ public class UpdatePreferencesServlet {
      * @param response
      * @param targetId - id of the node to add the new folder to. By default, the folder will be inserted after other
      *                   existing items in the node unless a siblingId is provided.
-     * @param siblingId - if set, insert prior to the node with this id, otherwise simple insert at the end of the list.
+     * @param siblingId - if set, insert new folder prior to the node with this id, otherwise simple insert at the end of the list.
      * @param attributes - if included, parse the JSON name-value pairs in the body as the attributes of the folder.
      * e.g. :
      * {   
@@ -935,7 +935,7 @@ public class UpdatePreferencesServlet {
             ulm.saveUserLayout();
         } catch (Exception e) {
             log.warn("Error saving layout", e);
-            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Unable to add a new folder", locale)));
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change.folder", "Unable to add a new folder", locale)));
         }        
 
         Map<String, Object> model = new HashMap<>();
