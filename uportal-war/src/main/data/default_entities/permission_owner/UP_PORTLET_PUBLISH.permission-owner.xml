@@ -54,6 +54,12 @@
         <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
     </activity>
     <activity>
+        <name>Manage Maintenance</name>
+        <fname>MANAGE_MAINTENANCE</fname>
+        <desc>Manage uPortal content (portlets) in MAINTENANCE mode.  This permission also implies the ability to create, approve, publish, and expire portlets.</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
         <name>Configure</name>
         <fname>PORTLET_MODE_CONFIG</fname>
         <desc>Access the configuration mode of a portlet.</desc>
