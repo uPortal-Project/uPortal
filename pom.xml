@@ -203,6 +203,7 @@
         <mockito.version>1.9.5</mockito.version>
         <net.oauth.version>20100527</net.oauth.version>
         <objenesis.version>2.1</objenesis.version>
+        <org.json.version>20090211</org.json.version>
         <org.springframework.webflow.version>2.3.2.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
@@ -437,6 +438,11 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
                 <version>${tomcat-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${org.json.version}</version>
             </dependency>
             <dependency>
                 <groupId>dom4j</groupId>
