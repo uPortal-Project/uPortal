@@ -891,8 +891,10 @@ public class UpdatePreferencesServlet {
      * 
      * @param request
      * @param response
-     * @param targetId
-     * @param attributes - not required, parse the JSON name-value pairs in the body as the attributes of the folder.
+     * @param targetId - id of the node to add the new folder to. By default, the folder will be inserted after other
+     *                   existing items in the node unless a siblingId is provided.
+     * @param siblingId - if set, insert prior to the node with this id, otherwise simple insert at the end of the list.
+     * @param attributes - if included, parse the JSON name-value pairs in the body as the attributes of the folder.
      * e.g. :
      * {   
      *      "structureAttributes" : {"display" : "row", "other" : "another" },
@@ -905,6 +907,7 @@ public class UpdatePreferencesServlet {
     public ModelAndView addFolder(HttpServletRequest request, 
                                   HttpServletResponse response, 
                                   @RequestParam("targetId") String targetId, 
+                                  @RequestParam(value="siblingId", required=false) String siblingId,
                                   @RequestParam(value="display", required=false) String display,
                                   @RequestBody(required=false) Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
@@ -925,7 +928,7 @@ public class UpdatePreferencesServlet {
             setObjectAttributes(newFolder, request, attributes);
         }
 
-        ulm.addNode(newFolder, targetId, null);
+        ulm.addNode(newFolder, targetId, siblingId);
         final Locale locale = RequestContextUtils.getLocale(request);
         
         try {
