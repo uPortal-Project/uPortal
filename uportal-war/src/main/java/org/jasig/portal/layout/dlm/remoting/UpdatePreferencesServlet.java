@@ -668,9 +668,6 @@ public class UpdatePreferencesServlet {
     /**
      * Add a new channel.
      *
-     * @param per
-     * @param upm
-     * @param ulm
      * @param request
      * @param response
      * @throws IOException
