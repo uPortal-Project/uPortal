@@ -642,9 +642,6 @@ public class UpdatePreferencesServlet {
     /**
      * Add a new channel.
      *
-     * @param per
-     * @param upm
-     * @param ulm
      * @param request
      * @param response
      * @throws IOException
@@ -685,20 +682,20 @@ public class UpdatePreferencesServlet {
         if (isTab(ulm, destinationId)) {
             node = addNodeToTab(ulm,channel, destinationId);
 
-        } else if (isColumn(ulm, destinationId)) {
-            // move the channel into the column
-            node = ulm.addNode(channel, destinationId, null);
         } else {
-            // If we're moving this element before another one, we need
-            // to know what the target is. If there's no target, just
-            // assume we're moving it to the very end of the column.
-            String siblingId = null;
-            if (method.equals("insertBefore"))
-                siblingId = destinationId;
+            boolean isInsert = method != null && method.equals("insertBefore");
 
-            // move the node as requested and save the layout
-            node = ulm.addNode(channel, ulm.getParentId(destinationId),
-                    siblingId);
+            if (!(isInsert || ulm.getNode(destinationId).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER))) {
+                //If neither an insert or type folder - Can't "insert into" non-folder
+                //TODO (astuart) externalize string
+                return new ModelAndView("jsonView", Collections.singletonMap("error", "Cannot add node as child of portlet"));
+            }
+
+            String siblingId = isInsert ? destinationId : null;
+            String target = isInsert ? ulm.getParentId(destinationId) : destinationId;
+
+            // move the channel into the column
+            node = ulm.addNode(channel, target, siblingId);
         }
 
         final Locale locale = RequestContextUtils.getLocale(request);
@@ -1115,7 +1112,7 @@ public class UpdatePreferencesServlet {
 
         // get the fragment owner's ID from the element string
         String userIdString = StringUtils.substringBetween(elementId, Constants.FRAGMENT_ID_USER_PREFIX, Constants.FRAGMENT_ID_LAYOUT_PREFIX);
-        int userId = NumberUtils.toInt(userIdString,0);
+        int userId = NumberUtils.toInt(userIdString, 0);
 
         // construct a new person object representing the fragment owner
         RestrictedPerson fragmentOwner = PersonFactory.createRestrictedPerson();
@@ -1291,8 +1288,7 @@ public class UpdatePreferencesServlet {
           }
 
       } else {
-          boolean isInsert = method.equals("insertBefore");
-   
+          boolean isInsert = method != null && method.equals("insertBefore");
           // We can only perform an "insert before" operation OR insert into a folder.
           if (!(isInsert || ulm.getNode(destinationId).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER))) {
               return false;
