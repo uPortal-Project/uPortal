@@ -24,6 +24,9 @@ import java.util.Iterator;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.permission.IPermissionActivity;
+import org.jasig.portal.permission.IPermissionOwner;
+import org.jasig.portal.permission.target.IPermissionTarget;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
@@ -58,15 +61,15 @@ public DefaultPermissionPolicy() {
  * @param target java.lang.String
  * @exception org.jasig.portal.AuthorizationException
  */
-public boolean doesPrincipalHavePermission
-   (IAuthorizationService service,
-    IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target)
+public boolean doesPrincipalHavePermission (
+        IAuthorizationService service,
+        IAuthorizationPrincipal principal,
+        IPermissionOwner owner,
+        IPermissionActivity activity,
+        IPermissionTarget target)
 throws org.jasig.portal.AuthorizationException
 {
-   IPermission[] perms = service.getPermissionsForPrincipal(principal, owner, activity, target);
+   IPermission[] perms = service.getPermissionsForPrincipal(principal, owner.getFname(), activity.getFname(), target.getKey());
 
     // We found a permission associated with this principal.
     if ( perms.length == 1 )
@@ -117,13 +120,13 @@ private boolean permissionIsGranted(IPermission p)
  */
 private boolean primDoesPrincipalHavePermission(
     IAuthorizationPrincipal principal,
-    String owner,
-    String activity,
-    String target,
+    IPermissionOwner owner,
+    IPermissionActivity activity,
+    IPermissionTarget target,
     IAuthorizationService service)
 throws AuthorizationException
 {
-    IPermission[] perms = service.getPermissionsForPrincipal(principal, owner, activity, target);
+    IPermission[] perms = service.getPermissionsForPrincipal(principal, owner.getFname(), activity.getFname(), target.getKey());
 
     if ( perms.length == 0 )
         { return false; }

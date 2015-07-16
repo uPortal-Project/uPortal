@@ -31,6 +31,7 @@ import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.EntityTypes;
 import org.jasig.portal.concurrency.CachingException;
@@ -39,7 +40,11 @@ import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.permission.IPermissionActivity;
+import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
+import org.jasig.portal.permission.target.IPermissionTarget;
+import org.jasig.portal.permission.target.IPermissionTargetProvider;
+import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
@@ -73,7 +78,6 @@ import org.springframework.stereotype.Service;
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
  * @author Dan Ellentuck
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  */
 @Service("authorizationService")
 public class AuthorizationImpl implements IAuthorizationService {
@@ -89,7 +93,7 @@ public class AuthorizationImpl implements IAuthorizationService {
 
     /** The default Permission Policy this Authorization implementation will use. */
     private IPermissionPolicy defaultPermissionPolicy;
-    
+
     /** Spring-configured portlet definition registry instance */
     private IPortletDefinitionRegistry portletDefinitionRegistry;
 
@@ -112,7 +116,13 @@ public class AuthorizationImpl implements IAuthorizationService {
     private boolean cachePermissions = true;
 
     private Set<String> nonEntityPermissionTargetProviders = new HashSet<>();
-    
+
+    @Autowired
+    private IPermissionOwnerDao permissionOwnerDao;
+
+    @Autowired
+    private IPermissionTargetProviderRegistry targetProviderRegistry;
+
     @Autowired
     public void setDefaultPermissionPolicy(IPermissionPolicy newDefaultPermissionPolicy) {
         this.defaultPermissionPolicy = newDefaultPermissionPolicy;
@@ -520,12 +530,30 @@ throws AuthorizationException
             return (Boolean) element.getValue();
         }
 
+        /*
+         * Convert to (strongly-typed) Java objects based on interfaces in
+         * o.j.p.permission before we make the actual check with IPermissionPolicy;
+         * parameters that communicate something of the nature of the things they
+         * represent helps us make the check(s) more intelligently.  This objects
+         * were retro-fitted to IPermissionPolicy in uP 4.3;  perhaps we should do
+         * the same to IAuthorizationService itself?
+         */
+        final IPermissionOwner ipOwner = permissionOwnerDao.getPermissionOwner(owner);
+        final IPermissionActivity ipActivity = permissionOwnerDao.getPermissionActivity(owner, activity);
+        if (ipActivity == null) {
+            // Means needed data is missing;  much clearer than NPE
+            String msg = "The following activity is not defined for owner '" + owner + "':  " + activity;
+            throw new RuntimeException(msg);
+        }
+        final IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(ipActivity.getTargetProviderKey());
+        final IPermissionTarget ipTarget = targetProvider.getTarget(target);
+
         final boolean doesPrincipalHavePermission = policy.doesPrincipalHavePermission(this,
                 principal,
-                owner,
-                activity,
-                target);
-        
+                ipOwner,
+                ipActivity,
+                ipTarget);
+
         this.doesPrincipalHavePermissionCache.put(new Element(key, doesPrincipalHavePermission));
 
         return doesPrincipalHavePermission;
@@ -983,7 +1011,7 @@ throws AuthorizationException
                 // a member of a group so we could determine whether to check what groups the target entity might be
                 // contained within to see if the principal has permission to the containing group, but it does not
                 // (too significant to refactor database values at this point).  If the owner and activity strings map to
-                // a type of target that might be a group name or entity name,create a set of the groups the target
+                // a type of target that might be a group name or entity name, create a set of the groups the target
                 // entity is contained in.
                 boolean checkTargetForContainingGroups = true;
                 if (owner != null && activity != null) {
@@ -1012,9 +1040,9 @@ throws AuthorizationException
                     }
                 }
             }
-    		
-    		this.entityParentsCache.put(new Element(target, containingGroups));
-        	
+
+            this.entityParentsCache.put(new Element(target, containingGroups));
+
         }
 
 		

@@ -30,10 +30,12 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.permission.IPermissionActivity;
+import org.jasig.portal.permission.IPermissionOwner;
+import org.jasig.portal.permission.target.IPermissionTarget;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
@@ -44,7 +46,6 @@ import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
-
 
 /**
  * Tests the authorization framework.
@@ -68,50 +69,47 @@ public class AuthorizationTester extends TestCase
     private IPermissionPolicy defaultPermissionPolicy;
     private IPermissionPolicy negativePermissionPolicy;
     private IPermissionPolicy positivePermissionPolicy;
-    private IPermission[] addedPermissions;
     private List testPermissions = new ArrayList();
 
     private static Class GROUP_CLASS;
     private static Class IPERSON_CLASS;
     private static String CR = "\n";
-    
+
     private Random random = new Random();
 
-    private class NegativePermissionPolicy implements IPermissionPolicy
-    {
+    private class NegativePermissionPolicy implements IPermissionPolicy {
         private NegativePermissionPolicy() { super(); }
         public boolean doesPrincipalHavePermission(
-            IAuthorizationService service,
-            IAuthorizationPrincipal principal,
-            String owner,
-            String activity,
-            String target)
-        throws AuthorizationException
-       {
-           return ! (service.equals(service)) &&
-                  (principal.equals(principal)) &&
-                  (owner.equals(owner)) &&
-                  (activity.equals(activity));
-       }
+                IAuthorizationService service,
+                IAuthorizationPrincipal principal,
+                IPermissionOwner owner,
+                IPermissionActivity activity,
+                IPermissionTarget target)
+        throws AuthorizationException {
+            // Seems the only value this method provides is NPE detection
+            return ! (service.equals(service)) &&
+                    (principal.equals(principal)) &&
+                    (owner.equals(owner)) &&
+                    (activity.equals(activity));
+        }
         public String toString() { return this.getClass().getName(); }
     }
 
-    private class PositivePermissionPolicy implements IPermissionPolicy
-    {
+    private class PositivePermissionPolicy implements IPermissionPolicy {
         private PositivePermissionPolicy() { super(); }
         public boolean doesPrincipalHavePermission(
-            IAuthorizationService service,
-            IAuthorizationPrincipal principal,
-            String owner,
-            String activity,
-            String target)
-        throws AuthorizationException
-       {
-           return (service.equals(service)) &&
-                  (principal.equals(principal)) &&
-                  (owner.equals(owner)) &&
-                  (activity.equals(activity));
-       }
+                IAuthorizationService service,
+                IAuthorizationPrincipal principal,
+                IPermissionOwner owner,
+                IPermissionActivity activity,
+                IPermissionTarget target)
+        throws AuthorizationException {
+            // Seems the only value this method provides is NPE detection
+            return (service.equals(service)) &&
+                    (principal.equals(principal)) &&
+                    (owner.equals(owner)) &&
+                    (activity.equals(activity));
+        }
         public String toString() { return this.getClass().getName(); }
     }
     
@@ -178,25 +176,7 @@ public class AuthorizationTester extends TestCase
 public AuthorizationTester(String name) {
     super(name);
 }
-/**
- * @return org.jasig.portal.security.IPermissionPolicy
- */
-private IPermissionPolicy getDefaultPermissionPolicy() throws AuthorizationException
-{
-    if ( defaultPermissionPolicy == null )
-        { initializeDefaultPermissionPolicy(); }
-    return defaultPermissionPolicy;
-}
-/**
- * @return org.jasig.portal.services.GroupService
- */
-private Collection getGroupMembers(IGroupMember gm) throws GroupsException
-{
-    Collection list = new ArrayList();
-    for( Iterator itr=gm.getMembers(); itr.hasNext(); )
-        { list.add(itr.next()); }
-    return list;
-}
+
 /**
  * @return org.jasig.portal.security.IPermissionPolicy
  */
@@ -279,32 +259,7 @@ private void initializeAuthorizationService() throws AuthorizationException
 			}
 	}
 }
-/**
- * Create the default implementation of IPermissionPolicy.
- */
-private void initializeDefaultPermissionPolicy() throws AuthorizationException
-{
-    String eMsg = null;
-    String policyName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionPolicy.defaultImplementation");
-    if ( policyName == null )
-    {
-        eMsg = "AuthorizationTester.initializeDefaultPermissionPolicy(): No entry for org.jasig.portal.security.IPermissionPolicy.defaultImplementation in portal.properties.";
-        print (eMsg);
-        throw new AuthorizationException(eMsg);
-    }
 
-    try
-    {
-        defaultPermissionPolicy = (IPermissionPolicy)Class.forName(policyName).newInstance();
-    }
-    catch (Exception e)
-    {
-        eMsg = "AuthorizationTester.initializeDefaultPermissionPolicy(): Problem creating default permission policy... " + e.getMessage();
-        print(eMsg);
-        throw new AuthorizationException(eMsg);
-    }
-}
 /**
  * Create an implementation of IPermissionStore.
  */
@@ -477,7 +432,6 @@ public void testAlternativePermissionPolicies() throws Exception
     String activity = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.9999";
-    String everyoneKey = "local" + GROUP_SEPARATOR + "0";
 
     msg = "Creating a group member for everyone (" + EVERYONE_GROUP_PRINCIPAL_KEY + ").";
     print(msg);
@@ -568,7 +522,6 @@ public void testPermissionStore() throws Exception
 {
     print("***** ENTERING AuthorizationTester.testPermissionStore() *****");
     String msg = null;
-    boolean testResult = false;
     String activity = IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
     String existingTarget = "CHAN_ID.1";
     String nonExistingTarget = "CHAN_ID.000";

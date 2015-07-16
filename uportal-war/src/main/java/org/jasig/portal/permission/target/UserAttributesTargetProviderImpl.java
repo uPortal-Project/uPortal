@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.jasig.portal.permission.target.IPermissionTarget.TargetType;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
 public class UserAttributesTargetProviderImpl implements
@@ -41,7 +42,7 @@ public class UserAttributesTargetProviderImpl implements
 
     @Override
     public IPermissionTarget getTarget(String key) {
-        return new PermissionTargetImpl(key, key);
+        return new PermissionTargetImpl(key, key, TargetType.USER_ATTRIBUTE);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class UserAttributesTargetProviderImpl implements
         final List<IPermissionTarget> matches = new ArrayList<IPermissionTarget>();
         for (String attribute : attributes) {
             if (attribute.toLowerCase().contains(term)) {
-                matches.add(new PermissionTargetImpl(attribute, attribute));
+                matches.add(new PermissionTargetImpl(attribute, attribute, TargetType.USER_ATTRIBUTE));
             }
         }
         return matches;

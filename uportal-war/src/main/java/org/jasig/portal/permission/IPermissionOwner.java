@@ -41,7 +41,7 @@ import java.util.Set;
  * @since 3.3
  */
 public interface IPermissionOwner {
-	
+
     /**
      * Get the unique numerical identifier for this permission owner.  While
      * unique, this identifier should not be expected to be constant over time
@@ -49,16 +49,17 @@ public interface IPermissionOwner {
      * 
      * @return
      */
-	public Long getId();
+    public Long getId();
 
-	/**
-	 * Get the unique, unchanging functional name for this permission owner.
-	 * This identifier should not change over time and should consist of 
-	 * a short, meaningful string.
-	 * 
-	 * @return
-	 */
-	public String getFname();
+    /**
+     * Get the unique, unchanging functional name for this permission owner.
+     * This is the String against which permissions tests are made within
+     * {@link IAuthorizationService};  it must match the OWNER column on
+     * UP_PERMISSION and the corresponding static field on IPermission, if
+     * applicable.  This identifier should not change over time and should
+     * consist of a short, meaningful string.
+     */
+    public String getFname();
 
 	/**
 	 * Set the functional name for this permission owner.
