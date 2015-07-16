@@ -914,17 +914,25 @@ public class UpdatePreferencesServlet {
      * 
      * @param request
      * @param response
-     * @param targetId
-     * @param display - not required, set as a structure-attribute hint
-     * @param attributes - not required, parse the JSON name-value pairs in the body as the attributes of the folder.
+     * @param targetId - id of the node to add the new folder to. By default, the folder will be inserted after other
+     *                   existing items in the node unless a siblingId is provided.
+     * @param siblingId - if set, insert new folder prior to the node with this id, otherwise simple insert at the end of the list.
+     * @param attributes - if included, parse the JSON name-value pairs in the body as the attributes of the folder.
+     * e.g. :
+     * {   
+     *      "structureAttributes" : {"display" : "row", "other" : "another" },
+     *      "attributes" : {"hidden": "true", "type" : "header-top" }
+     * }
+     * 
      * @return
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
     public ModelAndView addFolder(HttpServletRequest request, 
                                   HttpServletResponse response, 
                                   @RequestParam("targetId") String targetId, 
+                                  @RequestParam(value="siblingId", required=false) String siblingId,
                                   @RequestParam(value="display", required=false) String display,
-                                  @RequestBody(required=false) Map<String, String> attributes) {
+                                  @RequestBody(required=false) Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
 
         if (!ulm.getNode(targetId).isAddChildAllowed()) {
@@ -939,20 +947,18 @@ public class UpdatePreferencesServlet {
         newFolder.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
         
         // Update the attributes based on the supplied JSON (optional request body name-value pairs)
-        if (attributes != null) {
-            setObjectAttributes(newFolder, attributes);
+        if (attributes != null && !attributes.isEmpty()) {
+            setObjectAttributes(newFolder, request, attributes);
         }
-        // Update the structure-attribute display
-        this.stylesheetUserPreferencesService.setLayoutAttribute(request, PreferencesScope.STRUCTURE, newFolder.getId(), "display", display);
 
-        ulm.addNode(newFolder, targetId, null);
+        ulm.addNode(newFolder, targetId, siblingId);
         final Locale locale = RequestContextUtils.getLocale(request);
         
         try {
             ulm.saveUserLayout();
         } catch (Exception e) {
             log.warn("Error saving layout", e);
-            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change", "Unable to add a new folder", locale)));
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.layout.change.folder", "Unable to add a new folder", locale)));
         }        
 
         Map<String, Object> model = new HashMap<>();
@@ -964,20 +970,71 @@ public class UpdatePreferencesServlet {
     
     /**
      * Attempt to map the attribute values to the given object.
-     * @param object
+     * @param node
+     * @param request
      * @param attributes
      */
-    private void setObjectAttributes(Object object, Map<String, String> attributes) {
-        for(String name : attributes.keySet()) {
-          try {
-            BeanUtils.setProperty(object, name, attributes.get(name));
+    private void setObjectAttributes(IUserLayoutNodeDescription node, HttpServletRequest request, Map<String, Map<String, String>> attributes) {
+        // Attempt to set the object attributes
+        for(String name : attributes.get("attributes").keySet()) {
+            try {
+              BeanUtils.setProperty(node, name, attributes.get(name));
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                log.warn("Unable to set attribute: " + name + "on object of type: " + object.getClass());
+                log.warn("Unable to set attribute: " + name + "on object of type: " + node.getType());
+            }
+        }
+        
+        // Set the structure-attributes, whatever they may be
+        Map<String, String> structureAttributes = attributes.get("structureAttributes");
+        if (structureAttributes != null) {
+            for(String name : structureAttributes.keySet()) {
+                this.stylesheetUserPreferencesService.setLayoutAttribute(request,
+                                                                         PreferencesScope.STRUCTURE, 
+                                                                         node.getId(), 
+                                                                         name, 
+                                                                         structureAttributes.get(name));
             }
         }
     }
 
+    /**
+     * Update the attributes for the node. Unrecognized attributes will log a warning, but are otherwise ignored.
+     * 
+     * @param request
+     * @param response
+     * @param targetId
+     * @param attributes - parse the JSON name-value pairs in the body as the attributes of the element.
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST, params = "action=updateAttributes")
+    public ModelAndView updateAttributes(HttpServletRequest request, 
+                                         HttpServletResponse response, 
+                                         @RequestParam("targetId") String targetId, 
+                                         @RequestBody Map<String, Map<String, String>> attributes) {
+        IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
+
+        if (!ulm.getNode(targetId).isAddChildAllowed()) {
+            response.setStatus(403);
+            return null;
+        }
+      
+        // Update the attributes based on the supplied JSON (request body name-value pairs)
+        IUserLayoutNodeDescription node = ulm.getNode(targetId);
+        setObjectAttributes(node, request, attributes);
+        
+        final Locale locale = RequestContextUtils.getLocale(request);        
+        try {
+            ulm.saveUserLayout();
+        } catch (Exception e) {
+            log.warn("Error saving layout", e);
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.attribute.change", "Unable to save attribute changes", locale)));
+        }        
+
+        Map<String, String> model = Collections.singletonMap("success", getMessage("success.element.update", "Updated element attributes", locale));
+        return new ModelAndView("jsonView", model);
+    }
+    
     /**
      * Rename a specified tab.
      *
@@ -1211,6 +1268,14 @@ public class UpdatePreferencesServlet {
         return null; //didn't find tab
     }
     
+    /**
+     * If the destination is a tab, the new element automatically goes to the end of the first column. 
+     * 
+     * Otherwise we check that the destination is a folder. If it is not and we aren't just trying to insert before it, 
+     * the operation fails. If we haven't failed, if the "method" param is "insertBefore", we insert before the destination
+     * node, otherwise it goes to the end of that folder.
+     * @return
+     */
     private boolean moveElementInternal(HttpServletRequest request, 
                                         String sourceId, 
                                         String destinationId, 
@@ -1250,9 +1315,8 @@ public class UpdatePreferencesServlet {
 
       } else {
           boolean isInsert = method != null && method.equals("insertBefore");
-
+          // We can only perform an "insert before" operation OR insert into a folder.
           if (!(isInsert || ulm.getNode(destinationId).getType().equals(IUserLayoutNodeDescription.LayoutNodeType.FOLDER))) {
-              //If neither an insert nor type folder - Can't "insert into" non-folder
               return false;
           }
 
@@ -1263,7 +1327,6 @@ public class UpdatePreferencesServlet {
       }
 
       try {
-          // save the user's layout
           ulm.saveUserLayout();
       } catch (Exception e) {
           log.warn("Error saving layout", e);
