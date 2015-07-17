@@ -1000,7 +1000,7 @@ public class UpdatePreferencesServlet {
         IUserLayoutNodeDescription node = ulm.getNode(targetId);
         if (node == null) {
             log.warn("[updateAttributes()] Unable to locate node with id: " + targetId);
-            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.element.update", "Unable to find layout element", locale)));
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.element.update", "Unable to find layout element", RequestContextUtils.getLocale(request))));
         } else {
             setObjectAttributes(node, request, attributes);
             
