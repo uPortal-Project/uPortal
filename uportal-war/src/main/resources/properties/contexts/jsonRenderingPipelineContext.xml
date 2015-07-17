@@ -164,31 +164,15 @@
         <property name="wrappedComponent" ref="jsonPostThemeTransformLogger" />
         <property name="chunkingElements">
             <map>
-                <entry>
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
-                </entry>
-                <entry>
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
-                </entry>
                 <entry key="json">
                     <bean class="org.jasig.portal.json.rendering.JsonLayoutPlaceholderEventSource" />
                 </entry>
             </map>
         </property>
         <property name="chunkingPatterns">
-            <map>
-                <entry key="\{up-portlet-title\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
-                </entry>
-                <entry key="\{up-portlet-help\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
-                </entry>
-                <entry key="\{up-portlet-link\(([^,]+),([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletLinkPlaceholderEventSource" />
-                </entry>
-            </map>
+            <!-- Since portlet rendering does not occur, we don't need any placeholder event sources.
+                 However we must pass in an empty map. -->
+            <map/>
         </property>
     </bean>
     
@@ -200,18 +184,22 @@
         <property name="wrappedComponent" ref="jsonWrapperFilteringCharacterPipelineComponent" />
         <property name="cache" ref="org.jasig.portal.rendering.THEME_TRANSFORM" />
     </bean>
-    
-    <bean id="jsonPortletRenderingInitiationCharacterComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationCharacterComponent">
-        <property name="wrappedComponent" ref="jsonThemeCachingComponent" />
-    </bean>
+
+    <!-- portlet rendering initiation.  Not needed for JSON layout.  We don't want to actually render the portlets
+         since we don't need to incorporate the portlet's output into the response.  -->
+    <!--<bean id="jsonPortletRenderingInitiationCharacterComponent" class="org.jasig.portal.rendering.PortletRenderingInitiationCharacterComponent">-->
+        <!--<property name="wrappedComponent" ref="jsonThemeCachingComponent" />-->
+    <!--</bean>-->
     
     <!-- portlet content incorporation -->
-    <bean id="jsonPortletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonPortletRenderingInitiationCharacterComponent" />
-    </bean>
+    <!-- portlet rendering initiation.  Not needed for JSON layout.  We don't want to actually render the portlets
+         since we don't need to incorporate the portlet's output into the response.  -->
+    <!--<bean id="jsonPortletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">-->
+        <!--<property name="wrappedComponent" ref="jsonPortletRenderingInitiationCharacterComponent" />-->
+    <!--</bean>-->
     <bean id="jsonPortalRenderingPipeline" class="org.jasig.portal.json.rendering.JsonLayoutRenderingPipeline">
         <qualifier value="json"/>
-        <property name="pipeline" ref="jsonPortletRenderingIncorporationComponent" />
+        <property name="pipeline" ref="jsonThemeCachingComponent" />
     </bean>
     
 </beans>

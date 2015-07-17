@@ -204,8 +204,7 @@
 | This template defines the method for expressing the presence of a portlet within a layout.
 -->
 <xsl:template match="channel">
-    <xsl:variable name="defaultPortletUrl"><xsl:value-of select="$CONTEXT_PATH"/>/api/v4-3/portlet/<xsl:value-of select="@fname"/></xsl:variable>
-    <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
+    <xsl:variable name="portletUrl"><xsl:value-of select="$CONTEXT_PATH"/>/api/v4-3/portlet/<xsl:value-of select="@fname"/>.html</xsl:variable>
     <xsl:variable name="iconUrl">
         <xsl:choose>
             <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
@@ -220,14 +219,11 @@
                                             "iconUrl": "<xsl:value-of select="$iconUrl"/>",
                                             <xsl:for-each select="@*[local-name() != 'hidden' and local-name() != 'immutable' and local-name() != 'unremovable']">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
                                             </xsl:for-each>
-                                            "parameters": [
+                                            "parameters": {
                                                 <xsl:for-each select="parameter">
-                                                {
-                                                    "name": "<xsl:value-of select ="@name" />",
-                                                    "value": "<xsl:value-of select="@value" />"
-                                                }<xsl:if test="position() != last()">,</xsl:if>
+                                                    "<xsl:value-of select="@name"/>": "<xsl:value-of select="@value"/>"<xsl:if test="position() != last()">,</xsl:if>
                                                 </xsl:for-each>
-                                            ]
+                                            }
                                         }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>
 <!-- ========================================================================= -->
@@ -237,9 +233,9 @@
 | RED
 -->
 <xsl:template match="debug">
-        <xsl:for-each select="*">
-             "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>"<xsl:if test="position() != last()">,</xsl:if>
-        </xsl:for-each>
+    <xsl:for-each select="*">
+         "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>"<xsl:if test="position() != last()">,</xsl:if>
+    </xsl:for-each>
 </xsl:template>
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: REGIONS ============================================ -->
@@ -247,17 +243,27 @@
 <!--
 | RED
 -->
+
+<!-- Collapse the regions with the same name using the Muenchian Method http://www.jenitennison.com/xslt/grouping/muenchian.xml
+     TODO: If we upgrade to XSLT 2.0, we can instead use for-each-group, see http://www.xml.com/pub/a/2003/11/05/tr.html -->
+<xsl:key name="regions-by-name" match="region" use="@name" />
 <xsl:template match="regions">
-            <xsl:for-each select="region">
-            {
-                <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
-                </xsl:for-each>
-                "portlets": [
-                        <xsl:apply-templates select="channel" />
-                ]
-            }<xsl:if test="position() != last()">,</xsl:if>
+    <xsl:for-each select="region[count(. | key('regions-by-name', @name)[1]) = 1]">
+        {
+            <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
             </xsl:for-each>
+            "content": [
+            <xsl:for-each select="key('regions-by-name', @name)">
+                <xsl:for-each select="*">
+                    <xsl:call-template name="folderContent"/>
+                </xsl:for-each>
+                <xsl:if test="position() != last()">,</xsl:if>
+            </xsl:for-each>
+            ]
+        }<xsl:if test="position() != last()">,</xsl:if>
+    </xsl:for-each>
 </xsl:template>
+
 <!-- ========================================================================= -->
 <!-- ========== TEMPLATE: NAVIGATION ========================================= -->
 <!-- ========================================================================= -->
@@ -329,14 +335,9 @@
 | RED
 -->
 <xsl:template match="favorites">
-            <xsl:apply-templates select="favorite" />
-</xsl:template>
-
-<xsl:template match="favorite">
-            {
-                "portlet":
-                    <xsl:apply-templates select="channel" />
-            }<xsl:if test="position() != last()">,</xsl:if>
+    <xsl:for-each select="*">
+        <xsl:call-template name="folderContent"/>
+    </xsl:for-each>
 </xsl:template>
 
 <xsl:template match="favoriteGroups">
@@ -344,13 +345,15 @@
 </xsl:template>
 
 <xsl:template match="favoriteGroup">
-            {
-                <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
-                </xsl:for-each>
-                "columns:" : [
-                <xsl:apply-templates select="column" />
-                ]
-            }<xsl:if test="position() != last()">,</xsl:if>
+    {
+        <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
+        </xsl:for-each>
+        "content": [
+        <xsl:for-each select="*">
+            <xsl:call-template name="folderContent"/>
+        </xsl:for-each>
+        ]
+    }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>
 
 <!-- ========================================================================= -->

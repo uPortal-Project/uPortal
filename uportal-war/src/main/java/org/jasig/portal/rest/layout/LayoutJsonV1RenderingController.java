@@ -41,7 +41,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class LayoutJsonV1RenderingController {
 
-    public static final String STYLESHEET_NAME = "DLMMobileColumns";
+    public static final String STRUCTURE_STYLESHEET_NAME = "DLMMobileColumns";
+    public static final String THEME_STYLESHEET_NAME = "JsonLayout";
     public static final String URL = "/v1/dlm/layout.json";
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -71,13 +72,18 @@ public class LayoutJsonV1RenderingController {
 
     private void internalRenderRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        this.setStylesheetName(request);
-        this.portletWindowRegistry.disablePersistentWindowStates(request);
-        this.portalRenderingPipeline.renderState(request, response);
+        setStructureStylesheetName(request);
+        setThemeStylesheetName(request);
+        portletWindowRegistry.disablePersistentWindowStates(request);
+        portalRenderingPipeline.renderState(request, response);
     }
 
-    private void setStylesheetName(final HttpServletRequest request) {
-        stylesheetUserPrefService.setStructureStylesheetOverride(request, STYLESHEET_NAME);
+    private void setStructureStylesheetName(final HttpServletRequest request) {
+        stylesheetUserPrefService.setStructureStylesheetOverride(request, STRUCTURE_STYLESHEET_NAME);
+    }
+
+    private void setThemeStylesheetName(final HttpServletRequest request) {
+        stylesheetUserPrefService.setThemeStyleSheetOverride(request, THEME_STYLESHEET_NAME);
     }
 
 }
