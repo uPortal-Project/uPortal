@@ -176,7 +176,7 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- 
      | Caches user-specific permission checks in AuthorizationImpl
@@ -185,7 +185,7 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
         eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
 
@@ -196,7 +196,7 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT"
         eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
 
