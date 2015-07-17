@@ -888,17 +888,16 @@ public class UpdatePreferencesServlet {
      * 
      * @param request
      * @param response
-     * @param targetId - id of the node to add the new folder to. By default, the folder will be inserted after other
+     * @param targetId - id of the folder node to add the new folder to. By default, the folder will be inserted after other
      *                   existing items in the node unless a siblingId is provided.
      * @param siblingId - if set, insert new folder prior to the node with this id, otherwise simple insert at the end of the list.
-     * @param attributes - if included, parse the JSON name-value pairs in the body as the attributes of the folder.
+     * @param attributes - if included, parse the JSON name-value pairs in the body as the attributes of the folder. These
+     *                     will override the defaults.
      * e.g. :
      * {   
      *      "structureAttributes" : {"display" : "row", "other" : "another" },
      *      "attributes" : {"hidden": "true", "type" : "header-top" }
      * }
-     * 
-     * @return
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=addFolder")
     public ModelAndView addFolder(HttpServletRequest request, 
@@ -977,9 +976,13 @@ public class UpdatePreferencesServlet {
      * 
      * @param request
      * @param response
-     * @param targetId
-     * @param attributes - parse the JSON name-value pairs in the body as the attributes of the element.
-     * @return
+     * @param targetId - the id of the node whose attributes will be updated.
+     * @param attributes - parse the JSON name-value pairs in the body as the attributes of the folder. 
+     * e.g. :
+     * {   
+     *      "structureAttributes" : {"display" : "row", "other" : "another" },
+     *      "attributes" : {"hidden": "true", "type" : "header-top" }
+     * }
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=updateAttributes")
     public ModelAndView updateAttributes(HttpServletRequest request, 
@@ -988,25 +991,30 @@ public class UpdatePreferencesServlet {
                                          @RequestBody Map<String, Map<String, String>> attributes) {
         IUserLayoutManager ulm = userInstanceManager.getUserInstance(request).getPreferencesManager().getUserLayoutManager();
 
-        if (!ulm.getNode(targetId).isAddChildAllowed()) {
+        if (!ulm.getNode(targetId).isEditAllowed()) {
             response.setStatus(403);
             return null;
         }
       
         // Update the attributes based on the supplied JSON (request body name-value pairs)
         IUserLayoutNodeDescription node = ulm.getNode(targetId);
-        setObjectAttributes(node, request, attributes);
-        
-        final Locale locale = RequestContextUtils.getLocale(request);        
-        try {
-            ulm.saveUserLayout();
-        } catch (Exception e) {
-            log.warn("Error saving layout", e);
-            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.attribute.change", "Unable to save attribute changes", locale)));
-        }        
-
-        Map<String, String> model = Collections.singletonMap("success", getMessage("success.element.update", "Updated element attributes", locale));
-        return new ModelAndView("jsonView", model);
+        if (node == null) {
+            log.warn("[updateAttributes()] Unable to locate node with id: " + targetId);
+            return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.element.update", "Unable to find layout element", locale)));
+        } else {
+            setObjectAttributes(node, request, attributes);
+            
+            final Locale locale = RequestContextUtils.getLocale(request);        
+            try {
+                ulm.saveUserLayout();
+            } catch (Exception e) {
+                log.warn("Error saving layout", e);
+                return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.persisting.attribute.change", "Unable to save attribute changes", locale)));
+            }        
+    
+            Map<String, String> model = Collections.singletonMap("success", getMessage("success.element.update", "Updated element attributes", locale));
+            return new ModelAndView("jsonView", model); 
+        }
     }
     
     /**
