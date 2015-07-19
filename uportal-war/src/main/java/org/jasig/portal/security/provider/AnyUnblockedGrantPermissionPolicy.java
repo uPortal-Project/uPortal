@@ -181,10 +181,6 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
 
     }
 
-    /*
-     * TODO:  It's looking like the following method is really what we need to cache.
-     */
-
     private boolean hasUnblockedPathToGrantWithCache(IAuthorizationService service,
             IAuthorizationPrincipal principal, IPermissionOwner owner,
             IPermissionActivity activity, IPermissionTarget target,
