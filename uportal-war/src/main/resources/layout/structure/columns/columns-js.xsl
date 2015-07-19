@@ -27,7 +27,7 @@
 
     General Description:  This file was developed to support Javascript-driven rendering of the
     uPortal UI.  This file collects the necessary user layout data and exports xml that is then
-    organized and transformed into JSON using the json-v2.xsl file and a JSON-specific rendering
+    organized and transformed into JSON using the json-v4-3.xsl file and a JSON-specific rendering
     pipeline.  This file is based on the columns.xsl file, but has been updated to include
     additional data.  For the JSON structure transform, all regions, all tabs, favorites, and favorite
     groups are included.  We don't need to be concerned with maximized mode or detached.  The JS UI

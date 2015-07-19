@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LayoutJsonV43RenderingController {
 
     private static final String STRUCTURE_STYLESHEET_NAME = "DLMTabsColumnsJS";
-    private static final String THEME_STYLESHEET_NAME = "JsonLayoutV2";
+    private static final String THEME_STYLESHEET_NAME = "JsonLayoutV4-3";
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 

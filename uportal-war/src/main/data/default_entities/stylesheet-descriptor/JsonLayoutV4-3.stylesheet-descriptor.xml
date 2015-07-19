@@ -20,7 +20,7 @@
 
 -->
 <stylesheet-descriptor xmlns="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
-    <name>JsonLayoutV2</name>
-    <description>Renders the user layout as JSON (version 2)</description>
-    <uri>classpath:/layout/theme/json/json-v2.xsl</uri>
+    <name>JsonLayoutV4-3</name>
+    <description>Renders the user layout as JSON (version 4.3)</description>
+    <uri>classpath:/layout/theme/json/json-v4-3.xsl</uri>
 </stylesheet-descriptor>
