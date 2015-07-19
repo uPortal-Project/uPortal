@@ -229,6 +229,9 @@
                                 <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="DETAILS"/>
                                     <constructor-arg value="Stack Trace"/>
+                                    <constructor-arg>
+                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
                                 </bean>
                             </util:list>
                         </property>
@@ -241,6 +244,9 @@
                                 <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="ALL"/>
                                     <constructor-arg value="All permissions"/>
+                                    <constructor-arg>
+                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
                                 </bean>
                             </util:list>
                         </property>

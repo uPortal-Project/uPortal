@@ -32,16 +32,17 @@ package org.jasig.portal.permission;
 public interface IPermissionActivity extends Comparable<IPermissionActivity> {
 
     public Long getId();
-    
+
     /**
      * Get the unique, unchanging functional name for this permission activity.
-     * This identifier should not change over time and should consist of 
-     * a short, meaningful string.
-     * 
-     * @return
+     * This is the String against which permissions tests are made within
+     * {@link IAuthorizationService};  it must match the ACTIVITY column on
+     * UP_PERMISSION and the corresponding static field on IPermission, if
+     * applicable.  This identifier should not change over time and should
+     * consist of a short, meaningful string.
      */
     public String getFname();
-    
+
     /**
      * Set the functional name for this permission activity.
      * 

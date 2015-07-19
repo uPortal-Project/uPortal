@@ -23,18 +23,25 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.permission.IPermissionActivity;
+import org.jasig.portal.permission.IPermissionOwner;
+import org.jasig.portal.permission.dao.IPermissionOwnerDao;
+import org.jasig.portal.permission.target.IPermissionTarget;
+import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionPolicy;
-import org.jasig.portal.services.GroupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 /**
@@ -65,161 +72,207 @@ import org.springframework.stereotype.Service;
  *  Results in GRANT because there is an unblocked path to a GRANT.
  */
 @Service("anyUnblockedGrantPermissionPolicy")
-public class AnyUnblockedGrantPermissionPolicy
-    implements IPermissionPolicy {
+public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
 
-    protected final Log log = LogFactory.getLog(getClass());
-    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    public boolean doesPrincipalHavePermission(IAuthorizationService service, IAuthorizationPrincipal principal, String owner, String activity, String target) throws AuthorizationException {
-        // the API states that the service, owner, and activity arguments must 
-        // not be null. If for some reason they are null, log and fail closed
-        // The principal must also not be null.
+    @Autowired
+    private IPermissionOwnerDao permissionOwnerDao;
+
+    @Autowired
+    private IPermissionTargetProviderRegistry targetProviderRegistry;
+
+    @Autowired
+    @Qualifier(value="org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT")
+    private Cache hasUnblockedGrantCache;
+
+    public boolean doesPrincipalHavePermission(
+            IAuthorizationService service,
+            IAuthorizationPrincipal principal,
+            IPermissionOwner owner,
+            IPermissionActivity activity,
+            IPermissionTarget target) throws AuthorizationException {
+
+        /*
+         * The API states that the service, owner, and activity arguments must
+         * not be null. If for some reason they are null, log and fail closed.
+         * The principal must also not be null.
+         */
         if (service == null || principal == null || owner == null || activity == null) {
-
             log.error("Null argument to AnyUnblockedGrantPermissionPolicy doesPrincipalHavePermission() method " +
-                    "should not be possible.  This is indicative of a potentially serious bug in the " +
-                    "permissions and authorization infrastructure. " +
-                    "service= [" + service + "] principal = [" + principal + "] owner = [" + owner + "] activity = [" + activity + "] target = [" + target + "]");
-
+                    "should not be possible.  This is indicative of a potentially serious bug in the permissions " +
+                    "and authorization infrastructure;  service='{}', principal='{}', owner='{}', activity='{}', target='{}'",
+                    service, principal.getKey(), owner.getFname(), activity.getFname(), target.getKey());
             // fail closed
             return false;
         }
 
-        // if this user is a super-user, just return true
-        if (!IPermission.ALL_PERMISSIONS_ACTIVITY.equals(activity)
-                && doesPrincipalHavePermission(service, principal,
-                        IPermission.PORTAL_SYSTEM,
-                        IPermission.ALL_PERMISSIONS_ACTIVITY,
-                        IPermission.ALL_TARGET)) {
-            return true;
-        }
-        
-        // first check for explicit permissions for this Principal
-        IPermission[] perms = service.getPermissionsForPrincipal(principal, owner, activity, target);
-
-        Set<IPermission> activePermissions = activePermissions(perms);
-
-        if (containsType(activePermissions, IPermission.PERMISSION_TYPE_DENY)) {
-            if (log.isTraceEnabled()) {
-            	log.trace("Principal [" + principal + "] is explicitly denied permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "].");
-            }
-            return false;
-        }
-
-        if (containsType(activePermissions, IPermission.PERMISSION_TYPE_GRANT)) {
-            // explicit GRANT
-            if (log.isTraceEnabled()) {
-            	log.trace("Principal [" + principal + "] is granted permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal has an excplicit GRANT and does not have an exlicit DENY.");
-            }
-            return true;
-        }
-
-        // if the target is formatted as a channel, check if the user has
-        // the ALL_CHANNELS permission
-        if (target.startsWith(IPermission.PORTLET_PREFIX)
-                    && doesPrincipalHavePermission(service, principal, owner,
-                            activity, IPermission.ALL_PORTLETS_TARGET)) {
-            return true;
-        }
-
-        // if this target corresponds to a group or category, check if the user
-        // has the ALL_CATEGORIES or ALL_GROUPS permissions
-        IEntityGroup targetGroup = GroupService.findGroup(target);
-        if (targetGroup != null) {
-            if ((targetGroup.getEntityType().equals(IPortletDefinition.class)
-                    && doesPrincipalHavePermission(service, principal, owner,
-                            activity, IPermission.ALL_CATEGORIES_TARGET) || doesPrincipalHavePermission(
-                    service, principal, owner, activity,
-                    IPermission.ALL_GROUPS_TARGET))) {
+        // Is this user a super-user?  (Should this logic be moved to AuthorizationImpl?)
+        final IPermissionActivity allPermissionsActivity = permissionOwnerDao.getPermissionActivity(IPermission.PORTAL_SYSTEM, IPermission.ALL_PERMISSIONS_ACTIVITY);
+        if (!activity.equals(allPermissionsActivity)) {  // NOTE:  Must check to avoid infinite recursion
+            final IPermissionOwner allPermissionsOwner = permissionOwnerDao.getPermissionOwner(IPermission.PORTAL_SYSTEM);
+            final IPermissionTarget allPermissionsTarget = targetProviderRegistry.getTargetProvider(allPermissionsActivity.getTargetProviderKey()).getTarget(IPermission.ALL_TARGET);
+            if (doesPrincipalHavePermission(service, principal, allPermissionsOwner, allPermissionsActivity, allPermissionsTarget)) {
+                // Stop checking;  just return true
                 return true;
             }
         }
 
-        // no explicit permission.  Search for an unblocked GRANT.
-        boolean hasUnblockedPathToGrant;
+        /*
+         * uPortal uses a few "special" targets that signal permission to
+         * perform the specified activity over an entire class of targets;
+         * see if one of those applies in this case.
+         */
+        IPermissionTarget collectiveTarget = null;  // The "collective noun" representing a class of thing
+        switch (target.getTargetType()) {
+            case PORTLET:
+                collectiveTarget = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()).getTarget(IPermission.ALL_PORTLETS_TARGET);
+                break;
+            case CATEGORY:
+                collectiveTarget = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()).getTarget(IPermission.ALL_CATEGORIES_TARGET);
+                break;
+            case GROUP:
+                collectiveTarget = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()).getTarget(IPermission.ALL_GROUPS_TARGET);
+                break;
+            default:
+            // This sort of handling does not apply;  just pass through
+        }
+        /*
+         * NOTE:  Cannot generalize to a collective target if we are already on
+         * the collective target, else StackOverflowError.
+         */
+        if (collectiveTarget != null && !collectiveTarget.equals(target)) {
+            if (doesPrincipalHavePermission(service, principal, owner, activity, collectiveTarget)) {
+                /*
+                 * There is a collective for this class of target,
+                 * and the user DOES have this special permission
+                 */
+                return true;
+            }
+        }
+
+        // Search ourselves and all ancestors for an unblocked GRANT.
+        boolean rslt;
         try {
-            // track groups we've already explored to avoid infinite loop
-            Set<IGroupMember> seenGroups = new HashSet<IGroupMember>(100);
-            hasUnblockedPathToGrant = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+            // Track groups we've already explored to avoid infinite loop
+            final Set<IGroupMember> seenGroups = new HashSet<IGroupMember>(100);
+            rslt = hasUnblockedPathToGrantWithCache(service, principal, owner, activity, target, seenGroups);
         } catch (Exception e) {
             log.error("Error searching for unblocked path to grant for principal [" + principal + "]", e);
             // fail closed
             return false;
         }
-        
+
         if (log.isTraceEnabled()) {
-        	if (hasUnblockedPathToGrant) {
-        		log.trace("Principal [" + principal + "] is granted permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal has an unblocked path to a GRANT.");
-        	} else {
-        		log.trace("Principal [" + principal + "] is denied permission to perform activity [" + activity + "] on target [" + target + "] under permission owning system [" + owner + "] because this principal does not have an unblocked path to a GRANT.");
-        	}
+            if (rslt) {
+                log.trace("Principal '{}' is granted permission to perform activity "
+                        + "'{}' on target '{}' under permission owning system '{}' "
+                        + "because this principal has an unblocked path to a GRANT.",
+                        principal, activity.getFname(), target.getKey(), owner.getFname());
+            } else {
+                log.trace("Principal '{}' is denied permission to perform activity '{}' "
+                        + "on target '{}' under permission owning system '{}' because this "
+                        + "principal does not have an unblocked path to a GRANT.",
+                        principal, activity.getFname(), target.getKey(), owner.getFname());
+            }
         }
-        
-        return hasUnblockedPathToGrant;
+
+        return rslt;
 
     }
 
-    private boolean hasUnblockedPathToGrant(IAuthorizationService service, IAuthorizationPrincipal principal, String owner, String activity, String target, Set<IGroupMember> seenGroups) throws GroupsException {
+    private boolean hasUnblockedPathToGrantWithCache(IAuthorizationService service,
+            IAuthorizationPrincipal principal, IPermissionOwner owner,
+            IPermissionActivity activity, IPermissionTarget target,
+            Set<IGroupMember> seenGroups) throws GroupsException {
 
-    	if (log.isTraceEnabled()) {
-    		log.trace("Searching for unblocked path to GRANT for principal [" + principal + "] to [" + activity + "] on target [" + target + "] having already checked ["+ seenGroups + "]");
-    	}
-    	
-        IGroupMember principalAsGroupMember = service.getGroupMember(principal);
+        final CacheTuple cacheTuple = new CacheTuple(
+                principal.getPrincipalString(),
+                owner.getFname(),
+                activity.getFname(),
+                target.getKey());
+        Element element = hasUnblockedGrantCache.get(cacheTuple);
+        if (element == null) {
+            boolean answer = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+            element = new Element(cacheTuple, answer);
+            hasUnblockedGrantCache.put(element);
+        }
+        return (Boolean) element.getObjectValue();
 
-        if (seenGroups.contains(principalAsGroupMember)) {
-        	
-        	if (log.isTraceEnabled()) {
-        		log.trace("Declining to re-examine principal [" + principal + "] for permission to [" + activity + "] on [" + target + "] because this group is among already checked groups [" + seenGroups + "]");
-        	}
-        	
-            return false;
+    }
+
+    /**
+     * This method performs the actual, low-level checking of a single activity
+     * and target.  Is IS responsible for performing the same check for
+     * affiliated groups in the Groups hierarchy, but it is NOT responsible for
+     * understanding the nuances of relationships some activities and/or targets
+     * have with one another (e.g. MANAGE_APPROVED, ALL_PORTLETS, etc.).  It
+     * performs the following steps, in order:
+     *
+     * <ol>
+     *   <li>Find out if the specified principal is <em>specifically</em> granted or denied;  if an answer is found in this step, return it</li>
+     *   <li>Find out what groups this principal belongs to;  convert each one to a principal and seek an answer by invoking ourselves recursively;  if an answer is found in this step, return it</li>
+     *   <li>Return false (no explicit GRANT means no permission)</li>
+     * </ol>
+     */
+    private boolean hasUnblockedPathToGrant(IAuthorizationService service,
+            IAuthorizationPrincipal principal, IPermissionOwner owner,
+            IPermissionActivity activity, IPermissionTarget target,
+            Set<IGroupMember> seenGroups) throws GroupsException {
+
+        if (log.isTraceEnabled()) {
+            log.trace("Searching for unblocked path to GRANT for principal '{}' to "
+                    + "'{}' on target '{}' having already checked:  {}",
+                    principal.getKey(), activity.getFname(), target.getKey(), seenGroups);
         }
 
+        /*
+         * Step #1:  Specific GRANT/DENY attached to this principal
+         */
+        final IPermission[] permissions = service.getPermissionsForPrincipal(principal,
+                        owner.getFname(), activity.getFname(), target.getKey());
+
+        final Set<IPermission> activePermissions = removeInactivePermissions(permissions);
+        final boolean denyExists = containsType(activePermissions, IPermission.PERMISSION_TYPE_DENY);
+        if (denyExists) {
+            // We need go no further;  DENY trumps both GRANT & inherited permissions
+            return false;
+        }
+        final boolean grantExists = containsType(activePermissions, IPermission.PERMISSION_TYPE_GRANT);
+        if (grantExists) {
+            // We need go no further;  explicit GRANT at this level of the hierarchy
+            if (log.isTraceEnabled()) {
+                log.trace("Found unblocked path to this permission set including a GRANT:  {}",
+                        activePermissions);
+            }
+            return true;
+        }
+
+        /*
+         * Step #2:  Seek an answer from affiliated groups
+         */
+        IGroupMember principalAsGroupMember = service.getGroupMember(principal);
+        if (seenGroups.contains(principalAsGroupMember)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Declining to re-examine principal '{}' for permission to '{}' "
+                        + "on '{}' because this group is among already checked groups:  {}",
+                        principal.getKey(), activity.getFname(), target.getKey(), seenGroups);
+            }
+            return false;
+        }
         seenGroups.add(principalAsGroupMember);
-
-
-
+        @SuppressWarnings("unchecked")
         Iterator<IGroupMember> immediatelyContainingGroups = principalAsGroupMember.getContainingGroups();
-
         while (immediatelyContainingGroups.hasNext()) {
             IGroupMember parentGroup = immediatelyContainingGroups.next();
             try {
                 if (parentGroup != null) {
                     IAuthorizationPrincipal parentPrincipal = service.newPrincipal( parentGroup );
-                    IPermission[] parentPermissions = service.getPermissionsForPrincipal(parentPrincipal, owner, activity, target);
-
-                    Set<IPermission> activeParentPermissions = activePermissions(parentPermissions);
-
-                    boolean parentPermissionsContainsDeny = containsType(activeParentPermissions, IPermission.PERMISSION_TYPE_DENY);
-                    boolean parentPermissionsContainsGrant = containsType(activeParentPermissions, IPermission.PERMISSION_TYPE_GRANT);
-
-                    if (parentPermissionsContainsGrant && ! parentPermissionsContainsDeny) {
-                        // there's a GRANT on this group to which we had an unblocked path, and
-                        // there's no DENY on this group.
-                    	
-                    	if (log.isTraceEnabled()) {
-                    		log.trace("Found unblocked path to this permission set including a GRANT: [" + activeParentPermissions + "]");
-                    	}
-                    	
+                    boolean parentHasUnblockedPathToGrant = hasUnblockedPathToGrantWithCache(service, parentPrincipal, owner, activity, target, seenGroups);
+                    if (parentHasUnblockedPathToGrant) {
                         return true;
                     }
-
-                    if (! parentPermissionsContainsDeny) {
-                        // there's no blocking deny, so recursively check to see if the parent has an unblocked path to a grant
-
-
-                        boolean parentHasUnblockedPathToGrant = hasUnblockedPathToGrant(service, parentPrincipal, owner, activity, target, seenGroups);
-                        if (parentHasUnblockedPathToGrant) {
-                            return true;
-                        }
-
-
-                        // parent didn't have a path to grant.  Fall through and try another parent if any
-                    }
-
-
+                    // Parent didn't have a path to grant, fall through and try another parent (if any)
                 }
             } catch (Exception e) {
                 // problem evaluating this path, but let's not let it stop
@@ -230,20 +283,26 @@ public class AnyUnblockedGrantPermissionPolicy
             }
 
         }
+
+        /*
+         * Step #3:  No explicit GRANT means no permission
+         */
         return false;
+
     }
 
     /**
      * Returns a Set containing those IPermission instances where the present
      * date is neither after the permission expiration if present nor before
-     * the permission start date if present.
-     * @param perms
-     * @return potentially empty non-null Set of active permissions.
+     * the permission start date if present.  Only permissions objects that have
+     * been filtered by this method should be checked.
+     *
+     * @return Potentially empty non-null Set of active permissions.
      */
-    private Set<IPermission> activePermissions(final IPermission[] perms) {
+    private Set<IPermission> removeInactivePermissions(final IPermission[] perms) {
         Date now = new Date();
 
-        Set<IPermission> activePermissions = new HashSet<IPermission>(1);
+        Set<IPermission> rslt = new HashSet<IPermission>(1);
 
         for (int i = 0; i < perms.length; i++) {
             IPermission p = perms[i];
@@ -252,48 +311,120 @@ public class AnyUnblockedGrantPermissionPolicy
                 (p.getEffective() == null || ! p.getEffective().after(now))
                 &&
                 (p.getExpires() == null || p.getExpires().after(now))
-               ) {
-
-                activePermissions.add(p);
-
-
+             ) {
+                rslt.add(p);
             }
 
         }
 
-        return activePermissions;
-
-
+        return rslt;
     }
 
     /**
      * Returns true if a set of IPermission instances contains a permission of
-     * the specified type.
-     * False otherwise.
-     * @param permissions
-     * @return true if the set contains a permission of the sought type, false otherwise
+     * the specified type, otherwise false.  Permissions passed to this method
+     * <em>must</em> already be filtered of inactive (expired) instances.
+     *
+     * @return True if the set contains a permission of the sought type, false otherwise
      * @throws IllegalArgumentException if input set or type is null.
      */
     private boolean containsType(final Set<IPermission> permissions, final String soughtType) {
 
+        // Assertions
         if (permissions == null) {
             throw new IllegalArgumentException("Cannot check null set for contents.");
         }
-
         if (soughtType == null) {
             throw new IllegalArgumentException("Cannot search for type null.");
         }
 
-        for (Iterator<IPermission> permissionIter = permissions.iterator(); permissionIter.hasNext(); ) {
-            IPermission permission = permissionIter.next();
+        boolean rslt = false;  // default
 
-            if (permission != null && soughtType.equals(permission.getType())) {
-                return true;
+        for (IPermission p : permissions) {
+            if (soughtType.equals(p.getType())) {
+                rslt = true;
             }
         }
 
-        return false;
+        return rslt;
 
+    }
+
+    /*
+     * Nested Types
+     */
+
+    private static final class CacheTuple {
+        private final String principalName;
+        private final String owner;
+        private final String activity;
+        private final String target;
+        public CacheTuple(String principalName, String owner, String activity, String target) {
+            this.principalName = principalName;
+            this.owner = owner;
+            this.activity = activity;
+            this.target = target;
+        }
+        @SuppressWarnings("unused")
+        public String getPrincipalName() {
+            return principalName;
+        }
+        @SuppressWarnings("unused")
+        public String getOwner() {
+            return owner;
+        }
+        @SuppressWarnings("unused")
+        public String getActivity() {
+            return activity;
+        }
+        @SuppressWarnings("unused")
+        public String getTarget() {
+            return target;
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((activity == null) ? 0 : activity.hashCode());
+            result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+            result = prime * result
+                    + ((principalName == null) ? 0 : principalName.hashCode());
+            result = prime * result
+                    + ((target == null) ? 0 : target.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            CacheTuple other = (CacheTuple) obj;
+            if (activity == null) {
+                if (other.activity != null)
+                    return false;
+            } else if (!activity.equals(other.activity))
+                return false;
+            if (owner == null) {
+                if (other.owner != null)
+                    return false;
+            } else if (!owner.equals(other.owner))
+                return false;
+            if (principalName == null) {
+                if (other.principalName != null)
+                    return false;
+            } else if (!principalName.equals(other.principalName))
+                return false;
+            if (target == null) {
+                if (other.target != null)
+                    return false;
+            } else if (!target.equals(other.target))
+                return false;
+            return true;
+        }
     }
 
 }

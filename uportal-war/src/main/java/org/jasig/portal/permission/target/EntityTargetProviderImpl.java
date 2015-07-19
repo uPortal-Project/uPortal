@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.jasig.portal.permission.target.IPermissionTarget.TargetType;
 import org.jasig.portal.security.IPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,9 +49,22 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @since 3.3
  */
 public class EntityTargetProviderImpl implements IPermissionTargetProvider, Serializable {
+
+    private static final IPermissionTarget ALL_CATEGORIES_TARGET =
+            new PermissionTargetImpl(IPermission.ALL_CATEGORIES_TARGET,
+                    IPermission.ALL_CATEGORIES_TARGET, TargetType.CATEGORY);
+
+    private static final IPermissionTarget ALL_GROUPS_TARGET =
+            new PermissionTargetImpl(IPermission.ALL_GROUPS_TARGET,
+                    IPermission.ALL_GROUPS_TARGET, TargetType.GROUP);
+
+    private static final IPermissionTarget ALL_PORTLETS_TARGET =
+            new PermissionTargetImpl(IPermission.ALL_PORTLETS_TARGET,
+                    IPermission.ALL_PORTLETS_TARGET, TargetType.PORTLET);
+
     private static final long serialVersionUID = 1L;
 
-    private Set<String> allowedEntityTypes = new HashSet<String>();
+    private Set<TargetType> allowedTargetTypes = new HashSet<>();
 
     protected transient final Log log = LogFactory.getLog(getClass());
 
@@ -65,15 +79,45 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
      * Construct a new instance of targets matching the set of allowed
      * target entity types.
      * 
-     * @param allowedEntityTypes
+     * @param targetTypeNames
      */
-    public EntityTargetProviderImpl(Set<String> allowedEntityTypes) {
-        this.allowedEntityTypes = allowedEntityTypes;
+    public EntityTargetProviderImpl(Set<String> targetTypeNames) {
+        /*
+         * Arguably this logic should be moved to the TargetType enum itself; 
+         * but this sort of mapping only occurs (afaik) for "entities."
+         */
+        for (String name : targetTypeNames) {
+            switch (name) {
+                case "person":
+                    allowedTargetTypes.add(TargetType.PERSON);
+                    break;
+                case "group":
+                    allowedTargetTypes.add(TargetType.GROUP);
+                    break;
+                case "portlet":
+                    allowedTargetTypes.add(TargetType.PORTLET);
+                    break;
+                case "category":
+                    allowedTargetTypes.add(TargetType.CATEGORY);
+                    break;
+                default:
+                    String msg = "Unrecognized targetTypeName:  " + name;
+                    throw new RuntimeException(msg);
+            }
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#getTarget(java.lang.String)
+    /**
+     * The <code>key</code> parameter <em>should</em> specify a unique entity
+     * across all 4 supported types:  people, groups, portlets, and categories.
+     * 
+     * Concrete examples of working keys:
+     * <ul>
+     *   <li>defaultTemplateUser (user)</li>
+     *   <li>local.0 (group)</li>
+     *   <li>PORTLET_ID.82 (portlet)</li>
+     *   <li>local.1 (category)</li>
+     * </ul>
      */
     public IPermissionTarget getTarget(String key) {
 
@@ -81,15 +125,16 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
          * If the specified key matches one of the "all entity" style targets,
          * just return the appropriate target.
          */
-        
-        if (IPermission.ALL_CATEGORIES_TARGET.equals(key)) {
-            return getAllCategoriesTarget();
-        } else if (IPermission.ALL_PORTLETS_TARGET.equals(key)) {
-            return getAllPortletsTarget();
-        } else if (IPermission.ALL_GROUPS_TARGET.equals(key)) {
-            return getAllGroupsTarget();
+        switch (key) {
+            case IPermission.ALL_CATEGORIES_TARGET:
+                return ALL_CATEGORIES_TARGET;
+            case IPermission.ALL_PORTLETS_TARGET:
+                return ALL_PORTLETS_TARGET;
+            case IPermission.ALL_GROUPS_TARGET:
+                return ALL_GROUPS_TARGET;
+            // Else just fall through...
         }
-        
+
         /*
          * Attempt to find a matching entity for each allowed entity type.  This
          * implementation will return the first entity that it finds. If the 
@@ -97,18 +142,14 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
          * possible that this implementation would demonstrate inconsistent
          * behavior.
          */
-        
-        for (String type : allowedEntityTypes) {
-            JsonEntityBean entity = groupListHelper.getEntity(type, key, false);
+        for (TargetType targetType : allowedTargetTypes) {
+            JsonEntityBean entity = groupListHelper.getEntity(targetType.toString(), key, false);
             if (entity != null) {
-                String entityId = entity.getId();
-                if("portlet".equals(type))
-                    entityId = IPermission.PORTLET_PREFIX.concat(entityId);
-                IPermissionTarget target = new PermissionTargetImpl(entityId, entity.getName());
+                IPermissionTarget target = new PermissionTargetImpl(entity.getId(), entity.getName(), targetType);
                 return target;
             }
         }
-        
+
         return null;
     }
 
@@ -126,61 +167,24 @@ public class EntityTargetProviderImpl implements IPermissionTargetProvider, Seri
          * Attempt to find matching entities for each allowed entity type.
          * Any matching entities will be added to our collection.
          */
-        
-        for (String type : allowedEntityTypes) {
-            Set<JsonEntityBean> entities = groupListHelper.search(type, term);
+        for (TargetType targetType : allowedTargetTypes) {
+            Set<JsonEntityBean> entities = groupListHelper.search(targetType.toString(), term);
             for (JsonEntityBean entity : entities) {
-                IPermissionTarget target = new PermissionTargetImpl(entity.getId(), entity.getName());
+                IPermissionTarget target = new PermissionTargetImpl(entity.getId(), entity.getName(), targetType);
                 matching.add(target);
             }
         }
 
         if (IPermission.ALL_CATEGORIES_TARGET.contains(term)) {
-            matching.add(getAllCategoriesTarget());
+            matching.add(ALL_CATEGORIES_TARGET);
         } else if (IPermission.ALL_PORTLETS_TARGET.contains(term)) {
-            matching.add(getAllPortletsTarget());
+            matching.add(ALL_PORTLETS_TARGET);
         } else if (IPermission.ALL_GROUPS_TARGET.contains(term)) {
-            matching.add(getAllGroupsTarget());
+            matching.add(ALL_GROUPS_TARGET);
         }
 
         // return the list of matching targets
         return matching;
     }
 
-    /**
-     * Return an IPermissionTarget matching all categories.  This target will
-     * represent any generic category-type entity, allowing administrators
-     * to set permissions on ungrouped entity items.
-     * 
-     * @return all categories target
-     */
-    protected IPermissionTarget getAllCategoriesTarget() {
-        return new PermissionTargetImpl(IPermission.ALL_CATEGORIES_TARGET,
-                IPermission.ALL_CATEGORIES_TARGET);
-    }
-
-    /**
-     * Return an IPermissionTarget matching all person groups.  This target will
-     * represent any generic person group-type entity, allowing administrators
-     * to set permissions on ungrouped entity items.
-     * 
-     * @return all groups target
-     */
-    protected IPermissionTarget getAllGroupsTarget() {
-        return new PermissionTargetImpl(IPermission.ALL_GROUPS_TARGET,
-                IPermission.ALL_GROUPS_TARGET);
-    }
-
-    /**
-     * Return an IPermissionTarget matching all portlets.  This target will
-     * represent any generic portlet-type entity, allowing administrators
-     * to set permissions on ungrouped entity items.
-     * 
-     * @return all portlets target
-     */
-    protected IPermissionTarget getAllPortletsTarget() {
-        return new PermissionTargetImpl(IPermission.ALL_PORTLETS_TARGET,
-                IPermission.ALL_PORTLETS_TARGET);
-    }
-    
 }

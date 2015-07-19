@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.jasig.portal.permission.target.IPermissionTarget.TargetType;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
@@ -33,8 +34,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider {
 
+    /**
+     * This is an example of a "collective target."  It represents all instances
+     * of a certain class of thing (portlet types, in this case).  NOTE:  There
+     * are other collective targets;  e.g. ALL_PORTLETS and ALL_GROUPS.
+     * Implementation of collective targets is uneven -- logic for most of them
+     * is baked into AnyUnblockedGrantPermissionPolicy, whereas the logic for
+     * this one is written in PortletAdministrationHelper.  (Arguably neither
+     * place is appropriate;  they might be better in the service layer for
+     * permissions:  AuthorizationImpl.)
+     */
     public static final IPermissionTarget ALL_PORTLET_TYPES_TARGET = 
-            new PermissionTargetImpl(IPermission.ALL_PORTLET_TYPES, IPermission.ALL_PORTLET_TYPES);
+            new PermissionTargetImpl(IPermission.ALL_PORTLET_TYPES, 
+                    IPermission.ALL_PORTLET_TYPES, TargetType.PORTLET_TYPE);
 
     @Autowired
     private IChannelPublishingDefinitionDao channelPublishingDefinitionDao;
@@ -51,7 +63,7 @@ public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider 
             final Map<IPortletType, PortletPublishingDefinition> cpds = channelPublishingDefinitionDao.getChannelPublishingDefinitions();
             for (Map.Entry<IPortletType, PortletPublishingDefinition> y : cpds.entrySet()) {
                 if (y.getKey().getName().equals(key)) {
-                    rslt = new PermissionTargetImpl(y.getKey().getName(), y.getKey().getName());
+                    rslt = new PermissionTargetImpl(y.getKey().getName(), y.getKey().getName(), TargetType.PORTLET_TYPE);
                 }
             }
         }
@@ -74,7 +86,7 @@ public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider 
         final Map<IPortletType, PortletPublishingDefinition> cpds = channelPublishingDefinitionDao.getChannelPublishingDefinitions();
         for (Map.Entry<IPortletType, PortletPublishingDefinition> y : cpds.entrySet()) {
             if (y.getKey().getName().toLowerCase().contains(lowerTerm)) {
-                IPermissionTarget target = new PermissionTargetImpl(y.getKey().getName(), y.getKey().getName());
+                IPermissionTarget target = new PermissionTargetImpl(y.getKey().getName(), y.getKey().getName(), TargetType.PORTLET_TYPE);
                 rslt.add(target);
             }
         }
