@@ -34,6 +34,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PortletTypeTargetProviderImpl implements IPermissionTargetProvider {
 
+    /**
+     * This is an example of a "collective target."  It represents all instances
+     * of a certain class of thing (portlet types, in this case).  NOTE:  There
+     * are other collective targets;  e.g. ALL_PORTLETS and ALL_GROUPS.
+     * Implementation of collective targets is uneven -- logic for most of them
+     * is baked into AnyUnblockedGrantPermissionPolicy, whereas the logic for
+     * this one is written in PortletAdministrationHelper.  (Arguably neither
+     * place is appropriate;  they might be better in the service layer for
+     * permissions:  AuthorizationImpl.)
+     */
     public static final IPermissionTarget ALL_PORTLET_TYPES_TARGET = 
             new PermissionTargetImpl(IPermission.ALL_PORTLET_TYPES, 
                     IPermission.ALL_PORTLET_TYPES, TargetType.PORTLET_TYPE);
