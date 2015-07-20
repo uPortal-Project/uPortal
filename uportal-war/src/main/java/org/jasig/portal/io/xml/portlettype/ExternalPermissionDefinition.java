@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.io.xml.portlettype;
 
-import org.jasig.portal.channel.IPortletPublishingService;
+import org.jasig.portal.security.IPermission;
 
 /**
  * Set of supported permissions that can be used in the <permissions></permissions>
@@ -28,8 +28,8 @@ import org.jasig.portal.channel.IPortletPublishingService;
  * @since 4.2
  */
 public enum ExternalPermissionDefinition {
-    SUBSCRIBE(IPortletPublishingService.FRAMEWORK_OWNER, IPortletPublishingService.SUBSCRIBER_ACTIVITY, false),
-    BROWSE(IPortletPublishingService.FRAMEWORK_OWNER, IPortletPublishingService.BROWSE_ACTIVITY, true);
+    SUBSCRIBE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_SUBSCRIBER_ACTIVITY, false),
+    BROWSE(IPermission.PORTAL_SUBSCRIBE, IPermission.PORTLET_BROWSE_ACTIVITY, true);
 
     private final String system;
     private final String activity;

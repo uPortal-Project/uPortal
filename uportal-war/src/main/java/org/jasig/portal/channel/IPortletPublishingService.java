@@ -29,13 +29,8 @@ import org.jasig.portal.security.IPerson;
  */
 public interface IPortletPublishingService {
 
-	public static final String FRAMEWORK_OWNER = "UP_PORTLET_SUBSCRIBE";
-	public static final String SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
-    public static final String BROWSE_ACTIVITY = "BROWSE";
-	public static final String GRANT_PERMISSION_TYPE = "GRANT";
+    public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers);
 
-	public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers);
+    public void removePortletDefinition(IPortletDefinition definition, IPerson person);
 
-	public void removePortletDefinition(IPortletDefinition definition, IPerson person);
-	
 }

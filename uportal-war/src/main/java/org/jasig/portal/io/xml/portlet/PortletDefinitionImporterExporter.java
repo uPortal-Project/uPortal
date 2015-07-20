@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.io.xml.portlet;
 
 import java.math.BigInteger;
@@ -68,7 +69,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletDefinitionImporterExporter 
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
@@ -356,7 +356,7 @@ public class PortletDefinitionImporterExporter
 
                         final IAuthorizationPrincipal authPrincipal = authService.newPrincipal(member);
                         final IPermission permEntity = upm.newPermission(authPrincipal);
-                        permEntity.setType(GRANT_PERMISSION_TYPE);
+                        permEntity.setType(IPermission.PERMISSION_TYPE_GRANT);
                         permEntity.setActivity(permissionDef.getActivity());
                         permEntity.setTarget(target);
                         permissions.add(permEntity);
@@ -401,8 +401,8 @@ public class PortletDefinitionImporterExporter
         // remove permissions
         AuthorizationService authService = AuthorizationService.instance();
         String target = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
-        IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(FRAMEWORK_OWNER);
-        IPermission[] oldPermissions = upm.getPermissions(SUBSCRIBER_ACTIVITY, target);
+        IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+        IPermission[] oldPermissions = upm.getPermissions(IPermission.PORTLET_SUBSCRIBER_ACTIVITY, target);
         upm.removePermissions(oldPermissions);
 
         // delete the channel

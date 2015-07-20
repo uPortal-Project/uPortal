@@ -164,9 +164,11 @@
              See bean permissionTargetProviderRegistry. -->
         <property name="nonEntityPermissionTargetProviders">
             <set>
+                <value>portletTypeTargetProvider</value>
                 <value>errorChannelTargetProvider</value>
                 <value>portalSystemTargetProvider</value>
                 <value>userAttributesTargetProvider</value>
+                <value>portalDataTypeTargetProvider</value>
             </set>
         </property>
     </bean>
@@ -257,9 +259,12 @@
                         <property name="personAttributeDao" ref="personAttributeDao" />
                     </bean>
                 </entry>
+                <entry key="portalDataTypeTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.PortalDataTypeTargetProviderImpl" />
+                </entry>
             </map>
         </property>
-    </bean>    
+    </bean>
 
     <util:map id="redirectionServices">
         <entry key="person">

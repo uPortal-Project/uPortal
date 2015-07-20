@@ -43,4 +43,16 @@
         <desc>Allow the user to add a layout tab</desc>
         <targetProvider>portalSystemTargetProvider</targetProvider>
     </activity>
+    <activity>
+        <name>Export Entity</name>
+        <fname>EXPORT_ENTITY</fname>
+        <desc>Allow the user to export entity XML from the ImportExportPortlet</desc>
+        <targetProvider>portalDataTypeTargetProvider</targetProvider>
+    </activity>
+    <activity>
+        <name>Delete Entity</name>
+        <fname>DELETE_ENTITY</fname>
+        <desc>Allow the user to delete a portal entity within the ImportExportPortlet</desc>
+        <targetProvider>portalDataTypeTargetProvider</targetProvider>
+    </activity>
 </permission-owner>

@@ -43,6 +43,7 @@ import javax.portlet.PortletRequest;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlets.search.DisplayNameComparator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -413,7 +414,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected Set<String> getAvailableAttributes(final IAuthorizationPrincipal principal, final Set<String> attributeNames) {
         final Set<String> permittedAttributes = new HashSet<String>();
         for (String attr : attributeNames) {
-            if (principal.hasPermission(USERS_OWNER, VIEW_ATTRIBUTE_PERMISSION, attr)) {
+            if (principal.hasPermission(IPermission.PORTAL_USERS, IPermission.VIEW_USER_ATTRIBUTE_ACTIVITY, attr)) {
                 permittedAttributes.add(attr);
             }
         }
@@ -438,8 +439,8 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
         // non-admin users, this will result in a call to PersonDirectory (which may go out to LDAP or
         // other external systems) to find out what groups the person is in to see if the principal
         // has permission or deny through one of the contained groups.
-        if (person.getName() != null && principal.hasPermission(USERS_OWNER, VIEW_USER_PERMISSION, person.getName())) {
-            
+        if (person.getName() != null && principal.hasPermission(IPermission.PORTAL_USERS, IPermission.VIEW_USER_ACTIVITY, person.getName())) {
+
             // if the user has permission, filter the person attributes according
             // to the specified permitted attributes
             final Map<String,List<Object>> visibleAttributes = new HashMap<String,List<Object>>();

@@ -19,66 +19,40 @@
 
 package org.jasig.portal.permission.target;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 
-/**
- * SimpleStringTargetProviderImpl provides a basic target provider implementation
- * capable of registering static strings as targets.  This implementation is
- * appropriate for permission owners for which targets are simple static 
- * strings that are well-defined and known in advance.
- * 
- * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
- * @since 3.3
- */
-public class SimpleStringTargetProviderImpl implements IPermissionTargetProvider, Serializable {
-    private static final long serialVersionUID = 1L;
+import org.jasig.portal.io.xml.IPortalDataHandlerService;
+import org.jasig.portal.io.xml.IPortalDataType;
+import org.springframework.beans.factory.annotation.Autowired;
+
+public class PortalDataTypeTargetProviderImpl implements IPermissionTargetProvider {
 
     private Map<String, IPermissionTarget> targetMap = new HashMap<String, IPermissionTarget>();
 
-    /**
-     * Add a permission target to this target provider.
-     * 
-     * @param target
-     */
-    public void addTarget(IPermissionTarget target) {
-        targetMap.put(target.getKey(), target);
-    }
+    @Autowired
+    private IPortalDataHandlerService portalDataHandlerService;
 
-    /**
-     * Set the permission targets for this provider.
-     * 
-     * @param targets  collection of targets
-     */
-    public void setTargets(Collection<IPermissionTarget> targets) {
-
-        // clear out any existing targets
-        targetMap.clear();
-
-        // add each target to the internal map and index it by the target key 
-        for (IPermissionTarget target : targets) {
-            targetMap.put(target.getKey(), target);
+    @PostConstruct
+    public void init() {
+        Iterable<IPortalDataType> dataTypes = portalDataHandlerService.getExportPortalDataTypes();
+        for (IPortalDataType type : dataTypes) {
+            final String typeId = type.getTypeId();
+            targetMap.put(typeId, new PermissionTargetImpl(typeId, typeId,
+                                IPermissionTarget.TargetType.DATA_TYPE));
         }
-
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#getTarget(java.lang.String)
-     */
+    @Override
     public IPermissionTarget getTarget(String key) {
         return targetMap.get(key);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProvider#searchTargets(java.lang.String)
-     */
+    @Override
     public Collection<IPermissionTarget> searchTargets(String term) {
 
         // ensure that the search term is all lowercase to aid in string comparison

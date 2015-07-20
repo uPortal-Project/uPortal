@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlets.permissionsadmin;
 
 import java.util.Collection;
@@ -31,14 +32,8 @@ import org.jasig.portal.security.IPerson;
  * permissions administration operations.
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public interface IPermissionAdministrationHelper {
-
-    public static final String PERMISSIONS_OWNER = "UP_PERMISSIONS";
-    public static final String EDIT_PERMISSION = "EDIT_PERMISSIONS";
-    public static final String VIEW_PERMISSION = "VIEW_PERMISSIONS";
-    public static final String ALL_PERMISSIONS_TARGET = "ALL";
 
     public boolean canEditOwner(IPerson currentUser, String owner);
 

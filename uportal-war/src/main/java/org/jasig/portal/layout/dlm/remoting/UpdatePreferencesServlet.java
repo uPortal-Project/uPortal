@@ -70,6 +70,7 @@ import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
@@ -105,10 +106,6 @@ public class UpdatePreferencesServlet {
 
     private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
     private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
-    
-    private static final String ADDTAB_PERMISSION_OWNER = "UP_SYSTEM";
-    private static final String ADDTAB_PERMISSION_ACTIVITY = "ADD_TAB";
-    private static final String ADDTAB_PERMISSION_TARGET = "ALL";
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -120,12 +117,12 @@ public class UpdatePreferencesServlet {
     private IUserLayoutStore userLayoutStore;
     private MessageSource messageSource;
     private IPortletWindowRegistry portletWindowRegistry;
-    
+
     @Value("${org.jasig.portal.layout.dlm.remoting.addedWindowState:null}")
     private String addedPortletWindowState;
-    
+
     private WindowState addedWindowState;
-    
+
     @PostConstruct
     private void initAddedPortletWindowState(){
         if(addedPortletWindowState!=null && !"null".equalsIgnoreCase(addedPortletWindowState) && !addedPortletWindowState.isEmpty()){
@@ -404,7 +401,6 @@ public class UpdatePreferencesServlet {
         int newColumnCount = widths.length;
 
         // build a list of the current columns for this tab
-        @SuppressWarnings("unchecked")
         Enumeration<String> columns = ulm.getChildIds(tabId);
         List<String> columnList = new ArrayList<String>();
         while (columns.hasMoreElements()) {
@@ -451,7 +447,6 @@ public class UpdatePreferencesServlet {
             for (String columnId : deleted) {
 
                 // move all channels in the current column to the last valid column
-                @SuppressWarnings("unchecked")
                 Enumeration channels = ulm.getChildIds(columnId);
                 while (channels.hasMoreElements()) {
                     ulm.addNode(ulm.getNode((String) channels.nextElement()),
@@ -729,7 +724,6 @@ public class UpdatePreferencesServlet {
     private IUserLayoutNodeDescription addNodeToTab(IUserLayoutManager ulm, IUserLayoutChannelDescription channel, String tabId) {
         IUserLayoutNodeDescription node = null;
 
-        @SuppressWarnings("unchecked")
         Enumeration<String> columns = ulm.getChildIds(tabId);
         if (columns.hasMoreElements()) {
             while (columns.hasMoreElements()) {
@@ -799,12 +793,12 @@ public class UpdatePreferencesServlet {
 
         // Verify that the user has permission to add this tab
         final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(per.getUserName());
-        if (!authPrincipal.hasPermission(ADDTAB_PERMISSION_OWNER, ADDTAB_PERMISSION_ACTIVITY, ADDTAB_PERMISSION_TARGET)) {
+        if (!authPrincipal.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.ADD_TAB_ACTIVITY, IPermission.ALL_TARGET)) {
             log.warn("Attempt to add a tab through the REST API by unauthorized user '" + per.getUserName() + "'");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }
-        
+
         // construct a brand new tab
         String id = "tbd";
         String tabName = request.getParameter("tabName");
@@ -1272,7 +1266,6 @@ public class UpdatePreferencesServlet {
       if (isTab(ulm, destinationId)) {
           // if the target is a tab type node, move the element to
           // the end of the first column
-          @SuppressWarnings("unchecked")
           Enumeration<String> columns = ulm.getChildIds(destinationId);
           if (columns.hasMoreElements()) {
               ulm.moveNode(sourceId, columns.nextElement(), null);

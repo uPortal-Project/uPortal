@@ -55,7 +55,8 @@ public interface IPermissionTarget {
         PORTLET,
 
         /**
-         * This target is a group <em>of portlets</em> (category) and no other type.
+         * This target is a group <em>of portlets</em> (category) and no other
+         * type.
          */
         CATEGORY,
 
@@ -65,9 +66,16 @@ public interface IPermissionTarget {
         PORTLET_TYPE,
 
         /**
-         * This target is an attribute users may have (e.g. telephoneNumber) and no other type.
+         * This target is an attribute users may have (e.g. telephoneNumber) and
+         * no other type.
          */
         USER_ATTRIBUTE,
+
+        /**
+         * This target is a type of entity (data type) recognized by
+         * Import/Export (e.g. portlet-definition) and no other type.
+         */
+        DATA_TYPE,
 
         /**
          * This target is not any of the other things listed in this enumeration.

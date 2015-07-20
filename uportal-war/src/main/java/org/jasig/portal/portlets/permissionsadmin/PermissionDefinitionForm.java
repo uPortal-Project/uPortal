@@ -25,7 +25,6 @@ import java.util.Map;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.target.IPermissionTarget;
-import org.jasig.portal.portlets.Attribute;
 
 /**
  * PermissionDefinitionForm represents important editing information for 
@@ -33,7 +32,6 @@ import org.jasig.portal.portlets.Attribute;
  * 
  * @author Drew Wills
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class PermissionDefinitionForm implements Serializable {
 

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlets.lookup;
 
 import java.util.List;
@@ -28,7 +29,6 @@ import org.springframework.webflow.context.ExternalContext;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPersonLookupHelper {
     /**
@@ -55,13 +55,6 @@ public interface IPersonLookupHelper {
      * Portlet preference name to use to specify a attributes to exclude in the user details view
      */
     public static final String PERSON_LOOKUP_PERSON_DETAILS_DETAILS_ATTRIBUTES_EXCLUDES = "person-lookup.personDetails.detailsAttributes.exclude";
-
-    public static final String USERS_OWNER = "UP_USERS";
-    
-    public static final String VIEW_USER_PERMISSION = "VIEW_USER";
-
-    public static final String VIEW_ATTRIBUTE_PERMISSION = "VIEW_USER_ATTRIBUTE";
-    
 
     /**
      * Gets the Set of attributes to allow the user to query with.

@@ -197,9 +197,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
         	}
 
 			try {
-                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPortletPublishingService.FRAMEWORK_OWNER);
+                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPermission.PORTAL_SUBSCRIBE);
                 IAuthorizationPrincipal[] prins =
-                        pm.getAuthorizedPrincipals(IPortletPublishingService.SUBSCRIBER_ACTIVITY,
+                        pm.getAuthorizedPrincipals(IPermission.PORTLET_SUBSCRIBER_ACTIVITY,
                         PermissionHelper.permissionTargetIdForPortletDefinition(def));
                 for (int mp = 0; mp < prins.length; mp++) {
                 	JsonEntityBean bean;
@@ -822,7 +822,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
                 throw new IllegalArgumentException("");
             }
         }
-        if (ap.hasPermission("UP_FRAMEWORK", activity, IPermission.ALL_PORTLETS_TARGET)) {
+        if (ap.hasPermission(IPermission.PORTAL_PUBLISH, activity, IPermission.ALL_PORTLETS_TARGET)) {
             logger.debug("Found permission for category ALL_PORTLETS and lifecycle state " + state.toString());
             return true;
         }

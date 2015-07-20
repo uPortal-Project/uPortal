@@ -38,6 +38,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
@@ -63,9 +64,6 @@ public class PortletErrorController {
     public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletErrorController.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
     public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletErrorController.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
 
-	protected static final String ERROR_OWNER = "UP_ERROR_CHAN";
-	protected static final String ERROR_ACTIVITY = "VIEW";
-	protected static final String ERROR_TARGET = "DETAILS";
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletWindowRegistry portletWindowRegistry;
@@ -188,6 +186,6 @@ public class PortletErrorController {
 	protected boolean hasAdminPrivileges(IUserInstance userInstance) {
 		EntityIdentifier ei = userInstance.getPerson().getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    return ap.hasPermission(ERROR_OWNER, ERROR_ACTIVITY, ERROR_TARGET);
+	    return ap.hasPermission(IPermission.ERROR_PORTLET, IPermission.VIEW_ACTIVITY, IPermission.DETAILS_TARGET);
 	}
 }

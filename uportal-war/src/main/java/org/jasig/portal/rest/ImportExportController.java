@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.services.AuthorizationService;
@@ -63,12 +65,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class ImportExportController {
 
-	private static final String OWNER = "UP_SYSTEM";
-	private static final String EXPORT_PERMISSION = "EXPORT_ENTITY";
-	private static final String DELETE_PERMISSION = "DELETE_ENTITY";
-
     final Log log = LogFactory.getLog(getClass());
-    
+
     private IPersonManager personManager;
     private IPortalDataHandlerService portalDataHandlerService;
     private XmlUtilities xmlUtilities;
@@ -149,7 +147,7 @@ public class ImportExportController {
 		final EntityIdentifier ei = person.getEntityIdentifier();
 	    final IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
 
-	    if (!ap.hasPermission(OWNER, DELETE_PERMISSION, entityType)) {
+	    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.DELETE_ACTIVITY, entityType)) {
 	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    	return;
 	    }
@@ -174,7 +172,7 @@ public class ImportExportController {
 
 	    // if the current user does not have permission to delete this database
 	    // object type, return a 401 error code
-	    if (!ap.hasPermission(OWNER, EXPORT_PERMISSION, entityType)) {
+	    if (!ap.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.EXPORT_ACTIVITY, entityType)) {
 	    	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    	return;
 	    }

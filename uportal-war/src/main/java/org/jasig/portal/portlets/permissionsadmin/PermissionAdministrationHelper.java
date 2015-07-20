@@ -67,25 +67,25 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     public boolean canEditOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, EDIT_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.EDIT_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
 
     public boolean canViewOwner(IPerson currentUser, String owner) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, VIEW_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.VIEW_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
 
     public boolean canEditActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, EDIT_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.EDIT_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
 
     public boolean canViewActivity(IPerson currentUser, String activity) {
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, VIEW_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.VIEW_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
     
     /* (non-Javadoc)
@@ -95,7 +95,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, EDIT_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.EDIT_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
     
     /* (non-Javadoc)
@@ -105,7 +105,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
         
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(PERMISSIONS_OWNER, VIEW_PERMISSION, ALL_PERMISSIONS_TARGET));
+        return (ap.hasPermission(IPermission.PORTAL_PERMISSIONS, IPermission.VIEW_PERMISSIONS_ACTIVITY, IPermission.ALL_TARGET));
     }
 
     public Set<JsonEntityBean> getEntitiesForPrincipals(Collection<String> principals) {

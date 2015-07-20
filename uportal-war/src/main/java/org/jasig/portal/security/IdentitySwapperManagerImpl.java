@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.security;
 
 import javax.portlet.PortletRequest;
@@ -29,9 +30,7 @@ import org.springframework.stereotype.Service;
 
 @Service("identitySwapperManager")
 public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
-    public static final String IMPERSONATE_OWNER = "UP_USERS";
-    public static final String IMPERSONATE_ACTIVITY = "IMPERSONATE";
-    
+
     private static final String SWAP_TARGET_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_UID";
     private static final String SWAP_TARGET_PROFILE = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_PROFILE";
     private static final String SWAP_ORIGINAL_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_ORIGINAL_UID";
@@ -59,7 +58,7 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     }
 
     protected boolean canImpersonateUser(final IAuthorizationPrincipal ap, String targetUsername) {
-        return ap.hasPermission(IMPERSONATE_OWNER, IMPERSONATE_ACTIVITY, targetUsername);
+        return ap.hasPermission(IPermission.PORTAL_USERS, IPermission.IMPERSONATE_USER_ACTIVITY, targetUsername);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     @Override
     public void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername, String profile) {
         if (!canImpersonateUser(currentUserName, targetUsername)) {
-            throw new RuntimeAuthorizationException(currentUserName, IMPERSONATE_OWNER, targetUsername);
+            throw new RuntimeAuthorizationException(currentUserName, IPermission.IMPERSONATE_USER_ACTIVITY, targetUsername);
         }
         
         final PortletSession portletSession = portletRequest.getPortletSession();
@@ -86,7 +85,7 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     @Override
     public void setOriginalUser(HttpSession session, String currentUserName, String targetUsername) {
         if (!canImpersonateUser(currentUserName, targetUsername)) {
-            throw new RuntimeAuthorizationException(currentUserName, IMPERSONATE_OWNER, targetUsername);
+            throw new RuntimeAuthorizationException(currentUserName, IPermission.IMPERSONATE_USER_ACTIVITY, targetUsername);
         }
         
         session.setAttribute(SWAP_ORIGINAL_UID, currentUserName);
