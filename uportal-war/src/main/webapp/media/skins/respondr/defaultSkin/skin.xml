@@ -25,6 +25,9 @@
 
   <css>https://fonts.googleapis.com/css?family=Oxygen</css>
 
+  <css included="plain">/ResourceServingWebapp/rs/bootstrap/3.3.5/css/bootstrap.css</css>
+  <css included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.3.5/css/bootstrap.min.css</css>
+
   <css included="plain">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.css</css>
   <css included="aggregated">/ResourceServingWebapp/rs/normalize/2.1.2/normalize-2.1.2.min.css</css>
 
