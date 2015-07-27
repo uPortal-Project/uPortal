@@ -22,9 +22,9 @@
 <web-app 
     xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     metadata-complete="true"
-    version="2.5">
+    version="3.0">
     
     <display-name>uPortal</display-name>
 
@@ -445,9 +445,10 @@
         <location>/500.html</location>
     </error-page>
 
-    <sessionConfig>
+    <session-config>
       <tracking-mode>COOKIE</tracking-mode>
-    </sessionConfig>
+      <!-- Specify the HTTP session duration in <tomcatHome>/conf/web.xml so it is the same for all webapps. -->
+    </session-config>
     
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
