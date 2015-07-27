@@ -40,6 +40,7 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
         <property name="logEvents" value="false" /> 
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="postUserLayoutStoreLogger"/>
     </bean>
     
     <bean id="dashboardWindowStateSettingsStAXComponent" class="org.jasig.portal.rendering.WindowStateSettingsStAXComponent">
@@ -50,11 +51,10 @@
     <!-- portlet window attribute incorporation -->
     <bean id="portletWindowAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="dashboardWindowStateSettingsStAXComponent" />
-        <property name="attributeSource">
-            <bean class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
-        </property>
+        <property name="attributeSource" ref="attributeSource"/>
     </bean>
-    
+    <bean name="attributeSource" class="org.jasig.portal.rendering.PortletWindowAttributeSource" />
+
     <!-- structure attribute incorporation -->
     <bean id="structureAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
         <property name="wrappedComponent" ref="portletWindowAttributeIncorporationComponent" />
@@ -67,14 +67,15 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_STRUCTURE" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="preStructureTransformLogger"/>
     </bean>
     
     <!-- structure transformation -->
+    <bean id="structureTransformSource" class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
+    
     <bean id="structureTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="preStructureTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.StructureTransformerSource"/>
-        </property>
+        <property name="transformerSource" ref="structureTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
@@ -100,6 +101,7 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.POST_STRUCTURE" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="postStructureTransformLogger"/>
     </bean>
     
     <bean id="structureCachingComponent" class="org.jasig.portal.rendering.cache.CachingStAXPipelineComponent">
@@ -124,14 +126,14 @@
         <property name="loggerName" value="org.jasig.portal.rendering.LoggingStAXComponent.PRE_THEME" />
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
+        <property name="stepIdentifier" value="preThemeTransformLogger"/>
     </bean>
      
     <!-- theme transformation -->
+    <bean id="themeTransformSource" class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
     <bean id="themeTransformComponent" class="org.jasig.portal.rendering.xslt.XSLTComponent">
         <property name="wrappedComponent" ref="preThemeTransformLogger" />
-        <property name="transformerSource">
-            <bean class="org.jasig.portal.rendering.xslt.ThemeTransformerSource"/>
-        </property>
+        <property name="transformerSource" ref="themeTransformSource"/>
         <property name="xsltParameterSource">
             <bean class="org.jasig.portal.rendering.xslt.MergingTransformerConfigurationSource">
                 <property name="sources">
@@ -215,6 +217,7 @@
         <property name="logEvents" value="false" />
         <property name="logFullDocument" value="true" />
         <property name="logFullDocumentAsHtml" value="true" />
+        <property name="stepIdentifier" value="postThemeTransformLogger"/>
     </bean>
     
     <!-- StAX to String serialization -->
@@ -290,10 +293,6 @@
         <property name="pipeline" ref="analyticsIncorporationComponent" />
     </bean>
     
-    
-    
-    
-                           
     <bean id="resourcesElementsProvider" class="org.jasig.resourceserver.utils.aggr.ResourcesElementsProviderImpl">
         <property name="resourcesDao" ref="resourcesDao" />
     </bean>

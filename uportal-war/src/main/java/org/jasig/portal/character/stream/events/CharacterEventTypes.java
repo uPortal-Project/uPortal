@@ -45,6 +45,7 @@ public enum CharacterEventTypes {
     PORTLET_LINK,
     /**
      * @see PortletHelpPlaceholderEvent
+     * @deprecated As of Jul 2015 I don't think this is actually used
      */
     PORTLET_HELP,
     /**

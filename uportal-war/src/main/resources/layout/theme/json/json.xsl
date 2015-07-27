@@ -213,7 +213,7 @@
 | This template defines the method for expressing the presence of a portlet within a layout.
 -->
 <xsl:template match="channel">
-    <xsl:variable name="defaultPortletUrl">
+    <xsl:variable name="portletUrl">
         <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
                 <url:portal-url>
@@ -223,7 +223,6 @@
             </xsl:with-param>
         </xsl:call-template>
     </xsl:variable>
-    <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
     <xsl:variable name="iconUrl">
         <xsl:choose>
             <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
@@ -237,7 +236,6 @@
                         "title": "<xsl:value-of select="@title"/>",
                         "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
-                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                         "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>

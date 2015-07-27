@@ -18,27 +18,32 @@
  */
 package org.jasig.portal.json.rendering;
 
+import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.rendering.StylesheetAttributeSource;
+import org.jasig.portal.rest.layout.LayoutJsonV1RenderingController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Returns structure stylesheet descriptor and preferences data
- * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-public class JsonStructureAttributeSource extends StylesheetAttributeSource {
-    @Override
-    public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
-        return this.stylesheetDescriptorDao.getStylesheetDescriptorByName("DLMMobileColumns");
+@Controller
+public class LayoutJsonV1RedirectController {
+
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    // Redirect the old endpoint to the new endpoint.
+    @RequestMapping(value="/layout.json", method = RequestMethod.GET)
+    public String v1RenderRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        return ("redirect:/api" + LayoutJsonV1RenderingController.URL);
     }
 
-    @Override
-    public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
-        return PreferencesScope.STRUCTURE;
-    }
 }

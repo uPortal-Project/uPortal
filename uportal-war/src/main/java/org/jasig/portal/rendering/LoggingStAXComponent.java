@@ -40,15 +40,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Logs the StAX events
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     private XmlUtilities xmlUtilities;
     private boolean logFullDocument = true;
-    private boolean logEvents = true;
+    private boolean logEvents = false;
     private boolean logFullDocumentAsHtml = false;
+    private String stepIdentifier = "";
 
     public void setLoggerName(String loggerName) {
         logger = LoggerFactory.getLogger(loggerName);
@@ -62,7 +62,11 @@ public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
     public void setLogEvents(boolean logEvents) {
         this.logEvents = logEvents;
     }
-    
+
+    public void setStepIdentifier(String stepIdentifier) {
+        this.stepIdentifier = stepIdentifier;
+    }
+
     @Autowired
     public void setXmlUtilities(XmlUtilities xmlUtilities) {
         this.xmlUtilities = xmlUtilities;
@@ -107,7 +111,7 @@ public class LoggingStAXComponent extends StAXPipelineComponentWrapper {
                 
                 if (event.isEndDocument()) {
                     final String xmlOutput = xmlUtilities.serializeXMLEvents(eventBuffer, logFullDocumentAsHtml);
-                    logger.debug("\n" + xmlOutput);
+                    logger.debug(stepIdentifier + "\n" + xmlOutput);
                 }
             }
             

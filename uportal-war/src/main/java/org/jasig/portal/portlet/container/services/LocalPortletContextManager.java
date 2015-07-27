@@ -271,7 +271,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         for (PortletRegistryListener l : registryListeners) {
             l.portletApplicationRegistered(event);
         }
-        logger.info("Portlet Context '/" + context.getApplicationName() + "' registered.");
+        logger.info("Portlet Context '" + context.getApplicationName() + "' registered.");
     }
 
     private void fireRemoved(DriverPortletContext context) {
@@ -282,7 +282,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             l.portletApplicationRemoved(event);
         }
 
-        logger.info("Portlet Context '/" + context.getApplicationName() + "' removed.");
+        logger.info("Portlet Context '" + context.getApplicationName() + "' removed.");
     }
 
     /**

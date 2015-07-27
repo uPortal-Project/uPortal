@@ -243,4 +243,7 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#clearAllLayoutAttributes()
      */
     public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope);
+    
+    public void setStructureStylesheetOverride(HttpServletRequest request, String override);
+    public void setThemeStyleSheetOverride(HttpServletRequest request, String override);
 }

@@ -128,14 +128,8 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     }
 
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        
         final PreferencesScope stylesheetPreferencesScope = this.getStylesheetPreferencesScope(request);
-        final int stylesheetId = stylesheetPreferencesScope.getStylesheetId(userProfile);
-        
-        return this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+        return this.stylesheetUserPreferencesService.getStylesheetDescriptor(request, stylesheetPreferencesScope);
     }
     
     public abstract PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request);

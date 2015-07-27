@@ -20,11 +20,9 @@ package org.jasig.portal.character.stream.events;
 
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
-
-
 /**
  * @author Eric Dalquist
- * @version $Revision$
+ * @deprecated As of Jul 2015 It does not look like this class is actually used.
  */
 public final class PortletHelpPlaceholderEventImpl extends PortletPlaceholderEventImpl implements PortletHelpPlaceholderEvent {
     private static final long serialVersionUID = 1L;
