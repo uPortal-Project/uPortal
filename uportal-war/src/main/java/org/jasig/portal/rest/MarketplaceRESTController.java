@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -77,14 +78,14 @@ public class MarketplaceRESTController {
     }
     
     @RequestMapping(value="/marketplace/entry/{fname}.json")
-    public MarketplaceEntry marketplaceEntryFeed(HttpServletRequest request, @PathVariable String fname) {
+    public ModelAndView marketplaceEntryFeed(HttpServletRequest request, @PathVariable String fname) {
       final IPerson user = personManager.getPerson(request);
       
       MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
       MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
       entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
       
-      return entry;
+      return new ModelAndView("json", "entry", entry);
   }
     
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
