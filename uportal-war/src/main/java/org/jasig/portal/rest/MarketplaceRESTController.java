@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
@@ -78,14 +79,19 @@ public class MarketplaceRESTController {
     }
     
     @RequestMapping(value="/marketplace/entry/{fname}.json")
-    public ModelAndView marketplaceEntryFeed(HttpServletRequest request, @PathVariable String fname) {
+    public ModelAndView marketplaceEntryFeed(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) {
       final IPerson user = personManager.getPerson(request);
       
       MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
-      MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
-      entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
+      if(marketplacePortletDefinition != null && marketplaceService.mayBrowsePortlet(user, marketplacePortletDefinition)) {
+          MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
+          entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
+          
+          return new ModelAndView("json", "entry", entry);
+      }
       
-      return new ModelAndView("json", "entry", entry);
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+      return null;
   }
     
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
