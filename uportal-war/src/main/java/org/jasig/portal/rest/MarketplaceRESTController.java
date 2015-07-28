@@ -76,6 +76,17 @@ public class MarketplaceRESTController {
         return new ModelAndView("json", "portlets", marketplaceEntries);
     }
     
+    @RequestMapping(value="/marketplace/entry/{fname}.json")
+    public MarketplaceEntry marketplaceEntryFeed(HttpServletRequest request, @PathVariable String fname) {
+      final IPerson user = personManager.getPerson(request);
+      
+      MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+      MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
+      entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
+      
+      return entry;
+  }
+    
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
     public ModelAndView getUserRating(HttpServletRequest request, @PathVariable String fname) {
         Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");
