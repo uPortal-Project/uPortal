@@ -183,7 +183,7 @@
     "user": "<xsl:value-of select="$USER_ID"/>",
     "authenticated": "<xsl:value-of select='$AUTHENTICATED'/>",
     "hostname": "<xsl:value-of select='$HOST_NAME'/>",
-    "fragmentAdmin" : "<xsl:value-of select='$IS_FRAGMENT_ADMIN_MODE'/>"
+    "fragmentAdmin" : "<xsl:value-of select='$IS_FRAGMENT_ADMIN_MODE'/>",
     "locale": "<xsl:value-of select="$USER_LANG"/>",
     "layout": {
         "globals": {
