@@ -128,6 +128,7 @@ public class JpaPermissionOwnerDao extends BasePortalJpaDao implements IPermissi
         return findActivity(permissionOwner, activityFname);
     }
 
+    @PortalTransactionalReadOnly
     @Override
     public IPermissionActivity getPermissionActivity(String ownerFname, String activityFname) {
         final IPermissionOwner permissionOwner = this.getPermissionOwner(ownerFname);
