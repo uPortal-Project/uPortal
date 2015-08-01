@@ -441,7 +441,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <div class="col-sm-offset-4">
                                 <ul class="config-list">
                                     <c:forEach items="${ portlet.groups }" var="group">
-                                        <li><a href="${ chooseGroupUrl }">${ fn:escapeXml(group.name )}</a></li>
+                                        <li><i class="fa fa-users"></i> ${fn:escapeXml(group.name )}</li>
                                     </c:forEach>
                                 </ul>
                             </div>
@@ -458,7 +458,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <div class="col-sm-offset-4">
                                 <ul class="config-list">
                                     <c:forEach items="${ portlet.categories }" var="category">
-                                        <li><a href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a></li>
+                                        <li><i class="fa fa-folder-open"></i> ${fn:escapeXml(category.name )}</li>
                                     </c:forEach>
                                 </ul>
                             </div>

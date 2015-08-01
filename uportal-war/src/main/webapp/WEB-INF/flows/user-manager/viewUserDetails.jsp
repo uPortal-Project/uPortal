@@ -113,21 +113,21 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Portlet Section -->
         <div class="portlet-section" role="region">
             <div class="titlebar">
                 <h3 class="title" role="heading"><spring:message code="parent.groups" text="Parent Groups" /></h3>
             </div>
             <div class="content">
-                <ul>
-                    <c:forEach items="${ parents }" var="group">
-                        <li>${ group.name }</li>
+                <ul style="list-style: none;">
+                    <c:forEach items="${parents}" var="group">
+                        <li><i class="fa fa-users"></i> <c:out value="${group.name}" /></li>
                     </c:forEach>
                 </ul>
             </div>
         </div>
-        
+
         <div class="buttons">
             <a class="button btn" href="${ backUrl }"><spring:message code="back" text="Back" /></a>
         </div>
