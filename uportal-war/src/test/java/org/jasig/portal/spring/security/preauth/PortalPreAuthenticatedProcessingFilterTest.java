@@ -20,9 +20,7 @@ package org.jasig.portal.spring.security.preauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 
@@ -32,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hibernate.PropertyAccessException;
 import org.jasig.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
@@ -149,6 +148,88 @@ public class PortalPreAuthenticatedProcessingFilterTest {
         final ProfileSelectionEvent expectedEvent =
                 new ProfileSelectionEvent(filter, "targetProfileKey", person, request);
         verify(this.eventPublisher).publishEvent(expectedEvent);
+    }
+
+    /**
+     * Test that when firing a profile selection event arising from personal profile selection,
+     * an exception thrown by the event handler is handled by the
+     * PortalPreAuthenticatedProcessingFilter such that it does not propagate and thereby prevent
+     * user login.  That is, failure to register the user profile selection is better than
+     * failure to log in at all.
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testHandlesExceptionFromFiringProfileSelectionEvent()
+        throws IOException, ServletException {
+        SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(request.getServletPath()).thenReturn("/Login");
+        when(request.getParameter(LoginController.REQUESTED_PROFILE_KEY)).thenReturn(
+            "someProfileKey");
+
+        final ProfileSelectionEvent expectedEvent =
+            new ProfileSelectionEvent(filter, "someProfileKey", person, request);
+
+        final RuntimeException rootCause = new RuntimeException();
+        final PropertyAccessException propertyAccessException =
+            new PropertyAccessException(rootCause, "String message", false,
+                PortalPreAuthenticatedProcessingFilterTest.class, "somePropertyName");
+
+        // test that the specific observed exception type is handled
+        doThrow(propertyAccessException)
+            .when(this.eventPublisher).publishEvent(expectedEvent);
+
+        filter.doFilter(request, response, filterChain);
+
+        // test that exceptions generally are handled
+        doThrow(rootCause)
+            .when(this.eventPublisher).publishEvent(expectedEvent);
+
+        filter.doFilter(request, response, filterChain);
+    }
+
+    /**
+     * Test that when firing a profile selection event arising from swapped profile selection,
+     * an exception thrown by the event handler is handled by the
+     * PortalPreAuthenticatedProcessingFilter such that it does not propagate and thereby prevent
+     * (swapped) user login.  That is, failure to register the user profile selection and
+     * therefore swapping as potentially the wrong profile is better than failing to swap at all.
+     * @throws IOException
+     * @throws ServletException
+     */
+    @Test
+    public void testHandlesExceptionFromFiringSwappedProfileSelectionEvent()
+        throws IOException, ServletException {
+
+        SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(request.getServletPath()).thenReturn("/Login");
+        when(request.isRequestedSessionIdValid()).thenReturn(true);
+
+        when(identitySwapperManager.getTargetProfile(session)).thenReturn("targetProfileKey");
+        when(identitySwapperManager.getOriginalUsername(session)).thenReturn(null);
+        when(identitySwapperManager.getTargetUsername(session)).thenReturn("targetUsername");
+
+        final ProfileSelectionEvent expectedEvent =
+            new ProfileSelectionEvent(filter, "targetProfileKey", person, request);
+
+        final RuntimeException rootCause = new RuntimeException();
+        final PropertyAccessException propertyAccessException =
+            new PropertyAccessException(rootCause, "String message", false,
+                PortalPreAuthenticatedProcessingFilterTest.class, "somePropertyName");
+
+        // test that the specific observed exception type is handled
+        doThrow(propertyAccessException)
+            .when(this.eventPublisher).publishEvent(expectedEvent);
+
+        filter.doFilter(request, response, filterChain);
+
+        // test that exceptions generally are handled
+        doThrow(rootCause)
+            .when(this.eventPublisher).publishEvent(expectedEvent);
+
+        filter.doFilter(request, response, filterChain);
     }
 
 }

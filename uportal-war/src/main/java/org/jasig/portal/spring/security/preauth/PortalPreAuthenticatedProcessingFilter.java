@@ -354,12 +354,30 @@ public class PortalPreAuthenticatedProcessingFilter
         if (requestedProfile != null) {
 
             final ProfileSelectionEvent event = new ProfileSelectionEvent(this, requestedProfile, person, request);
-            this.eventPublisher.publishEvent(event);
+
+            try {
+                this.eventPublisher.publishEvent(event);
+            } catch (final Exception exceptionFiringProfileSelection) {
+                // failing to register a profile selection is bad,
+                // but preventing login entirely is worse.  Log the exception and continue.
+                logger.error("Exception on firing profile selection event " + event,
+                    exceptionFiringProfileSelection);
+            }
+
 
         } else if(swapperProfile != null) {
 
             final ProfileSelectionEvent event = new ProfileSelectionEvent(this, swapperProfile, person, request);
-            this.eventPublisher.publishEvent(event);
+
+            try {
+                this.eventPublisher.publishEvent(event);
+            } catch (final Exception exceptionFiringSwappedProfileSelection) {
+                // failing to swap as the desired profile selection is bad,
+                // but preventing login entirely is worse.  Log the exception and continue.
+                logger.error("Exception on firing profile selection event " + event,
+                    exceptionFiringSwappedProfileSelection);
+            }
+
 
         } else {
             if (logger.isTraceEnabled()) {
