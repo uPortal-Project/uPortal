@@ -62,9 +62,9 @@
                         <div class="content">
                             <div id="${n}searchResults" class="hidden">
                                 <ul class="searchTabsContainer">
-                                    <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span></a></li>
+                                    <li><a href="#${n}_DEFAULT_TAB"><span><spring:message code="${defaultTabKey}"/></span> <span class="badge"><c:out value="${fn:length(results[defaultTabKey])}" /></span></a></li>
                                     <c:forEach var="tabKey" items="${tabKeys}" varStatus="loopStatus">
-                                        <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span></a></li>
+                                        <li><a href="#${n}_${loopStatus.index}"><span><spring:message code="${tabKey}"/></span> <span class="badge"><c:out value="${fn:length(results[tabKey])}" /></span></a></li>
                                     </c:forEach>
                                 </ul>
 
