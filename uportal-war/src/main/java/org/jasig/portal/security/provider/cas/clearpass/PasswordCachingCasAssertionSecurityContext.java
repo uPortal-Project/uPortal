@@ -51,12 +51,15 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
 
     @Override
     public final IOpaqueCredentials getOpaqueCredentials() {
+        log.debug("Invoking getOpacheCredentials()");
         if (this.cachedCredentials == null) {
+            log.debug("Have no credentials, invoking superclass");
             return super.getOpaqueCredentials();
         }
 
         final NotSoOpaqueCredentials credentials = new CacheOpaqueCredentials();
         credentials.setCredentials(this.cachedCredentials);
+        log.debug("Returning credentials");
         return credentials;
     }
 
@@ -88,7 +91,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
             String password = retrievePasswordUsingProxyTicket(proxyTicket);
 
             if (password != null) {
-                log.debug("Password retrieved from ClearPass.");
+                log.debug("Password length {} retrieved from ClearPass.", password.length());
                 this.cachedCredentials = password.getBytes();
             }
         }
@@ -150,6 +153,7 @@ public class PasswordCachingCasAssertionSecurityContext extends CasAssertionSecu
 		private static final long serialVersionUID = 1l;
 
 		public String getCredentials() {
+            log.debug("credentialString is {}", credentialstring != null ? "non-null" : "null");
 		  return this.credentialstring != null ? new String(this.credentialstring) : null;
 		}
 	}

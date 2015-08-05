@@ -27,8 +27,6 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.UserInfoService;
@@ -48,6 +46,8 @@ import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CachedPasswordUserInfoService implements UserInfoService  {
@@ -58,7 +58,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IStringEncryptionService stringEncryptionService;
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     
     /**
@@ -181,19 +181,26 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		// check to see if a password is expected by this portlet
 		if (isPasswordRequested(request, portletWindow)) {
 
-	        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+            log.debug("Portlet named {} wants a password", portletWindow.getPortletDefinition().getPortletName());
+
+            final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 	        final IUserInstance userInstance = userInstanceManager.getUserInstance(httpServletRequest);
 	        final IPerson person = userInstance.getPerson();
 			final ISecurityContext context = person.getSecurityContext();
 
 			// if it is, attempt to request a password
 			String password = getPassword(context);
+            log.debug(password != null ? "Have a non-null password" : "password was null");
 			if (this.decryptPassword && password != null) {
+                log.debug("Attempting to decrypt password");
 				password = stringEncryptionService.decrypt(password);
+                log.debug("Password decryption complete, password is length {}", password != null ? password.length() : "is null");
 			}
-			if (password != null)
-				userInfo.put(this.passwordKey, password);
-
+			if (password != null) {
+                userInfo.put(this.passwordKey, password);
+                log.debug("Found password with length {} for portlet name {}",
+                        password.length() != 0 ? "non-zero" : 0, portletWindow.getPortletDefinition().getPortletName());
+            }
 		}
 		return userInfo;
 		
