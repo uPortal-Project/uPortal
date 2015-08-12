@@ -266,7 +266,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 
         // User must have the selected lifecycle permission over AT LEAST ONE
         // category in which this portlet resides.  (This is the same check that
-        // is made when the user enteres the lifecycle-selection step in the wizard.)
+        // is made when the user enters the lifecycle-selection step in the wizard.)
         if (!hasLifecyclePermission(publisher, form.getLifecycleState(), form.getCategories())) {
             logger.warn("User '" + publisher.getUserName() + 
                     "' attempted to save the following portlet without the selected MANAGE permission:  " + form);

@@ -290,7 +290,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                                 </c:when>
                                                                 <c:otherwise>
                                                                     <tr>
-                                                                        <td class="text-right"><span class="uportal-label">
+                                                                        <td class="text-right">
                                                                             <div class="control-label">
                                                                                 <spring:message code="${parameter.label}"/>
                                                                                 <c:if test="${not empty parameter.description}">
@@ -456,6 +456,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <button type="submit" class="button btn btn-primary" name="_eventId_chooseCategory"><spring:message code="edit.categories"/>&nbsp;&nbsp;<i class="fa fa-folder-open"></i></button>
                             </div>
                             <div class="col-sm-offset-4">
+                                <%-- If there are no categories selected and there are no lifecycle states, the
+                                     user does not have the Manage ALL_CATEGORIES permission so they must specify a
+                                     category to get a set of lifecycle states.  Give them a friendly message to
+                                     help them understand this. --%>
+                                <c:if test="${empty portlet.categories && empty lifecycleStates}">
+                                    <p class="text-info">You must specify a category to be able to save</p>
+                                </c:if>
                                 <ul class="config-list">
                                     <c:forEach items="${ portlet.categories }" var="category">
                                         <li><i class="fa fa-folder-open"></i> ${fn:escapeXml(category.name )}</li>
@@ -864,6 +871,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     }
                 });
             });
+
+            <c:if test="${empty lifecycleStates}">
+                // If there are no lifecycle states showing, which can happen for a tenant administrator
+                // before they select a category, disable the Save and Configure and Save buttons.
+                $('#${n} input[name="_eventId_saveAndConfig"]').prop('disabled',true);
+                $('#${n} input[name="_eventId_save"]').prop('disabled',true);
+            </c:if>
         });
     });
 
