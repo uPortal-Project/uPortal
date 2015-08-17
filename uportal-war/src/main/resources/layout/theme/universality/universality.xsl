@@ -935,7 +935,7 @@
         }
     </script>
     <div class="copyright">
-         <p>Student Success Plan   |   Copyright 2014, Apereo Foundation   |   All rights reserved.</p>
+         <p>Student Success Plan   |   Copyright <script type="text/javascript">document.write(new Date().getFullYear());</script>, Apereo Foundation   |   All rights reserved.</p>
          <div style="cursor: pointer" id="InfoToggle"> </div>
     </div>
 
