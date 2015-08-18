@@ -162,7 +162,7 @@ var up = up || {};
         updateSelectionStates(that);
 
         // Enable submit.
-        if (that.options.selected.length < 1) {
+        if (that.options.selected.length < 1 && that.options.requireSelection) {
             buttonPrimary.attr("disabled", "disabled");
         }//end:if.
     };//end:function.
