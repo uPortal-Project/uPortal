@@ -214,8 +214,8 @@ up.jQuery(function() {
                 { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Delete Link
                 {
                     mData: function(source, type) {
+                        // this function sets the value (set), returns original source of value (undefined), and then returns the value
                         if (type === undefined) {
-                            // Send the raw data back
                             return source.categories;
                         } else if (type === 'set') {
                             source.display = source.categories.join();
@@ -230,7 +230,11 @@ up.jQuery(function() {
                 }  // Categories - hidden 
             ],
             fnInitComplete: function (oSettings) {
-                portletList_configuration.main.table.fnDraw();
+                //portletList_configuration.main.table.fnDraw();
+                // Adding formatting to sDom
+                $("div.toolbar-br").html('<BR>');
+                $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
+                $(".column-filter-widget select").addClass("form-control");
             },
             fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
                 oSettings.jqXHR = $.ajax({
@@ -268,7 +272,7 @@ up.jQuery(function() {
                 $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"toolbar-filter-options"W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>',
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
@@ -281,15 +285,9 @@ up.jQuery(function() {
     };
 
     initializeTable();
-
     // Hide the out of the box search and populate it with our text box
     $('#${n}portletBrowser .portlet-search-input').keyup(function(){
         portletList_configuration.main.table.fnFilter( $(this).val() );
     });
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
-    $(".column-filter-widget select").addClass("form-control");
-
 });
 </script>
