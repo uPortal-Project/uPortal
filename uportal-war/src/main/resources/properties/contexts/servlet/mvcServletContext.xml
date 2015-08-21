@@ -22,11 +22,46 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+    <!-- Starting with Spring MVC 4.1, the following can be used instead of the 'conversionService', 'handlerAdapter', and 'handlerMapping' beans defined below.
+    <mvc:annotation-driven>
+        <mvc:path-matching
+            suffix-pattern="true"
+            trailing-slash="false"
+    </mvc:annotation-driven>
+    -->
+
+    <bean name="conversionService" class="org.springframework.core.convert.support.DefaultConversionService" />
+
+    <bean name="handlerAdapter" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="webBindingInitializer">
+            <bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+                <property name="conversionService" ref="conversionService"/>
+            </bean>
+        </property>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="handlerMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <!-- 
+         | rest controllers require these to be set to false
+         -->
+        <property name="useTrailingSlashMatch" value="false"></property>
+        <property name="useSuffixPatternMatch" value="false"></property>
+    </bean>
 
     <!-- Enable annotation-based Spring Security permission evaluation -->
     <security:global-method-security pre-post-annotations="enabled">
@@ -39,14 +74,6 @@
         </property>
     </bean>
 
-	<!-- 
-	 | rest controllers require useDefaultSuffixPattern set to false
-	 -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-  		<property name="useDefaultSuffixPattern" value="false"/>
-	</bean>
-    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
-    
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.jasig.portal.layout.dlm.remoting"/>
