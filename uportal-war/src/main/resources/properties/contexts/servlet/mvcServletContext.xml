@@ -35,7 +35,7 @@
     <!-- Starting with Spring MVC 4.1, the following can be used instead of the 'conversionService', 'handlerAdapter', and 'handlerMapping' beans defined below.
     <mvc:annotation-driven>
         <mvc:path-matching
-            suffix-pattern="true"
+            suffix-pattern="false"
             trailing-slash="false"
     </mvc:annotation-driven>
     -->
