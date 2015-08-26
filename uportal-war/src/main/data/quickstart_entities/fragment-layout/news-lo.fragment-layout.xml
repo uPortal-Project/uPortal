@@ -45,17 +45,14 @@
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="uportal-news" unremovable="false" hidden="false" immutable="false" ID="n9"/>
-        <channel fname="jasig-news" unremovable="false" hidden="false" immutable="false" ID="n10"/>
-        <channel fname="unicon-news" unremovable="false" hidden="false" immutable="false" ID="n11"/>
+        <channel fname="ny-times-education" unremovable="false" hidden="false" immutable="false" ID="n13"/>
+        <channel fname="chronicle-wired" unremovable="false" hidden="false" immutable="false" ID="n14"/>
       </folder>
       <folder ID="s12" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
         <structure-attribute>
           <name>width</name>
           <value>50%</value>
         </structure-attribute>
-        <channel fname="ny-times-education" unremovable="false" hidden="false" immutable="false" ID="n13"/>
-        <channel fname="chronicle-wired" unremovable="false" hidden="false" immutable="false" ID="n14"/>
         <channel fname="salon" unremovable="false" hidden="false" immutable="false" ID="n15"/>
         <channel fname="sports-illustrated" unremovable="false" hidden="false" immutable="false" ID="n16"/>
       </folder>

@@ -19,11 +19,11 @@
 
 -->
 <predefined-news script="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
-  <fname>unicon_news</fname>
+  <fname>sfn-ny-times</fname>
   <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
-  <name>Unicon News</name>
+  <name>NY Times</name>
   <parameters>
-    <parameter name="url">https://www.unicon.net/about/news/feed</parameter>
+    <parameter name="url">http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml</parameter>
   </parameters>
   <predefinedRoles>
     <role>Everyone</role>

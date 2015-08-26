@@ -73,4 +73,9 @@
         <name>showChrome</name>
         <value>true</value>
     </parameter>
+    <portlet-preference>
+        <name>Whitelist.regexValues</name>
+        <!-- Anything that doesn't start with 'sfn-' -->
+        <value>^(?!sfn-).+</value>
+    </portlet-preference>
 </portlet-definition>

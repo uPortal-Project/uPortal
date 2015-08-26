@@ -28,7 +28,7 @@
     <timeout>10000</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
-        <ns2:portletName>single-feed-news</ns2:portletName>
+        <ns2:portletName>news</ns2:portletName>
     </portlet-descriptor>
     <category>News</category>
     <group>Everyone</group>
@@ -58,18 +58,12 @@
         <value>true</value>
     </parameter>
     <portlet-preference>
-        <name>name</name>
-        <readOnly>false</readOnly>
-        <value>New York Times</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>url</name>
-        <readOnly>false</readOnly>
-        <value>http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml</value>
-    </portlet-preference>
-    <portlet-preference>
         <name>summaryView</name>
         <readOnly>false</readOnly>
         <value>flyout</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>Whitelist.regexValues</name>
+        <value>sfn-ny-times</value>
     </portlet-preference>
 </portlet-definition>

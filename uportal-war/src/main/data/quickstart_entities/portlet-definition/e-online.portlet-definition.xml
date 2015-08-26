@@ -28,7 +28,7 @@
     <timeout>10000</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
-        <ns2:portletName>single-feed-news</ns2:portletName>
+        <ns2:portletName>news</ns2:portletName>
     </portlet-descriptor>
     <category>Entertainment</category>
     <group>Everyone</group>
@@ -46,18 +46,12 @@
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
     </parameter>
     <portlet-preference>
-        <name>name</name>
-        <readOnly>false</readOnly>
-        <value>E! Online</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>url</name>
-        <readOnly>false</readOnly>
-        <value>http://feeds.eonline.com/EOnline-WhatsHot</value>
-    </portlet-preference>
-    <portlet-preference>
         <name>summaryView</name>
         <readOnly>false</readOnly>
         <value>flyout</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>Whitelist.regexValues</name>
+        <value>sfn-e-online</value>
     </portlet-preference>
 </portlet-definition>

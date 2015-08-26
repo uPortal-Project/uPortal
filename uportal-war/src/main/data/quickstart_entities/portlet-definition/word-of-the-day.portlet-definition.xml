@@ -23,12 +23,12 @@
     <title>Word of the Day</title>
     <name>Word of the Day</name>
     <fname>word-of-the-day</fname>
-    <desc>Word of the Day channel</desc>
+    <desc>Dictonary.com Word of the Day</desc>
     <type>RSS</type>
     <timeout>10000</timeout>
     <portlet-descriptor>
         <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
-        <ns2:portletName>single-feed-news</ns2:portletName>
+        <ns2:portletName>news</ns2:portletName>
     </portlet-descriptor>
     <category>Entertainment</category>
     <group>Everyone</group>
@@ -42,23 +42,12 @@
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/apps/internet-news-reader.png</value>
     </parameter>
     <portlet-preference>
-        <name>name</name>
-        <readOnly>false</readOnly>
-        <value>Word of the Day</value>
-    </portlet-preference>
-    <portlet-preference>
-        <name>url</name>
-        <readOnly>false</readOnly>
-        <value>http://www.dictionary.com/wordoftheday/wotd.rss</value>
-    </portlet-preference>
-    <portlet-preference>
         <name>summaryView</name>
         <readOnly>false</readOnly>
         <value>full</value>
     </portlet-preference>
     <portlet-preference>
-        <name>maxStories</name>
-        <readOnly>false</readOnly>
-        <value>1</value>
+        <name>Whitelist.regexValues</name>
+        <value>sfn-wotd</value>
     </portlet-preference>
 </portlet-definition>

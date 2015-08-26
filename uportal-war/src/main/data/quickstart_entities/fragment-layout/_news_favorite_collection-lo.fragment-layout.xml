@@ -46,7 +46,6 @@
                     <value>40%</value>
                 </structure-attribute>
                 <channel fname="chronicle-wired" unremovable="false" hidden="false" immutable="false" ID="n9"/>
-                <channel fname="jasig-news" unremovable="false" hidden="false" immutable="false" ID="n10"/>
             </folder>
         </folder>
     </folder>

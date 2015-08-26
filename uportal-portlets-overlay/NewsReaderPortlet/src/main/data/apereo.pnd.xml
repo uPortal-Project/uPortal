@@ -23,7 +23,7 @@
   <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
   <name>Apereo News</name>
   <parameters>
-    <parameter name="url">http://www.apereo.org/uportal-news/feed</parameter>
+    <parameter name="url">http://www.apereo.org/news/feed</parameter>
   </parameters>
   <predefinedRoles>
     <role>Everyone</role>

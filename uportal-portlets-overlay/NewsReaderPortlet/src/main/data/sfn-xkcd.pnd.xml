@@ -19,11 +19,11 @@
 
 -->
 <predefined-news script="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
-  <fname>unicon_news</fname>
+  <fname>sfn-xkcd</fname>
   <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
-  <name>Unicon News</name>
+  <name>XKCD Comics</name>
   <parameters>
-    <parameter name="url">https://www.unicon.net/about/news/feed</parameter>
+    <parameter name="url">http://xkcd.com/rss.xml</parameter>
   </parameters>
   <predefinedRoles>
     <role>Everyone</role>

@@ -19,11 +19,11 @@
 
 -->
 <predefined-news script="classpath:/org/jasig/portlet/newsreader/io/import-PredefinedNewsDefinition_v1-0.crn.xml">
-  <fname>unicon_news</fname>
+  <fname>sfn-movie-news</fname>
   <className>org.jasig.portlet.newsreader.adapter.RomeAdapter</className>
-  <name>Unicon News</name>
+  <name>Movies.com</name>
   <parameters>
-    <parameter name="url">https://www.unicon.net/about/news/feed</parameter>
+    <parameter name="url">http://www.movies.com/rss-feeds/movie-news-rss</parameter>
   </parameters>
   <predefinedRoles>
     <role>Everyone</role>
