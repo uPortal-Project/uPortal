@@ -39,6 +39,8 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
@@ -316,6 +318,8 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
         Validate.notNull(user, "Cannot filter to BROWSEable by a null user");
 
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+
         // lazy init is essential to avoid infinite recursion in graphing related portlets.
         if(this.relatedPortlets==null){
             this.initRelatedPortlets();
@@ -332,7 +336,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
         for (final MarketplacePortletDefinition relatedPortlet : tempList) {
 
-            if (marketplaceService.mayBrowsePortlet(user, relatedPortlet)) {
+            if (marketplaceService.mayBrowsePortlet(principal, relatedPortlet)) {
                 rslt.add(relatedPortlet);
             }
 
