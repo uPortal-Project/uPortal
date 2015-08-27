@@ -27,20 +27,20 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * @version $Revision$
  */
 class PortletWindowIdImpl implements IPortletWindowId {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final IPortletEntityId portletEntityId;
     private final String windowInstanceId;
     private final String compositeIdString;
     
-    public PortletWindowIdImpl(IPortletEntityId portletEntityId, String windowInstanceId, String compositeIdString) {
+    public PortletWindowIdImpl(IPortletEntityId portletEntityId, String windowInstanceId) {
         Validate.notNull(portletEntityId, "portletEntityId can not be null");
 
         this.portletEntityId = portletEntityId;
         this.windowInstanceId = windowInstanceId;
-        this.compositeIdString = compositeIdString;
+        this.compositeIdString = PortletWindowIdStringUtils.format(portletEntityId.getStringId(), windowInstanceId);
     }
-    
+
     public IPortletEntityId getPortletEntityId() {
         return this.portletEntityId;
     }
