@@ -100,9 +100,27 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         }
     }
 
-
+    /**
+     * Load the list of marketplace entries for a user.  Will load entries async.
+     * This method is primarily intended for seeding data.  Most impls should call
+     * browseableMarketplaceEntriesFor() instead.
+     *
+     * Note:  Set is immutable since it is potentially shared between threads.  If
+     * the set needs mutability, be sure to consider the thread safety implications.
+     * No protections have been provided against modifying the MarketplaceEntry itself,
+     * so be careful when modifying the entities contained in the list.
+     *
+     * @param user the non-null user
+     * @return a Future that will resolve to a set of MarketplaceEntry objects
+     *      the requested user has browse access to.
+     * @throws java.lang.IllegalArgumentException if user is null
+     * @since 4.2
+     */
     @Async
     public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user) {
+
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+
         final List<IPortletDefinition> allPortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
 
@@ -110,7 +128,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
 
         for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
 
-            if (mayBrowsePortlet(user, portletDefinition)) {
+            if (mayBrowsePortlet(principal, portletDefinition)) {
                 final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
                 final MarketplaceEntry entry =
                     new MarketplaceEntry(marketplacePortletDefinition, user);
@@ -187,37 +205,12 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public boolean mayBrowsePortlet(final IPerson user, final IPortletDefinition portletDefinition) {
-        Validate.notNull(user, "Cannot determine if null users can browse portlets.");
+    public boolean mayBrowsePortlet(final IAuthorizationPrincipal principal, final IPortletDefinition portletDefinition) {
+        Validate.notNull(principal, "Cannot determine if null principals can browse portlets.");
         Validate.notNull(portletDefinition, "Cannot determine whether a user can browse a null portlet definition.");
 
-        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
-
         final String portletPermissionEntityId = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
-
         return mayBrowse(principal, portletPermissionEntityId);
-
-    }
-
-    @Override
-    public Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user) {
-        Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
-
-        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
-        final Set<MarketplacePortletDefinition> featuredPortlets = new HashSet<>();
-
-        for (final MarketplaceEntry entry : browseablePortlets) {
-            IPortletDefinition portletDefinition = entry.getMarketplacePortletDefinition();
-            for (final PortletCategory category : this.portletCategoryRegistry.getParentCategories(portletDefinition)) {
-
-                if ( FEATURED_CATEGORY_NAME.equalsIgnoreCase(category.getName())){
-                    featuredPortlets.add(getOrCreateMarketplacePortletDefinition(portletDefinition));
-                }
-
-            }
-        }
-
-        return featuredPortlets;
     }
 
     @Override
@@ -241,7 +234,6 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         return featuredPortlets;
     }
 
-
     @Override
     public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition) {
         Element element = marketplacePortletDefinitionCache.get(portletDefinition.getFName());
@@ -253,7 +245,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         }
         return (MarketplacePortletDefinition) element.getObjectValue();
     }
-    
+
     @Override
     public MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname) {
         IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
@@ -266,28 +258,39 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     // Private stateless static utility methods below here
 
     /**
-     * True if the principal has UP_PORTLET_SUBSCRIBE.BROWSE or UP_PORTLET_PUBLISH.MANAGE on the target id.
-     * The target ID must be fully resolved.  This method will not e.g. prepend the portlet prefix to target ids
-     * that seem like they might be portlet IDs.
-     * Implementation note: technically this method is not stateless since asking an AuthorizationPrincipal about
-     * its permissions has caching side effects in the permissions system, but it's stateless as far as this Service
-     * is concerned.
-     * @param principal non-null IAuthorizationPrincipal who might have permission
-     * @param targetId non-null identifier of permission target
-     * @return true if has BROWSE or MANAGE permissions, false otherwise.
+     * True if the principal has UP_PORTLET_SUBSCRIBE.BROWSE on the target id.
+     * The target ID must be fully resolved.  This method will not e.g. prepend
+     * the portlet prefix to target ids that seem like they might be portlet IDs.
+     * <p>
+     * Implementation note: technically this method is not stateless since
+     * asking an AuthorizationPrincipal about its permissions has caching side
+     * effects in the permissions system, but it's stateless as far as this
+     * Service is concerned.
+     *
+     * @param principal Non-null IAuthorizationPrincipal who might have permission
+     * @param targetId Non-null identifier of permission target
+     * @return true if principal has BROWSE permissions, false otherwise
      */
     private static boolean mayBrowse(final IAuthorizationPrincipal principal, final String targetId) {
         Validate.notNull(principal, "Cannot determine permissions for a null user.");
         Validate.notNull(targetId, "Cannot determine permissions on a null target.");
 
-        return (principal.hasPermission(IPermission.PORTAL_SUBSCRIBE,
-                IPermission.PORTLET_BROWSE_ACTIVITY, targetId)
-                || principal.hasPermission(IPermission.PORTAL_PUBLISH,
-                IPermission.PORTLET_MANAGER_ACTIVITY, targetId));
+        return (principal.hasPermission(
+                IPermission.PORTAL_SUBSCRIBE,
+                IPermission.PORTLET_BROWSE_ACTIVITY,
+                targetId));
 
     }
-    
-    @Override
+
+    /**
+     * Answers whether the given user may add the portlet to their layout
+     * @param user a non-null IPerson who might be permitted to add
+     * @param portletDefinition a non-null portlet definition
+     * @return true if permitted, false otherwise
+     * @throws IllegalArgumentException if user is null
+     * @throws IllegalArgumentException if portletDefinition is null
+     * @since uPortal 4.2
+     */
     @RequestCache
     public boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition) {
         Validate.notNull(user, "Cannot determine if null users can browse portlets.");
