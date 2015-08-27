@@ -58,6 +58,8 @@ import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -175,8 +177,9 @@ public class PortletMarketplaceController {
 
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final IPerson user = personManager.getPerson(servletRequest);
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        if (! this.marketplaceService.mayBrowsePortlet(user, result)) {
+        if (! this.marketplaceService.mayBrowsePortlet(principal, result)) {
             // TODO: provide an error experience
             // currently at least blocks rendering the entry for the portlet the user is not authorized to see.
             this.setUpInitialView(webRequest, portletRequest, model, null);
@@ -253,6 +256,10 @@ public class PortletMarketplaceController {
 
 
     private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
+
+        // We'll track and potentially log the time it takes to perform this initialization
+        final long timestamp = System.currentTimeMillis();
+
         final HttpServletRequest servletRequest = this.portalRequestUtils.getPortletHttpRequest(portletRequest);
         final PortletPreferences preferences = portletRequest.getPreferences();
         final boolean isLogLevelDebug = logger.isDebugEnabled();
@@ -287,6 +294,10 @@ public class PortletMarketplaceController {
 
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("initialFilter", initialFilter);
+
+        logger.debug("Marketplace took {}ms in setUpInitialView for user '{}'",
+                System.currentTimeMillis() - timestamp, user.getUserName());
+
     }
 
 

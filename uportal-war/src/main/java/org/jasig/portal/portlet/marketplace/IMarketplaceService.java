@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 
 import java.util.Set;
@@ -33,26 +34,6 @@ import java.util.concurrent.Future;
  * @since uPortal 4.1
  */
 public interface IMarketplaceService {
-
-
-    /**
-     * Load the list of marketplace entries for a user.  Will load entries async.
-     * This method is primarily intended for seeding data.  Most impls should call
-     * browseableMarketplaceEntriesFor() instead.
-     *
-     * Note:  Set is immutable since it is potentially shared between threads.  If
-     * the set needs mutability, be sure to consider the thread safety implications.
-     * No protections have been provided against modifying the MarketplaceEntry itself,
-     * so be careful when modifying the entities contained in the list.
-     *
-     * @param user the non-null user
-     * @return a Future that will resolve to a set of MarketplaceEntry objects
-     *      the requested user has browse access to.
-     * @throws java.lang.IllegalArgumentException if user is null
-     * @since 4.2
-     */
-    Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user);
-
 
     /**
      * Return the Marketplace entries visible to the user.
@@ -77,38 +58,15 @@ public interface IMarketplaceService {
 
     /**
      * Answers whether the given user may browse the portlet marketplace entry for the given portlet definition.
-     * @param user a non-null IPerson who might be permitted to browse the entry
-     * @param portletDefinition a non-null portlet definition the Marketplace entry of which the user might browse
+     *
+     * @param principal A non-null IPerson who might be permitted to browse the entry
+     * @param portletDefinition A non-null portlet definition the Marketplace entry of which the user might browse
      * @return true if permitted, false otherwise
-     * @throws IllegalArgumentException if user is null
-     * @throws IllegalArgumentException if portletDefinition is null
+     * @throws IllegalArgumentException If user is null
+     * @throws IllegalArgumentException If portletDefinition is null
      * @since uPortal 4.1
      */
-    boolean mayBrowsePortlet(IPerson user, IPortletDefinition portletDefinition);
-    
-    /**
-     * Answers whether the given user may add the portlet to their layout
-     * @param user a non-null IPerson who might be permitted to add
-     * @param portletDefinition a non-null portlet definition
-     * @return true if permitted, false otherwise
-     * @throws IllegalArgumentException if user is null
-     * @throws IllegalArgumentException if portletDefinition is null
-     * @since uPortal 4.2
-     */
-    boolean mayAddPortlet(IPerson user, IPortletDefinition portletDefinition);
-
-    /**
-     * Provides the potentially empty non-null Set of featured portlets for this user.
-     * "For this user" is subject to implementation-specific considerations (as in, is it the same featured portlets
-     * for everyone?  Does it depend on user role?  Do you especially feature GTD portlets for users who seem to be
-     * absent-minded?  Do you feature meal-related portlets around lunch time?  These decisions are entirely up to the
-     * implementation.
-     * However, the user MUST have BROWSE permission on all members of the Set.
-     * @param user non-null user for whom featured portlets are desired
-     * @return non-null potentially empty Set of featured portlet MarketplacePortletDefinitions
-     * @throws java.lang.IllegalArgumentException if user is null or otherwise observed to be broken
-     */
-    Set<MarketplacePortletDefinition> featuredPortletsForUser(IPerson user);
+    boolean mayBrowsePortlet(IAuthorizationPrincipal principal, IPortletDefinition portletDefinition);
 
     /**
      * Provides the potentially empty non-null Set of featured Marketplace entries for the user.
