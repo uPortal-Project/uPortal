@@ -78,10 +78,7 @@ import com.google.common.collect.Sets;
 @Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     public static final QName PORTLET_WINDOW_ID_ATTR_NAME = new QName("portletWindowId");
-    
-    static final char ID_PART_SEPERATOR = '.';
-    static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
-    
+
     static final String STATELESS_PORTLET_WINDOW_ID = "tw";
     static final String PORTLET_WINDOW_DATA_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW_DATA";
     static final String PORTLET_WINDOW_ATTRIBUTE = PortletWindowRegistryImpl.class.getName() + ".PORTLET_WINDOW.thread-";
@@ -278,23 +275,21 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     @Override
     public PortletWindowIdImpl getPortletWindowId(HttpServletRequest request, String portletWindowId) {
         Validate.notNull(portletWindowId, "portletWindowId can not be null");
-        
-        final String[] portletWindowIdParts = ID_PART_SEPERATOR_PATTERN.split(portletWindowId);
-        
-        final String entityIdStr;
+
+        final String entityIdStr = PortletWindowIdStringUtils.parsePortletEntityId(portletWindowId);
         final String instanceId;
-        if (portletWindowIdParts.length == 1) {
-            entityIdStr = portletWindowIdParts[0];
-            instanceId = null;
-        }
-        else if (portletWindowIdParts.length == 2) {
-            entityIdStr = portletWindowIdParts[0];
-            instanceId = portletWindowIdParts[1];
-        }
-        else  {
+        if (!PortletEntityIdStringUtils.hasCorrectNumberOfParts(entityIdStr)
+                || !PortletWindowIdStringUtils.hasCorrectNumberOfParts(portletWindowId)) {
             throw new IllegalArgumentException("Provided portlet window ID '" + portletWindowId + "' is not valid");
         }
-        
+
+        if (PortletWindowIdStringUtils.hasPortletWindowInstanceId(portletWindowId)) {
+            instanceId = PortletWindowIdStringUtils.parsePortletWindowInstanceId(portletWindowId);
+        }
+        else {
+            instanceId = null; 
+        }
+
         final IPortletEntity portletEntity = this.portletEntityRegistry.getPortletEntity(request, entityIdStr);
         if (portletEntity == null) {
             throw new IllegalArgumentException("No parent IPortletEntity found for id '" + entityIdStr + "' from portlet window id: " + portletWindowId);
@@ -784,12 +779,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
      * @return A portlet window id for the parameters.
      */
     protected PortletWindowIdImpl createPortletWindowId(String windowInstanceId, IPortletEntityId portletEntityId) {
-        final StringBuilder compositeIdString = new StringBuilder(portletEntityId.getStringId());
-        
-        if (windowInstanceId != null) {
-            compositeIdString.append(ID_PART_SEPERATOR).append(windowInstanceId);
-        }
-        
-        return new PortletWindowIdImpl(portletEntityId, windowInstanceId, compositeIdString.toString());
+        return new PortletWindowIdImpl(portletEntityId, windowInstanceId);
     }
+
 }
