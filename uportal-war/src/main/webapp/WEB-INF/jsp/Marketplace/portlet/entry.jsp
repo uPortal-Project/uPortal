@@ -406,8 +406,7 @@
                     </div>
                 </div>
                 <div id="col-xs-9 marketplace_users_rated">
-                    <span
-                            id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
+                    <span id="marketplace_average_rating_description">(${marketplaceEntry.userRated} reviews)</span>
                 </div>
             </div>
         </div>
@@ -417,13 +416,15 @@
                     <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
                     <div id="${n}marketplace_rating_instructions" class="help-block"></div>
                     <form id="${n}save_rating_form">
-                        <div class="col-xs-4">
+                        <div class="form-group">
                             <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
                         </div>
+                        <c:if test="${enableReviews}">
                         <div class="form-group">
                             <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
                             <div id="${n}input_chars_remaining"></div>
                         </div>
+                        </c:if>
                         <div class="form-group">
                             <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled"><spring:message code="submit" text="Submit"/></button>
                         </div>
@@ -579,7 +580,6 @@
                 fname: null,
                 tabs: []
             },
-
             update: function(data) {
                 this.set({
                     isFavorite: data.favorite,
@@ -605,11 +605,9 @@
                 portletChannelId: '${marketplaceEntry.id}'
             },
 
-
             initialize: function(options) {
                 this.listenTo(this.model, 'change', this.render);
             },
-
 
             render: function() {
                 var html;
@@ -619,7 +617,6 @@
 
                 return this.$el;
             },
-
 
             addPortlet: function(evt) {
                 var tabId, url, promise, tabName;
@@ -694,7 +691,6 @@
                 });
             },
 
-
             removeFavorite: function(evt) {
                 var promise;
 
@@ -708,7 +704,6 @@
                     updateOptionsMenu();
                 });
             },
-
 
             _getTabNameById: function(id) {
                 var tabsArray, first;
@@ -737,7 +732,6 @@
             el: $('#${n} ul.marketplace_dropdown_menu'),
             model: optionsMenuModel
         });
-
 
         var updateOptionsMenu = function() {
             var promise;
@@ -818,7 +812,6 @@
                 self.listenTo(self.collection, 'reset', self.render);
             },
 
-
             render: function() {
                 var self = this;
 
@@ -829,7 +822,6 @@
 
                 return this.$el;
             },
-
 
             _validateScreenShot: function(screenShot) {
                 var image, defer;
@@ -856,22 +848,9 @@
             collection: screenShotCollection
         });
 
-        var updateCharactersRemaining = function(){
-            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit){
-                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
-            }
-            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
-            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
-            if(remainingCharsAvailable <= 10){
-                $("#${n}input_chars_remaining").css("color","red");
-            }
-            else{
-                $("#${n}input_chars_remaining").css("color","black");
-            }
-        }
-        var updateRatingInstructions = function(messageText){
+        var updateRatingInstructions = function(messageText) {
             $("#${n}marketplace_rating_instructions").text(messageText);
-        }
+        };
         $(".marketplace_screen_shots:first").addClass("active");
         $(".marketplace_release_notes>li:nth-child(-n+"+
                 defaults.visibleReleaseNoteCount+")").addClass("marketplace_show");
@@ -880,9 +859,9 @@
         if(lengthLink.length>0) {
             lengthLink = lengthLink[0];
             lengthLink.onclick = toggleNotesDisplayLength;
-            function toggleNotesDisplayLength(){
+            function toggleNotesDisplayLength() {
                 var currentText = lengthLink.innerHTML;
-                if($.trim(currentText) == 'More'){
+                if($.trim(currentText) == 'More') {
                     $(".marketplace_release_notes>li").addClass("marketplace_show");
                     lengthLink.innerHTML="Less";
                 }else{
@@ -892,12 +871,12 @@
                 }
             }
         }
-        var htmlDecode = function(input){
+        var htmlDecode = function(input) {
             var e = document.createElement('div');
             e.innerHTML = input;
             return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         };
-        if($("#${n}marketplace_user_rating").val().length>0){
+        if($("#${n}marketplace_user_rating").val().length>0) {
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
             updateRatingInstructions('<spring:message code="rating.instructions.rated"
             text='You have already rated "{0}"; adjust your rating if you wish.'
@@ -910,15 +889,38 @@
             arguments="${marketplaceEntry.title}"
             htmlEscape="true" />');
         }
+
+        <c:if test="${enableReviews}">
+        // Optional Reviews feature...
+        var updateCharactersRemaining = function() {
+            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit) {
+                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
+            }
+            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
+            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
+            if(remainingCharsAvailable <= 10) {
+                $("#${n}input_chars_remaining").css("color","red");
+            }
+            else{
+                $("#${n}input_chars_remaining").css("color","black");
+            }
+        };
         updateCharactersRemaining();
+        $("#${n}marketplace_user_review_input").keyup(function() {
+            updateCharactersRemaining();
+        });
+        </c:if>
+
+        // Submit function
         $("#${n}save_rating_form").submit(function (e) {
+            var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
                 data: {rating: $("#${n}marketplace_user_rating").val(),
                     portletFName: "${marketplaceEntry.fname}",
-                    review: $("#${n}marketplace_user_review_input").val().trim()},
+                    review: reviewText ? reviewText.trim() : ''},
                 type: 'POST',
-                success: function(){
+                success: function() {
                     $('#up-notification').noty({
                         text: '<spring:message code="rating.saved.successfully" text="Success"/>',
                         layout: 'TopCenter',
@@ -930,7 +932,7 @@
                      htmlEscape="false"
                  />');
                 },
-                error: function(){
+                error: function() {
                     $('#up-notification').noty({
                         text: '<spring:message code="rating.saved.unsuccessfully" text="Failure"/>',
                         layout: 'TopCenter',
@@ -942,9 +944,6 @@
         });
         $("#${n}marketplace_user_rating").change(function() {
             $("#${n}marketplace_user_rating_submit_button").removeClass("disabled");
-        });
-        $("#${n}marketplace_user_review_input").keyup(function(){
-            updateCharactersRemaining();
         });
     });
 
