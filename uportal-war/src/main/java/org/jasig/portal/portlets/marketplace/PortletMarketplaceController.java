@@ -82,7 +82,6 @@ import org.w3c.dom.NodeList;
 
 import static java.lang.String.format;
 
-
 /**
  * 
  * @author vertein
@@ -100,47 +99,46 @@ public class PortletMarketplaceController {
     private static String ENABLE_REVIEWS_DEFAULT = "true";
 
     private IMarketplaceService marketplaceService;
-	private IPortalRequestUtils portalRequestUtils;
-	private IPortletDefinitionRegistry portletDefinitionRegistry;
-	private IPersonManager personManager;
-	private IPortletCategoryRegistry portletCategoryRegistry;
-	private IPortletDefinitionDao portletDefinitionDao;
-	private IMarketplaceRatingDao marketplaceRatingDAO;
+    private IPortalRequestUtils portalRequestUtils;
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IPersonManager personManager;
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    private IPortletDefinitionDao portletDefinitionDao;
+    private IMarketplaceRatingDao marketplaceRatingDAO;
     private IUserInstanceManager userInstanceManager;
     private IUserLayoutStore userLayoutStore;
-
 
     @Autowired
     public void setMarketplaceService(IMarketplaceService marketplaceService) {
         this.marketplaceService = marketplaceService;
     }
 
-	@Autowired
-	public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
+    @Autowired
+    public void setPortletDefinitionDao(IPortletDefinitionDao portletDefinitionDao) {
         this.portletDefinitionDao = portletDefinitionDao;
     }
 
-	@Autowired
-	public void setMarketplaceRatingDAO(IMarketplaceRatingDao marketplaceRatingDAO) {
+    @Autowired
+    public void setMarketplaceRatingDAO(IMarketplaceRatingDao marketplaceRatingDAO) {
         this.marketplaceRatingDAO = marketplaceRatingDAO;
     }
-	
-	@Autowired
+
+    @Autowired
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
-	
-	@Autowired
+
+    @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-	
-	@Autowired
+
+    @Autowired
     public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
         this.portletDefinitionRegistry = portletDefinitionRegistry;
     }
-	
-	@Autowired
+
+    @Autowired
     public void setPortalRequestUtils(IPortalRequestUtils portalRequestUtils) {
         this.portalRequestUtils = portalRequestUtils;
     }
@@ -150,7 +148,7 @@ public class PortletMarketplaceController {
         this.userInstanceManager = userInstanceManager;
     }
 
-	@Autowired
+    @Autowired
     public void setUserLayoutStore(final IUserLayoutStore userLayoutStore) {
         this.userLayoutStore = userLayoutStore;
     }
@@ -205,16 +203,16 @@ public class PortletMarketplaceController {
 
         return "jsp/Marketplace/portlet/entry";
     }
-	
-	/**
-	 * Use to save the rating of portlet
-	 * @param request
-	 * @param response
-	 * @param portletFName fname of the portlet to rate
-	 * @param rating will be parsed to int
-	 * @param review optional review to be saved along with rating
-	 * @throws NumberFormatException if rating cannot be parsed to an int
-	 */
+
+    /**
+     * Use to save the rating of portlet
+     * @param request
+     * @param response
+     * @param portletFName fname of the portlet to rate
+     * @param rating will be parsed to int
+     * @param review optional review to be saved along with rating
+     * @throws NumberFormatException if rating cannot be parsed to an int
+     */
     @ResourceMapping("saveRating")
     public void saveRating(ResourceRequest request, ResourceResponse response,
             PortletRequest portletRequest, @RequestParam String portletFName,
@@ -237,7 +235,7 @@ public class PortletMarketplaceController {
             portletDefinitionDao.getPortletDefinitionByFname(portletFName));
 
     }
-	
+
     /**
      * @param request
      * @param response
@@ -274,7 +272,6 @@ public class PortletMarketplaceController {
         return "json";
     }
 
-
     private void setUpInitialView(WebRequest webRequest, PortletRequest portletRequest, Model model, String initialFilter){
 
         // We'll track and potentially log the time it takes to perform this initialization
@@ -299,7 +296,7 @@ public class PortletMarketplaceController {
             (Set<MarketplaceEntry>) registry.get("featured");
 
         model.addAttribute("featuredEntries", featuredPortlets);
-        
+
         //Determine if the marketplace is going to show the root category
         String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE, "false");
         boolean showRootCategory = Boolean.parseBoolean(showRootCategoryPreferenceValue);
@@ -319,7 +316,6 @@ public class PortletMarketplaceController {
                 System.currentTimeMillis() - timestamp, user.getUserName());
 
     }
-
 
     /**
      * Returns a set of MarketplacePortletDefinitions.  Supply a user to limit 
@@ -350,7 +346,6 @@ public class PortletMarketplaceController {
         return registry;
     }
 
-
     private boolean isPortletFavorited(IUserLayout layout, String fname) {
         List<IUserLayoutNodeDescription> favorites = FavoritesUtils.getFavoritePortlets(layout);
         for (IUserLayoutNodeDescription favorite : favorites) {
@@ -367,7 +362,6 @@ public class PortletMarketplaceController {
 
         return false;
     }
-
 
     private List<PortletTab> getPortletTabInfo(DistributedUserLayout layout, String fname) {
         final String XPATH_TAB = "/layout/folder/folder[@hidden = 'false' and @type = 'regular']";
@@ -434,23 +428,19 @@ public class PortletMarketplaceController {
         private final String id;
         private final List<String> layoutIds;
 
-
         public PortletTab(final String name, final String id, final List<String> layoutIds) {
             this.name = name;
             this.id = id;
             this.layoutIds = (layoutIds == null) ? Collections.<String>emptyList() : layoutIds;
         }
 
-
         public String getName() {
             return name;
         }
 
-
         public String getId() {
             return id;
         }
-
 
         public List<String> getLayoutIds() {
             return Collections.unmodifiableList(layoutIds);
