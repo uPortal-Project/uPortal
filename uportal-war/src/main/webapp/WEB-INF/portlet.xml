@@ -116,9 +116,9 @@
             <title>Favorites</title>
         </portlet-info>
     </portlet>
-    	
+
     <portlet>
-    	<portlet-name>PortletMarketplace</portlet-name>
+        <portlet-name>PortletMarketplace</portlet-name>
         <display-name xml:lang="en">Marketplace</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
@@ -134,8 +134,17 @@
         <portlet-info>
             <title>PortletMarketplace</title>
         </portlet-info>
+        <portlet-preferences>
+            <!--
+             | Toggles the Reviews feature on/off.
+             +-->
+            <preference>
+                <name>PortletMarketplaceController.enableReviews</name>
+                <value>true</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
-    
+
     <portlet>
         <portlet-name>FragmentAdministration</portlet-name>
         <display-name xml:lang="en">Exit Fragment Administration</display-name>

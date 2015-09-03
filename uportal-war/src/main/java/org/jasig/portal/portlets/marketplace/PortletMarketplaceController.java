@@ -94,7 +94,10 @@ public class PortletMarketplaceController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static String SHOW_ROOT_CATEGORY_PREFERENCE_NAME="showRootCategory";
+    private static String SHOW_ROOT_CATEGORY_PREFERENCE = "showRootCategory";
+
+    private static String ENABLE_REVIEWS_PREFERENCE = "PortletMarketplaceController.enableReviews";
+    private static String ENABLE_REVIEWS_DEFAULT = "true";
 
     private IMarketplaceService marketplaceService;
 	private IPortalRequestUtils portalRequestUtils;
@@ -193,7 +196,13 @@ public class PortletMarketplaceController {
         model.addAttribute("marketplaceRating", tempRatingImpl);
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("marketplaceEntry", marketplaceEntry);
-        model.addAttribute("shortURL",mpDefinition.getShortURL());
+        model.addAttribute("shortURL", mpDefinition.getShortURL());
+
+        // Reviews feature enabled?
+        final PortletPreferences prefs = renderRequest.getPreferences();
+        final String enableReviewsPreferenceValue = prefs.getValue(ENABLE_REVIEWS_PREFERENCE, ENABLE_REVIEWS_DEFAULT);
+        model.addAttribute("enableReviews", Boolean.valueOf(enableReviewsPreferenceValue));
+
         return "jsp/Marketplace/portlet/entry";
     }
 	
@@ -210,12 +219,23 @@ public class PortletMarketplaceController {
     public void saveRating(ResourceRequest request, ResourceResponse response,
             PortletRequest portletRequest, @RequestParam String portletFName,
             @RequestParam String rating, @RequestParam(required=false) String review){
+
         Validate.notNull(rating, "Please supply a rating - should not be null");
         Validate.notNull(portletFName, "Please supply a portlet to rate - should not be null");
+
+        // Make certain reviews are permitted before trying to save one
+        final PortletPreferences prefs = request.getPreferences();
+        final String enableReviewsPreferenceValue = prefs.getValue(ENABLE_REVIEWS_PREFERENCE, ENABLE_REVIEWS_DEFAULT);
+        if (!Boolean.valueOf(enableReviewsPreferenceValue)) {
+            // Clear the parameter if sent...
+            review = null;
+        }
+
         marketplaceRatingDAO.createOrUpdateRating(Integer.parseInt(rating), 
             portletRequest.getRemoteUser(),
             review,
             portletDefinitionDao.getPortletDefinitionByFname(portletFName));
+
     }
 	
     /**
@@ -281,7 +301,7 @@ public class PortletMarketplaceController {
         model.addAttribute("featuredEntries", featuredPortlets);
         
         //Determine if the marketplace is going to show the root category
-        String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE_NAME, "false");
+        String showRootCategoryPreferenceValue = preferences.getValue(SHOW_ROOT_CATEGORY_PREFERENCE, "false");
         boolean showRootCategory = Boolean.parseBoolean(showRootCategoryPreferenceValue);
 
         if(isLogLevelDebug){
@@ -317,8 +337,7 @@ public class PortletMarketplaceController {
 
         final Set<MarketplaceEntry> visiblePortlets =
                 this.marketplaceService.browseableMarketplaceEntriesFor(user);
-        
-        @SuppressWarnings("unchecked")
+
         final Set<PortletCategory> visibleCategories =
                 this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
 
