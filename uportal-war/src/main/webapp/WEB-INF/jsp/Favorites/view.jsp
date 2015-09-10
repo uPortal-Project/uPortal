@@ -26,6 +26,10 @@
         <c:set var="marketplaceUrl">${renderRequest.contextPath}/p/${marketplaceFname}/max/render.uP</c:set>
     </c:if>
 
+    <c:if test="${not empty maxHeightPixels}">
+        <style>#fav-portlet-${n} .favorites-list { max-height: ${maxHeightPixels}px; overflow-y: auto; }</style>
+    </c:if>
+
     <nav class="navbar navbar-default" id="${n}">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -40,7 +44,7 @@
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="fav-portlet-${n}">
-            <ul class="list-group">
+            <ul class="list-group favorites-list">
                 <c:forEach var="collection" items="${collections}">
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-chevron-right pull-right"></span>

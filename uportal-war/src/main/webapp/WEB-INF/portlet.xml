@@ -115,6 +115,15 @@
         <portlet-info>
             <title>Favorites</title>
         </portlet-info>
+        <portlet-preferences>
+            <!--
+             | Single-value preference that (optionally) restricts the height of
+             | the favorites list, in view mode, to the specified number of pixels.
+             +-->
+            <preference>
+                <name>FavoritesController.maxHeightPixels</name>
+            </preference>
+        </portlet-preferences>
     </portlet>
 
     <portlet>

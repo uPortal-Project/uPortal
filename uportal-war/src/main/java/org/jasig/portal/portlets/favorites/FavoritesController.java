@@ -26,10 +26,13 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.user.IUserInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import java.util.List;
+
+import javax.portlet.PortletPreferences;
 
 /**
  * View controller for Favorites portlet.
@@ -46,8 +49,13 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("VIEW")
-public class FavoritesController
-       extends AbstractFavoritesController {
+public class FavoritesController extends AbstractFavoritesController {
+
+    /**
+     * Single-value preference that (optionally) restricts the height of the
+     * favorites list, in view mode, to the specified number of pixels.
+     */
+    public static final String MAX_HEIGHT_PIXELS_PREFERENCE = "FavoritesController.maxHeightPixels";
 
     /**
      * Handles all Favorites portlet VIEW mode renders.
@@ -101,6 +109,13 @@ public class FavoritesController
         logger.trace("Favorites Portlet VIEW mode render populated model [{}] for render by view {}.",
                 model, viewName);
         return viewName;
+    }
+
+    @ModelAttribute("maxHeightPixels")
+    public Integer getMaxHeightPixels(PortletPreferences prefs) {
+        String value = prefs.getValue(MAX_HEIGHT_PIXELS_PREFERENCE, null);
+        Integer rslt = value != null ? Integer.valueOf(value) : null;
+        return rslt;
     }
 
 }
