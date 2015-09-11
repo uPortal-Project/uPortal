@@ -80,72 +80,74 @@
         </with-attribute>
     </when>
     <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
-        <with>
-            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
-            <attribute key="ENTITY_TYPE">${valueOf(entity-type)}</attribute>
-            <attribute key="MEMBER_COUNT">${valueOf(count(children/*))}</attribute>
-            <subtasks>
-                <!-- If there are no members, don't delete existing members.  The reason for this has to do with
-                     the current duplication of group data between required_entities and quickstart_entities.
-                     In particular it affects groups of portlets. Without this test, the portlet groups would
-                     be empty. Portlet definitions in required_entities would add portlets to portlet groups defined
-                     in required_entities, then repeat definitions of the portlet groups in quickstart,
-                     such as Administration.group-membership.xml, would remove all the members added during the
-                     required_entities/portlet-definitions and add only those in the
-                     quickstart_entities/portlet-definitions.
+        <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
+            <with>
+                <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+                <attribute key="ENTITY_TYPE_NAME">${groovy("org.jasig.portal.channel.IChannelDefinition".equals(ENTITY_TYPE) ? "org.jasig.portal.portlet.om.IPortletDefinition" : ENTITY_TYPE)}</attribute>
+                <attribute key="MEMBER_COUNT">${valueOf(count(children/*))}</attribute>
+                <subtasks>
+                    <!-- If there are no members, don't delete existing members.  The reason for this has to do with
+                         the current duplication of group data between required_entities and quickstart_entities.
+                         In particular it affects groups of portlets. Without this test, the portlet groups would
+                         be empty. Portlet definitions in required_entities would add portlets to portlet groups defined
+                         in required_entities, then repeat definitions of the portlet groups in quickstart,
+                         such as Administration.group-membership.xml, would remove all the members added during the
+                         required_entities/portlet-definitions and add only those in the
+                         quickstart_entities/portlet-definitions.
 
-                     At this point I don't see trying to fix the data as the best solution for now as it might mess
-                     up existing installations. The use case (removing all members as part of an import/update)
-                     is apparently not frequent. In the future when we do a major release and adopters would probably
-                     need to do an initdb, it would be good to eliminate the duplication of group definitions
-                     in quickstart and the below if condition could be removed.  -->
-                <if test="${jexl(MEMBER_COUNT > 0)}">
-                    <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
-                         so caches get cleared and replicated to other nodes. -->
-                    <with>
-                        <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.jasig.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE))[0].key))}</attribute>
-                        <subtasks>
-                            <groovy>
-                                <script>
-                                    import org.jasig.portal.groups.IEntityGroup
-                                    import org.jasig.portal.groups.IGroupConstants
-                                    import org.jasig.portal.groups.IGroupMember
-                                    import org.jasig.portal.io.GetMemberIsGroupPhrase
-                                    import org.jasig.portal.io.GetMemberKeyPhrase
-                                    import org.jasig.portal.io.GetMemberServicePhrase
-                                    import org.jasig.portal.services.GroupService
-                                    import org.slf4j.LoggerFactory
+                         At this point I don't see trying to fix the data as the best solution for now as it might mess
+                         up existing installations. The use case (removing all members as part of an import/update)
+                         is apparently not frequent. In the future when we do a major release and adopters would probably
+                         need to do an initdb, it would be good to eliminate the duplication of group definitions
+                         in quickstart and the below if condition could be removed.  -->
+                    <if test="${jexl(MEMBER_COUNT > 0)}">
+                        <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
+                             so caches get cleared and replicated to other nodes. -->
+                        <with>
+                            <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.jasig.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
+                            <subtasks>
+                                <groovy>
+                                    <script>
+                                        import org.jasig.portal.groups.IEntityGroup
+                                        import org.jasig.portal.groups.IGroupConstants
+                                        import org.jasig.portal.groups.IGroupMember
+                                        import org.jasig.portal.io.GetMemberIsGroupPhrase
+                                        import org.jasig.portal.io.GetMemberKeyPhrase
+                                        import org.jasig.portal.io.GetMemberServicePhrase
+                                        import org.jasig.portal.services.GroupService
+                                        import org.slf4j.LoggerFactory
 
-                                    def log = LoggerFactory.getLogger(this.getClass());
+                                        def log = LoggerFactory.getLogger(this.getClass());
 
-                                    log.debug("Removing members from group $group")
-                                    group.getMembers().each() {group.removeMember(it)}
+                                        log.debug("Removing members from group $group")
+                                        group.getMembers().each() {group.removeMember(it)}
 
-                                    Attributes.NODE.selectNodes('children/*').each {
-                                        String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
-                                        String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
-                                        log.debug("Found service=$groupService, memberId=$memberId")
+                                        Attributes.NODE.selectNodes('children/*').each {
+                                            String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
+                                            String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
+                                            log.debug("Found service=$groupService, memberId=$memberId")
 
-                                        if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
-                                            String key = groupService + '.' + memberId
-                                            log.debug("Created key $key")
-                                            IEntityGroup member = GroupService.findGroup(key)
-                                            log.debug("Adding group $member")
-                                            group.addMember(member)
-                                        } else {
-                                            IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE))
-                                            log.debug("Adding entity $member")
-                                            group.addMember(member)
+                                            if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                                                String key = groupService + '.' + memberId
+                                                log.debug("Created key $key")
+                                                IEntityGroup member = GroupService.findGroup(key)
+                                                log.debug("Adding group $member")
+                                                group.addMember(member)
+                                            } else {
+                                                IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE_NAME))
+                                                log.debug("Adding entity $member")
+                                                group.addMember(member)
+                                            }
                                         }
-                                    }
-                                    group.updateMembers()
+                                        group.updateMembers()
 
-                                </script>
-                            </groovy>
-                        </subtasks>
-                    </with>
-                </if>
-            </subtasks>
-        </with>
+                                    </script>
+                                </groovy>
+                            </subtasks>
+                        </with>
+                    </if>
+                </subtasks>
+            </with>
+        </with-attribute>
     </when>
 </choose>
