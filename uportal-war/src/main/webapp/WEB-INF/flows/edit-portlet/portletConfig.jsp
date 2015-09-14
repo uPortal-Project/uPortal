@@ -551,8 +551,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                        </c:forEach>
                                     </form:select>
                                      <form:select path="publishAmPm">
-                                         <form:option value="0" label="${am}"/>
-                                         <form:option value="1" label="${pm}"/>
+                                         <form:option value="0" label="${ amLabel }"/>
+                                         <form:option value="1" label="${ pmLabel }"/>
                                      </form:select>
                              (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                          </span>
@@ -598,8 +598,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                             </c:forEach>
                                         </form:select>
                                         <form:select path="expirationAmPm">
-                                            <form:option value="0" label="${am}"/>
-                                            <form:option value="1" label="${pm}"/>
+                                            <form:option value="0" label="${ amLabel }"/>
+                                            <form:option value="1" label="${ pmLabel }"/>
                                         </form:select>
                                         (<a class="clear-date" href="javascript:;"><spring:message code="reset"/></a>)
                                     </span>
