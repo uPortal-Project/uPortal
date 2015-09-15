@@ -30,6 +30,8 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.slf4j.Logger;
@@ -47,7 +49,7 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
  * renders a JSP at a location specified in the portlet definition (publish 
  * time).  This feature is very similar to the SimpleJspPortlet in the 
  * jasig-widget-portlets project, except portlets based on tech (1) are 
- * framework portlets, and (2) may access the native {@link IPortalUrlProvider} 
+ * framework portlets, and (2) may access the native {@link IPortalUrlProvider}
  * API.
  */
 @Controller
@@ -67,6 +69,9 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     @Autowired()
     private IPortalRequestUtils portalRequestUtils;
 
+    @Autowired
+    private IPersonManager personManager;
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -78,9 +83,13 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
         final Map<String,Object> model = new HashMap<String, Object>();
 
         @SuppressWarnings("unchecked")
-        final Map<String,String> userInfo = (Map<String, String>) req.getAttribute(PortletRequest.USER_INFO);
+        final Map<String, String> userInfo = (Map<String, String>) req.getAttribute(PortletRequest.USER_INFO);
         model.put("userInfo", userInfo);
         logger.debug("Invoking with userInfo={}", userInfo);
+
+        // Determine if guest user.
+        IPerson person = personManager.getPerson(portalRequestUtils.getPortletHttpRequest(req));
+        model.put("authenticated", !person.isGuest());
 
         model.putAll(getBeans(req));
 
