@@ -64,9 +64,9 @@ var up = up || {};
                         $(that).modal('hide');
                         up.notify($(that).data('rating.save.successful'), 'TopCenter', 'success');
                         // delay adjusting instructions to afford time for the modal to have actually hidden first
-                        setTimeout(function(){
-                                $(that).find('.ratingModalInstruct').text($(that).data('rating.instructions.rated'))},
-                            1000);
+                        setTimeout(function() {
+                            $(that).find('.ratingModalInstruct').text($(that).data('rating.instructions.rated'));
+                        }, 1000);
                     },
                     error: function(){
                         // Dismiss the modal even on error.
