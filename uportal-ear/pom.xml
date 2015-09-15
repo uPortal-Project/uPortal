@@ -149,8 +149,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.portlet</groupId>
-            <artifactId>portlet-api</artifactId>
+            <groupId>org.apache.portals</groupId>
+            <artifactId>portlet-api_2.1.0_spec</artifactId>
             <scope>compile</scope>
         </dependency>
         
