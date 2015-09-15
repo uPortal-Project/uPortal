@@ -36,8 +36,9 @@
           2. static using skin.xml
                 Does not use the Dynamic Skin Portlet at all.  Typically used at a non-tenant institution that
                 customized their theme or skin.  You must change skin.xml to include your
-                institution CSS skin file and remove Dynamic Skin Manager from respondr-lo.fragment-layout.xml and
-                re-import the fragment layout.
+                institution CSS skin file, remove Dynamic Skin Manager from respondr-lo.fragment-layout.xml and
+                re-import the fragment layout, and change the skin name set in
+                src/main/data/required_entities/stylesheet-descriptor/Respondr.stylesheet-descriptor.xml
           3. dynamic
                 Generates a customized CSS file from the defaultSkin LESS file, incorporating user-configured
                 portlet preference values for configurable elements (mostly colors). Dynamic Skin Portlet links
