@@ -4,21 +4,30 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in RFC 2119.
 
+## Abstract
+
+AngularJS has become a very popular framework for developing user-facing
+functionality. Because of the way Angular prohibits nested bootstrapping of
+modules, special care is required for ensuring that multiple users of Angular do
+not conflict, which would degrade usability, regardless of how the page skin or
+page fragments are combined.
+
+This document lays out a strategy in which Portal and/or portlets can both use
+Angular, and may coexist without conflicting.
+
+Practically this means that:
+
+- Angular may be used in portal skins
+- Angular portlets may be used, even multiple on the same page without conflict
+- Angular portlets may be used in an Angular portal skin without conflict
+
 ## Skins/Portal
-- MAY use the `$compile` service to compile DOM nodes of all loaded portlets.
-  - This has the added benefit of allowing a portal to apply directives to
-    existing standard portlet content if desired.
-- MUST check portlet contents for the "directive" `<!-- uportal-use-angular -->`
-  and, if found, use the `$compile` service to compile the DOM nodes with a new
-  isolate $scope. See below for an example.
-
-```javascript
-if(portletMarkup.indexOf('uportal-use-angular') > -1) {
-  var newScope = $scope.$new(true, $scope);
-  $compile(iEle.find('div')[0])(newScope);
-}
-```
-
+- MUST enable angular portlets doing one of the following:
+  - Check portlet content for the `<!-- uportal-use-angular -->` comment
+      "directive," and if found, use the $compile service on the DOM nodes.
+  - Use the `$compile` service to compile DOM nodes of all loaded portlets.
+    - This has the added benefit of allowing a portal to apply directives to
+      existing standard portlet content if desired.
 - MUST create a global window.up.ngApp directive that exposes the Angular
   functions `$controllerProvider.register` (with name controller),
   `$provide.service`, `$provide.factory`, `$provide.value`, and
@@ -50,8 +59,8 @@ $controllerProvider, $provide) {
 
 ## Portlets
 - MUST check for existence of Angular in two ways.
-    - On global window object
-    - As an as-yet-unloaded script tag with id 'uportal-angular-script'.
+  - On global window object (`window.angular`)
+  - As an as-yet-unloaded script tag with id 'uportal-Angular-script'.
 - MUST NOT use the ng-app directive or attempt to bootstrap outside their boundaries/chrome.
 - MUST be written as portably as possible and will be expected to work well
   with any version of Angular 1.x, as the precise version of Angular is unknown
@@ -59,20 +68,22 @@ $controllerProvider, $provide) {
 - MUST namespace their module names if bootstrapping, as recommended in
   [JavaScript Best
   Practices](https://wiki.jasig.org/display/UPM41/JavaScript+Best+Practices)
+- SHOULD use the `<!-- uportal-use-angular -->` "directive" as an indicator to
+  portals that do not $compile all portlet content.
 
-### Behavior
-- If Angular is found, (e.g. `window.angular === undefined`, or `typeof angular
+### Behavior for Angular checks
+- If Angular is found, (e.g. `window.Angular === undefined`, or `typeof Angular
   === 'undefined'`) portlets MUST check for the lazy-loader window.up.ngApp
   and, if found, use the lazy-loader to register its components.
 - If Angular is found, and lazy-loader is not found, then the portlet SHOULD
   assume that another portlet is using Angular, proceed to register its own
-  module, and MUST use angular.bootstrap to attach itself to the portlet
+  module, and MUST use Angular.bootstrap to attach itself to the portlet
   fragment. For an example, see the bootstrap() function in the [code below](#boilerplate-portal-code).
 - If Angular is not found but an existing script element with id
-  'uportal-angular-script' is found, the portlet MUST NOT create a new script
+  'uportal-Angular-script' is found, the portlet MUST NOT create a new script
   element but rather attach its event handler to the existing script tag.
 - If Angular is not found on global scope, portlet MUST create a script DOM
-  element with id 'uportal-angular-script', and attach to said DOM element a
+  element with id 'uportal-Angular-script', and attach to said DOM element a
   'load' event handler to bootstrap itself, or use `$(window).load` to do so.
 
 ### External Script Files
@@ -114,16 +125,16 @@ $controllerProvider, $provide) {
 
 <script type="text/javascript">
   (function(window, $) {
-    if (typeof window.angular === 'undefined') {
-      //No matter what, check angular and load if needed.
-      var ANGULAR_SCRIPT_ID = 'angular-uportal-script';
+    if (typeof window.Angular === 'undefined') {
+      //No matter what, check Angular and load if needed.
+      var Angular_SCRIPT_ID = 'Angular-uportal-script';
 
-      var scr = document.getElementById(ANGULAR_SCRIPT_ID);
+      var scr = document.getElementById(Angular_SCRIPT_ID);
 
       if (!scr) {
         scr = document.createElement('script');
         scr.type = 'text/javascript';
-        scr.id = ANGULAR_SCRIPT_ID;
+        scr.id = Angular_SCRIPT_ID;
         scr.async = true;
         scr.charset = 'utf-8';
         scr.src = 'https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular.js';
@@ -185,16 +196,16 @@ $controllerProvider, $provide) {
 
 <script type="text/javascript">
   (function(window, $) {
-    if (typeof window.angular === 'undefined') {
-      //No matter what, check angular and load if needed.
-      var ANGULAR_SCRIPT_ID = 'angular-uportal-script';
+    if (typeof window.Angular === 'undefined') {
+      //No matter what, check Angular and load if needed.
+      var Angular_SCRIPT_ID = 'Angular-uportal-script';
 
-      var scr = document.getElementById(ANGULAR_SCRIPT_ID);
+      var scr = document.getElementById(Angular_SCRIPT_ID);
 
       if (!scr) {
         scr = document.createElement('script');
         scr.type = 'text/javascript';
-        scr.id = ANGULAR_SCRIPT_ID;
+        scr.id = Angular_SCRIPT_ID;
         scr.async = true;
         scr.charset = 'utf-8';
         scr.src = 'https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.4/angular.js';
@@ -234,7 +245,7 @@ $controllerProvider, $provide) {
     //If loaded, register right away.
     register(window.up.ngApp);
   } else {
-    //Otherwise, let jsp call your bootstrapper once angular is loaded.
+    //Otherwise, let jsp call your bootstrapper once Angular is loaded.
     window.up = window.up || {};
     window.up.ngBootstrap = window.up.ngBootstrap || {};
 
