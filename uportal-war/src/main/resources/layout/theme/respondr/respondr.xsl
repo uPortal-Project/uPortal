@@ -567,11 +567,11 @@
 
 
 <!-- ================================================================================ -->
-<!-- ========== TEMPLATE: PAGE DIALOGS DASHBOARD ==================================== -->
+<!-- ========== TEMPLATE: PAGE DIALOGS FOCUSED   ==================================== -->
 <!-- ================================================================================ -->
 <!-- 
  | YELLOW
- | This template renders dialog windows for "dashboard" (non-focused) mode in the portal.
+ | This template renders dialog windows for focused mode on a portlet use has BROWSE to.
  -->
 <xsl:template name="page.dialogs.useit">
 
