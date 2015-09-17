@@ -59,6 +59,7 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     private static final String CONTROLLER_PREFERENCE_PREFIX = JspInvokerPortletController.class.getSimpleName() + ".";
     private static final String VIEW_LOCATION_PREFERENCE = CONTROLLER_PREFERENCE_PREFIX + "viewLocation";
     private static final String BEANS_PREFERENCE = CONTROLLER_PREFERENCE_PREFIX + "beans";
+    public static final String PREF_SECURITY_ROLE_NAMES = CONTROLLER_PREFERENCE_PREFIX + "securityRolesToTest";
 
     private ApplicationContext applicationContext;
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -95,6 +96,8 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
 
         model.putAll(getPreferences(req));
 
+        addSecurityRoleChecksToModel(req, model);
+
         final String viewLocation = getViewLocation(req);
         return new ModelAndView(viewLocation, model);
 
@@ -103,7 +106,7 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     private Map<String,Object> getBeans(PortletRequest req) {
         Map<String,Object> rslt = new HashMap<String,Object>();  // default
         PortletPreferences prefs = req.getPreferences();
-        String[] beanNames = prefs.getValues(BEANS_PREFERENCE, new String[] {});
+        String[] beanNames = prefs.getValues(BEANS_PREFERENCE, new String[]{});
         for (String name : beanNames) {
             Object bean = applicationContext.getBean(name);
             rslt.put(name, bean);
@@ -138,6 +141,20 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
         }
         logger.debug("Invoking with viewLocation={}", rslt);
         return rslt;
+    }
+
+    /**
+     * Run through the list of configured security roles and add an "is"+Rolename to the model.  The security roles
+     * must also be defined with a <code>&lt;security-role-ref&gt;</code> element in the portlet.xml.
+     * @param req Portlet request
+     * @param model Model object to add security indicators to
+     */
+    private void addSecurityRoleChecksToModel(PortletRequest req, Map<String,Object> model) {
+        PortletPreferences prefs = req.getPreferences();
+        String[] securityRoles = prefs.getValues(PREF_SECURITY_ROLE_NAMES, new String[]{});
+        for (int i = 0; i < securityRoles.length; i++) {
+            model.put("is"+securityRoles[i].replace(" ", "_"), req.isUserInRole(securityRoles[i]));
+        }
     }
 
 }
