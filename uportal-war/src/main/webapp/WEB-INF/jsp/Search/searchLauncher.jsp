@@ -33,7 +33,7 @@
     <div class="fl-widget-inner">
       <div class="fl-widget-content">
         <c:set var="searchLabel"><spring:message code="search"/></c:set>
-        <form class="form-inline form-search" role="form" method="post" action="${searchLaunchUrl}" id="${n}webSearchForm">
+        <form class="form-search" role="form" method="post" action="${searchLaunchUrl}" id="${n}webSearchForm">
           <div class="input-group">
             <input id="${n}webSearchInput"  class="searchInput input-large search-query form-control" value="" name="query" type="text" placeholder="Enter search terms"/>
             <span class="input-group-btn">
