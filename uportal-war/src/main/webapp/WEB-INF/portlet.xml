@@ -859,14 +859,15 @@
              | Security roles to test the user for as a convenience to allow the JSP to do basic security conditions
              | such as <c:if test=${isFaculty}></c:if> for role-sensitive menu operations or other needs.  Each role
              | listed here is checked and an "is"+roleName is added to the model sent to the JSP.  Each role
-             | specified here must ALSO be specified in a <security-role-ref> element in the portlet.xml.
+             | specified here must ALSO be specified in a <security-role-ref> element for this portlet.
+             | Specify the roles to check in your portlet publication record.
              +-->
             <preference>
                 <name>JspInvokerPortletController.securityRolesToTest</name>
-                <value>PortalSystem</value>
-                <value>FragmentOwners</value>
-                <value>TenantAdministrators</value>
-                <value>PortalAdministrators</value>
+                <!--<value>PortalSystem</value>-->
+                <!--<value>FragmentOwners</value>-->
+                <!--<value>TenantAdministrators</value>-->
+                <!--<value>PortalAdministrators</value>-->
             </preference>
         </portlet-preferences>
 
