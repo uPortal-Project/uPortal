@@ -102,4 +102,17 @@ public class PeopleRESTController {
         return mv;
     }
 
+    @RequestMapping(value = "/people/me.json", method = RequestMethod.GET)
+    public ModelAndView getMe(HttpServletRequest request, HttpServletResponse response) {
+        final IPerson me = personManager.getPerson(request);
+
+        if ( me == null ) {
+            //If null, this person is not logged in.
+            response.setStatus(401);
+            return null;
+        }
+
+        return new ModelAndView("json", me.getAttributeMap());
+    }
+
 }
