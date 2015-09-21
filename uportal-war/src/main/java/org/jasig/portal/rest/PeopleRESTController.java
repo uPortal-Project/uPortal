@@ -112,7 +112,8 @@ public class PeopleRESTController {
             return null;
         }
 
-        return new ModelAndView("json", me.getAttributeMap());
+        return new ModelAndView("json")
+                .addObject("person", me.getAttributeMap());
     }
 
 }
