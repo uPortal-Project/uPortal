@@ -18,19 +18,11 @@
  */
 package org.jasig.portal.rest;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,71 +31,78 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @Controller
-public class PeopleRESTController {
+@RequestMapping("/people/v2")
+public class PeopleRESTControllerV2 {
 
     private IPersonManager personManager;
-    
+    private ObjectMapper jsonMapper;
+
+    @Autowired
+    public void setJsonMapper(ObjectMapper jsonMapper) {
+        this.jsonMapper = jsonMapper;
+    }
+
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
 
     private PersonLookupHelperImpl lookupHelper;
-    
+
     @Autowired(required = true)
     public void setPersonLookupHelper(PersonLookupHelperImpl lookupHelper) {
         this.lookupHelper = lookupHelper;
     }
 
-    @RequestMapping(value="/people.json", method = RequestMethod.GET)
-    public ModelAndView getPeople(@RequestParam("searchTerms[]") List<String> searchTerms,
-            HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public void searchPeople(@RequestParam Map<String,Object> query,
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        final IPerson person = personManager.getPerson((HttpServletRequest) request);
-        if (person == null) {
+        final IPerson user = personManager.getPerson((HttpServletRequest) request);
+        if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return;
         }
 
-        // build a search query from the request parameters
-        Map<String,Object> query = new HashMap<String,Object>();
-        for (String term : searchTerms) {
-            String search = request.getParameter(term);
-            if (StringUtils.isNotBlank(search)) {
-                query.put(term, search);
-            }
-        }
-        
-        List<IPersonAttributes> people = lookupHelper.searchForPeople(person, query);
+        List<IPersonAttributes> people = lookupHelper.searchForPeople(user, query);
 
-        ModelAndView mv = new ModelAndView();
-        mv.addObject("people", people);
-        mv.setViewName("json");
-        
-        return mv;
+        List<Object> results = new ArrayList<Object>();
+        for(IPersonAttributes p : people) {
+            results.add(p.getAttributes());
+        }
+
+        response.setHeader("Content-Type", "application/json");
+        jsonMapper.writeValue(response.getOutputStream(), results);
     }
 
-    @RequestMapping(value="/people/{username}.json", method = RequestMethod.GET)
+    @RequestMapping(value="/{username}", method = RequestMethod.GET)
     public ModelAndView getPerson(@PathVariable String username,
             HttpServletRequest request, HttpServletResponse response) {
 
-        final IPerson searcher = personManager.getPerson((HttpServletRequest) request);
+        final IPerson searcher = personManager.getPerson(request);
         if (searcher == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
 
         final IPersonAttributes person = lookupHelper.findPerson(searcher, username);
+        if (person == null) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return null;
+        }
 
-        final ModelAndView mv = new ModelAndView();
-        mv.addObject("person", person);
-        mv.setViewName("json");
-        
-        return mv;
+        return new ModelAndView("json", person.getAttributes());
     }
 
-    @RequestMapping(value = "/people/me.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
     public ModelAndView getMe(HttpServletRequest request, HttpServletResponse response) {
         final IPerson me = personManager.getPerson(request);
 
@@ -113,8 +112,7 @@ public class PeopleRESTController {
             return null;
         }
 
-        return new ModelAndView("json")
-                .addObject("person", new NamedPersonImpl(me.getUserName(), me.getAttributeMap()));
+        return new ModelAndView("json", me.getAttributeMap());
     }
 
 }
