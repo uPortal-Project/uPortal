@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/people/v2")
-public class PeopleRESTControllerV2 {
+@RequestMapping("/v4-3/people/")
+public class PeopleRESTControllerV43 {
 
     private IPersonManager personManager;
     private ObjectMapper jsonMapper;
@@ -74,6 +74,12 @@ public class PeopleRESTControllerV2 {
 
         List<IPersonAttributes> people = lookupHelper.searchForPeople(user, query);
 
+        if ( people == null ) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        //Unwrap attributes
         List<Object> results = new ArrayList<Object>();
         for(IPersonAttributes p : people) {
             results.add(p.getAttributes());
