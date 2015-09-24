@@ -577,7 +577,7 @@
 <!-- ================================================================================ -->
 <!-- 
  | YELLOW
- | This template renders dialog windows for focused mode on a portlet use has BROWSE to.
+ | This template renders dialog windows for focused mode on a portlet user has BROWSE to.
  -->
 <xsl:template name="page.dialogs.useit">
 
