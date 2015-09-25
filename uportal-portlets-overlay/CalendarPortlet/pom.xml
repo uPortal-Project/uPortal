@@ -49,13 +49,6 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.portlet</groupId>
-            <artifactId>portlet-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-db</artifactId>
             <version>${project.version}</version>
@@ -64,7 +57,6 @@
         </dependency>
 
     </dependencies>
-    
 
     <build>
         <filters>

@@ -209,7 +209,6 @@
         <persistence-api.version>1.0</persistence-api.version>
         <person-directory.version>1.7.1-M1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
-        <portlet-api.version>2.0</portlet-api.version>
         <quartz.version>2.2.1</quartz.version>
         <resource-server.version>1.0.43</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
@@ -518,9 +517,9 @@
                 <version>${mail.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.portlet</groupId>
-                <artifactId>portlet-api</artifactId>
-                <version>${portlet-api.version}</version>
+                <groupId>org.apache.portals</groupId>
+                <artifactId>portlet-api_2.1.0_spec</artifactId>
+                <version>1.0</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
