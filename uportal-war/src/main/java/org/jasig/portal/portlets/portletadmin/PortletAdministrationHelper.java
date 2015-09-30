@@ -991,8 +991,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
          * PUBLISHED
          */
         if (selectedLifecycleState.isEqualToOrAfter(PortletLifecycleState.PUBLISHED)) {
-            // We are the 'publisher' if it isn't previously published...
-            if (portletDef.getPublishDate() == null) {
+            // We are the 'publisher' if it isn't previously published or the publish time hasn't hit yet...
+            if (portletDef.getPublishDate() == null || portletDef.getPublishDate().after(now)) {
                 portletDef.setPublisherId(publisher.getID());
                 portletDef.setPublishDate(now);
             }
@@ -1004,7 +1004,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
                 portletDef.setExpirationDate(form.getExpirationDateTime());
                 portletDef.setExpirerId(publisher.getID());
             }
-        } else {
+        } else if (!selectedLifecycleState.equals(PortletLifecycleState.APPROVED)
+                || form.getPublishDate() == null){
             // Clear previous publishing fields, if present...
             portletDef.setPublishDate(null);
             portletDef.setPublisherId(-1);
@@ -1018,7 +1019,8 @@ public class PortletAdministrationHelper implements ServletContextAware {
             // (MAINTENANCE mode is not considered expired)
             portletDef.setExpirerId(publisher.getID());
             portletDef.setExpirationDate(now);
-        } else {
+        } else if (!selectedLifecycleState.equals(PortletLifecycleState.PUBLISHED)
+                || form.getExpirationDate() == null) {
             // Clear previous expiration fields, if present...
             portletDef.setExpirationDate(null);
             portletDef.setExpirerId(-1);
