@@ -135,7 +135,7 @@
         <NotificationPortlet.version>2.1.1</NotificationPortlet.version>
         <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
         <SimpleContentPortlet.version>2.0.1</SimpleContentPortlet.version>
-        <WeatherPortlet.version>1.1.1</WeatherPortlet.version>
+        <WeatherPortlet.version>1.1.4-M2</WeatherPortlet.version>
         <WebProxyPortlet.version>2.0.0-M5</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
