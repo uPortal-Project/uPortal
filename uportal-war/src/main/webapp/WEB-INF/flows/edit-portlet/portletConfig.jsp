@@ -434,7 +434,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <!-- Portlet groups -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label h3"><spring:message code="permissions"/></label>
+                            <label class="col-sm-3 control-label h4"><spring:message code="permissions"/></label>
                             <div class="col-sm-9">
                                 <button type="submit" class="button btn btn-primary" name="_eventId_chooseGroup"><spring:message code="edit.permissions"/>&nbsp;&nbsp;<i class="fa fa-users"></i></button>
                                 <c:if test="${empty portlet.groups}">
@@ -477,11 +477,20 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <!-- Portlet categories -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label h3"><spring:message code="categories"/></label>
+                            <label class="col-sm-3 control-label h4"><spring:message code="categories"/></label>
                             <div class="col-sm-9">
                                 <button type="submit" class="button btn btn-primary" name="_eventId_chooseCategory"><spring:message code="edit.categories"/>&nbsp;&nbsp;<i class="fa fa-folder-open"></i></button>
                             </div>
                             <div class="col-sm-offset-4">
+                                <%-- If there are no categories selected and there are no lifecycle states, the
+                                     user does not have the Manage ALL_CATEGORIES permission so they must specify a
+                                     category to get a set of lifecycle states.  Give them a friendly message to
+                                     help them understand this. For a tenant admin, this also helps insure they can
+                                     access this portlet later because it must be in one of the tenant categories
+                                     since they don't have the ALL_PORTLETS permission. --%>
+                                <c:if test="${empty portlet.categories && empty lifecycleStates}">
+                                    <p class="text-warning">You must specify a category to be able to save</p>
+                                </c:if>
                                 <ul class="config-list">
                                     <c:forEach items="${ portlet.categories }" var="category">
                                         <li><a href="${ chooseCategoryUrl }">${ fn:escapeXml(category.name )}</a></li>
@@ -890,6 +899,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     }
                 });
             });
+
+            <c:if test="${empty lifecycleStates}">
+                // If there are no lifecycle states showing, which can happen for a tenant administrator
+                // before they select a category, disable the Save and Configure and Save buttons.
+                $('#${n} input[name="_eventId_saveAndConfig"]').prop('disabled',true);
+                $('#${n} input[name="_eventId_save"]').prop('disabled',true);
+            </c:if>
         });
     });
 
