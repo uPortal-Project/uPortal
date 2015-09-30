@@ -268,7 +268,7 @@ var uportal = uportal || {};
         that.components = {};
 
         // initialize the gallery component, if present
-        if (that.options.gallerySelector) that.components.gallery = up.PortalGallery(
+        if (that.options.gallerySelector && $(that.options.gallerySelector).length > 0) that.components.gallery = up.PortalGallery(
             that.options.gallerySelector,
             {
                 // content browsing pane
