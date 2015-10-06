@@ -43,9 +43,6 @@
             <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n130"/>
             <channel fname="session-timeout" unremovable="false" hidden="false" immutable="false" ID="n140"/>
         </folder>
-        <folder ID="s200" hidden="false" immutable="true" name="Header Right folder" type="header-right" unremovable="true">
-            <channel fname="session-timeout" unremovable="false" hidden="false" immutable="false" ID="n210"/>
-        </folder>
         <folder ID="s300" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
             <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n310"/>
         </folder>
