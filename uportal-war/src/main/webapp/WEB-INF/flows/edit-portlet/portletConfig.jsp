@@ -70,9 +70,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
             <!-- Portlet Messages -->
             <spring:hasBindErrors name="portlet">
-                <!--div class="portlet-msg-error portlet-msg error text-danger" role="alert">
+                <!-- div class="portlet-msg-error portlet-msg error text-danger" role="alert">
                 <form:errors path="*" element="div"/>
-                </div--> <!-- end: portlet-msg -->
+                </div --> <!-- end: portlet-msg -->
 
                 <div class="alert alert-danger" role="alert">
                     <form:errors path="*" element="div"/>
@@ -274,7 +274,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         <!-- Portlet Display Settings -->
                                         <c:if test="${ fn:length(step.parameters) > 0 }">
                                             <div class="portlet-table">
-                                                <table class=" table table-hover" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
+                                                <table class=" table table-hover" summary="<spring:message code='this.table.lists.portlet.parameters'/>">
                                                     <thead>
                                                         <tr>
                                                             <th width="30%"><spring:message code="parameter"/></th>
@@ -315,7 +315,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         <c:if test="${ portlet.portlet }">
                                             <c:if test="${ fn:length(step.preferences) > 0 }">
                                                 <div class="preference-options-section">
-                                                    <table class="portlet-table table table-hover" summary="<spring:message code="this.table.lists.portlet.parameters"/>">
+                                                    <table class="portlet-table table table-hover" summary="<spring:message code='this.table.lists.portlet.parameters'/>">
                                                         <thead>
                                                             <tr>
                                                                 <th width="40%"><spring:message code="parameter"/></th>
@@ -440,20 +440,19 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <c:if test="${empty portlet.groups}">
                                     <p class="text-warning">You should specify a group or no one will be able to view the portlet</p>
                                 </c:if>
-                                <form>
                                     <table class="table table-condensed permissions-options-table">
                                         <thead>
                                             <tr>
                                                 <td class="col-md-6"></td>
                                                 <td class="col-md-3">
                                                     <spring:message code="edit.browse"/>&nbsp;
-                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code="edit.browse.tooltip"/>">
+                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
                                                         <i class="fa fa-info-circle"></i>
                                                     </a>
                                                 </td>
                                                 <td class="col-md-3">
                                                     <spring:message code="edit.subscribe"/>&nbsp;
-                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code="edit.subscribe.tooltip"/>">
+                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
                                                         <i class="fa fa-info-circle"></i>
                                                     </a>
                                                 </td>
@@ -461,15 +460,31 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         </thead>
                                         <tbody>
                                             <c:forEach items="${ portlet.groups }" var="group">
+                                                <c:set var="group_name" value="${fn:escapeXml(group.name)}" />
+                                                <c:set var="group_browse_perm" value="${group_name}_BROWSE" />
+                                                <c:set var="group_subscribe_perm" value="${group_name}_SUBSCRIBE" />
                                                 <tr>
-                                                    <td><i class="fa fa-users"></i> ${fn:escapeXml(group.name )}</td>
-                                                    <td class=text-center><input type="checkbox" name="browse" checked></td>
-                                                    <td class=text-center><input type="checkbox" name="subscribe" checked></td>
+                                                    <td><i class="fa fa-users"></i> ${group_name}</td>
+                                                    <c:choose>
+                                                      <c:when test="${portlet.permissions.contains(group_browse_perm)}">
+                                                        <td class=text-center><input type="checkbox" name="${group_browse_perm}" checked></td>
+                                                      </c:when>
+                                                      <c:otherwise>
+                                                        <td class=text-center><input type="checkbox" name="${group_browse_perm}"></td>
+                                                      </c:otherwise>
+                                                    </c:choose>
+                                                    <c:choose>
+                                                      <c:when test="${portlet.permissions.contains(group_subscribe_perm)}">
+                                                        <td class=text-center><input type="checkbox" name="${group_subscribe_perm}" checked></td>
+                                                      </c:when>
+                                                      <c:otherwise>
+                                                        <td class=text-center><input type="checkbox" name="${group_subscribe_perm}"></td>
+                                                      </c:otherwise>
+                                                    </c:choose>
                                                 </tr>
                                             </c:forEach>
                                         </tbody>
                                     </table>
-                                </form>
                             </div>
                         </div>
                     </div> <!-- end: portlet groups -->
@@ -550,7 +565,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div class="content">
 
                     <table class="portlet-table table table-hover"
-                           summary="<spring:message code="publish.and.expiration.dates"/>">
+                           summary="<spring:message code='publish.and.expiration.dates'/>">
                         <thead>
                         <tr>
                             <th><spring:message code="option"/></th>
@@ -596,7 +611,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <div class="content">
 
                     <table class="portlet-table table table-hover"
-                           summary="<spring:message code="publish.and.expiration.dates"/>">
+                           summary="<spring:message code='publish.and.expiration.dates'/>">
                         <thead>
                             <tr>
                                 <th><spring:message code="option"/></th>
@@ -636,15 +651,15 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <!-- Buttons -->
             <div class="buttons">
                 <c:if test="${supportsConfig}">
-                    <input class="button btn btn-primary" type="submit" value="<spring:message code="save.and.configure"/>" name="_eventId_saveAndConfig"/>
+                    <input class="button btn btn-primary" type="submit" value="<spring:message code='save.and.configure'/>" name="_eventId_saveAndConfig"/>
                 </c:if>
-                <input class="button btn btn-primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save">
+                <input class="button btn btn-primary" type="submit" value="<spring:message code='save'/>" name="_eventId_save"/>
                 <c:choose>
                     <c:when test="${completed}">
-                        <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+                        <input class="button btn btn-link" type="submit" value="<spring:message code='cancel'/>" name="_eventId_cancel"/>
                     </c:when>
                     <c:otherwise>
-                        <input class="button btn" type="submit" value="<spring:message code="back"/>" name="_eventId_back"/>
+                        <input class="button btn" type="submit" value="<spring:message code='back'/>" name="_eventId_back"/>
                     </c:otherwise>
                 </c:choose>
             </div><!-- end: Portlet Buttons -->
@@ -655,13 +670,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <div style="display:none">
     <div id="${n}addParameterDialog" class="parameter-adding-dialog jqueryui"
-         title="<spring:message code="add.preference"/>">
+         title="<spring:message code='add.preference'/>">
         <div>
             <form id="${n}addParameterForm" action="javascript:;">
                 <p><spring:message code="preference.name"/>:
                     <input name="name"/>
                 </p>
-                <input type="submit" value="<spring:message code="add"/>"/>
+                <input type="submit" value="<spring:message code='add'/>"/>
             </form>
         </div>
     </div>
