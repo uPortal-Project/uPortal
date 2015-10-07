@@ -20,12 +20,7 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
@@ -57,14 +52,14 @@ public class PortletDefinitionForm implements Serializable {
 
     private static final String FRAMEWORK_PORTLET_URL = "/uPortal";
 	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("M/d/yyyy");
-	
+
 	private static final long serialVersionUID = 892741367149099648L;
 	protected transient final Log log = LogFactory.getLog(getClass());
-	
+
 	/**
 	 * Main portlet fields
 	 */
-	
+
 	private String id = null;
 	private String fname = "";
 	private String name = "";
@@ -75,11 +70,11 @@ public class PortletDefinitionForm implements Serializable {
 	private boolean framework = false;
 	private int timeout = 5000;
 	private int typeId;
-	
+
 	/**
 	 * Lifecycle information
 	 */
-	
+
 	private PortletLifecycleState lifecycleState = PortletLifecycleState.CREATED;
 	private Date publishDate;
 	private int publishHour = 12;
@@ -89,28 +84,29 @@ public class PortletDefinitionForm implements Serializable {
 	private int expirationHour = 12;
 	private int expirationMinute = 0;
 	private int expirationAmPm = 0;
-	
+
 	/**
 	 * Portlet controls
 	 */
-	
+
 	private boolean editable;
 	private boolean hasHelp;
 	private boolean hasAbout;
 	private boolean configurable;
-	
+
 	/**
 	 * Groups and categories
 	 */
-	
+
 	private List<JsonEntityBean> groups = new ArrayList<JsonEntityBean>();
 	private List<JsonEntityBean> categories = new ArrayList<JsonEntityBean>();
+    private Set<String> permissions = new HashSet<>();
 
-	
+
 	/**
 	 * Parameters and preferences
 	 */
-	
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Attribute> parameters = LazyMap.decorate(
 			new HashMap<String, Attribute>(), new AttributeFactory());
@@ -131,7 +127,7 @@ public class PortletDefinitionForm implements Serializable {
 
 	/**
 	 * Construct a new PortletDefinitionForm from a PortletDefinition
-	 * 
+	 *
 	 * @param def
 	 */
 	public PortletDefinitionForm(IPortletDefinition def) {
@@ -158,15 +154,15 @@ public class PortletDefinitionForm implements Serializable {
     		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
     	}
         this.setLifecycleState(def.getLifecycleState());
-		
+
 		if (def.getLifecycleState().equals(PortletLifecycleState.APPROVED)) {
 			this.setPublishDateTime(def.getPublishDate());
 		}
-		
+
 		if (def.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
 			this.setExpirationDateTime(def.getExpirationDate());
 		}
-		
+
 		for (IPortletDefinitionParameter param : def.getParameters()) {
 			if (param.getName().startsWith("PORTLET.")) {
 				this.portletPreferences.put(param.getName(),
@@ -176,7 +172,7 @@ public class PortletDefinitionForm implements Serializable {
 						new Attribute(param.getValue()));
 			}
 		}
-		
+
         for (IPortletPreference pref : def.getPortletPreferences()) {
 			List<Attribute> attributes = new ArrayList<Attribute>();
 			for (String value : pref.getValues()) {
@@ -185,7 +181,7 @@ public class PortletDefinitionForm implements Serializable {
 			this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
             this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(pref.isReadOnly()));
 		}
-            
+
 	}
 
     /**
@@ -197,9 +193,9 @@ public class PortletDefinitionForm implements Serializable {
     }
 
 	/**
-	 * Sets the Java class name and parameter defaults based on the 
+	 * Sets the Java class name and parameter defaults based on the
 	 * PortletPublishingDefinition.
-	 * 
+	 *
 	 * @param cpd
 	 */
 	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
@@ -229,7 +225,7 @@ public class PortletDefinitionForm implements Serializable {
 					if (attribute == null
 							|| attribute.getValue() == null
 							|| attribute.getValue().trim().equals("")) {
-						
+
 						// use the default value if one exists
 					    ParameterInputType input = param.getParameterInput().getValue();
 						if (input != null) {
@@ -245,11 +241,11 @@ public class PortletDefinitionForm implements Serializable {
 					if (!this.portletPreferences.containsKey(pref.getName())
 							|| this.portletPreferences.get(pref.getName()).getValue().size() == 0
 							|| (this.portletPreferences.get(pref.getName()).getValue().size() == 1 && this.portletPreferences.get(pref.getName()).getValue().get(0).trim().equals(""))) {
-						
+
 						if (!this.portletPreferences.containsKey(pref.getName())) {
 							this.portletPreferences.put(pref.getName(), new StringListAttribute());
 						}
-						
+
 						// use the default value if one exists
 						PreferenceInputType input = pref.getPreferenceInput().getValue();
 						if (input instanceof SingleValuedPreferenceInputType) {
@@ -381,7 +377,7 @@ public class PortletDefinitionForm implements Serializable {
 	public void setPublishDate(Date publishDate) {
 		this.publishDate = publishDate;
 	}
-	
+
 	public Date getExpirationDate() {
 		return expirationDate;
 	}
@@ -389,7 +385,7 @@ public class PortletDefinitionForm implements Serializable {
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
 	}
-	
+
 	public boolean isEditable() {
 		return editable;
 	}
@@ -429,7 +425,7 @@ public class PortletDefinitionForm implements Serializable {
 	public void setParameters(Map<String, Attribute> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	public Map<String, StringListAttribute> getPortletPreferences() {
 		return this.portletPreferences;
 	}
@@ -454,10 +450,27 @@ public class PortletDefinitionForm implements Serializable {
 	public void setGroups(List<JsonEntityBean> groups) {
 		this.groups = groups;
 	}
-	
+
 	public void addGroup(JsonEntityBean group) {
 		this.groups.add(group);
 	}
+
+    public Set<String> getPermissions() {
+        return Collections.unmodifiableSet(permissions);
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions.clear();
+        this.permissions.addAll(permissions);
+    }
+
+    public void addPermission(String permission) {
+        permissions.add(permission);
+    }
+
+    public void clearPermissions() {
+        this.permissions.clear();
+    }
 
 	public List<JsonEntityBean> getCategories() {
 		return categories;
@@ -466,7 +479,7 @@ public class PortletDefinitionForm implements Serializable {
 	public void setCategories(List<JsonEntityBean> categories) {
 		this.categories = categories;
 	}
-	
+
 	public void addCategory(JsonEntityBean category) {
 		this.categories.add(category);
 	}
@@ -518,18 +531,18 @@ public class PortletDefinitionForm implements Serializable {
 	public void setExpirationAmPm(int expirationAmPm) {
 		this.expirationAmPm = expirationAmPm;
 	}
-	
+
 	/**
 	 * Return the full date and time at which this portlet shoudl be automatically
 	 * published.  This value is built from the individual date/time fields.
-	 * 
+	 *
 	 * @return
 	 */
 	public Date getPublishDateTime() {
 		if (this.getPublishDate() == null) {
 			return null;
 		}
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(this.getPublishDate());
 		cal.set(Calendar.HOUR, this.getPublishHour());
@@ -543,14 +556,14 @@ public class PortletDefinitionForm implements Serializable {
 	/**
 	 * Return the full date and time at which this portlet shoudl be automatically
 	 * expired.  This value is built from the individual date/time fields.
-	 * 
+	 *
 	 * @return
 	 */
 	public Date getExpirationDateTime() {
 		if (this.getExpirationDate() == null) {
 			return null;
 		}
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(this.getExpirationDate());
 		cal.set(Calendar.HOUR, this.getExpirationHour());
