@@ -130,7 +130,7 @@
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="true"/>
-        <input name="requireSelection" value="true"/>
+        <input name="requireSelection" value="false"/>
         <input name="rootEntity" value="rootEntity"/>
         <input name="enableAdHocGroups" value="false"/>
 
@@ -163,7 +163,7 @@
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
         <input name="selectMultiple" value="true"/>
-        <input name="requireSelection" value="true"/>
+        <input name="requireSelection" value="false"/>
         <input name="rootEntity" value="rootEntity"/>
         <input name="enableAdHocGroups" value="true"/>
         <input name="adHocEntity" value="rootEntity"/>
