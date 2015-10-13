@@ -94,7 +94,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                         data-placement="top"></span>
                             </span>
                             <div class="col-sm-8">
-                                <form:input path="title" type="text" class="form-control" id="portletTitle"/>
+                                <form:input path="title" type="text" class="form-control" id="portletTitle" autocomplete="off" autocorrect="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -105,7 +105,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             data-placement="top"></span>
                             </span>
                             <div class="col-sm-8">
-                                <form:input path="name" type="text" class="form-control" id="portletName"/>
+                                <form:input path="name" type="text" class="form-control" id="portletName" autcomplete="off" autocorrect="off"/>
                             </div>
                         </div>
                         <div class="form-group name-title-mismatch-warn" style="display: none">
@@ -123,7 +123,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 data-placement="top"></span>
                             </span>
                             <div class="col-sm-8">
-                                <form:input path="fname" type="text" class="form-control" id="portletFname"/>
+                                <form:input path="fname" type="text" class="form-control" id="portletFname" autcomplete="off" autocorrect="off"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -134,7 +134,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 data-placement="top"></span>
                             </span>
                             <div class="col-sm-8">
-                                <form:input path="description" type="text" class="form-control" id="portletDescription"/>
+                                <form:input path="description" type="text" class="form-control" id="portletDescription" autcomplete="off" autocorrect="off"/>
                             </div>
                         </div>
                     </div>
