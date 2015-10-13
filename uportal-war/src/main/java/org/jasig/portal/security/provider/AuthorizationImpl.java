@@ -228,14 +228,14 @@ protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
 public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String portletDefinitionId) throws AuthorizationException {
     String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
-    
-    // retrieve the indicated channel from the channel registry store and 
+
+    // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
     IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     if (portlet == null){
         throw new AuthorizationException("Unable to locate portlet " + portletDefinitionId);
     }
-    
+
     final String activity = IPermission.PORTLET_MODE_CONFIG;
     return doesPrincipalHavePermission(principal, owner, activity, target);
 }
@@ -252,28 +252,28 @@ throws AuthorizationException
 {
     String owner = IPermission.PORTAL_PUBLISH;
     String target = IPermission.PORTLET_PREFIX + portletDefinitionId;
-    
-    // retrieve the indicated channel from the channel registry store and 
+
+    // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
     IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     if (portlet == null){
     	return doesPrincipalHavePermission(principal, owner,
 				IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY, target);
 //    	throw new AuthorizationException("Unable to locate channel " + channelPublishId);
-    }    
+    }
     PortletLifecycleState state = portlet.getLifecycleState();
     int order = state.getOrder();
-    
+
     /*
      * The following code assumes that later lifecycle states imply permission
-     * for earlier lifecycle states.  For example, if a user has permission to 
-     * manage an expired channel, we assume s/he also has permission to 
-     * create, approve, and publish channels.  The following code counts 
+     * for earlier lifecycle states.  For example, if a user has permission to
+     * manage an expired channel, we assume s/he also has permission to
+     * create, approve, and publish channels.  The following code counts
      * channels with auto-publish or auto-expiration dates set as requiring
-     * publish or expiration permissions for management, even though the channel 
+     * publish or expiration permissions for management, even though the channel
      * may not yet be published or expired.
      */
-    
+
     String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
     if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
             && doesPrincipalHavePermission(principal, owner, activity, target)) {
@@ -285,28 +285,28 @@ throws AuthorizationException
 			|| portlet.getExpirationDate() != null)
 			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
 		return true;
-    } 
-	
+    }
+
 	activity = IPermission.PORTLET_MANAGER_ACTIVITY;
-	if ((order <= PortletLifecycleState.PUBLISHED.getOrder() 
+	if ((order <= PortletLifecycleState.PUBLISHED.getOrder()
     		|| portlet.getPublishDate() != null)
 			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
-    } 
-	
+    }
+
 	activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
 	log.debug("order: " + order + ", approved order: " + PortletLifecycleState.APPROVED.getOrder());
 	if (order <= PortletLifecycleState.APPROVED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
-    } 
-	
+    }
+
 	activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
 	if (order <= PortletLifecycleState.CREATED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, target)) {
     	return true;
     }
-    	
+
 	// if no permissions were found, return false
 	return false;
 }
@@ -322,17 +322,17 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
 //    return doesPrincipalHavePermission
 //      (principal, IPermission.PORTAL_FRAMEWORK, IPermission.CHANNEL_PUBLISHER_ACTIVITY, null);
     String owner = IPermission.PORTAL_PUBLISH;
-    
-    // retrieve the indicated channel from the channel registry store and 
+
+    // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
     PortletCategory category = PortletCategoryRegistryLocator.getPortletCategoryRegistry().getPortletCategory(categoryId);
     if (category == null){
 //    	return doesPrincipalHavePermission(principal, owner,
 //				IPermission.CHANNEL_MANAGER_APPROVED_ACTIVITY, target);
     	throw new AuthorizationException("Unable to locate category " + categoryId);
-    }    
+    }
     int order = state.getOrder();
-    
+
     String activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
     if (order <= PortletLifecycleState.MAINTENANCE.getOrder()
             && doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
@@ -344,33 +344,33 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
 			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
 		return true;
     }
-	
+
     activity = IPermission.PORTLET_MANAGER_ACTIVITY;
 	if (order <= PortletLifecycleState.PUBLISHED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
-	
+
     activity = IPermission.PORTLET_MANAGER_APPROVED_ACTIVITY;
 	if (order <= PortletLifecycleState.APPROVED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
-	
+
     activity = IPermission.PORTLET_MANAGER_CREATED_ACTIVITY;
 	if (order <= PortletLifecycleState.CREATED.getOrder()
 			&& doesPrincipalHavePermission(principal, owner, activity, categoryId)) {
     	return true;
     }
-    	
+
 	return false;
 
 }
 
 /**
- * Answers if the principal has permission to RENDER this Channel.  This 
+ * Answers if the principal has permission to RENDER this Channel.  This
  * implementation currently delegates to the SUBSCRIBE permission.
- * 
+ *
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param portletDefinitionId
@@ -380,7 +380,7 @@ public boolean canPrincipalManage(IAuthorizationPrincipal principal, PortletLife
 public boolean canPrincipalRender(IAuthorizationPrincipal principal, String portletDefinitionId)
 throws AuthorizationException
 {
-	// This code simply assumes that anyone who can subscribe to a channel 
+	// This code simply assumes that anyone who can subscribe to a channel
 	// should be able to render it.  In the future, we'd like to update this
 	// implementation to use a separate permission for rendering.
     return canPrincipalSubscribe(principal, portletDefinitionId);
@@ -419,8 +419,8 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
 {
     String owner = IPermission.PORTAL_SUBSCRIBE;
 
-    
-    // retrieve the indicated channel from the channel registry store and 
+
+    // retrieve the indicated channel from the channel registry store and
     // determine its current lifecycle state
     IPortletDefinition portlet = this.portletDefinitionRegistry.getPortletDefinition(portletDefinitionId);
     if (portlet == null){
@@ -430,7 +430,7 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
     String target = PermissionHelper.permissionTargetIdForPortletDefinition(portlet);
 
     PortletLifecycleState state = portlet.getLifecycleState();
-    
+
     /*
      * Each channel lifecycle state now has its own subscribe permission.  The
      * following logic checks the appropriate permission for the lifecycle.
@@ -453,13 +453,8 @@ public boolean canPrincipalSubscribe(IAuthorizationPrincipal principal, String p
 							+ portletDefinitionId);
     }
 
-    // Test the appropriate permission.  For subscribe activity permission, you could also have browse permission.
-    boolean allowed = doesPrincipalHavePermission(principal, owner, permission, target);
-    if (!allowed && permission == IPermission.PORTLET_SUBSCRIBER_ACTIVITY) {
-        return canPrincipalBrowse(principal, portlet);
-    }
-    return allowed;
-
+    // Test the appropriate permission.
+    return doesPrincipalHavePermission(principal, owner, permission, target);
 }
 
 /**
@@ -504,7 +499,7 @@ throws AuthorizationException
     @RequestCache
     public boolean doesPrincipalHavePermission(IAuthorizationPrincipal principal, String owner, String activity,
             String target, IPermissionPolicy policy) throws AuthorizationException {
-        
+
         final CacheKeyBuilder<Serializable, Serializable> cacheKeyBuilder = CacheKey.builder(AuthorizationImpl.class.getName());
         final String username = principal.getKey();
         if (IPerson.class.equals(principal.getType())) {
@@ -512,7 +507,7 @@ throws AuthorizationException
         }
         cacheKeyBuilder.addAll(policy.getClass(), username,
                 principal.getType(), owner, activity, target);
-        
+
         final CacheKey key = cacheKeyBuilder.build();
 
         final Element element = this.doesPrincipalHavePermissionCache.get(key);
@@ -563,12 +558,12 @@ throws AuthorizationException
         perms = getPermissionsForPrincipal(p, owner, activity, target);
         al.addAll(Arrays.asList(perms));
     }
-    
+
     if (log.isTraceEnabled()) {
     	log.trace("query for all permissions for principal=[" + principal + "], owner=[" + owner +
     			"], activity=[" + activity + "], target=[" + target + "] returned permissions [" + al + "]");
     }
-    
+
     return ((IPermission[])al.toArray(new IPermission[al.size()]));
 }
 
@@ -634,7 +629,7 @@ throws GroupsException
         log.debug("AuthorizationImpl.getGroupMemberForPrincipal(): principal [" + principal + "] " +
                 "got group member [" + gm + "]");
     }
-        
+
     return gm;
 }
 
@@ -963,16 +958,16 @@ throws AuthorizationException
     }
 
 	Set<String> containingGroups;
-	
+
 	if (target != null) {
-		
+
         final Element element = this.entityParentsCache.get(target);
         if (element != null) {
             containingGroups = (Set<String>) element.getObjectValue();
         }
         else {
         	containingGroups = new HashSet<String>();
-        	
+
         	//Ignore target entity lookups for the various synthetic ALL targets
         	if (!IPermission.ALL_CATEGORIES_TARGET.equals(target) &&
                     !IPermission.ALL_GROUPS_TARGET.equals(target) &&
@@ -1017,7 +1012,7 @@ throws AuthorizationException
         	
         }
 
-		
+
 	} else {
 		containingGroups = new HashSet<String>();
 	}
@@ -1033,17 +1028,17 @@ throws AuthorizationException
         		// activity matches
                 (activity == null || activity.equals(perms[i].getActivity())) &&
                 // target matches or is a member of the current permission target
-                (target == null || target.equals(permissionTarget) 
-                		|| containingGroups.contains(permissionTarget))    
+                (target == null || target.equals(permissionTarget)
+                		|| containingGroups.contains(permissionTarget))
             ) {
 
                 al.add(perms[i]);
         }
-        
+
     }
 
 
-    
+
     if (log.isTraceEnabled()) {
         log.trace(
                 "AuthorizationImpl.primGetPermissionsForPrincipal(): " +
