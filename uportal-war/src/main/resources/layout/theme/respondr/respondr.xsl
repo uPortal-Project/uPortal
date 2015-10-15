@@ -658,6 +658,7 @@
             </xsl:for-each>
             -->
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
+            <script src="/uPortal/scripts/respond.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
             <div id="up-notification"></div>
@@ -785,6 +786,7 @@
         <xsl:for-each select="//header/descendant::channel-header">
             <xsl:copy-of select="."/>
         </xsl:for-each>
+        <script src="/uPortal/scripts/respond.min.js" type="text/javascript"></script>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
         <div id="wrapper">
