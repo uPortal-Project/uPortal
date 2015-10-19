@@ -183,7 +183,9 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
                 clearTimeout(timerId);
             }
 
-            timerId = setTimeout(showTimeoutDialog, sleepMS);
+            if (typeof config.enabled === 'undefined' || config.enabled === true) {
+                timerId = setTimeout(showTimeoutDialog, sleepMS);
+            }
         };
 
         // return public interface API.
