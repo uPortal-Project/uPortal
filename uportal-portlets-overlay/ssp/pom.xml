@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.ssp.platform.portlets-overlay</groupId>
         <artifactId>platform-portlets-overlay</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.jasig.ssp</groupId>
             <artifactId>ssp</artifactId>
-            <version>2.7.0</version>
+            <version>2.7.0-SNAPSHOT</version>
             <type>war</type>
             <exclusions>
                 <exclusion>
