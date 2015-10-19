@@ -269,6 +269,12 @@
     };
     up.Backbone = Backbone.noConflict();
 
+    // fix console.log in IE8,9.  Though we don't commit to supporting these IE versions, this minor fix allows
+    // these browsers to work better.
+    if (!window.console) window.console = {};
+    if (!window.console.log) window.console.log = function() {};
+    if (!window.console.trace) window.console.trace = function() {};
+
     (function($) {
       $(function() {
         var navMenuToggle = function() {
@@ -658,7 +664,11 @@
             </xsl:for-each>
             -->
             <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-            <script src="/uPortal/scripts/respond.min.js" type="text/javascript"></script>
+            <!-- For IE 8 support per http://getbootstrap.com/getting-started/#support. The user will see a
+                 'flicker' on the interface because of the time delay from the start of this script to when all
+                 CSS files present get re-loaded after being processed by this script, but that's OK since we
+                 aren't committing to support IE8 and this minor change makes IE8 work better. -->
+            <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
             <div id="up-notification"></div>
@@ -786,7 +796,11 @@
         <xsl:for-each select="//header/descendant::channel-header">
             <xsl:copy-of select="."/>
         </xsl:for-each>
-        <script src="/uPortal/scripts/respond.min.js" type="text/javascript"></script>
+        <!-- For IE 8 support per http://getbootstrap.com/getting-started/#support. The user will see a
+             'flicker' on the interface because of the time delay from the start of this script to when all
+             CSS files present get re-loaded after being processed by this script, but that's OK since we
+             aren't committing to support IE8 and this minor change makes IE8 work better. -->
+        <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
         <div id="wrapper">
