@@ -24,6 +24,7 @@
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
         <version>39</version>
+        <relativePath></relativePath>
     </parent>
     
     <prerequisites>
