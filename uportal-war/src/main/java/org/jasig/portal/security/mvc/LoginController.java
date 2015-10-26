@@ -61,6 +61,8 @@ public class LoginController {
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
 
+    // Disallow /Login/refUrl=//location which could maliciously redirect user's browser to another site
+    // by whitelisting a refUrl of nothing, /, or / plus anything other than another /
     private static final Pattern LOCAL_URL_PATTERN = Pattern.compile("|/|/[^/].*");
     private IPortalUrlProvider portalUrlProvider;
     private IPersonManager personManager;
