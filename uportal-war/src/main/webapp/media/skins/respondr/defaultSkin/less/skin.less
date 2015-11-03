@@ -18,21 +18,8 @@
  */
 
 /**
- * Place any and all style over-rides in this file.
+ * This file is for skin-specific overrides.  NOTE, however, that the skin.less
+ * file SHOULD REMAIN COMPLETELY EMPTY in defaultSkin.  (The expectation is that
+ * skin designers will copy defaultSkin and use it as a starting point, then
+ * modify to taste.
  */
-
-.modal-dialog {
-  position: initial;
-}
-
-// Link color - uses defaultSkin/less/variables.less, not common/bootstrap/variables.less
-a {
-  color: @portal-link-color;
-  text-decoration: none;
-
-  &:hover,
-  &:focus {
-    color: @portal-link-hover-color;
-    text-decoration: underline;
-  }
-}
