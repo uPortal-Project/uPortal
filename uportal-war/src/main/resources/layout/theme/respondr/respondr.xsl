@@ -676,10 +676,9 @@
                 <xsl:call-template name="region.hidden-top" />
                 <xsl:call-template name="region.page-top" />
                 <header class="portal-header" role="banner">
+                    <xsl:call-template name="region.pre-header" />
+                    <xsl:call-template name="region.header-top" />
                     <div class="container-fluid">
-                        <div class="portal-global row">
-                            <xsl:call-template name="region.pre-header" />
-                        </div>
                         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                         <div class="row">
                             <xsl:call-template name="region.header-left" />

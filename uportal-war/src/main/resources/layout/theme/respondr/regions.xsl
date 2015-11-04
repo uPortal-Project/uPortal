@@ -107,10 +107,33 @@
     -->
     <xsl:template name="region.pre-header">
         <xsl:if test="//region[@name='pre-header']/channel">
-            <div id="region-pre-header" class="portal-user">
-                <xsl:for-each select="//region[@name='pre-header']/channel">
-                    <xsl:call-template name="regions.portlet.decorator" />
-                </xsl:for-each>
+            <div class="container-fluid">
+                <div class="portal-global row">
+                    <div id="region-pre-header" class="portal-user">
+                        <xsl:for-each select="//region[@name='pre-header']/channel">
+                            <xsl:call-template name="regions.portlet.decorator" />
+                        </xsl:for-each>
+                    </div>
+                </div>
+            </div>
+        </xsl:if>
+    </xsl:template>
+
+    <!-- ========== TEMPLATE: HEADER-TOP ========== -->
+    <!-- ============================================= -->
+    <!--
+     | This template renders portlets at the bottom of the header area.
+    -->
+    <xsl:template name="region.header-top">
+        <xsl:if test="//region[@name='header-top']/channel">
+            <div id="region-header-top" class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <xsl:for-each select="//region[@name='header-top']/channel">
+                            <xsl:call-template name="regions.portlet.decorator" />
+                        </xsl:for-each>
+                    </div>
+                </div>
             </div>
         </xsl:if>
     </xsl:template>
