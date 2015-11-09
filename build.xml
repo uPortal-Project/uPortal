@@ -1669,7 +1669,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <os family="windows"/>
         </condition>
         <property name="windowsCmdArg1" value="-Djasig.ignore"/>
-        <condition property="windowsCmdArg2" value="mvn.bat" else="mvn">
+        <condition property="windowsCmdArg2" value="mvn.bat" else="mvn.cmd">
             <and>
               <os family="windows"/>
               <!--
