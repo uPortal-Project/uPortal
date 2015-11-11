@@ -165,16 +165,11 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                 Set<IPortletDefinition> filteredPortletDefinitions = new HashSet<>();
                 for (final IPortletDefinition portletDefinition : allDisplayablePortletDefinitions) {
                     final Set<PortletCategory> parents = portletCategoryRegistry.getParentCategories(portletDefinition);
-                    boolean includeIt = false;  // default
                     for (final PortletCategory parent : parents) {
                         if (allSpecifiedAndDecendantCategories.contains(parent)) {
-                            includeIt = true;
+                            filteredPortletDefinitions.add(portletDefinition);
                             break;
                         }
-                    }
-                    if (includeIt) {
-                        filteredPortletDefinitions.add(portletDefinition);
-                        break;
                     }
                 }
 
