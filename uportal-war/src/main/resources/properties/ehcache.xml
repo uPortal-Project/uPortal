@@ -1314,11 +1314,17 @@
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
+    <!-- Caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
         not serializable, so don't overflow to disk.  -->
     <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- Caches a few odds and ends related to limiting which categories are
+         displayed in a single publication of the Marketplace;  not replicated -->
+    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
+           eternal="false" maxElementsInMemory="20" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     
     <!-- ********************************************************** -->

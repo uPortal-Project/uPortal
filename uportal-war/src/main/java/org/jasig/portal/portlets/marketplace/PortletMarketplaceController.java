@@ -19,7 +19,9 @@
 package org.jasig.portal.portlets.marketplace;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +42,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.Validate;
+import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.UserPreferencesManager;
+import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
@@ -62,12 +66,14 @@ import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,6 +85,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import net.sf.ehcache.Cache;
 
 import static java.lang.String.format;
 
@@ -95,8 +103,25 @@ public class PortletMarketplaceController {
 
     private static String SHOW_ROOT_CATEGORY_PREFERENCE = "showRootCategory";
 
+    /**
+     * Optional, multi-valued preference that (if specified) limits the portlets
+     * displayed in the Marketplace to those belonging to one or more of these
+     * categories.
+     *
+     * @since 4.3
+     */
+    private static String PERMITTED_CATEGORIES_PREFERENCE = "permittedCategories";
+
     private static String ENABLE_REVIEWS_PREFERENCE = "PortletMarketplaceController.enableReviews";
     private static String ENABLE_REVIEWS_DEFAULT = "true";
+
+    /**
+     * Caches objects related to the ability to limit the portlets displayed
+     * in a single publication of the Marketplace.
+     */
+    @Autowired
+    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
+    private Cache marketplaceCategoryCache;
 
     private IMarketplaceService marketplaceService;
     private IPortalRequestUtils portalRequestUtils;
@@ -283,7 +308,7 @@ public class PortletMarketplaceController {
 
         final IPerson user = personManager.getPerson(servletRequest);
 
-        final Map<String,Set<?>> registry = getRegistry(user);
+        final Map<String,Set<?>> registry = getRegistry(user, portletRequest);
         @SuppressWarnings("unchecked")
         final Set<MarketplaceEntry> marketplaceEntries =
             (Set<MarketplaceEntry>) registry.get("portlets");
@@ -327,22 +352,27 @@ public class PortletMarketplaceController {
      *               only portlets that user can use.
      * @return a set of portlets filtered that user can use, and other parameters
     */
-    public Map<String,Set<?>> getRegistry(final IPerson user){
+    public Map<String,Set<?>> getRegistry(final IPerson user, final PortletRequest req){
 
         Map<String,Set<?>> registry = new TreeMap<String,Set<?>>();
 
+        // Empty, or the set of categories that are permitted to
+        // be displayed in the Portlet Marketplace (portlet)
+        final Set<PortletCategory> permittedCategories = getPermittedCategories(req);
+
         final Set<MarketplaceEntry> visiblePortlets =
-                this.marketplaceService.browseableMarketplaceEntriesFor(user);
+                this.marketplaceService.browseableMarketplaceEntriesFor(user, permittedCategories);
 
         final Set<PortletCategory> visibleCategories =
-                this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user);
+                this.marketplaceService.browseableNonEmptyPortletCategoriesFor(user, permittedCategories);
 
         final Set<MarketplaceEntry> featuredPortlets =
-            this.marketplaceService.featuredEntriesForUser(user);
+            this.marketplaceService.featuredEntriesForUser(user, permittedCategories);
 
         registry.put("portlets", visiblePortlets);
         registry.put("categories", visibleCategories);
         registry.put("featured", featuredPortlets);
+
         return registry;
     }
 
@@ -446,4 +476,51 @@ public class PortletMarketplaceController {
             return Collections.unmodifiableList(layoutIds);
         }
     }
+
+    private Set<PortletCategory> getPermittedCategories(PortletRequest req) {
+
+        Set<PortletCategory> rslt = Collections.emptySet();  // default
+        final PortletPreferences prefs = req.getPreferences();
+        final String[] permittedCategories = prefs.getValues(PERMITTED_CATEGORIES_PREFERENCE, new String[0]);
+
+        if (permittedCategories.length != 0) {
+            // Expensive to create, use cache for this collection...
+            Set<String> cacheKey = new HashSet<>(Arrays.asList(permittedCategories));
+            net.sf.ehcache.Element cacheElement = marketplaceCategoryCache.get(cacheKey);
+
+            if (cacheElement == null) {
+                // Nothing in cache currently;  need to populate cache
+                HashSet<PortletCategory> portletCategories = new HashSet<>();
+                for (final String categoryName : permittedCategories) {
+                    EntityIdentifier[] cats = GroupService.searchForGroups(categoryName, IGroupConstants.IS, IPortletDefinition.class);
+                    if (cats != null && cats.length > 0) {
+                        PortletCategory pc = portletCategoryRegistry.getPortletCategory(cats[0].getKey());
+                        if (pc != null) {
+                            portletCategories.add(pc);
+                        } else {
+                            logger.warn("No PortletCategory found in portletCategoryRegistry for id '{}'", cats[0].getKey());
+                        }
+                    } else {
+                        logger.warn("No category found in GroupService for name '{}'", categoryName);
+                    }
+                }
+                /*
+                 * Sanity Check:  Since at least 1 category name was specified, we
+                 * need to make certain there's at least 1 PortletCategory in the
+                 * set;  otherwise, a restricted Marketplace portlet would become
+                 * an unrestricted one.
+                 */
+                if (portletCategories.isEmpty()) {
+                    throw new IllegalStateException("None of the specified category "
+                            + "names could be resolved to a PortletCategory:  "
+                            + Arrays.asList(permittedCategories));
+                }
+                cacheElement = new net.sf.ehcache.Element(cacheKey, portletCategories);
+                this.marketplaceCategoryCache.put(cacheElement);
+            }
+            rslt = (Set<PortletCategory>) cacheElement.getObjectValue();
+        }
+        return rslt;
+    }
+
 }

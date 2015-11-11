@@ -19,6 +19,7 @@
 package org.jasig.portal.rest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.marketplace.IMarketplaceService;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.rest.layout.MarketplaceEntryRating;
 import org.jasig.portal.security.IPerson;
@@ -71,7 +73,8 @@ public class MarketplaceRESTController {
     public ModelAndView marketplaceEntriesFeed(HttpServletRequest request) {
         final IPerson user = personManager.getPerson(request);
 
-        Set<MarketplaceEntry> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user);
+        final Set<PortletCategory> empty = Collections.emptySet();  // Produces an complete/unfiltered collection
+        final Set<MarketplaceEntry> marketplaceEntries = marketplaceService.browseableMarketplaceEntriesFor(user, empty);
 
         return new ModelAndView("json", "portlets", marketplaceEntries);
     }
