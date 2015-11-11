@@ -83,6 +83,12 @@
         <property name="attributeSource" ref="attributeSource"/>
     </bean>
 
+    <!-- portlet definition attribute incorporation -->
+    <bean id="jsonPortletDefinitionAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
+        <property name="attributeSource" ref="portletDefinitionAttributeSource"/>
+    </bean>
+    <bean id="portletDefinitionAttributeSource" class="org.jasig.portal.rendering.PortletDefinitionAttributeSource"/>
 
     <!-- portlet rendering initiation.  Not needed for JSON layout.  We don't want to actually render the portlets
          since we don't need to incorporate the portlet's output into the response.  -->
@@ -92,7 +98,7 @@
     
     <!-- theme attribute incorporation -->
     <bean id="jsonThemeAttributeIncorporationComponent" class="org.jasig.portal.rendering.StAXAttributeIncorporationComponent">
-        <property name="wrappedComponent" ref="jsonPortletWindowAttributeIncorporationComponent" />
+        <property name="wrappedComponent" ref="jsonPortletDefinitionAttributeIncorporationComponent" />
         <property name="attributeSource" ref="themeAttributeSource" />
     </bean>
 
