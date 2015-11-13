@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.util.WebUtils;
@@ -63,14 +64,15 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
 	/**
 	 * Name of the {@link HttpSession} attribute used for storing a concurrent map of portlet cookies that do not need to be persisted.
 	 */
-	static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
+	private static final String SESSION_ATTRIBUTE__SESSION_ONLY_COOKIE_MAP = PortletCookieServiceImpl.class.getName() + ".SESSION_ONLY_COOKIE_MAP";
 	/**
 	 * Name of the {@link HttpSession} attribute used to track the value of the {@link IPortalCookie} (useful if the client does not accept cookies).
+     * Note: Package access for the test class convenience.
 	 */
-	static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
+	/*private*/ static final String SESSION_ATTRIBUTE__PORTAL_COOKIE_ID = PortletCookieServiceImpl.class.getName() + ".PORTAL_COOKIE_ID";
 	
 	private static final String PURGE_LOCK_NAME = PortletCookieServiceImpl.class.getName() + ".PURGE_LOCK";
-    
+
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	private IPortletCookieDao portletCookieDao;
@@ -166,7 +168,17 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
         //Update the expiration date of the portal cookie stored in the DB if the update interval has passed
         final DateTime expires = portalCookie.getExpires();
         if (DateTime.now().minusMillis(this.maxAgeUpdateInterval).isAfter(expires.minusSeconds(this.maxAge))) {
-            this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
+            try {
+                this.portletCookieDao.updatePortalCookieExpiration(portalCookie, cookie.getMaxAge());
+            } catch (HibernateOptimisticLockingFailureException e) {
+                // Especially with ngPortal UI multiple requests for individual portlet content may come at
+                // the same time.  Sometimes another thread updated the portal cookie between our dao fetch and
+                // dao update.  If this happens, simply ignore the update since another thread has already
+                // made the update.
+                logger.debug("Attempted to update expired portal cookie but another thread beat me to it."
+                    + " Ignoring update since the other thread handled it.");
+                return;
+            }
             
             // Update expiration dates of portlet cookies stored in session
             removeExpiredPortletCookies(request);
