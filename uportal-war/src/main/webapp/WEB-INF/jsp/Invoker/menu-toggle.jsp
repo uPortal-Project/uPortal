@@ -20,11 +20,5 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-<c:set var="greeting">
-    <c:choose>
-        <c:when test="${userInfo['impersonating'] eq 'true'}"><spring:message code="you.are.idswapped.as"/></c:when>
-        <c:otherwise><spring:message code="you.are.signed.in.as"/></c:otherwise>
-    </c:choose>
-</c:set>
+<a href="javascript:;" class="menu-toggle pull-left visible-xs" data-toggle="offcanvas"><i class="fa fa-align-justify"></i> Menu</a>
 
-<div class="user-name"><span class="hidden-xs">${greeting}</span>&nbsp;${userInfo['displayName']}</div>

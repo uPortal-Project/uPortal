@@ -278,11 +278,14 @@
     (function($) {
       $(function() {
         var navMenuToggle = function() {
-          var menu = $(".portal-nav .menu"), menuToggle = $(".portal-nav .menu-toggle");
+          var menu = $(".portal-nav .menu"), menuToggle = $("#sticky-nav .menu-toggle");
           // Toggle the menu visibility when the button is clicked.
           menuToggle.click(function() {
             //alert("Handler for .click() called.");
             menu.toggleClass("show");
+            $('html, body').animate({
+                    scrollTop: 0
+               });
             return false;
           });
           // Console for debugging.
@@ -291,7 +294,15 @@
 
         navMenuToggle();
       });
-
+      
+      up.jQuery(document).ready(function () {
+           var $ = up.jQuery;
+           // Toggle the off-canvas menu when the button is clicked.
+           $('[data-toggle="offcanvas"]').click(function () {
+                $('.row-offcanvas').toggleClass('active');
+           });
+      });
+      
       $(document).ready(function() {
           if (up.lightboxConfig) {
             up.lightboxConfig.init();
@@ -671,6 +682,7 @@
             <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
+          <div class="row-offcanvas row-offcanvas-left">
             <div id="up-notification"></div>
             <div id="wrapper">
                 <xsl:call-template name="region.hidden-top" />
@@ -767,6 +779,7 @@
                 up.analytics.portletData = <portlet-analytics-data/>;
                 up.analytics.pageData = <page-analytics-data/>;
             </script>
+          </div>
         </body>
     </html>
 </xsl:template>
