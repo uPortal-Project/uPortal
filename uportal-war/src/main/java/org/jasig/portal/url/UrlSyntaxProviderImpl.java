@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.url;
 
 import java.io.UnsupportedEncodingException;
@@ -24,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -333,6 +333,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             ParseStep parseStep = ParseStep.FOLDER;
             for (int pathPartIndex = 0; pathPartIndex < requestPathParts.length; pathPartIndex++) {
                 String pathPart = requestPathParts[pathPartIndex];
+
+                logger.trace("In parseStep {} considering pathPart [{}].", parseStep, pathPart);
+
                 if (StringUtils.isEmpty(pathPart)) {
                     continue;
                 }
@@ -342,34 +345,49 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         parseStep = ParseStep.PORTLET;
                         
                         if (FOLDER_PATH_PREFIX.equals(pathPart)) {
-                            //Skip adding the prefix to the folders deque
+
+                            logger.trace("Skipping adding {} to the folders deque " +
+                                    "because it is simply the folder path prefix.", pathPart);
+
                             pathPartIndex++;
                             
                             final LinkedList<String> folders = new LinkedList<String>();
                             for (;pathPartIndex < requestPathParts.length; pathPartIndex++) {
                                 pathPart = requestPathParts[pathPartIndex];
-                                
-                                //Found the portlet part of the path, step back one and finish folder parsing
+
                                 if (PORTLET_PATH_PREFIX.equals(pathPart)) {
+                                    logger.trace("Found the portlet part of the path " +
+                                            "demarked by portlet path prefix [{}]; " +
+                                            "stepping back one path part to finish folder processing", pathPart);
                                     pathPartIndex--;
                                     break;
-                                }
-                                //Found the end of the path, step back one, check for state and finish folder parsing
-                                else if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
-                                    pathPartIndex--;
-                                    pathPart = requestPathParts[pathPartIndex];
-                                    
-                                    //If a state was added to the folder list remove it and step back one so other code can handle it
-                                    if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
-                                        folders.removeLast();
+                                } else {
+
+
+                                    if (pathPart.endsWith(REQUEST_TYPE_SUFFIX)) {
+                                        logger.trace("Found the end of the folder path with pathPart [{}];" +
+                                                " stepping back one, checking for state, " +
+                                                "and finishing folder parsing", pathPart);
                                         pathPartIndex--;
+                                        pathPart = requestPathParts[pathPartIndex];
+
+                                        // If a state was added to the folder list remove it and step back one so
+                                        // other code can handle it
+                                        if (UrlState.valueOfIngoreCase(pathPart, null) != null) {
+                                            logger.trace("A state was added to the end of folder list {};" +
+                                                    " removing it.", folders);
+                                            folders.removeLast();
+                                            pathPartIndex--;
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
-    
+
+                                logger.trace("Adding pathPart [{}] to folders.", pathPart);
                                 folders.add(pathPart);
                             }
-                            
+
+                            logger.trace("Folders is [{}]", folders);
                             if (folders.size() > 0) {
                                 final String targetedLayoutNodeId = urlNodeSyntaxHelper.getLayoutNodeForFolderNames(request, folders);
                                 portalRequestInfo.setTargetedLayoutNodeId(targetedLayoutNodeId);
@@ -620,10 +638,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             
             request.setAttribute(PORTAL_REQUEST_INFO_ATTR, portalRequestInfo);
             
-            if(logger.isDebugEnabled()) {
-                logger.debug("finished building requestInfo: " + portalRequestInfo);
-            }
-            
+            logger.debug("Finished building requestInfo: {}", portalRequestInfo);
+
             return portalRequestInfo;
         }
         finally {
@@ -744,7 +760,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     }
 
     /**
-     * If the targetedPortletWindowId is not null {@link #getPortletRequestInfo(IPortalRequestInfo, Map, IPortletWindowId)} is called and that
+     * If the targetedPortletWindowId is not null {@link IPortalRequestInfo#getPortletRequestInfo(IPortletWindowId)} is called and that
      * value is returned. If targetedPortletWindowId is null targetedPortletRequestInfo is returned.
      */
     protected PortletRequestInfoImpl getTargetedPortletRequestInfo(
@@ -814,6 +830,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
+        
+        boolean isRedirectionToDefaultUrl = false;
+        
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final String cachedCanonicalUrl = (String)request.getAttribute(PORTAL_CANONICAL_URL);
         if (cachedCanonicalUrl != null) {
@@ -840,11 +859,20 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         }
         else {
             portalUrlBuilder = this.portalUrlProvider.getDefaultUrl(request);
+            isRedirectionToDefaultUrl = request.getPathInfo() != null;
         }
         
         //Copy over portal parameters
-        final Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
-        portalUrlBuilder.setParameters(portalParameters);
+        Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
+        
+        if(isRedirectionToDefaultUrl) {//add in redirect parameter so we know that we were redirected
+            Map<String, List<String>> portalParamsWithRedirect = new HashMap<String, List<String>>(portalParameters);
+            
+            portalParamsWithRedirect.put("redirectToDefault", Collections.singletonList( "true" ));
+            portalUrlBuilder.setParameters(portalParamsWithRedirect);
+        } else {
+            portalUrlBuilder.setParameters(portalParameters);
+        }
         
         //Copy data for each portlet
         for (final IPortletRequestInfo portletRequestInfo : portalRequestInfo.getPortletRequestInfoMap().values()) {
@@ -1219,9 +1247,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         final ContentTuple canonicalTuple = ContentTuple.parse(canonicalPath);
 
         /*
-         * At this point they must be the same
+         * Return true if they are approximately/functionally equivalent.
          */
-        return !canonicalTuple.equals(requestTuple);
+        return !canonicalTuple.equalsIgnoringNullFolderDifferences(requestTuple);
 
     }
 
@@ -1271,26 +1299,42 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             return result;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
+        /**
+         * Compares two tuples for equality ignoring null folder differences.  A path such as
+         * /uPortal/p/uportal-links/max which doesn't specify a folder should be considered equal to a
+         * canonical path such as /uPortal/f/welcome/p/uportal-links.u32l1n12/max/render.uP
+         * which is targeting the same portlet but happens to specify the folder the portlet is on.
+         *
+         * @param obj <code>ContentTuple</code> to compare to
+         * @return true if the <code>ContentTuple's</code> are functionally equal ignoring one folder being null
+         */
+        public boolean equalsIgnoringNullFolderDifferences(Object obj) {
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (getClass() != obj.getClass())
+            }
+            if (getClass() != obj.getClass()) {
                 return false;
+            }
             ContentTuple other = (ContentTuple) obj;
-            if (folder == null) {
-                if (other.folder != null)
-                    return false;
-            } else if (!folder.equals(other.folder))
-                return false;
+
+            // If the portlets are not the same, return false.
             if (portlet == null) {
-                if (other.portlet != null)
+                if (other.portlet != null) {
                     return false;
-            } else if (!portlet.equals(other.portlet))
+                }
+            } else if (!portlet.equals(other.portlet)) {
                 return false;
-            return true;
+            }
+
+            // If either or both of the folders are null, return true.  Otherwise if the folders are not the same,
+            // return false.
+            if (folder == null || other.folder == null) {
+                return true;
+            }
+            return folder.equals(other.folder);
         }
 
     }

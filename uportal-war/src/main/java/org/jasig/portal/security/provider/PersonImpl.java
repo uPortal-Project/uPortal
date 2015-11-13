@@ -1,27 +1,25 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.security.provider;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
@@ -99,40 +98,19 @@ public class PersonImpl implements IPerson {
     }
 
     /**
-     * Returns a <code>java.util.Enumeration</code> of all the attribute values.
-     * @return <code>java.util.Enumeration</code> of the attributes.
+     * Provides access to this {@link org.jasig.portal.security.provider.PersonImpl}'s private copy of the attributes
+     * attached to this {@link IPerson}.  Changes to the map will affect the attributes directly.  (Perhaps we'd rather
+     * do a defensive copy?)
      */
-    public Enumeration<List<Object>> getAttributes() {
-        if (this.userAttributes == null) {
-            return null;
-        }
-        
-        final Collection<List<Object>> values = this.userAttributes.values();
-        return Collections.enumeration(values);
-    }
-    
     public Map<String,List<Object>> getAttributeMap() {
         final Map<String,List<Object>> attrMap = this.userAttributes;
         return attrMap;
     }
 
     /**
-     * Returns an enumeration of all of the attribute names associated with the user
-     * @return enumeration of all of the attribute names associated with the user
-     */
-    public Enumeration<String> getAttributeNames() {
-        if (this.userAttributes == null) {
-            return null;
-        }
-        
-        final Set<String> names = this.userAttributes.keySet();
-        return Collections.enumeration(names);
-    }
-
-    /**
      * Sets the specified attribute to a value.
      *
-     * Reference impementation checks for the setting of the username attribute
+     * Reference implementation checks for the setting of the username attribute
      * and updates the EntityIdentifier accordingly
      *
      * @param key Attribute's name
@@ -249,7 +227,7 @@ public class PersonImpl implements IPerson {
     public boolean isGuest() {
         boolean isGuest = false;  // default
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (PersonFactory.GUEST_USERNAME.equals(userName) && 
+        if (PersonFactory.GUEST_USERNAME.equalsIgnoreCase(userName) && 
                 (m_securityContext == null || !m_securityContext.isAuthenticated())) {
             isGuest = true;
         }
@@ -266,15 +244,6 @@ public class PersonImpl implements IPerson {
         return m_eid;
     }
 
-    /**
-     * One time set of the entity identifier
-     * @param ei
-     */
-    public void setEntityIdentifier(final EntityIdentifier ei) {
-        m_eid = ei;
-        entityIdentifierSet = true;
-    }
-
     /* (non-Javadoc)
     * @see java.security.Principal#getName()
     */
@@ -284,23 +253,13 @@ public class PersonImpl implements IPerson {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(PersonImpl.class.getName());
-        sb.append(" fullName=[");
-        sb.append(this.m_FullName);
-        sb.append("]");
-        sb.append(" id=[");
-        sb.append(this.m_ID);
-        sb.append("]");
-        sb.append(" securityContext=[");
-        sb.append(this.m_securityContext);
-        sb.append("]");
-        sb.append(" attributes=[");
-        sb.append(this.userAttributes);
-        sb.append("]");
-        sb.append(" isGuest:");
-        sb.append(this.isGuest());
-        return sb.toString();
+        return new ToStringBuilder(this)
+                .append("id", m_ID)
+                .append("fullName", m_FullName)
+                .append("attributes", userAttributes)
+                .append("securityContext", m_securityContext)
+                .append("isGuest", isGuest())
+                .toString();
     }
 
     @Override

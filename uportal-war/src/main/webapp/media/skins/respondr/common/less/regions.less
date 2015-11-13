@@ -1,0 +1,158 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+/* ==========================================================================
+   Namespace: .portal
+   ========================================================================== */
+
+/* 
+ * Everything in this stylesheet is scoped (nested) within ".portal".
+ * As a best practice, anything added to this stylesheet (that is not a variable 
+ * or mixin) should also be scoped within the namespace.
+ */
+
+.portal {
+
+    /* ==========================================================================
+       General-purpose styles that apply to all regions
+       ========================================================================== */
+    [id^="region-"] {
+
+        [id^="portlet_"] {
+            position: relative;
+        }
+
+        .hover-chrome {
+            display:none;
+            position: absolute;
+            opacity: .5;
+            list-style:none;
+            padding: 0 4px;
+            top: -1em;
+            background-color: @grayscale2;
+
+            .hover-option {
+                display: inline-block;
+
+                a {
+                    color: @grayscale9;
+                }
+            }
+        }
+
+    }
+
+    /* ==========================================================================
+       Namespace: .region-pre-header
+       ========================================================================== */
+    #region-pre-header {
+        padding-top: 2px;
+
+        .up-portlet-wrapper {
+            display: inline-block;
+        }
+    }
+
+    /* ==========================================================================
+       Namespace: .region-header-bottom
+       ========================================================================== */
+    #region-header-bottom  {
+        .up-portlet-wrapper {
+            color: @white;
+
+            a {
+                color: #B2CCE1;
+            }
+            a:hover {
+                color: @white;
+            }
+        }
+    }
+
+    /* ==========================================================================
+       Namespace: region-customizeDrawer
+       ========================================================================== */
+    #region-customize {
+        padding-left: 0;
+
+        button {
+            z-index: 999;
+            margin-top: -1px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            margin-left: 0;
+            padding: 6px 15px 0;
+            font-size: 12px;
+
+            button:focus {
+                outline: none;
+            }
+            i {
+                margin-left: 5px;
+            }
+
+        }
+
+        #customizeOptionsWrapper {
+            margin-top: 1px;
+            z-index: 800;
+        }
+
+        #customizeOptions {
+            background-color: rgb(239, 239, 239);
+            .border(@grayscale4);
+        }
+
+        #customizeOptions.collapse + button i:after {
+            content: "\f0d7";
+        }
+
+        #customizeOptions + button i:after {
+            content: "\f0d8";
+        }
+    }
+
+    /* ==========================================================================
+       Namespace: .region-pre-content
+       ========================================================================== */
+    #region-pre-content {
+        margin-top: 8px;
+    }
+
+}
+
+@media only screen and (min-width: 769px) {
+
+    #region-header-left {
+        padding-left: 32px;
+
+        section.up-portlet-wrapper {
+            margin-top: 16px;
+        }
+    }
+
+    #region-header-right {
+        padding-right: 32px;
+
+        section.up-portlet-wrapper {
+            margin-top: 16px;
+        }
+    }
+
+}

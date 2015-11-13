@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.groupadmin;
 
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.RuntimeAuthorizationException;
 import org.jasig.portal.services.AuthorizationService;
@@ -48,17 +48,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class GroupAdministrationHelper {
-	
-	public static final String GROUPS_OWNER = "UP_GROUPS";
-	public static final String CREATE_PERMISSION = "CREATE_GROUP";
-	public static final String DELETE_PERMISSION = "DELETE_GROUP";
-	public static final String EDIT_PERMISSION = "EDIT_GROUP";
-	public static final String VIEW_PERMISSION = "VIEW_GROUP";
-	
-	protected final Log log = LogFactory.getLog(getClass()); 
 
-	private IGroupListHelper groupListHelper;
-	
+
+    protected final Log log = LogFactory.getLog(getClass()); 
+
+    private IGroupListHelper groupListHelper;
+
 	@Autowired(required = true)
 	public void setGroupListHelper(IGroupListHelper groupListHelper) {
 		this.groupListHelper = groupListHelper;
@@ -108,7 +103,7 @@ public class GroupAdministrationHelper {
 	public void deleteGroup(String key, IPerson deleter) {
 
         if (!canDeleteGroup(deleter, key)) {
-            throw new RuntimeAuthorizationException(deleter, DELETE_PERMISSION, key);
+            throw new RuntimeAuthorizationException(deleter, IPermission.DELETE_GROUP_ACTIVITY, key);
         }
 		
 		log.info("Deleting group with key " + key);
@@ -130,17 +125,17 @@ public class GroupAdministrationHelper {
 		group.delete();
 		
 	}
-	
-	/**
-	 * Update the title and description of an existing group in the group store.
-	 * 
-	 * @param groupForm Form representing the new group configuration
-	 * @param updater Updating user
-	 */
-	public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
+
+    /**
+     * Update the title and description of an existing group in the group store.
+     * 
+     * @param groupForm Form representing the new group configuration
+     * @param updater Updating user
+     */
+    public void updateGroupDetails(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-			throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(updater, IPermission.EDIT_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -158,16 +153,16 @@ public class GroupAdministrationHelper {
 
 	}
 
-	/**
-	 * Update the members of an existing group in the group store.
-	 * 
-	 * @param groupForm Form representing the new group configuration
-	 * @param updater   Updating user
-	 */
-	public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
+    /**
+     * Update the members of an existing group in the group store.
+     * 
+     * @param groupForm Form representing the new group configuration
+     * @param updater   Updating user
+     */
+    public void updateGroupMembers(GroupForm groupForm, IPerson updater) {
 
         if (!canEditGroup(updater, groupForm.getKey())) {
-            throw new RuntimeAuthorizationException(updater, EDIT_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(updater, IPermission.EDIT_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -203,19 +198,19 @@ public class GroupAdministrationHelper {
 		group.updateMembers();
 
 	}
-	
-	/**
-	 * Create a new group under the specified parent.  The new group will 
-	 * automatically be added to the parent group.
-	 * 
-	 * @param groupForm		form object representing the new group
-	 * @param parent		parent group for this new group
-	 * @param creator		the uPortal user creating the new group
-	 */
-	public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
-		
+
+    /**
+     * Create a new group under the specified parent.  The new group will 
+     * automatically be added to the parent group.
+     * 
+     * @param groupForm     form object representing the new group
+     * @param parent        parent group for this new group
+     * @param creator       the uPortal user creating the new group
+     */
+    public void createGroup(GroupForm groupForm, JsonEntityBean parent, IPerson creator) {
+
         if (!canCreateMemberGroup(creator, parent.getId())) {
-            throw new RuntimeAuthorizationException(creator, CREATE_PERMISSION, groupForm.getKey());
+            throw new RuntimeAuthorizationException(creator, IPermission.CREATE_GROUP_ACTIVITY, groupForm.getKey());
         }
 
 		if (log.isDebugEnabled()) {
@@ -248,12 +243,10 @@ public class GroupAdministrationHelper {
 			}
 		}
 		
-		// save the group, updating both its basic information and group
-		// membership
+		// save the group, updating both its basic information and group membership
 		group.update();
 		
-		// add this group to the membership list for the specified
-		// parent
+		// add this group to the membership list for the specified parent
 		IEntityGroup parentGroup = GroupService.findGroup(parent.getId());
 		parentGroup.addMember(group);
 		parentGroup.updateMembers();
@@ -261,35 +254,31 @@ public class GroupAdministrationHelper {
 	}
 
     public boolean canEditGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, EDIT_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.EDIT_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canDeleteGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, DELETE_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.DELETE_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canCreateMemberGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, CREATE_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.CREATE_GROUP_ACTIVITY, target));
     }
-    
+
     public boolean canViewGroup(IPerson currentUser, String target) {
-        
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-        return (ap.hasPermission(GROUPS_OWNER, VIEW_PERMISSION, target));
+        return (ap.hasPermission(IPermission.PORTAL_GROUPS, IPermission.VIEW_GROUP_ACTIVITY, target));
     }
-    
+
     /**
-     * Get the authoriztaion principal matching the supplied IPerson.
+     * Get the authorization principal matching the supplied IPerson.
      * 
      * @param person
      * @return

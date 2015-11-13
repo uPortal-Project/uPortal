@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,12 +38,16 @@ import java.util.regex.Pattern;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import javax.portlet.PortletMode;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
+import javax.portlet.WindowState;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainerException;
@@ -88,14 +92,22 @@ import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.StringListAttribute;
+import org.jasig.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.url.IPortalUrlBuilder;
+import org.jasig.portal.url.IPortalUrlProvider;
+import org.jasig.portal.url.IPortletUrlBuilder;
+import org.jasig.portal.url.UrlType;
 import org.jasig.portal.utils.ComparableExtractingComparator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.PortletDescriptor;
@@ -113,63 +125,40 @@ import org.springframework.webflow.context.ExternalContext;
 @Service
 public class PortletAdministrationHelper implements ServletContextAware {
 	protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
-	
-	private IGroupListHelper groupListHelper;
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
-    private IPortletCategoryRegistry portletCategoryRegistry;
-    private IPortletTypeRegistry portletTypeRegistry;
-    private PortalDriverContainerServices portalDriverContainerServices;
-    private IPortletPublishingService portletPublishingService; 
-    private PortletDelegationLocator portletDelegationLocator;
+
+    private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
+
+    /*
+     * Autowired beans listed alphabetically by type
+     */
+    @Autowired
+    private FragmentAdministrationHelper fragmentAdminHelper;
+    @Autowired
+    private IAuthorizationService authorizationService;
+    @Autowired
     private IChannelPublishingDefinitionDao portletPublishingDefinitionDao;
+    @Autowired
+    private IGroupListHelper groupListHelper;
+    @Autowired
+    private IPortalUrlProvider urlProvider;
+    @Autowired
+    private IPortletCategoryRegistry portletCategoryRegistry;
+    @Autowired
+    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    @Autowired
+    private IPortletPublishingService portletPublishingService; 
+    @Autowired    
+    private IPortletTypeRegistry portletTypeRegistry;
+    @Autowired
+    private PortalDriverContainerServices portalDriverContainerServices;
+    @Autowired
+    private PortletDelegationLocator portletDelegationLocator;
+
     private ServletContext servletContext;
-    
-	@Override
+
+    @Override
     public void setServletContext(ServletContext servletContext) {
 	    this.servletContext = servletContext;
-    }
-	@Autowired
-    public void setPortletDelegationLocator(PortletDelegationLocator portletDelegationLocator) {
-        this.portletDelegationLocator = portletDelegationLocator;
-    }
-	@Autowired
-    public void setGroupListHelper(IGroupListHelper groupListHelper) {
-		this.groupListHelper = groupListHelper;
-	}
-	
-	/**
-	 * Set the portlet registry store
-	 * 
-	 * @param portletRegistryStore
-	 */
-	@Autowired
-	public void setPortletDefinitionRegistry(IPortletDefinitionRegistry portletDefinitionRegistry) {
-		this.portletDefinitionRegistry = portletDefinitionRegistry;
-	}
-	
-	@Autowired
-	public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
-		this.portletCategoryRegistry = portletCategoryRegistry;
-	}
-	
-	@Autowired
-	public void setPortletTypeRegistry(IPortletTypeRegistry portletTypeRegistry) {
-		this.portletTypeRegistry = portletTypeRegistry;
-	}
-	
-	@Autowired
-	public void setPortalDriverContainerServices(
-			PortalDriverContainerServices portalDriverContainerServices) {
-		this.portalDriverContainerServices = portalDriverContainerServices;
-	}
-	@Autowired
-	public void setPortletPublishingService(
-			IPortletPublishingService portletPublishingService) {
-		this.portletPublishingService = portletPublishingService;
-	}
-	@Autowired
-	public void setPortletChannelPublishingDefinitionDao(IChannelPublishingDefinitionDao portletPublishingDefinitionDao) {
-        this.portletPublishingDefinitionDao = portletPublishingDefinitionDao;
     }
 
     /**
@@ -178,14 +167,15 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	 * be pre-populated with the PortletDefinition's current configuration.  If
 	 * the PortletDefinition does not yet exist, a new default form will be
 	 * created.
-	 * 
-	 * @param chanId
+	 *
+     * @param person
+     * @param portletId
 	 * @return
 	 */
-	public PortletDefinitionForm getPortletDefinitionForm(String portletId) {
-		
-		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
-		
+    public PortletDefinitionForm getPortletDefinitionForm(IPerson person, String portletId) {
+
+        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
+
 		// create the new form
 		final PortletDefinitionForm form;
 		if (def != null) {
@@ -195,11 +185,11 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		else {
 		    form = new PortletDefinitionForm();
 		}
-		
+
 		// if this is a pre-existing portlet, set the category and permissions
         if (def != null) {
-        	
-        	// create a JsonEntityBean for each current category and add it 
+
+        	// create a JsonEntityBean for each current category and add it
         	// to our form bean's category list
         	Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
         	for (PortletCategory cat : categories) {
@@ -207,18 +197,19 @@ public class PortletAdministrationHelper implements ServletContextAware {
         	}
 
 			try {
-                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPortletPublishingService.FRAMEWORK_OWNER);
-                IAuthorizationPrincipal[] prins = pm.getAuthorizedPrincipals(IPortletPublishingService.SUBSCRIBER_ACTIVITY,
-                        IPermission.PORTLET_PREFIX + String.valueOf(form.getId()));
+                IPermissionManager pm = AuthorizationService.instance().newPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+                IAuthorizationPrincipal[] prins =
+                        pm.getAuthorizedPrincipals(IPermission.PORTLET_SUBSCRIBER_ACTIVITY,
+                        PermissionHelper.permissionTargetIdForPortletDefinition(def));
                 for (int mp = 0; mp < prins.length; mp++) {
                 	JsonEntityBean bean;
-                	
+
                 	// first assume this is a group
                 	IEntityGroup group = GroupService.findGroup(prins[mp].getKey());
                 	if (group != null) {
                     	bean = new JsonEntityBean(group, EntityEnum.GROUP);
-                	} 
-                	
+                	}
+
                 	// if a matching group can't be found, try to find a matching
                 	// non-group entity
                 	else {
@@ -227,18 +218,18 @@ public class PortletAdministrationHelper implements ServletContextAware {
                     	String name = groupListHelper.lookupEntityName(bean);
                     	bean.setName(name);
                 	}
-                	
+
                     form.addGroup(bean);
                 }
 			} catch (GroupsException e) {
 				e.printStackTrace();
 			}
-		} 
-        
+		}
+
         // otherwise, if this is a new portlet, pre-populate the categories
         // and groups with some reasonable defaults
         else {
-        	
+
 			// pre-populate with top-level category
 			IEntityGroup portletCategoriesGroup = GroupService.getDistinguishedGroup(GroupService.PORTLET_CATEGORIES);
 			form.addCategory(new JsonEntityBean(portletCategoriesGroup, groupListHelper.getEntityType(portletCategoriesGroup)));
@@ -246,20 +237,71 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			// pre-populate with top-level group
 			IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
 			form.addGroup(new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup)));
+
 		}
 
-		return form;
-	}
-	
-	/**
-	 * Persist a new or edited PortletDefinition.
-	 * 
-	 * @param form
-	 * @param publisher
-	 */
-	public PortletDefinitionForm savePortletRegistration(PortletDefinitionForm form,
-			IPerson publisher) throws Exception {
-		
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+        // User must have SOME FORM of lifecycle permission over AT LEAST ONE
+        // category in which this portlet resides;  lifecycle permissions are
+        // hierarchical, so we'll test with the weakest.
+        if (!hasLifecyclePermission(person, PortletLifecycleState.CREATED, form.getCategories())) {
+            logger.warn("User '" + person.getUserName() +
+                    "' attempted to edit the following portlet without MANAGE permission:  " + def);
+            throw new SecurityException("Not Authorized");
+        }
+
+        return form;
+    }
+
+    /**
+     * Persist a new or edited PortletDefinition.
+     * 
+     * @param form
+     * @param publisher
+     */
+    public PortletDefinitionForm savePortletRegistration(IPerson publisher, 
+            PortletDefinitionForm form) throws Exception {
+
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+
+        // User must have the selected lifecycle permission over AT LEAST ONE
+        // category in which this portlet resides.  (This is the same check that
+        // is made when the user enters the lifecycle-selection step in the wizard.)
+        if (!hasLifecyclePermission(publisher, form.getLifecycleState(), form.getCategories())) {
+            logger.warn("User '" + publisher.getUserName() + 
+                    "' attempted to save the following portlet without the selected MANAGE permission:  " + form);
+            throw new SecurityException("Not Authorized");
+        }
+
+        if (!form.isNew()) {
+            // User must have the previous lifecycle permission
+            // in AT LEAST ONE previous category as well
+            IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinition(form.getId());
+            Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
+            List<JsonEntityBean> categoryBeans = new ArrayList<JsonEntityBean>();
+            for (PortletCategory cat : categories) {
+                categoryBeans.add(new JsonEntityBean(cat));
+            }
+            if (!hasLifecyclePermission(publisher, def.getLifecycleState(), categoryBeans)) {
+                logger.warn("User '" + publisher.getUserName() + 
+                        "' attempted to save the following portlet without the previous MANAGE permission:  " + form);
+                throw new SecurityException("Not Authorized");
+            }
+        }
+
+        if (form.isNew() || portletDefinitionRegistry.getPortletDefinition(form.getId()).getType().getId() != form.getTypeId()) {
+            // User must have access to the selected CPD if s/he selected it in this interaction
+            final int selectedTypeId = form.getTypeId();
+            final PortletPublishingDefinition cpd = portletPublishingDefinitionDao.getChannelPublishingDefinition(selectedTypeId);
+            final Map<IPortletType, PortletPublishingDefinition> allowableCpds = this.getAllowableChannelPublishingDefinitions(publisher);
+            if (!allowableCpds.containsValue(cpd)) {
+                logger.warn("User '" + publisher.getUserName() + 
+                        "' attempted to administer the following portlet without the selected " + 
+                        IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE + " permission:  " + form);
+                throw new SecurityException("Not Authorized");
+            }
+        }
+
 		// create the group array from the form's group list
 		IGroupMember[] groupMembers = new IGroupMember[form.getGroups().size()];
 		for (int i = 0; i < groupMembers.length; i++) {
@@ -272,7 +314,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 				
 			}
 		}
-		
+
         // create the category array from the form's category list
 		PortletCategory[] categories = new PortletCategory[form.getCategories().size()];
 		for (ListIterator<JsonEntityBean> iter = form.getCategories().listIterator(); iter.hasNext();) {
@@ -303,111 +345,28 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	    portletDef.getPortletDescriptorKey().setWebAppName(form.getApplicationId());
 	    portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
 	    portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
-	    
-	    Date now = new Date();
 
-		int order = form.getLifecycleState().getOrder();
-		
-		if (form.getId() == null) {
-			
-			if (order >= PortletLifecycleState.APPROVED.getOrder()) {
-				portletDef.setApproverId(publisher.getID());
-				portletDef.setApprovalDate(now);
-			}
-			
-			if (order >= PortletLifecycleState.PUBLISHED.getOrder()) {
-			    portletDef.setPublisherId(publisher.getID());
-			    if (portletDef.getPublishDate() == null) {
-				    portletDef.setPublishDate(now);
-			    }
-			} else if (form.getPublishDate() != null) {
-				portletDef.setPublishDate(form.getPublishDateTime());
-				portletDef.setPublisherId(publisher.getID());
-			}
-
-			if (order >= PortletLifecycleState.EXPIRED.getOrder()) {
-			    portletDef.setExpirerId(publisher.getID());
-			    if (portletDef.getExpirationDate() == null) {
-			    	portletDef.setExpirationDate(now);
-			    }
-			} else if (form.getExpirationDate() != null) {
-				portletDef.setExpirationDate(form.getExpirationDateTime());
-				portletDef.setExpirerId(publisher.getID());
-			}
-			
-		} 
-		
-		// if we're updating a portlet
-		else {
-
-			if (order >= PortletLifecycleState.APPROVED.getOrder()) {
-				if (portletDef.getApproverId() < 0) {
-					portletDef.setApproverId(publisher.getID());
-				}
-				if (portletDef.getApprovalDate() == null) {
-					portletDef.setApprovalDate(now);
-				}
-			} else {
-				portletDef.setApprovalDate(null);
-				portletDef.setApproverId(-1);
-			}
-			
-			if (order >= PortletLifecycleState.PUBLISHED.getOrder()) {
-				if (portletDef.getPublisherId() < 0) {
-					portletDef.setPublisherId(publisher.getID());
-				}
-				if (portletDef.getPublishDate() == null) {
-					portletDef.setPublishDate(now);
-				}
-			} else if (form.getPublishDate() != null) {
-				portletDef.setPublishDate(form.getPublishDate());
-				if (portletDef.getPublisherId() < 0) {
-					portletDef.setPublisherId(publisher.getID());
-				}
-			} else {
-				portletDef.setPublishDate(null);
-				portletDef.setPublisherId(-1);
-			}
-			
-			if (order >= PortletLifecycleState.EXPIRED.getOrder()) {
-				if (portletDef.getExpirerId() < 0) {
-					portletDef.setExpirerId(publisher.getID());
-				}
-				if (portletDef.getExpirationDate() == null) {
-					portletDef.setExpirationDate(now);
-				}
-			} else if (form.getExpirationDate() != null) {
-				portletDef.setExpirationDate(form.getExpirationDate());
-				if (portletDef.getExpirerId() < 0) {
-					portletDef.setExpirerId(publisher.getID());
-				}
-			} else {
-				portletDef.setExpirationDate(null);
-				portletDef.setExpirerId(-1);
-			}
-			
-		}
-
-	    
 	    final IPortletType portletType = portletTypeRegistry.getPortletType(form.getTypeId());
 	    if (portletType == null) {
 	        throw new IllegalArgumentException("No IPortletType exists for ID " + form.getTypeId());
 	    }
 	    portletDef.setType(portletType);
 	    
-	    // add portlet parameters
-		List<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
+	    // Make parameters (NB:  these are different from preferences) in the
+	    // portletDef reflect the state of the form, in case any have changed.
 		for (String key : form.getParameters().keySet()) {
 			String value = form.getParameters().get(key).getValue();
 			if (!StringUtils.isBlank(value)) {
 			    portletDef.addParameter(key, value);
 			}
 		}
-
 	    portletDef.addParameter(IPortletDefinition.EDITABLE_PARAM, Boolean.toString(form.isEditable()));
+	    portletDef.addParameter(IPortletDefinition.CONFIGURABLE_PARAM, Boolean.toString(form.isConfigurable()));
 	    portletDef.addParameter(IPortletDefinition.HAS_HELP_PARAM, Boolean.toString(form.isHasHelp()));
 	    portletDef.addParameter(IPortletDefinition.HAS_ABOUT_PARAM, Boolean.toString(form.isHasAbout()));
-	    
+
+        // Now add portlet preferences
+        List<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
 		for (String key : form.getPortletPreferences().keySet()) {
 			List<String> prefValues = form.getPortletPreferences().get(key).getValue();
 			if (prefValues != null && prefValues.size() > 0) {
@@ -417,29 +376,102 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			}
 		}
 		portletDef.setPortletPreferences(preferenceList);
-	    
+
+        // Lastly update the PortletDefinition's lifecycle state & lifecycle-related metadata
+        updateLifecycleState(form, portletDef, publisher);
+
 	    portletPublishingService.savePortletDefinition(portletDef, publisher, Arrays.asList(categories), Arrays.asList(groupMembers));
 
-	    return this.getPortletDefinitionForm(portletDef.getPortletDefinitionId().getStringId());
+	    return this.getPortletDefinitionForm(publisher, portletDef.getPortletDefinitionId().getStringId());
 	}
-	
-	/**
-	 * Delete the portlet with the given portlet ID.
-	 * 
-	 * @param portletID the portlet ID
-	 * @param person the person removing the portlet
-	 */
-	public void removePortletRegistration(String portletId, IPerson person) {
-		IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
-		portletDefinitionRegistry.deletePortletDefinition(def);
-	}
-	
+
+    /**
+     * Delete the portlet with the given portlet ID.
+     * 
+     * @param person the person removing the portlet
+     * @param form
+     */
+    public void removePortletRegistration(IPerson person, PortletDefinitionForm form) {
+
+        /* TODO:  Service-Layer Security Reboot (great need of refactoring with a community-approved plan in place) */
+        // Arguably a check here is redundant since -- in the current
+        // portlet-manager webflow -- you can't get to this point in the
+        // conversation with out first obtaining a PortletDefinitionForm;  but
+        // it makes sense to check permissions here as well since the route(s)
+        // to reach this method could evolve in the future.
+
+        // Let's enforce the policy that you may only delete a portlet thet's
+        // currently in a lifecycle state you have permission to MANAGE.
+        // (They're hierarchical.)
+        if (!hasLifecyclePermission(person, form.getLifecycleState(), form.getCategories())) {
+            logger.warn("User '" + person.getUserName() +  "' attempted to remove portlet '" + 
+                                form.getFname() + "' without the proper MANAGE permission");
+            throw new SecurityException("Not Authorized");
+        }
+
+        IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(form.getId());
+        portletDefinitionRegistry.deletePortletDefinition(def);
+
+    }
+
+
+    /**
+     * Check if the link to the Fragment admin portlet should display in the status message.
+     *
+     * Checks that the portlet is new, that the portlet has been published and that
+     * the user has necessary permissions to go to the fragment admin page.
+     *
+     * @param person the person publishing/editing the portlet
+     * @param form the portlet being editted
+     * @param portletId the id of the saved portlet
+     * @return true If all three conditions are met
+     */
+    public boolean shouldDisplayLayoutLink(IPerson person, PortletDefinitionForm form, String portletId) {
+        if (!form.isNew()) {
+            return false;
+        }
+
+        // only include the "do layout" link for published portlets.
+        if (form.getLifecycleState() != PortletLifecycleState.PUBLISHED) {
+            return false;
+        }
+
+        // check that the user can edit at least 1 fragment.
+        Map<String, String> layouts = fragmentAdminHelper.getAuthorizedDlmFragments(person.getUserName());
+        if (layouts == null || layouts.isEmpty()) {
+            return false;
+        }
+
+        // check that the user has subscribe priv.
+        IAuthorizationPrincipal authPrincipal = authorizationService.newPrincipal(person.getUserName(), EntityEnum.PERSON.getClazz());
+        if (!authPrincipal.canSubscribe(portletId)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Get the link to the fragment admin portlet.
+     *
+     * @param request the current http request.
+     * @return the portlet link
+     */
+    public String getFragmentAdminURL(HttpServletRequest request) {
+        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET, UrlType.RENDER);
+        IPortletUrlBuilder portletUrlBuilder = builder.getTargetedPortletUrlBuilder();
+        portletUrlBuilder.setPortletMode(PortletMode.VIEW);
+        portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
+
+        return builder.getUrlString();
+    }
+
 	/**
 	 * Get a list of the key names of the currently-set arbitrary portlet
 	 * preferences.
 	 * 
 	 * @param form
-	 * @param cpd
 	 * @return
 	 */
 	public Set<String> getArbitraryPortletPreferenceNames(PortletDefinitionForm form) {
@@ -687,48 +719,62 @@ public class PortletAdministrationHelper implements ServletContextAware {
 			return null;
 		}
 	}
-	
-	/**
-	 * Pre-populate a PortletDefinitionForm with portlet-specific information
-	 * using the supplied portlet descriptor.
-	 * 
-	 * @param application
-	 * @param portlet
-	 * @param form
-	 */
-	public void prepopulatePortlet(String application, String portlet, PortletDefinitionForm form) {
-		final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
-		final PortletDefinition portletDD;
-		try {
-		    portletDD = portletRegistryService.getPortlet(application, portlet);
-        }
-		catch (PortletContainerException e) {
-		    this.logger.warn("Failed to load portlet descriptor for appId='" + application + "', portletName='" + portlet + "'", e);
+
+    /**
+     * Pre-populate a new {@link PortletDefinitionForm} with information from
+     * the {@link PortletDefinition}.
+     *
+     * @param form
+     */
+    public void loadDefaultsFromPortletDefinitionIfNew(PortletDefinitionForm form) {
+
+        if (!form.isNew()) {
+            // Get out;  we only prepopulate new portlets
             return;
         }
-		    
-	    form.setTitle(portletDD.getPortletName());
-		form.setName(portletDD.getPortletName());
-		form.setApplicationId(application);
-		form.setPortletName(portletDD.getPortletName());
-		for (Supports supports : portletDD.getSupports()) {
-			for (String mode : supports.getPortletModes()) {
-				if ("edit".equals(mode)) {
-					form.setEditable(true);
-				} else if ("help".equals(mode)) {
-					form.setHasHelp(true);
-				}
-			}
-		}
-	}
-	
+
+        // appName/portletName must be set at this point
+        Validate.notBlank(form.getApplicationId(), "ApplicationId not set");
+        Validate.notBlank(form.getPortletName(), "PortletName not set");
+
+        final PortletRegistryService portletRegistryService = portalDriverContainerServices.getPortletRegistryService();
+        final PortletDefinition portletDef;
+        try {
+            portletDef = portletRegistryService.getPortlet(form.getApplicationId(), form.getPortletName());
+        }
+        catch (PortletContainerException e) {
+            this.logger.warn("Failed to load portlet descriptor for appId='" + form.getApplicationId() + "', portletName='" + form.getPortletName() + "'", e);
+            return;
+        }
+
+        form.setTitle(portletDef.getPortletName());
+        form.setName(portletDef.getPortletName());
+        for (Supports supports : portletDef.getSupports()) {
+            for (String mode : supports.getPortletModes()) {
+                if ("edit".equalsIgnoreCase(mode)) {
+                    form.setEditable(true);
+                } else if ("help".equalsIgnoreCase(mode)) {
+                    form.setHasHelp(true);
+                } else if ("config".equalsIgnoreCase(mode)) {
+                    form.setConfigurable(true);
+                }
+            }
+        }
+    }
+
 	public PortletLifecycleState[] getLifecycleStates() {
 		return PortletLifecycleState.values();
 	}
 
 	public Set<PortletLifecycleState> getAllowedLifecycleStates(IPerson person, List<JsonEntityBean> categories) {
 		Set<PortletLifecycleState> states = new TreeSet<PortletLifecycleState>();
-		if (hasLifecyclePermission(person, PortletLifecycleState.EXPIRED, categories)) {
+		if (hasLifecyclePermission(person, PortletLifecycleState.MAINTENANCE, categories)) {
+            states.add(PortletLifecycleState.CREATED);
+            states.add(PortletLifecycleState.APPROVED);
+            states.add(PortletLifecycleState.EXPIRED);
+            states.add(PortletLifecycleState.PUBLISHED);
+            states.add(PortletLifecycleState.MAINTENANCE);
+        } else if (hasLifecyclePermission(person, PortletLifecycleState.EXPIRED, categories)) {
 			states.add(PortletLifecycleState.CREATED);
 			states.add(PortletLifecycleState.APPROVED);
 			states.add(PortletLifecycleState.EXPIRED);
@@ -768,11 +814,15 @@ public class PortletAdministrationHelper implements ServletContextAware {
                 activity = IPermission.PORTLET_MANAGER_EXPIRED_ACTIVITY;
                 break;
             }
+            case MAINTENANCE: {
+                activity = IPermission.PORTLET_MANAGER_MAINTENANCE_ACTIVITY;
+                break;
+            }
             default: {
                 throw new IllegalArgumentException("");
             }
         }
-        if (ap.hasPermission("UP_FRAMEWORK", activity, IPermission.ALL_PORTLETS_TARGET)) {
+        if (ap.hasPermission(IPermission.PORTAL_PUBLISH, activity, IPermission.ALL_PORTLETS_TARGET)) {
             logger.debug("Found permission for category ALL_PORTLETS and lifecycle state " + state.toString());
             return true;
         }
@@ -794,9 +844,10 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	}
 	
 	public boolean configModeAction(ExternalContext externalContext, String fname) throws IOException {
+
 	    final ActionRequest actionRequest = (ActionRequest)externalContext.getNativeRequest();
 	    final ActionResponse actionResponse = (ActionResponse)externalContext.getNativeResponse();
-	    
+
 	    final IPortletWindowId portletWindowId = this.getDelegateWindowId(externalContext, fname);
 	    if (portletWindowId == null) {
 	        throw new IllegalStateException("Cannot execute configModeAciton without a delegate window ID in the session for key: " + RenderPortletTag.DEFAULT_SESSION_KEY_PREFIX + fname);
@@ -815,8 +866,29 @@ public class PortletAdministrationHelper implements ServletContextAware {
 	        //The portlet sent a redirect OR changed it's mode away from CONFIG, assume it is done
 	        return true;
 	    }
-	    
+
 	    return false;
+	}
+	
+	/**
+	 * updates the editPortlet form with the portletType 
+	 * of the first (and only) portletDefinition passed in through the Map of 
+	 * portlet definitions.
+	 * @param portletDefinitions
+	 * @param form
+	 * @return PortletPublishingDefinition of the first portlet definition in the 
+	 * list, null if the list is empty or has more than one element. 
+	 */
+	public PortletPublishingDefinition updateFormForSinglePortletType( Map<IPortletType, PortletPublishingDefinition> portletDefinitions, PortletDefinitionForm form) {
+		if (portletDefinitions.size() != 1) {
+			return null;
+		}
+		IPortletType portletType = portletDefinitions.keySet().iterator().next();
+		form.setTypeId(portletType.getId());
+		PortletPublishingDefinition cpd = portletPublishingDefinitionDao.getChannelPublishingDefinition(portletType.getId());
+		form.setChannelPublishingDefinition(cpd);
+		
+		return cpd;
 	}
 	
 	public boolean offerPortletSelection(PortletDefinitionForm form) {
@@ -841,8 +913,31 @@ public class PortletAdministrationHelper implements ServletContextAware {
 		
 		return false;
 	}
-	
-	protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
+
+    public Map<IPortletType, PortletPublishingDefinition> getAllowableChannelPublishingDefinitions(IPerson user) {
+
+        Map<IPortletType, PortletPublishingDefinition> rslt;
+
+        final Map<IPortletType, PortletPublishingDefinition> rawMap = portletPublishingDefinitionDao.getChannelPublishingDefinitions();
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+        if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE, IPermission.ALL_PORTLET_TYPES)) {
+            // Send the whole collection back...
+            rslt = rawMap;
+        } else {
+            // Filter the collection by permissions...
+            rslt = new HashMap<IPortletType, PortletPublishingDefinition>();
+            for (Map.Entry<IPortletType, PortletPublishingDefinition> y : rawMap.entrySet()) {
+                if (principal.hasPermission(IPermission.PORTAL_PUBLISH, IPermission.PORTLET_MANAGER_SELECT_PORTLET_TYPE, y.getKey().getName())) {
+                    rslt.put(y.getKey(), y.getValue());
+                }
+            }
+        }
+
+        return rslt;
+
+    }
+
+    protected Tuple<String, String> getPortletDescriptorKeys(PortletDefinitionForm form) {
         if (form.getPortletName() == null || (form.getApplicationId() == null && !form.isFramework())) {
             return null;
         }
@@ -859,4 +954,88 @@ public class PortletAdministrationHelper implements ServletContextAware {
         
         return new Tuple<String, String>(portletAppId, portletName);
 	}
+
+    private void updateLifecycleState(PortletDefinitionForm form, IPortletDefinition portletDef, IPerson publisher) {
+
+        /*
+         * Manage the metadata for each possible lifecycle state in turn...
+         */
+
+        Date now = new Date();  // Will be entered as the timestamp for states that we trigger
+        PortletLifecycleState selectedLifecycleState = form.getLifecycleState();
+
+        /*
+         * APPROVED
+         */
+        if (selectedLifecycleState.isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
+            // We are the 'approver' if it isn't previously approved...
+            if (portletDef.getApprovalDate() == null) {
+                portletDef.setApproverId(publisher.getID());
+                portletDef.setApprovalDate(now);
+            }
+            if (selectedLifecycleState.equals(PortletLifecycleState.APPROVED)
+                    && form.getPublishDate() != null
+                    // Permissions check required (of course) to use the auto-publish feature
+                    && hasLifecyclePermission(publisher, PortletLifecycleState.PUBLISHED, form.getCategories())) {
+                // We are also the 'publisher' if we scheduled the portlet for (future) publication...
+                portletDef.setPublishDate(form.getPublishDateTime());
+                portletDef.setPublisherId(publisher.getID());
+            }
+        } else {
+            // Clear previous approval fields, if present...
+            portletDef.setApprovalDate(null);
+            portletDef.setApproverId(-1);
+        }
+
+        /*
+         * PUBLISHED
+         */
+        if (selectedLifecycleState.isEqualToOrAfter(PortletLifecycleState.PUBLISHED)) {
+            // We are the 'publisher' if it isn't previously published or the publish time hasn't hit yet...
+            if (portletDef.getPublishDate() == null || portletDef.getPublishDate().after(now)) {
+                portletDef.setPublisherId(publisher.getID());
+                portletDef.setPublishDate(now);
+            }
+            if (selectedLifecycleState.equals(PortletLifecycleState.PUBLISHED)
+                    && form.getExpirationDate() != null
+                    // Permissions check required (of course) to use the auto-expire feature
+                    && hasLifecyclePermission(publisher, PortletLifecycleState.EXPIRED, form.getCategories())) {
+                // We are also the 'expirer' if we scheduled the portlet for (future) expiration...
+                portletDef.setExpirationDate(form.getExpirationDateTime());
+                portletDef.setExpirerId(publisher.getID());
+            }
+        } else if (!selectedLifecycleState.equals(PortletLifecycleState.APPROVED)
+                || form.getPublishDate() == null){
+            // Clear previous publishing fields, if present...
+            portletDef.setPublishDate(null);
+            portletDef.setPublisherId(-1);
+        }
+
+        /*
+         * EXPIRED
+         */
+        if (selectedLifecycleState.equals(PortletLifecycleState.EXPIRED)) {
+            // We are only the 'expirer' if we specifically choose EXPIRED
+            // (MAINTENANCE mode is not considered expired)
+            portletDef.setExpirerId(publisher.getID());
+            portletDef.setExpirationDate(now);
+        } else if (!selectedLifecycleState.equals(PortletLifecycleState.PUBLISHED)
+                || form.getExpirationDate() == null) {
+            // Clear previous expiration fields, if present...
+            portletDef.setExpirationDate(null);
+            portletDef.setExpirerId(-1);
+        }
+
+        /*
+         * MAINTENANCE
+         */
+        if (selectedLifecycleState.equals(PortletLifecycleState.MAINTENANCE)) {
+            // We are placing the portlet into MAINTENANCE mode;
+            // an admin will restore it (manually) when available
+            portletDef.addParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME, "true");
+        } else {
+            // Otherwise we must remove the MAINTENANCE flag, if present
+            portletDef.removeParameter(PortletLifecycleState.MAINTENANCE_MODE_PARAMETER_NAME);
+        }
+    }
 }

@@ -1,30 +1,27 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.groups.pags;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.portal.groups.pags.PersonAttributesGroupStore.GroupDefinition;
-import org.jasig.portal.groups.pags.PersonAttributesGroupStore.TestGroup;
 import org.jasig.portal.utils.ResourceLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -39,7 +36,8 @@ import org.w3c.dom.Text;
  * file format.
  *
  * @author Al Wold
- * @version $Revision$
+ * @deprecated JPA (database) PAGS is required for a small but growing list of
+ * newer features.
  */
 public class XMLPersonAttributesConfiguration
    implements IPersonAttributesConfiguration {
@@ -61,14 +59,14 @@ public class XMLPersonAttributesConfiguration
       NodeList groupElements = groupStoreElement.getChildNodes();
       for (int i = 0; i < groupElements.getLength(); i++) {
          if (groupElements.item(i) instanceof Element) {
-            GroupDefinition groupDef = initGroupDef((Element) groupElements.item(i));
+            PagsGroup groupDef = initGroupDef((Element) groupElements.item(i));
             groupDefinitions.put(groupDef.getKey(), groupDef);
          }
       }
       return groupDefinitions;
    }
-   private GroupDefinition initGroupDef(Element groupElement) {
-      GroupDefinition groupDef = new GroupDefinition();
+   private PagsGroup initGroupDef(Element groupElement) {
+      PagsGroup groupDef = new PagsGroup();
       NodeList children = groupElement.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
          if (children.item(i) instanceof Element) {
@@ -129,7 +127,7 @@ public class XMLPersonAttributesConfiguration
       }
       return groupDef;
    }
-   private void addMemberKeys(GroupDefinition groupDef, Element members) {
+   private void addMemberKeys(PagsGroup groupDef, Element members) {
       NodeList children = members.getChildNodes();
       for (int i = 0; i < children.getLength(); i++) {
          Node node = children.item(i);

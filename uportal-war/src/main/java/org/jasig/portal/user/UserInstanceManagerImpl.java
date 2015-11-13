@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.user;
 
 import java.io.Serializable;
@@ -34,10 +33,10 @@ import org.jasig.portal.UserInstance;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
-import org.jasig.portal.layout.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.UserLayoutManagerFactory;
+import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.PortalSecurityException;
@@ -103,12 +102,11 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
     public IUserInstance getUserInstance(HttpServletRequest request) throws PortalException {
         try {
             request = this.portalRequestUtils.getOriginalPortalRequest(request);
-        }
-        catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             //ignore, just means that this isn't a wrapped request
         }
         
-        //Use request attributes first for the fastest possible retrieval
+        // Use request attributes first for the fastest possible retrieval
         IUserInstance userInstance = (IUserInstance)request.getAttribute(KEY);
         if (userInstance != null) {
             return userInstance;
@@ -118,8 +116,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
         try {
             // Retrieve the person object that is associated with the request
             person = this.personManager.getPerson(request);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Exception while retrieving IPerson!", e);
             throw new PortalSecurityException("Could not retrieve IPerson", e);
         }
@@ -150,10 +147,7 @@ public class UserInstanceManagerImpl implements IUserInstanceManager {
 
         //Create the user layout manager and user instance object
         IUserLayoutManager userLayoutManager = userLayoutManagerFactory.getUserLayoutManager(person, userProfile);
-        if (person.isGuest()) {
-            userLayoutManager = userLayoutManagerFactory.immutableUserLayoutManager(userLayoutManager);
-        }
-        
+
         final UserPreferencesManager userPreferencesManager = new UserPreferencesManager(person, userProfile, userLayoutManager);
         userInstance = new UserInstance(person, userPreferencesManager, localeManager);
         

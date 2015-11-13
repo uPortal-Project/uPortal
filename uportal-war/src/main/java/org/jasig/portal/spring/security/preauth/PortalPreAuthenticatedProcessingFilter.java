@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.SessionAttributeProfileMapperImpl;
+import org.jasig.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
@@ -45,6 +45,7 @@ import org.jasig.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -53,11 +54,15 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  * PortalPreAuthenticatedProcessingFilter enables Spring Security 
  * pre-authentication in uPortal by returning the current IPerson object as
  * the user details.
+ *
+ * At login, fires ProfileSelectionEvent representing any runtime request for a profile selection
+ * (as in, profile request parameter or target profile indicated by the swapper manager).
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  * @version $Revision$
  */
-public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
+public class PortalPreAuthenticatedProcessingFilter
+        extends AbstractPreAuthenticatedProcessingFilter {
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
     
     private String loginPath = "/Login";
@@ -68,6 +73,8 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
     protected Authentication authenticationService = null;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
+
+    private ApplicationEventPublisher eventPublisher;
     
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -150,22 +157,38 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
          * is useful.
          */
         if (loginPath.equals(currentPath)) {
-            // clear out the current security context so we can re-establish
-            // it once the new session is established
+
             SecurityContextHolder.clearContext();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
+                " so we can re-establish it once the new session is established.");
+            }
+
             this.doPortalAuthentication((HttpServletRequest)request);
             chain.doFilter(request, response);
         }
         
         else if (logoutPath.equals(currentPath)) {
-            // clear out the current security context so we can re-establish
-            // it once the new session is established
+
             SecurityContextHolder.clearContext();
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Path [" + currentPath + "] is logoutPath, so cleared security context" +
+                        " so can re-establish it once the new session is established.");
+            }
+
+
             chain.doFilter(request, response);
         }
         
         // otherwise, call the base class logic
         else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
+                        " so no uPortal-custom filtering.");
+            }
+
             super.doFilter(request, response, chain);
         }
         
@@ -205,8 +228,17 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         // Clear out the existing session for the user if they have one
         String targetUid = null;
         String originalUid = null;
+        String originalEventSessionId = null;
         boolean swap = false;
+        String swapperProfile = null;
+
+        final String requestedSessionId = request.getRequestedSessionId();
+
         if (request.isRequestedSessionIdValid()) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("doPortalAuthentication for valid requested session id " + requestedSessionId);
+            }
+
             try {
                 HttpSession s = request.getSession(false);
                 
@@ -222,14 +254,25 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                         final IPerson person = personManager.getPerson(request);
                         originalUid = person.getName();
                         swap = true;
+                        swapperProfile = identitySwapperManager.getTargetProfile(s);
                     }
                 }
+                //Original person in session so this must be an un-swap request
                 else {
+                    if (logger.isDebugEnabled()) {
+                        logger.trace("This is an un-swap request swapping back from impersonated " + targetUid
+                                + " to original user " + originalUid + ".");
+                    }
+
                     final IPerson person = personManager.getPerson(request);
                     targetUid = person.getName();
                 }
 
                 if (s != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Invalidating the impersonated session in un-swapping.");
+                    }
+
                     s.invalidate();
                 }
             }
@@ -241,15 +284,16 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
                     logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
                 }
             }
+        } else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Requested session id " + requestedSessionId + " was not valid " +
+                        "so no attempt to apply swapping rules.");
+            }
+
         }
 
         //  Create the user's session
         HttpSession s = request.getSession(true);
-
-        final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
-        if (requestedProfile != null) {
-            s.setAttribute(SessionAttributeProfileMapperImpl.DEFAULT_SESSION_ATTRIBUTE_NAME, requestedProfile);
-        }
 
         IPerson person = null;
         try {
@@ -303,6 +347,42 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
             request.getSession(false).invalidate();
             // Add the authentication failure
             request.getSession(true).setAttribute(LoginController.AUTH_ERROR_KEY, Boolean.TRUE);
+        }
+
+        final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
+
+        if (requestedProfile != null) {
+
+            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, requestedProfile, person, request);
+
+            try {
+                this.eventPublisher.publishEvent(event);
+            } catch (final Exception exceptionFiringProfileSelection) {
+                // failing to register a profile selection is bad,
+                // but preventing login entirely is worse.  Log the exception and continue.
+                logger.error("Exception on firing profile selection event " + event,
+                    exceptionFiringProfileSelection);
+            }
+
+
+        } else if(swapperProfile != null) {
+
+            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, swapperProfile, person, request);
+
+            try {
+                this.eventPublisher.publishEvent(event);
+            } catch (final Exception exceptionFiringSwappedProfileSelection) {
+                // failing to swap as the desired profile selection is bad,
+                // but preventing login entirely is worse.  Log the exception and continue.
+                logger.error("Exception on firing profile selection event " + event,
+                    exceptionFiringSwappedProfileSelection);
+            }
+
+
+        } else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No requested or swapper profile requested so no profile selection event.");
+            }
         }
     }
 
@@ -360,4 +440,19 @@ public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthentic
         return (retHash);
     }
 
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher anApplicationEventPublisher) {
+        super.setApplicationEventPublisher(anApplicationEventPublisher);
+        this.eventPublisher = anApplicationEventPublisher;
+    }
+
+    /**
+     * Convenience method for sub-classes to access the event publisher without having to override this class
+     * implementation of setApplicationEventPublisher (which this class had to override in its parent class because
+     * that parent class failed to expose a getter method like this!)
+     * @return the Spring application event publisher.
+     */
+    protected final ApplicationEventPublisher getApplicationEventPublisher() {
+        return this.eventPublisher;
+    }
 }

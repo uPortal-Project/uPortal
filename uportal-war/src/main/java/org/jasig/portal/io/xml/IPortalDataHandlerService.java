@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.io.xml;
 
 import java.io.File;
@@ -26,23 +25,22 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 
 /**
- * Service that can import, export and delete portal data.
+ * Service that can import, export, and delete portal data.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
 public interface IPortalDataHandlerService {
+
     /**
      * Options that control behavior of batch import operations
      */
     public class BatchImportOptions extends BatchOptions {
         private boolean recursive = true;
         private boolean ignoreNonDataFiles = true;
-        
-        
+
         public BatchImportOptions setRecursive(boolean recursive) {
             this.recursive = recursive;
             return this;
@@ -51,7 +49,6 @@ public interface IPortalDataHandlerService {
             this.ignoreNonDataFiles = ignoreNonDataFiles;
             return this;
         }
-        
         @Override
         public BatchImportOptions setFailOnError(boolean failOnError) {
             super.setFailOnError(failOnError);
@@ -79,7 +76,9 @@ public interface IPortalDataHandlerService {
         public final boolean isIngoreNonDataFiles() {
             return this.ignoreNonDataFiles;
         }
+
     }
+
     /**
      * Options that control behavior of batch export operations
      */
@@ -100,13 +99,14 @@ public interface IPortalDataHandlerService {
             return this;
         }
     }
+
     /**
      * Options that control behavior of batch operations
      */
     public class BatchOptions {
         private boolean failOnError = true;
         private File logDirectoryParent = null;
-        
+
         public BatchOptions setFailOnError(boolean failOnError) {
             this.failOnError = failOnError;
             return this;
@@ -119,7 +119,6 @@ public interface IPortalDataHandlerService {
             this.logDirectoryParent = new File(logDirectoryParent);
             return this;
         }
-
         /**
          * @return defaults to true
          */
@@ -133,16 +132,24 @@ public interface IPortalDataHandlerService {
             return logDirectoryParent;
         }
     }
-    
+
     /**
-     * Import a batch of files from a directory.
-     * 
-     * @param directory Base directory to import from
-     * @param pattern Optional ant path matcher pattern used for matching files to import. If not specified the default pattern set is used
-     * @param options Optional set of options to better control the import
+     * Import data from the specified resource
      */
-    public void importData(File directory, String pattern, BatchImportOptions options);
-    
+    public void importData(Resource resource);
+
+    /**
+     * Import data from the specified source with the default {@link PortalDataKey}.
+     */
+    public void importData(Source source);
+
+    /**
+     * Import data from the specified source with the specified {@link PortalDataKey}.
+     * 
+     * @since uPortal 4.1
+     */
+    public void importData(Source source, PortalDataKey portalDataKey);
+
     /**
      * Import a batch of files from an archive.
      * 
@@ -150,22 +157,16 @@ public interface IPortalDataHandlerService {
      * @param options Optional set of options to better control the import
      */
     public void importDataArchive(Resource archive, BatchImportOptions options);
-    
+
     /**
-     * Import data from the specified resource, uses a {@link ResourceLoader} find the data file
+     * Import a batch of files from a directory.
+     * 
+     * @param directory Base directory to import from
+     * @param pattern Optional ant path matcher pattern used for matching files to import. If not specified the default pattern set is used
+     * @param options Optional set of options to better control the import
      */
-    public void importData(String resource);
-    
-    /**
-     * Import data from the specified resource
-     */
-    public void importData(Resource resource);
-    
-    /**
-     * Import data from the specified source
-     */
-    public void importData(Source source);
-    
+    public void importDataDirectory(File directory, String pattern, BatchImportOptions options);
+
     /**
      * @return All portal data types that can be exported
      */
@@ -225,4 +226,5 @@ public interface IPortalDataHandlerService {
      * @param dataId the id of the data to delete
      */
     public void deleteData(String typeId, String dataId);
+
 }

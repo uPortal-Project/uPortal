@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <portlet:renderURL var="formUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -52,7 +51,7 @@
         	<div class="panel type-categories">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="${ portletUrl }"><spring:message code="portlet.categories"/></a>
+                    	<a href="${ portletUrl }"class="btn btn-primary"><i class="fa fa-puzzle-piece"></i> <spring:message code="portlet.categories"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="portlet.categories.description"/></h3>
                 </div>
@@ -67,7 +66,7 @@
             <div class="panel type-people">
             	<div class="titlebar">
                 	<h2 class="title">
-                    	<a href="${ peopleUrl }"><spring:message code="person.groups"/></a>
+                    	<a href="${ peopleUrl }"class="btn btn-primary"><i class="fa fa-users"></i> <spring:message code="person.groups"/></a>
                     </h2>
                     <h3 class="subtitle"><spring:message code="person.groups.description"/></h3>
                 </div>

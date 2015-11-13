@@ -1,0 +1,200 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+.portal-nav {
+    background: @navbar-background-color;
+
+    .menu-toggle {
+        position: fixed;
+        top: 6px;
+        left: 10px;
+        padding: 0.5rem 1rem;
+        background: @menu-toggle-background-color;
+        border: 1px solid @menu-toggle-border-color;
+        color: @menu-toggle-text-color;
+        font-weight: inherit;
+        text-decoration: none;
+        .border-radius;
+
+        &:hover, &:focus {
+            background: @menu-toggle-hover-background-color;
+            color: @menu-toggle-hover-text-color;
+            border: 1px solid @menu-toggle-hover-border-color;
+        }
+
+        i {
+            padding-right: 0.25em;
+        }
+    }
+
+    .menu {
+        .inline-block-list;
+        display: none;
+
+        li {
+            border-bottom: 1px solid @color1;
+            position: relative;
+
+            a {
+                display: block;
+                color: @navbar-item-text-color;
+                background: @navbar-item-background-color;
+                font-weight: inherit;
+                text-decoration: none;
+                padding: 8px 14px;
+
+                &:hover, &:focus {
+                    background: @navbar-item-hover-background-color;
+                    color: @navbar-item-hover-text-color;
+
+                    i {
+                        opacity: 1;
+                    }
+                }
+                &.portal-navigation-gripper, &.portal-navigation-delete {
+                    display: none;
+                }
+            }
+
+            a.portal-navigation-link.disabled {
+                pointer-events: none;
+                cursor: default;
+            }
+
+            a.portal-navigation-link i {
+                    float: right;
+                    margin-top: 2px;
+                    margin-right: -6px;
+                    opacity: .5;
+            }
+
+            .flc-inlineEdit-edit {
+                color: @grayscale10;
+                margin-top: 8px;
+                margin-bottom: -2px;
+                margin-right: 5px;
+            }
+            .fl-inlineEdit-editModeInstruction {
+                height: 0;
+                overflow: hidden;
+                width: 0;
+            }
+            
+        }
+
+        .active {
+            .nav-tab-controls {
+            }
+
+            a {
+                background: @navbar-item-active-background-color;
+                color: @navbar-item-active-text-color;
+
+                i {
+                    opacity: 1;
+                }
+
+                &:hover {
+                    background: @navbar-item-active-hover-background-color;
+                    color: @navbar-item-active-hover-text-color;
+                }
+            }
+
+            a.portal-navigation-gripper {
+                position: absolute;
+                background: none;
+                top: 0;
+                left: 2px;
+                font-size: 6pt;
+                padding: 2px;
+                color: @navbar-controls-color;
+                cursor: move;
+                line-height: normal;
+                display: inline;
+
+                &:hover {
+                    color: @navbar-controls-hover-color;
+                }
+
+                span {
+                    display: none;
+                }
+            }
+
+            a.portal-navigation-delete {
+                position: absolute;
+                background: none;
+                top: 0;
+                right: 0;
+                padding: 3px;
+                margin-right: -1px;
+                font-size: 8pt;
+                line-height: normal;
+                margin-top: -3px;
+                color: @navbar-controls-color;
+                display: inline;
+                opacity: .2;
+
+                &:hover {
+                    color: @navbar-controls-hover-color;
+                    opacity: .9;
+                }
+
+                span {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+} // end .portal-nav
+
+@media only screen and (min-width: 769px) {
+
+/*
+ * Convert navigation from toggled block menu to inline tabs.
+ */
+    .portal-nav {
+        background: @navbar-background-color;
+        border-top: @navbar-border-size solid @navbar-border-color;
+        border-bottom: @navbar-border-size solid @navbar-border-color;
+        font-weight: @navbar-item-font-weight;
+
+        .menu-toggle {
+            display: none;
+        }
+
+        .menu {
+            display: block;
+            .inline-block-list;
+            margin-left: 64px;
+
+            li {
+                border: none;
+                .float;
+
+                a {
+                    display: inline-block;
+                    line-height: 30px;
+                    padding: 6px 20px;
+                }
+            }
+        }
+    }
+}

@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
@@ -67,7 +66,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       </div>
       <div class="content">
       
-        <table class="portlet-table" summary="<spring:message code="available.portlet.types"/>">
+        <table class="portlet-table table table-hover" summary="<spring:message code="available.portlet.types"/>">
           <thead>
             <tr>
               <th><spring:message code="option"/></th>
@@ -80,10 +79,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <c:forEach items="${ portletTypes }" var="chanTypeEntry">
                 <tr>
                   <td align="center">
-                    <form:radiobutton path="typeId" value="${ chanTypeEntry.key.id  }" cssClass="portlet-form-input-field"/>
+                    <form:radiobutton id="${chanTypeEntry.key.id}" path="typeId" value="${chanTypeEntry.key.id}" cssClass="portlet-form-input-field"/>
                   </td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.name )}</td>
-                  <td>${ fn:escapeXml(chanTypeEntry.key.description )}</td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.name}" /></label></td>
+                  <td><label for="${chanTypeEntry.key.id}"><c:out value="${chanTypeEntry.key.description}" /></label></td>
                 </tr>
             </c:forEach>
           </tbody>
@@ -96,13 +95,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     <div class="buttons">
       <c:choose>
         <c:when test="${ completed }">
-          <input class="button primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="review"/>" name="_eventId_review"/>
         </c:when>
         <c:otherwise>
-          <input class="button primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
+          <input class="button btn btn-primary" type="submit" value="<spring:message code="continue"/>" name="_eventId_next"/>
         </c:otherwise>
       </c:choose>
-      <input class="button" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
+      <input class="button btn btn-link" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
     </div> <!-- end: Portlet Buttons --> 
     
     </form:form>  <!-- End Form -->

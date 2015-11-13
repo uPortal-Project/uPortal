@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.base.Function;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
@@ -49,6 +49,7 @@ import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor;
@@ -56,6 +57,7 @@ import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletFailureExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory;
+import org.jasig.portal.portlets.error.MaintenanceModeException;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
@@ -68,8 +70,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
-
-import com.google.common.base.Function;
 
 /**
  * Handles the asynchronous execution of portlets, handling execution errors and publishing
@@ -97,7 +97,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
-     * Queue used to track workers that did not complete in their alloted time. 
+     * Queue used to track workers that did not complete in their allotted time.
      */
     private final Queue<IPortletExecutionWorker<?>> hungWorkers = new ConcurrentLinkedQueue<IPortletExecutionWorker<?>>();
 
@@ -218,10 +218,13 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         if (!portletRenderExecutionWorker.isRetrieved()) {
             final IPortletWindowId portletWindowId = portletRenderExecutionWorker.getPortletWindowId();
             final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
-            this.logger.warn("Portlet worker started but never retrieved for: " + portletWindow
-                    + ": If random portlet fnames it may be users switching tabs before page is done rendering. "
-                    + "If repeatedly occurring with one portlet fname see "
-                    + "http://jasig.275507.n4.nabble.com/Portlet-worker-started-but-never-retrieved-td4580698.html");
+            this.logger.warn("Portlet worker started but never retrieved for {}, worker {}."
+                    + " If random portlet fnames it may be users switching tabs before page is done rendering"
+                    + " (would see separate log message with java.net.SocketException on socket write)."
+                    + " If repeatedly occurring with one portlet fname your theme layout xsl may not be including"
+                    + " a portlet present in your layout xml files (see"
+                    + " http://jasig.275507.n4.nabble.com/Portlet-worker-started-but-never-retrieved-td4580698.html)",
+                    portletWindow, portletRenderExecutionWorker);
             
             try {
                 portletRenderExecutionWorker.get(0);
@@ -487,6 +490,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		if(renderHeaderOption != null) {
 			result = renderHeaderOption.getValues().contains(Boolean.TRUE.toString());
 		}
+        logger.debug("Portlet {} need render header worker: {}", portletDefinition.getPortletName(), result);
 		return result;
 	}
 
@@ -530,8 +534,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         try {
             resourceWorker.get(timeout);
 		} catch (Exception e) {
-			//log the exception
-			this.logger.error("resource worker failed with exception", e);
+			// Log the exception but not this thread's stacktrace. The portlet worker has already logged its stack trace
+			this.logger.error("resource worker {} failed with exception {}", resourceWorker, e.toString());
 			// render generic serveResource error
 			try {
 				if(!response.isCommitted()) {
@@ -685,7 +689,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             }
             catch (Exception e1) {
                 logger.error("Failed to render error portlet for: " + portletWindowId, e1);
-                return "Error Portlet Unavailable. Please contact your portal adminstrators.";
+                return "Error Portlet Unavailable. Please contact your portal administrators.";
             }
 		}
     }
@@ -796,7 +800,17 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         return defaultPortletUrl;
     }
-    
+
+    /**
+     * This method handles portlets that are slow to warm up. The default config multiplies the portlet's
+     * configured timeout by 20 the first 5 times it executes. The key is the portlet descriptor so even if you
+     * have the same portlet (web proxy for example) published 20 times only the first 5 renders of ANY WPP
+     * will get the extra time.
+     * @param portletDefinition
+     * @param request
+     * @param timeout
+     * @return
+     */
     protected final long getModifiedTimeout(IPortletDefinition portletDefinition, HttpServletRequest request, long timeout) {
         final IPortletDescriptorKey portletDescriptorKey = portletDefinition.getPortletDescriptorKey();
         final AtomicInteger counter = this.executionCount.get(portletDescriptorKey);
@@ -897,7 +911,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Returns the PortletRenderResult waiting up to the portlet's timeout
      * 
      * @return The PortletRenderResult from the portlet's execution
-     * @throws TimeoutException If the portlet's timeout was hit before a result was returned 
+     * @throws TimeoutException If the portlet's timeout was hit before a result was returned
      * @throws Exception The exception thrown by the portlet during execution 
      */
     protected PortletRenderResult getPortletRenderResult(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -937,7 +951,15 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     		// previous action failed, dispatch to errorPortlet immediately
     		portletRenderExecutionWorker = this.portletWorkerFactory.createFailureWorker(request, response, portletWindowId, cause);
     	} else {
-    		portletRenderExecutionWorker = this.portletWorkerFactory.createRenderWorker(request, response, portletWindowId);
+            IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(request, portletWindowId);
+            IPortletDefinition portletDef = portletWindow.getPortletEntity().getPortletDefinition();
+            if (portletDef.getLifecycleState().equals(PortletLifecycleState.MAINTENANCE)) {
+                // Prevent the portlet from rendering;  replace with a helpful "Out of Service" message
+                portletRenderExecutionWorker = this.portletWorkerFactory.createFailureWorker(request, response, portletWindowId, new MaintenanceModeException());
+            } else {
+                // Happy path
+                portletRenderExecutionWorker = this.portletWorkerFactory.createRenderWorker(request, response, portletWindowId);
+            }
     	}
     	
     	portletRenderExecutionWorker.submit();
@@ -981,7 +1003,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Null safe means for retrieving the {@link Map} from the specified session
      * keyed by {@link #SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP}.
      * 
-     * @param session
+     * @param request HttpServletRequest
      * @return a never null {@link Map} in the session for storing portlet failure causes.
      */
     @SuppressWarnings("unchecked")

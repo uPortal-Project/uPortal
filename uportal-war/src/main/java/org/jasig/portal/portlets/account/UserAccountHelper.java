@@ -1,30 +1,28 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.account;
 
-import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -32,8 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -64,33 +60,28 @@ import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.UrlType;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.stringtemplate.v4.ST;
-import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupDir;
+
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
 
     protected final Log log = LogFactory.getLog(getClass());
-    
-    private String templateDir  = "properties/templates";
-    private String passwordResetTemplate  = "passwordReset";
+    private static final String PORTLET_FNAME_LOGIN = "login";
+
     private ILocaleStore localeStore;
     private ILocalAccountDao accountDao;
     private IPortalPasswordService passwordService;
     private List<Preference> accountEditAttributes;
-    private JavaMailSenderImpl mailSender;
     private IPortalUrlProvider urlProvider;
     private MessageSource messageSource;
-    private String portalEmailAddress;
     private IPersonManager personManager;
     private IGroupListHelper groupListHelper;
-    
+    private IPasswordResetNotification passwordResetNotification;
+    private String loginPortletFolderName = "welcome";
+
     @Autowired
     public void setLocaleStore(ILocaleStore localeStore) {
         this.localeStore = localeStore;
@@ -112,11 +103,6 @@ public class UserAccountHelper {
     }
     
     @Autowired
-    public void setMailSender(JavaMailSenderImpl mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    @Autowired
     public void setPortalUrlProvider(IPortalUrlProvider urlProvider) {
         this.urlProvider = urlProvider;
     }
@@ -126,13 +112,6 @@ public class UserAccountHelper {
         this.messageSource = messageSource;
     }
 
-    
-    @Resource(name="portalEmailAddress")
-    public void setPortalEmailAddress(String portalEmailAddress) {
-        this.portalEmailAddress = portalEmailAddress;
-    }
-    
-    
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
@@ -143,7 +122,16 @@ public class UserAccountHelper {
         this.groupListHelper = groupListHelper;
     }
 
-    
+    @Autowired
+    public void setPasswordResetNotification(IPasswordResetNotification passwordResetNotification) {
+        this.passwordResetNotification = passwordResetNotification;
+    }
+
+    @Value("${org.jasig.portal.folder.login-layout:welcome}")
+    public void setLoginPortletFolderName(String loginPortletFolderName) {
+        this.loginPortletFolderName = loginPortletFolderName;
+    }
+
     public PersonForm getNewAccountForm() {
         
         PersonForm form = new PersonForm(accountEditAttributes);
@@ -384,73 +372,91 @@ public class UserAccountHelper {
         return token;
     }
     
-    public boolean validateLoginToken(String username, String password) {
+    public boolean validateLoginToken(String username, String token) {
         ILocalAccountPerson person = accountDao.getPerson(username);
         if (person != null) {
             Object recordedToken = person.getAttributeValue("loginToken");
-            if (recordedToken != null && recordedToken.equals(password)) {
+            if (recordedToken != null && recordedToken.equals(token)) {
+                if (log.isInfoEnabled()) {
+                    log.info("Successfully validated security token for user:  " + username);
+                }
                 return true;
+            } else {
+                if (log.isInfoEnabled()) {
+                    log.info("Unable to validate security token;  recordedToken=" + recordedToken + ", submitted token=" + token);
+                }
+            }
+        } else {
+            if (log.isInfoEnabled()) {
+                log.info("Unable to validate security token;  person not found:  " + username);
             }
         }
         return false;
     }
-    
+
     public void sendLoginToken(HttpServletRequest request, ILocalAccountPerson account) {
-        
-        IPerson person = personManager.getPerson(request);
-        final Locale[] userLocales = localeStore.getUserLocales(person);
-        LocaleManager localeManager = new LocaleManager(person, userLocales);
-        Locale locale = localeManager.getLocales()[0];
-        
-        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, "reset-password", UrlType.RENDER);
+        sendLoginToken(request, account, passwordResetNotification);
+    }
+    
+    public void sendLoginToken(HttpServletRequest request, ILocalAccountPerson account, IPasswordResetNotification notification) {
+
+        Locale locale = getCurrentUserLocale(request);
+
+        IPortalUrlBuilder builder = urlProvider.getPortalUrlBuilderByPortletFName(request, PORTLET_FNAME_LOGIN, UrlType.RENDER);
         IPortletUrlBuilder portletUrlBuilder = builder.getTargetedPortletUrlBuilder();
         portletUrlBuilder.addParameter("username", account.getName());
         portletUrlBuilder.addParameter("loginToken", (String) account.getAttributeValue("loginToken"));
         portletUrlBuilder.setPortletMode(PortletMode.VIEW);
         portletUrlBuilder.setWindowState(WindowState.MAXIMIZED);
 
-        StringBuffer url = new StringBuffer(); 
-        url.append(request.getScheme());
-        url.append("://").append(request.getServerName());
-        int port = request.getServerPort();
-        if (port != 80 && port != 443) {
-            url.append(":").append(port);
-        }
-        url.append(builder.getUrlString());
-        
-        log.debug("Sending password reset instructions to user with url " + url.toString());
-
-        String emailAddress = (String) account.getAttributeValue("mail");
-
-        final STGroup group = new STGroupDir(templateDir, '$', '$');
-        final ST template = group.getInstanceOf(passwordResetTemplate);
-        template.add("displayName", person.getAttribute("displayName"));
-        template.add("url", url.toString());
-
-        MimeMessage message = mailSender.createMimeMessage();
-        String body = template.render();
-
         try {
-            
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(emailAddress);
-            helper.setText(body, true);
-            helper.setSubject(messageSource.getMessage("reset.your.password", new Object[]{}, locale));
-            helper.setFrom(portalEmailAddress, messageSource.getMessage("portal.name", new Object[]{}, locale));
+            String path = fixPortletPath(request, builder);
 
-            log.debug("Sending message to " + emailAddress + " from " + 
-                      Arrays.toString(message.getFrom()) +  " subject " + message.getSubject());
-            this.mailSender.send(message);
-            
-        } catch(MailException e) {
-            log.error("Unable to send password reset email ", e);
-        } catch (MessagingException e) {
-            log.error("Unable to send password reset email ", e);
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unable to send password reset email ", e);
+            URL url = new URL(request.getScheme(), request.getServerName(),
+                    request.getServerPort(), path);
+
+            notification.sendNotification(url, account, locale);
+        } catch (MalformedURLException e) {
+            log.error(e);
         }
     }
-    
+
+    /**
+     * Similar to updateAccount, but narrowed to the password and re-tooled to 
+     * work as the guest user (which is what you are, when you have a valid 
+     * security token).
+     */
+    public void createPassword(PersonForm form, String token) {
+
+        final String username = form.getUsername();
+
+        // Re-validate the token to prevent URL hacking
+        if (!validateLoginToken(username, token)) {
+            throw new RuntimeException("Attempt to set a password for user '" 
+                    + username + "' without a valid security token");
+        }
+
+        final String password = form.getPassword();
+        if (StringUtils.isNotBlank(password)) {
+            if (!password.equals(form.getConfirmPassword())) {
+                throw new RuntimeException("Passwords don't match");
+            }
+
+            ILocalAccountPerson account = accountDao.getPerson(username);
+            account.setPassword(passwordService.encryptPassword(password));
+            account.setLastPasswordChange(new Date());
+            account.removeAttribute("loginToken");
+            accountDao.updateAccount(account);
+            if (log.isInfoEnabled()) {
+                log.info("Password created for account:  " + account);
+            }
+        } else {
+            throw new RuntimeException("Attempt to set a password for user '" 
+                    + form.getUsername() + "' but the password was blank");
+        }
+
+    }
+
     protected Locale getCurrentUserLocale(final HttpServletRequest request) {
         final IPerson person = personManager.getPerson(request);
         final Locale[] userLocales = localeStore.getUserLocales(person);
@@ -458,5 +464,30 @@ public class UserAccountHelper {
         final Locale locale = localeManager.getLocales()[0];
         return locale;
     }
-    
+
+
+    /**
+     * This entire method is a hack!  The login portlet URL only seems to load correctly if
+     * you pass in the folder name for the guest layout.  For the short term, allow configuration
+     * of the folder name and manually re-write the URL to include the folder if it doesn't already.
+     *
+     * This is terrible and needs to go away as soon as I can find a better approach.
+     *
+     * @param request
+     * @param urlBuilder
+     * @return
+     */
+    private String fixPortletPath(HttpServletRequest request, IPortalUrlBuilder urlBuilder) {
+        String path = urlBuilder.getUrlString();
+        String context = request.getContextPath();
+        if (StringUtils.isBlank(context)) {
+            context = "/";
+        }
+
+        if (!path.startsWith(context + "/f/")) {
+            return path.replaceFirst(context, context + "/f/" + loginPortletFolderName);
+        }
+
+        return path;
+    }
 }

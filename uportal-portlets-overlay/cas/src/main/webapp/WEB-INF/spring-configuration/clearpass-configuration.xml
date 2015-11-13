@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
@@ -86,11 +86,22 @@
     <property name="ticketValidator">
       <bean class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
         <constructor-arg index="0" value="${server.prefix}" />
-        <property name="acceptAnyProxy" value="true" />
+           <property name="allowedProxyChains" ref="clearPassProxyList" />
+           <!-- As a convenient alternative to specifying allowedProxyChains, you can comment it out and instead use
+                this property, but do NOT deploy to production this way. Use clearPassProxyList instead.
+           <property name="acceptAnyProxy" value="true" />  -->
       </bean>
     </property>
   </bean>
 
   <bean id="httpServletRequestWrappingFilter" class="org.jasig.cas.client.util.HttpServletRequestWrapperFilter"/>
+
+    <bean id="clearPassProxyList" class="org.jasig.cas.client.validation.ProxyList">
+        <constructor-arg>
+            <list>
+                <value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</value>
+            </list>
+        </constructor-arg>
+    </bean>
 
 </beans>

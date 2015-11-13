@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.io.xml;
 
 import java.io.BufferedInputStream;
@@ -98,9 +97,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
@@ -120,7 +117,7 @@ import com.google.common.io.InputSupplier;
  * @version $Revision$
  */
 @Service("portalDataHandlerService")
-public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, ResourceLoaderAware {
+public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     
 	/**
 	 * Tracks the base import directory to allow for easier to read logging when importing 
@@ -170,8 +167,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     private org.jasig.portal.utils.DirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
     private XmlUtilities xmlUtilities;
-    private ResourceLoader resourceLoader;
-    
+
     private long maxWait = -1;
     private TimeUnit maxWaitTimeUnit = TimeUnit.MILLISECONDS;
 
@@ -245,15 +241,24 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final Map<PortalDataKey, IDataImporter<Object>> dataImportersMap = new LinkedHashMap<PortalDataKey, IDataImporter<Object>>();
         
         for (final IDataImporter<?> dataImporter : dataImporters) {
-            final Set<PortalDataKey> importDataKeys = dataImporter.getImportDataKeys();
-            
-            for (final PortalDataKey importDataKey : importDataKeys) {
-                this.logger.debug("Registering IDataImporter for '{}' - {}", new Object[] {importDataKey, dataImporter});
-                final IDataImporter<Object> existing = dataImportersMap.put(importDataKey, (IDataImporter<Object>)dataImporter);
-                if (existing != null) {
-                    this.logger.warn("Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}", 
-                            new Object[] {importDataKey, existing, dataImporter});
+
+            try {
+
+                final Set<PortalDataKey> importDataKeys = dataImporter.getImportDataKeys();
+
+                for (final PortalDataKey importDataKey : importDataKeys) {
+                    this.logger.debug("Registering IDataImporter for '{}' - {}",
+                            new Object[]{importDataKey, dataImporter});
+                    final IDataImporter<Object> existing =
+                            dataImportersMap.put(importDataKey, (IDataImporter<Object>) dataImporter);
+                    if (existing != null) {
+                        this.logger.warn("Duplicate IDataImporter PortalDataKey for {} Replacing {} with {}",
+                                new Object[]{importDataKey, existing, dataImporter});
+                    }
                 }
+
+            } catch (Exception exception) {
+                logger.error("Failed to register data importer {}.", dataImporter, exception);
             }
         }
         
@@ -270,18 +275,28 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
-        for (final IDataExporter<?> dataImporter : dataExporters) {
-            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
-            final String typeId = portalDataType.getTypeId();
-            
-            this.logger.debug("Registering IDataExporter for '{}' - {}", new Object[] {typeId, dataImporter});
-            final IDataExporter<Object> existing = dataExportersMap.put(typeId, (IDataExporter<Object>)dataImporter);
-            if (existing != null) {
-                this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}", 
-                        new Object[] {typeId, existing, dataImporter});
+        for (final IDataExporter<?> dataExporter : dataExporters) {
+
+            try {
+
+                final IPortalDataType portalDataType = dataExporter.getPortalDataType();
+                final String typeId = portalDataType.getTypeId();
+
+                this.logger.debug("Registering IDataExporter for '{}' - {}",
+                        new Object[]{typeId, dataExporter});
+                final IDataExporter<Object> existing =
+                        dataExportersMap.put(typeId, (IDataExporter<Object>) dataExporter);
+                if (existing != null) {
+                    this.logger.warn("Duplicate IDataExporter typeId for {} Replacing {} with {}",
+                            new Object[]{typeId, existing, dataExporter});
+                }
+
+                portalDataTypes.add(portalDataType);
+
+            } catch (Exception exception) {
+                logger.error("Failed to register data exporter {}.", dataExporter, exception);
             }
-            
-            portalDataTypes.add(portalDataType);
+
         }
         
         this.portalDataExporters = Collections.unmodifiableMap(dataExportersMap);
@@ -307,18 +322,27 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         
         final Set<IPortalDataType> portalDataTypes = new LinkedHashSet<IPortalDataType>();
         
-        for (final IDataDeleter<?> dataImporter : dataDeleters) {
-            final IPortalDataType portalDataType = dataImporter.getPortalDataType();
-            final String typeId = portalDataType.getTypeId();
-            
-            this.logger.debug("Registering IDataDeleter for '{}' - {}", new Object[] {typeId, dataImporter});
-            final IDataDeleter<Object> existing = dataDeletersMap.put(typeId, (IDataDeleter<Object>)dataImporter);
-            if (existing != null) {
-                this.logger.warn("Duplicate IDataDeleter typeId for {} Replacing {} with {}", 
-                        new Object[] {typeId, existing, dataImporter});
+        for (final IDataDeleter<?> dataDeleter : dataDeleters) {
+
+            try {
+
+                final IPortalDataType portalDataType = dataDeleter.getPortalDataType();
+                final String typeId = portalDataType.getTypeId();
+
+                this.logger.debug("Registering IDataDeleter for '{}' - {}",
+                        new Object[]{typeId, dataDeleter});
+                final IDataDeleter<Object> existing =
+                        dataDeletersMap.put(typeId, (IDataDeleter<Object>) dataDeleter);
+                if (existing != null) {
+                    this.logger.warn("Duplicate IDataDeleter typeId for {} Replacing {} with {}",
+                            new Object[]{typeId, existing, dataDeleter});
+                }
+
+                portalDataTypes.add(portalDataType);
+
+            } catch (Exception exception) {
+                logger.error("Failed to register data deleter {}.", dataDeleter, exception);
             }
-            
-            portalDataTypes.add(portalDataType);
         }
         
         this.portalDataDeleters = Collections.unmodifiableMap(dataDeletersMap);
@@ -333,25 +357,27 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         final Map<PortalDataKey, IDataUpgrader> dataUpgraderMap = new LinkedHashMap<PortalDataKey, IDataUpgrader>();
         
         for (final IDataUpgrader dataUpgrader : dataUpgraders) {
-            final Set<PortalDataKey> upgradeDataKeys = dataUpgrader.getSourceDataTypes();
-            for (final PortalDataKey upgradeDataKey : upgradeDataKeys) {
-                this.logger.debug("Registering IDataUpgrader for '{}' - {}", upgradeDataKey, dataUpgrader);
-                final IDataUpgrader existing = dataUpgraderMap.put(upgradeDataKey, dataUpgrader);
-                if (existing != null) {
-                    this.logger.warn("Duplicate IDataUpgrader PortalDataKey for {} Replacing {} with {}", 
-                            new Object[] {upgradeDataKey, existing, dataUpgrader});
+
+            try {
+
+                final Set<PortalDataKey> upgradeDataKeys = dataUpgrader.getSourceDataTypes();
+                for (final PortalDataKey upgradeDataKey : upgradeDataKeys) {
+                    this.logger.debug("Registering IDataUpgrader for '{}' - {}", upgradeDataKey, dataUpgrader);
+                    final IDataUpgrader existing = dataUpgraderMap.put(upgradeDataKey, dataUpgrader);
+                    if (existing != null) {
+                        this.logger.warn("Duplicate IDataUpgrader PortalDataKey for {} Replacing {} with {}",
+                                new Object[]{upgradeDataKey, existing, dataUpgrader});
+                    }
                 }
+
+            } catch (Exception exception) {
+                logger.error("Failed to register data upgrader {}.", dataUpgrader, exception);
             }
         }
         
         this.portalDataUpgraders = Collections.unmodifiableMap(dataUpgraderMap);
     }
-    
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-    
+
     @Override
     public void importDataArchive(Resource archive, BatchImportOptions options) {
         try {
@@ -451,7 +477,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
                 }
             }
             
-            importData(tempDir, null, options);
+            importDataDirectory(tempDir, null, options);
         }
         catch (IOException e) {
             throw new RuntimeException("Failed to extract data from '" +resource + "' to '" + tempDir + "' for batch import.", e);
@@ -497,7 +523,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
     }
 
     @Override
-    public void importData(File directory, String pattern, final BatchImportOptions options) {
+    public void importDataDirectory(File directory, String pattern, final BatchImportOptions options) {
         if (!directory.exists()) {
             throw new IllegalArgumentException("The specified directory '" + directory + "' does not exist");
         }
@@ -637,25 +663,55 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         return logDirectory;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImportExportService#importData(java.lang.String)
-     */
-    @Override
-    public void importData(String resourceLocation) {
-        final Resource resource = this.resourceLoader.getResource(resourceLocation);
-        this.importData(resource);
-    }
-
     @Override
     public void importData(final Resource resource) {
         this.importData(resource, null);
     }
-    
+
     @Override
     public void importData(Source source) {
-		this.importData(source, null);
+        this.importData(source, null);
     }
-    
+
+    @Override
+    public final void importData(final Source source, PortalDataKey portalDataKey) {
+        //Get a StAX reader for the source to determine info about the data to import
+        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
+
+        //If no PortalDataKey was passed build it from the source
+        if (portalDataKey == null) {
+            final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
+            portalDataKey = new PortalDataKey(rootElement);
+            bufferedXmlEventReader.reset();
+        }
+
+        final String systemId = source.getSystemId();
+
+        //Post Process the PortalDataKey to see if more complex import operations are needed
+        final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
+        if (portalDataType == null) {
+            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + getPartialSystemId(systemId));
+        }
+        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
+        bufferedXmlEventReader.reset();
+
+        //If only a single result from post processing import
+        if (postProcessedPortalDataKeys.size() == 1) {
+            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
+        }
+        //If multiple results from post processing ordering is needed
+        else {
+            //Iterate over the data key order list to run the imports in the correct order
+            for (final PortalDataKey orderedPortalDataKey : this.dataKeyImportOrder) {
+                if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
+                    //Reset the to start of the XML document for each import/upgrade call
+                    bufferedXmlEventReader.reset();
+                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
+                }
+            }
+        }
+    }
+
     /**
      * @param portalDataKey Optional PortalDataKey to use, useful for batch imports where post-processing of keys has already take place
      */
@@ -677,46 +733,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IEntityImportService#importEntity(javax.xml.transform.Source)
-     */
-    protected final void importData(final Source source, PortalDataKey portalDataKey) {
-        //Get a StAX reader for the source to determine info about the data to import
-        final BufferedXMLEventReader bufferedXmlEventReader = createSourceXmlEventReader(source);
-        
-        //If no PortalDataKey was passed build it from the source
-        if (portalDataKey == null) {
-            final StartElement rootElement = StaxUtils.getRootElement(bufferedXmlEventReader);
-            portalDataKey = new PortalDataKey(rootElement);
-            bufferedXmlEventReader.reset();
-        }
-        
-        final String systemId = source.getSystemId();
-        
-        //Post Process the PortalDataKey to see if more complex import operations are needed
-        final IPortalDataType portalDataType = this.dataKeyTypes.get(portalDataKey);
-		if (portalDataType == null) {
-            throw new RuntimeException("No IPortalDataType configured for " + portalDataKey + ", the resource will be ignored: " + getPartialSystemId(systemId));
-        }
-        final Set<PortalDataKey> postProcessedPortalDataKeys = portalDataType.postProcessPortalDataKey(systemId, portalDataKey, bufferedXmlEventReader);
-        bufferedXmlEventReader.reset();
-        
-        //If only a single result from post processing import
-        if (postProcessedPortalDataKeys.size() == 1) {
-            this.importOrUpgradeData(systemId, DataAccessUtils.singleResult(postProcessedPortalDataKeys), bufferedXmlEventReader);
-        }
-        //If multiple results from post processing ordering is needed
-        else {
-            //Iterate over the data key order list to run the imports in the correct order
-            for (final PortalDataKey orderedPortalDataKey : this.dataKeyImportOrder) {
-                if (postProcessedPortalDataKeys.contains(orderedPortalDataKey)) {
-                    //Reset the to start of the XML document for each import/upgrade call
-                    bufferedXmlEventReader.reset();
-                    this.importOrUpgradeData(systemId, orderedPortalDataKey, bufferedXmlEventReader);
-                }
-            }
-        }
-    }
     
     protected String getPartialSystemId(String systemId) {
     	final String directoryUriStr = IMPORT_BASE_DIR.get();
@@ -744,7 +760,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService, 
             this.logger.info("Imported : {}", getPartialSystemId(systemId));
             return;
         }
-        
+
         //No importer, see if there is an upgrader, if so upgrade
         final IDataUpgrader dataUpgrader = this.portalDataUpgraders.get(portalDataKey);
         if (dataUpgrader != null) {

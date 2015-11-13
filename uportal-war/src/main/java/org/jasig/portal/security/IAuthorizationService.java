@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.security;
 
 import java.util.Vector;
@@ -24,6 +23,7 @@ import java.util.Vector;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 
 /**
@@ -77,7 +77,24 @@ public interface IAuthorizationService
  */
     public boolean canPrincipalRender(IAuthorizationPrincipal principal, String channelPublishId)
     throws AuthorizationException;
-/**
+
+    /**
+     * True if the principal has permission to browse this portlet.
+     * @param principal principal
+     * @param portletDefinitionId Portlet definition string ID of the portlet to check
+     * @return True if the principal has permission to browse this portlet.
+     */
+    public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, String portletDefinitionId);
+
+    /**
+     * True if the principal has permission to browse this portlet.
+     * @param principal principal
+     * @param portlet Portlet to check
+     * @return True if the principal has permission to browse this portlet.
+     */
+    public boolean canPrincipalBrowse(IAuthorizationPrincipal principal, IPortletDefinition portlet);
+
+    /**
  * Answers if the principal has permission to subscribe to this Channel.
  * @return boolean
  * @param principal IAuthorizationPrincipal
@@ -90,6 +107,9 @@ public interface IAuthorizationService
  * Answers if the owner has given the principal permission to perform the activity on
  * the target.  Params <code>owner</code> and <code>activity</code> must be non-null.
  * If <code>target</code> is null, then target is not checked.
+ * <br/>
+ * NOTE:  Do not invoke this method if there is a more specific method implemented.  The more specific method
+ * may have additional behavior.
  *
  * @return boolean
  * @param principal IAuthorizationPrincipal
@@ -250,7 +270,10 @@ public interface IAuthorizationService
  * the target, as evaluated by the policy.  Params <code>policy</code>, <code>owner</code> 
  * and <code>activity</code> must be non-null.  If <code>target</code> is null, then 
  * target is not checked.
- *
+ * <br/>
+ * NOTE:  Do not invoke this method if there is a more specific method implemented.  The more specific method
+ * may have additional behavior.
+p *
  * @return boolean
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String

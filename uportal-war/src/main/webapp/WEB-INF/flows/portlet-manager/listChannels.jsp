@@ -1,26 +1,25 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-    
+
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
 <portlet:actionURL var="queryUrl">
   <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -31,10 +30,6 @@
 <portlet:actionURL var="newPortletUrl" >
   <portlet:param name="execution" value="${flowExecutionKey}" />
   <portlet:param name="_eventId" value="createPortlet"/>
-</portlet:actionURL>
-<portlet:actionURL var="popularPortletsUrl">
-  <portlet:param name="execution" value="${flowExecutionKey}" />
-  <portlet:param name="_eventId" value="popularPortlets"/>
 </portlet:actionURL>
 <portlet:actionURL var="editPortletUrl" escapeXml="false">
   <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -58,363 +53,241 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | http://www.ja-sig.org/wiki/x/cQ
 -->
-    
+
+<style>
+#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+    display: none;
+}
+#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
+    display: inline-block;
+}
+#${n}portletBrowser .dataTables_wrapper {
+    width: 100%;
+}
+#${n}portletBrowser .dataTables_paginate .paginate_button {
+    margin: 2px;
+    color: #428BCA;
+    cursor: pointer;
+    *cursor: hand;
+}
+#${n}portletBrowser .dataTables_paginate .paginate_active {
+    margin: 2px;
+    color:#000;
+}
+
+#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
+    text-decoration: line-through;
+}
+
+#${n}portletBrowser table tr td a {
+    color: #428BCA;
+}
+
+#${n}portletBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}portletBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}portletBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}portletBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}portletBrowser .datatable-search-view {
+    text-align:right;
+}
+</style>
+
 <!-- Portlet -->
 <div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
-  
+  <c:if test="${not empty statusMsgCode}">
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
+      <c:if test="${not empty layoutURL}">
+        <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
+      </c:if>
+    </div>
+  </c:if>
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-  	<h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
+    <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
     <div class="fl-col-flex2 toolbar" role="toolbar">
       <div class="fl-col">
-        <ul>
-          <li><a class="button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span></a></li>
-          <li><a class="button" href="${ popularPortletsUrl }" title="<spring:message code="popular.portlets"/>"><span><spring:message code="popular.portlets"/></span></a></li>
+        <ul class="btn-group">
+          <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
         </ul>
       </div>
-      <div class="fl-col fl-text-align-right portlet-search-view">
-        <form class="portlet-search-form" style="display:inline">
-            <input type="text" class="portlet-search-input"/>
-            <input type="submit" value="<spring:message code="search"/>"/>
+      <div class="fl-col fl-text-align-right datatable-search-view">
+        <form class="portlet-search-form form-inline" style="display:inline">
+          <label><spring:message code="search"/></label>
+          <input type="text" class="portlet-search-input form-control"/>
         </form>
       </div>
     </div>
     <div style="clear:both"></div>
   </div>
-        
-	<!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
-  
-  	<!-- Portlet Message -->
-  	<div class="portlet-msg-info portlet-msg info" role="status" id="${n}loadingMessage">
-    	<div class="titlebar">
-        <h3 class="title"><spring:message code="loading"/> . . .</h3>
-      </div>
-      <div class="content">
-    	  <p><spring:message code="please.wait.while.the.system.finishes.loading.portlet.registry"/></p>
-      </div>
-    </div>
-    
-    <!-- Portlet Section -->
-    <div id="${n}channelAddingTabs" class="fl-pager">   
-        <div class="fl-col-flex2">
-          <div class="fl-col view-filter">
-            <label for="${n}categorySelectMenu"><spring:message code="show"/></label>
-            <select id="${n}categorySelectMenu">
-              <option value=""><spring:message code="all"/></option>
-            </select>
-            <label for="${n}stateSelectMenu"><spring:message code="show.portlet.state"/></label>
-            <select id="${n}stateSelectMenu">
-                <option value=""><spring:message code="all"/></option>
-            </select>
-          </div>
-          <div class="fl-col flc-pager-top view-pager">
-            <ul id="pager-top" class="fl-pager-ui">
-              <li class="flc-pager-previous"><a href="javascript:;">&lt; <spring:message code="previous"/></a></li>
-              <li>
-                <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                  <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-                  <%-- <li class="flc-pager-pageLink-disabled">2</li>
-                  <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>--%>
-                </ul>
-              </li>
-              <li class="flc-pager-next"><a href="javascript:;"><spring:message code="next"/> &gt;</a></li>
-              <li>
-                <span class="flc-pager-summary"><spring:message code="show"/></span>
-                <span> <select class="pager-page-size flc-pager-page-size">
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-                </select></span> <spring:message code="per.page"/>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div style="clear:both"></div>
 
-        <table id="${n}categoriesTable1" summary="<spring:message code="registered.portlet.list"/>" xmlns:rsf="http://ponder.org.uk" class="portlet-table" style="width:100%;">
+  <!-- Portlet Content -->
+  <div class="fl-widget-content content portlet-content" role="main">
+      <div>
+        <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
           <thead>
-            <tr rsf:id="header:">
-              <th id="${n}portletName" class="flc-pager-sort-header"><a rsf:id="name" title="Click to sort" href="javascript:;"><spring:message code="name"/></a></th>
-              <th id="${n}portletType" class="flc-pager-sort-header"><a rsf:id="type" title="Click to sort" href="javascript:;"><spring:message code="type"/></a></th>
-              <th id="${n}portletState" class="flc-pager-sort-header"><a rsf:id="state" title="Click to sort" href="javascript:;"><spring:message code="state"/></a></th>
-              <th id="${n}portletEditLink" rsf:id="editLink"><spring:message code="edit"/></th>
-              <th id="${n}portletDeleteLink" rsf:id="deleteLink"><spring:message code="delete"/></th>
+            <tr>
+              <th><spring:message code="name"/></th>
+              <th><spring:message code="type"/></th>
+              <th><spring:message code="state"/></th>
+              <th><spring:message code="edit"/></th>
+              <th><spring:message code="delete"/></th>
+              <th><spring:message code="category"/></th>
             </tr>
           </thead>
-          <tbody id="${n}categoriesBody">
-            <tr rsf:id="row:">
-              <td headers="${n}portletName"><span rsf:id="name"></span></td>
-              <td headers="${n}portletType" rsf:id="type"></td>
-              <td headers="${n}portletState" rsf:id="state" style="text-transform:capitalize"></td>
-              <td headers="${n}portletEditLink"><a href="" rsf:id="editLink"></a></td>
-              <td headers="${n}portletDeleteLink"><a href="" rsf:id="deleteLink"></a></td>
-            </tr>
-          </tbody>
         </table>
-      
       </div>
-    
   </div> <!-- end: portlet-body -->
 
 </div> <!-- end: portlet -->
-    	
-	<script type="text/javascript"><rs:compressJs>
-	 up.jQuery(function() {
-        var $ = up.jQuery;
-        var fluid = up.fluid;
-        var editUrl = "${ editPortletUrl }";
-        var removeUrl = "${ removePortletUrl }";
 
-        var portletTypes = { };
-        <c:forEach items="${portletTypes}" var="type">portletTypes[${type.id}] = '${type.name}';</c:forEach>
+<script type="text/javascript">
+up.jQuery(function() {
 
-        up.PortletAdministrationStateListView = function(container, overallThat, options) {
-            // construct the new component
-            var that = fluid.initView("up.PortletAdministrationStateListView", container, options);
+    var $ = up.jQuery;  // de-alias jQuuery to the customary name
 
-            // initialize a state map for this component
-            that.state = {};
+    var portletList_configuration = {
+        column: {
+            name: 0,
+            type: 1,
+            Lifecycle: 2,
+            placeHolderForEditLink  : 3,
+            placeHolderForDeleteLink: 4,
+            categories: 5
+        },
+        main: {
+            table : null,
+            pageSize: 10
+        }
+    };
 
-            var states = [];
-            states.push({
-                id: "",
-                name: '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>'
-            });
+    // Url generating helper functions
+    var getEditURL = function(portletId) {
+        var url = '${editPortletUrl}'.replace("PORTLETID", portletId);
+        return '<a href="' + url + '"><spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-edit"></i></span></a>';
+    };
+    var getDeleteURL = function(portletId) {
+        var url = '${removePortletUrl}'.replace("PORTLETID", portletId);
+        return '<a href="' + url + '"><spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/> <span class="pull-right"><i class="fa fa-trash-o"></i></span></a>';
+    };
 
-            <c:forEach items="${ lifecycleStates }" var="lifecycleState">
-            states.push({ id: "${lifecycleState}", name: "${lifecycleState}" })
-            </c:forEach>
-
-            var tree = { children: [] };
-
-            var s = overallThat.state.currentState || "";
-            var selection = {
-                ID: "stateSelect",
-                selection: s,
-                optionlist: [],
-                optionnames: [],
-                decorators: [
-                    { type: "jQuery", func: "change",
-                        args: function(){
-                            var state = null;
-                            if($(this).val()) {
-                                state = { id: $(this).val(), name: $(this).val() }
-                            } else {
-                                state = { id: "", name: $(this).val() }
-                            }
-                            overallThat.events.onStateSelect.fire(overallThat, state);
-                        }
-                    }
-                ]
-            };
-
-            $(states).each(function(idx, state){
-                selection.optionlist.push(state.id);
-                selection.optionnames.push(state.name.charAt(0).toUpperCase() + state.name.slice(1).toLowerCase());
-            });
-
-            tree.children.push(selection);
-
-            var cutpoints = [ { id: "stateSelect", selector: "#${n}stateSelectMenu" } ];
-
-            // render the component
-            that.state.templates = fluid.selfRender($(container).find(".view-filter"), tree, { cutpoints: cutpoints });
-            that.refresh = function() { };
-
-            return that;
-        };
-
-        up.PortletAdministrationCategoryListView = function(container, overallThat, options) {
-
-            // construct the new component
-            var that = fluid.initView("up.PortletAdministrationCategoryListView", container, options);
-
-            // initialize a state map for this component
-            that.state = {};
-
-            // Build an array of all categories containing at least
-            // one deep member, sorted by name
-            var categories = [];
-            categories.push({
-                id: "",
-                name: '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>',
-                description: '<spring:message code="all.categories" htmlEscape="false" javaScriptEscape="true"/>',
-                categories: [],
-                deepCategories: [],
-                portlets: [],
-                deepPortlets: []
-            });
-            $(overallThat.registry.getAllCategories()).each(function(idx, category){
-                if (category.deepPortlets.length > 0 && category.id != "local.1") {
-                    categories.push(category);
+    // Created as its own 
+    var initializeTable = function() {
+        portletList_configuration.main.table = $("#${n}portletsList").dataTable({
+            iDisplayLength: portletList_configuration.main.pageSize,
+            aLengthMenu: [5, 10, 20, 50],
+            bServerSide: false,
+            sAjaxSource: '<c:url value="/api/portlets.json"/>',
+            sAjaxDataProp: "portlets",
+            bDeferRender: false,
+            bProcessing: true,
+            bAutoWidth:false,
+            sPaginationType: 'full_numbers',
+            oLanguage: {
+                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                oPaginate: {
+                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
-            });
-            categories.sort(up.getStringPropertySortFunction("name", '<spring:message code="all" htmlEscape="false" javaScriptEscape="true"/>'));
-
-            var tree = { children: [] };
-            
-            var s = overallThat.state.currentCategory || "";
-            var selection = { 
-                ID: "categorySelect", 
-                selection: s, 
-                optionlist: [], 
-                optionnames: [],
-                decorators: [
-                    { type: "jQuery", func: "change",
-                        args: function(){
-                            var category;
-                            if ($(this).val() == "") {
-                                category = {
-                                    id: "",
-                                    name: '<spring:message code="all"  htmlEscape="false" javaScriptEscape="true"/>',
-                                    description: '<spring:message code="all.categories" htmlEscape="false" javaScriptEscape="true"/>',
-                                    categories: [],
-                                    deepCategories: [],
-                                    portlets: [],
-                                    deepPortlets: []
-                                };
-                            } else {
-                                category = overallThat.registry.getCategory($(this).val());
-                            }
-                            overallThat.events.onCategorySelect.fire(overallThat, category);
+            },
+            aoColumns: [
+                { mData: 'name', sType: 'html', sWidth: '30%' },  // Name
+                { mData: 'type', sType: 'html', sWidth: '30%' },  // Type 
+                { mData: 'lifecycleState', sType: 'html', sWidth: '20%' },  // Lifecycle State
+                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Edit Link
+                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Delete Link
+                {
+                    mData: function(source, type) {
+                        // this function sets the value (set), returns original source of value (undefined), and then returns the value
+                        if (type === undefined) {
+                            return source.categories;
+                        } else if (type === 'set') {
+                            source.display = source.categories.join();
+                            return;
                         }
-                    }
-                ]
-            };
-            
-            $(categories).each(function(idx, category){
-                selection.optionlist.push(category.id);
-                selection.optionnames.push(category.name);
-            });
-            
-            tree.children.push(selection);
-
-            var cutpoints = [ { id: "categorySelect", selector: "#${n}categorySelectMenu" } ];
-            // render the component 
-            that.state.templates = fluid.selfRender($(container).find(".view-filter"), tree, 
-                { cutpoints: cutpoints });
-
-            that.refresh = function() {
-            };
-
-            return that;
-        };
-
-        up.PortletAdministrationPortletListView = function(container, overallThat, options) {
-
-            // construct the new component
-            var that = fluid.initView("up.PortletAdministrationPortletListView", container, options);
-
-            // initialize a state map for this component
-            that.state = {};
-
-            // Build a list of all portlets that are a deep member of the
-            // currently-selected category, sorted by title
-            var portlets = [];
-            var members = (overallThat.state.currentCategory && overallThat.state.currentCategory != "" ) ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
-            $(members).each(function(idx, portlet){
-                if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.title) || overallThat.state.portletRegex.test(portlet.description)) {
-                    if((overallThat.state.currentState == null) || ((overallThat.state.currentState.id === "") || (portlet.state.toUpperCase() === overallThat.state.currentState.id.toUpperCase()))) {
-                        portlets.push(portlet);
-                    }
-                }
-            });
-            portlets.sort(up.getStringPropertySortFunction("name"));
-
-            var options = {
-                dataModel: portlets,
-                annotateColumnRange: "name",
-                columnDefs: [
-                    { key: "name", valuebinding: "*.name", sortable: true },
-                    { key: "type", valuebinding: "*.type", sortable: true,
-                        components: function(row) {
-                                return { value: portletTypes[row.type] };
-                            }
-                        },
-                    { key: "state", valuebinding: "*.state", sortable: true,
-                        components: function(row) {
-                                return { value: row.state.toLowerCase() }
-                            }
-                        },
-                    { key: "editLink", valuebinding: "*.id",
-                        components: {
-                            target: editUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: '<spring:message code="edit" htmlEscape="false" javaScriptEscape="true"/>'
-                            }
-                        },
-                    { key: "deleteLink", valuebinding: "*.id",
-                        components: {
-                            target: removeUrl.replace("PORTLETID", '${"${*.id}"}'),
-                            linktext: '<spring:message code="delete" htmlEscape="false" javaScriptEscape="true"/>'
-                            }
+                        // 'display', 'filter', 'sort', and 'type' all just use the formatted string
+                        return source.display;
+                    },
+                    bSearchable: true,
+                    bVisible: false,
+                    asSorting: [ "desc", "asc" ]
+                }  // Categories - hidden 
+            ],
+            fnInitComplete: function (oSettings) {
+                //portletList_configuration.main.table.fnDraw();
+                // Adding formatting to sDom
+                $("div.toolbar-br").html('<BR>');
+                $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
+                $(".column-filter-widget select").addClass("form-control");
+            },
+            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = $.ajax({
+                    url: sUrl,
+                    data: aoData,
+                    dataType: "json",
+                    cache: false,
+                    type: oSettings.sServerMethod,
+                    success: function (json) {
+                        if (json.sError) {
+                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
                         }
-                ],
-                bodyRenderer: {
-                  type: "fluid.pager.selfRender",
-                  options: {
-                      selectors: {
-                         root: "#${n}categoriesTable1"
-                      },
-                      row: "row:"
-                    }
-                    
-                },
-                pagerBar: {type: "fluid.pager.pagerBar", options: {
-                  pageList: {type: "fluid.pager.renderedPageList",
-                    options: { 
-                      linkBody: "a"
-                    }
-                  }
-                }}
-            };
-            that.state.pager = fluid.pager("#${n}channelAddingTabs", options);
 
-            that.refresh = function() {
-                portlets = [];
-                var members = overallThat.state.currentCategory ? overallThat.registry.getMemberPortlets(overallThat.state.currentCategory, true) : overallThat.registry.getAllPortlets();
-                $(members).each(function(idx, portlet){
-                    if (!overallThat.state.portletRegex || overallThat.state.portletRegex.test(portlet.name) || overallThat.state.portletRegex.test(portlet.description)) {
-                        if((overallThat.state.currentState == null) || ((overallThat.state.currentState.id === "") || (portlet.state.toUpperCase() === overallThat.state.currentState.id.toUpperCase()))) {
-                            portlets.push(portlet);
-                        }
+                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
+                        fnCallback(json);
+                    },
+                    error: function (xhr, error, thrown) {
+                        lib.handleError(xhr, error, thrown);
                     }
                 });
-                portlets.sort(up.getStringPropertySortFunction("name"));
-                up.refreshPager(that.state.pager, portlets);
-            };
-
-            return that;
-        };
-    
-        $(document).ready(function() {
-            var browser = up.PortletBrowser("#${n}portletBrowser", null,
-                { 
-                    portletRegistry: { 
-                        type: "up.PortletRegistry",
-                        options: { portletListUrl: "<c:url value="/api/portletList"><c:param name="type" value="manage"/></c:url>" } 
-                    },
-                    stateListView: {
-                        type: "up.PortletAdministrationStateListView"
-                    },
-                    categoryListView: {
-                        type: "up.PortletAdministrationCategoryListView"
-                    },
-                    portletListView: {
-                        type: "up.PortletAdministrationPortletListView"
-                    },
-                    searchView: {
-                        options: {searchInvitationMessage: '<spring:message code="search.for.stuff" htmlEscape="false" javaScriptEscape="true"/>'}
-                    },
-                    listeners: {
-                        onLoad: function(that) {
-                            $("#${n}loadingMessage").hide();
-                        }
-                    }
-                }
-            );
+            },
+            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                infoMessage = infoMessage.replace(/_START_/g, iStart).
+                                      replace(/_END_/g, iEnd).
+                                      replace(/_TOTAL_/g, iTotal).
+                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                return infoMessage;
+            },
+            // Add links to the proper columns after we get the data
+            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                // Create edit and delete links
+                $('td:eq(3)', nRow).html( getEditURL(aData.id) );
+                $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
+            },
+            // Setting the top and bottom controls
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"toolbar-filter-options"W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>',
+            // Filtering
+            oColumnFilterWidgets: {
+                sSeparator: ',', // Used for multivalue column Categories
+                aiExclude: [portletList_configuration.column.name,
+                                portletList_configuration.column.type,
+                                portletList_configuration.column.placeHolderForEditLink,
+                                portletList_configuration.column.placeHolderForDeleteLink]
+            }
         });
+    };
 
-   	  });
-    </rs:compressJs></script>
+    initializeTable();
+    // Hide the out of the box search and populate it with our text box
+    $('#${n}portletBrowser .portlet-search-input').keyup(function(){
+        portletList_configuration.main.table.fnFilter( $(this).val() );
+    });
+});
+</script>

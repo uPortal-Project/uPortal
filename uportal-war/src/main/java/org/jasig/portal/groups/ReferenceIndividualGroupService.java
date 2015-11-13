@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.groups;
 
 import java.util.ArrayList;
@@ -35,8 +34,8 @@ import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.EntityLockService;
 import org.jasig.portal.services.GroupService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reference individual, or leaf, group service.
@@ -48,7 +47,7 @@ public class ReferenceIndividualGroupService extends ReferenceCompositeGroupServ
 implements IIndividualGroupService, ILockableGroupService
 {
     
-    private static final Log log = LogFactory.getLog(ReferenceIndividualGroupService.class);
+    private static final Logger log = LoggerFactory.getLogger(ReferenceIndividualGroupService.class);
     
     // Describes the attributes of this service.  See compositeGroupServices.xml.
     protected ComponentGroupServiceDescriptor serviceDescriptor;
@@ -202,6 +201,7 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
  */
 public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
 {
+    log.debug("Finding containing groups for member {}", gm.getKey());
     Collection groups = new ArrayList(10);
     IEntityGroup group = null;
     for ( Iterator it = getGroupStore().findContainingGroups(gm); it.hasNext(); )

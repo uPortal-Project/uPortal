@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -30,24 +30,33 @@
             <classifier>classes</classifier>
             <type>jar</type>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>serializer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jasig.cas</groupId>
+                    <artifactId>cas-client-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Use same version as uPortal to ease debugging -->
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>javax.portlet</groupId>
-            <artifactId>portlet-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
             <scope>compile</scope>
         </dependency>
 
     </dependencies>
-    
 
     <build>
         <filters>
@@ -113,9 +122,10 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>${jdbc.groupId}</groupId>
-                        <artifactId>${jdbc.artifactId}</artifactId>
-                        <version>${jdbc.version}</version>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uportal-db</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
                         <scope>compile</scope>
                     </dependency>
                     <dependency>
@@ -125,6 +135,27 @@
                         <classifier>classes</classifier>
                         <type>jar</type>
                         <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>xalan</groupId>
+                                <artifactId>serializer</artifactId>
+                            </exclusion>
+                            <!-- exclude logback during the build since we can't specify to use commandline-logback.xml
+                                 during the running of this plug-in and logback.xml references CATALINA_BASE.webroot
+                                 which is undefined when running db-init from the command line. -->
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-classic</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>ch.qos.logback</groupId>
+                                <artifactId>logback-core</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>log4j-over-slf4j</artifactId>
+                            </exclusion>
+                        </exclusions>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -152,20 +183,26 @@
                         <classifier>classes</classifier>
                         <type>jar</type>
                         <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>xalan</groupId>
+                                <artifactId>serializer</artifactId>
+                            </exclusion>
+                        </exclusions>
                     </dependency>
                 </dependencies>
                 <configuration>
                     <tasks>
                         <!-- Set default value of data location if it is not set -->
-                        <property name="dir" value="${basedir}/src/main/data"/>
+                        <property name="dir" value="${basedir}/src/main/data" />
 
                         <property name="runtime_classpath" refid="maven.runtime.classpath" />
                         <property name="plugin_classpath" refid="maven.plugin.classpath" />
 
                         <java failonerror="true" classname="org.danann.cernunnos.runtime.Main">
-                            <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
+                            <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                             <classpath>
-                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF"/>
+                                <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF" />
                                 <pathelement path="${runtime_classpath}" />
                                 <pathelement path="${plugin_classpath}" />
                                 <pathelement location="${servlet.jar}" />

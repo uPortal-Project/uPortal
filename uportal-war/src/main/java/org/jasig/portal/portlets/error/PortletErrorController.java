@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.error;
 
 import java.io.PrintWriter;
@@ -39,6 +38,7 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPermission;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
@@ -64,9 +64,6 @@ public class PortletErrorController {
     public static final String REQUEST_ATTRIBUTE__CURRENT_FAILED_PORTLET_WINDOW_ID = PortletErrorController.class.getName() + ".CURRENT_FAILED_PORTLET_WINDOW_ID";
     public static final String REQUEST_ATTRIBUTE__CURRENT_EXCEPTION_CAUSE = PortletErrorController.class.getName() + ".CURRENT_EXCEPTION_CAUSE";
 
-	protected static final String ERROR_OWNER = "UP_ERROR_CHAN";
-	protected static final String ERROR_ACTIVITY = "VIEW";
-	protected static final String ERROR_TARGET = "DETAILS";
 	private IUserInstanceManager userInstanceManager;
 	private IPortalRequestUtils portalRequestUtils;
 	private IPortletWindowRegistry portletWindowRegistry;
@@ -130,7 +127,12 @@ public class PortletErrorController {
 		model.addAttribute("exception", cause);
 		final String rootCauseMessage = ExceptionUtils.getRootCauseMessage(cause);
 		model.addAttribute("rootCauseMessage", rootCauseMessage);
-		
+
+        // Maintenance Mode?
+        if (cause != null && cause instanceof MaintenanceModeException) {
+            return "/jsp/PortletError/maintenance";
+        }
+
 		IUserInstance userInstance = this.userInstanceManager.getUserInstance(httpRequest);
 		if(hasAdminPrivileges(userInstance)) {
 			IPortletWindow window = this.portletWindowRegistry.getPortletWindow(httpRequest, currentFailedPortletWindowId);
@@ -184,6 +186,6 @@ public class PortletErrorController {
 	protected boolean hasAdminPrivileges(IUserInstance userInstance) {
 		EntityIdentifier ei = userInstance.getPerson().getEntityIdentifier();
 	    IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
-	    return ap.hasPermission(ERROR_OWNER, ERROR_ACTIVITY, ERROR_TARGET);
+	    return ap.hasPermission(IPermission.ERROR_PORTLET, IPermission.VIEW_ACTIVITY, IPermission.DETAILS_TARGET);
 	}
 }

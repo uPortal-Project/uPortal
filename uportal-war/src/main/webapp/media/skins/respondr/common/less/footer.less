@@ -1,0 +1,103 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
+/* ==========================================================================
+   Footer Nav
+   ========================================================================== */
+
+    #region-footer-first {
+        background: @footer-background-color;
+        color: @footer-text-color;
+        font-size: 90%;
+        padding: 20px;
+
+        a {
+            color: @footer-link-color;
+
+            &:hover, &:focus {
+                color: @footer-link-hover-color;
+            }
+        }
+
+        h4 {
+            a {
+                color: @footer-link-color;
+                margin: 0;
+
+                &:hover, &:focus {
+                    color: @footer-link-hover-color;
+                }
+            }
+            a.disabled {
+                pointer-events: none;
+                cursor: default;
+            }
+        }
+
+        ul {
+            list-style-type: none;
+            margin-left: 10px;
+            display: none;
+            padding: 0;
+        }
+    }
+
+/* ==========================================================================
+   Footer Legal
+   ========================================================================== */
+
+    #region-footer-second {
+        background: @footer-secondary-background-color;
+        color: @footer-text-color;
+        font-size: 80%;
+        padding: 5px 0;
+
+        .hover-option {
+            font-size: 14px;
+        }
+
+        .legal-footer a {
+            color: @footer-link-color;
+
+            &:hover, &:focus {
+                color: @footer-link-hover-color;
+            }
+        }
+    }
+
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+@media only screen and (min-width: 769px) {
+    #region-footer-first, #region-footer-second {
+        padding: 20px 0;
+    }
+
+    #region-footer-first {
+        ul {
+            display: block;
+        }
+    }
+}

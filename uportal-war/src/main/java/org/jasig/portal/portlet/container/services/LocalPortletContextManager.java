@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.container.services;
 
 import java.io.InputStream;
@@ -48,6 +47,8 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
+import org.jasig.portal.api.PlatformApiBroker;
+import org.jasig.portal.api.PlatformApiBrokerImpl;
 import org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -114,6 +115,13 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         this.portletAppDescriptorService = portletAppDescriptorService;
     }
 
+    private PlatformApiBrokerImpl platformApiBroker;
+
+    @Autowired
+    public void setPlatformApiBroker(PlatformApiBrokerImpl platformApiBroker) {
+        this.platformApiBroker = platformApiBroker;
+    }
+
     // Public Methods ----------------------------------------------------------
 
     /**
@@ -136,6 +144,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             DriverPortletContext portletContext = new DriverPortletContextImpl(servletContext, portletApp,
                     requestDispatcherService);
 
+            portletContext.setAttribute(PlatformApiBroker.PORTLET_CONTEXT_ATTRIBUTE_NAME,platformApiBroker);
             portletContexts.put(contextPath, portletContext);
 
             fireRegistered(portletContext);
@@ -262,7 +271,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
         for (PortletRegistryListener l : registryListeners) {
             l.portletApplicationRegistered(event);
         }
-        logger.info("Portlet Context '/" + context.getApplicationName() + "' registered.");
+        logger.info("Portlet Context '" + context.getApplicationName() + "' registered.");
     }
 
     private void fireRemoved(DriverPortletContext context) {
@@ -273,7 +282,7 @@ public class LocalPortletContextManager implements PortletRegistryService, Portl
             l.portletApplicationRemoved(event);
         }
 
-        logger.info("Portlet Context '/" + context.getApplicationName() + "' removed.");
+        logger.info("Portlet Context '" + context.getApplicationName() + "' removed.");
     }
 
     /**

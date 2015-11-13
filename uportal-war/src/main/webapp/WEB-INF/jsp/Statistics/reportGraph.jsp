@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
@@ -68,7 +67,7 @@
             </div>
             <p id="${n}_chartLoading" class="portlet-msg-info" style="display: none">
                 <spring:message var="loadingStr" code="loading" />
-                <img alt="${loadingStr} ..." src="${renderRequest.contextPath}/media/skins/universality/common/images/loading.gif">
+                <img alt="${loadingStr} ..." src="${renderRequest.contextPath}/media/skins/common/images/loading.gif">
                 <span> ${loadingStr} ${reportNameStr}</span>
             </p>
             <div id="${n}_chart" class="chart"></div>
@@ -127,7 +126,7 @@ up.jQuery(function() {
    var privateChartWrapper = undefined;
    var resizeInterval = undefined;
    var intervalsCache = {};
-   
+
    // Used by svg->canvas->png conversion
    $.fn.outerHTML = function(s) {
       return s ? this.before(s).remove() : $("<p>").append(
@@ -300,56 +299,54 @@ up.jQuery(function() {
    $(window).resize(resizeChart);
 
    $("#${n} .datepicker").datepicker();
-   $("#${n}_reportForm").ajaxForm({
-      url : reportDataUrl,
-      type : 'GET',
-      traditional : true,
-      dataType : "json",
-      beforeSubmit : function(arr, form, options) {
-         if (!validateIntervals()) {
-            return false;
-         }
-         
-         $("#${n}_chartLoading").show();
+   $('#${n}_reportForm').submit(function(event) {
+       if (!validateIntervals()) {
+           return false;
+       }
 
-         // Update report download links for the new query
-         var queryString = form.serialize();
-         $("#${n}_downloadCsv").attr('href', buildUrl(reportDataUrl, queryString, {
-            format : "csv"
-         }));
-         $("#${n}_downloadHtml").attr('href', buildUrl(reportDataUrl, queryString, {
-            format : "html"
-         }));
-         $("#${n}_downloadPng").attr('href', '');
-         $("#${n}_permLink").attr('href', buildUrl(reportUrl, queryString));
-         
-         
+       $("#${n}_chartLoading").show();
 
-         $(document.body).animate({
-            'scrollTop' : $('#${n}_chartLinkBar').offset().top
-         }, 1000);
-      },
-      success : function(data) {
-         // Render the updated graph
-         var table = new google.visualization.DataTable(data.table);
+       // Update report download links for the new query
+       var queryString = $('#${n}_reportForm').serialize();
+       $("#${n}_downloadCsv").attr('href', buildUrl(reportDataUrl, queryString, {
+           format: "csv"
+       }));
+       $("#${n}_downloadHtml").attr('href', buildUrl(reportDataUrl, queryString, {
+           format: "html"
+       }));
+       $("#${n}_downloadPng").attr('href', '');
+       $("#${n}_permLink").attr('href', buildUrl(reportUrl, queryString));
 
-         // Render the report title, or the title with the augmented text based on report parameters
-         var tableTitle = $("#${n}_titleUnmodified").text();
-         if (data.titleAugmentation) {
-             tableTitle = $("#${n}_titleTemplate").text().replace("$0",data.titleAugmentation);
-         }
+       $(document.body).animate({
+           'scrollTop': $('#${n}_chartLinkBar').offset().top
+       }, 1000);
 
-         var chartWrapper = getChartWrapper();
-         chartWrapper.setOption('title',tableTitle);
-         chartWrapper.setDataTable(table);
-         chartWrapper.draw();
-         
-         $("#${n}_chartLoading").hide();
-      },
-      error : function() {
-         alert("Report Query Failed");
-         $("#${n}_chartLoading").hide();
-      }
+       $.ajax({
+           url: buildUrl(reportDataUrl, queryString, {}),
+           type: 'POST',
+           dataType: 'json'
+       }).then(function (data) {
+           // Render the updated graph
+           var table = new google.visualization.DataTable(data.table);
+
+           // Render the report title, or the title with the augmented text based on report parameters
+           var tableTitle = $("#${n}_titleUnmodified").text();
+           if (data.titleAugmentation) {
+               tableTitle = $("#${n}_titleTemplate").text().replace("$0", data.titleAugmentation);
+           }
+
+           var chartWrapper = getChartWrapper();
+           chartWrapper.setOption('title', tableTitle);
+           chartWrapper.setDataTable(table);
+           chartWrapper.draw();
+
+           $("#${n}_chartLoading").hide();
+       }, function () {
+           alert("Report Query Failed");
+           $("#${n}_chartLoading").hide();
+       });
+
+       event.preventDefault();
    });
 
    $("#${n}_editChart").click(function() { editChart(); return false; });

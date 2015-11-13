@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/subscribed-fragment" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor">
+    <title>Basic LTI Portlet (demo)</title>
+    <name>Basic LTI Portlet (demo)</name>
+    <fname>basiclti-portlet</fname>
+    <desc>Implements the IMS Basic Learning Tools Interoperability spec and allows you to render any Basic LTI enabled app inside uPortal</desc>
+    <type>Portlet</type>
+    <timeout>5000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/basiclti-portlet</ns2:webAppName>
+        <ns2:portletName>basiclti-portlet</ns2:portletName>
+    </portlet-descriptor>
+    <category>Academics</category>
+    <category>Demonstration</category>
+    <group>Authenticated Users</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Authenticated Users</group>
+        </permission>
+    </permissions>
+    <parameter>
+        <name>alternate</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>blockImpersonation</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hideFromMobile</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>highlight</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>printable</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>showChrome</name>
+        <value>true</value>
+    </parameter>
+    <portlet-preference>
+        <name>key</name>
+        <readOnly>false</readOnly>
+        <value>12345</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>launch_data</name>
+        <readOnly>false</readOnly>
+        <value>endpoint_url=http://www.imsglobal.org/developers/LTI/test/v1p1/tool.php;;
+example_param_1=hello world;;
+example_param_2=another value;;</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>portlet_height</name>
+        <readOnly>false</readOnly>
+        <value>600</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>portlet_title</name>
+        <readOnly>false</readOnly>
+        <value>Basic LTI Portlet (demo)</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>provider_type</name>
+        <readOnly>false</readOnly>
+        <value>standard</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>secret</name>
+        <readOnly>false</readOnly>
+        <value>secret</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>version</name>
+        <readOnly>false</readOnly>
+        <value>1</value>
+    </portlet-preference>
+</portlet-definition>

@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.url.xml;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +39,7 @@ import org.springframework.stereotype.Service;
  * Wrapper class for {@link IPortalUrlProvider} that makes use easier in XSL
  * 
  * @author Eric Dalquist
+ * @author vertein
  * @version $Revision$
  */
 @Service("xslPortalUrlProvider")
@@ -104,15 +104,43 @@ public class XsltPortalUrlProvider {
             return this.portalUrlProvider.getDefaultUrl(request);
         }
         catch (Exception e) {
-            this.logger.error("Faild to create IPortalUrlBuilder for fname='" + fname + "', layoutId='" + layoutId + "', type='" + type +"'. # will be returned instead.", e);
+            this.logger.error("Failed to create IPortalUrlBuilder for fname='" + fname + "', layoutId='" + layoutId + "', type='" + type +"'. # will be returned instead.", e);
             return new FailSafePortalUrlBuilder();
         }
     }
     
     /**
      * Get the portlet URL builder for the specified fname or layoutId (fname takes precedence)
+     * @param request
+     * @param portalUrlBuilder
+     * @param fname
+     * @param layoutId
+     * @param state
+     * @param mode
+     * @param copyCurrentRenderParameters
+     * @return
+     * @deprecated As of uPortal release 4.1, replaced by 
+     *     {@link #getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode, String copyCurrentRenderParameters, String resourceId))
      */
-    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode, String copyCurrentRenderParameters) {
+    @Deprecated
+    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode, String copyCurrentRenderParameters){
+        return this.getPortletUrlBuilder(request, portalUrlBuilder, fname, layoutId, state, mode, copyCurrentRenderParameters, null);
+    }
+    
+    /**
+     * Get the portlet URL builder for the specified fname or layoutId (fname takes precedence)
+     * @param request
+     * @param portalUrlBuilder
+     * @param fname - can be empty string
+     * @param layoutId - can by empty string
+     * @param state - can be empty string
+     * @param mode - can be empty string
+     * @param copyCurrentRenderParameters
+     * @param resourceId - can be empty string
+     * @return IPortletUrlBuilder
+     * @since uPortal 4.1
+     */
+    public IPortletUrlBuilder getPortletUrlBuilder(HttpServletRequest request, IPortalUrlBuilder portalUrlBuilder, String fname, String layoutId, String state, String mode, String copyCurrentRenderParameters, String resourceId) {
         final IPortletUrlBuilder portletUrlBuilder;
         
         if (StringUtils.isNotEmpty(fname)) {
@@ -148,6 +176,10 @@ public class XsltPortalUrlProvider {
         
         if (StringUtils.isNotEmpty(mode)) {
             portletUrlBuilder.setPortletMode(PortletUtils.getPortletMode(mode));
+        }
+        
+        if(StringUtils.isNotEmpty(resourceId) && portletUrlBuilder.getPortalUrlBuilder().getUrlType()==UrlType.RESOURCE){
+            portletUrlBuilder.setResourceId(resourceId);
         }
         
         return portletUrlBuilder;

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal.portlets-overlay</groupId>
+        <artifactId>uportal-portlets-overlay</artifactId>
+        <version>4.3.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>sakai-connector</artifactId>
+    <packaging>war</packaging>
+
+    <name>Sakai Connector Portlet</name>
+    <description>Overlay on the Sakai Connector Portlet</description>
+
+    <dependencies>
+        <!-- ===== Compile Time Dependencies ============================== -->
+        <dependency>
+            <groupId>org.jasig.portlet</groupId>
+            <artifactId>sakai-connector</artifactId>
+            <version>${sakai-connector-portlet.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+    
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../../${filters.file}</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                    <!-- By specifying an exclude we'll retain META-INF/context.xml (META-INF is excluded by default).
+                         Context.xml is important because it allows the ResourceUrl to 'see' the ResourceServingWebapp
+                         to determine if a resource is available there, which allows for browser caching of common
+                         libraries -->
+                    <dependentWarExcludes>junkname.jar</dependentWarExcludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.portals.pluto</groupId>
+                <artifactId>maven-pluto-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

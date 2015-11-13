@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!-- ========================================================================= -->
 <!-- ========== README ======================================================= -->
 <!-- ========================================================================= -->
@@ -212,7 +211,7 @@
         up.jQuery = jQuery.noConflict(true);
         up.fluid = fluid;
         fluid = null;
-        fluid_1_4 = null;
+        fluid_1_5 = null;
         up._ = _.noConflict();
         up.Backbone = Backbone.noConflict();
         
@@ -249,7 +248,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template name="page.meta">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="description" content="{upMsg:getMessage('portal.page.meta.description', $USER_LANG)}" />
@@ -302,7 +301,7 @@
 | Template contents can be any valid XSL or XHTML.
 -->
 <xsl:template match="/">
-    <html lang="{$USER_LANG}">
+    <html lang="{$USER_LANG}" class="muniversality">
         <head>
             <xsl:call-template name="page.title" />
             <xsl:call-template name="page.meta" />
@@ -310,6 +309,7 @@
               <xsl:with-param name="path" select="$SKIN_RESOURCES_PATH" />
             </xsl:call-template>
 
+            <xsl:copy-of select="//channel[@fname = 'google-analytics-config']"/>
             <xsl:call-template name="page.js" />
         </head>
         <body class="up {$FLUID_THEME_CLASS} dashboard-{$VIEW}">

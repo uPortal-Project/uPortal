@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!-- ========================================================================= -->
 <!-- ========== README ======================================================= -->
 <!-- ========================================================================= -->
@@ -214,7 +213,7 @@
 | This template defines the method for expressing the presence of a portlet within a layout.
 -->
 <xsl:template match="channel">
-    <xsl:variable name="defaultPortletUrl">
+    <xsl:variable name="portletUrl">
         <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
                 <url:portal-url>
@@ -224,7 +223,6 @@
             </xsl:with-param>
         </xsl:call-template>
     </xsl:variable>
-    <xsl:variable name="portletUrl">{up-portlet-link(<xsl:value-of select="@ID" />,<xsl:value-of select="$defaultPortletUrl" />)}</xsl:variable>
     <xsl:variable name="iconUrl">
         <xsl:choose>
             <xsl:when test="parameter[@name='mobileIconUrl'] and parameter[@name='mobileIconUrl']/@value != ''">
@@ -235,10 +233,9 @@
     </xsl:variable>
                     {
                         "fname": "<xsl:value-of select="@fname"/>",
-                        "title": "{up-portlet-title(<xsl:value-of select="@ID" />)}",
+                        "title": "<xsl:value-of select="@title"/>",
                         "url": "<xsl:value-of select="$portletUrl"/>",
                         "description": "<xsl:value-of select="@description"/>",
-                        "newItemCount": "{up-portlet-new-item-count(<xsl:value-of select="@ID" />)}",
                         "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>

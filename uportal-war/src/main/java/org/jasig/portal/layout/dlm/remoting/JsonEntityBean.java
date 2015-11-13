@@ -1,82 +1,95 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.jasig.portal.security.IPermission;
 
 /**
  * <p>Entity bean for JSON output.  Used for categories, groups, and people.</p>
  * 
  * @author Drew Mazurek
  */
-@SuppressWarnings("unchecked")
 public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> {
 
-	public static final String ENTITY_CATEGORY = "category";
-	public static final String ENTITY_CHANNEL = "channel";
-	public static final String ENTITY_GROUP = "group";
-	public static final String ENTITY_PERSON = "person";
-	
-	private EntityEnum entityType;
-	private String id;
-	private String name;
-	private String creatorId;
-	private String description;
-    private String principalString;
-	private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
-	private boolean childrenInitialized = false;
-		
-	public JsonEntityBean() { }
-	
-	public JsonEntityBean(PortletCategory category) {
-		
-		this.entityType = EntityEnum.CATEGORY;
-		this.id = category.getId();
-		this.name = category.getName();
-		this.creatorId = category.getCreatorId();
-		this.description = category.getDescription();
-	}
-	
-	public JsonEntityBean(IGroupMember groupMember, EntityEnum entityType) {
-		
-		this.entityType = entityType;
-		this.id = groupMember.getKey();
-	}
+    private static final long serialVersionUID = 1L;
 
-	public JsonEntityBean(IEntityGroup entityGroup, EntityEnum entityType) {
-		
-		this.entityType = entityType;
-		this.id = entityGroup.getKey();
-		this.name = entityGroup.getName();
-		this.creatorId = entityGroup.getCreatorID();
-		this.description = entityGroup.getDescription();
-	}
+    public static final String ENTITY_CATEGORY = "category";
+    public static final String ENTITY_CHANNEL = "channel";
+    public static final String ENTITY_GROUP = "group";
+    public static final String ENTITY_PERSON = "person";
+
+    private EntityEnum entityType;
+    private String id;
+    private String name;
+    private String creatorId;
+    private String description;
+    private String principalString;
+    private String targetString;
+    private List<JsonEntityBean> children = new ArrayList<JsonEntityBean>();
+    private boolean childrenInitialized = false;
+
+    public JsonEntityBean() {}
+
+    public JsonEntityBean(PortletCategory category) {
+        this.entityType = EntityEnum.CATEGORY;
+        this.id = category.getId();
+        this.name = category.getName();
+        this.creatorId = category.getCreatorId();
+        this.description = category.getDescription();
+        this.targetString = category.getId();  // e.g. 'local.25'
+    }
+
+    public JsonEntityBean(IGroupMember groupMember, EntityEnum entityType) {
+        this.entityType = entityType;
+        this.id = groupMember.getKey();
+        String prefix = "";  // default
+        switch (entityType) {
+            case PORTLET:
+                prefix = IPermission.PORTLET_PREFIX;  // E.g. groupMember.getKey()=56
+                break;
+            case PERSON:
+                // No prefix -- e.g. groupMember.getKey()=admin
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported entityType:  " + entityType);
+        }
+        this.targetString = prefix + groupMember.getKey();
+    }
+
+    public JsonEntityBean(IEntityGroup entityGroup, EntityEnum entityType) {
+        this.entityType = entityType;
+        this.id = entityGroup.getKey();
+        this.name = entityGroup.getName();
+        this.creatorId = entityGroup.getCreatorID();
+        this.description = entityGroup.getDescription();
+        this.targetString = entityGroup.getKey();  // e.g. 'local.19' and 'pags.Authenticated Users'
+    }
+
 	public EntityEnum getEntityType() {
 	    return entityType;
 	}
@@ -89,12 +102,15 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	public void setEntityType(EntityEnum entityType) {
 	    this.entityType = entityType;
 	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 	public String getName() {
 		return name;
 	}
@@ -113,7 +129,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 	public void setDescription(String description) {
 		this.description = description;
 	}
-    
+
     public String getPrincipalString() {
         return principalString;
     }
@@ -121,7 +137,26 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     public void setPrincipalString(String principalString) {
         this.principalString = principalString;
     }
-    
+
+    /**
+     * Identifies this bean uniquely as a permissions target.  NOTE:  This id is
+     * not the fname (for portlets) or name field (for groups), but rater a
+     * unique String like 'PORTLET_ID.19' or 'local.36' or 'pags.Authenticated Users'
+     * 
+     * @since uPortal 4.0.14
+     */
+    public String getTargetString() {
+        return targetString;
+    }
+
+    /**
+     * 
+     * @since uPortal 4.0.14
+     */
+    public void setTargetString(String targetString) {
+        this.targetString = targetString;
+    }
+
 	public List<JsonEntityBean> getChildren() {
 		return children;
 	}
@@ -212,4 +247,13 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
             .append(this.principalString, this.getPrincipalString())
         .toComparison();
     }
+
+    @Override
+    public String toString() {
+        return "JsonEntityBean [entityType=" + entityType + ", id=" + id
+                + ", name=" + name + ", creatorId=" + creatorId
+                + ", description=" + description + ", principalString="
+                + principalString + "]";
+    }
+
 }

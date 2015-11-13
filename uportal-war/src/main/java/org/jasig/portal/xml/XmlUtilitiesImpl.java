@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.xml;
 
 import java.io.IOException;
@@ -44,7 +43,6 @@ import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.cache.resource.CachedResource;
 import org.jasig.portal.utils.cache.resource.CachingResourceLoader;
 import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
-import org.jasig.portal.xml.stream.FilteringXMLEventReader;
 import org.jasig.portal.xml.stream.IndentingXMLEventWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -170,17 +168,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
     
     @Override
     public Node convertToDom(XMLEventReader xmlEventReader) throws XMLStreamException {
-        //Remove when woodstox 4.1.3 is released: http://jira.codehaus.org/browse/WSTX-271
-        xmlEventReader = new FilteringXMLEventReader(xmlEventReader) {
-            @Override
-            protected XMLEvent filterEvent(XMLEvent event, boolean peek) {
-                if (event.getEventType() == XMLEvent.COMMENT) {
-                    return null;
-                }
-                return event;
-            }
-        };
-        
+
         //Convert the XmlEventReader into a DOM
         final XMLOutputFactory xmlOutputFactory = this.getXmlOutputFactory();
         final DOMResult sourceDom = new DOMResult(DocumentFactory.getThreadDocument());
@@ -188,7 +176,7 @@ public class XmlUtilitiesImpl implements XmlUtilities {
         sourceWriter.add(xmlEventReader);
         sourceWriter.flush();
         sourceWriter.close();
-        
+
         return sourceDom.getNode();
     }
 

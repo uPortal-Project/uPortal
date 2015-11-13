@@ -1,24 +1,23 @@
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!--
  | Detailed help documentation lives in docs/antHelp.txt, please refer to this file or
  | run 'ant help' for usage of this file.
@@ -119,15 +118,34 @@
      | Properties that describe the maven project
      +-->
     <property name="bootstrap.dir" value="${basedir}/bootstrap" />
+	<property name="uportal-db.dir" value="${basedir}/uportal-db" />
+    <property name="uportal-platform-api.dir" value="${basedir}/uportal-platform-api" />
     <property name="uportal-search-api.dir" value="${basedir}/uportal-search-api" />
     <property name="uportal-war.dir" value="${basedir}/uportal-war" />
     <property name="uportal-portlets-overlay.dir" value="${basedir}/uportal-portlets-overlay" />
     <property name="uportal-ear.dir" value="${basedir}/uportal-ear" />
+    <property name="uportal.war.name" value="uPortal"/> <!-- Keep in sync with uportal.docbase in pom.xml and environment.build.uportal.context in filters/*.properties -->
 
     <import file="${bootstrap.dir}/build_includes.xml" />
 
 
     <!-- ============================== Public Targets ============================== -->
+    
+    <target name="deploy-less">
+      <exec executable="lessc">
+        <arg value="" />
+        <arg value="${basedir}/uportal-war/src/main/webapp/media/skins/respondr/defaultSkin.less" />
+        <arg value="${server.base}/webapps/portal/media/skins/respondr/defaultSkin.css" />
+      </exec>
+    </target>
+
+    <target name="deploy-xsl">
+      <exec executable="rsync">
+        <arg value="-avC" />
+        <arg value="${basedir}/uportal-war/src/main/resources/layout" />
+        <arg value="${server.base}/webapps/portal/WEB-INF/classes" />
+      </exec>
+    </target>
 
     <target name="help" description="Prints information about using this ant build file.">
         <loadfile property="helpMessage" srcFile="docs/antHelp.txt" />
@@ -160,6 +178,21 @@
 	<target name="db-update" depends="prodPrompt" description="Updates an existing database from one patch version to the next">
         <antcall target="db-hibernate-update" />
 	</target>
+
+    <target name="db-gen-update-script" description="Generates the SQL files for a database upgrade.">
+    	<!-- Check arguments -->
+        <fail message="'-DoutputDir=[output directory]' must be specified">
+            <condition>
+                <not>
+                    <isset property="outputDir" />
+                </not>
+            </condition>
+        </fail>
+    	
+        <antcall target="db-hibernate-gen-update-script">
+            <param name="outputDir" value="${outputDir}"/>
+        </antcall>
+    </target>
 
     <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
         <fail unless="ddlFile">
@@ -218,6 +251,23 @@
             <antcall target="db-hibernate-portal-update" />
             <antcall target="db-hibernate-raw-events-update" />
             <antcall target="db-hibernate-aggr-events-update" />
+        </up-shell-batch>
+    </target>
+
+	<target name="db-hibernate-gen-update-script" depends="prodPrompt" description="Generates hibernate update script for portal, raw events, and aggregator databases. Does not run updates.">
+		<property name="outputDir" value=" "/>
+        <up-shell-batch>
+            <antcall target="db-hibernate-gen-portal-update-script">
+                <param name="outputFile" value="${outputDir}/portalDb-update.sql" />
+            </antcall>
+        	<antcall target="db-hibernate-gen-portal-update-script">
+        		<param name="databaseQualifier" value="RawEventsDb" />
+                <param name="outputFile" value="${outputDir}/rawDb-update.sql" />
+            </antcall>
+	        <antcall target="db-hibernate-gen-portal-update-script">
+	        	<param name="databaseQualifier" value="AggrEventsDb" />
+                <param name="outputFile" value="${outputDir}/aggrDb-update.sql" />
+            </antcall>
         </up-shell-batch>
     </target>
 
@@ -285,6 +335,30 @@
             <param name="script" value="${portal-shell-script}" />
         </antcall>
     </target>
+	
+	<target name="db-hibernate-gen-portal-update-script" depends="prodPrompt" description="Generates script for hibernate updates. Does not run updates. Defaults to PortalDb.">
+	        <property name="databaseQualifier" value="PortalDb" />
+	        <property name="outputFile" value=" " />
+
+	        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+	        <echo>Creating HBM2DDL Update Script</echo>
+	        <echo file="${portal-shell-script}" append="true">
+	            logger.info("");
+	            logger.info("");
+	            logger.info("Generate Update Script for Database " + '${databaseQualifier}');
+	            
+	            //hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
+	            portalShellBuildHelper.hibernateGenerateScript(
+	        	    "db-hibernate-update",
+	                '${databaseQualifier}',
+	                /${outputFileEscaped}/);
+	        </echo>
+
+	        <antcall target="up-shell">
+	            <param name="script" value="${portal-shell-script}" />
+	        </antcall>
+	    </target>
 
     <target name="db-hibernate-stats" depends="prodPrompt">
         <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
@@ -440,6 +514,28 @@
         </antcall>
     </target>
 
+    <!-- Since uPortal 4.2.0 -->
+    <target name="pagsXmlToEntity" description="Script to convert PAGSGroupStoreConfig.xml to entity PAGS files">
+        <if>
+            <not>
+                    <isset property="dir" />
+            </not>
+            <then>
+                <fail>'-Ddir' output directory must be specified for PAGS conversion</fail>
+            </then>
+        </if>
+
+        <groovy-safe-path property="dirFullEscaped" input="${dir}" />
+
+        <echo>Executing PAGS Conversion Script</echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="bootstrap/utilities/scripts/xmlPagsToEntityPags.groovy" />
+            <param name="arg1" value="uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"/>
+            <param name="arg2" value="${dir}"/>
+        </antcall>
+    </target>
+
     <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
         <if>
             <not>
@@ -458,9 +554,12 @@
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />
                                 <arg value="-s" />
                                 <arg value="${script}" />
+                                <arg value="${arg1}"/>
+                                <arg value="${arg2}"/>
                             </java>
                         </then>
                         <else>
@@ -468,6 +567,7 @@
 
                             <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />
                             </java>
                         </else>
@@ -643,15 +743,21 @@
                 </then>
             </if>
 
-            <artifact:dependencies pathid="uportal-ant" settingsFile="${maven.settings}">
-                <pom file="${bootstrap.dir}/uportal-ant-tasks/pom.xml" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <fileset id="uportal-build.fsid" file="${basedir}/build.xml" />
+            <maven-artifact-macro project-name="uportal-ant" project-path="${bootstrap.dir}/uportal-ant-tasks" checkfilesid="uportal-build.fsid">
 
-            <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
-                <classpath>
-                    <path refid="uportal-ant" />
-                </classpath>
-            </typedef>
+                <typedef resource="org/jasig/portal/ant/antlib.xml" uri="urn:up-util-ant">
+                    <classpath>
+                        <path refid="uportal-ant.classpath" />
+                    </classpath>
+                </typedef>
+            </maven-artifact-macro>
 
             <mkdir dir="${server.base}/shared/lib" />
             <up:tomcatEarDeploy ear="${uportal-ear.artifact}" catalinaBase="${server.base}" webAppsDir="${server.webapps}" extractWars="${extractWars}" removeExistingDirectories="${removeExisting}" />
@@ -693,19 +799,23 @@
             </condition>
         </fail>
 
-
         <basename property="war.filename" file="${portletAppPath}" />
 
         <uportal-parent-macro>
-            <artifact:dependencies pathid="pluto-ant" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/pluto-assembler/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
-
-            <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
-                <classpath>
-                    <path refid="pluto-ant" />
-                </classpath>
-            </taskdef>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <fileset id="uportal-build.fsid" file="${basedir}/build.xml" />
+            <maven-artifact-macro project-name="pluto-assembler" project-path="${bootstrap.dir}/pluto-assembler" checkfilesid="uportal-build.fsid">
+                <taskdef classname="org.apache.pluto.ant.AssembleTask" name="assemblePortlet">
+                    <classpath>
+                        <path refid="pluto-assembler.classpath" />
+                    </classpath>
+                </taskdef>
+            </maven-artifact-macro>
         </uportal-parent-macro>
 
         <assemblePortlet destdir="${jasig.tmpdir}" war="${portletAppPath}" />
@@ -780,16 +890,22 @@
         </fail>
 
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <maven-artifact-macro project-name="hsql" project-path="${bootstrap.dir}/hsqldb">
+                <!-- no subtasks needed -->
+            </maven-artifact-macro>
 
             <property name="database" value="file:${basedir}/data/uPortal;hsqldb.tx=mvcc" />
             <property name="port" value="${environment.build.hsql.port}" />
 
             <echo message="Starting HSQL on ${port}" />
             <echo message="Using: ${database}" />
-            <java fork="true" spawn="${spawn}" maxmemory="32M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
+            <java fork="true" spawn="${spawn}" maxmemory="160M" dir="${basedir}" classname="org.hsqldb.server.Server" failonerror="${failonerror}">
                 <classpath refid="hsql.classpath" />
 
                 <arg value="--database.0" />
@@ -821,9 +937,15 @@
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
     	<echo>${environment.token}</echo>
         <uportal-parent-macro>
-            <artifact:dependencies pathid="hsql.classpath" settingsFile="${maven.settings}">
-                <artifact:pom file="${bootstrap.dir}/hsqldb/pom.xml" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
+            <!--
+             | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
+             | transient dependencies are properly downloaded by a maven invocation first and we don't get corrupt
+             | artifacts in the local repo from artifact:dependencies. Conveniently this also defines a classpath
+             | property based on the module project's pom.
+             +-->
+            <maven-artifact-macro project-name="hsql" project-path="${bootstrap.dir}/hsqldb">
+                <!-- no subtasks needed -->
+            </maven-artifact-macro>
 
             <copy file="${bootstrap.dir}/hsqldb.sqltool.rc.sample" tofile="${bootstrap.dir}/hsqldb.sqltool.rc" overwrite="true">
                 <filterset>
@@ -850,6 +972,13 @@
                         <then>
                             <echo>HSQL is not running</echo>
                         </then>
+                        <elseif>
+                            <contains string="${hsql-shutdown.err.out}" substring="java.io.EOFException" />
+                            <!-- See http://sourceforge.net/tracker/?func=detail&aid=3565829&group_id=23316&atid=378131 -->
+                            <then>
+                                <echo>FYI HSQL shutdown threw java.io.EOFException but we believe did shut down correctly.</echo>
+                            </then>
+                        </elseif>
                         <else>
                             <echo>${hsql-shutdown.err.out}</echo>
                             <throw refid="hsql-shutdown.exceptionId" />
@@ -1194,10 +1323,10 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </target>
 
     <!--
-     | Macro for tasks involving a maven project. The macro loads the pom, creates a classpath,
-     | ensures the project artifact is up-to-date, and runs the <sub-tasks> element. If the
-     | artifact is not up-to-date the <pre-package> element can be used to add behavior before
-     | 'mvn package' is called on the project.
+     | Macro for tasks involving a maven project. The macro loads the pom, ensures the project artifact is up-to-date,
+     | creates a @{project-name}.classpath property based on the project's pom.xml, and runs the <sub-tasks> element.
+     | If the artifact is not up-to-date the <pre-package> element can be used to add behavior before 'mvn package' is
+     | called on the project.
      |
      | The following are available in the pre-package and sub-tasks elements:
      | pom object   - @{project-name}.pom       - The Maven POM object for the project
@@ -1216,9 +1345,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
              | Load the pom & classpath
              +-->
             <artifact:pom file="@{project-path}/pom.xml" id="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            <artifact:dependencies pathid="@{project-name}.classpath" settingsFile="${maven.settings}">
-                <artifact:pom refid="@{project-name}.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            </artifact:dependencies>
 
             <!--
              | Define the location of the resulting artifact
@@ -1284,6 +1410,15 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </if>
 
             <!--
+             | Per https://issues.jasig.org/browse/UP-4163 and https://issues.jasig.org/browse/UP-4221, create the
+             | classpath property AFTER invoking maven to build the project and download all dependencies because the
+             | dependencies anttask improperly downloads from only the repositories specified in transient dependency
+             | POMs and on failure does not fallback to download from the standard maven-central repository
+             | (see http://jira.codehaus.org/browse/MANTTASKS-246).
+            +-->
+            <artifact:dependencies pathid="@{project-name}.classpath" pomrefid="@{project-name}.pom"/>
+
+            <!--
              | Execute the sub-tasks
              +-->
             <sub-tasks />
@@ -1291,8 +1426,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </macrodef>
 
     <!--
-     | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
-     | dependencies. The task also ensures the uportal-search-api WAR exists and is up to date.
+     | The task ensures the uportal-search-api JAR exists and is up to date.
      |
      | The following are available in the search-api-sub-tasks element:
      | properties from the uportal-parent-macro macrodef
@@ -1316,6 +1450,58 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             </uportal-parent-macro>
         </sequential>
     </macrodef>
+	
+    <!--
+     | The task ensures the uportal-platform-api JAR exists and is up to date.
+     |
+     | The following are available in the platform-api-sub-tasks element:
+     | properties from the uportal-parent-macro macrodef
+     | pom object   - uportal-platform-api.pom                       - The Maven POM object for the uportal-platform-api pom
+     | property     - uportal-platform-api.artifact                  - The full path to the uportal-platform-api WAR
+     | path         - uportal-platform-api.classpath                 - The uportal-platform-api classpath not including the uportal-platform-api WAR
+     +-->
+    <macrodef name="uportal-platform-api-macro">
+        <element name="platform-api-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <uportal-parent-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+
+                <maven-artifact-macro project-name="uportal-platform-api" project-path="${uportal-platform-api.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <!--
+                     | Execute the platform-api-sub-tasks
+                     +-->
+                    <platform-api-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-parent-macro>
+        </sequential>
+    </macrodef>
+
+    <!--
+     | The task ensures the uportal-db pom is installed into the local repository for dependency resolution.
+     |
+     | The following are available in the uportal-db-sub-tasks element:
+     | properties from the uportal-parent-macro macrodef
+     | pom object   - uportal-db.pom                       - The Maven POM object for the uportal-db pom
+     | property     - uportal-db.artifact                  - The full path to the uportal-db WAR
+     | path         - uportal-db.classpath                 - The uportal-db classpath not including the uportal-db WAR
+     +-->
+    <macrodef name="uportal-db-macro">
+        <element name="uportal-db-sub-tasks" optional="false" implicit="true" />
+
+        <sequential>
+            <uportal-parent-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+
+                <maven-artifact-macro project-name="uportal-db-api" project-path="${uportal-db.dir}" checkfilesid="uportal-parent.pom.fsid">
+                    <!--
+                     | Execute the uportal-db-sub-tasks
+                     +-->
+                    <uportal-db-sub-tasks />
+                </maven-artifact-macro>
+            </uportal-parent-macro>
+        </sequential>
+    </macrodef>
 
     <!--
      | Provides a wrapper for tasks that need a classpath that includes all of the uPortal WAR
@@ -1331,28 +1517,43 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
+            <uportal-db-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+            </uportal-db-macro>
+            <uportal-platform-api-macro>
+                <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
+            </uportal-platform-api-macro>
             <uportal-search-api-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
-
-                <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
-                    <artifact:dependencies pathid="uportal-war-classes.classpath" settingsFile="${maven.settings}">
-                        <artifact:dependency groupId="${uportal-war.pom.groupId}" artifactId="${uportal-war.pom.artifactId}" version="${uportal-war.pom.version}" classifier="classes" scope="provided" />
-                    </artifact:dependencies>
-
-                    <!--
-                     | Include the uportal-war-classes JAR in the final classpath
-                     +-->
-                    <path id="uportal-war-full.classpath">
-                        <path refid="uportal-war-classes.classpath" />
-                        <path refid="uportal-war.classpath" />
-                    </path>
-
-                    <!--
-                     | Execute the war-sub-tasks
-                     +-->
-                    <war-sub-tasks />
-                </maven-artifact-macro>
             </uportal-search-api-macro>
+
+            <maven-artifact-macro project-name="uportal-war" project-path="${uportal-war.dir}" checkfilesid="uportal-parent.pom.fsid">
+
+                <!--
+                 | Include the uportal-war-classes JAR in the final classpath for use by initdb.  DON'T reference it
+                 | with an artifact:dependencies task.  Due to artifact:dependencies attempting to download
+                 | dependencies and having errors when when a transient dependency has a repository specified in its
+                 | pom.xml (see http://jira.codehaus.org/browse/MANTTASKS-246), use the uPortal-classes.jar in the
+                 | target directory from the uPortal war build (or we could define a reference to the one in
+                 | .m2/repository but the target dir is simpler and the file should be present).
+                 +-->
+                <fail message="Unable to find ${uportal-war.dir}/target/uPortal-classes.jar. Run ant deploy-war to rebuild uportal-war">
+                    <condition>
+                        <not>
+                            <available file="${uportal-war.dir}/target/${uportal.war.name}-classes.jar"/>
+                        </not>
+                    </condition>
+                </fail>
+                <path id="uportal-war-full.classpath">
+                    <path location="${uportal-war.dir}/target/${uportal.war.name}-classes.jar" />
+                    <path refid="uportal-war.classpath" />
+                </path>
+
+                <!--
+                 | Execute the war-sub-tasks
+                 +-->
+                <war-sub-tasks />
+            </maven-artifact-macro>
         </sequential>
     </macrodef>
 
@@ -1413,7 +1614,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
 
     <!--
      | Utility target for executing a maven with some number (up to 10) of goals. The
-     | target should automaticly work on all OSs as long as 'mvn' is on the path.
+     | target should automatically work on all OSs as long as 'mvn' is on the path.
      +-->
     <target name="mvn">
         <property name="goal" value="-Djasig.ignore" />
@@ -1447,12 +1648,44 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="filters.arg" value="-Djasig.ignore" />
 
-        <artifact:mvn pom="${pomDir}/pom.xml" failonerror="true" fork="true" mavenHome="${maven.home}" maxmemory="512m">
+        <condition property="maven.verbosity" value="-q">
+            <isset property="maven.quiet" />
+        </condition>
+        <property name="maven.verbosity" value="-Djasig.ignore" />
+
+        <!--
+         | Shell to execute maven.  Do not use mvn ant task.  See http://jira.codehaus.org/browse/MANTTASKS-246.
+         | Setup parameters for mac/linux/unix vs. windows.  For windows, run cmd /c mvn.bat.
+         | On Windows the space in the path c:\Program Files\...\mvn.bat messes up the argument list so we don't pass
+         | the full path to the mvn bat file. Per uPortal installation documentation, ${maven.home}/bin should be in
+         | the path environment variable so we just need the executable name.
+         +-->
+        <condition property="mvnExecutable" value="cmd">
+            <os family="windows"/>
+        </condition>
+        <property name="mvnExecutable" value="mvn"/>
+
+        <condition property="windowsCmdArg1" value="/c">
+            <os family="windows"/>
+        </condition>
+        <property name="windowsCmdArg1" value="-Djasig.ignore"/>
+        <condition property="windowsCmdArg2" value="mvn.bat">
+            <os family="windows"/>
+        </condition>
+        <property name="windowsCmdArg2" value="-Djasig.ignore"/>
+
+        <echo message="Running mvn in ${pomDir} for goals: ${goal} ${goal1} ${goal2}"/>
+        <exec executable="${mvnExecutable}" dir="${pomDir}" failonerror="true">
+            <arg value="${windowsCmdArg1}"/>
+            <arg value="${windowsCmdArg2}"/>
+            <arg value="-Djava.awt.headless=true"/>
             <arg value="-s${maven.settings}" />
+            <arg value="-B"/>
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />
             <arg value="${filters.arg}" />
+            <arg value="${maven.verbosity}" />
             <arg value="${goal}" />
             <arg value="${goal1}" />
             <arg value="${goal2}" />
@@ -1463,6 +1696,6 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <arg value="${goal7}" />
             <arg value="${goal8}" />
             <arg value="${goal9}" />
-        </artifact:mvn>
+        </exec>
     </target>
 </project>

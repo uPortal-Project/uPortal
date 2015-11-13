@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.rendering.worker;
 
 import java.lang.Thread.State;
@@ -37,20 +36,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.google.common.util.concurrent.Futures;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
-
-import com.google.common.util.concurrent.Futures;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base for portlet execution dispatching. Tracks the target, request, response objects as well as
  * submitted, started and completed timestamps.
  */
 abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     private final Map<String, Object> executionAttributes = new ConcurrentHashMap<String, Object>();
     private final CountDownLatch startLatch = new CountDownLatch(1);
@@ -71,10 +69,10 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     private final AtomicInteger cancelCount = new AtomicInteger();
     private final AtomicBoolean canceled = new AtomicBoolean();
     private volatile boolean retrieved = false;
-        
+
     public PortletExecutionWorker(
             ExecutorService executorService, List<IPortletExecutionInterceptor> interceptors, IPortletRenderer portletRenderer, 
-            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, long timeout /*IPortletWindowId portletWindowId, String portletFname*/) {
+            HttpServletRequest request, HttpServletResponse response, IPortletWindow portletWindow, long timeout) {
 
         this.executorService = executorService;
         this.interceptors = interceptors;
@@ -186,7 +184,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                 executionComplete();
             }
         }
-    };
+    }
     
     private void startExecution() {
         //grab the current thread
@@ -222,7 +220,7 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                 interceptor.postExecution(request, response, this, e);
             }
             catch (Throwable ex2) {
-                logger.error("HandlerInterceptor.postExecution threw exception", ex2);
+                logger.error("HandlerInterceptor.postExecution threw exception for {}", this, ex2);
             }
         }
     }
@@ -273,34 +271,33 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
             return this.future.get(waitTime, TimeUnit.MILLISECONDS);
         }
         catch (InterruptedException e) {
-            this.logger.warn("Execution interrupted on portlet window " + this.portletWindowId, e);
+            this.logger.warn("Execution interrupted on portlet {}", this, e);
             throw e;
         }
         catch (ExecutionException e) {
-            this.logger.warn("Execution failed on portlet window " + this.portletWindowId, e);
+            this.logger.warn("Execution failed on portlet {}", this, e);
             throw e;
         }
         catch (TimeoutException e) {
-            final StringBuilder errorBuilder = new StringBuilder("Execution timed out on portlet window ");
-            errorBuilder.append(this.portletWindowId);
-            
+            final StringBuilder errorBuilder = new StringBuilder("Execution timed out on portlet ");
+
+            errorBuilder.append(this.toString());
+
             final Thread localWorkerThread = workerThread;
             if (localWorkerThread != null) {
                 final State state = localWorkerThread.getState();
                 final StackTraceElement[] stackTrace = localWorkerThread.getStackTrace();
-                
+
                 errorBuilder.append("\n\tPortlet Thread State: ").append(state).append("\n");
                 errorBuilder.append("\tPortlet Thread Stack Trace: \n");
-                
+
                 for (final StackTraceElement stackTraceElement : stackTrace) {
                     errorBuilder.append("\t\tat ").append(stackTraceElement).append("\n");
                 }
-                
-                errorBuilder.append("Portal Stack Trace:");
             }
-            
-            this.logger.warn(errorBuilder, e);
-            
+
+            this.logger.warn(errorBuilder.toString());
+
             throw e;
         }
     }
@@ -362,9 +359,13 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     
     @Override
     public final long getDuration() {
-        return this.complete - this.started;
+        if (this.complete > 0) {
+            return this.complete - this.started;
+        } else {
+            return System.currentTimeMillis()- this.started;
+        }
     }
-    
+
     @Override
     public String toString() {
         return "PortletExecutionWorker [" +
@@ -378,6 +379,6 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
                     "canceled=" + this.canceled + ", " +
                     "cancelCount=" + this.cancelCount + ", " +
                     "wait=" + this.getWait() + ", " +
-                    "duration=" + this.getDuration() + "]";
+                    "duration=" + this.getDuration() + "ms]";
     }
 }

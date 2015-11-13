@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.container.services;
 
 import java.util.Enumeration;
@@ -28,8 +27,6 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.UserInfoService;
@@ -49,6 +46,8 @@ import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class CachedPasswordUserInfoService implements UserInfoService  {
@@ -59,7 +58,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IPortalRequestUtils portalRequestUtils;
     private IStringEncryptionService stringEncryptionService;
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     
     /**
@@ -163,7 +162,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		return passwordKey;
 	}
 	/**
-	 * @param proxyTicketKey name of the key to save the password under
+	 * @param passwordKey name of the key to save the password under
 	 */
 	public void setPasswordKey(String passwordKey) {
 		this.passwordKey = passwordKey;
@@ -179,34 +178,41 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
 		
 		Map<String, String> userInfo = new HashMap<String, String>();
 
-		// check to see if a CAS proxy ticket is expected by this portlet
+		// check to see if a password is expected by this portlet
 		if (isPasswordRequested(request, portletWindow)) {
 
-	        final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
+            log.debug("Portlet named {} wants a password", portletWindow.getPortletDefinition().getPortletName());
+
+            final HttpServletRequest httpServletRequest = this.portalRequestUtils.getPortletHttpRequest(request);
 	        final IUserInstance userInstance = userInstanceManager.getUserInstance(httpServletRequest);
 	        final IPerson person = userInstance.getPerson();
 			final ISecurityContext context = person.getSecurityContext();
 
-			// if it is, attempt to request a proxy ticket
+			// if it is, attempt to request a password
 			String password = getPassword(context);
+            log.debug(password != null ? "Have a non-null password" : "password was null");
 			if (this.decryptPassword && password != null) {
+                log.debug("Attempting to decrypt password");
 				password = stringEncryptionService.decrypt(password);
+                log.debug("Password decryption complete, password is length {}", password != null ? password.length() : "is null");
 			}
-			if (password != null)
-				userInfo.put(this.passwordKey, password);
-
+			if (password != null) {
+                userInfo.put(this.passwordKey, password);
+                log.debug("Found password with length {} for portlet name {}",
+                        password.length() != 0 ? "non-zero" : 0, portletWindow.getPortletDefinition().getPortletName());
+            }
 		}
 		return userInfo;
 		
 	}
 	
 	/**
-	 * Determine whether the portlet has expects a CAS proxy ticket as one of the 
+	 * Determine whether the portlet has expects a password as one of the
 	 * user attributes.
 	 * 
 	 * @param request portlet request
 	 * @param plutoPortletWindow portlet window
-	 * @return <code>true</code> if a CAS proxy ticket is expected, <code>false</code>
+	 * @return <code>true</code> if a password is expected, <code>false</code>
 	 *         otherwise
 	 * @throws PortletContainerException if expeced attributes cannot be determined
 	 */
@@ -219,7 +225,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
         final IPortletDefinition portletDefinition = portletEntity.getPortletDefinition();
         final PortletApplicationDefinition portletApplicationDescriptor = this.portletDefinitionRegistry.getParentPortletApplicationDescriptor(portletDefinition.getPortletDefinitionId());
         
-        // check to see if the proxy ticket key is one of the requested user attributes
+        // check to see if the password key is one of the requested user attributes
         List<? extends UserAttribute> requestedUserAttributes = portletApplicationDescriptor.getUserAttributes();
         for (final UserAttribute userAttributeDD : requestedUserAttributes) {
             final String attributeName = userAttributeDD.getName();
@@ -227,7 +233,7 @@ public class CachedPasswordUserInfoService implements UserInfoService  {
             	return true;
         }
 
-        // if the proxy ticket key wasn't found in the list of requested attributes
+        // if the password key wasn't found in the list of requested attributes
         return false;
 
     }

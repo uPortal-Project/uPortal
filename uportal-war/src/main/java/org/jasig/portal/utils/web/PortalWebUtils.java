@@ -1,31 +1,36 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.utils.web;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.portlet.PortletRequest;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.portlet.context.PortletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
 
@@ -120,5 +125,42 @@ public final class PortalWebUtils {
             }
             return map;
         }
+    }
+
+    /**
+     * Get the request context path from the current request.
+     * Copes with both HttpServletRequest and PortletRequest and so usable when handling
+     * Spring-processed Servlet or Portlet requests.
+     * Requires that Spring have bound the request, as in the case of dispatcher servlet or portlet or when the binding
+     * filter or listener is active.  This should be the case for all requests in the uPortal framework and framework
+     * portlets.
+     * @return request.getContextPath() for the relevant servlet or portlet request
+     * @throws IllegalStateException if the request is not Spring-bound or is neither Servlet nor Portlet flavored
+     */
+    public static String currentRequestContextPath() {
+
+        final RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+
+        if (null == requestAttributes) {
+            throw new IllegalStateException("Request attributes are not bound.  " +
+                    "Not operating in context of a Spring-processed Request?");
+        }
+
+        if (requestAttributes instanceof ServletRequestAttributes) {
+
+            final ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) requestAttributes;
+            final HttpServletRequest request = servletRequestAttributes.getRequest();
+            return request.getContextPath();
+
+        } else if (requestAttributes instanceof PortletRequestAttributes) {
+
+            final PortletRequestAttributes portletRequestAttributes = (PortletRequestAttributes) requestAttributes;
+            final PortletRequest request = portletRequestAttributes.getRequest();
+            return request.getContextPath();
+
+        } else {
+            throw new IllegalStateException("Request attributes are an unrecognized implementation.");
+        }
+
     }
 }

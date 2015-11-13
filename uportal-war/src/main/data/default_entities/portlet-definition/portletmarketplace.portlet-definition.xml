@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+    <title>Portlet Marketplace</title>
+    <name>Portlet Marketplace</name>
+    <fname>portletmarketplace</fname>
+    <desc>Browse and add portlets</desc>
+    <type>Portlet</type>
+    <timeout>50000</timeout>
+    <portlet-descriptor>
+        <ns2:isFramework>true</ns2:isFramework>
+        <ns2:portletName>PortletMarketplace</ns2:portletName>
+    </portlet-descriptor>
+    <category>uPortal</category>
+    <category>Featured</category>
+    <group>Everyone</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Everyone</group>
+        </permission>
+    </permissions>
+    <parameter>
+        <name>iconUrl</name>
+        <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/preferences-system.png</value>
+    </parameter>
+    <portlet-preference>
+    	<name>screen_shot2_caption</name>
+    	<readOnly>true</readOnly>
+    	<value>One Stop Shopping</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>screen_shot1</name>
+    	<readOnly>true</readOnly>
+    	<value>http://image.shutterstock.com/display_pic_with_logo/427597/141533524/stock-photo-marketplace-road-sign-141533524.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>screen_shot1_caption</name>
+    	<readOnly>true</readOnly>
+    	<value>The really cool marketplace</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>Release_Date</name>
+    	<readOnly>true</readOnly>
+    	<value>2014-09-13 12:00:00</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>screen_shot2</name>
+    	<readOnly>true</readOnly>
+    	<value>http://thumb7.shutterstock.com/display_pic_with_logo/248635/135897425/stock-photo-a-vending-machine-with-the-words-buy-apps-here-and-many-app-tiles-and-icons-ready-to-be-bought-and-135897425.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>short_link</name>
+        <readOnly>true</readOnly>
+        <value>http://goo.gl/ALBYpJ</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>showRootCategory</name>
+        <readOnly>true</readOnly>
+        <value>false</value>
+    </portlet-preference>
+    <portlet-preference>
+    	<name>Release_Notes</name>
+    	<readOnly>true</readOnly>
+    	<value>Responsive Design!</value>
+    	<value>Doesn't Break</value>
+    	<value>Adds the ability to have Screenshots</value>
+    	<value>Adds the ability for version notes</value>
+    	<value>Search works</value>
+    	<value>See your favorite apps</value>
+    </portlet-preference>
+</portlet-definition>

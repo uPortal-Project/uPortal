@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.security.provider;
 
 import java.io.Serializable;
@@ -31,8 +30,8 @@ import org.jasig.portal.security.IParentAwareSecurityContext;
 import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>This is the basic abstract class for all security contexts that should
@@ -46,7 +45,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ChainingSecurityContext implements ISecurityContext
 {
-    protected final Log log = LogFactory.getLog(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
   /**
    * Default value for stopWhenAuthenticated.
@@ -84,7 +83,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
   /**
-   * We walk the chain of subcontext assigning principals and opaquecredentials
+   * We walk the chain of subcontexts assigning principals and opaqueCredentials
    * from the parent. Note that the contexts themselves should resist
    * actually performing the assignment if an assignment has already been made
    * to either the credentials or the UID.
@@ -93,7 +92,6 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   public synchronized void authenticate()  throws PortalSecurityException {
     int i;
     Enumeration e = mySubContexts.elements();
-    boolean error = false;
 
     while (e.hasMoreElements()) {
       ISecurityContext sctx = ((Entry) e.nextElement()).getCtx();
@@ -103,9 +101,8 @@ public abstract class ChainingSecurityContext implements ISecurityContext
               ((IParentAwareSecurityContext) sctx).authenticate(this);
           } else {
               sctx.authenticate();
-          }        
+          }
       } catch (Exception ex) {
-        error = true;
         log.error("Exception authenticating subcontext " + sctx, ex);
       }
       // Stop attempting to authenticate if authenticated and if the property flag is set
@@ -120,7 +117,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
          this.myOpaqueCredentials.credentialstring[i] = 0;
        myOpaqueCredentials.credentialstring = null;
     }
-    if (error && !this.isauth) throw new PortalSecurityException("One of the security subcontexts threw an exception");
+
     return;
   }
 
@@ -212,7 +209,7 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   }
 
 
-  // I 'spose the public class could just implement all of these interfaces
+  // I suppose the public class could just implement all of these interfaces
   // but I prefer member classes. -ADN
 
   protected class ChainingPrincipal implements IPrincipal {

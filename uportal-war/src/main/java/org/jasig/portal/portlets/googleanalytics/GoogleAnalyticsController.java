@@ -1,3 +1,21 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.jasig.portal.portlets.googleanalytics;
 
 import java.io.IOException;
@@ -16,6 +34,7 @@ import org.jasig.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +49,9 @@ public class GoogleAnalyticsController {
     
     private PortletPreferencesJsonDao portletPreferencesJsonDao;
 
+    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name:guest}")
+    private String guestUserName;
+
     @Autowired
     public void setPortletPreferencesJsonDao(PortletPreferencesJsonDao portletPreferencesJsonDao) {
         this.portletPreferencesJsonDao = portletPreferencesJsonDao;
@@ -37,7 +59,14 @@ public class GoogleAnalyticsController {
     
     @RenderMapping
     public String renderAnalyticsHeader(RenderRequest request, ModelMap model) throws IOException {
-        final String remoteUser = request.getRemoteUser();
+
+        // For which user account are we logging portal activity?
+        String remoteUser = request.getRemoteUser();
+        if (remoteUser == null) {
+            // User is not authenticated;  log for the guest user
+            remoteUser = guestUserName;
+        }
+
         final IGroupMember groupMember = GroupService.getGroupMember(remoteUser, IPerson.class);
         final Map<String, Boolean> isMemberCache = new HashMap<String, Boolean>();
         

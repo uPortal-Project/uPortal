@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
@@ -52,6 +51,13 @@
         <transition on="activities" to="listActivities"/>
         <transition on="createPermission" to="selectTarget"/>
         <transition on="editPermission" to="edit-permission"/>
+        <transition on="delete" to="deletePermission">
+            <set name="flowScope.principalName" value="requestParameters.principalName"/>
+            <set name="flowScope.permissionType" value="requestParameters.permissionType"/>
+            <set name="flowScope.principalKey" value="requestParameters.principalKey"/>
+            <set name="flowScope.targetName" value="requestParameters.targetName"/>
+            <set name="flowScope.principals" value="permissionAdministrationHelper.getCurrentPrincipals(owner, activity, requestParameters.targetName)"/>
+        </transition>
     </view-state>
     
     <!-- Select a new target on which to assign a permission -->
@@ -87,7 +93,7 @@
         <transition on="#{breadcrumb == 'listActivities'}" to="listActivities"/>
         <transition on="#{breadcrumb == 'showActivity'}" to="showActivity"/>
     </subflow-state>
-
+    
     <!-- VIEW PERMISSIONS view state -->    
     <view-state id="permissionLookupResult">
         <on-entry>
@@ -101,7 +107,24 @@
             <set name="flowScope.activity" value="permissionOwnerDao.getPermissionActivity(owner.id, requestParameters.activity)"/>
         </transition>
     </view-state>
-
+    
+    <!-- Delete Permission State -->
+    <view-state id="deletePermission">
+        
+        <on-entry>
+            <set name="viewScope.breadcrumbs" value="new java.util.LinkedHashMap()"/>
+            <evaluate expression="breadcrumbs.put('listOwners', 'Categories')"/>
+            <evaluate expression="breadcrumbs.put('listActivities', owner.name)"/>
+            <evaluate expression="breadcrumbs.put('showActivity', activity.name)"/>
+            <set name="viewScope.targetProvider" value="permissionTargetProviderRegistry.getTargetProvider(activity.targetProviderKey)"/>
+            <set name="viewScope.target" value="targetProvider.getTarget(requestParameters.targetName)"/>
+        </on-entry>
+        <transition on="remove" to="showActivity"/>
+        <transition on="cancel" to="showActivity"/>
+        <transition on="listOwners" to="listOwners"/>
+        <transition on="listActivities" to="listActivities"/>
+        <transition on="showActivity" to="showActivity"/>
+    </view-state>
     
     <!-- End state -->
     <end-state id="finishPermissionEdit" />

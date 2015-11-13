@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.rdbm;
 
 import java.sql.Connection;
@@ -34,7 +33,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -303,7 +302,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     		//The order of these tests is IMPORTANT, each may depend on the
     		//results of the previous tests.
     		this.getMetaData(conn);
-    		final SimpleJdbcTemplate jdbcTemplate = new SimpleJdbcTemplate(this.dataSource);
+    		final JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dataSource);
     		
     		this.testDatabaseInitialized(jdbcTemplate);
     		if (this.portalTablesExist) {
@@ -346,9 +345,9 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /**
      * Tests if the uPortal tables exist that are needed for this test. 
      */
-    private void testDatabaseInitialized(final SimpleJdbcTemplate jdbcTemplate) {
+    private void testDatabaseInitialized(final JdbcTemplate jdbcTemplate) {
         try {
-            jdbcTemplate.queryForInt("SELECT COUNT(USER_ID) FROM UP_USER");
+            jdbcTemplate.queryForObject("SELECT COUNT(USER_ID) FROM UP_USER", Integer.class);
             this.portalTablesExist = true;
         }
         catch (BadSqlGrammarException bsge) {
@@ -360,7 +359,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
      * Test the database to see if it really supports outer joins.
      * @param conn The connection to use.
      */
-    private void testOuterJoins(final SimpleJdbcTemplate jdbcTemplate) {
+    private void testOuterJoins(final JdbcTemplate jdbcTemplate) {
         if (this.dbmdSupportsOuterJoins) {
             for (final JoinQueryString joinQueryString : joinTests) {
                 final String joinTestQuery =
@@ -373,7 +372,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
 								@Override
                                 public void doInTransactionWithoutResult(
 										TransactionStatus status) {
-									jdbcTemplate.getJdbcOperations().execute(
+									jdbcTemplate.execute(
 											joinTestQuery);
 								}
 							});
@@ -398,7 +397,7 @@ public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean
     /**
      * Test the database to find the supported timestamp format
      */
-    private void testTimeStamp(final SimpleJdbcTemplate jdbcTemplate) {
+    private void testTimeStamp(final JdbcTemplate jdbcTemplate) {
         try {
             //Try using {ts }
             final String timeStampTestQuery =

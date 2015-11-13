@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.rendering;
 
 import java.io.IOException;
@@ -107,6 +106,8 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the action
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
+     * @throws org.jasig.portal.AuthorizationException if the requesting user lacks permission to invoke
+     * the portlet window (e.g. due to its having a forbidden portlet mode)
      */
     public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
     
@@ -116,6 +117,8 @@ public interface IPortletRenderer {
      * @param portletWindowId Portlet to target with the action
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
+     * @throws org.jasig.portal.AuthorizationException if the requesting user lacks permission to invoke
+     * the portlet window (e.g. due to its having a forbidden portlet mode)
      */
     public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Event event);
     
@@ -126,6 +129,8 @@ public interface IPortletRenderer {
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      * @param portletOutputHandler The output handler to write to
+     * @throws org.jasig.portal.AuthorizationException if the requesting user lacks permission to invoke
+     * the portlet window (e.g. due to its having a forbidden portlet mode)
      */
     public PortletRenderResult doRenderMarkup(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
     
@@ -136,6 +141,8 @@ public interface IPortletRenderer {
      * @param httpServletRequest The portal's request
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      * @param portletOutputHandler The output handler to write to
+     * @throws org.jasig.portal.AuthorizationException if the requesting user lacks permission to invoke
+     * the portlet window (e.g. due to its having a forbidden portlet mode)
      */
     public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException;
     
@@ -147,6 +154,8 @@ public interface IPortletRenderer {
      * @param httpServletResponse The portal's response (nothing will be written to the response)
      * @param portletOutputHandler The output handler to write to
      * @return The execution time for serving the resource
+     * @throws org.jasig.portal.AuthorizationException if the requesting user lacks permission to invoke
+     * the portlet window (e.g. due to its having a forbidden portlet mode)
      */
     public long doServeResource(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, PortletResourceOutputHandler portletOutputHandler) throws IOException;
     

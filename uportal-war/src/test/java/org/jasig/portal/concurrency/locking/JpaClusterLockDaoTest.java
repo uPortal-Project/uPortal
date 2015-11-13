@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.concurrency.locking;
 
 import static junit.framework.Assert.assertNotNull;
@@ -40,6 +39,7 @@ import org.jasig.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
 import org.jasig.portal.utils.threading.ThrowingRunnable;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
@@ -151,9 +151,14 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         mutex = clusterLockDao.getClusterMutex(mutexName);
         assertFalse(mutex.isLocked());
     }
-    
 
-    @Test
+
+    /**
+     * This test turns out to be nondeterministic under load and so can yield false-negatives
+     * (failures that don't seem to actually indicate a regression).
+     * @throws InterruptedException
+     */
+    @Ignore
     public void testConcurrentCreateLocking() throws InterruptedException  {
         reset(portalInfoProvider);
         when(portalInfoProvider.getUniqueServerName()).thenReturn("ServerA");
@@ -202,8 +207,12 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         mutex = clusterLockDao.getClusterMutex(mutexName);
         assertFalse(mutex.isLocked());
     }
-    
-    @Test
+
+    /**
+     * Ignoring this test because it is nondeterministic.
+     * @throws Exception
+     */
+    @Ignore
     public void testNotAbandoned() throws Exception  {
         //Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");
@@ -270,8 +279,12 @@ public class JpaClusterLockDaoTest extends BasePortalJpaDaoTest {
         mutex = clusterLockDao.getClusterMutex(mutexName);
         assertFalse(mutex.isLocked());
     }
-    
-    @Test
+
+    /**
+     * Ignoring this test because it is nondeterministic.
+     * @throws Exception
+     */
+    @Ignore
     public void testAbandoned() throws Exception  {
         //Used to make a 'mutable string'
         final AtomicReference<String> currentServer = new AtomicReference<String>("ServerA");

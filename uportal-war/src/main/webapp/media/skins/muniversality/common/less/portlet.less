@@ -1,0 +1,252 @@
+/*====================================*/
+/* PORTLET */
+/*====================================*/
+/*
+ * Styles for portlets.
+ */
+
+
+.up {
+    /* Courses portlet */
+
+    .ptl-courses {
+
+        .view-courses {
+
+            .utilities {
+                margin-top: 2em;
+            }
+        }
+
+        .course-details {
+
+            .titlebar {
+                position: relative;
+                padding-right: 4em;
+
+                .grade {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    padding: 0.1em 10px;
+                    background: @c4;
+                    color: @white;
+                    border: 1px solid @c4dark;
+                    font-size: 150%;
+                    line-height: 150%;
+                    font-weight: bold;
+                    text-shadow: 0 -1px 0 @c4darkest;
+                    .rounded(5px);
+                }
+            }
+        }
+    }
+
+    /* Feeds */
+    .feed {
+
+        .ui-btn-inner {
+            padding: 0.7em 15px;
+
+            .ui-link-inherit {
+                padding: 0.7em 15px 0.7em 100px;
+            }
+        }
+        .ui-li-has-thumb {
+
+            .ui-btn-inner {
+                padding: 0;
+            }
+        }
+        .ui-icon {
+            display: none;
+        }
+        .ui-li-thumb {
+            left: auto;
+            left: 1px;
+            float: left;
+            margin-right: 10px;
+            margin-left: 0;
+        }
+        .title, .news-reader-story-title {
+            margin: 0 0 0.7em 0;
+            font-size: 13px;
+            max-height: 35px;
+        }
+        p {
+            font-size: 11px;
+            color: @graydark;
+            max-height: 40px;
+        }
+        .ui-btn-inner, .ui-li-heading, .ui-btn-text, .ui-li-desc {
+            white-space: normal;
+        }
+        .title, p {
+            text-overflow: ellipsis;
+        }
+    }
+
+    /* Calendar */
+    .ui-datepicker {
+        /* jQuery UI widget override to get the calendar widget as wide as possible. */
+        width: 19em;
+
+        td {
+            span, a {
+                /* jQuery UI widget override to increase the hit area of the days. */
+                padding: 0.5em;
+            }
+        }
+
+        .ui-datepicker-prev {
+
+            .ui-icon {
+                /* jQuery UI widget override to fix the Previous Month button. */
+                background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+                background-color: transparent;
+                background-position: -80px -192px;
+            }
+        }
+        .ui-datepicker-next {
+
+            .ui-icon {
+                /* jQuery UI widget override to fix the Next Month button. */
+                background-image: url("/ResourceServingWebapp/rs/jqueryui/1.8/theme/smoothness/images/ui-icons_222222_256x240.png");
+                background-color: transparent;
+                background-position: -48px -192px;
+            }
+        }
+    }
+
+
+    .ui-datepicker-inline {
+        display: block;
+    }
+
+    .ptl-calendar {
+
+        .upcal-hide-on-calendar {
+            display:none;
+        }
+
+        .dayName {
+            font-size: 16px;
+            margin: 0.7em 0 0.3em 0;
+        }
+
+        .upcal-event-list {
+            border-bottom: 1px solid @gray;
+        }
+
+        .upcal-event {
+            border-top: 1px solid @gray;
+            background: @white;
+            padding: 5px;
+            .clearfix();
+
+            .upcal-event-time {
+                float: left;
+                width: 30%;
+                padding: 0.5em 0;
+                text-align: center;
+                font-size: 13px;
+                color: @gray;
+
+                span {
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: @text;
+                }
+            }
+
+            .upcal-event-link {
+                display: block;
+                margin-left: 30%;
+                padding: 0.5em;
+                border-width: 1px;
+                border-style: solid;
+                border-color: @graydark;
+                background: @graylighter;
+                font-size: 14px;
+                font-weight: bold;
+                text-decoration: none;
+            .rounded(5px);
+            }
+        }
+
+        .upcal-color-0 .upcal-event-link {
+        .color-box(@cal0);
+        }
+        .upcal-color-1 .upcal-event-link {
+        .color-box(@cal1);
+        }
+        .upcal-color-2 .upcal-event-link {
+        .color-box(@cal2);
+        }
+        .upcal-color-3 .upcal-event-link {
+        .color-box(@cal3);
+        }
+        .upcal-color-4 .upcal-event-link {
+        .color-box(@cal4);
+        }
+        .upcal-color-5 .upcal-event-link {
+        .color-box(@cal5);
+        }
+        .upcal-color-6 .upcal-event-link {
+        .color-box(@cal6);
+        }
+        .upcal-color-7 .upcal-event-link {
+        .color-box(@cal7);
+        }
+        .upcal-color-8 .upcal-event-link {
+        .color-box(@cal8);
+        }
+        .upcal-color-9 .upcal-event-link {
+        .color-box(@cal9);
+        }
+    }
+
+    .no-ui-li-count {
+        padding-right: 0.7em;
+    }
+
+    .unavailable {
+        opacity: 0.5;
+    }
+
+    .portlet-msg-status,
+    .portlet-msg-info,
+    .portlet-msg-error,
+    .portlet-msg-alert,
+    .portlet-msg-success {
+        padding:0.25em 0.25em 0.25em 2.25em;
+        border:2px solid #FFFF00;
+        color:#666;
+        background:#FFFFCC url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/bell.png) 0.5em 0.3em no-repeat;
+    }
+
+    .portlet-msg-info {
+        color:#000;
+        background:#99ccff url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/information.png) 0.5em 0.3em no-repeat;
+        border-color:#3399ff;
+    }
+
+    .portlet-msg-error {
+        color:#f00;
+        background:#ffeeee url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/exclamation.png) 0.5em 0.3em no-repeat;
+        border-color:#cc0000;
+    }
+
+    .portlet-msg-alert {
+        color:#000;
+        background:#FFCC66 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/error.png) 0.5em 0.3em no-repeat;
+        border-color:#FF6600;
+    }
+
+    .portlet-msg-success {
+        color:#000;
+        background:#D1F0E0 url(/ResourceServingWebapp/rs/famfamfam/silk/1.3/tick.png) 0.5em 0.3em no-repeat;
+        border-color:#009900;
+    }
+
+}

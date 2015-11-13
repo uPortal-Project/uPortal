@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -22,14 +22,13 @@
             <version>${AnnouncementsPortlet.version}</version>
             <type>war</type>
         </dependency>
-        
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -100,9 +99,10 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>${jdbc.groupId}</groupId>
-                        <artifactId>${jdbc.artifactId}</artifactId>
-                        <version>${jdbc.version}</version>
+                        <groupId>org.jasig.portal</groupId>
+                        <artifactId>uportal-db</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
                         <scope>compile</scope>
                     </dependency>
                     <dependency>
@@ -136,21 +136,20 @@
                                 <!-- Provided jars aren't added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
                                 <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
-                                <property name="portlet.jar" value="${maven.dependency.javax.portlet.portlet-api.jar.path}" />
+                                <property name="portlet.jar" value="${maven.dependency.org.apache.portals.portlet-api_2.1.0_spec.jar.path}" />
 
                                 <java failonerror="true" classname="org.jasig.portlet.announcements.Importer">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
+                                        <pathelement location="${project.build.directory}/${project.artifactId}/WEB-INF/context" />
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
                                         <pathelement location="${portlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/classes" />  <!-- Should be in runtime classpath -->
                                     </classpath>
 
                                     <arg value="${dir}" />
-                                    <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
+                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -174,19 +173,20 @@
                                 <!-- Provided jars don't seem to be added to the runtime
                                      classpath, so we manually add in servlet.jar here  -->
                                 <property name="servlet.jar" value="${maven.dependency.javax.servlet.servlet-api.jar.path}" />
-                                <property name="portlet.jar" value="${maven.dependency.javax.portlet.portlet-api.jar.path}" />
+                                <property name="portlet.jar" value="${maven.dependency.org.apache.portals.portlet-api_2.1.0_spec.jar.path}" />
 
                                 <java failonerror="true" fork="true" classname="org.jasig.portlet.announcements.Exporter">
                                     <sysproperty key="log4j.configuration" value="command-line.log4j.properties" />
                                     <classpath>
+                                        <pathelement location="${project.build.directory}/${project.artifactId}/WEB-INF/context" />
                                         <pathelement path="${runtime_classpath}" />
                                         <pathelement path="${plugin_classpath}" />
                                         <pathelement location="${servlet.jar}" />
                                         <pathelement location="${portlet.jar}" />
-                                        <pathelement path="${project.build.directory}/${project.artifactId}/WEB-INF/classes" />
                                     </classpath>
+
                                     <arg value="${dir}" />
-                                    <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
+                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -217,9 +217,9 @@
                     </dependency>
 
                     <dependency>
-                        <groupId>javax.portlet</groupId>
-                        <artifactId>portlet-api</artifactId>
-                        <version>2.0</version>
+                        <groupId>org.apache.portals</groupId>
+                        <artifactId>portlet-api_2.1.0_spec</artifactId>
+                        <version>1.0</version>
                         <scope>runtime</scope>
                     </dependency>
 

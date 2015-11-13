@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.dlm;
 
 import java.util.LinkedList;
@@ -312,36 +311,37 @@ public class FragmentDefinition extends EvaluatorGroup
     }
 
     @Override
-    public boolean isApplicable( IPerson p )
-    {
+    public boolean isApplicable(IPerson p) {
+
         boolean isApplicable = false;
         if (LOG.isInfoEnabled())
             LOG.info(">>>> calling " + name + ".isApplicable( "
                     + p.getAttribute("username") + " )");
-        if ( /*view == null ||
-             view.getUserId() == -1 || */
-             evaluators == null )
-        {
-            isApplicable = false;
-            if (LOG.isDebugEnabled()) {
+        try {
+            if (evaluators == null) {
                 LOG.debug("isApplicable()=false due to evaluators collection being null");
-            }
-        }
-        else
-        {
-            for ( int i=0; i<evaluators.size(); i++ )
-                if ( evaluators.get(i).isApplicable( p ) )
-                {
-                    isApplicable = true;
-                    break;
+            } else {
+                for (Evaluator v : evaluators) {
+                    if (v.isApplicable(p)) {
+                        isApplicable = true;
+                        break;
+                    }
                 }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to evaluate whether fragment '" + this.getName()
+                                    + "' is applicable to user '" + p.getUserName() + "'", e);
         }
-        if (LOG.isInfoEnabled())
+
+        if (LOG.isInfoEnabled()) {
             LOG.info("---- " + name
                     + ".isApplicable( "
                     + p.getAttribute( "username" )
                     + " )=" + isApplicable);
+        }
+
         return isApplicable;
+
     }
     
     private String loadAttribute( String name, 

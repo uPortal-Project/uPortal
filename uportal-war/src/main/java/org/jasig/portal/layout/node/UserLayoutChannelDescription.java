@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.node;
 
 import java.util.Collection;
@@ -25,6 +24,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
@@ -47,7 +47,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
 
 	private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
 	
-    Hashtable parameters;
+    Hashtable parameters=new Hashtable();
 
     String title=null;
     String description=null;
@@ -63,11 +63,12 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     
     public UserLayoutChannelDescription() {
         super();
-        parameters=new Hashtable();
     }
 
     public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
-        this();
+
+        super(d);
+
         this.title=d.getTitle();
         this.name = d.getName();
         this.description=d.getDescription();
@@ -118,7 +119,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public UserLayoutChannelDescription(Element xmlNode) throws PortalException {
         super( xmlNode );
-        parameters=new Hashtable();
         
         if(!xmlNode.getNodeName().equals("channel")) {
             throw new PortalException("Given XML Element is not a channel!");
@@ -552,8 +552,23 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
       return LayoutNodeType.PORTLET;
     }
 
-	public String toString() {
-		return "["+channelPublishId+","+title+"]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channelPublishId", this.channelPublishId).
+                append("channelTypeId", this.channelTypeId).
+                append("nodeType", this.getType()).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
+
+    }
 
 }

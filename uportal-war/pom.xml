@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to Jasig under one or more contributor license
+  ~ agreements. See the NOTICE file distributed with this work
+  ~ for additional information regarding copyright ownership.
+  ~ Jasig licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file
+  ~ except in compliance with the License. You may obtain a
+  ~ copy of the License at:
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on
+  ~ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -14,14 +33,13 @@
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
     
-    <dependencies>  
-        <!-- ***** Portal JDBC Driver *****
-         | The groupId, artifactId and version are configured in the root POM.
-         +-->
+    <dependencies>
+        <!-- ***** Portal JDBC Driver ***** -->
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
         </dependency>
         
         <dependency>
@@ -124,6 +142,11 @@
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -184,7 +207,11 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-
+        <dependency>
+          <groupId>joda-time</groupId>
+          <artifactId>joda-time-jsptags</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
@@ -194,21 +221,31 @@
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib-ext-spring</artifactId>
             <exclusions>
-            	<exclusion>
-            		<groupId>javax.servlet</groupId>
-  					<artifactId>servlet-api</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-        
+
+        <dependency>
+            <groupId>net.oauth.core</groupId>
+            <artifactId>oauth</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.codehaus.staxmate</groupId>
+            <groupId>com.fasterxml.staxmate</groupId>
             <artifactId>staxmate</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
         </dependency>
 
         <dependency>
@@ -250,10 +287,21 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-groovysh</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-sql</artifactId>
+            <!-- Commented out to make it easier to create groovy crn scripts using an IDE <scope>runtime</scope>-->
         </dependency>
 
         <dependency>
@@ -294,6 +342,11 @@
         <dependency>
             <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.jasig.portlet.utils</groupId>
+            <artifactId>portlet-ws-util</artifactId>
         </dependency>
 
         <dependency> 
@@ -455,8 +508,8 @@
         </dependency>
         
         <dependency>
-            <groupId>javax.portlet</groupId>
-            <artifactId>portlet-api</artifactId>
+            <groupId>org.apache.portals</groupId>
+            <artifactId>portlet-api_2.1.0_spec</artifactId>
             <scope>provided</scope>
         </dependency>
         
@@ -499,18 +552,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.service.persondir</groupId>
-            <artifactId>person-directory-api</artifactId>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-platform-api</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         
-        
         <!-- ===== Runtime Dependencies ======================================= -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         
         <dependency>
             <groupId>org.jasig.ehcache</groupId>
@@ -529,7 +577,7 @@
             <artifactId>groovy-xml</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
@@ -555,13 +603,45 @@
             </exclusions>
             <scope>runtime</scope>
          </dependency>
-        
+
+        <!-- For clustered uPortal environments using CAS ClearPass. It does not hurt to have the dependency included
+             even if the site does not use CAS ClearPass -->
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-support-distributed-ehcache</artifactId>
+            <version>${casclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.lesscss</groupId>
+            <artifactId>lesscss</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
@@ -586,7 +666,14 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -594,8 +681,20 @@
         </dependency>
 
         <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.skyscreamer</groupId>
+            <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -608,6 +707,13 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>0.7-groovy-2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -627,11 +733,13 @@
                  +-->
                 <includes>
                     <include>org/apache/pluto/driver/container/pluto-configuration.properties</include>
+                    <include>properties/ehcache.xml</include>
                     <include>properties/portal.properties</include>
                     <include>properties/rdbm.properties</include>
                     <include>properties/security.properties</include>
                     <include>properties/contexts/userContext.xml</include>
                     <include>properties/groups/PAGSGroupStoreConfig.xml</include>
+                    <include>META-INF/persistence.xml</include>
                     <include>logback.xml</include>
                 </includes>
             </resource>
@@ -642,22 +750,39 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
                 <excludes>
+                    <exclude>org/apache/pluto/driver/container/pluto-configuration.properties</exclude>
+                    <exclude>properties/ehcache.xml</exclude>
                     <exclude>properties/portal.properties</exclude>
                     <exclude>properties/rdbm.properties</exclude>
                     <exclude>properties/security.properties</exclude>
                     <exclude>properties/contexts/userContext.xml</exclude>
                     <exclude>properties/groups/PAGSGroupStoreConfig.xml</exclude>
+                    <exclude>META-INF/persistence.xml</exclude>
+                    <exclude>logback.xml</exclude>
                 </excludes>
-            </resource>
-            <resource>
-                <directory>src/main/webapp/WEB-INF</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>log4j.properties</include>
-                </includes>
             </resource>
         </resources>
         <plugins>
+            <!-- Compile groovy classes -->
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>addSources</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <goal>testGenerateStubs</goal>
+                            <goal>testCompile</goal>
+                            <goal>removeStubs</goal>
+                            <goal>removeTestStubs</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
@@ -707,7 +832,7 @@
             <plugin>
                 <groupId>org.bsc.maven</groupId>
                 <artifactId>maven-processor-plugin</artifactId>
-                <version>2.0.5</version>
+                <version>2.2.4</version>
                 <executions>
                     <execution>
                         <id>process</id>
@@ -748,7 +873,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xmx512m -XX:MaxPermSize=512m</argLine>
+                    <argLine>-Xmx512m -XX:MaxPermSize=512m -Duser.timezone=UTC</argLine>
                     <systemPropertyVariables>
                         <org.jasig.portal.test>true</org.jasig.portal.test>
                     </systemPropertyVariables>
@@ -793,34 +918,54 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.jasig.maven</groupId>
-                <artifactId>sass-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>compile-sass-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>update-stylesheets</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.lesscss</groupId>
                 <artifactId>lesscss-maven-plugin</artifactId>
                 <version>1.3.3</version>
-                <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/uPortal4/less</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/uPortal4/css</outputDirectory>
-                    <compress>true</compress>
-                </configuration>
                 <executions>
                     <execution>
+                        <id>respondr-less</id>
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/respondr/</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/respondr/</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>common-less</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/common/less</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/common/css</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>mobile-less</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/webapp/media/skins/muniversality/mobileSkin</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}/media/skins/muniversality/mobileSkin</outputDirectory>
+                            <compress>true</compress>
+                            <includes>
+                                <include>*.less</include>
+                            </includes>
+                            <lessJs>${project.basedir}/src/main/webapp/media/skins/common/javascript/less/less-1.6.2.js</lessJs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -829,22 +974,6 @@
                 <artifactId>resource-server-plugin</artifactId>
                 <version>${resource-server.version}</version>
                 <executions>
-                    <execution>
-                        <id>aggregate-universality-skins</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>batch-aggregate</goal>
-                        </goals>
-                        <inherited>false</inherited>
-                        <configuration>
-                            <displayJsWarnings>false</displayJsWarnings>
-                            <useGeneratedSources>true</useGeneratedSources>
-                            <includes>
-                                <include>media/skins/universality/**/skin.xml</include>
-                            </includes>
-                            <sharedJavaScriptDirectory>media/skins/universality/common/javascript</sharedJavaScriptDirectory>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>aggregate-muniversality-skins</id>
                         <phase>prepare-package</phase>
@@ -949,7 +1078,7 @@
                                 </goals>
                               </pluginExecutionFilter>
                               <action>
-                                <ignore></ignore>
+                                <ignore />
                               </action>
                             </pluginExecution>
                           </pluginExecutions>

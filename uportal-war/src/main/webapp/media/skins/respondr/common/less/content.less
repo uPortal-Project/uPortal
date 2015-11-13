@@ -1,0 +1,299 @@
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+@portletWrapperBorderRadius: 5px;
+
+#portalPageBody {
+    background-color: @content-background-color;
+    min-height: 300px;
+}
+
+/** Page Message for returned action messages */
+#portalPageBodyMessage {
+    display: none;
+    .border-radius(7px);
+    margin-bottom: 1em;
+}
+
+#portalPageBodyMessage.error {
+    background-color: @color2-lighter;
+    .border(@color2-dark);
+}
+
+#portalPageBodyMessage.warn {
+    background-color: @color2-lighter;
+    .border(@color2-dark);
+}
+
+#portalPageBodyMessage.success {
+    background-color: @color2-lighter;
+    .border(@color2-dark);
+}
+
+#portalPageBodyMessage p {
+    font-weight: bold;
+    margin-bottom: 2px;
+    text-align: center;
+}
+
+.portlet {
+    margin-bottom: 2px;
+    padding: 10px;
+}
+
+.portlet-header {
+
+}
+
+.portlet-title {
+    .border-radiuses-top(5px);
+
+    .btn-group {
+
+    }
+}
+
+.portlet-content {
+    color: @grayscale8;
+    padding: 0 20px 20px 20px;
+}
+
+.borderless {
+    background: @grayscale10;
+    border-color: @black;
+
+    .portlet-header {
+        display: none;
+    }
+
+    .portlet-content {
+        color: @grayscale2;
+        padding: 20px;
+    }
+
+}
+
+section h1 {
+    font-size: 135%;
+}
+
+section h2 {
+    font-size: 125%;
+}
+
+section h3 {
+    font-size: 115%;
+}
+
+section h4 {
+    font-size: 105%;
+}
+
+.up-portlet-wrapper-inner {
+    margin: 10px 0;
+}
+
+.up-portlet-titlebar {
+    background-color: @portlet-titlebar-background-color; /* Old browsers */
+    background-color: @portlet-titlebar-background-color;
+    #gradient > .vertical(lighten(@portlet-titlebar-background-color, 5%), darken(@portlet-titlebar-background-color, 10%), 0%, 100%);
+    .border(@portlet-header-border-color);
+    border-bottom: none;
+    .border-radiuses-top(@portlet-border-radius);
+    position: relative;
+
+    > h2 {
+        font-size: 14px;
+        padding: 7px 7px;
+        margin: 0;
+        list-style: none;
+        line-height: 20px;
+        > a {
+            color: @portlet-titlebar-link-color;
+            &:hover {
+                color: darken(@portlet-titlebar-link-color, 20%)
+            }
+        }
+    }
+
+    .btn-group {
+        position: absolute;
+        top: 2px;
+        right: 0;
+        margin: 0;
+
+        > a {
+            color: @portlet-options-link-color;
+            font-size: 11px;
+            font-weight: normal;
+            .caret {
+                border-top-color: @portlet-options-link-color;
+            }
+            &:hover {
+                color: @portlet-options-link-hover-color;
+
+                .caret {
+                    border-top-color: @portlet-options-link-hover-color;
+                }
+            }
+        }
+    }
+}
+
+.up-portlet-content-wrapper {
+    background-color: @white;
+    .border(@portlet-border-color);
+    border-top: none;
+    .border-radiuses-bottom(@portletWrapperBorderRadius);
+    overflow: hidden;
+    padding: 10px;
+
+    .stacktrace {
+        text-align: left;
+    }
+}
+
+.btn-skin, a.btn-skin, button.btn-skin {
+    .pretty-buttons(@btn-skin-text-color, @btn-skin-background-color);
+}
+
+.btn-skin-alt, a.btn-skin-alt, button.btn-skin-alt {
+    .pretty-buttons(@btn-skin-alt-text-color, @btn-skin-alt-background-color);
+    .btn-link {
+        color: @btn-skin-alt-text-color;
+    }
+}
+
+.btn-inline-group {
+    margin: 10px 0;
+}
+
+#portal-sticky-header {
+    margin-top: @detached-header-height;
+
+    .navbar {
+        background: @detached-header-backbround-color;
+        min-height: @detached-header-height;
+        max-height: @detached-header-height;
+        padding-top: 5px;
+
+        a {
+            color: @detached-header-link-color;
+        }
+
+        .navbar-header {
+            font-size: 16pt;
+        }
+    }
+    .portal-global {
+        padding: 0;
+    }
+}
+
+#portalTip,
+#region-customize {
+    display: none;
+}
+
+section.emergency-alert {
+    margin-bottom: 1em;
+    border-radius: 5px;
+
+    .view-alert {
+        padding-top: 15px !important;
+        padding-bottom: 30px !important;
+    }
+}
+
+    #config-lightbox .modal-dialog {
+        position: initial;
+        width: auto;
+        max-width: 1000px;
+        min-width: 600px;
+    }
+
+    #config-lightbox .loading {
+        width: 100%;
+        height: 100px;
+        background-image: url('../common/images/loading.gif');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 100px;
+    }
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+/*
+ * Breakpoints: 240px, 320px, 480px, 600px, 769px, and 992px.
+ */
+
+/*
+ * When the screen size is larger than 769px wide...
+ * (Corresponds to the smallest breakpoint in Bootstrap)
+ */
+
+@media only screen and (min-width: 769px) {
+    #portalTip,
+    #region-customize {
+        display: block;
+    }
+
+    .portal-content {
+        padding: 0 0 0 20px;
+    }
+
+    .portlet {
+        margin-bottom: 10px;
+        .border-radius;
+    }
+}
+
+// large screens show all 6 columns.
+@media only screen and (min-width: 769px) {
+    .portal-page-column.col-md-2 {
+        width: 16.6666667%;
+        float: left;
+    }
+}
+
+
+@media only screen and (max-width: 769px) {
+    // collapse from 6 to 3 columns
+    .portal-page-column.col-md-2 {
+        width: 33.3%;
+        float: left;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    // collapse from 6 to 2 columns
+    .portal-page-column.col-md-2 {
+        width: 50%;
+        float: left;
+    }
+}
+
+@media only screen and (max-width: 240px) {
+    // on really small screen collapse to a single column
+    .portal-page-column.col-md-2 {
+        width: 100%;
+    }
+}
+

@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -27,16 +27,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.utils.Tuple;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import org.jasig.portal.search.SearchResult;
+import org.jasig.portal.utils.Tuple;
 
 /**
- * Used to collate search results for the SearchPortletController
+ * Used to collate search results for the SearchPortletController.
  * 
  * @author Eric Dalquist
  * @version $Revision$
@@ -47,10 +46,10 @@ public class PortalSearchResults implements Serializable {
     private final Set<String> defaultTab;
     //Map of <result type, Set<result tabs>>
     private final Map<String, Set<String>> resultTypeMappings;
-    
+
     //Map of <tab-key, List<result, url>>
     private final LoadingCache<String, List<Tuple<SearchResult, String>>> results;
-    
+
     public PortalSearchResults(String defaultTab, Map<String, Set<String>> resultTypeMappings) {
         this.defaultTab = ImmutableSet.of(defaultTab);
         this.resultTypeMappings = resultTypeMappings;

@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlet.registry;
 
 import java.util.Iterator;
@@ -264,7 +263,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         }
         
         if (portletWindowData == null) {
-            logger.trace("No IPortletWindow {} exists, returning null");
+            logger.trace("No IPortletWindow {} exists, returning null", portletWindowId);
             return null;
         }
         
@@ -367,10 +366,10 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
             final IPortletWindow portletWindow = this.getOrCreateDefaultPortletWindow(request, portletEntityId);
             portletWindows.add(portletWindow);
         }
-            
+
         return portletWindows;
     }
-    
+
     @Override
     public Tuple<IPortletWindow, StartElement> getPortletWindow(HttpServletRequest request, StartElement element) {
         //Check if the layout node explicitly specifies the window id
@@ -394,20 +393,30 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         if (portalRequestInfo.getUrlState() == UrlState.DETACHED) {
-            //Handle detached portlets explicitly
-            //TODO Can we ever have non-targeted portlets render in a detached request? If so should they all be stateless windows anyways? 
-            final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-            portletWindow = this.getOrCreateStatelessPortletWindow(request, portletWindowId);
+            /*
+             * We want to handle DETACHED portlet windows differently/explicitly,
+             * but we need to be aware there may be other portlets on the page
+             * besides the targeted one.  These would be portlets in regions
+             * (Respondr theme) -- such as DynamicRespondrSkin.
+             *
+             * We need to confirm, therefore, that this is actually the portlet
+             * in DETACHED.  If it is, we'll send back a 'stateless' PortletWindow.
+             */
+            if (portalRequestInfo.getTargetedPortletWindowId().toString().contains("_" + layoutNodeId + "_")) {
+                final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
+                portletWindow = this.getOrCreateStatelessPortletWindow(request, portletWindowId);
+            }
+
         }
-        
+
         element = this.addPortletWindowId(element, portletWindow.getPortletWindowId());
-        
+
         return new Tuple<IPortletWindow, StartElement>(portletWindow, element);
     }
-    
+
     protected StartElement addPortletWindowId(StartElement element, IPortletWindowId portletWindowId) {
         final Attribute windowIdAttribute = xmlEventFactory.createAttribute(PORTLET_WINDOW_ID_ATTR_NAME, portletWindowId.getStringId());
-        
+
         //Clone the start element to add the new attribute
         final QName name = element.getName();
         final String prefix = name.getPrefix();

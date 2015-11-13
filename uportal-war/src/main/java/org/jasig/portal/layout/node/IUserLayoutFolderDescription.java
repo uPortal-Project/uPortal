@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.node;
 
 import org.w3c.dom.Document;
@@ -26,33 +25,66 @@ import org.w3c.dom.Element;
 /**
  * An interface describing a folder user layout node.
  *
- * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
+ * @author Peter Kharchenko
  */
 public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription {
 
-    public static final int REGULAR_TYPE=0;
-    public static final int HEADER_TYPE=1;
-    public static final int FOOTER_TYPE=2;
-    public static final int SIDEBAR_TYPE=3;
- 
-    public static final String[] folderTypeNames= {"regular","header","footer","sidebar"};
+    /**
+     * Type attribute value of regular layout folders (i.e., tabs displayed normally, not headers, footers,
+     * emergency fragments, tip fragments, favorites-containing meta-fragments, etc.
+     * @since uPortal 4.1
+     */
+    public static final String REGULAR_TYPE = "regular";
 
     /**
-     * Returns folder type.
-     *
-     * @return an <code>int</code> value corresponding
-     * to one of the valid folder types.
+     * Type attribute value of header folders.
+     * @since uPortal 4.1
      */
-    public int getFolderType();
+    public static final String HEADER_TYPE = "header";
+
+    /**
+     * Type attribute value of footer folders.
+     * @since uPortal 4.1
+     */
+    public static final String FOOTER_TYPE = "footer";
+
+    /**
+     * Type attribute value of sidebar folders.
+     * @since uPortal 4.1
+     */
+    public static final String SIDEBAR_TYPE = "sidebar";
+
+    /**
+     * Type attribute value of folders containing user favorites (used by the optional Favorites portlet).
+     * @since uPortal 4.1
+     */
+    public static final String FAVORITES_TYPE = "favorites";
+
+    /**
+     * Type attribute value of folders representing a named collection of user favorites
+     * (used by the optional Favorites portlet).
+     * @since uPortal 4.1
+     */
+    public static final String FAVORITE_COLLECTION_TYPE = "favorite_collection";
+
+
+    /**
+     * Returns folder type.  Type might be one of the values documented in this interface.
+     * Then again, it might be any other String.
+     *
+     * @since uPortal 4.1
+     * @return a non-null String representing folder type.
+     */
+    public String getFolderType();
 
     /**
      * Assign a type to a folder.
+     * Some useful types are documented in this interface.
      *
-     * @param folderType an <code>int</code> value corresponding
-     * to one of the valid folder types.
+     * @since uPortal 4.1
+     * @param folderType String corresponding to underlying 'type' attribute
      */
-    public void setFolderType(int folderType);
+    public void setFolderType(String folderType);
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current node.

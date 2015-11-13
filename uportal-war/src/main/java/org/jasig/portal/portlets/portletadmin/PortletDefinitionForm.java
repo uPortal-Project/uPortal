@@ -1,25 +1,25 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.portlets.portletadmin;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
@@ -49,10 +51,14 @@ import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.BooleanAttributeFactory;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.StringListAttributeFactory;
+import org.jasig.portal.xml.PortletDescriptor;
 
 public class PortletDefinitionForm implements Serializable {
+
+    private static final String FRAMEWORK_PORTLET_URL = "/uPortal";
+	private static final FastDateFormat dateFormat = FastDateFormat.getInstance("M/d/yyyy");
 	
-	private static final long serialVersionUID = 892741367149099647L;
+	private static final long serialVersionUID = 892741367149099648L;
 	protected transient final Log log = LogFactory.getLog(getClass());
 	
 	/**
@@ -91,6 +97,7 @@ public class PortletDefinitionForm implements Serializable {
 	private boolean editable;
 	private boolean hasHelp;
 	private boolean hasAbout;
+	private boolean configurable;
 	
 	/**
 	 * Groups and categories
@@ -141,20 +148,22 @@ public class PortletDefinitionForm implements Serializable {
 		if (def.getParameter(IPortletDefinition.EDITABLE_PARAM) != null) {
 		    this.setEditable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.EDITABLE_PARAM).getValue()));
 		}
-        if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
+        if (def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM) != null) {
+    		this.setConfigurable(Boolean.parseBoolean(def.getParameter(IPortletDefinition.CONFIGURABLE_PARAM).getValue()));
+    	}
+		if (def.getParameter(IPortletDefinition.HAS_HELP_PARAM) != null) {
             this.setHasHelp(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_HELP_PARAM).getValue()));
         }
         if (def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM) != null) {
     		this.setHasAbout(Boolean.parseBoolean(def.getParameter(IPortletDefinition.HAS_ABOUT_PARAM).getValue()));
     	}
-		this.setLifecycleState(def.getLifecycleState());
+        this.setLifecycleState(def.getLifecycleState());
 		
-		int order = this.getLifecycleState().getOrder();
-		if (order < PortletLifecycleState.PUBLISHED.getOrder()) {
+		if (def.getLifecycleState().equals(PortletLifecycleState.APPROVED)) {
 			this.setPublishDateTime(def.getPublishDate());
 		}
 		
-		if (order < PortletLifecycleState.EXPIRED.getOrder()) {
+		if (def.getLifecycleState().equals(PortletLifecycleState.PUBLISHED)) {
 			this.setExpirationDateTime(def.getExpirationDate());
 		}
 		
@@ -178,7 +187,15 @@ public class PortletDefinitionForm implements Serializable {
 		}
             
 	}
-	
+
+    /**
+     * Indicates whether this portlet has been previously published.
+     * @return
+     */
+    public boolean isNew() {
+        return id == null || id.equals("-1");
+    }
+
 	/**
 	 * Sets the Java class name and parameter defaults based on the 
 	 * PortletPublishingDefinition.
@@ -186,6 +203,21 @@ public class PortletDefinitionForm implements Serializable {
 	 * @param cpd
 	 */
 	public void setChannelPublishingDefinition(PortletPublishingDefinition cpd) {
+
+        // Set appName/portletName if a descriptor is present.  If a framework
+        // portlet, the applicationId is /uPortal.
+        if (cpd.getPortletDescriptor() != null) {
+            final PortletDescriptor pDesc = cpd.getPortletDescriptor();
+            // PortletDescriptor is a class generated from XSD.  The value of
+            // isIsFramework() will commonly be null.
+            final boolean isFramework = pDesc.isIsFramework() != null
+                    ? pDesc.isIsFramework()
+                    : false;
+            applicationId = isFramework
+                    ? FRAMEWORK_PORTLET_URL
+                    : pDesc.getWebAppName();
+            portletName = pDesc.getPortletName();
+        }
 
 		// set default values for all portlet parameters
 		for (Step step : cpd.getSteps()) {
@@ -303,17 +335,19 @@ public class PortletDefinitionForm implements Serializable {
 		return applicationId;
 	}
 
-	public void setApplicationId(String applicationId) {
-		this.applicationId = applicationId;
-	}
+    public void setApplicationId(String applicationId) {
+        // Be careful not to pass on extra whitespace
+        this.applicationId = StringUtils.isNotBlank(applicationId) ? applicationId.trim() : applicationId;
+    }
 
 	public String getPortletName() {
 		return portletName;
 	}
 
-	public void setPortletName(String portletName) {
-		this.portletName = portletName;
-	}
+    public void setPortletName(String portletName) {
+        // Be careful not to pass on extra whitespace
+        this.portletName = portletName.trim();
+    }
 
 	public boolean isFramework() {
 		return framework;
@@ -362,6 +396,14 @@ public class PortletDefinitionForm implements Serializable {
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public boolean isConfigurable() {
+		return configurable;
+	}
+
+	public void setConfigurable(boolean configurable) {
+		this.configurable = configurable;
 	}
 
 	public boolean isHasHelp() {
@@ -519,6 +561,34 @@ public class PortletDefinitionForm implements Serializable {
 		return cal.getTime();
 	}
 
+
+	/**
+	 * Get the expiration date as a string.  This is just  webflow workaround.
+	 * @return the expiration date as a string
+	 */
+	public String getExpirationDateString() {
+		if (expirationDate == null) {
+			return null;
+		}
+
+		return dateFormat.format(expirationDate);
+	}
+
+
+	/**
+	 * Set the expiration date as a string.
+	 * @param date the date string
+	 * @throws ParseException if the string cannot be parsed
+	 */
+	public void setExpirationDateString(String date) throws ParseException {
+		if (StringUtils.isBlank(date)) {
+			expirationDate = null;
+			return;
+		}
+
+		expirationDate = dateFormat.parse(date);
+	}
+
 	public void setPublishDateTime(Date publish) {
 		if (publish != null) {
 			this.setPublishDate(publish);
@@ -533,7 +603,37 @@ public class PortletDefinitionForm implements Serializable {
 			this.setPublishAmPm(cal.get(Calendar.AM_PM));
 		}
 	}
-	
+
+
+	/**
+	 * Get the publish date as a string.
+	 * @return the publish date as a string
+	 */
+	public String getPublishDateString() {
+		if (publishDate == null) {
+			return null;
+		}
+
+		return dateFormat.format(publishDate);
+	}
+
+
+	/**
+	 * Set the publish date as a string.   This is just a webflow
+	 * workaround.
+	 *
+	 * @param date the date string
+	 * @throws ParseException if the date cannot be parsed
+	 */
+	public void setPublishDateString(String date) throws ParseException {
+		if (StringUtils.isBlank(date)) {
+			publishDate = null;
+			return;
+		}
+
+		publishDate = dateFormat.parse(date);
+	}
+
 	public void setExpirationDateTime(Date expire) {
 		if (expire != null) {
 			this.setExpirationDate(expire);
@@ -548,5 +648,5 @@ public class PortletDefinitionForm implements Serializable {
 			this.setExpirationAmPm(cal.get(Calendar.AM_PM));
 		}
 	}
-	
+
 }

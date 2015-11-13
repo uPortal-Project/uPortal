@@ -1,0 +1,178 @@
+/*====================================*/
+/* MOBILE SKIN THEME */
+/*====================================*/
+
+.up {
+
+    .ui-bar, .ui-li-divider {
+        border: 1px solid;
+        font-weight: bold;
+
+        input, select, textarea, button {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+    }
+
+    .dashboard {
+        color: @white;
+        text-shadow: 0 1px 0 @black;
+        background: @bgc url("../common/images/bg_320x480_flat.png") 0 25px no-repeat;
+
+        .ui-link-inherit {
+            color: @white;
+        }
+
+        .ui-link {
+            color: @white;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .ui-br {
+            border-bottom: 1px solid rgba(130,130,130,.3); }
+    }
+
+    .focused {
+        color: @text;
+        text-shadow: 0 1px 0 @white;
+        background: @graylighter;
+        .gradient(@graylightest, @graylightest, @graylighter);
+    }
+
+    .portlet-wrapper-titlebar {
+        border-color: @c2dark;
+        background: @c2;
+        color: @white;
+        text-shadow	: 0 -1px 0 @black;
+        .gradient(@c2light, @c2light, @c2dark);
+
+        .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+            .button-variant(@c3darker, @c3, @white, @black, @c3, @c3, @c3darker, @white);
+        }
+
+        .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+            .button-variant(@c3darker, @c3light, @white, @black, @c3light, @c3light, @c3dark, @white);
+        }
+
+        .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+            .button-variant(@c3darker, @c3, @white, @black, @c3dark, @c3dark, @c3light, @white);
+        }
+    }
+
+    .portlet-titlebar {
+        border-color: @c1darker;
+        background: @c1dark;
+        color: @white;
+        text-shadow	: 0 -1px 0 @black;
+        .gradient(@c1, @c1, @c1darker);
+
+        .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+            .button-variant(@c1darker, @c1, @white, @black, @c1, @c1, @c1darker, @white);
+        }
+
+        .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+            .button-variant(@c3darker, @c1light, @white, @black, @c1lighter, @c1lighter, @c1darker, @white);
+        }
+
+        .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+            .button-variant(@c1darker, @c1, @white, @black, @c1darker, @c1darker, @c1, @white);
+        }
+    }
+
+    .portlet-content {
+
+        .titlebar {
+            .title, .subtitle {
+                margin: 0;
+            }
+            .subtitle {
+                font-size: 100%;
+                color: @graydarker;
+            }
+            .subtitle + .text {
+                margin-top: 14px;
+            }
+            .text p {
+                margin-bottom: 12px;
+            }
+        }
+
+        > .titlebar + .ui-listview {
+            margin-top: 18px;
+        }
+
+        .ui-li-divider {
+            border-color: @c1dark;
+            border-top: 1px solid @c1light;
+            background: @c1;
+            color: @white;
+            text-shadow	: 0 -1px 0 @black;
+            .gradient(@c1dark, @c1dark, @c1light);
+            .box-shadow(0 0 5px #999);
+            z-index: 1;
+
+            .ui-grid-a {
+                .ui-block-b {
+                    text-align: right;
+                }
+            }
+        }
+
+        .utilities {
+
+            .ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+                .button-variant(@graylight, @graylightest, @text, @white, @white, @white, @graylightest, @graydarkest);
+            }
+
+            .ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+                .button-variant(@c3dark, @c3light, @white, @black, @c3lighter, @c3lighter, @c3dark, @white);
+            }
+
+            .ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+                .button-variant(@c3darker, @c3, @white, @black, @c3dark, @c3dark, @c3light, @white);
+            }
+        }
+    }
+
+    /* icons */
+    .ui-icon-map {
+        background-image: url(../common/images/icons/location-18x18.png);
+    }
+
+    .ui-icon-phone {
+        background-image: url(../common/images/icons/phone-18x18.png);
+    }
+
+    /* iPhone Skin Overrides */
+    .ui-content {
+
+        .ui-header {
+            margin-top: -15px;
+            margin-left: -15px;
+            margin-bottom: 15px;
+            width:320px;
+        }
+    }
+
+    .up-new-item-count-0 {
+        display:none;
+    }
+}
+
+
+
+
+/* retina icons */
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+    .up {
+        .ui-icon-map {
+            background-image: url(../common/images/icons/location-36x36.png);
+            background-size: 18px 18px;
+        }
+
+        .ui-icon-phone {
+            background-image: url(../common/images/icons/phone-36x36.png);
+            background-size: 18px 18px;
+        }
+    }
+}

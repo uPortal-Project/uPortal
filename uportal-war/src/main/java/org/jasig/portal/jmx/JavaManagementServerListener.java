@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.jmx;
 
 import javax.servlet.ServletContext;
@@ -54,12 +53,32 @@ public class JavaManagementServerListener implements ServletContextListener {
     private static final String LOGGER_NAME = JavaManagementServerListener.class.getName();
 
     private JavaManagementServerBean javaManagementServerBean;
+    
+    private Log logger;
+    
+    /**
+     * Inits and/or returns already initialized logger.  <br>
+     * You have to use this method in order to use the logger,<br> 
+     * you should not call the private variable directly.<br>
+     * This was done because Tomcat may instantiate all listeners before calling contextInitialized on any listener.<br>
+     * Note that there is no synchronization here on purpose. The object returned by getLog for a logger name is<br>
+     * idempotent and getLog itself is thread safe. Eventually all <br>
+     * threads will see an instance level logger variable and calls to getLog will stop.
+     * @return the log for this class
+     */
+    protected Log getLogger() {
+    	Log l = this.logger;
+	  if (l == null) {
+	    l = LogFactory.getLog(LOGGER_NAME);
+	    this.logger = l;
+	  }
+	  return l;
+	}
 
     /**
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     public void contextInitialized(ServletContextEvent event) {
-    	Log logger = LogFactory.getLog(LOGGER_NAME);
         final ServletContext servletContext = event.getServletContext();
         
         //Create the bean
@@ -80,7 +99,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortOne(portOne);
         }
         catch (NumberFormatException nfe) {
-            logger.warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
+            getLogger().warn("init-parameter '" + JMX_RMI_PORT_1 + "' is required and must contain a number. '" + portOneStr + "' is not a valid number.", nfe);
         }
         
         //Get the second rmi port from the init parameters
@@ -90,7 +109,7 @@ public class JavaManagementServerListener implements ServletContextListener {
             this.javaManagementServerBean.setPortTwo(portTwo);
         }
         catch (NumberFormatException nfe) {
-            logger.debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
+        	getLogger().debug("Failed to convert init-parameter '" + JMX_RMI_PORT_2 + "' with value '" + portTwoStr + "' to a number, defaulting portTwo to portOne + 1", nfe);
         }
         
         this.javaManagementServerBean.startServer();

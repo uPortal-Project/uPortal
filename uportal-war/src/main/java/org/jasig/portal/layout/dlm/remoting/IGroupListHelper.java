@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.dlm.remoting;
 
 import java.util.List;
@@ -25,6 +24,7 @@ import java.util.Set;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IPerson;
 
 /**
  * Helper methods for retrieving portal entities.
@@ -42,16 +42,30 @@ public interface IGroupListHelper {
 	 * @param searchTerm	search string
 	 * @return				set of matching JsonEntityBeans
 	 */
-	public Set<JsonEntityBean> search(String entityType, String searchTerm);
+	Set<JsonEntityBean> search(String entityType, String searchTerm);
 
-	/**
-	 * Get the root entity for a particular type of group entity.
-	 * 
-	 * @param groupType
-	 * @return
-	 */
-	public JsonEntityBean getRootEntity(String groupType);
-	
+    /**
+     * Get the root entity for a particular type of group entity.
+     * 
+     * @param groupType
+     * @return
+     */
+    JsonEntityBean getRootEntity(String groupType);
+
+    /**
+     * Obtain the user's best root (starting) entity available given the 
+     * specified permissions activity.
+     */
+    JsonEntityBean getIndividualBestRootEntity(IPerson person,
+            String groupType, String permissionOwner, String permissionActivity);
+
+    /**
+     * Obtain the user's best root (starting) entity available given the 
+     * specified permissions activities.
+     */
+    JsonEntityBean getIndividualBestRootEntity(IPerson person, String groupType,
+            String permissionOwner, String[] permissionActivities);
+
 	/**
 	 * Get the set of entity types allowed as children of the specified group
 	 * type.
@@ -59,7 +73,7 @@ public interface IGroupListHelper {
 	 * @param groupType
 	 * @return
 	 */
-	public Set<String> getEntityTypesForGroupType(String groupType);
+	Set<String> getEntityTypesForGroupType(String groupType);
 
 	/**
 	 * Return the string representation of the type of a specified entity object.
@@ -67,7 +81,7 @@ public interface IGroupListHelper {
 	 * @param entity	Entity whose type needs to be determined
 	 * @return			One of the possible EntityEnum string representations
 	 */
-	public EntityEnum getEntityType(IGroupMember entity); 
+	EntityEnum getEntityType(IGroupMember entity); 
 	
 	/**
 	 * Find the name of a specified entity.
@@ -75,7 +89,7 @@ public interface IGroupListHelper {
 	 * @param entityBean	JsonEntityBean representation of an entity
 	 * @return				Entity name, or <code>null</code> if none is found
 	 */
-	public String lookupEntityName(JsonEntityBean entityBean);
+	String lookupEntityName(JsonEntityBean entityBean);
 
 	/**
 	 * Return a JsonEntityBean for the supplied IGroupMember instance.
@@ -83,7 +97,7 @@ public interface IGroupListHelper {
 	 * @param member
 	 * @return
 	 */
-	public JsonEntityBean getEntity(IGroupMember member);
+	JsonEntityBean getEntity(IGroupMember member);
 
 	/**
 	 * Retrieve an individual entity matching the specified type and id.  If
@@ -97,7 +111,7 @@ public interface IGroupListHelper {
 	 * @param populateChildren	<code>true</code> to populate the bean with children
 	 * @return					JsonEntityBean representation or <code>null</code>
 	 */
-	public JsonEntityBean getEntity(String entityType, String entityId, boolean populateChildren);
+	JsonEntityBean getEntity(String entityType, String entityId, boolean populateChildren);
 	
 	/**
 	 * Get a list of JsonEntityBeans for a supplied list of string identifiers, 
@@ -108,10 +122,10 @@ public interface IGroupListHelper {
 	 * @param params	List of string identifiers
 	 * @return			List of matching JsonEntityBeans 
 	 */
-	public List<JsonEntityBean> getEntityBeans(List<String> params);
+	List<JsonEntityBean> getEntityBeans(List<String> params);
 	
-    public JsonEntityBean getEntityForPrincipal(String principalString);
+    JsonEntityBean getEntityForPrincipal(String principalString);
 
-    public IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity);
+    IAuthorizationPrincipal getPrincipalForEntity(JsonEntityBean entity);
 
 }

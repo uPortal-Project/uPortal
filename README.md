@@ -1,19 +1,26 @@
-For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM40/Home)
+For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM41/Home)
 
-Additional information about uPortal is available on the [uPortal Home Page](http://www.jasig.org/uportal)
+Additional information about uPortal is available on the [uPortal Home Page](http://www.apereo.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
 
+## Travis-CI Continuous Integration
+
+uPortal uses Travis-CI for lightweight continuous integration.  You can see build statuses at [https://travis-ci.org/Jasig/uPortal].  This handy image summarizes build status for the master branch:
+
+[![Master Branch Build Status](https://travis-ci.org/Jasig/uPortal.png?branch=master)](https://travis-ci.org/Jasig/uPortal)
+
 ## Requirements
-* JDK 1.6.0_26 or later - Just a JRE is not sufficient, a full JDK is required
-* Servlet 2.5 Container - Tomcat 6.0 is recommended, there some configuration changes that must be made for Tomcat 6.0 which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM40/Installing+Tomcat).
+* JDK 1.7 or later - The JRE alone is NOT sufficient, a full JDK is required
+* Servlet 3.0 Container - Tomcat 7.0 or later is required.  (NOTE:  Tomcat 8 is not yet supported.)  There some configuration changes that
+must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM41/Installing+Tomcat).
 * Maven 3.0.3 or later
-* Ant 1.8.2
+* Ant 1.8.2 or 1.9.3 or later.
 
 ## Building and Deploying
 uPortal uses Maven for its project configuration and build system. An Ant
 build.xml is also provided which handles the initialization and deployment
 related tasks. As a uPortal deployer you will likely only ever need to use the
-Ant tasks. Ant 1.8.2 or later is required
+Ant tasks. Ant 1.8.2 or 1.9.3 or later is required
 
 ### Ant tasks (run "ant -p" for a full list) :
 
@@ -39,7 +46,7 @@ email address is the best place to go with questions related to configuring or
 deploying uPortal.    
 
 The uPortal manual is a collaborative document on the wiki which has more
-detailed documentation: https://wiki.jasig.org/display/UPM40
+detailed documentation: https://wiki.jasig.org/display/UPM41
 
 
 ## Other Notes
@@ -60,7 +67,7 @@ be deployed as, etc.
 #### Initial Deployment
 You must run the initportal target before uPortal is started the first time.
 This target will take care of compiling, deploying, database population and
-other initial tasks. Running initportal again is similiar to hitting a reset
+other initial tasks. Running initportal again is similar to hitting a reset
 button on the portal. Any saved configuration in the portal is lost and a clean
 version of the portal is configured.
 

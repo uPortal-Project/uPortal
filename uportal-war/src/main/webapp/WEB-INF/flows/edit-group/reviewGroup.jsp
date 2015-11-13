@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <portlet:renderURL var="cancelUrl">
     <portlet:param name="execution" value="${flowExecutionKey}" />
@@ -66,16 +65,16 @@
         <div class="toolbar">
         	<ul>
                 <c:if test="${ canEdit }">
-                    <li><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
+                    <li class="btn"><a class="button" href="${ editDetailsUrl }"><spring:message code="edit"/></a></li>
                 </c:if>
                 <c:if test="${ !isNew }">
-                    <li><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
+                    <li class="btn"><a class="button" href="${ permissionsUrl }"><spring:message code="view.permissions"/></a></li>
                 </c:if>
                 <c:if test="${ canDelete }">
-                    <li><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
+                    <li class="btn"><a class="button" href="${ deleteUrl }"><spring:message code="delete"/></a></li>
                 </c:if>
                 <c:if test="${ canCreateMember }">
-                    <li><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
+                    <li class="btn"><a class="button" href="${ createMemberUrl }"><spring:message code="create.member.group"/></a></li>
                 </c:if>
             </ul>
         </div>
@@ -104,11 +103,11 @@
         <div class="buttons">
             <c:choose>
                 <c:when test="${ isNew }">
-                    <a class="button" href="${ saveUrl }"><spring:message code="save"/></a>
-                    <a class="button" href="${ backUrl }"><spring:message code="back"/></a>
+                    <a class="button btn" href="${ saveUrl }"><spring:message code="save"/></a>
+                    <a class="button btn" href="${ backUrl }"><spring:message code="back"/></a>
                 </c:when>
                 <c:otherwise>
-                    <a class="button" href="${ cancelUrl }"><spring:message code="done"/></a>
+                    <a class="button btn" href="${ cancelUrl }"><spring:message code="done"/></a>
                 </c:otherwise>
             </c:choose>
         </div>

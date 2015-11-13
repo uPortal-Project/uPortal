@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.groups;
 
 import java.util.ArrayList;
@@ -27,6 +26,8 @@ import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * GroupMemberImpl summary first sentence goes here.
@@ -37,6 +38,7 @@ import org.jasig.portal.services.GroupService;
  */
 public abstract class GroupMemberImpl implements IGroupMember
 {
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 /*
  * The <code>EntityIdentifier</code> that uniquely identifies the entity,
  * e.g., the <code>IPerson</code>, <code>ChannelDefinition</code>, etc.,
@@ -277,6 +279,7 @@ public boolean hasMembers() throws GroupsException
  */
 private void initializeContainingGroupKeys() throws GroupsException
 {
+    log.debug("Initialzing keys for groups that contain member {}. Finding existing containing groups", this.getKey());
     Set keys = new HashSet(10);
     for ( Iterator it = getCompositeGroupService().findContainingGroups(this); it.hasNext(); )
     {

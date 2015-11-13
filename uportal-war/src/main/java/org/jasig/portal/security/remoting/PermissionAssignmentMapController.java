@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.security.remoting;
 
 import java.util.ArrayList;
@@ -117,7 +116,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
-
+        
         JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
 
         if (bean != null) {
@@ -145,6 +144,53 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
 
         
         return getOwners(principals, owner, activity, target, request, response);
+    }
+    
+
+    /**
+     * Deletes a specific permission
+     * @param principal
+     * @param assignment
+     * @param owner
+     * @param activity
+     * @param target
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value="/deletePermission", method = RequestMethod.POST)
+    public void deletePermission(
+            @RequestParam("principal") String principal,
+            @RequestParam("owner") String owner,
+            @RequestParam("activity") String activity,
+            @RequestParam("target") String target, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+
+        // ensure the current user is authorized to update and view permissions
+        final IPerson currentUser = personManager.getPerson((HttpServletRequest) request);
+
+        if (!permissionAdministrationHelper.canEditPermission(currentUser, target) || 
+                !permissionAdministrationHelper.canViewPermission(currentUser, target)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+        JsonEntityBean bean = groupListHelper.getEntityForPrincipal(principal);
+
+        if (bean != null) {
+            
+            IAuthorizationPrincipal p = groupListHelper.getPrincipalForEntity(bean);
+            
+            IPermission[] directPermissions = permissionStore.select(owner, p.getPrincipalString(), activity, target, null);
+            this.authorizationService.removePermissions(directPermissions);
+            
+        } else {
+            log.warn("Unable to resolve the following principal (will " +
+                    "be omitted from the list of assignments):  " + 
+                    principal);
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        return;
     }
 
     @RequestMapping(value="/permissionAssignmentMap", method = RequestMethod.GET)

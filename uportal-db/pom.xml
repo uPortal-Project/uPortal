@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.jasig.portal</groupId>
+        <artifactId>uportal-parent</artifactId>
+        <version>4.3.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>uportal-db</artifactId>
+    <packaging>pom</packaging>
+
+    <name>uPortal DB</name>
+    <description>
+    The goal of this module is to be able to deploy all the db driver jars to all environments
+    instead of needing to change parent pom properties and rebuilding for each environment.
+    The same effect used to be accomplished by manually updating all related poms with hardcoded
+    dependencies, this module allows for just one place to be updated and the change propogates to all the
+    packaged modules/portlets.
+    </description>
+
+    <dependencies>
+        <!-- Add any db drivers that are applicable to *any* of your environments -->
+	    <dependency>
+	        <groupId>org.hsqldb</groupId>
+	        <artifactId>hsqldb</artifactId>
+	        <version>${hsqldb.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+        <!--
+         | The following db drivers should be uncommented and/or modified as needed for server 
+         | deployments.  (Add all thaat are needed.)  Don't forget to add appropriate  .version 
+         | properties to the root pom.xml, or simply enter the appropriate version below.
+         +-->
+	    <!--
+	    <dependency>
+            <groupId>org.postgresql</groupId>
+	        <artifactId>postgresql</artifactId>
+	        <version>${postgres.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>com.ibm.db2</groupId>
+	        <artifactId>db2-jdbc</artifactId>
+	        <version>${db2.version}</version>
+	        <scope>compile</scope>
+	    </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${mssql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6_g</artifactId>
+            <version>${oracle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sybase</groupId>
+            <artifactId>sybase-jconnect</artifactId>
+            <version>${sybase.version}</version>
+        </dependency>
+	    -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Kind of dumb but to avoid wasting time and always re-building uportal-db project since a
+                 pom packaging has no actual artifact, copy the pom.xml to
+                 target/uportal-db-${version}.pom so the ant build doesn't re-run this on this each build. -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="pom.xml" tofile="target/uportal-db-${project.version}.pom" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

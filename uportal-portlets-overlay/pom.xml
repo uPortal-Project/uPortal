@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,6 +17,7 @@
 
     <modules>
         <module>AnnouncementsPortlet</module>
+        <module>basiclti-portlet</module>
         <module>BookmarksPortlet</module>
         <module>CalendarPortlet</module>
         <module>cas</module>
@@ -27,6 +28,7 @@
         <module>pluto-testsuite</module>
         <module>NewsReaderPortlet</module>
         <module>NotificationPortlet</module>
+		<module>sakai-connector-portlet</module>
         <module>SimpleContentPortlet</module>
         <module>WeatherPortlet</module>
         <module>WebProxyPortlet</module>

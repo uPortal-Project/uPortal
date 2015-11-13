@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <%@ tag dynamic-attributes="attributes" isELIgnored="false" %>
@@ -32,11 +31,17 @@
   <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.MultiTextPreferenceInput') }">
     <c:forEach items="${ values }" var="val">
       <div>
-         <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" />
-         <a class="delete-parameter-value-link" href="javascript:;">Remove</a>
+         <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" class="form-control" />
+         <a class="delete-parameter-value-link btn btn-xs btn-info" href="javascript:;">
+             <spring:message code="remove" text="Remove"/>&nbsp;&nbsp;
+             <i class="fa fa-minus-circle"></i>
+         </a>
       </div>
     </c:forEach>
-    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">Add value</a>
+    <a class="add-parameter-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+        <spring:message code="add.value" text="Add Value"/>&nbsp;&nbsp;
+        <i class="fa fa-plus-circle"></i>
+    </a>
   </c:when>
 
   <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput') }">
@@ -46,7 +51,7 @@
       <!-- Textarea -->
         <c:choose>
             <c:when test="${ values != null }">
-                <textarea>${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
+                <textarea class="form-control">${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
             </c:when>
             <c:otherwise>
                 <form:textarea path="${path}"/>
@@ -57,7 +62,7 @@
       <!-- Text input -->
         <c:choose>
             <c:when test="${ values != null }">
-                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" />
+                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" class="form-control" />
             </c:when>
             <c:otherwise>
                 <form:input path="${path}"/>

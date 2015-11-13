@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!--
 	| deployerConfigContext.xml centralizes into one file some of the declarative configuration that
 	| all CAS deployers will need to modify.
@@ -33,11 +32,14 @@
 	| declaration to replace the default SimpleTestUsernamePasswordAuthenticationHandler with
 	| one implementing your approach for authenticating usernames and passwords.
 	+-->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	<!--
 		| This bean declares our AuthenticationManager.  The CentralAuthenticationService service bean
@@ -49,6 +51,18 @@
 		+-->
 	<bean id="authenticationManager"
 		class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+
+		<!-- Uncomment the metadata populator to allow clearpass to capture and cache the password
+		     This switch effectively will turn on clearpass.
+		<property name="authenticationMetaDataPopulators">
+		   <list>
+		      <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator">
+		         <constructor-arg index="0" ref="credentialsCache" />
+		      </bean>
+		   </list>
+		</property>
+         -->
+
 		<!--
 			| This is the List of CredentialToPrincipalResolvers that identify what Principal is trying to authenticate.
 			| The AuthenticationManagerImpl considers them in order, finding a CredentialToPrincipalResolver which 
@@ -74,8 +88,9 @@
 					| need to change this bean declaration (or add additional declarations) to declare a CredentialsToPrincipalResolver that supports the
 					| Credentials you are using.
 					+-->
-				<bean
-					class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" />
+				<bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+					<property name="attributeRepository" ref="attributeRepository" />
+				</bean>
 				<!--
 					| HttpBasedServiceCredentialsToPrincipalResolver supports HttpBasedCredentials.  It supports the CAS 2.0 approach of
 					| authenticating services by SSL callback, extracting the callback URL from the Credentials and representing it as a
@@ -119,16 +134,6 @@
 			</list>
 		</property>
         
-        <!-- Uncomment the following block to enable clearPass 
-        <property name="authenticationMetaDataPopulators">
-           <list>
-              <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator">
-                 <constructor-arg index="0" ref="credentialsCache" />
-              </bean>
-           </list>
-        </property>
-         -->
-         
 	</bean>
     
     <bean id="userPasswordDao" class="org.jasig.portal.cas.authentication.handler.support.PortalPersonDirUserPasswordDao" 
@@ -190,6 +195,20 @@
                         <property name="serviceId" value="^(https?|imaps?)://.*" />
                         <property name="evaluationOrder" value="10000001" />
                     </bean>
+                    <!--
+                    Use the following definition instead of the above to further restrict access
+                    to services within your domain (including subdomains).
+                    Note that example.com must be replaced with the domain you wish to permit.
+                    -->
+                    <!--
+                    <bean class="org.jasig.cas.services.RegexRegisteredService">
+                        <property name="id" value="1" />
+                        <property name="name" value="HTTP and IMAP on example.com" />
+                        <property name="description" value="Allows HTTP(S) and IMAP(S) protocols on example.com" />
+                        <property name="serviceId" value="^(https?|imaps?)://([A-Za-z0-9_-]+\.)*example\.com/.*" />
+                        <property name="evaluationOrder" value="0" />
+                    </bean>
+                    -->
                 </list>
             </property>
         </bean>
@@ -201,6 +220,13 @@
 	      <list>
 	        <bean class="org.jasig.cas.monitor.MemoryMonitor"
 	            p:freeMemoryWarnThreshold="10" />
+        <!--
+          NOTE
+          The following ticket registries support SessionMonitor:
+            * DefaultTicketRegistry
+            * JpaTicketRegistry
+          Remove this monitor if you use an unsupported registry.
+        -->
 	        <bean class="org.jasig.cas.monitor.SessionMonitor"
 	            p:ticketRegistry-ref="ticketRegistry"
 	            p:serviceTicketCountWarnThreshold="5000"

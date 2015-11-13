@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration scan="true" scanPeriod="30 seconds">
+  <contextName>calendar</contextName>
+
+  <!-- 
+   | Propagate log levels to java.util.logging 
+   +-->
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+  <!-- 
+   | Expose the logback configuration via JMX 
+   +-->
+  <jmxConfigurator />
+
+  <!-- 
+   | Specify a local property that sets up the logging directory
+   +-->
+  <property scope="local" name="LOG_DIR" value="${environment.build.log.logfileDirectory}" />
+
+  <!--
+   | Setup a file based logger that rolls
+   | 
+   | http://logback.qos.ch/manual/appenders.html#RollingFileAppender
+   +-->
+  <appender name="LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- 
+     | Name of the current log file
+     +-->
+    <File>${LOG_DIR}/${CONTEXT_NAME}.log</File>
+    
+    <!-- 
+     | Log message pattern configuration
+     | 
+     | http://logback.qos.ch/manual/layouts.html#conversionWord
+     +-->
+    <encoder>
+      <pattern>${environment.build.logback.layoutConversionPattern}</pattern>
+    </encoder>
+    
+    <!--
+     | Rolls the log file every 24 hours
+     | gzip the archived log file
+     | Delete archived log files older than 28 days
+     | 
+     | http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy
+     +-->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/${CONTEXT_NAME}.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+      <maxHistory>28</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- 
+   | Setup default log level to the build-defined value
+   +-->
+  <root level="${environment.build.log.rootLevel}">
+    <appender-ref ref="LOG" />
+  </root>
+
+  <!-- 
+   | Turn up logging for portlet specific package
+   +-->
+    <!--
+  <logger name="org.jasig.portlet.calendar" additivity="false" level="DEBUG">
+    <appender-ref ref="LOG" />
+  </logger>
+  -->
+
+    <!-- Enable to troubleshoot Exchange Web Services messages at the wire level. -->
+    <!--
+    <logger name="org.apache.http.wire" additivity="false" level="DEBUG">
+        <appender-ref ref="USD" />
+    </logger>
+    <logger name="org.springframework.ws" additivity="false" level="DEBUG">
+        <appender-ref ref="USD" />
+    </logger>
+    -->
+
+</configuration>
+

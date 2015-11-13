@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:util="http://www.springframework.org/schema/util"
@@ -28,11 +27,35 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
            
-    <bean id="httpConnectionManager" class="org.jasig.portal.services.MultiThreadedHttpConnectionManagerFactoryBean" />
+    <bean id="webServiceMessageSender" class="org.springframework.ws.transport.http.HttpComponentsMessageSender">
+        <property name="httpClient" ref="httpClient"/>
+    </bean>
+    <bean id="clientHttpRequestFactory" class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
+        <property name="httpClient" ref="httpClient" />
+    </bean>
     
-    <!-- Each client object needs its own HttpClient -->
-    <bean id="httpClient" class="org.jasig.portal.services.HttpClientFactoryBean" scope="prototype">
-        <property name="httpConnectionManager" ref="httpConnectionManager" />
+    <bean id="httpClient" class="org.jasig.apache.http.impl.client.ResponseHeaderHandlingHttpClient" depends-on="httpConnectionParamBean, clientParamBean">
+        <constructor-arg ref="httpConnectionManager" />
+        <constructor-arg ref="httpParams"/>
+    </bean>
+    <bean id="httpConnectionManager" class="org.jasig.apache.http.impl.conn.CleanShutdownPoolingClientConnectionManager" destroy-method="shutdown">
+        <property name="defaultMaxPerRoute" value="1000" />
+        <property name="maxTotal" value="1000" />
+    </bean>
+    <bean id="httpParams" class="org.apache.http.params.BasicHttpParams"/>
+    <bean id="httpConnectionParamBean" class="org.apache.http.params.HttpConnectionParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="connectionTimeout" value="5000"/>
+        <property name="soTimeout" value="30000"/>
+        <property name="staleCheckingEnabled" value="true"/>
+    </bean>
+    <bean id="clientParamBean" class="org.apache.http.client.params.ClientParamBean">
+        <constructor-arg index="0">
+            <ref bean="httpParams"/>
+        </constructor-arg>
+        <property name="cookiePolicy" value="ignoreCookies"/>
     </bean>
     
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
@@ -56,11 +79,7 @@
                 </bean>
             </util:list>
         </property>
-        <property name="requestFactory">
-            <bean class="org.springframework.http.client.CommonsClientHttpRequestFactory">
-                <property name="httpClient" ref="httpClient" />
-            </bean>
-        </property>
+        <property name="requestFactory" ref="clientHttpRequestFactory" />
     </bean>
     
     <util:set id="UsernameCacheTagPurger_IgnoredUsernames">
@@ -69,7 +88,6 @@
     
     
     <util:list id="searchServices">
-        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
         
         <!-- Uncomment and fill in your Google Custom Search ID to use
         <bean class="org.jasig.portal.portlets.search.google.GoogleCustomSearchService">
@@ -83,6 +101,20 @@
             <property name="site" value="Site"/>
         </bean>
         -->
+        
+        <!--Toggle one of the next two via comment
+        	Marketplace and PortletRegistry search are very similar.  Marketplace provides searching of
+        	portlet preferences marked as screen_capture_x and will include a link to the marketplace
+        	entry and possibly more to come
+         -->
+        
+        <!--
+        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+        --> 
+         
+        <bean class="org.jasig.portal.portlet.marketplace.MarketplaceSearchService" />
+		
+        
     </util:list>
     
     <!-- 
@@ -94,12 +126,56 @@
     <util:map id="searchTabs">
         <entry key="googleInstitution.results">
             <list>
-                <value>googleCustom</value>
-                <value>googleAppliance</value>
+                <value>${org.jasig.portal.portlets.googleWebSearch.search.result.type}</value>
+                <value>${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}</value>
             </list>
         </entry>
     </util:map>
 
+    <!--
+     | For search autocomplete, indicate a set of priorities for each type of search result type.  Lower values
+     | result in the search result appearing higher in the list (e.g. greater emphasis).
+     |
+     | Key: value set by the various Search services in the SearchResult.type field.
+     |
+     | Value: The value is the general priority for results of that type.  The default priority if not specified
+     | is priority 0.  A positive value is lower than the default priority (i.e. de-emphasizes result),
+     | and a negative value is higher than the default priority (e.g. emphasizes result).
+     +-->
+    <util:map id="searchAutocompletePriorityMap" value-type="java.lang.Integer">
+        <entry key="${org.jasig.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
+        <entry key="${org.jasig.portal.portlets.directory.search.result.type}" value="5"/>
+        <!--<entry key="${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
+        <!--<entry key="${org.jasig.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
+    </util:map>
+
+    <!--
+     | Set of the search result types to exclude from search autocompletion.  The value is the set by the
+     | various Search services in the SearchResult.type field.
+     +-->
+    <util:set id="searchAutocompleteIgnoreResultTypes">
+        <!--<value>${org.jasig.portal.portlets.directory.search.result.type}</value>-->
+    </util:set>
+
+
+    <bean id="authorizationService" class="org.jasig.portal.security.provider.AuthorizationImpl">
+        <!-- Set of permissionTargetProviders that are not entities and permission checks on a target
+             string value do not need to search through groups or group member target names for a match.
+             See bean permissionTargetProviderRegistry. -->
+        <property name="nonEntityPermissionTargetProviders">
+            <set>
+                <value>portletTypeTargetProvider</value>
+                <value>errorChannelTargetProvider</value>
+                <value>portalSystemTargetProvider</value>
+                <value>userAttributesTargetProvider</value>
+                <value>portalDataTypeTargetProvider</value>
+            </set>
+        </property>
+    </bean>
+    <!--
+    | The permissionTargetProvider key names must be synchronized between src/main/data/default_entities/permission_owner/*.xml
+    | files, here, and authorizationService.
+    +-->
     <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">
             <map>
@@ -145,6 +221,9 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry key="portletTypeTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.PortletTypeTargetProviderImpl"/>
+                </entry>
                 <entry key="errorChannelTargetProvider">
                     <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
                         <property name="targets">
@@ -152,6 +231,9 @@
                                 <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="DETAILS"/>
                                     <constructor-arg value="Stack Trace"/>
+                                    <constructor-arg>
+                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
                                 </bean>
                             </util:list>
                         </property>
@@ -164,6 +246,9 @@
                                 <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="ALL"/>
                                     <constructor-arg value="All permissions"/>
+                                    <constructor-arg>
+                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                    </constructor-arg>
                                 </bean>
                             </util:list>
                         </property>
@@ -174,9 +259,12 @@
                         <property name="personAttributeDao" ref="personAttributeDao" />
                     </bean>
                 </entry>
+                <entry key="portalDataTypeTargetProvider">
+                    <bean class="org.jasig.portal.permission.target.PortalDataTypeTargetProviderImpl" />
+                </entry>
             </map>
         </property>
-    </bean>    
+    </bean>
 
     <util:map id="redirectionServices">
         <entry key="person">
@@ -210,5 +298,39 @@
             </bean>
         </entry>
     </util:map>
-        
+
+    <!--
+     | Map of custom attributes for tenants that may be managed in the Tenant
+     | Manager.  (Any attribute may be created programmatically.)  Runtime type
+     | for attributes is Map<String,String>.  In this Map, the keys are attribute
+     | names and the values are themselves keys into the messageBundle for human-
+     | readable form labels.  The order specified is the order they will appear
+     | on the screen.
+     +-->
+    <util:map id="tenantManagerAttributes" map-class="java.util.LinkedHashMap">
+        <entry key="#{T(org.jasig.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_USERNAME}" value="tenant.manager.adminContactUsername" />
+        <entry key="#{T(org.jasig.portal.tenants.ResetPasswordTenantOperationsListener).ADMIN_CONTACT_EMAIL}" value="tenant.manager.adminContactEmail" />
+        <entry key="tenantOrg" value="tenant.manager.tenantOrgValue" />
+    </util:map>
+
+    <!--
+     | Defines what happens when a Tenant is created/updated/deleted.
+     +-->
+    <util:list id="tenantOperationsListeners">
+        <!-- Processes templated entities -->
+        <bean class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener" />
+        <!-- Persists the tenant object locally;  implemented as a listener so this behavior can occupy any position in the chain. -->
+        <bean class="org.jasig.portal.tenants.JpaPersistenceTenantOperationsListener" />
+        <!-- Sends a "reset password" email to the named admin contact;  MUST BE LAST! -->
+        <bean class="org.jasig.portal.tenants.ResetPasswordTenantOperationsListener">
+            <property name="passwordResetNotification">
+                <bean class="org.jasig.portal.portlets.account.EmailPasswordResetNotificationImpl">
+                    <property name="subjectMessageKey" value="tenant.new.account"/>
+                    <property name="templateDir" value="${org.jasig.portal.tenant.template-dir}"/>
+                    <property name="templateName" value="${org.jasig.portal.tenant.template-name}"/>
+                </bean>
+            </property>
+        </bean>
+    </util:list>
+
 </beans>

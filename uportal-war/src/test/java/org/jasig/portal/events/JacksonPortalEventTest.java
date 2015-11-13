@@ -1,30 +1,29 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.StringReader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,10 +37,12 @@ import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.url.UrlState;
 import org.jasig.portal.url.UrlType;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
@@ -151,6 +152,37 @@ public class JacksonPortalEventTest {
         event = new PortletHungEvent(eventBuilder, hungWorker);
         assertEventJsonEquals("{\"@c\":\".PortletHungEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\",\"fname\":\"fname\"}", event);
 
+        final ITenant tenant = new ITenant() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public int compareTo(ITenant o) { return 0; }
+            @Override
+            public long getId() { return 1L; }
+            @Override
+            public String getName() { return "Mordor"; }
+            @Override
+            public void setName(String name) {}
+            @Override
+            public String getFname() { return "mordor"; }
+            @Override
+            public void setFname(String fname) {}
+            @Override
+            public String getAttribute(String name) { return null; }
+            @Override
+            public void setAttribute(String name, String value) {}
+            @Override
+            public Map<String, String> getAttributesMap() { return Collections.emptyMap(); }
+        };
+
+        event = new TenantCreatedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantCreatedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
+
+        event = new TenantUpdatedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantUpdatedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
+
+        event = new TenantRemovedTenantEvent(eventBuilder, tenant);
+        assertEventJsonEquals("{\"@c\":\".TenantRemovedTenantEvent\",\"timestamp\":1371745598080,\"serverId\":\"example.com\",\"eventSessionId\":\"1234567890123_system_AAAAAAAAAAA\",\"userName\":\"system\"}", event);
+
     }
     
     private static final Pattern TIMESTAMP_SPLIT = Pattern.compile("(?<=\"timestamp\":)\\d+");
@@ -162,7 +194,7 @@ public class JacksonPortalEventTest {
         actual = TIMESTAMP_SPLIT.matcher(actual).replaceAll(TEST_NOW);
         expected = TIMESTAMP_SPLIT.matcher(expected).replaceAll(TEST_NOW);
         
-        assertEquals(expected, actual);
+        JSONAssert.assertEquals(expected, actual, false);
         
         return actual;
     }

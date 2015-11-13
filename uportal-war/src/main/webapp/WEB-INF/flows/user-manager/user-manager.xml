@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
@@ -56,9 +55,11 @@
             <set name="viewScope.canDelete" value="userAccountHelper.canDeleteUser(user, person.name)"/>
             <set name="viewScope.canImpersonate" value="identitySwapperManager.canImpersonateUser(user, person.name)"/>
             <set name="viewScope.parents" value="userAccountHelper.getParentGroups(person.name)"/>
+            <set name="viewScope.profiles" value="userLayoutStore.getSystemProfileList()" />
         </on-entry>
         <transition on="editUser" to="editLocalAccount"/>
         <transition on="swap" to="swapIdentity"/>
+        <transition on="swapDynamic" to="swapDynamic"/>
         <transition on="viewPermissions" to="viewPermissions"/>
         <transition on="resetLayout" to="resetLayout"/>
         <transition on="confirmRemove" to="confirmRemove"/>
@@ -151,8 +152,20 @@
                 value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
             <set name="flashScope.user"
                 value="personManager.getPerson(servletRequest)"/>
-            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user, person.name)" />
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name)" />
         </on-entry>
+    </end-state>
+    
+    <end-state id="swapDynamic">
+        <on-entry>
+            <set name="flashScope.servletRequest" 
+                value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
+            <set name="flashScope.user"
+                value="personManager.getPerson(servletRequest)"/>
+            <set name="flashScope.profile"
+                value="requestParameters.profile" />
+            <evaluate expression="identitySwapperManager.impersonateUser(externalContext.nativeRequest, user.name, person.name, profile)" />
+        </on-entry>    
     </end-state>
     
     <end-state id="finish"/>

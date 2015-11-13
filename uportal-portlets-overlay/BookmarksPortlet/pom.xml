@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -24,9 +24,10 @@
         </dependency>
         
         <dependency>
-            <groupId>${jdbc.groupId}</groupId>
-            <artifactId>${jdbc.artifactId}</artifactId>
-            <version>${jdbc.version}</version>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
             <scope>compile</scope>
         </dependency>
     </dependencies>

@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false" name="uPortal.cacheManager">
      
@@ -27,6 +26,7 @@
      | General direct-access portal caches are in the first section
      | Hibernate entity caches are in the second section
      | Portal Event Hibernate caches are in the third section
+     | Miscellaneous caches are in the fourth section
      |
      | Please see http://ehcache.sourceforge.net/documentation/configuration.html for detailed information on
      | how to configurigure caches in this file
@@ -34,10 +34,58 @@
      
     <!-- Location of persistent caches on disk -->
     <diskStore path="java.io.tmpdir/uPortal" />
-    
+
+    <!-- Use jGroups for Peer discovery.  For more information, see
+     | http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     | https://wiki.jasig.org/display/UPM40/Clustering
+     + -->
     <cacheManagerPeerProviderFactory
         class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
         properties="file=properties/jgroups.xml" />
+
+    <!--
+     | Start of RMI Replicated Caching for CAS ClearPass in uPortal.
+     |
+     | The RMI Peer provider/listener is required for using CAS ClearPass in a clustered uPortal
+     | environment.  If you are not using CAS ClearPass, or if you don't have your uPortal servers clustered
+     | you do not need RMI Replicated Caching.  Either the automatic or manual peer discovery peer provide factory
+     | must be uncommented, along with the RMI Peer Listener.
+     +-->
+
+    <!--
+     | RMI Replicated Caching Automatic Peer Discovery.  If it works in your network environment, it is a simpler
+     | configuration.
+     | Need to verify it with someone who can test it though. Couldn't on my home network (see UP-4108 notes).
+     | When testing it, suggest enabling debug logging as indicated in UP-4108.
+     +-->
+     <!--
+     <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1, multicastGroupPort=4446, timeToLive=32"
+        propertySeparator="," />
+     -->
+
+    <!--
+     | RMI Replicated Caching Manual Peer Discovery.  Use if automatic does not work for you or you don't want to
+     | allow multicast on your network.  You must also set the IP addresses of the machines in the uPortal cluster
+     | in the filters/*.properties files.
+     +-->
+    <!--
+    <cacheManagerPeerProviderFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+        properties="peerDiscovery=manual,rmiUrls=${environment.build.cas.clearpass.cache.rmi.urls}" />
+    -->
+    <!--
+     | Required if using Manual or Automatic RMI Replicated Caching Peer Discovery for CAS ClearPass in clustered
+     | uPortal environment.
+     +-->
+    <!--
+    <cacheManagerPeerListenerFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+        properties="port=${environment.build.cas.clearpass.cache.rmi.listenerPort}" />
+    -->
+
+    <!-- End of RMI Replicated Caching for CAS ClearPass in uPortal. -->
     
     <defaultCache eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
@@ -45,6 +93,14 @@
     <!-- ****************************************************************** -->
     <!-- ******************** uPortal Framework Caches ******************** -->
     <!-- ****************************************************************** -->
+    
+    <!-- 
+     | Caches username -> LrsActor resolution
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.events.tincan.LrsActorCache"
+        eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- 
      | Caches layout node id -> tab name resolutions done by the tab renderer aggregator
@@ -120,20 +176,30 @@
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
-    
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
     <!-- 
-     | Caches principal specific permission checks
-     | 1 x principal x permission
+     | Caches user-specific permission checks in AuthorizationImpl
+     | 1 x user x permission
      | - not replicated - doesn't represent an updatable data store
      +-->
     <cache name="org.jasig.portal.security.provider.AuthorizationImpl.PRINCIPAL_HAS_PERMISSION"
         eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
-        timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
-    
-    
+
+    <!-- 
+     | Caches low-level permission checks in AnyUnblockedGrantPermissionPolicy
+     | 1 x principal x permission
+     | - not replicated - doesn't represent an updatable data store
+     +-->
+    <cache name="org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT"
+        eternal="false" maxElementsInMemory="50000" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
+    </cache>
+
     <!-- 
      | Caches fragment layouts
      | - 1 x fragment layout
@@ -433,7 +499,16 @@
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-    <!-- 
+    <!--
+     | Caches compiled portlet SpEL Expression objects
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
+    <cache name="portletSpELExpressionCache"
+           eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!--
      | Caches post-layout pipeline events
      | - 1 x user x navigational state
      | - not replicated
@@ -484,7 +559,7 @@
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
     
     <!-- Only ID Cached -->
-    <cache name="org.jasig.portal.concurrency.locking.ClusterMutex##NaturalId"
+    <cache name="org.jasig.portal.concurrency.locking.ClusterMutex-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -494,7 +569,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.version.dao.jpa.VersionImpl##NaturalId"
+    <cache name="org.jasig.portal.version.dao.jpa.VersionImpl-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -569,7 +644,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl##NaturalId"
+    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -867,7 +942,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl##NaturalId"
+    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -978,7 +1053,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl##NaturalId"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1034,7 +1109,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl##NaturalId"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1183,7 +1258,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl##NaturalId"
+    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1204,6 +1279,46 @@
                 replicateRemovals=true "/>
     </cache>
     
+    <!-- 
+     | Caches queries for tenants
+     +-->
+    <cache name="org.jasig.portal.tenants.JpaTenant.Query"
+        eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+    </cache>
+
+    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+    
+    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false" 
+        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true, 
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+
+    <!-- Caches MarketplacePortletDefinition instances;  not replicated -->
+    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
+           eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
+    <!-- caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
+        not serializable, so don't overflow to disk.  -->
+    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
+           eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     
     <!-- ********************************************************** -->
@@ -1389,7 +1504,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1424,7 +1539,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1446,7 +1561,7 @@
     </cache>
         
     <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1472,7 +1587,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1508,7 +1623,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1544,7 +1659,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1618,7 +1733,7 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl##NaturalId"
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl.Query" 
@@ -1632,7 +1747,7 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl##NaturalId"
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.Query" 
@@ -1646,7 +1761,7 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl##NaturalId"
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query" 
@@ -1660,7 +1775,7 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl##NaturalId"
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.Query" 
@@ -1674,7 +1789,7 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl##NaturalId" 
+    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl-NaturalId" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
     <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.groupMappings" 
@@ -1683,4 +1798,97 @@
     <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.Query" 
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- ********************************************************** -->
+    <!-- ***************** Miscellaneous Caches ******************* -->
+    <!-- ********************************************************** -->
+
+    <!--
+     | Caches CAS Proxy-Granting Tickets (PGT) for CAS Clearpass support in a clustered uPortal environment, allowing
+     | a CAS server to make the Clearpass PGT callback to any uPortal server, not just the uPortal server that initiated
+     | the Clearpass PGT Request call to CAS.  Note that this cache data is replicated synchronously (really fired
+     | synchronously - you don't know when the nodes in the cluster actually process the replication) to lessen the
+     | chance that the uPortal node needing the PGT to request the user's password doesn't have it.  The PGT ticket
+     | needs to be retained until requested by the portal to provide to a portlet, then it is not needed anymore since
+     | the password is cached in the SecurityContext.
+     |
+     | Additional configuration steps needed:
+     | - https://wiki.jasig.org/display/CASC/Configuring+the+Jasig+CAS+Client+for+Java+in+the+web.xml,
+     |          section Replicating PGT using "proxyGrantingTicketStorageClass" and Distributed Caching
+     | - https://wiki.jasig.org/display/CASUM/uPortal+ClearPass+Extension
+     | - https://wiki.jasig.org/display/UPM40/Caching+and+Re-playing+Credentials
+     |
+     | For more information, see:
+     | - https://wiki.jasig.org/display/UPM40/Clustering
+     | - http://jasig.275507.n4.nabble.com/Re-uportal-dev-EhCache-and-jgroups-question-td4661918.html
+     |
+     | - 1 x user logins
+     | - CAS PGT replicated synchronously
+     +-->
+    <cache name="org.jasig.cas.client.proxy.EhcacheBackedProxyGrantingTicketStorageImpl.cache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0"
+           memoryStoreEvictionPolicy="LRU" statistics="true">
+        <!-- Uncomment when enabling CAS Clearpass in clustered environment
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+            properties="replicateAsynchronously=false,
+                replicatePuts=true,
+                replicateUpdates=true, replicateUpdatesViaCopy=true,
+                replicateRemovals=true "/>
+        -->
+    </cache>
+
+
+    <!-- Caches failures with skin manager less CSS compilations. -->
+    <cache name="org.jasig.portal.skinManager.failureCache"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- PAGS Group Definition Cache, not replicated -->
+    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- PAGS Store Cache, not replicated -->
+    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="250" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Caches hash strings representing thread calls into the AdHocGroupTester test() method. This is part
+     | of the check for recursion. Leveraging TTL to handle any strings that become orphaned due to exceptions, etc.
+     | - 1 x thread x ad hoc test
+     -->
+    <cache name="org.jasig.portal.groups.pags.testers.AdHocGroupTester"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="1000" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- ****************************************************************** -->
+    <!-- ******************** uPortal Portlet Caches ******************** -->
+    <!-- ****************************************************************** -->
+
+    <!--
+     | Default cache for query results from SqlQueryPortletController. May be per-user (configurable with portlet
+     | preferences).  If using multiple SqlQueryPortlet instances, though not required, you typically would create
+     | a separate cache for each instance to reduce filling the cache and to adjust timeToLive.
+     | - 1 x expression used in the portal
+     | - not replicated
+     +-->
+    <cache name="org.jasig.portal.portlets.sqlquery.SqlQueryPortletController.queryResults"
+           eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
 </ehcache>

@@ -1,0 +1,21 @@
+newTenant (displayName, url) ::= <<
+<html>
+<body>
+
+<p>Dear $displayName$,</p>
+
+<p>A new tenant account has been created on your behalf. Please <a href="$url$">use this secure URL</a> to setup a new password.</p>
+
+<p>Please enter the password you want for your account twice on the page that opens.</p> 
+
+<p>If you cannot access the link above, you can paste the following address into your browser: $url$</p>
+
+<p>Welcome to uMobile and the conference!</p>
+
+<p>- The uMobile Team<br/>
+http://www.jasig.org/umobile
+</p>
+
+</body>
+</html>
+>>

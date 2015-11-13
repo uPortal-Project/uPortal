@@ -1,30 +1,81 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- START: VALUES BEING PASSED FROM BACKEND -->
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <c:set var="n"><portlet:namespace/></c:set>
+<style>
+#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
+    display: none;
+}
+#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
+    display: inline-block;
+}
+#${n}portletBrowser .dataTables_wrapper {
+    width: 100%;
+}
+#${n}portletBrowser .dataTables_paginate .paginate_button {
+    margin: 2px;
+    color: #428BCA;
+    cursor: pointer;
+    *cursor: hand;
+}
+#${n}portletBrowser .dataTables_paginate .paginate_active {
+    margin: 2px;
+    color:#000;
+}
+
+#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
+    text-decoration: line-through;
+}
+
+#${n}portletBrowser table tr td a {
+    color: #428BCA;
+}
+
+#${n}portletBrowser .dataTables-left {
+    float:left;
+}
+
+#${n}portletBrowser .column-filter-widget {
+    vertical-align: top;
+    display: inline-block;
+    overflow: hidden;
+    margin-right: 5px;
+}
+
+#${n}portletBrowser .filter-term {
+    display: block;
+    text-align:bottom;
+}
+
+#${n}portletBrowser .dataTables_length label {
+    font-weight: normal;
+}
+#${n}portletBrowser .datatable-search-view {
+    text-align:right;
+}
+</style>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -38,12 +89,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div id="${n}portletBrowser" class="fl-widget portlet" role="section">
 <form id="${n}form">
   
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
-  	<h2 role="heading"><spring:message code="most.frequently.added"/></h2>
+    <h2 role="heading"><spring:message code="most.frequently.added"/></h2>
   </div> <!-- end: portlet-title -->
   
   <!-- Portlet Toolbar -->
@@ -58,63 +109,22 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </select>
   </div> <!-- end: portlet-toolbar -->
         
-	<!-- Portlet Body -->
+    <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  
-  	<!-- Portlet Messages -->
-  	<div class="portlet-msg-info" role="status" id="${n}loadingMessage">
-    	<h3><spring:message code="loading.information"/></h3>
-    	<p><spring:message code="please.wait.while.the.system.finishes.loading.the.requested.data"/></p>
-    </div> <!-- end: portlet-msg -->
-    
+
     <!-- Portlet Section -->
     <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">      
-      <!-- Portlet Section Options -->
-      <div class="view-pager flc-pager-top portlet-section-options">
-        <ul id="pager-top" class="fl-pager-ui">
-          <li class="flc-pager-previous"><a href="#">&lt; <spring:message code="previous"/></a></li>
-          <li>
-            <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-              <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
-              <li class="flc-pager-pageLink-disabled">2</li>
-              <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
-            </ul>
-          </li>
-          <li class="flc-pager-next"><a href="#"><spring:message code="next"/> &gt;</a></li>
-          <li>
-            <span class="flc-pager-summary"><spring:message code="show"/></span>
-            <span> <select class="pager-page-size flc-pager-page-size">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            </select></span> <spring:message code="per.page"/>
-          </li>
-        </ul>
-      </div><!-- end: portlet-section-options -->
 
       <div class="portlet-section-body">
-        <table id="${n}portletsTable" summary="" xmlns:rsf="http://ponder.org.uk" style="width:100%;">
+        <table id="${n}portletsTable" style="width:100%;">
           <thead>
             <tr rsf:id="header:">
-              <th id="${n}portletTitle" class="flc-pager-sort-header"><a rsf:id="title" title="Click to sort" href="javascript:;"><spring:message code="title"/></a></th>
-              <th id="${n}portletCount" class="flc-pager-sort-header"><a rsf:id="count" title="Click to sort" href="javascript:;"><spring:message code="number.times"/></a></th>
+              <th><spring:message code="title"/></th>
+              <th><spring:message code="number.times"/></th>
             </tr>
           </thead>
-          <tbody id="${n}portletsBody">
-            <tr rsf:id="row:">
-              <td headers="${n}portletTitle" rsf:id="title"></td>
-              <td headers="${n}portletCount" rsf:id="count"></td>
-            </tr>
-          </tbody>
         </table>
       </div>
-      
-      <div id="${n}noneAdded" style="display: none;">
-        <p><spring:message code="no.apps.have.been.added.by.users.in.the.specified.time.period"/></p>
-      </div> 
-
       <c:if test="${showAdminFeatures}">
         <!-- Portlet Buttons -->
         <div class="portlet-button-group">
@@ -138,90 +148,99 @@ up.jQuery(function() {
 
     var $ = up.jQuery;
     var portletDeepLinkUrl = '<c:url value="/p/PORTLETFNAME"/>';
-    var pager;
 
-    var fetchStats = function() {
-        var counts;
-
-        $("#${n}loadingMessage").slideDown(500);
-
-        $.ajax({
-            url: '${popularPortletCountsUrl}',
-            async: false,
-            data: $("#${n}form").serialize(),
-            type: 'GET',
-            dataType: "json",
-            success: function(data) { 
-                counts = data.counts; 
-            },
-            error: function(request, textStatus, error) {
-                alert("ERROR:  " + textStatus);
-            }
-        });
-        
-        $("#${n}loadingMessage").slideUp(1000);
-        
-        if (counts) {
-            if (counts.length > 0) {
-                $("#${n}noneAdded").hide();
-            } else {
-                $("#${n}noneAdded").show();
-            }
+    var portletList_configuration = {
+        column: {
+            title: 0,
+            times: 1
+        },
+        main: {
+            table : null,
+            pageSize: 10
         }
+    };
 
-        return counts;
-    }
+    var getDeepLinkAnchorTag = function(portletFName, portletDescription, portletTitle) {
+        var url = portletDeepLinkUrl.replace("PORTLETFNAME", portletFName);
+        return '<a href="' + url + '" title="' + portletDescription + '">' + portletTitle + '</a>';
+    };
 
-    var updateTable = function() {
-        var newPortlets = fetchStats();
-        var newModel = up.fluid.copy(pager.model);
-        newModel.totalRange = newPortlets.length;
-        newModel.pageIndex = 0;
-        newModel.pageCount = Math.max(1, Math.floor((newModel.totalRange - 1)/ newModel.pageSize) + 1);
-        up.fluid.clear(pager.options.dataModel);
-        up.fluid.model.copyModel(pager.options.dataModel, newPortlets);
-        pager.permutation = undefined;
-        pager.events.onModelChange.fire(newModel, pager.model, pager);
-        up.fluid.model.copyModel(pager.model, newModel)
-    }
-
-    var options = {
-        dataModel: fetchStats(),
-        annotateColumnRange: 'title',
-        columnDefs: [
-            { key: "title", valuebinding: "*.portletTitle", sortable: true,
-                components: function(row, index) {
-                    return {
-                        markup: '<a href="' + portletDeepLinkUrl.replace("PORTLETFNAME", '${"${*.portletFName}"}') + '" title="\${*.portletDescription}">\${*.portletTitle}</a>'
-                    }
+    var initializeTable = function() {
+        // To allow the datatable to be repopulated to search multiple times
+        // clear and destroy the original
+        if (portletList_configuration.main.table != undefined && typeof portletList_configuration.main.table.fnClearTable !== 'undefined') {
+            portletList_configuration.main.table.fnClearTable();
+            portletList_configuration.main.table.fnDestroy();
+        }
+        portletList_configuration.main.table = $("#${n}portletsTable").dataTable({
+            iDisplayLength: portletList_configuration.main.pageSize,
+            aLengthMenu: [5, 10, 20, 50],
+            bServerSide: false,
+            sAjaxSource: '${popularPortletCountsUrl}',
+            sAjaxDataProp: "counts",
+            bDeferRender: false,
+            bProcessing: true,
+            bAutoWidth:false,
+            sPaginationType: 'full_numbers',
+            oLanguage: {
+                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+                oPaginate: {
+                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            { key: "count", valuebinding: "*.count", sortable: true }
-        ],
-        bodyRenderer: {
-          type: "fluid.pager.selfRender",
-          options: {
-              selectors: {
-                 root: "#${n}portletsTable"
-              },
-              row: "row:"
-            }
-            
-        },
-        pagerBar: {type: "fluid.pager.pagerBar", options: {
-          pageList: {type: "fluid.pager.renderedPageList",
-            options: { 
-              linkBody: "a"
-            }
-          }
-        }}
+            aoColumns: [
+                { mData: 'portletFName', sType: 'string', sWidth: '50%' },  // Name
+                { mData: 'count', sType: 'string', sWidth: '50%' }  // Times 
+            ],
+            fnInitComplete: function (oSettings) {
+                portletList_configuration.main.table.fnDraw();
+            },
+            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = $.ajax({
+                    url: sUrl,
+                    data: $("#${n}form").serialize(),
+                    dataType: "json",
+                    cache: false,
+                    type: oSettings.sServerMethod,
+                    success: function (json) {
+                        if (json.sError) {
+                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
+                        }
+
+                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
+                        fnCallback(json);
+                    },
+                    error: function (xhr, error, thrown) {
+                        lib.handleError(xhr, error, thrown);
+                    }
+                });
+            },
+            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
+                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
+                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
+                infoMessage = infoMessage.replace(/_START_/g, iStart).
+                                      replace(/_END_/g, iEnd).
+                                      replace(/_TOTAL_/g, iTotal).
+                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
+                return infoMessage;
+            },
+            // Add links to the proper columns after we get the data
+            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                // get deeplink anchor tag
+                $('td:eq(0)', nRow).html( getDeepLinkAnchorTag(aData.portletFName, aData.portletDescription, aData.portletTitle) );
+            },
+            // Setting the top and bottom controls
+            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            // Filtering
+            oColumnFilterWidgets: { }
+        });
     };
-    pager = up.fluid.pager("#${n}popularPortlets", options);
 
-    $("#${n}days").change(updateTable);
-    $("#${n}fromDate").change(updateTable);
-
-    $(".cal-datepicker").datepicker();
-
+    initializeTable();
+    $("#${n}days").change(initializeTable);
+    // Adding formatting to sDom
+    $("div.toolbar-br").html('<BR>');
+    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>

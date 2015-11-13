@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -53,6 +53,27 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     
     private static final String LOGGER_NAME = UserGroupSkinMappingTransformerConfigurationSource.class.getName();
     
+    private Logger logger;
+    
+    /**
+     * Inits and/or returns already initialized logger.  <br>
+     * You have to use this method in order to use the logger,<br> 
+     * you should not call the private variable directly.<br>
+     * This was done because Tomcat may instantiate all listeners before calling contextInitialized on any listener.<br>
+     * Note that there is no synchronization here on purpose. The object returned by getLog for a logger name is<br>
+     * idempotent and getLog itself is thread safe. Eventually all <br>
+     * threads will see an instance level logger variable and calls to getLog will stop.
+     * @return the log for this class
+     */
+    protected Logger getLogger() {
+    	Logger l = this.logger;
+	  if (l == null) {
+	    l = LoggerFactory.getLogger(LOGGER_NAME);
+	    this.logger = l;
+	  }
+	  return l;
+	}
+    
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -66,7 +87,6 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     }
 
     protected String getSkinName(HttpServletRequest request) {
-    	final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
     	
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
@@ -79,14 +99,14 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
             final IGroupMember group = groupToSkinEntry.getKey();
             if (groupMember.isDeepMemberOf(group)) {
                 final String skin = groupToSkinEntry.getValue();
-                logger.debug("Setting skin override {} for {} because they are a member of {}",
+                getLogger().debug("Setting skin override {} for {} because they are a member of {}",
                         new Object[] { skin, person.getUserName(), group });
                 //Cache the resolution
                 return skin;
             }
         }
 
-        logger.debug("No user {} is not a member of any configured groups, no skin override will be done", person.getUserName());
+        getLogger().debug("No user {} is not a member of any configured groups, no skin override will be done", person.getUserName());
         return null;
     }
     
@@ -108,7 +128,6 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
         }
 
         protected IGroupMember findGroup(String group) {
-        	final Logger logger = LoggerFactory.getLogger(LOGGER_NAME);
             //Find group by ID
             final IGroupMember groupMember = GroupService.findGroup(group);
             if (groupMember != null) {
@@ -118,13 +137,13 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
             //No matching ID, search by name
             final EntityIdentifier[] results = GroupService.searchForGroups(group, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
-                logger.warn("Configured group '" + group + "' cannot be found for skin mapping. This mapping will be ignored");
+            	getLogger().warn("Configured group '" + group + "' cannot be found for skin mapping. This mapping will be ignored");
                 return null;
             }
             
             //Warn if multiple results are found
             if (results.length > 1) {
-                logger.warn(results.length + " groups were found for skin mapping group '" + group + "'. The first result will be used. " + Arrays.toString(results));
+            	getLogger().warn(results.length + " groups were found for skin mapping group '" + group + "'. The first result will be used. " + Arrays.toString(results));
             }
             
             return GroupService.getGroupMember(results[0]);

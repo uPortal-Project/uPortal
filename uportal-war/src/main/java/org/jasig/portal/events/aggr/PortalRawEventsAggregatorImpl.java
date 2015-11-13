@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr;
 
 import java.io.Serializable;
@@ -71,6 +70,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 @Service
@@ -86,7 +86,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
     private AggregationIntervalHelper intervalHelper;
     private EventSessionDao eventSessionDao;
     private DateDimensionDao dateDimensionDao;
-    private Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators = Collections.emptySet();
+    private Set<IntervalAwarePortalEventAggregator<PortalEvent>> intervalAwarePortalEventAggregators = Collections.emptySet();
+    private Set<SimplePortalEventAggregator<PortalEvent>> simplePortalEventAggregators = Collections.emptySet();
     private List<ApplicationEventFilter<PortalEvent>> applicationEventFilters = Collections.emptyList();
     
     private int eventAggregationBatchSize = 10000;
@@ -144,8 +145,22 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
     }
 
     @Autowired
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void setPortalEventAggregators(Set<IPortalEventAggregator<PortalEvent>> portalEventAggregators) {
-        this.portalEventAggregators = portalEventAggregators;
+        final com.google.common.collect.ImmutableSet.Builder<IntervalAwarePortalEventAggregator<PortalEvent>> intervalAwarePortalEventAggregatorsBuilder = ImmutableSet.builder();
+        final com.google.common.collect.ImmutableSet.Builder<SimplePortalEventAggregator<PortalEvent>> simplePortalEventAggregatorsBuilder = ImmutableSet.builder();
+
+        for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+            if (portalEventAggregator instanceof IntervalAwarePortalEventAggregator) {
+                intervalAwarePortalEventAggregatorsBuilder.add((IntervalAwarePortalEventAggregator)portalEventAggregator);
+            }
+            else if (portalEventAggregator instanceof SimplePortalEventAggregator) {
+                simplePortalEventAggregatorsBuilder.add((SimplePortalEventAggregator)portalEventAggregator);
+            }
+        }
+        
+        this.intervalAwarePortalEventAggregators = intervalAwarePortalEventAggregatorsBuilder.build();
+        this.simplePortalEventAggregators = simplePortalEventAggregatorsBuilder.build();
     }
 
     @Resource(name="aggregatorEventFilters")
@@ -333,7 +348,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
 	                    
 	                logger.debug("Cleaning unclosed {} aggregations between {} and {}",  new Object[] { interval, start, end});
 	
-	                for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+	                for (final IntervalAwarePortalEventAggregator<PortalEvent> portalEventAggregator : intervalAwarePortalEventAggregators) {
 	                    checkShutdown();
 	                    
 	                    final Class<? extends IPortalEventAggregator<?>> aggregatorType = getClass(portalEventAggregator);
@@ -492,7 +507,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
     		//Create the set of intervals that are actually being aggregated
     		final Set<AggregationInterval> handledIntervalsNotIncluded = EnumSet.allOf(AggregationInterval.class);
     		final Set<AggregationInterval> handledIntervalsBuilder = EnumSet.noneOf(AggregationInterval.class);
-    		for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+    		for (final IntervalAwarePortalEventAggregator<PortalEvent> portalEventAggregator : intervalAwarePortalEventAggregators) {
     		    final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
     		    
     		    //Get aggregator specific interval info config
@@ -650,8 +665,8 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
             //Load or create the event session
             EventSession eventSession = getEventSession(item);
             
-            //Give each aggregator a chance at the event
-            for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+            //Give each interval aware aggregator a chance at the event
+            for (final IntervalAwarePortalEventAggregator<PortalEvent> portalEventAggregator : intervalAwarePortalEventAggregators) {
                 if (checkSupports(portalEventAggregator, item)) {
                     final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                     
@@ -673,6 +688,13 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
                     
                     //Aggregation magic happens here!
                     portalEventAggregator.aggregateEvent(item, eventSession, eventAggregationContext, aggregatorIntervalInfo);
+                }
+            }
+            
+            //Give each simple aggregator a chance at the event
+            for (final SimplePortalEventAggregator<PortalEvent> portalEventAggregator : simplePortalEventAggregators) {
+                if (checkSupports(portalEventAggregator, item)) {
+                    portalEventAggregator.aggregateEvent(item, eventSession);
                 }
             }
         }
@@ -710,7 +732,7 @@ public class PortalRawEventsAggregatorImpl extends BaseAggrEventsJpaDao implemen
         }
         
         private void doHandleIntervalBoundary(AggregationInterval interval, Map<AggregationInterval, AggregationIntervalInfo> intervals) {
-            for (final IPortalEventAggregator<PortalEvent> portalEventAggregator : portalEventAggregators) {
+            for (final IntervalAwarePortalEventAggregator<PortalEvent> portalEventAggregator : intervalAwarePortalEventAggregators) {
                 
                 final Class<? extends IPortalEventAggregator<?>> aggregatorType = PortalRawEventsAggregatorImpl.this.getClass(portalEventAggregator);
                 final AggregatedIntervalConfig aggregatorIntervalConfig = this.intervalsForAggregatorHelper.getAggregatorIntervalConfig(aggregatorType);

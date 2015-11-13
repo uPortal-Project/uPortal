@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.3.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -71,6 +71,31 @@
                          libraries -->
                     <dependentWarExcludes>junkname.jar</dependentWarExcludes>
                 </configuration>
+            </plugin>
+    	    <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <version>1.3.3</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/webapp/less</sourceDirectory>
+                    <!--
+                     | Sadly, the CCS must be output into the src/ tree (rather than target/) so it can be subsequently
+                     | copied over by the maven-war-plugin;  otherwise, the plugin won't be aware of it and will
+                     | overwrite it with the overlay.
+                     +-->
+                    <outputDirectory>${project.basedir}/src/main/webapp/css</outputDirectory>
+                    <compress>true</compress>
+                    <includes>
+                        <include>*.less</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.portals.pluto</groupId>

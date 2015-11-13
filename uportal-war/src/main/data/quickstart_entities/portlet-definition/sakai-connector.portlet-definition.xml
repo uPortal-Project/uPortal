@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<portlet-definition version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns7="https://source.jasig.org/schemas/uportal/io/subscribed-fragment" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns8="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor">
+    <title>Sakai Connector (demo)</title>
+    <name>Sakai Connector (demo)</name>
+    <fname>sakai-connector</fname>
+    <desc>Embed tools from any of your Sakai sites directly into the portal. Demo connection to Sakai Nightly demo site.</desc>
+    <type>Portlet</type>
+    <timeout>5000</timeout>
+    <portlet-descriptor>
+        <ns2:webAppName>/sakai-connector</ns2:webAppName>
+        <ns2:portletName>sakai-connector</ns2:portletName>
+    </portlet-descriptor>
+    <category>Academics</category>
+    <category>Demonstration</category>
+    <group>Authenticated Users</group>
+    <permissions>
+        <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
+            <group>Authenticated Users</group>
+        </permission>
+    </permissions>
+    <parameter>
+        <name>alternate</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>blockImpersonation</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>configurable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>disableDynamicTitle</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>editable</name>
+        <value>true</value>
+    </parameter>
+    <parameter>
+        <name>hasAbout</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hasHelp</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>hideFromMobile</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>highlight</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>printable</name>
+        <value>false</value>
+    </parameter>
+    <parameter>
+        <name>showChrome</name>
+        <value>true</value>
+    </parameter>
+    <portlet-preference>
+        <name>adminPassword</name>
+        <readOnly>false</readOnly>
+        <value>admin</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>adminUsername</name>
+        <readOnly>false</readOnly>
+        <value>admin</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>allowedTools</name>
+        <readOnly>false</readOnly>
+        <value>sakai.announcements:sakai.singleuser:sakai.assignment.grades:blogger:sakai.dropbox:sakai.mailbox:sakai.forums:sakai.gradebook.tool:sakai.podcasts:sakai.poll:sakai.resources:sakai.schedule:sakai.samigo:sakai.rwiki</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>endpoint</name>
+        <readOnly>false</readOnly>
+        <value>http://nightly2.sakaiproject.org:8085/imsblti/provider/</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>key</name>
+        <readOnly>false</readOnly>
+        <value>uportal-integration</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>loginUrl</name>
+        <readOnly>false</readOnly>
+        <value>http://nightly2.sakaiproject.org:8085/sakai-axis/SakaiLogin.jws?wsdl</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>portletTitle</name>
+        <readOnly>false</readOnly>
+        <value>Sakai Connector (demo)</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>scriptUrl</name>
+        <readOnly>false</readOnly>
+        <value>http://nightly2.sakaiproject.org:8085/sakai-axis/SakaiScript.jws?wsdl</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>secret</name>
+        <readOnly>false</readOnly>
+        <value>secret</value>
+    </portlet-preference>
+</portlet-definition>

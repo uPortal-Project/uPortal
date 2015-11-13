@@ -1,24 +1,24 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout.node;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.dlm.Constants;
 import org.w3c.dom.Document;
@@ -52,6 +52,13 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         this.immutable=d.isImmutable();
         this.unremovable=d.isUnremovable();
         this.hidden=d.isHidden();
+
+        // copy over DLM attributes
+        this.deleteAllowed = d.isDeleteAllowed();
+        this.editAllowed = d.isEditAllowed();
+        this.moveAllowed = d.isMoveAllowed();
+        this.addChildAllowed = d.isAddChildAllowed();
+        this.precedence = d.getPrecedence();
     }
 
     UserLayoutNodeDescription( Element xmlNode )
@@ -299,7 +306,20 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
         }
     }
 
+    @Override
     public String toString() {
-    	return "["+id+","+name+"]";
+        return new ToStringBuilder(this).
+                append("ID", this.id).
+                append("name", this.name).
+                append("channel_or_folder?", this.getType()).
+                append("precedence", this.precedence).
+                append("moveAllowed", this.moveAllowed).
+                append("removable", !this.unremovable).
+                append("deleteAllowed", this.deleteAllowed).
+                append("immutable", this.immutable).
+                append("editAllowed", this.editAllowed).
+                append("precedence", this.precedence).
+                toString();
+
     }
 }

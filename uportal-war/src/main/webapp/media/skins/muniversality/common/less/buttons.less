@@ -1,0 +1,49 @@
+/* jQuery Mobile based button styles. Flattens out their color classes (A,B,C,D,E)
+ * With SASS, truly separates the presentation from the content:
+ * no color classes needed in the markup.
+ * Pass in the desired type of button based on the context.
+ */
+
+/* Apply baseline button styling once to every kind of button. */
+.up {
+    .ui-btn {
+        border: 1px solid;
+        font-family: Helvetica, Arial, sans-serif;
+        font-weight: bold;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .ui-btn-active {
+        .button-variant(@c1darker, @c1, @white, @black, @c1, @c1, @c1darker, @white);
+    }
+}
+
+.button-variant(@btn-border-color, @btn-background-color, @btn-text-color, @btn-text-shadow, @btn-gradient-color1, @btn-gradient-color2, @btn-gradient-color3, @ui-link-inherit-color) {
+    border-color: @btn-border-color;
+    background: @btn-background-color;
+    color: @btn-text-color;
+    text-shadow	: 0 -1px 0 @btn-text-shadow;
+    .gradient(@btn-gradient-color1, @btn-gradient-color2, @btn-gradient-color3);
+
+    a.ui-link-inherit {
+        color: @ui-link-inherit-color;
+    }
+}
+
+/* Default button styles - can be overridden in the skin.less file */
+.ui-btn-up-a, .ui-btn-up-b, .ui-btn-up-c, .ui-btn-up-d, .ui-btn-up-e {
+    .button-variant(@graylight, @text, @white, @black, @white, @white, @graylightest, @graydarkest);
+}
+
+.ui-btn-hover-a, .ui-btn-hover-b, .ui-btn-hover-c, .ui-btn-hover-d, .ui-btn-hover-e {
+    .button-variant(@graydark, @graylighter, @white, @white, @graylightest, @graylightest, @graylighter, @graydarkest);
+}
+
+.ui-btn-down-a, .ui-btn-down-b, .ui-btn-down-c, .ui-btn-down-d, .ui-btn-down-e {
+    .button-variant(@c1darker, @graylighter, @text, @white, @graylighter, @graylighter, @white, @graydarkest);
+}
+
+.ui-btn-active {
+    .button-variant(@c1darker, @c1, @white, @black, @c1, @c1, @c1darker, @white);
+}

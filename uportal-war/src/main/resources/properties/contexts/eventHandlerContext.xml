@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns="http://www.springframework.org/schema/beans"
   xmlns:aop="http://www.springframework.org/schema/aop"
@@ -34,30 +33,51 @@
      | This section of this file relates to handling portal events as they are fired.
      + ================================================================================== -->
 
-    <!-- 
-     | List of event filters to apply to all event listeners that handle newly fired events.
-     +-->
-    <util:list id="listenerEventFilters">
-        <!-- Can be used to filter events based on event type using an instanceof check -->
-        <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
-            <property name="supportedEvents">
-                <list>
-                    <value>org.jasig.portal.events.PortalEvent</value>
-                </list>
-            </property>
-        </bean>
-        <!-- Can be used to filter events based on who generated the event
-        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
-            <property name="ignoredUserNamePatterns">
-                <list>
-                    <value>user\..*</value>
-                    <value>vptest-user.*</value>
-                </list>
-            </property>
-            <property name="supportGuest" value="true" />
-        </bean>
-         -->
-    </util:list>
+<!--
+ | List of event filters to apply to all event listeners that handle newly fired events.
+ +-->
+<util:list id="listenerEventFilters">
+    <!-- Can be used to filter events based on event type using an instanceof check -->
+    <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
+        <property name="supportedEvents">
+            <list>
+                <value>org.jasig.portal.events.PortalEvent</value>
+            </list>
+        </property>
+        <!-- Can configure a list of events to ignore based on event type using an instanceof check. For example
+             if you are using Google Analytics, you can ignore most PortletExecutionEvents (retain
+             PortletActionExecutionEvent for logging Search Events for the search terms) and some other Events.
+             You may want to retain login, logout, layout changes, Portlet hung, and tenant events.
+             Note that the PortletExecutionEvents include information about time to execute the portlet event
+             (action, render, event, and resource events) which could be helpful to report on times that
+             individual portlets are taking to do their operations.  At the moment though there are currently
+             no reports shipping in uPortal to aggregate and report on that information (you could write it and
+             contribute it though!).  It is an example of information that Google Analytics would not currently
+             report on.
+        <property name="ignoredEvents">
+            <list>
+                <value>org.jasig.portal.events.PortletEventExecutionEvent</value>
+                <!- - <value>org.jasig.portal.events.PortletActionExecutionEvent</value> retain for Search terms - ->
+                <value>org.jasig.portal.events.PortletRenderExecutionEvent</value>
+                <value>org.jasig.portal.events.PortletRenderHeaderExecutionEvent</value>
+                <value>org.jasig.portal.events.PortletResourceExecutionEvent</value>
+                <value>org.jasig.portal.events.PortalRenderEvent</value>
+            </list>
+        </property>
+        -->
+    </bean>
+    <!-- Can be used to filter events based on who generated the event
+    <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+        <property name="ignoredUserNamePatterns">
+            <list>
+                <value>user\..*</value>
+                <value>vptest-user.*</value>
+            </list>
+        </property>
+        <property name="supportGuest" value="true" />
+    </bean>
+     -->
+</util:list>
     
     <!--
      | Event Listeners, these are beans that implement the Spring ApplicationListener interface to handle application
@@ -71,7 +91,7 @@
     -->
     
     <!-- 
-     | 
+     | Queues raw events that pass the filter criteria for storing into the database.
      +-->
     <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler">
         <property name="applicationEventFilters" ref="listenerEventFilters" />
@@ -135,4 +155,7 @@
         <property name="executionType" value="RESOURCE" />
     </bean>
     <bean id="searchRequestAggregator" class="org.jasig.portal.events.aggr.action.SearchRequestAggregator"/>
+    <bean id="tinCanEventAggregator" class="org.jasig.portal.events.tincan.TinCanPortalEventAggregator">
+        <property name="tinCanEventScheduler" ref="tinCanEventScheduler"/>
+    </bean>
 </beans>

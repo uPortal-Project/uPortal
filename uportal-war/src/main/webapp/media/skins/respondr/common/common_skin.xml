@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<resources xmlns="http://www.jasig.org/uportal/web/skin"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
+
+    <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
+    
+    <!--
+    | NOTE:  The following order is important!
+    +-->
+    <js included="plain">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery/1.10.2/jquery-1.10.2.min.js</js>
+
+    <!-- Must follow loading of jQuery -->
+    <js included="plain">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery-migrate/jquery-migrate-1.2.1.min.js</js>
+
+    <js included="plain" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.js</js>
+    <js included="aggregated" resource="true">/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js</js>
+
+    <!-- Uncomment for internationalization.  Removed for minor efficiency especially for mobile networks. -->
+    <!--
+    <js included="plain" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.js</js>
+    <js included="aggregated" resource="true">/ResourceServingWebapp/rs/jqueryui/1.10.3/i18n/jquery-ui-i18n.min.js</js>
+    -->
+
+    <js included="plain">/ResourceServingWebapp/rs/bootstrap/3.3.5/js/bootstrap.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/bootstrap/3.3.5/js/bootstrap.min.js</js>
+
+    <js included="plain">/ResourceServingWebapp/rs/bootstrap-plugins/accessibility/1.0.2/js/bootstrap-accessibility.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/bootstrap-plugins/accessibility/1.0.2/js/bootstrap-accessibility.min.js</js>
+
+    <!-- Fluid must come after Bootstrap.  Issue found with Respondr.  When you click on the 'Manage Portlets' link,
+     | fluid was calling that.container.tooltip("widget"); which should call jQueryUI's tooltip function, but
+     | bootstrap.js overwrote it and caused a Javascript error.  Loading bootstrap first will overwrite tooltip
+     | (and perhaps other functions), then loading fluid will overwrite bootstrap so fluid works.
+     | todo: if we will use bootstrap tooltip JavaScript, bootstrap does have support for a noconflict mode (see
+     | http://getbootstrap.com/javascript/#js-noconflict) and we can save the bootstrap functions to invoke them
+     | manually.
+     -->
+    <js included="plain" resource="true">/rs/fluid/1.5.0/js/fluid-custom.js</js>
+    <js included="aggregated" resource="true">/rs/fluid/1.5.0/js/fluid-custom.min.js</js>
+
+    <js included="plain" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.js</js>
+    <js included="aggregated" resource="true">/rs/underscore/1.5.2/underscore-1.5.2.min.js</js>
+
+    <js included="plain" resource="true">/rs/backbone/1.1.0/backbone-1.1.0.js</js>
+    <js included="aggregated" resource="true">/rs/backbone/1.1.0/backbone-1.1.0.min.js</js>
+
+    <js included="plain">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.js</js>
+    <js included="aggregated">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.min.js</js>
+
+    <!-- Data Table Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.min.js</js>
+
+    <!-- Rating Includes -->
+    <js included="plain" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.js</js>
+    <js included="aggregated" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.min.js</js>
+
+    <!-- Data Table Bootstrap Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
+    <css included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+
+    <!-- Data Table ColumnFilterWidgets Includes -->
+    <js included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
+    <css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
+
+    <!-- jsTree Includes (entity-selector) -->
+    <js included="plain" resource="true">/scripts/jstree/jstree.js</js>
+    <js included="aggregated" resource="true">/scripts/jstree/jstree.min.js</js>
+
+    <js included="plain" resource="true">/rs/conflict-resolution/js/resolve-conflicts.js</js>
+    <js included="aggregated" resource="true">/rs/conflict-resolution/js/resolve-conflicts.min.js</js>
+
+    <js import="true">../../common/common_skin.xml</js>
+
+</resources>

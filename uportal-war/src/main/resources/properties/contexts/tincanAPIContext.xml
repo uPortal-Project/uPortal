@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--
+      - Example configuration for a remote LRS.
+      -
+      - The "id" property of the *TinCanAPIProvider is used to configure the LRS provider.
+      - The actual configuration properties are stored in a properties file (eg. portal.properties)
+      - See the javadoc in DefaultTinCanAPIProvider or portal.properties for configuration details.
+      -
+      - The "id" property of the *AuthInterceptor is used to configure the authentication
+      - interceptor.  The actual configuration properties are stored in a properties file.
+      - See portal.properties for example configurations.
+      -->
+    <bean id="scormCloudTinCanProvider" class="org.jasig.portal.events.tincan.providers.DefaultTinCanAPIProvider">
+        <property name="id" value="scorm-cloud-lrs"/>
+        <property name="restTemplate">
+            <bean class="org.springframework.web.client.RestTemplate">
+                <property name="interceptors">
+                    <list>
+                        <!-- Enable a MAXIMUM of 1 of the following interceptors -->
+                        <!-- -->
+                        <bean class="org.springframework.web.client.interceptors.BasicAuthInterceptor">
+                            <property name="id" value="scorm-cloud-lrs"/>
+                        </bean>
+                        <!-- -->
+
+                        <!--
+                        <bean class="org.springframework.web.client.interceptors.ZeroLeggedOAuthInterceptor">
+                            <property name="id" value="scorm-cloud-lrs"/>
+                        </bean>
+                        -->
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <!--
+      - If you enable the batching provider, you also need to add a scheduler
+      - for how often to check the queue.
+      -
+      - This example, schedules the scormCloudTinCanBatchProvider to flush its
+      - LRS queue every 2 seconds.
+      -
+      - If you have multiple batching providers defined, each provider will need
+      - to be listed here.
+      -
+      - IMPORTANT: If using the BatchTinCanAPIProvider, this MUST be enabled!
+      -
+      - TODO:  When we upgrade to a newer spring (3.2+) should switch the annotated
+      - configuration.
+      -->
+    <!--
+    <task:scheduled-tasks scheduler="uPortalTaskScheduler">
+        <task:scheduled ref="scormCloudTinCanBatchProvider" method="sendBatch" fixed-delay="${org.jasig.portal.tincan-api.batch-scheduler.delayMS:2000}"/>
+    </task:scheduled-tasks>
+    -->
+
+    <!--
+     - Example of a batching provider.  The batching provider will queue up LRS events.  Every
+     - ${org.jasig.portal.tincan-api.batch-scheduler.delayMS} it will check the queue and then
+     - post all LRSStatements to the LRS at once.
+     -->
+    <bean id="scormCloudTinCanBatchProvider" class="org.jasig.portal.events.tincan.providers.BatchTinCanAPIProvider">
+        <property name="id" value="scorm-cloud-lrs"/>
+        <property name="restTemplate">
+            <bean class="org.springframework.web.client.RestTemplate">
+                <property name="interceptors">
+                    <list>
+                        <!-- Enable a MAXIMUM of 1 of the following interceptors -->
+                        <!-- -->
+                        <bean class="org.springframework.web.client.interceptors.BasicAuthInterceptor">
+                            <property name="id" value="scorm-cloud-lrs"/>
+                        </bean>
+                        <!-- -->
+
+                        <!--
+                        <bean class="org.springframework.web.client.interceptors.ZeroLeggedOAuthInterceptor">
+                            <property name="id" value="scorm-cloud-lrs"/>
+                        </bean>
+                        -->
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <!-- The list of "providers" to handle xAPI events -->
+    <util:list id="tinCanProviders">
+        <!-- provider that just logs xAPI events -->
+        <bean class="org.jasig.portal.events.tincan.providers.LogEventTinCanAPIProvider"/>
+
+        <!-- provider that sends individual xAPI events to scorm-cloud -->
+        <ref bean="scormCloudTinCanProvider"/>
+
+        <!-- provider that sends xAPI events to scorm-cloud in batches -->
+        <!--<ref bean="scormCloudTinCanBatchProvider"/>-->
+    </util:list>
+
+
+    <!--
+      - Example config to control the list of events that should be passed to xAPI
+      -
+      - Enable the set of events that should be converted to xAPI events
+      -->
+    <util:list id="tinCanEventConverters">
+        <!-- send xAPI events on login -->
+        <bean class="org.jasig.portal.events.tincan.converters.LoginEventConverter">
+            <property name="verb" value="INITIALIZED"/>
+        </bean>
+
+        <!-- send xAPI events on logout -->
+        <bean class="org.jasig.portal.events.tincan.converters.LogoutEventConverter">
+            <property name="verb" value="EXITED"/>
+        </bean>
+
+        <!-- send xAPI events on a subset of portlet actions -->
+        <bean class="org.jasig.portal.events.tincan.converters.PortletExecutionEventConverter">
+            <!-- can filter by specific type of action -->
+            <property name="supportedEventTypes">
+                <util:list>
+                    <value>org.jasig.portal.events.PortletActionExecutionEvent</value>
+                    <value>org.jasig.portal.events.PortletEventExecutionEvent</value>
+                    <value>org.jasig.portal.events.PortletResourceExecutionEvent</value>
+                </util:list>
+            </property>
+            <!-- for execution events, can also filter events by fname.  -->
+            <property name="fnameFilterType" value="Blacklist"/>
+            <property name="filterFNames">
+                <util:list>
+                    <value>emergency-alert</value>
+                    <value>notification-icon</value>
+                </util:list>
+            </property>
+            <property name="verb" value="INTERACTED"/>
+        </bean>
+
+        <!-- Example of using a different action for specific set of events -->
+        <!--
+        <bean class="org.jasig.portal.events.tincan.converters.PortletExecutionEventConverter">
+            <property name="supportedEventTypes">
+                <util:list>
+                    <value>org.jasig.portal.events.PortletRenderExecutionEvent</value>
+                    <value>org.jasig.portal.events.PortletRenderHeaderExecutionEvent</value>
+                </util:list>
+            </property>
+            <property name="fnameFilterType" value="Whitelist"/>
+            <property name="verb" value="EXPERIENCED"/>
+        </bean>
+        -->
+
+        <!-- send xAPI events on portlet render -->
+        <!--
+        <bean class="org.jasig.portal.events.tincan.converters.PortletRenderEventConverter">
+            <property name="verb" value="EXPERIENCED"/>
+        </bean>
+        -->
+
+        <!--
+            Catch-all filter that is mostly intended to determine which types of
+            events are being fired.  It is primarily a debugging aid.  If enabled,
+            this will fire for every event not handled elsewhere.  Not intended
+            for production use!
+        -->
+        <!--
+        <bean class="org.jasig.portal.events.tincan.converters.GeneralEventConverter">
+            <property name="verb" value="INTERACTED"/>
+        </bean>
+        -->
+    </util:list>
+
+    <!--
+     - Blocking event scheduler.  Since this works off aggregated events, it's already done in the background.
+     -->
+    <bean id="blockingTinCanEventScheduler" class="org.jasig.portal.events.tincan.BlockingTinCanEventScheduler">
+        <property name="providers" ref="tinCanProviders"/>
+    </bean>
+
+    <alias alias="tinCanEventScheduler" name="blockingTinCanEventScheduler"/>
+</beans>

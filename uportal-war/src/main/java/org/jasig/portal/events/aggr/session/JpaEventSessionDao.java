@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events.aggr.session;
 
 import java.util.Iterator;
@@ -44,6 +43,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -55,16 +55,24 @@ import com.google.common.base.Function;
 @Repository("eventSessionDao")
 public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSessionDao {
     private final static String EVENT_SESSION_CACHE_SOURCE = JpaEventSessionDao.class.getName() + "_EVENT_SESSION";
+    private int maxPurgeBatchSize;
 
     private String deleteByEventSessionIdQuery;
     private CriteriaQuery<EventSessionImpl> findExpiredEventSessionsQuery;
+    private CriteriaQuery<Long> countExpiredEventSessionsQuery;
     private ParameterExpression<String> eventSessionIdParameter;
     private ParameterExpression<DateTime> dateTimeParameter;
     
     private AggregatedGroupLookupDao aggregatedGroupLookupDao;
     private ICompositeGroupService compositeGroupService;
     private EntityManagerCache entityManagerCache;
-    
+
+    @Autowired
+    @Value("${org.jasig.portal.events.aggr.session.JpaEventSessionDao.maxPurgeBatchSize:100000}")
+    public void setMaxPurgeBatchSize(int maxPurgeBatchSize) {
+        this.maxPurgeBatchSize = maxPurgeBatchSize;
+    }
+
     @Autowired
     public void setEntityManagerCache(EntityManagerCache entityManagerCache) {
         this.entityManagerCache = entityManagerCache;
@@ -95,6 +103,20 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
                         cb.lessThanOrEqualTo(root.get(EventSessionImpl_.lastAccessed), dateTimeParameter)
                     );
                 
+                return criteriaQuery;
+            }
+        });
+
+        this.countExpiredEventSessionsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<Long>>() {
+            @Override
+            public CriteriaQuery<Long> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<Long> criteriaQuery = cb.createQuery(Long.class);
+                final Root<EventSessionImpl> root = criteriaQuery.from(EventSessionImpl.class);
+                criteriaQuery.select(cb.count(root));
+                criteriaQuery.where(
+                        cb.lessThanOrEqualTo(root.get(EventSessionImpl_.lastAccessed), dateTimeParameter)
+                );
+
                 return criteriaQuery;
             }
         });
@@ -148,17 +170,31 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
         query.executeUpdate();
     }
 
-    @AggrEventsTransactional
-    @Override
-    public int purgeEventSessionsBefore(DateTime lastAggregatedEventDate) {
+    private void purgeEventList(int batchSize, DateTime lastAggregatedEventDate) {
         final TypedQuery<EventSessionImpl> query = this.createQuery(this.findExpiredEventSessionsQuery);
         query.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
+        query.setMaxResults(batchSize);
         final List<EventSessionImpl> resultList = query.getResultList();
         for (final EventSessionImpl eventSession : resultList) {
             this.getEntityManager().remove(eventSession);
         }
+    }
+
+    @AggrEventsTransactional
+    @Override
+    public int purgeEventSessionsBefore(DateTime lastAggregatedEventDate) {
+        final TypedQuery<Long> countQuery = this.createQuery(this.countExpiredEventSessionsQuery);
+        countQuery.setParameter(this.dateTimeParameter, lastAggregatedEventDate);
+        final int totalRows =   countQuery.getSingleResult().intValue();
+
+        if (totalRows > 0) {
+            final int numberBatches = totalRows / maxPurgeBatchSize;
+            for (int i = 0; i <= numberBatches; i++) {
+                purgeEventList(maxPurgeBatchSize, lastAggregatedEventDate);
+            }
+        }
         
-        return resultList.size();
+        return totalRows;
     }
     
     /**

@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.layout;
 
 import java.util.Collection;
@@ -55,6 +54,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Handles retrieving and storing the various scopes of stylesheet user preference data.
@@ -67,6 +67,11 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     private static final String OUTPUT_PROPERTIES_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".OUTPUT_PROPERTIES";
     private static final String STYLESHEET_PARAMETERS_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".STYLESHEET_PARAMETERS";
     private static final String LAYOUT_ATTRIBUTES_KEY = StylesheetUserPreferencesServiceImpl.class.getName() + ".LAYOUT_ATTRIBUTES";
+    
+    public static final String STYLESHEET_STRUCTURE_OVERRIDE_REQUEST_ATTRIBUTE =
+            StylesheetUserPreferencesServiceImpl.class.getCanonicalName() + ".STYLESHEET_STRUCTURE_NAME";
+    public static final String STYLESHEET_THEME_OVERRIDE_REQUEST_ATTRIBUTE_NAME = 
+            StylesheetUserPreferencesServiceImpl.class.getCanonicalName() + ".STYLESHEET_THEME_NAME";
     
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
@@ -118,8 +123,7 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
         final IUserProfile userProfile = preferencesManager.getUserProfile();
         
-        final int stylesheetId = prefScope.getStylesheetId(userProfile);
-        final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+        final IStylesheetDescriptor stylesheetDescriptor = getStylesheetDescriptor(request, prefScope);
         
         return new StylesheetPreferencesKey(person, userProfile, stylesheetDescriptor);
     }
@@ -229,13 +233,19 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     
     @Override
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request, PreferencesScope prefScope) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserProfile userProfile = preferencesManager.getUserProfile();
-        
-        final int stylesheetId = prefScope.getStylesheetId(userProfile);
-        return this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+        String stylesheetName = this.getStyleSheetName(request, prefScope);
+        if(!StringUtils.isBlank(stylesheetName)) {
+            return this.stylesheetDescriptorDao.getStylesheetDescriptorByName( stylesheetName);
+        }
+        else {
+            final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
+
+            final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
+            final IUserProfile userProfile = preferencesManager.getUserProfile();
+
+            final int stylesheetId = prefScope.getStylesheetId(userProfile);
+            return this.stylesheetDescriptorDao.getStylesheetDescriptor(stylesheetId);
+        }
     }
 
     @Override
@@ -244,7 +254,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
         if (outputPropertyDescriptor == null) {
-            logger.warn("Attempted to get output property {} but no such output property is defined in stylesheet descriptor {}. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to get output property '{}' but no such output property is defined in stylesheet descriptor '{}'. null will be returned",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
 
@@ -321,7 +332,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IOutputPropertyDescriptor outputPropertyDescriptor = stylesheetDescriptor.getOutputPropertyDescriptor(name);
         if (outputPropertyDescriptor == null) {
-            logger.warn("Attempted to remove output property {} but no such output property is defined in stylesheet descriptor {}. It will be ignored", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to remove output property '{}' but no such output property is defined in stylesheet descriptor '{}'. It will be ignored",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
         
@@ -449,7 +461,8 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
         if (stylesheetParameterDescriptor == null) {
-            logger.warn("Attempted to get stylesheet parameter {} but no such stylesheet parameter is defined in stylesheet descriptor {}. null will be returned", new Object[] {name, stylesheetDescriptor.getName()});
+            logger.warn("Attempted to get stylesheet parameter '{}' but no such stylesheet parameter is defined in stylesheet descriptor '{}'. null will be returned",
+                    new Object[] {name, stylesheetDescriptor.getName()});
             return null;
         }
 
@@ -488,6 +501,9 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     @Transactional
     @Override
     public String setStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name, String value) {
+
+        logger.trace("Setting stylesheet parameter {} with scope {} to {}.", name, prefScope, value);
+
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
         final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
         final IStylesheetParameterDescriptor stylesheetParameterDescriptor = stylesheetDescriptor.getStylesheetParameterDescriptor(name);
@@ -1111,5 +1127,35 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         request.removeAttribute(LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString());
+    }
+    
+    @Override
+    public void setStructureStylesheetOverride(HttpServletRequest request, String override) {
+        request.setAttribute(StylesheetUserPreferencesServiceImpl.STYLESHEET_STRUCTURE_OVERRIDE_REQUEST_ATTRIBUTE, override);
+    }
+    
+    @Override
+    public void setThemeStyleSheetOverride(HttpServletRequest request, String override) {
+        request.setAttribute(
+                StylesheetUserPreferencesServiceImpl.STYLESHEET_THEME_OVERRIDE_REQUEST_ATTRIBUTE_NAME, override);
+    }
+
+    /**
+     * Returns the stylesheet name if overridden in the request object.
+     * @param request HttpRequest
+     * @param scope Scope (Structure or Theme)
+     * @return Stylesheet name if set as an override in the request, else null if it was not.
+     */
+    protected String getStyleSheetName(final HttpServletRequest request, PreferencesScope scope) {
+        final String stylesheetNameFromRequest;
+        
+        if( scope.equals(PreferencesScope.STRUCTURE)) {
+            stylesheetNameFromRequest = (String)request.getAttribute(STYLESHEET_STRUCTURE_OVERRIDE_REQUEST_ATTRIBUTE);
+        }
+        else {
+            stylesheetNameFromRequest = (String)request.getAttribute(STYLESHEET_THEME_OVERRIDE_REQUEST_ATTRIBUTE_NAME);
+        }
+        
+        return stylesheetNameFromRequest;
     }
 }

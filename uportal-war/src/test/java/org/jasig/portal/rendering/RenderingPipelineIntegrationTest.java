@@ -1,25 +1,25 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.rendering;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 
 import static org.mockito.Mockito.mock;
@@ -36,6 +36,7 @@ import javax.xml.transform.OutputKeys;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.xslt.IXalanMessageHelper;
@@ -48,9 +49,12 @@ import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Eric Dalquist
@@ -117,7 +122,6 @@ public class RenderingPipelineIntegrationTest {
         this.xalanMessageHelper = xalanMessageHelper;
     }
 
-//    @Ignore
     @Test
     public void testRenderingPipeline() throws Exception {
         final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -130,16 +134,15 @@ public class RenderingPipelineIntegrationTest {
         
         final IPortalUrlBuilder portalUrlBuilder = mock(IPortalUrlBuilder.class);
         final IPortletUrlBuilder portletUrlBuilder = mock(IPortletUrlBuilder.class);
-        
+
         when(portalUrlBuilder.getUrlString()).thenReturn("URL_PLACEHOLDER");
+        when(portletUrlBuilder.getPortalUrlBuilder()).thenReturn(portalUrlBuilder);
         when(portalUrlBuilder.getTargetedPortletUrlBuilder()).thenReturn(portletUrlBuilder);
+        when(portalUrlBuilder.getPortletUrlBuilder(any(IPortletWindowId.class))).thenReturn(portletUrlBuilder);
         
         when(this.resourcesElementsProvider
-                .getResourcesXmlFragment(any(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml")))
+                .getResourcesXmlFragment(any(HttpServletRequest.class), eq("/media/skins/respondr/defaultSkin/skin.xml")))
                 .thenReturn(headFragment.getChildNodes());
-        when(this.resourcesElementsProvider
-                .getResourcesParameter(any(HttpServletRequest.class), eq("/media/skins/universality/uportal3/skin.xml"), eq("fss-theme")))
-                .thenReturn(".fl-mist");
         when(this.portalUrlProvider.getDefaultUrl(any(HttpServletRequest.class))).thenReturn(portalUrlBuilder);
         when(this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(any(HttpServletRequest.class), any(String.class), any(UrlType.class))).thenReturn(portalUrlBuilder);
         when(this.portalUrlProvider.getPortalUrlBuilderByPortletFName(any(HttpServletRequest.class), any(String.class), any(UrlType.class))).thenReturn(portalUrlBuilder);
@@ -148,6 +151,7 @@ public class RenderingPipelineIntegrationTest {
         final IPortletWindow portletWindow = mock(IPortletWindow.class);
         when(portletWindowRegistry.getPortletWindow(any(HttpServletRequest.class), any(StartElement.class))).thenReturn(new Tuple<IPortletWindow, StartElement>(portletWindow, null));
         when(portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(any(HttpServletRequest.class), any(String.class))).thenReturn(portletWindow);
+        when(portletWindowRegistry.getOrCreateDefaultPortletWindowByFname(any(HttpServletRequest.class), anyString())).thenReturn(portletWindow);
         when(portletWindow.getPortletWindowId()).thenReturn(new MockPortletWindowId("1"));
         
         final PipelineEventReader<?, ?> eventReader = this.component.getEventReader(request, response);

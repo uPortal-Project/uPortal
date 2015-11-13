@@ -1,22 +1,21 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.portal.events;
 
 import java.util.ArrayList;
@@ -54,6 +53,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortletRequestInfo;
@@ -78,11 +78,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
- */
-/**
- * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portalEventFactory")
 public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationEventPublisherAware {
@@ -391,7 +386,36 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         
         this.applicationEventPublisher.publishEvent(portalRenderEvent);
     }
-    
+
+    /*
+     * Tenant Events
+     */
+
+    @Override
+    public void publishTenantCreatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantCreatedTenantEvent event = new TenantCreatedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishTenantUpdatedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantUpdatedTenantEvent event = new TenantUpdatedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishTenantRemovedTenantEvent(HttpServletRequest request, Object source, ITenant tenant) {
+        final PortalEventBuilder eventBuilder = this.createPortalEventBuilder(source, request);
+        final TenantRemovedTenantEvent event = new TenantRemovedTenantEvent(eventBuilder, tenant);
+        this.applicationEventPublisher.publishEvent(event);
+    }
+
+    /*
+     * Implementation
+     */
+
     protected PortalEventBuilder createPortalEventBuilder(Object source, HttpServletRequest request) {
         request = getCurrentPortalRequest(request);
         final IPerson person = this.getPerson(request);
@@ -630,4 +654,5 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         
         return builder.build();
     }
+
 }

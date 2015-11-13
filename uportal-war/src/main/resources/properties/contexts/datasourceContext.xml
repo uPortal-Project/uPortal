@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util"
@@ -37,7 +36,7 @@
       
         <property name="initialSize" value="1" />
         <property name="minIdle" value="1" />
-        <property name="maxActive" value="75" />
+        <property name="maxActive" value="100" />
         <property name="maxIdle" value="50" />
         <property name="maxWait" value="5000" /> <!-- 5 seconds -->
         <property name="maxAge" value="3600000" /> <!-- 1 hour -->
@@ -96,8 +95,12 @@
     		<util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
     	</property>
     	<property name="validationQueryMap">
+            <!-- todo: Change to simply use ${hibernate.connection.validationQuery} instead of a map -->
     		<map>
-    			<entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.OracleDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle8iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle9iDialect" value="SELECT 1 FROM DUAL" />
+                <entry key="org.hibernate.dialect.Oracle10gDialect" value="SELECT 1 FROM DUAL" />
     			<entry key="org.hibernate.dialect.MySQLDialect" value="SELECT 1" />
     			<entry key="org.hibernate.dialect.PostgreSQL81Dialect" value="SELECT 1" />
     			<entry key="org.hibernate.dialect.SQLServerDialect" value="SELECT 1" />

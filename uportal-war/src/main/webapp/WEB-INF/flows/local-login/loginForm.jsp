@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 
 <portlet:renderURL var="formUrl"/>
@@ -35,11 +34,11 @@
 
   <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
-  
+
     <!-- Portlet Section -->
     <div id="${n}search" class="portlet-section" role="region">
 
-      <div class="portlet-section-body">
+      <div class="portlet-section-body container-fluid">
 
         <c:if test="${ not empty attemptedUsername }">
             <!-- Portlet Message -->
@@ -54,34 +53,50 @@
               </div>
             </div>
         </c:if>
-        
-        <form action="${ loginUrl }" method="POST">
 
-            <label for="${n}userName"><spring:message code="username"/></label>
-            <input type="text" id="${n}userName" name="userName" value="${ attemptedUsername }"/>
-            
-            <label for="${n}password"><spring:message code="password"/></label>
-            <input type="password" id="${n}password" name="password"/>
-        
-            <label for="${n}profile"><spring:message code="profile"/></label>
-            <select id="${n}profile" name="profile">
+        <form class="form-horizontal" role="form" action="${ loginUrl }" method="POST">
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="${n}userName"><spring:message code="username"/></label>
+            <div class="col-sm-8">
+              <input class="xform-control" type="text" id="${n}userName" name="userName" value="${ attemptedUsername }"/>
+            </div>
+           </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="${n}password"><spring:message code="password"/></label>
+            <div class="col-sm-8">
+              <input class="xform-control" type="password" id="${n}password" name="password"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="${n}profile"><spring:message code="profile"/></label>
+            <div class="col-sm-8">
+              <select class="xform-control" id="${n}profile" name="profile">
                 <option value="desktop" ${ profile == 'desktop' ? 'selected=selected' : '' }>Desktop</option>
                 <option value="mobile" ${ profile == 'mobile' ? 'selected=selected' : '' }>Mobile</option>
-            </select>
-        
-            <div class="buttons utilities">
-                <input type="submit" value="<spring:message code="login"/>" class="primary button"/>
+                <option value="respondr" ${ profile == 'respondr' ? 'selected=selected' : '' }>Responsive</option>
+              </select>
             </div>
-        </form>
-        
-        <p>
-            <a href="${ forgotPasswordUrl }"><spring:message code="forgot.your.username.or.password"/></a>
-        </p>
+          </div>
 
-      </div>  
+          <div class="buttons utilities form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <input type="submit" value="<spring:message code="login"/>" class="primary button btn"/>
+              </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+              <a href="${ forgotPasswordUrl }"><spring:message code="forgot.your.username.or.password"/></a>
+            </div>
+          </div>
+        </form>
+
+      </div>
 
     </div>
-    
+
   </div>
 
 </div>

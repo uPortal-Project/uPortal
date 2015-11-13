@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -64,10 +64,12 @@ public class ActivityController {
     private static final String PREFERENCE_DISPLAY_GROUPS = PREFERENCE_PREFIX + "displayGroups";
     private static final String PREFERENCE_DISPLAY_OTHER = PREFERENCE_PREFIX + "displayOther";
     private static final String PREFERENCE_UNIQUE_LOGINS = PREFERENCE_PREFIX + "uniqueLogins";
+    private static final String PREFERENCE_SHOW_SEACHES = PREFERENCE_PREFIX + "showSearches";
     private static final String DEFAULT_PREFERENCE_MASTER_GROUP = "Everyone";
     private static final String[] DEFAULT_PREFERENCE_DISPLAY_GROUPS = new String[]{ };
     private static final String DEFAULT_PREFERENCE_DISPLAY_OTHER = "true";
     private static final String DEFAULT_PREFERENCE_UNIQUE_LOGINS = "true";
+    private static final String DEFAULT_PREFERENCE_SHOW_SEARCHES = "true";
 
     private static final int NOW = 1;
     private static final int TODAY = 2;
@@ -104,16 +106,23 @@ public class ActivityController {
 
     @RenderMapping
     public ModelAndView summary(PortletRequest request) throws TypeMismatchException {
-        Map<String, Object> model = new HashMap<String, Object>();
-        PortalActivity now = buildPortalActivity(request,NOW);
-        PortalActivity today = buildPortalActivity(request,TODAY);
-        PortalActivity yesterday = buildPortalActivity(request,YESTERDAY);
-        List<SearchInfo> popularSearchTerms = getPopularSearchTerms();
+        final Map<String, Object> model = new HashMap<String, Object>();
+        final PortalActivity now = buildPortalActivity(request, NOW);
+        final PortalActivity today = buildPortalActivity(request, TODAY);
+        final PortalActivity yesterday = buildPortalActivity(request, YESTERDAY);
+        model.put("usageNow", now);
+        model.put("usageToday", today);
+        model.put("usageYesterday", yesterday);
 
-        model.put("popularSearchTerms",popularSearchTerms);
-        model.put("usageNow",now);
-        model.put("usageToday",today);
-        model.put("usageYesterday",yesterday);
+        // Searches
+        List<SearchInfo> popularSearchTerms = Collections.emptyList();  // default
+        final PortletPreferences prefs = request.getPreferences();
+        final Boolean showSearches = Boolean.valueOf(prefs.getValue(PREFERENCE_SHOW_SEACHES, DEFAULT_PREFERENCE_SHOW_SEARCHES));
+        if (showSearches) {
+            popularSearchTerms = getPopularSearchTerms();
+        }
+        model.put("showSearches", showSearches);
+        model.put("popularSearchTerms", popularSearchTerms);
 
         return new ModelAndView("jsp/Activity/activity", model);
     }

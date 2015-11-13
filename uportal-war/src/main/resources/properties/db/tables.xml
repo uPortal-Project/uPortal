@@ -1,25 +1,24 @@
 <?xml version="1.0"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <!-- $Revision$ -->
 <!DOCTYPE tables PUBLIC "-//uPortal//Tables/EN" "tables.dtd">
 
@@ -32,7 +31,7 @@
       <column> <name>USER_ID</name>          <type>INTEGER</type>
         <desc>Internal sequence id of a user's portal information - unique user identifier - primary key, see UP_SEQUENCE</desc>
       </column>
-      <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>35</param>
+      <column> <name>USER_NAME</name>        <type>VARCHAR</type>   <param>100</param>
         <desc>Authentication prinicipal - Foreign key to up_person_dir</desc>
       </column>
       <column> <name>USER_DFLT_USR_ID</name> <type>INTEGER</type>
@@ -426,7 +425,7 @@
     <not-null>ENTITY_KEY</not-null>
   </table>
 
-  <!-- Used by the EntityPropertyRegistry to store aribtrary properties. -->
+  <!-- Used by the EntityPropertyRegistry to store arbitrary properties. -->
   <table sinceMajor="2" sinceMinor="1">
     <name>UP_ENTITY_PROP</name>
     <desc>Each row represents a property of a portal entity.</desc>

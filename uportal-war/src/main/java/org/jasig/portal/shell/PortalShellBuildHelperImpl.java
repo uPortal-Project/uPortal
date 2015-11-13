@@ -1,18 +1,18 @@
 /**
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
  */
@@ -164,6 +164,24 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
         //TODO add upgrade-state to up_version table to handle a failure during the hbm2ddl update
         this.versionedDataUpdater.preUpdateDatabase(databaseQualifier);
         
+        updateScript(target, databaseQualifier, outputFile, export);
+        
+        this.versionedDataUpdater.postUpdateDatabase(databaseQualifier);
+    }
+    
+    @Override
+    public void hibernateGenerateScript(String target, String databaseQualifier, String outputFile) {
+        updateScript(target, databaseQualifier, outputFile, false);
+    }
+    
+    /**
+     * This runs a database update or just generates the script
+     * @param target the database to target
+     * @param databaseQualifier The Spring database qualifier
+     * @param outputFile The output file to utilize to generate the scripts
+     * @param runIt Do you want to run it, or just generate the script?
+     */
+    private void updateScript(String target, String databaseQualifier, String outputFile, boolean runIt) {
         final ISchemaExport schemaExportBean = this.getSchemaExport(databaseQualifier);
         if (schemaExportBean == null) {
             throw new RuntimeException(target + " could not find schemaExportBean " + databaseQualifier);
@@ -176,13 +194,11 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
 
             outputFile = StringUtils.trimToNull(outputFile);
 
-            schemaExportBean.update(export, outputFile, true);
+            schemaExportBean.update(runIt, outputFile, true);
         }
         catch (Exception e) {
             throw new RuntimeException(target + " for " + databaseQualifier + " failed", e);
         }
-        
-        this.versionedDataUpdater.postUpdateDatabase(databaseQualifier);
     }
 
     @Override
@@ -293,7 +309,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
             pattern = StringUtils.trimToNull(pattern);
 
             try {
-                portalDataHandlerService.importData(new File(dataDir),
+                portalDataHandlerService.importDataDirectory(new File(dataDir),
                         pattern,
                         new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
             }

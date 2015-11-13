@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans" 
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+           http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
     
     <!-- ********** User Information Support Beans ********** -->
@@ -113,14 +116,17 @@
     <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
         <property name="delegateDescriptors">
             <list>
-                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
-                    <aop:scoped-proxy />
-                </bean>
-                <bean class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
-                    <aop:scoped-proxy />
-                </bean>
+                <ref bean="sessionScopeAdditionalDescriptors"/>
+                <ref bean="requestScopeAdditionalDescriptors"/>
             </list>
         </property>
+    </bean>
+    <!-- Do not change this bean id without altering CasAssertionSecurityContext to refer to the new id. -->
+    <bean id="sessionScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="globalSession">
+        <aop:scoped-proxy />
+    </bean>
+    <bean id="requestScopeAdditionalDescriptors" class="org.jasig.services.persondir.support.AdditionalDescriptors" scope="request">
+        <aop:scoped-proxy />
     </bean>
 
     <!--
@@ -153,13 +159,45 @@
         </property>
         <property name="cacheKeyGenerator" ref="userAttributeCacheKeyGenerator" />
         <property name="cachedPersonAttributesDao" >
-            <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+            <bean class="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl">
+                <property name="merger">
+                    <!-- This is a "first one wins" strategy. I.e. the first value found for
+                    any given result attribute will be assigned to the user. Different values
+                    found in subsequently queried attribute sources will be ignored. Suitable
+                    if uP-local attributes should always take precedence. Other
+                    options (all in the same package):
+
+                        MultivaluedAttributeMerger - Collects values from all DAOs into lists (does not
+                          filter out duplicate values, though)
+                        ReplacingAttributeAdder - "Last one wins" strategy. I.e. the opposite of
+                          NoncollidingAttributeAdder.
+                    -->
+                    <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
+                </property>
                 <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                 <property name="personAttributeDaos">
                     <list>
-                        <ref bean="uPortalAccountUserSource" />
-                        <ref bean="uPortalJdbcUserSource" />
-                        <!-- ADDITIONAL ATTRIBUTE SOURCES GET ADDED HERE -->
+                        <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
+                        <bean class="org.jasig.portal.persondir.ImpersonationStatusPersonAttributeDao" />
+                        <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
+                            <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
+                            <property name="personAttributeDaos">
+                                <list>
+                                    <ref bean="uPortalAccountUserSource" />
+                                    <ref bean="uPortalJdbcUserSource" />
+                                </list>
+                            </property>
+                        </bean>
+                        <!-- ADDITIONAL ATTRIBUTE SOURCES GET ADDED HERE
+
+                        Don't add more sources to the CascadingPersonAttributeDao.personAttributeDaos
+                        list above unless you're adding "special" DAOs tasked with augmenting/transforming
+                        the attributes generated by uP-local DAOs. (CascadingPersonAttributeDao takes
+                        the results from the first-DAO, transforms them into a query, and passes that
+                        query to each subsequent DAO. I.e. subsequent DAOs in the cascade list will
+                        *not* be given a chance to process the original query. But they will if you add
+                        them directly to the MergingPersonAttributeDaoImpl.personAttributeDaos list here.)
+                        -->
                     </list>
                 </property>
             </bean>
@@ -191,13 +229,13 @@
             </map>
         </property>
     </bean>
-    
+
     <!--
      | Looks in the base UP_USER table, doesn't find attributes but will ensure a result if it the user exists in the
      | portal database and is searched for by username, results are cached by the outer caching DAO
      +-->
     <bean id="uPortalJdbcUserSource"
-        class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
+          class="org.jasig.services.persondir.support.CachingPersonAttributeDaoImpl">
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
@@ -211,7 +249,7 @@
             <bean class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPersonAttributeDao">
                 <constructor-arg index="0" ref="PersonDB" />
                 <constructor-arg>
-                    <value> 
+                    <value>
                         SELECT USER_NAME
                         FROM UP_USER
                         WHERE {0}
@@ -237,7 +275,7 @@
             </bean>
         </property>
     </bean>
-    
+
     <!-- Where non-local attribute DAOs go -->
     
     <bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">

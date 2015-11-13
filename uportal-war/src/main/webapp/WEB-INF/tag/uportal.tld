@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 -->
-
 <taglib xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
   version="2.1">
@@ -98,7 +97,7 @@
         <function-signature>boolean containsValue(java.util.Map, java.lang.Object)</function-signature>
     </function>
     <function>
-        <description> Tests if an object is an isntance of a class. </description>
+        <description> Tests if an object is an instance of a class. </description>
         <name>instanceOf</name>
         <function-class>org.jasig.portal.utils.jsp.Util</function-class>
         <function-signature>boolean instanceOf(java.lang.Object, java.lang.String)</function-signature>
@@ -113,6 +112,31 @@
         <function-signature>java.lang.String json(java.lang.Object)</function-signature>
         <example>
             ${up:json(obj)}
+        </example>
+    </function>
+    <function>
+        <description>
+            Tests if a string is a valid URL
+            Will open a connection and make sure that it can connect to the URL
+            it looks for an HTTP status code of 200 on a GET
+        </description>
+        <name>isValidUrl</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>boolean isValidUrl(java.lang.String)</function-signature>
+        <example>
+            ${up:isValidUrl("www.example.com/image.png")}
+        </example>
+    </function>
+    <function>
+        <description>
+            URL encodes a single path segment.  Intended for building RESTful URLs where
+            variable values may contain illegal characters.
+        </description>
+        <name>encodePathSegment</name>
+        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-signature>java.lang.String encodePathSegment(java.lang.String)</function-signature>
+        <example>
+            ${up:urlEncode("www.example.com/image.png")}
         </example>
     </function>
 </taglib>

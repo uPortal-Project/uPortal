@@ -1,24 +1,23 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License. You may obtain a
-    copy of the License at:
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+      http://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on
-    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied. See the License for the
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
 
 --%>
-
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <c:set var="n"><portlet:namespace/></c:set>
 
@@ -34,11 +33,14 @@
     <c:if test="${backgroundImage ne null}">
     ${backgroundContainerSelector}, html.um-dashboard {
         background-image: url("${backgroundImage}");
-        background-size: cover;
+        background-size: 100%;
+        background-attachment: fixed;
     }
+    /* Opacity currently not working; selector drop down appears behind portlets; 
+       see http://stackoverflow.com/questions/15558148/possible-opacity-z-index-bug
     ${applyOpacityTo} {
         opacity: ${opacityCssValue};
-    }
+    } */
     </c:if>
 
     html.um-dashboard, html.um-dashboard body {
@@ -63,7 +65,7 @@
         overflow-y: scroll;
         z-index: 10000;
         text-align:center;
-        max-height:90%;
+        max-height:515px;
     }
 
     #${n}background-edit-control .background-edit-menu a {
@@ -102,6 +104,7 @@
         cursor: pointer;
         color: rgb(51, 51, 51);
         text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.75);
+        background-color: #DEDEDE;
         background: rgb(245, 245, 245) linear-gradient(to bottom, rgb(255, 255, 255), rgb(230, 230, 230)) repeat-x;
         border: 1px solid rgb(204, 204, 204);
         border-bottom-color: rgb(179, 179, 179);
@@ -134,7 +137,7 @@
         <a href="#">
             <span class="caption">None</span>
         </a>
-        <c:forEach var="image" items="${images}" varStatus="status">
+        <c:forEach var="image" items="${thumbnailImages}" varStatus="status">
             <a href="#">
                 <img src="${image}" />
                 <span class="caption">Background ${status.index + 1}</span>
@@ -160,14 +163,15 @@
         var changeBackground = function() {
             if (elements.background) {
                 $('body').css('background-color','transparent');
-                elements.coreElement.css({'background-image': 'url('+elements.background+')', 'background-size': 'cover'});
+                elements.coreElement.css({'background-image': 'url('+elements.background+')', 'background-size': '100%', 'background-attachment': 'fixed'});
             } else {
-                elements.coreElement.css({'background-image': 'none', 'background-size': 'auto'});
+                elements.coreElement.css({'background-image': 'none', 'background-size': 'auto', 'background-attachment': 'scroll'});
             }
         };
 
         var setBackground = function(el) {
             elements.background = $(el).find('img').attr('src') || '';
+            elements.background = elements.background.replace("/thumbnails","");
             elements.form.find('.background-value').val(elements.background);
 
             changeBackground();
