@@ -55,7 +55,9 @@
                     </div>
                 </c:if>
 
-                <c:if test="${not empty results}">
+                <c:choose>
+
+                <c:when test="${not empty results}">
 
                     <div class="portlet-section" role="region">
 
@@ -120,7 +122,13 @@
                             </div>
                         </div>
                     </div>
-                </c:if>
+                </c:when>
+                    <c:otherwise>
+                        <div class="search-results-empty">
+                            <p><spring:message code="no.results"/></p>
+                        </div>
+                </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </div>
