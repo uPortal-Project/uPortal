@@ -36,6 +36,7 @@
             <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n42"/>
         </folder>
         <folder ID="s100" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
+            <channel fname="portal-menu-toggle" unremovable="false" hidden="false" immutable="false" ID="n9"/>
             <channel fname="login-launcher" unremovable="false" hidden="false" immutable="false" ID="n8"/>
         </folder>
         <folder ID="s1000" hidden="false" immutable="false" name="Welcome" type="regular" unremovable="false">

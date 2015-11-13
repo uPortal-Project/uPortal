@@ -55,6 +55,7 @@
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
 <xsl:param name="USE_FLYOUT_MENUS" select="'false'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+<xsl:param name="USE_OFFCANVAS_MENU" select="'true'" /> <!-- Sets the use of off-canvas menu.  Values are 'true' or 'false'. -->
 <xsl:param name="useTabGroups">false</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
@@ -105,11 +106,29 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
-        <div class="container-fluid">
-        <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
+        <div id="sidebar">
+          <xsl:choose>
+             <xsl:when test="$USE_OFFCANVAS_MENU='true'">
+                <xsl:attribute name="class">sidebar-offcanvas container-fluid</xsl:attribute>
+              </xsl:when>
+             <xsl:otherwise>
+                <xsl:attribute name="class">container-fluid</xsl:attribute>
+             </xsl:otherwise>
+          </xsl:choose>
+        <!-- menu-toggle is moved into uportal-war/src/main/webapp/WEB-INF/jsp/Invoker/menu-toggle.jsp 
+          <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
+         -->
         <div id="portalNavigation" class="fl-widget">
           <div id="portalNavigationInner" class="fl-widget-inner header">
-              <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column">
+              <ul id="portalNavigationList">
+                 <xsl:choose>
+                    <xsl:when test="$USE_OFFCANVAS_MENU='true'">
+                       <xsl:attribute name="class">menu fl-tabs flc-reorderer-column list-group list-group-horizontal</xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                       <xsl:attribute name="class">menu fl-tabs flc-reorderer-column</xsl:attribute>
+                    </xsl:otherwise>
+                 </xsl:choose>
                  <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
                    <xsl:with-param name="CONTEXT">header</xsl:with-param>
                  </xsl:apply-templates>
@@ -117,7 +136,15 @@
                 <!-- invite the user to add a tab if permission to do so
                 and navigation element is flagged as allowing tab-adding -->
                  <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and not($PORTAL_VIEW='focused')">
-                    <li class="portal-navigation-add-item">
+                    <li>
+                        <xsl:choose>
+                           <xsl:when test="$USE_OFFCANVAS_MENU='true'">
+                              <xsl:attribute name="class">portal-navigation-add-item list-group-item</xsl:attribute>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:attribute name="class">portal-navigation-add-item</xsl:attribute>
+                           </xsl:otherwise>
+                        </xsl:choose>
                         <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                           <i class="fa fa-plus-circle"></i>
                         </a>
@@ -233,7 +260,19 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <xsl:variable name="USE_FLYOUT">
+      <xsl:choose>
+        <xsl:when test="$USE_FLYOUT_MENUS='true'">useflyout</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="USE_OFFCANVAS">
+      <xsl:choose>
+        <xsl:when test="$USE_OFFCANVAS_MENU='true'">list-group-item</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$USE_FLYOUT} {$USE_OFFCANVAS}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <!-- For transient tabs, don't try to calculate an URL.  It display an exception in the logs. Use a safe URL. -->
         <xsl:choose>
@@ -292,16 +331,26 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->
     <xsl:param name="TAB_POSITION"/> <!-- Provides the position of the tab -->
 
-    <div> <!-- Unique ID is needed for the flyout menus javascript. -->
-      <xsl:attribute name="id">portalSubnavigation_<xsl:value-of select="@ID"/></xsl:attribute>
-      <xsl:attribute name="class">portal-subnav-container</xsl:attribute>
-      <xsl:attribute name="style"></xsl:attribute>
+        <xsl:element name="a"> <!-- Navigation dropdown toogle. -->
+          <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
+          <xsl:attribute name="data-target">#</xsl:attribute>
+          <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
+          <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
+          <xsl:attribute name="role">button</xsl:attribute>
+          <xsl:attribute name="aria-expanded">false</xsl:attribute>
+          <xsl:attribute name="tabindex">0</xsl:attribute>
+            <xsl:element name="span"> <!-- Navigation dropdown toogle caret -->
+               <xsl:attribute name="class">caret</xsl:attribute>
+            </xsl:element>
+            <span class="sr-only">
+               <xsl:value-of select="upMsg:getMessage('toggle.menu', $USER_LANG)"/>
+            </span>
+        </xsl:element>
 
-      <div>  <!-- Inner div for additional presentation/formatting options. -->
-        <xsl:attribute name="id">portalSubnavigationInner_<xsl:value-of select="@ID"/></xsl:attribute>
-        <xsl:attribute name="class">portal-subnav-container-inner</xsl:attribute>
-        <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-              <xsl:for-each select="//navigation/tab[@activeTab='true']/tabChannel">
+        <ul class="dropdown-menu portal-subnav-list"> <!-- List of the subnavigation menu items. -->
+             <xsl:attribute name="aria-labelledby">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
+             <xsl:attribute name="role">menu</xsl:attribute>
+              <xsl:for-each select="tabChannel">
                 <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
                   <xsl:choose>
                     <xsl:when test="position()=1 and position()=last()">single</xsl:when>
