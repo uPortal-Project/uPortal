@@ -159,12 +159,13 @@ public class MarketplaceSearchService implements IPortalSearchService {
      * @return boolean whether query matched criteria in the marketplace portlet definition
      */
     protected boolean matches(String query, MarketplacePortletDefinition portlet) {
-        return portlet.getTitle().contains(query) ||
-                portlet.getName().contains(query) ||
-                (portlet.getDescription() != null && portlet.getDescription().contains(query)) ||
-                portlet.getFName().contains(query) ||
-                this.captionMatches(query, portlet.getScreenShots()) ||
-                this.releaseNotesMatches(query, portlet.getPortletReleaseNotes())	
+        final String lcQuery = query.toLowerCase();
+        return portlet.getTitle().toLowerCase().contains(lcQuery) ||
+                portlet.getName().toLowerCase().contains(lcQuery) ||
+                (portlet.getDescription() != null && portlet.getDescription().toLowerCase().contains(lcQuery)) ||
+                portlet.getFName().toLowerCase().contains(lcQuery) ||
+                this.captionMatches(lcQuery, portlet.getScreenShots()) ||
+                this.releaseNotesMatches(lcQuery, portlet.getPortletReleaseNotes())
                 ;
     }
     
@@ -176,7 +177,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
     protected boolean captionMatches(String query, List<ScreenShot> screenShots){
     	for(ScreenShot screenShot: screenShots){
     		for(String caption: screenShot.getCaptions()){
-    			if(caption.contains(query)){
+    			if(caption.toLowerCase().contains(query)){
     				return true;
     			}
     		}
@@ -192,7 +193,7 @@ public class MarketplaceSearchService implements IPortalSearchService {
     protected boolean releaseNotesMatches(String query, PortletReleaseNotes portletReleaseNotes){
     	if(portletReleaseNotes.getReleaseNotes()!=null){
     		for(String notes : portletReleaseNotes.getReleaseNotes()){
-    			if(notes.contains(query)){
+    			if(notes.toLowerCase().contains(query)){
     				return true;
     			}
     		}
