@@ -110,9 +110,11 @@
             <div class="container-fluid">
                 <div class="portal-global row">
                     <div id="region-pre-header" class="portal-user">
-                        <xsl:for-each select="//region[@name='pre-header']/channel">
-                            <xsl:call-template name="regions.portlet.decorator" />
-                        </xsl:for-each>
+                        <div id="sticky-nav">
+                            <xsl:for-each select="//region[@name='pre-header']/channel">
+                                <xsl:call-template name="regions.portlet.decorator" />
+                            </xsl:for-each>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -38,9 +38,10 @@
             <channel fname="personalization-gallery" unremovable="false" hidden="false" immutable="false" ID="n42"/>
         </folder> -->
         <folder ID="s100" hidden="false" immutable="true" name="Pre Header folder" type="pre-header" unremovable="true">
-            <channel fname="notification-icon" unremovable="false" hidden="false" immutable="false" ID="n110"/>
-            <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n120"/>
+            <channel fname="portal-menu-toggle" unremovable="false" hidden="false" immutable="false" ID="n150"/>
             <channel fname="logout-launcher" unremovable="false" hidden="false" immutable="false" ID="n130"/>
+            <channel fname="portal-greeting" unremovable="false" hidden="false" immutable="false" ID="n120"/>
+            <channel fname="notification-icon" unremovable="false" hidden="false" immutable="false" ID="n110"/>
             <channel fname="session-timeout" unremovable="false" hidden="false" immutable="false" ID="n140"/>
         </folder>
         <folder ID="s300" hidden="false" immutable="true" name="Customize folder" type="customize" unremovable="true">
