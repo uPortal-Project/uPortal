@@ -151,6 +151,13 @@
                 <name>PortletMarketplaceController.enableReviews</name>
                 <value>true</value>
             </preference>
+            <!--
+             | Optional, multi-valued preference that restricts which
+             | portlets may be displayed in the Marketplace (portlet)
+             +-->
+            <preference>
+                <name>permittedCategories</name>
+            </preference>
         </portlet-preferences>
     </portlet>
 

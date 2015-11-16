@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlet.marketplace;
 
 import com.google.common.collect.ImmutableSet;
@@ -41,6 +42,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,13 +68,16 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     private boolean enableMarketplacePreloading = false;
 
     @Autowired
-    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
-    private Cache marketplacePortletDefinitionCache;
-    
-    @Autowired
     public void setAuthorizationService(IAuthorizationService service) {
         this.authorizationService = service;
     }
+
+    /**
+     * Used to store individual MarketplacePortletDefinition instances.
+     */
+    @Autowired
+    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache")
+    private Cache marketplacePortletDefinitionCache;
 
     /**
      * Cache of Username -> Future<Set<MarketplaceEntry>
@@ -79,6 +85,14 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Autowired
     @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache")
     private Cache marketplaceUserPortletDefinitionCache;
+
+    /**
+     * Caches objects related to the ability to limit the portlets displayed
+     * in a single publication of the Marketplace.
+     */
+    @Autowired
+    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
+    private Cache marketplaceCategoryCache;
 
     @Value("${org.jasig.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
     public void setLoadMarketplaceOnLogin(final boolean enableMarketplacePreloading) {
@@ -95,8 +109,14 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Override
     public void onApplicationEvent(LoginEvent loginEvent) {
         if (enableMarketplacePreloading) {
-            IPerson person = loginEvent.getPerson();
-            loadMarketplaceEntriesFor(person);
+            final IPerson person = loginEvent.getPerson();
+            /*
+             * Passing an empty collection pre-loads an unfiltered collection;
+             * instances of PortletMarketplace that specify filtering will
+             * trigger a new collection to be loaded.
+             */
+            final Set<PortletCategory> empty = Collections.emptySet();
+            loadMarketplaceEntriesFor(person, empty);
         }
     }
 
@@ -110,23 +130,58 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
      * No protections have been provided against modifying the MarketplaceEntry itself,
      * so be careful when modifying the entities contained in the list.
      *
-     * @param user the non-null user
+     * @param user The non-null user
+     * @param categories Restricts the output to entries within the specified categories if non-empty
      * @return a Future that will resolve to a set of MarketplaceEntry objects
      *      the requested user has browse access to.
      * @throws java.lang.IllegalArgumentException if user is null
      * @since 4.2
      */
     @Async
-    public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user) {
+    public Future<ImmutableSet<MarketplaceEntry>> loadMarketplaceEntriesFor(final IPerson user, final Set<PortletCategory> categories) {
 
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final List<IPortletDefinition> allPortletDefinitions =
+        List<IPortletDefinition> allDisplayablePortletDefinitions =
                 this.portletDefinitionRegistry.getAllPortletDefinitions();
+
+        if (!categories.isEmpty()) {
+            // Indicates we plan to restrict portlets displayed in the Portlet
+            // Marketplace to those that belong to one or more specified groups.
+            Element portletDefinitionsElement = marketplaceCategoryCache.get(categories);
+            if (portletDefinitionsElement == null) {
+
+                /*
+                 * Collection not in cache -- need to recreate it
+                 */
+
+                // Gather the complete collection of allowable categories (specified categories & their descendants)
+                final Set<PortletCategory> allSpecifiedAndDecendantCategories = new HashSet<>();
+                for (PortletCategory pc : categories) {
+                    collectSpecifiedAndDescendantCategories(pc, allSpecifiedAndDecendantCategories);
+                }
+
+                // Filter portlets that match the criteria
+                Set<IPortletDefinition> filteredPortletDefinitions = new HashSet<>();
+                for (final IPortletDefinition portletDefinition : allDisplayablePortletDefinitions) {
+                    final Set<PortletCategory> parents = portletCategoryRegistry.getParentCategories(portletDefinition);
+                    for (final PortletCategory parent : parents) {
+                        if (allSpecifiedAndDecendantCategories.contains(parent)) {
+                            filteredPortletDefinitions.add(portletDefinition);
+                            break;
+                        }
+                    }
+                }
+
+                portletDefinitionsElement = new Element(categories, new ArrayList<>(filteredPortletDefinitions));
+                marketplaceCategoryCache.put(portletDefinitionsElement);
+            }
+            allDisplayablePortletDefinitions = (List<IPortletDefinition>) portletDefinitionsElement.getObjectValue();
+        }
 
         final Set<MarketplaceEntry> visiblePortletDefinitions = new HashSet<>();
 
-        for (final IPortletDefinition portletDefinition : allPortletDefinitions) {
+        for (final IPortletDefinition portletDefinition : allDisplayablePortletDefinitions) {
 
             if (mayBrowsePortlet(principal, portletDefinition)) {
                 final MarketplacePortletDefinition marketplacePortletDefinition = getOrCreateMarketplacePortletDefinition(portletDefinition);
@@ -151,14 +206,14 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(final IPerson user) {
+    public ImmutableSet<MarketplaceEntry> browseableMarketplaceEntriesFor(final IPerson user, final Set<PortletCategory> categories) {
         Element cacheElement = marketplaceUserPortletDefinitionCache.get(user.getUserName());
         Future<ImmutableSet<MarketplaceEntry>> future = null;
         if (cacheElement == null) {
             // not in cache, load it and cache the results...
-            future = loadMarketplaceEntriesFor(user);
+            future = loadMarketplaceEntriesFor(user, categories);
         } else {
-            future = (Future<ImmutableSet<MarketplaceEntry>>)cacheElement.getObjectValue();
+            future = (Future<ImmutableSet<MarketplaceEntry>>) cacheElement.getObjectValue();
         }
 
         try {
@@ -171,10 +226,10 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user) {
+    public Set<PortletCategory> browseableNonEmptyPortletCategoriesFor(final IPerson user, final Set<PortletCategory> categories) {
         final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user, categories);
 
         final Set<PortletCategory> browseableCategories = new HashSet<PortletCategory>();
 
@@ -214,10 +269,10 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     }
 
     @Override
-    public Set<MarketplaceEntry> featuredEntriesForUser(final IPerson user) {
+    public Set<MarketplaceEntry> featuredEntriesForUser(final IPerson user, final Set<PortletCategory> categories) {
         Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
 
-        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user);
+        final Set<MarketplaceEntry> browseablePortlets = browseableMarketplaceEntriesFor(user, categories);
         final Set<MarketplaceEntry> featuredPortlets = new HashSet<>();
 
         for (final MarketplaceEntry entry : browseablePortlets) {
@@ -280,6 +335,17 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
                 IPermission.PORTLET_BROWSE_ACTIVITY,
                 targetId));
 
+    }
+
+    /**
+     * Called recursively to gather all specified categories and descendants 
+     */
+    private void collectSpecifiedAndDescendantCategories(PortletCategory specified, Set<PortletCategory> gathered) {
+        final Set<PortletCategory> children = portletCategoryRegistry.getAllChildCategories(specified);
+        for (PortletCategory child : children) {
+            collectSpecifiedAndDescendantCategories(child, gathered);
+        }
+        gathered.add(specified);
     }
 
     /**
