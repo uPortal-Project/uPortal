@@ -117,6 +117,19 @@
             </single-choice-parameter-input>
         </parameter>
 
+        <parameter>
+            <name>disablePortletEvents</name>
+            <label>disable.portlet.events</label>
+            <description>
+                This portlet may not fire or receive events
+            </description>
+            <single-choice-parameter-input display="select">
+                <default>false</default>
+                <option value="false" label="false"/>
+                <option value="true" label="true"/>
+            </single-choice-parameter-input>
+        </parameter>
+
     </step>
 
 </portlet-publishing-definition>

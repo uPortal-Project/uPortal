@@ -82,7 +82,13 @@ import org.springframework.web.util.WebUtils;
 @Service("portletExecutionManager")
 public class PortletExecutionManager extends HandlerInterceptorAdapter
         implements IPortletExecutionManager, IPortletExecutionInterceptor, PortletExecutionManagerMXBean {
-    
+
+    /**
+     * Optional publishing parameter that makes a portlet ineligable to send or
+     * receive events.  Improves performance when they are not needed.
+     */
+    public static final String DISABLE_PORTLET_EVENTS_PARAMETER = null;
+
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
 	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
@@ -332,16 +338,27 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 	    	final Map<IPortletWindowId, Exception> portletFailureMap = getPortletErrorMap(request);
 			portletFailureMap.put(portletWindowId, e);
 		}
-        
+
         //If the worker is still running add it to the hung-workers queue
         if (!portletActionExecutionWorker.isComplete()) {
             cancelWorker(request, portletActionExecutionWorker);
         }
-		
-		final PortletEventQueue portletEventQueue = this.eventCoordinationService.getPortletEventQueue(request);
-        this.doPortletEvents(portletEventQueue, request, response);
+
+        // Is this portlet permitted to emit events?  (Or is it disablePortletEvents=true?)
+        final IPortletWindow portletWindow = portletWindowRegistry.getPortletWindow(request, portletWindowId);
+        IPortletDefinition portletDefinition = portletWindow.getPortletEntity().getPortletDefinition();
+        IPortletDefinitionParameter disablePortletEvents = portletDefinition.getParameter(DISABLE_PORTLET_EVENTS_PARAMETER);
+        if (disablePortletEvents != null && Boolean.parseBoolean(disablePortletEvents.getValue())) {
+            logger.info("Ignoring portlet events for portlet '{}' because they have been disabled.",
+                    portletDefinition.getFName());
+        } else {
+            // Proceed with events...
+            final PortletEventQueue portletEventQueue = this.eventCoordinationService.getPortletEventQueue(request);
+            this.doPortletEvents(portletEventQueue, request, response);
+        }
+
     }
-    
+
     public void doPortletEvents(PortletEventQueue eventQueue, HttpServletRequest request, HttpServletResponse response) {
         if (eventQueue.getUnresolvedEvents().isEmpty()) {
             return;

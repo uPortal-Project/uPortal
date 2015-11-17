@@ -60,6 +60,7 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.container.EventImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
+import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -254,7 +255,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                         layoutNodeIdItr.remove();
                         continue;
                     }
-                    
+
                     final List<? extends EventDefinitionReference> supportedProcessingEvents = portletDescriptor.getSupportedProcessingEvents();
                     //Skip portlets that don't handle any events and remove them from the set so they are not checked again
                     if (supportedProcessingEvents == null || supportedProcessingEvents.size() == 0) {
@@ -275,7 +276,16 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
                 	if (defaultPortletEntity.equals(portletEntity)) {
                 		portletDefinitions.remove(portletDefinition);
                 	}
-                	
+
+                    // Is this portlet permitted to receive events?  (Or is it disablePortletEvents=true?)
+                    IPortletDefinitionParameter disablePortletEvents = portletDefinition.getParameter(
+                                            PortletExecutionManager.DISABLE_PORTLET_EVENTS_PARAMETER);
+                    if (disablePortletEvents != null && Boolean.parseBoolean(disablePortletEvents.getValue())) {
+                        logger.info("Ignoring portlet events for portlet '{}' because they have been disabled.",
+                                portletDefinition.getFName());
+                        continue;
+                    }
+
                     final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
                     final Set<IPortletWindow> portletWindows = this.portletWindowRegistry.getAllPortletWindowsForEntity(request, portletEntityId);
                     
@@ -298,7 +308,17 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
             	
 	            //If the event is global there might still be portlet definitions that need targeting
 	            for (final IPortletDefinition portletDefinition : portletDefinitions) {
-	            	final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
+
+                    // Is this portlet permitted to receive events?  (Or is it disablePortletEvents=true?)
+                    IPortletDefinitionParameter disablePortletEvents = portletDefinition.getParameter(
+                                            PortletExecutionManager.DISABLE_PORTLET_EVENTS_PARAMETER);
+                    if (disablePortletEvents != null && Boolean.parseBoolean(disablePortletEvents.getValue())) {
+                        logger.info("Ignoring portlet events for portlet '{}' because they have been disabled.",
+                                portletDefinition.getFName());
+                        continue;
+                    }
+
+                    final IPortletDefinitionId portletDefinitionId = portletDefinition.getPortletDefinitionId();
 	            	//Check if the user can render the portlet definition before doing event tests
 	            	if (ap.canRender(portletDefinitionId.getStringId())) {
 		            	if (this.supportsEvent(event, portletDefinitionId)) {
@@ -442,7 +462,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
         //Check in the cache if the portlet definition supports this event
         final Element element = this.supportedEventCache.get(key);
         if (element != null) {
-            final Boolean supported = (Boolean)element.getValue();
+            final Boolean supported = (Boolean) element.getObjectValue();
             if (supported != null) {
                 return supported;
             }
