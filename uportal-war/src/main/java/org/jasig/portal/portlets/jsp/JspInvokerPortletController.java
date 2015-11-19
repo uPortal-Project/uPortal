@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.ExtendedPropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
@@ -65,6 +66,9 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired()
+    private ExtendedPropertySourcesPlaceholderConfigurer properties;
+
+    @Autowired()
     private IPortalUrlProvider portalUrlProvider;
 
     @Autowired()
@@ -78,6 +82,10 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
         this.applicationContext = applicationContext;
     }
 
+    public void setProperties(ExtendedPropertySourcesPlaceholderConfigurer props) {
+        this.properties = props;
+    }
+
     @RenderMapping
     protected ModelAndView render(RenderRequest req, RenderResponse res) {
 
@@ -87,6 +95,9 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
         final Map<String, String> userInfo = (Map<String, String>) req.getAttribute(PortletRequest.USER_INFO);
         model.put("userInfo", userInfo);
         logger.debug("Invoking with userInfo={}", userInfo);
+
+        // Can access property values in JSP using ${properties.getProperty('propertyName')}
+        model.put("properties", properties.getPropertyResolver());
 
         // Determine if guest user.
         IPerson person = personManager.getPerson(portalRequestUtils.getPortletHttpRequest(req));
