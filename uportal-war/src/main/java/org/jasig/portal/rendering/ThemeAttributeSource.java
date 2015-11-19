@@ -21,6 +21,8 @@ package org.jasig.portal.rendering;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Handles converting the data stored in {@link ThemeStylesheetUserPreferences} into additional attributes
@@ -29,9 +31,16 @@ import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScop
  * @version $Revision$
  */
 public class ThemeAttributeSource extends StylesheetAttributeSource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThemeAttributeSource.class);
+
     @Override
     public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
         return PreferencesScope.THEME;
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 }
 
