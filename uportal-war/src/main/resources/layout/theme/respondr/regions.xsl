@@ -147,7 +147,7 @@
     <xsl:template name="region.header-left">
         <xsl:choose>
             <xsl:when test="//region[@name='header-left']/channel">
-                <div id="region-header-left" class="col-sm-8 text-left">
+                <div id="region-header-left" class="col-sm-8 text-center">
                     <xsl:for-each select="//region[@name='header-left']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
