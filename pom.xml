@@ -121,6 +121,8 @@
         <env>local</env>
         <filters.file>filters/${env}.properties</filters.file>
 
+        <!-- secureSessionCookie>false</secureSessionCookie -->
+
         <!-- WAR Dependency Version Properties -->
         <AnnouncementsPortlet.version>2.2.0-M1</AnnouncementsPortlet.version>
         <basiclti-portlet.version>1.4.2</basiclti-portlet.version>
@@ -1569,3 +1571,4 @@
         </profile>
     </profiles>
 </project>
+
