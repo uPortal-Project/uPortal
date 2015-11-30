@@ -338,7 +338,10 @@
         <div class="col-sm-8">
             <div class="sort_buttons_group">
                 <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default"><spring:message code="label.azIndex" text="A-Z Index" /></button>
+                <!-- Offer Browse By: Category (but only if there are categories in the list) -->
+                <c:if test="${not empty categoryList}">
                 <button type="button" id="${n}category-sort-button" class="btn btn-default"><spring:message code="label.category" text="Categories" /></button>
+                </c:if>
             </div>
         </div>
         <div class="col-sm-3">
