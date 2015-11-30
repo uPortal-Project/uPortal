@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.StringUtils;
@@ -225,12 +226,17 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     }
     
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
+    /**
+     * Key for storing the last-known, valid value of 'targetedLayoutNodeId' in the session.
+     */
+    private static final String REMEMBERED_LAYOUT_NODE_ID = UrlSyntaxProviderImpl.class.getName() + ".REMEMBERED_LAYOUT_NODE_ID";
+
     /**
      * WindowStates that are communicated as part of the path
      */
     private static final Set<WindowState> PATH_WINDOW_STATES = new LinkedHashSet<WindowState>(Arrays.asList(WindowState.MAXIMIZED, IPortletRenderer.DETACHED, IPortletRenderer.EXCLUSIVE));
-    
+
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
     private Set<UrlState> statelessUrlStates = EnumSet.of(UrlState.DETACHED, UrlState.EXCLUSIVE);
     private String defaultEncoding = "UTF-8";
@@ -830,9 +836,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
     @Override
     public String getCanonicalUrl(HttpServletRequest request) {
-        
+
         boolean isRedirectionToDefaultUrl = false;
-        
+
         request = this.portalRequestUtils.getOriginalPortalRequest(request);
         final String cachedCanonicalUrl = (String)request.getAttribute(PORTAL_CANONICAL_URL);
         if (cachedCanonicalUrl != null) {
@@ -841,55 +847,76 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             return cachedCanonicalUrl;
         }
-        
+
         final IPortalRequestInfo portalRequestInfo = this.getPortalRequestInfo(request);
 
         final UrlType urlType = portalRequestInfo.getUrlType();
-        
+
         final IPortletWindowId targetedPortletWindowId = portalRequestInfo.getTargetedPortletWindowId();
         final String targetedLayoutNodeId = portalRequestInfo.getTargetedLayoutNodeId();
-        
+
         //Create a portal url builder with the appropriate target
         final IPortalUrlBuilder portalUrlBuilder;
         if (targetedPortletWindowId != null) {
+            /*
+             * The request targets a specific window (portlet)
+             */
             portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByPortletWindow(request, targetedPortletWindowId, urlType);
         }
         else if (targetedLayoutNodeId != null) {
+            /*
+             * The request targets a specific node in the layout (a tab -- can
+             * it be anything else?)
+             */
             portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, targetedLayoutNodeId, urlType);
+            rememberLayoutNodeId(request, targetedLayoutNodeId);  // See below
+        }
+        else if (getRememberedLayoutNodeId(request) != null) {
+            /*
+             * The request targets nothing specific, but we "remember" the most
+             * recent 'targetedLayoutNodeId' and will replay that one.  (The
+             * alternative is always returning to the default/first tab coming
+             * out of DETACHED or entering EDIT/CONFIG in a region.)
+             */
+            portalUrlBuilder = this.portalUrlProvider.getPortalUrlBuilderByLayoutNode(request, getRememberedLayoutNodeId(request), urlType);
         }
         else {
+            /*
+             * The request targets nothing specific, and we have no choice but
+             * to choose the default/first tab.
+             */
             portalUrlBuilder = this.portalUrlProvider.getDefaultUrl(request);
             isRedirectionToDefaultUrl = request.getPathInfo() != null;
         }
-        
+
         //Copy over portal parameters
         Map<String, List<String>> portalParameters = portalRequestInfo.getPortalParameters();
-        
+
         if(isRedirectionToDefaultUrl) {//add in redirect parameter so we know that we were redirected
             Map<String, List<String>> portalParamsWithRedirect = new HashMap<String, List<String>>(portalParameters);
-            
+
             portalParamsWithRedirect.put("redirectToDefault", Collections.singletonList( "true" ));
             portalUrlBuilder.setParameters(portalParamsWithRedirect);
         } else {
             portalUrlBuilder.setParameters(portalParameters);
         }
-        
+
         //Copy data for each portlet
         for (final IPortletRequestInfo portletRequestInfo : portalRequestInfo.getPortletRequestInfoMap().values()) {
             final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
             final IPortletUrlBuilder portletUrlBuilder = portalUrlBuilder.getPortletUrlBuilder(portletWindowId);
-            
+
             //Parameters
             final Map<String, List<String>> portletParameters = portletRequestInfo.getPortletParameters();
             portletUrlBuilder.setParameters(portletParameters);
-            
+
             switch (urlType) {
                 case RESOURCE: {
                     //cacheability and resourceId for resource requests
                     portletUrlBuilder.setCacheability(portletRequestInfo.getCacheability());
                     portletUrlBuilder.setResourceId(portletRequestInfo.getResourceId());
                 }
-                
+
                 case RENDER:
                 case ACTION: {
                     //state & mode for all requests
@@ -902,7 +929,7 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
 
         return portalUrlBuilder.getUrlString();
     }
-    
+
     @Override
     public String generateUrl(HttpServletRequest request, IPortalActionUrlBuilder portalActionUrlBuilder) {
         final String redirectLocation = portalActionUrlBuilder.getRedirectLocation();
@@ -1251,6 +1278,29 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
          */
         return !canonicalTuple.equalsIgnoringNullFolderDifferences(requestTuple);
 
+    }
+
+    /**
+     * Conditionally remembers the last-known valid 'targetedLayoutNodeId' if
+     * the user has a session.
+     */
+    private void rememberLayoutNodeId(final HttpServletRequest request, final String layoutNodeId) {
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.setAttribute(REMEMBERED_LAYOUT_NODE_ID, layoutNodeId);
+        }
+    }
+
+    /**
+     * Provides the last-known valid 'targetedLayoutNodeId' if present, otherwise null.
+     */
+    private String getRememberedLayoutNodeId(final HttpServletRequest request) {
+        String rslt = null;  // default
+        final HttpSession session = request.getSession(false);
+        if (session != null) {
+            rslt = (String) session.getAttribute(REMEMBERED_LAYOUT_NODE_ID);
+        }
+        return rslt;
     }
 
     private static final class ContentTuple {
