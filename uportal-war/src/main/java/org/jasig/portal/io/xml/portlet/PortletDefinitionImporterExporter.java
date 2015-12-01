@@ -368,7 +368,7 @@ public class PortletDefinitionImporterExporter
             if (username != null) {
                 return username;
             }
-            logger.warn("Invalid userID {} found when exporting a portlet; return system username instead");
+            logger.warn("Invalid userID {} found when exporting a portlet; return system username instead", id);
         }
         return systemUsername;
     }
