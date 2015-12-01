@@ -32,6 +32,7 @@ public final class SystemPerson implements IPerson {
     private static final long serialVersionUID = 1L;
     
     public static final IPerson INSTANCE = new SystemPerson();
+    private static final String USERNAME = "system";
 
     /* (non-Javadoc)
      * @see java.security.Principal#getName()
@@ -70,7 +71,7 @@ public final class SystemPerson implements IPerson {
      */
     @Override
     public String getUserName() {
-        return "system";
+        return USERNAME;
     }
 
     /* (non-Javadoc)

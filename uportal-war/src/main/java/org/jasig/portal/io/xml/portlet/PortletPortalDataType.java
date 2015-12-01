@@ -44,11 +44,20 @@ public class PortletPortalDataType extends AbstractPortalDataType {
     @Deprecated
     public static final QName LEGACY_CHANNEL_DEFINITION_QNAME = new QName("channel-definition");
     
-    public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
+    public static final PortalDataKey IMPORT_43_DATA_KEY = new PortalDataKey(
             PORTLET_DEFINITION_QNAME, 
             null,
+            "4.3");
+
+    /**
+     * @deprecated used for importing old data files
+     */
+    @Deprecated
+    public static final PortalDataKey IMPORT_40_DATA_KEY = new PortalDataKey(
+            PORTLET_DEFINITION_QNAME,
+            null,
             "4.0");
-    
+
     /**
      * @deprecated used for importing old data files
      */
@@ -85,7 +94,7 @@ public class PortletPortalDataType extends AbstractPortalDataType {
             "classpath://org/jasig/portal/io/import-channel_v3-2.crn",
             null);
 
-    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_31_DATA_KEY, IMPORT_32_DATA_KEY, IMPORT_40_DATA_KEY);
+    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_26_DATA_KEY, IMPORT_30_DATA_KEY, IMPORT_31_DATA_KEY, IMPORT_32_DATA_KEY, IMPORT_40_DATA_KEY, IMPORT_43_DATA_KEY);
     
     public PortletPortalDataType() {
         super(PORTLET_DEFINITION_QNAME);

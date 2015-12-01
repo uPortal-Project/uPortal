@@ -62,6 +62,8 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     private IEntity portletDefEntity = Mock();
     private IAuthorizationService authorizationService = Mock();
     private IUpdatingPermissionManager updatingPermissionManager = Mock();
+    private Date testClassStart = new Date(System.currentTimeMillis() - 1000); // A second prior to now
+    private Date futureTime = new Date(testClassStart.getTime() + 1000 * 60 * 60 * 24)
 
     @Subject
     private PortletDefinitionImporterExporter importer = new PortletDefinitionImporterExporter(
@@ -108,6 +110,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         authServiceInvocationHandler.service = authorizationService;
     }
 
+    // Verifies a date is after the test started and at or before now
+    def checkDateTimeInRange (Date dateTime) {
+        assert dateTime.after(testClassStart)
+        def now = new Date()
+        assert dateTime.before(now) || dateTime.equals(now)
+    }
+
 
     def 'should support importing simple portlets'() {
         given:
@@ -138,6 +147,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 return portletDef;
             };
             1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+                // If no lifecycle specified, defaults to published by System user at current date/time
+                checkDateTimeInRange(pd.getApprovalDate())
+                assert pd.getApproverId() == 0  // During testing System user = 0
+                checkDateTimeInRange(pd.getPublishDate())
+                assert pd.getPublisherId() == 0 // During testing System user = 0
+                assert pd.getExpirationDate() == null
+                assert pd.getExpirerId() < 1
                 return pd;
             };
             1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
@@ -153,11 +169,185 @@ public class PortletDefinitionImporterExporterTest extends Specification {
     }
 
 
+    def 'should support importing portlets with lifecycle but bad future dates'() {
+        given:
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        def portletDef = null;
+
+        and: 'I setup a sample portlet definition'
+        def input = new ExternalPortletDefinition(
+                name: 'test',
+                title: 'title',
+                fname: 'test-new',
+                desc: 'desc',
+                type: 'Portlet',
+                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                lifecycle: new Lifecycle(
+                        // Test with bad future date for approved and published to insure the dates aer set to reasonable
+                        // value (around current date/time)
+                        approved: new LifecycleEntry(
+                                value: getCalendar(futureTime) // bad data, future date
+                        ),
+                        published: new LifecycleEntry(
+                                value: getCalendar(futureTime) // bad data, future date
+                        ),
+                        expiration: new LifecycleEntry(
+                                value: getCalendar(futureTime)
+                        )
+                ),
+                categories: []
+        );
+
+        when: 'I import the portlet'
+        importer.importData(input);
+
+        then: 'I see that the appropriate interactions were called'
+        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+
+        2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
+        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
+            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
+            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            return portletDef;
+        };
+        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            // Future date allowed only for expiration
+            checkDateTimeInRange(pd.getApprovalDate())
+            assert pd.getApproverId() == 0  // During testing System user = 0
+            checkDateTimeInRange(pd.getPublishDate())
+            assert pd.getPublisherId() == 0 // During testing System user = 0
+            assert pd.getExpirationDate() == futureTime
+            assert pd.getExpirerId() == 0  // During testing System user = 0
+            return pd;
+        };
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+
+        1 * portletDefEntity.getAllContainingGroups() >> [].iterator();
+
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
+        1 * updatingPermissionManager.removePermissions(_);
+        1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
+            return permArray.size() == 0;
+        });
+    }
+
+    def 'should support importing portlets with created lifecycle'() {
+        given:
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        def portletDef = null;
+        def testStart = new Date()
+
+        and: 'I setup a sample portlet definition'
+        def input = new ExternalPortletDefinition(
+                name: 'test',
+                title: 'title',
+                fname: 'test-new',
+                desc: 'desc',
+                type: 'Portlet',
+                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                lifecycle: new Lifecycle(
+                        // No properties specified; e.g. created
+                ),
+                categories: []
+        );
+
+        when: 'I import the portlet'
+        importer.importData(input);
+
+        then: 'I see that the appropriate interactions were called'
+        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+
+        2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
+        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
+            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
+            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            return portletDef;
+        };
+        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            assert pd.getApprovalDate() == null
+            assert pd.getApproverId() < 1
+            assert pd.getPublishDate() == null
+            assert pd.getPublisherId() < 1
+            assert pd.getExpirationDate() == null
+            assert pd.getExpirerId() < 1
+            return pd;
+        };
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+
+        1 * portletDefEntity.getAllContainingGroups() >> [].iterator();
+
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
+        1 * updatingPermissionManager.removePermissions(_);
+        1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
+            return permArray.size() == 0;
+        });
+    }
+
+    def 'should support importing portlets with approval lifecycle'() {
+        given:
+        def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
+        def portletDef = null;
+        def testStart = new Date()
+
+        and: 'I setup a sample portlet definition'
+        def input = new ExternalPortletDefinition(
+                name: 'test',
+                title: 'title',
+                fname: 'test-new',
+                desc: 'desc',
+                type: 'Portlet',
+                portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
+                lifecycle: new Lifecycle(
+                        approved: new LifecycleEntry(
+                                value: getCalendar(testStart)
+                        )
+                ),
+                categories: []
+        );
+
+        when: 'I import the portlet'
+        importer.importData(input);
+
+        then: 'I see that the appropriate interactions were called'
+        1 * typeRegistry.getPortletType('Portlet') >> portletType;
+
+        2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
+        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
+            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
+            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            return portletDef;
+        };
+        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            // Only approved has value
+            assert pd.getApprovalDate() == testStart
+            assert pd.getApproverId() == 0  // During testing System user = 0
+            assert pd.getPublishDate() == null
+            assert pd.getPublisherId() < 1
+            assert pd.getExpirationDate() == null
+            assert pd.getExpirerId() < 1
+            return pd;
+        };
+        1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
+
+        1 * portletDefEntity.getAllContainingGroups() >> [].iterator();
+
+        1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
+        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
+        1 * updatingPermissionManager.removePermissions(_);
+        1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
+            return permArray.size() == 0;
+        });
+    }
+
+
     def 'should support updating existing portlets'() {
         given: 'A portlet definition exists'
             def portletType = new PortletTypeImpl('Portlet', 'CpdUri');
             def portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
             portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
+            def testStart = new Date()
 
             // groups assigned to old entity
             IEntityGroup oldGroupStudent = Mock();
@@ -182,6 +372,12 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 fname: 'fname',
                 desc: 'desc',
                 type: 'Portlet',
+                lifecycle: new Lifecycle(
+                        // approved not specified; should default
+                        published: new LifecycleEntry(
+                                value: getCalendar(testStart)
+                        )
+                ),
                 groups: [ "Portal Administrator", "Teacher" ],
                 portletDescriptor: new PortletDescriptor(webAppName: "test", portletName: "test", isFramework: false),
                 categories: []
@@ -197,6 +393,14 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             0 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _);
 
             1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+                // verify the result
+                // Only published specified so only approved around now
+                checkDateTimeInRange(pd.getApprovalDate())
+                assert pd.getApproverId() == 0  // During testing System user = 0
+                checkDateTimeInRange(pd.getPublishDate())
+                assert pd.getPublisherId() < 1
+                assert pd.getExpirationDate() == null
+                assert pd.getExpirerId() == 0  // During testing System user = 0
                 return pd;
             };
             1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
@@ -385,4 +589,12 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             );
         }
     }
+
+    // Utility method to convert a date to a calendar.
+    private static Calendar getCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
 }

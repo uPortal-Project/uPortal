@@ -19,10 +19,8 @@
 package org.jasig.portal.io.xml.portlet;
 
 import org.jasig.portal.io.xml.BaseXsltDataUpgraderTest;
-import org.jasig.portal.io.xml.XmlTestException;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.xml.sax.SAXParseException;
 
 /**
  * @author Eric Dalquist
@@ -84,7 +82,17 @@ public class PortletDataUpgradeTest extends BaseXsltDataUpgraderTest {
                 new ClassPathResource("/org/jasig/portal/io/xml/portlet/test-portlet-1_32-40_expected.channel.xml"),
                 new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.1.xsd"));
     }
-    
+
+    @Test
+    public void testUpgradeTestPortlet40to43() throws Exception {
+        testXsltUpgrade(
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/upgradePortlet_40.xsl"),
+                PortletPortalDataType.IMPORT_40_DATA_KEY,
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/test-portlet-1_40.portlet-definitionl.xml"),
+                new ClassPathResource("/org/jasig/portal/io/xml/portlet/test-portlet-1_40-43_expected.portlet-definition.xml"),
+                new ClassPathResource("/xsd/io/portlet-definition/portlet-definition-4.3.xsd"));
+    }
+
     @Test
     public void testUpgradeGroupsManagerChannel26to30() throws Exception {
         testXsltUpgrade(
