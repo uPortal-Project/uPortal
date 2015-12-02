@@ -1248,8 +1248,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.11</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <excludes>
