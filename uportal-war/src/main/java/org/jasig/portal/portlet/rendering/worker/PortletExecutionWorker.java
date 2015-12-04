@@ -360,9 +360,9 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     @Override
     public final long getDuration() {
         if (this.complete > 0) {
-            return this.complete - this.started;
+            return this.complete - this.submitted;
         } else {
-            return System.currentTimeMillis()- this.started;
+            return System.currentTimeMillis()- this.submitted;
         }
     }
 
