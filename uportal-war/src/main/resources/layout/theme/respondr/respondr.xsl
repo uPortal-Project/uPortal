@@ -678,7 +678,7 @@
                 <header class="portal-header" role="banner">
                     <xsl:call-template name="region.pre-header" />
                     <xsl:call-template name="region.header-top" />
-                    <div class="container-fluid">
+                    <div class="container-fluid portal-header-main">
                         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                         <div class="row">
                             <xsl:call-template name="region.header-left" />
@@ -844,7 +844,6 @@
                             <div class="row">
                                 <div id="portalPageBodyMessage" class="col-md-12"></div>
                             </div>
-                            
                         </div>
                         <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
                         <xsl:copy-of select="/layout_fragment/content"/>
