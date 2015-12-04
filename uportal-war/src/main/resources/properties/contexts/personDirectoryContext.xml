@@ -89,8 +89,7 @@
 
     <!--
      | Servlet filter that creates an attribute for the serverName
-     +
-    -->
+     +-->
     <bean id="requestAttributeSourceFilter"
         class="org.jasig.services.persondir.support.web.RequestAttributeSourceFilter">
         <property name="additionalDescriptors" ref="requestAdditionalDescriptors" />
@@ -116,7 +115,9 @@
 
     <!--
      | Session-scoped descriptors object. One of these will exist for each user in their session. It will store the
-     | attributes from the request set by the requestAttributeSourceFilter
+     | attributes from the request set by the requestAttributeSourceFilter.  This must hold both a session-scoped
+     | bean and request-scoped bean.  See http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771
+     | for more information.
      +-->
     <bean id="requestAdditionalDescriptors" class="org.jasig.services.persondir.support.MediatingAdditionalDescriptors">
         <property name="delegateDescriptors">
