@@ -97,6 +97,11 @@
         <property name="usernameAttribute" value="remoteUser" />
         <property name="remoteUserAttribute" value="remoteUser" />
         <property name="serverNameAttribute" value="serverName" />
+        <!-- The processing position should be set to BOTH for uPortal because the session-scoped bean
+             sessionScopeAdditionalDescriptors gets cleared during /Login processing and request attributes
+             (particularly from HTTP Headers populated by Shibboleth) would be lost.  By executing the filter both
+             before and after, the latter execution will re-add the request attributes to the session-scoped bean.
+             See http://permalink.gmane.org/gmane.comp.java.jasig.uportal/10771 for more information. -->
         <property name="processingPosition" value="BOTH" />
         <property name="headerAttributeMapping">
             <util:map>
