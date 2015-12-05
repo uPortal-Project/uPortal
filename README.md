@@ -1,4 +1,4 @@
-For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM41/Home)
+For more detailed help please refer to the [uPortal Manual](https://wiki.jasig.org/display/UPM42/Home)
 
 Additional information about uPortal is available on the [uPortal Home Page](http://www.apereo.org/uportal)
 or in the [uPortal Wiki](https://wiki.jasig.org/display/UPC/Home)
@@ -12,8 +12,8 @@ uPortal uses Travis-CI for lightweight continuous integration.  You can see buil
 ## Requirements
 * JDK 1.7 or later - The JRE alone is NOT sufficient, a full JDK is required
 * Servlet 3.0 Container - Tomcat 7.0 or later is required.  (NOTE:  Tomcat 8 is not yet supported.)  There some configuration changes that
-must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM41/Installing+Tomcat).
-* Maven 3.0.3 or later
+must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM42/Installing+Tomcat).
+* Maven 3.2.2 or later
 * Ant 1.8.2 or 1.9.3 or later.
 
 ## Building and Deploying
@@ -41,12 +41,12 @@ This is the required process to deploy any portlet to a uPortal instance.
 
 
 ## Help and Support
-The [uportal-user@lists.ja-sig.org](https://wiki.jasig.org/display/JSG/uportal-user)
+The [uportal-user@apereo.org](https://wiki.jasig.org/display/JSG/uportal-user)
 email address is the best place to go with questions related to configuring or 
 deploying uPortal.    
 
 The uPortal manual is a collaborative document on the wiki which has more
-detailed documentation: https://wiki.jasig.org/display/UPM41
+detailed documentation: https://wiki.jasig.org/display/UPM42
 
 
 ## Other Notes
