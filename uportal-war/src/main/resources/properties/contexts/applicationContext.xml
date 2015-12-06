@@ -58,6 +58,7 @@
                |  Reasons for choosing that may include:
                |    - Desire to keep sensitive information out of your Git repository
                |    - Ability to change some common settings without a full build and deploy cycle
+               |    - Building a WAR/EAR that is environment-independent.
                |
                |  Any property defined in the above files that is referenced in the Spring context 
                |  may be overridden in one (or both) of these files.
