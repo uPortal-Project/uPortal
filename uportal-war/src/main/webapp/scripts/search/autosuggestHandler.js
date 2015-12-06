@@ -45,7 +45,7 @@ var autoSuggestResultsProcessors = function (jQuery) {
                 uniqueItems[channel.id] = channel.id;
             }
             return {
-                label: channel.name + '~' + channel.title + '~' + channel.description,
+                label: channel.name + '~' + channel.title + '~' + channel.fname + '~' + channel.description,
                 title: channel.title,
                 desc: channel.description === null ? '' : channel.description,
                 url: urlPattern.replace('$fname', channel.fname)
