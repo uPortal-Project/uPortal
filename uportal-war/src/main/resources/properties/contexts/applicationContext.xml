@@ -51,7 +51,7 @@
               <value>classpath:/properties/security.properties</value>
               <value>classpath:/properties/portal.properties</value>
               <!-- 
-               |  The following 2 files optionally allow deployers to set or override many uPortal 
+               |  The following files optionally allow deployers to set or override many uPortal
                |  configuration settings in a outside the control of the build/deploy cycle, SCM, 
                |  and Tomcat.
                |
@@ -65,9 +65,16 @@
                |  The default location for overrides is ${CATALINA_HOME}/portal/overrides.properties;  
                |  you can use a custom location by specifying PORTAL_HOME as a JVM startup argument 
                |  or as an environment variable.
+               |
+               |  The first two files (overrides.properties) are intended to contain properties,
+               |  such as database secrets, that are shared with portlets (they read those property
+               |  files also).  The latter two files (uPortal_overrides.properties) are for properties
+               |  that are specific to uPortal (portlets should not read these files).
                +-->
               <value>file:${CATALINA_HOME}/portal/overrides.properties</value>
               <value>file:${PORTAL_HOME}/overrides.properties</value>
+              <value>file:${CATALINA_HOME}/portal/uPortal_overrides.properties</value>
+              <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
             </list>
         </property>
         <property name="ignoreResourceNotFound" value="true" />
