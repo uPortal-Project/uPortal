@@ -531,7 +531,7 @@ public class SearchPortletController {
         if (portalSearchResults != null) {
             results = portalSearchResults.getResults();
         }
-            model.put("results", results);
+        model.put("results", results);
         model.put("defaultTabKey", this.defaultTabKey);
         model.put("tabKeys", this.tabKeys);
 

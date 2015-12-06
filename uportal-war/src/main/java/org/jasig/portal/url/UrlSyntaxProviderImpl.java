@@ -312,7 +312,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         
         try {
-            //Clone the parameter map so data can be removed from it as it is parsed to help determine what to do with non-namespaced parameters
+            // Clone the parameter map so data can be removed from it as it is parsed to help determine
+            // what to do with non-namespaced parameters
             final Map<String, String[]> parameterMap = new ParameterMap(request.getParameterMap());
             
             final String requestPath = this.urlPathHelper.getPathWithinApplication(request);
@@ -552,7 +553,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     continue;
                 }
                 
-                //Portlet control parameters are either used directly or as a prefix to a windowId. Use the SuffixedPortletParameter to simplify their parsing
+                // Portlet control parameters are either used directly or as a prefix to a windowId. Use the
+                // SuffixedPortletParameter to simplify their parsing
                 for (final SuffixedPortletParameter suffixedPortletParameter : SuffixedPortletParameter.values()) {
                     final String parameterPrefix = suffixedPortletParameter.getParameterPrefix();
                     //Skip to the next parameter prefix if the current doesn't match
@@ -562,29 +564,34 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                     
                     //All of these parameters require at least one value
                     if (values.isEmpty()) {
-                        this.logger.warn("Ignoring parameter " + name + " as it must have a value. Value: " + values);
+                        this.logger.warn("Ignoring parameter {} as it must have a value. Value: {}", name, values);
                         break;
                     }
                     
                     //Verify the parameter is being used on the correct type of URL
                     final Set<UrlType> validUrlTypes = suffixedPortletParameter.getValidUrlTypes();
                     if (!validUrlTypes.contains(portalRequestInfo.getUrlType())) {
-                        this.logger.warn("Ignoring parameter " + name + " as it is only valid for " + validUrlTypes + " requests and this is a " + portalRequestInfo.getUrlType() + " request. Value: " + values);
+                        this.logger.warn("Ignoring parameter {} as it is only valid for {} requests and this is a "
+                                + "{} request. Value: {}", name, validUrlTypes, portalRequestInfo.getUrlType(), values);
                         break;
                     }
                     
                     //Determine the portlet window and request info the parameter targets
-                    final IPortletWindowId portletWindowId = this.parsePortletWindowIdSuffix(request, parameterPrefix, additionalPortletIds, name);
-                    final PortletRequestInfoImpl portletRequestInfo = getTargetedPortletRequestInfo(portalRequestInfo, targetedPortletRequestInfo, portletWindowId);
+                    final IPortletWindowId portletWindowId =
+                            this.parsePortletWindowIdSuffix(request, parameterPrefix, additionalPortletIds, name);
+                    final PortletRequestInfoImpl portletRequestInfo =
+                            getTargetedPortletRequestInfo(portalRequestInfo, targetedPortletRequestInfo, portletWindowId);
                     if (portletRequestInfo == null) {
-                        this.logger.warn("Parameter " + name + " is for the targeted portlet but no portlet is targeted by the request. The parameter will be ignored. Value: " + values);
+                        this.logger.warn("Parameter {} is for the targeted portlet but no portlet is targeted"
+                                + " by the request. The parameter will be ignored. Value: {}", name, values);
                         break;
                     }
                     
                     parameterEntryItr.remove();
                     
                     //Use the enum helper to store the parameter values on the request info
-                    suffixedPortletParameter.updateRequestInfo(request, portletWindowRegistry, portletRequestInfo, values, delegateIdMappings);
+                    suffixedPortletParameter.updateRequestInfo(request, portletWindowRegistry,
+                            portletRequestInfo, values, delegateIdMappings);
                     break;
                 }
             }
@@ -607,7 +614,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                         parameters = delegatePortletRequestInfo.getPortletParameters();
                     }
                     else {
-                        this.logger.warn("No root delegate portlet could be resolved, non-namespaced parameters will be sent to the targeted portlet. THIS SHOULD NEVER HAPPEN. Delegate parent/child mapping: " + delegateIdMappings);
+                        this.logger.warn("No root delegate portlet could be resolved, non-namespaced parameters"
+                                + " will be sent to the targeted portlet. THIS SHOULD NEVER HAPPEN. Delegate"
+                                + " parent/child mapping: {}", delegateIdMappings);
                         
                         if (targetedPortletRequestInfo != null) {
                             parameters = targetedPortletRequestInfo.getPortletParameters();
@@ -628,7 +637,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             }
             
             //If a portlet is targeted but no layout node is targeted must be maximized
-            if (targetedPortletRequestInfo != null && portalRequestInfo.getTargetedLayoutNodeId() == null && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
+            if (targetedPortletRequestInfo != null && portalRequestInfo.getTargetedLayoutNodeId() == null
+                    && (requestedUrlState == null || requestedUrlState == UrlState.NORMAL)) {
                 portalRequestInfo.setUrlState(UrlState.MAX);
                 targetedPortletRequestInfo.setWindowState(WindowState.MAXIMIZED);
             }
