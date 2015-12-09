@@ -671,6 +671,7 @@
         </echo>
 
         <antcall target="up-shell">
+            <param name="-Denv" value="${env}" />
             <param name="script" value="${portal-shell-script}" />
         </antcall>
     </target>
