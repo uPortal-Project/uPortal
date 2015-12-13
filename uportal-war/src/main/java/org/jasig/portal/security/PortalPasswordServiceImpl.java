@@ -83,7 +83,10 @@ public class PortalPasswordServiceImpl implements IPortalPasswordService {
      * @see org.jasig.portal.security.IPortalPasswordService#validatePassword(java.lang.String, java.lang.String)
      */
     public boolean validatePassword(String cleartext, String encrypted) {
-        if (encrypted.startsWith(MD5_PREFIX)) {
+        // If local account has no password, do not allow login.
+        if (encrypted == null) {
+            return false;
+        } else if (encrypted.startsWith(MD5_PREFIX)) {
             encrypted = encrypted.substring(5);
             return md5Encryptor.checkPassword(cleartext, encrypted);
         } else if (encrypted.startsWith(SHA256_PREFIX)) {
