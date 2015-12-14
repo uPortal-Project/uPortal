@@ -147,14 +147,14 @@
     <xsl:template name="region.header-left">
         <xsl:choose>
             <xsl:when test="//region[@name='header-left']/channel">
-                <div id="region-header-left" class="col-sm-8 text-left">
+                <div id="region-header-left" class="col-sm-6 col-md-8 text-left">
                     <xsl:for-each select="//region[@name='header-left']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div id="empty-region-header-left" class="col-sm-8 text-left"></div>
+                <div id="empty-region-header-left" class="col-sm-6 col-md-8 text-left"></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -168,14 +168,14 @@
     <xsl:template name="region.header-right">
         <xsl:choose>
             <xsl:when test="//region[@name='header-right']/channel">
-                <div id="region-header-right" class="col-sm-4 text-right">
+                <div id="region-header-right" class="col-sm-6 col-md-4 text-right">
                     <xsl:for-each select="//region[@name='header-right']/channel">
                         <xsl:call-template name="regions.portlet.decorator" />
                     </xsl:for-each>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div id="empty-region-header-right" class="col-sm-4 text-right"></div>
+                <div id="empty-region-header-right" class="col-sm-6 col-md-4 text-right"></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
