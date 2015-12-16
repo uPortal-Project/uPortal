@@ -34,15 +34,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
+
+    // IPerson attribute key to flag if this value has already been set
+    private static final String SESSION_MAX_INACTIVE_SET_ATTR = "MAX_INACTIVE_SET";
     protected final Log log = LogFactory.getLog(getClass());
     private IPersonManager personManager;
     private IAuthorizationService authorizationService;
-    
+
     @Autowired
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
     }
-    
+
     @Autowired
     public void setAuthorizationService(IAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
@@ -54,20 +57,40 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
         if (session == null) {
             return true;
         }
-        
+
         // Now see if authentication was successful...
         final IPerson person = this.personManager.getPerson((HttpServletRequest) request);
         if (person == null) {
             return true;
         }
-        
+
+        // Check if the session max inactive value has already been set
+        Boolean isAlreadySet = (Boolean) person.getAttribute(this.SESSION_MAX_INACTIVE_SET_ATTR);
+        if (isAlreadySet != null && isAlreadySet.equals(Boolean.TRUE)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Session.setMaxInactiveInterval() has already been determined for user '"
+                        + person.getAttribute(IPerson.USERNAME) + "'");
+            }
+            return true;
+        }
+
         final ISecurityContext securityContext = person.getSecurityContext();
         if (securityContext != null && securityContext.isAuthenticated()) {
             // We have an authenticated user... let's see if any MAX_INACTIVE settings apply...
             IAuthorizationPrincipal principal = authorizationService.newPrincipal((String) person.getAttribute(IPerson.USERNAME), IPerson.class);
             Integer rulingGrant = null;
             Integer rulingDeny = null;
-            IPermission[] permissions = authorizationService.getAllPermissionsForPrincipal(principal, null, "MAX_INACTIVE", null);
+            IPermission[] permissions = authorizationService.getAllPermissionsForPrincipal(principal, IPermission.PORTAL_SYSTEM, "MAX_INACTIVE", null);
+            assert(permissions != null);
+            if (permissions.length == 0) {
+                // No max inactive permission set for this user
+                if (log.isInfoEnabled()) {
+                    log.info("No MAX_INACTIVE permissions apply to user '"
+                            + person.getAttribute(IPerson.USERNAME) + "'");
+                }
+                person.setAttribute(this.SESSION_MAX_INACTIVE_SET_ATTR, Boolean.TRUE);
+                return true;
+            }
             for (IPermission p : permissions) {
                 // First be sure the record applies currently...
                 long now = System.currentTimeMillis();
@@ -82,14 +105,14 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
                 if (p.getType().equals(IPermission.PERMISSION_TYPE_GRANT)) {
                     try {
                         Integer grantEntry = Integer.valueOf(p.getTarget());
-                        if (rulingGrant == null 
+                        if (rulingGrant == null
                                         || grantEntry.intValue() < 0 /* Any negative number trumps all */
                                         || rulingGrant.intValue() < grantEntry.intValue()) {
                             rulingGrant = grantEntry;
                         }
                     } catch (NumberFormatException nfe) {
-                        log.warn("Invalid MAX_INACTIVE permission grant '" 
-                                        + p.getTarget() 
+                        log.warn("Invalid MAX_INACTIVE permission grant '"
+                                        + p.getTarget()
                                         + "';  target must be an integer value.");
                     }
                 } else if (p.getType().equals(IPermission.PERMISSION_TYPE_DENY)) {
@@ -99,8 +122,8 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
                             rulingDeny = denyEntry;
                         }
                     } catch (NumberFormatException nfe) {
-                        log.warn("Invalid MAX_INACTIVE permission deny '" 
-                                        + p.getTarget() 
+                        log.warn("Invalid MAX_INACTIVE permission deny '"
+                                        + p.getTarget()
                                         + "';  target must be an integer value.");
                     }
                 } else {
@@ -109,19 +132,19 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
             }
 
             if (rulingDeny != null && rulingDeny.intValue() < 0) {
-                // Negative MaxInactiveInterval values mean the session never 
-                // times out, so a negative DENY is somewhat nonsensical... just 
+                // Negative MaxInactiveInterval values mean the session never
+                // times out, so a negative DENY is somewhat nonsensical... just
                 // clear it.
-                log.warn("A MAX_INACTIVE DENY entry improperly specified a negative target:  " 
+                log.warn("A MAX_INACTIVE DENY entry improperly specified a negative target:  "
                         + rulingDeny.intValue());
                 rulingDeny = null;
             }
             if (rulingGrant != null || rulingDeny != null) {
-                // We only want to intervene if there's some actual value 
-                // specified... otherwise we'll just let the container settings 
+                // We only want to intervene if there's some actual value
+                // specified... otherwise we'll just let the container settings
                 //govern.
-                int maxInactive = rulingGrant != null 
-                                    ? rulingGrant.intValue() 
+                int maxInactive = rulingGrant != null
+                                    ? rulingGrant.intValue()
                                     : 0;    // If rulingGrant is null, rulingDeny won't be...
                 if (rulingDeny != null) {
                     // Applying DENY entries is tricky b/c GRANT entries may be negative...
@@ -135,15 +158,16 @@ public class MaxInactiveInterceptor extends HandlerInterceptorAdapter {
                 }
                 // Apply the specified setting...
                 session.setMaxInactiveInterval(maxInactive);
+                person.setAttribute(this.SESSION_MAX_INACTIVE_SET_ATTR, Boolean.TRUE);
                 if (log.isInfoEnabled()) {
-                    log.info("Setting maxInactive to '" + maxInactive 
-                                + "' for user '" 
-                                + person.getAttribute(IPerson.USERNAME) + "'");
+                    log.info("Setting maxInactive to '" + maxInactive
+                            + "' for user '"
+                            + person.getAttribute(IPerson.USERNAME) + "'");
                 }
             }
-            
+
         }
-        
+
         return true;
     }
 }
