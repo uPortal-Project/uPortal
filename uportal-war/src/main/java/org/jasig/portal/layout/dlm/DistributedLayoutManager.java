@@ -1268,8 +1268,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
     @Override
     public String getCacheKey() {
-        return Integer.toString(getDistributedUserLayout().getLayout().hashCode());
-//        return this.cacheKey;
+        return this.cacheKey;
     }
 
     /**
