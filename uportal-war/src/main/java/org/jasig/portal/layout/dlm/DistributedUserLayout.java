@@ -71,7 +71,7 @@ public class DistributedUserLayout {
     }
 
     /**
-     * @return The names of all of the fragments incorperated into the layout
+     * @return The names of all of the fragments incorporated into the layout
      */
     public Set<String> getFragmentNames() {
         return this.fragmentNames;
