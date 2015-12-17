@@ -80,11 +80,9 @@ import org.w3c.dom.NodeList;
  * layout fragments that are derived from regular portal user accounts.
  *
  * @author Mark Boyd
- * @version 1.0  $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class DistributedLayoutManager implements IUserLayoutManager, IFolderLocalNameResolver, InitializingBean
-{
+public class DistributedLayoutManager implements IUserLayoutManager, IFolderLocalNameResolver, InitializingBean {
     public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
@@ -94,7 +92,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     private XPathOperations xpathOperations;
     private IPortalLayoutEventFactory portalEventFactory;
     private IAuthorizationService authorizationService;
-    
+
     protected final IPerson owner;
     protected final IUserProfile profile;
 
@@ -103,39 +101,39 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
      * defined in the dlm context configuration.  
      */
     static final String FOLDER_LABEL_POLICY = "FolderLabelPolicy";
-    
-    protected final static Random rnd=new Random();
-    protected String cacheKey="initialKey";
+
+    protected final static Random rnd = new Random();
+    protected String cacheKey = null;  // Must be "updated" prior to use
     protected String rootNodeId = null;
 
     private boolean channelsAdded = false;
     private boolean isFragmentOwner = false;
 
-    public DistributedLayoutManager(IPerson owner, IUserProfile profile) throws PortalException
-    {
-        if (owner == null)
-        {
+    public DistributedLayoutManager(IPerson owner, IUserProfile profile) throws PortalException {
+
+        if (owner == null) {
             throw new PortalException(
                     "Unable to instantiate DistributedLayoutManager. "
                             + "A non-null owner must to be specified.");
         }
-
-        if (profile == null)
-        {
+        if (profile == null) {
             throw new PortalException(
                     "Unable to instantiate DistributedLayoutManager for "
                             + owner.getAttribute(IPerson.USERNAME) + ". A "
                             + "non-null profile must to be specified.");
         }
-        
+
         // cache the relatively lightwieght userprofile for use in 
         // in layout PLF loading
         owner.setAttribute(IUserProfile.USER_PROFILE, profile);
-        
+
         this.owner = owner;
         this.profile = profile;
+
+        // Must always initialize the cacheKey to a generated value
+        this.updateCacheKey();
     }
-    
+
     @Autowired
     public void setAuthorizationService(IAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
@@ -1268,14 +1266,16 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         return v.elements();
     }
 
+    @Override
     public String getCacheKey() {
-        return this.cacheKey;
+        return Integer.toString(getDistributedUserLayout().getLayout().hashCode());
+//        return this.cacheKey;
     }
 
     /**
-     * This is outright cheating ! We're supposed to analyze the user layout tree
-     * and return a key that corresponds uniqly to the composition and the sturcture of the tree.
-     * Here we just return a different key wheneever anything changes. So if one was to move a
+     * This is outright cheating! We're supposed to analyze the user layout tree
+     * and return a key that corresponds uniquely to the composition and the structure of the tree.
+     * Here we just return a different key whenever anything changes. So if one was to move a
      * node back and forth, the key would always never (almost) come back to the original value,
      * even though the changes to the user layout are cyclic.
      *
