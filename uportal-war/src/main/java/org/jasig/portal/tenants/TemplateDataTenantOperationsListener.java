@@ -61,7 +61,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     private ApplicationContext applicationContext;
     private Resource[] templateResources;
-    private SAXReader reader = new SAXReader();
+    private SAXReader reader;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Value("${org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/jasig/portal/tenants/data/**/*.xml}")
@@ -74,6 +74,11 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private IPortalSpELService portalSpELService;
 
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
+
+    public TemplateDataTenantOperationsListener() {
+        this.reader = new SAXReader();
+        this.reader.setMergeAdjacentText(true);
+    }
 
     /**
      * Order in which data types should be imported.
