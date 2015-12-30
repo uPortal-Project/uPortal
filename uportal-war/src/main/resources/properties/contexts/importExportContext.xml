@@ -142,8 +142,8 @@
      +-->
     <bean id="portletDefinitionImporterExporter" class="org.jasig.portal.io.xml.portlet.PortletDefinitionImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.portlet" />
-        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.1.xsd" />
-        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd" />
+        <property name="schema" value="classpath:/xsd/io/portlet-definition/portlet-definition-4.3.xsd" />
+        <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.3.xsd" />
     </bean>
     <bean id="portletTypeImporterExporter" class="org.jasig.portal.io.xml.portlettype.PortletTypeImporterExporter">
         <property name="contextPath" value="org.jasig.portal.io.xml.portlettype" />
@@ -345,6 +345,14 @@
             </set>
         </property>
         <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/portlet/upgradeChannel_32.xsl" />
+    </bean>
+    <bean id="portlet40DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
+        <property name="portalDataKeys">
+            <set>
+                <util:constant static-field="org.jasig.portal.io.xml.portlet.PortletPortalDataType.IMPORT_40_DATA_KEY"/>
+            </set>
+        </property>
+        <property name="xslResource" value="classpath:/org/jasig/portal/io/xml/portlet/upgradePortlet_40.xsl" />
     </bean>
     <bean id="subscribedFragment32DataUpgrader" class="org.jasig.portal.io.xml.XsltDataUpgrader">
         <property name="portalDataKeys">

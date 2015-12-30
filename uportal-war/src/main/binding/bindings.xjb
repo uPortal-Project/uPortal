@@ -29,7 +29,7 @@
             <jaxb:package name="org.jasig.portal.io.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
-    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-definition/portlet-definition-4.1.xsd">
+    <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-definition/portlet-definition-4.3.xsd">
         <jaxb:bindings node="//xs:element[@name='portlet-definition']">
             <jaxb:class name="ExternalPortletDefinition"/>
         </jaxb:bindings>

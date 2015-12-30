@@ -820,6 +820,9 @@
                         <include>io/subscribed-fragment/*.xsd</include>
                         <include>portlet-publishing/*.xsd</include>
                     </schemaIncludes>
+                    <schemaExcludes>
+                        <exclude>io/portlet-definition/portlet-definition-4.1.xsd</exclude>
+                    </schemaExcludes>
                 </configuration>
             </plugin>
             <plugin>

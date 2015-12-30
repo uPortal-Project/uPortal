@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.0.xsd">
+<portlet-definition xmlns="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns2="https://source.jasig.org/schemas/uportal" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.3" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-definition https://source.jasig.org/schemas/uportal/io/portlet-definition/portlet-definition-4.3.xsd">
     <title>About.com College Life</title>
     <name>About.com College Life</name>
     <fname>about-college-life</fname>
@@ -30,6 +30,10 @@
         <ns2:webAppName>/NewsReaderPortlet</ns2:webAppName>
         <ns2:portletName>news</ns2:portletName>
     </portlet-descriptor>
+    <lifecycle>
+        <approved user="system">2015-11-06T12:48:19.717-07:00</approved>
+        <published user="system">2015-11-06T12:48:19.717-07:00</published>
+    </lifecycle>
     <category>Entertainment</category>
     <category>News</category>
     <group>Everyone</group>

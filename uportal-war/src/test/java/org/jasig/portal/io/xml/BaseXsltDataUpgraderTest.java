@@ -107,6 +107,7 @@ public abstract class BaseXsltDataUpgraderTest {
         }
 
         XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setNormalizeWhitespace(true);
         try {
             Diff d = new Diff(new InputStreamReader(expectedResultResource.getInputStream()), new StringReader(resultString));
             assertTrue("Upgraded data doesn't match expected data: " + d, d.similar());

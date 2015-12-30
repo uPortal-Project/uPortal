@@ -26,7 +26,7 @@ import org.jasig.portal.user.IUserInstance;
 
 
 /**
- * A class handling holding all user state information. The class is also reponsible for
+ * A class handling holding all user state information. The class is also responsible for
  * request processing and orchestrating the entire rendering procedure.
  * (this is a replacement for the good old LayoutBean class)
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}

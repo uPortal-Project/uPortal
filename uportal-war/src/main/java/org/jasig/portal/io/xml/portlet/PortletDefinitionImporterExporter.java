@@ -22,6 +22,7 @@ package org.jasig.portal.io.xml.portlet;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
@@ -55,6 +57,7 @@ import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.security.*;
@@ -74,11 +77,16 @@ public class PortletDefinitionImporterExporter
         extends AbstractJaxbDataHandler<ExternalPortletDefinition> 
         implements IPortletPublishingService {
 
+
     private PortletPortalDataType portletPortalDataType;
     private IPortletTypeRegistry portletTypeRegistry;
     private IPortletDefinitionDao portletDefinitionDao;
     private IPortletCategoryRegistry portletCategoryRegistry;
+    private IUserIdentityStore userIdentityStore;
     private boolean errorOnChannel = true;
+
+    private IPerson systemUser = PersonFactory.createSystemPerson();
+    private String systemUsername = SystemPerson.INSTANCE.getUserName();
 
     @Value("${org.jasig.portal.io.errorOnChannel}")
 	public void setErrorOnChannel(boolean errorOnChannel) {
@@ -104,10 +112,15 @@ public class PortletDefinitionImporterExporter
     public void setPortletCategoryRegistry(IPortletCategoryRegistry portletCategoryRegistry) {
         this.portletCategoryRegistry = portletCategoryRegistry;
     }
-    
+
+    @Autowired
+    public void setUserIdentityStore(IUserIdentityStore identityStore) {
+        this.userIdentityStore = identityStore;
+    }
+
     @Override
     public Set<PortalDataKey> getImportDataKeys() {
-        return Collections.singleton(PortletPortalDataType.IMPORT_40_DATA_KEY);
+        return Collections.singleton(PortletPortalDataType.IMPORT_43_DATA_KEY);
     }
 
     @Override
@@ -227,15 +240,11 @@ public class PortletDefinitionImporterExporter
             def.setResourceTimeout(resourceTimeout.intValue());
         }
         def.setType(portletType);
-        
-        Date now = new Date();
-        IPerson systemUser = PersonFactory.createSystemPerson();
-        def.setApprovalDate(now);
-        def.setApproverId(systemUser.getID());
-        def.setPublishDate(now);
-        def.setPublisherId(systemUser.getID());     
-        
-        
+
+        handleLifecycleApproval(def, portletRep.getLifecycle());
+        handleLifecyclePublished(def, portletRep.getLifecycle());
+        handleLifecycleExpired(def, portletRep.getLifecycle());
+
         final Set<IPortletDefinitionParameter> parameters = new LinkedHashSet<IPortletDefinitionParameter>();
         for (ExternalPortletParameter param : portletRep.getParameters()) {
             parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
@@ -256,14 +265,116 @@ public class PortletDefinitionImporterExporter
         }
         def.setPortletPreferences(preferenceList);
         
-        savePortletDefinition(def, PersonFactory.createSystemPerson(), categories, permissions);
+        savePortletDefinition(def, systemUser, categories, permissions);
+    }
+
+    // lifecycle not present: approved immediately
+    // lifecycle present, approval not present nor any later lifecycle: not approved (i.e created)
+    // lifecycle present, approval not present but later lifecycle is: approved at earliest later lifecycle datetime
+    // lifecycle present, approval specified: approved at indicated date
+    private void handleLifecycleApproval(IPortletDefinition def, Lifecycle lifecycle) {
+        if (lifecycle != null) {
+            if (lifecycle.getApproved() != null) {
+                LifecycleEntry lifecycleEntry = lifecycle.getApproved();
+                def.setApprovalDate(calculateEarliestApprovalDate(lifecycle));
+                def.setApproverId(getUserIdForUsername(lifecycleEntry.getUser(), def));
+            } else if (lifecycle.getPublished() != null || lifecycle.getExpiration() != null) {
+                def.setApprovalDate(calculateEarliestPubExpireDate(lifecycle));
+                def.setApproverId(systemUser.getID());
+            } else {
+                def.setApprovalDate(null);
+                def.setApproverId(-1);  // Using -1 to be consistent with PortletAdministrationHelper
+            }
+        } else {
+            def.setApprovalDate(new Date());
+            def.setApproverId(systemUser.getID());
+        }
+    }
+
+    // Handle improper data.  If the Approval date is after either the published or expire date, return the
+    // earlier of the latter two dates.
+    private Date calculateEarliestApprovalDate(Lifecycle lifecycle) {
+        Date publishOrExpireDate = calculateEarliestPubExpireDate(lifecycle);
+        return lifecycle.getApproved() != null
+                && publishOrExpireDate.after(lifecycle.getApproved().getValue().getTime()) ?
+                    lifecycle.getApproved().getValue().getTime() : publishOrExpireDate;
+    }
+
+    // Calculates the earliest of either the published Date or Expiration date, whichever is specified.
+    // If neither specified, returns current time.
+    private Date calculateEarliestPubExpireDate(Lifecycle lifecycle) {
+        Date now = new Date();
+        Date publishedDate = lifecycle.getPublished() != null && lifecycle.getPublished().getValue().before(now)?
+                lifecycle.getPublished().getValue().getTime() : now;
+        Date expiredDate = lifecycle.getExpiration() != null ? lifecycle.getExpiration().getValue().getTime() : now;
+        return publishedDate.after(expiredDate) ? expiredDate : publishedDate;
+    }
+
+    // lifecycle not present: published immediately
+    // lifecycle present, published not present nor any later lifecycle: not published
+    // lifecycle present, published not present but later lifecycle is: published at earliest later lifecycle datetime
+    // lifecycle present, published specified: published at indicated date
+    private void handleLifecyclePublished(IPortletDefinition def, Lifecycle lifecycle) {
+        if (lifecycle != null) {
+            if (lifecycle.getPublished() != null) {
+                LifecycleEntry lifecycleEntry = lifecycle.getPublished();
+                def.setPublishDate(calculateEarliestPubExpireDate(lifecycle));
+                def.setPublisherId(getUserIdForUsername(lifecycleEntry.getUser(), def));
+            } else if (lifecycle.getExpiration() != null) {
+                def.setPublishDate(calculateEarliestPubExpireDate(lifecycle));
+                def.setPublisherId(systemUser.getID());
+            } else {
+                def.setPublishDate(null);
+                def.setPublisherId(-1);  // Using -1 to be consistent with PortletAdministrationHelper
+            }
+        } else {
+            def.setPublishDate(new Date());
+            def.setPublisherId(systemUser.getID());
+        }
+    }
+
+    // lifecycle present and expired present: expired at indicated datetime
+    // else not expired
+    private void handleLifecycleExpired(IPortletDefinition def, Lifecycle lifecycle) {
+        if (lifecycle != null && lifecycle.getExpiration() != null) {
+            LifecycleEntry lifecycleEntry = lifecycle.getExpiration();
+            def.setExpirationDate(lifecycleEntry.getValue().getTime());
+            def.setExpirerId(getUserIdForUsername(lifecycleEntry.getUser(), def));
+        } else {
+            def.setExpirationDate(null);
+            def.setExpirerId(0);
+        }
+    }
+
+    // Returns the ID for the specified username or if not found the ID of the system user.
+    private int getUserIdForUsername (String username, IPortletDefinition def) {
+        if (username != null && !username.equals(systemUsername)) {
+            Integer id = userIdentityStore.getPortalUserId(username);
+            if (id != null) {
+                return id;
+            }
+            logger.warn("Invalid username {} in portlet lifecycle for fname={}, defaulting to system user",
+                    username, def.getFName());
+        }
+        // Note this returns 0 consistent with prior import behavior, not the id in the database.
+        // todo: Figure out if we should instead return the id of the system user in the DB
+        return systemUser.getID();
+    }
+
+    // Returns the username for a valid userId, else the system username
+    private String getUsernameForUserId(int id) {
+        if (id > 0) {
+            String username = userIdentityStore.getPortalUserName(id);
+            if (username != null) {
+                return username;
+            }
+            logger.warn("Invalid userID {} found when exporting a portlet; return system username instead", id);
+        }
+        return systemUsername;
     }
 
     /**
      * {@link String} id argument is treated as the portlet fname.
-     * 
-     * (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImporter#deleteData(java.lang.String)
      */
     @Transactional
     @Override
@@ -434,6 +545,13 @@ public class PortletDefinitionImporterExporter
         return BigInteger.valueOf(i);
     }
 
+    // Utility method to convert a date to a calendar.
+    private static Calendar getCalendar(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
     protected ExternalPortletDefinition convert(IPortletDefinition def) {
         ExternalPortletDefinition rep = new ExternalPortletDefinition();
          
@@ -447,6 +565,28 @@ public class PortletDefinitionImporterExporter
         rep.setResourceTimeout(convertToBigInteger(def.getResourceTimeout()));
         rep.setTitle(def.getTitle());
         rep.setType(def.getType().getName());
+
+        if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.APPROVED)) {
+            Lifecycle lifecycle = new Lifecycle();
+            LifecycleEntry approved = new LifecycleEntry();
+            approved.setUser(getUsernameForUserId(def.getApproverId()));
+            approved.setValue(getCalendar(def.getApprovalDate()));
+            lifecycle.setApproved(approved);
+            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.PUBLISHED)) {
+                LifecycleEntry published = new LifecycleEntry();
+                published.setUser(getUsernameForUserId(def.getPublisherId()));
+                published.setValue(getCalendar(def.getPublishDate()));
+                lifecycle.setPublished(published);
+            }
+            if (def.getLifecycleState().isEqualToOrAfter(PortletLifecycleState.EXPIRED)) {
+                LifecycleEntry expired = new LifecycleEntry();
+                expired.setUser(getUsernameForUserId(def.getExpirerId()));
+                expired.setValue(getCalendar(def.getExpirationDate()));
+                lifecycle.setExpiration(expired);
+            }
+            // Maintenance mode is handled via a portlet publishing parameter and not a lifecycle
+            rep.setLifecycle(lifecycle);
+        }
          
          
         final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
