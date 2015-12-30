@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -78,6 +80,22 @@ public class MarketplaceRESTController {
 
         return new ModelAndView("json", "portlets", marketplaceEntries);
     }
+    
+    @RequestMapping(value="/marketplace/entry/{fname}.json")
+    public ModelAndView marketplaceEntryFeed(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) {
+      final IPerson user = personManager.getPerson(request);
+      
+      MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+      if(marketplacePortletDefinition != null && marketplaceService.mayBrowsePortlet(user, marketplacePortletDefinition)) {
+          MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
+          entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
+          
+          return new ModelAndView("json", "entry", entry);
+      }
+      
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+      return null;
+  }
     
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
     public ModelAndView getUserRating(HttpServletRequest request, @PathVariable String fname) {
