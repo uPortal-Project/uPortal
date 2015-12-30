@@ -28,7 +28,6 @@ import javax.xml.transform.sax.SAXSource;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Node;
-import org.dom4j.Text;
 import org.dom4j.io.DocumentSource;
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
@@ -80,11 +79,11 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
                         }
                         break;
                     case org.w3c.dom.Node.TEXT_NODE:
-                        Text t = (Text) n;
-                        inpt = t.getText();
+                    case org.w3c.dom.Node.CDATA_SECTION_NODE:
+                        inpt = n.getText();
                         otpt = processText(inpt);
                         if (!otpt.equals(inpt)) {
-                            t.setText(otpt);
+                            n.setText(otpt);
                         }
                         break;
                     default:
