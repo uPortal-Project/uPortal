@@ -90,13 +90,26 @@ public interface IMarketplaceService {
      * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition.
      */
     MarketplacePortletDefinition getOrCreateMarketplacePortletDefinition(IPortletDefinition portletDefinition);
-    
+
     /**
      * Provides a {@link MarketplacePortletDefinition} object that corresponds to the specified portlet definition.
      * Implementations of IMarketplaceService may cache these objects to-taste.
      * @param fname a valid fname of a portlet
-     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition. 
+     * @return A {@link MarketplacePortletDefinition} wrapping the specified portlet definition.
      */
     MarketplacePortletDefinition getOrCreateMarketplacePortletDefinitionIfTheFnameExists(String fname);
+
+    /**
+     * Answers whether the given user may add the portlet to their layout
+     *
+     * @param user a non-null IPerson who might be permitted to add
+     * @param portletDefinition a non-null portlet definition
+     * @return true if permitted, false otherwise
+     * @throws IllegalArgumentException if user is null
+     * @throws IllegalArgumentException if portletDefinition is null
+     *
+     * @since uPortal 4.2
+     */
+    boolean mayAddPortlet(final IPerson user, final IPortletDefinition portletDefinition);
 
 }
