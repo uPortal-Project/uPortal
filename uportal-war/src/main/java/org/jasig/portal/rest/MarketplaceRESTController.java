@@ -32,6 +32,8 @@ import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.rest.layout.MarketplaceEntryRating;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.slf4j.Logger;
@@ -81,9 +83,10 @@ public class MarketplaceRESTController {
     @RequestMapping(value="/marketplace/entry/{fname}.json")
     public ModelAndView marketplaceEntryFeed(HttpServletRequest request, HttpServletResponse response, @PathVariable String fname) {
         final IPerson user = personManager.getPerson(request);
+        final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
 
-        MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
-        if(marketplacePortletDefinition != null && marketplaceService.mayBrowsePortlet(user, marketplacePortletDefinition)) {
+        final MarketplacePortletDefinition marketplacePortletDefinition = marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+        if(marketplacePortletDefinition != null && marketplaceService.mayBrowsePortlet(principal, marketplacePortletDefinition)) {
             MarketplaceEntry entry = new MarketplaceEntry(marketplacePortletDefinition, true, user);
             entry.setCanAdd(marketplaceService.mayAddPortlet(user, marketplacePortletDefinition));
 
