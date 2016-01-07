@@ -162,9 +162,16 @@
 <xsl:param name="baseActionURL">render.uP</xsl:param>
 <xsl:variable name="BASE_ACTION_URL"><xsl:value-of select="$baseActionURL"/></xsl:variable>
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
+
 <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
     <xsl:choose>
         <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
+        <xsl:otherwise>false</xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+<xsl:variable name="ADD_TAB_PERMISSION">
+    <xsl:choose>
+        <xsl:when test="upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL')">true</xsl:when>
         <xsl:otherwise>false</xsl:otherwise>
     </xsl:choose>
 </xsl:variable>
@@ -282,7 +289,15 @@
 | RED
 -->
 <xsl:template match="navigation">
-            <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
+            <xsl:for-each select="@*">
+                <xsl:variable name="attrValue">
+                    <xsl:choose>
+                        <xsl:when test="local-name(.) = 'allowAddTab' and . = 'true' and $ADD_TAB_PERMISSION = 'true'">true</xsl:when>
+                        <xsl:when test="local-name(.) = 'allowAddTab'">false</xsl:when>
+                        <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="$attrValue"/>",
             </xsl:for-each>
             "tabGroupsList": {
                 <xsl:for-each select="tabGroupsList/@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
