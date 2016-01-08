@@ -39,14 +39,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * Receives the username and password and tries to authenticate the user.
- * The form presented by org.jasig.portal.channels.CLogin is typically used
- * to generate the post to this servlet.
+ * Controller to work with the local login form.
+ * The form presented by org.jasig.portal.channels.CLogin is typically used to generate the post to this servlet.
+ * Actual login processing occurs in PortalPreAuthenticatedProcessingFilter.
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu)
- * Added properties in the security properties file that hold the tokens used to
- * represent the principal and credential for each security context.
  */
 @Controller
 @RequestMapping("/Login")
@@ -106,8 +104,7 @@ public class LoginController {
 
         if (redirectTarget == null) {
             /* Grab the target functional name, if any, off the login request.
-             * Also any arguments for the target
-             * We will pass them  along after authentication.
+             * Also any arguments for the target. We will pass them  along after authentication.
              */
             String targetFname = request.getParameter("uP_fname");
 
