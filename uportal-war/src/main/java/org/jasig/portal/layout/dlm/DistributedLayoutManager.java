@@ -122,9 +122,8 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                             + owner.getAttribute(IPerson.USERNAME) + ". A "
                             + "non-null profile must to be specified.");
         }
-
-        // cache the relatively lightwieght userprofile for use in 
-        // in layout PLF loading
+        
+        // cache the relatively lightweight userprofile for use in layout PLF loading
         owner.setAttribute(IUserProfile.USER_PROFILE, profile);
 
         this.owner = owner;
@@ -940,26 +939,20 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
             IPortletDefinition def = registry.getPortletDefinition(channelPublishId);
             return def.getParametersAsUnmodifiableMap();
-        } catch (Exception e)
-        {
-            throw new PortalException("Unable to acquire channel definition.",
-                    e);
+        } catch (Exception e) {
+            throw new PortalException("Unable to acquire channel definition.", e);
         }
     }
 
     public boolean canAddNode( IUserLayoutNodeDescription node,
                                String parentId,
-                               String nextSiblingId )
-        throws PortalException
-    {
+                               String nextSiblingId ) throws PortalException {
         return this.canAddNode(node,this.getNode(parentId),nextSiblingId);
     }
 
     protected boolean canAddNode( IUserLayoutNodeDescription node,
                                   IUserLayoutNodeDescription parent,
-                                  String nextSiblingId )
-        throws PortalException
-    {
+                                  String nextSiblingId ) throws PortalException {
         // make sure sibling exists and is a child of nodeId
         if(nextSiblingId!=null && ! nextSiblingId.equals("")) {
             IUserLayoutNodeDescription sibling=getNode(nextSiblingId);
@@ -978,12 +971,15 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             }
         }
 
-        if ( parent == null ||
-             ! node.isMoveAllowed() )
+        // todo if isFragmentOwner should probably verify both node and parent are part of the
+        // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
+        // do an improper operation.
+
+        if ( parent == null || !( node.isMoveAllowed() || isFragmentOwner) )
             return false;
 
         if ( parent instanceof IUserLayoutFolderDescription &&
-             ! ( (IUserLayoutFolderDescription) parent).isAddChildAllowed() )
+             ! (( (IUserLayoutFolderDescription) parent).isAddChildAllowed()) && !isFragmentOwner)
             return false;
 
         if ( nextSiblingId == null || nextSiblingId.equals("")) // end of list targeted
@@ -1000,13 +996,11 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
 
         // reverse scan so that as changes are made the order of the, as yet,
         // unprocessed nodes is not altered.
-        for( int idx = sibs.size() - 1;
-             idx >= 0;
-             idx-- )
+        for( int idx = sibs.size() - 1; idx >= 0; idx-- )
         {
             IUserLayoutNodeDescription prev = getNode((String) sibs.get(idx));
 
-            if ( ! MovementRules.canHopLeft( node, prev ) )
+            if ( !isFragmentOwner && ! MovementRules.canHopLeft( node, prev ) )
                 return false;
             if ( prev.getId().equals( nextSiblingId ) )
                 return true;
@@ -1029,9 +1023,13 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                                    String nextSiblingId )
         throws PortalException
     {
+        // todo if isFragmentOwner should probably verify both node and parent are part of the
+        // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
+        // do an improper operation.
+
         // are we moving to a new parent?
         if ( ! getParentId( node.getId() ).equals( parent.getId() ) )
-            return node.isMoveAllowed() &&
+            return (isFragmentOwner || node.isMoveAllowed()) &&
                 canAddNode( node, parent, nextSiblingId );
 
         // same parent. which direction are we moving?
@@ -1080,7 +1078,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
             if ( nextSibId != null &&
                  next.getId().equals( targetNextSibId ) )
                 return true;
-            else if ( ! MovementRules.canHopRight( node, next ) )
+            else if ( !isFragmentOwner && ! MovementRules.canHopRight( node, next ) )
                 return false;
         }
 
@@ -1096,14 +1094,12 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         Enumeration sibIds = getVisibleChildIds( getParentId( nodeId ) );
         List sibs = Collections.list(sibIds);
 
-        for ( int idx = sibs.indexOf( nodeId ) - 1;
-              idx >= 0;
-              idx-- )
+        for ( int idx = sibs.indexOf( nodeId ) - 1; idx >= 0; idx-- )
         {
             String prevSibId = (String) sibs.get( idx );
             IUserLayoutNodeDescription prev = getNode( prevSibId );
 
-            if ( ! MovementRules.canHopLeft( node, prev ) )
+            if ( !isFragmentOwner && ! MovementRules.canHopLeft( node, prev ) )
                 return false;
             if ( targetNextSibId != null &&
                  prev.getId().equals( targetNextSibId ) )
@@ -1121,13 +1117,15 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
        DOM model and it does not contain a 'deleteAllowed' attribute with a
        value of 'false'.
      */
-    protected boolean canDeleteNode( IUserLayoutNodeDescription node )
-        throws PortalException
-    {
+    protected boolean canDeleteNode( IUserLayoutNodeDescription node ) throws PortalException {
         if ( node == null )
             return false;
 
-        return node.isDeleteAllowed();
+        // todo if isFragmentOwner should probably verify node is part of the
+        // same layout fragment as the fragment owner to insure a misbehaving front-end doesn't
+        // do an improper operation.
+
+        return isFragmentOwner || node.isDeleteAllowed();
     }
 
     public boolean canUpdateNode( String nodeId )
