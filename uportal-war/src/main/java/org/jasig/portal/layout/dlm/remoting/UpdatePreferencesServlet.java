@@ -1291,18 +1291,12 @@ public class UpdatePreferencesServlet {
 
       } else {
           boolean isInsert = method != null && method.equals("insertBefore");
-          // We can only perform an "insert before" operation OR insert into a folder.
-          if (!(isInsert || isFolder(ulm, destinationId))) {
-              return false;
-          }
-
           if (isFolder(ulm, destinationId)) {
               ulm.moveNode(sourceId, destinationId, null);
           } else {
               String siblingId = isInsert ? destinationId : null;
-              String target = isInsert ? ulm.getParentId(destinationId) : destinationId;
 
-              if (!ulm.moveNode(sourceId, target, siblingId)) {
+              if (!ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId)) {
                   log.info("moveNode returned false. Aborting node movement");
                   return false;
               }
