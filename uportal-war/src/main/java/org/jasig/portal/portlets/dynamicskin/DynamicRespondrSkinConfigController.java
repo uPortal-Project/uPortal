@@ -18,8 +18,14 @@
  */
 package org.jasig.portal.portlets.dynamicskin;
 
-import java.io.IOException;
-import java.util.Enumeration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.portlet.bind.annotation.ActionMapping;
+import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -27,17 +33,13 @@ import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
 import javax.portlet.PortletPreferences;
 import javax.portlet.ReadOnlyException;
+import javax.portlet.RenderRequest;
 import javax.portlet.ValidatorException;
 import javax.portlet.WindowState;
 import javax.portlet.WindowStateException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.portlet.bind.annotation.ActionMapping;
-import org.springframework.web.portlet.bind.annotation.RenderMapping;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.SortedSet;
 
 /**
  * DynamicRespondrSkin portlet includes a CONFIG mode interface that allows an
@@ -52,6 +54,9 @@ import org.springframework.web.portlet.bind.annotation.RenderMapping;
 public class DynamicRespondrSkinConfigController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
+    @Autowired
+    private DynamicSkinService skinService;
+
     @ActionMapping(params = "action=update")
     public void updateSkinConfiguration(ActionRequest request, ActionResponse response, PortletPreferences prefs)
             throws IOException, ReadOnlyException, ValidatorException, PortletModeException {
@@ -60,7 +65,16 @@ public class DynamicRespondrSkinConfigController {
         Enumeration<String> preferenceNames = prefs.getNames();
         while (preferenceNames.hasMoreElements()) {
             String name = preferenceNames.nextElement();
-            if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+            if ("PREFdynamicSkinName".equals(name)) {
+                SortedSet<String> skins = skinService.getSkinNames(request);
+                String formValue = request.getParameter(name);
+                if (skins.contains(formValue)) {
+                    log.debug("Skin name {} found", formValue);
+                    prefs.setValue(name, formValue != null ? formValue : "");
+                } else {
+                    log.warn("Skin name {} is not recognized", formValue);
+                }
+            } else if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
                 String formValue = request.getParameter(name);
                 prefs.setValue(name, formValue != null ? formValue : "");
             }
@@ -89,7 +103,11 @@ public class DynamicRespondrSkinConfigController {
      * Display a form to manage skin choices.
      */
     @RenderMapping
-    public String showConfigPage(PortletPreferences preferences, Model model) {
+    public String showConfigPage(RenderRequest request, PortletPreferences preferences, Model model) {
+        // Add skin names
+        SortedSet<String> skins = skinService.getSkinNames(request);
+        model.addAttribute("skinNames", skins);
+
         // Get the list of preferences and add them to the model
         Enumeration<String> preferenceNames = preferences.getNames();
         while (preferenceNames.hasMoreElements()) {
