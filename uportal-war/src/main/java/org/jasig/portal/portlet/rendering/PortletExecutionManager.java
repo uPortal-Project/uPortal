@@ -76,7 +76,6 @@ import org.springframework.web.util.WebUtils;
  * events about the execution.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @ManagedResource("uPortal:section=Framework,name=PortletExecutionManager")
 @Service("portletExecutionManager")
@@ -87,21 +86,21 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Optional publishing parameter that makes a portlet ineligable to send or
      * receive events.  Improves performance when they are not needed.
      */
-    public static final String DISABLE_PORTLET_EVENTS_PARAMETER = null;
+    public static final String DISABLE_PORTLET_EVENTS_PARAMETER = "disablePortletEvents";
 
     private static final long DEBUG_TIMEOUT = TimeUnit.HOURS.toMillis(1);
     private static final String PORTLET_HEADER_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_HEADER_RENDERING_MAP";
-	private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
+    private static final String PORTLET_RENDERING_MAP = PortletExecutionManager.class.getName() + ".PORTLET_RENDERING_MAP";
 
     protected static final String SESSION_ATTRIBUTE__PORTLET_FAILURE_CAUSE_MAP = PortletExecutionManager.class.getName() + ".PORTLET_FAILURE_CAUSE_MAP";
-    
+
     /**
      * 'javax.portlet.renderHeaders' is the name of a container runtime option a JSR-286 portlet can enable to trigger header output
      */
     protected static final String PORTLET_RENDER_HEADERS_OPTION = "javax.portlet.renderHeaders";
-    
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     /**
      * Queue used to track workers that did not complete in their allotted time.
      */
@@ -112,7 +111,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             return new AtomicInteger();
         }
     });
-    
+
     private boolean ignoreTimeouts = false;
     private int extendedTimeoutExecutions = 5;
     private long extendedTimeoutMultiplier = 20;
