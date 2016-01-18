@@ -47,4 +47,14 @@
         <name>mobileIconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/actions/preferences-desktop-theme.png</value>
     </parameter>
+    <!-- NOTE:  When using the 'dynamic-respondr-skin' portlet with a custom skin,
+         uncomment the following <portlet-preference> element and change the <value>
+         to the name of your skin.  -->
+    <!--
+    <portlet-preference>
+        <name>PREFdynamicSkinName</name>
+        <readOnly>false</readOnly>
+        <value></value>
+    </portlet-preference>
+    -->
 </portlet-definition>
