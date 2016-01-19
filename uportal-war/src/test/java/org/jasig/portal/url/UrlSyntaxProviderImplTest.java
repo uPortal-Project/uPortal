@@ -275,6 +275,7 @@ public class UrlSyntaxProviderImplTest {
         when(portletWindow1.getPortletEntity()).thenReturn(portletEntity1);
         when(portletEntity1.getLayoutNodeId()).thenReturn(subscribeId);
         
+        urlSyntaxProvider.setCompactParamsForUriFragment("search");
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
         portletUrlBuilder1.setWindowState(WindowState.MINIMIZED);
@@ -368,6 +369,7 @@ public class UrlSyntaxProviderImplTest {
         when(portletWindow2.getDelegationParentId()).thenReturn(portletWindowId1);
         when(portletEntity2.getLayoutNodeId()).thenReturn(subscribeId2);
         
+        urlSyntaxProvider.setCompactParamsForUriFragment("search");
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RESOURCE);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
         portletUrlBuilder1.setWindowState(WindowState.NORMAL);
@@ -464,6 +466,7 @@ public class UrlSyntaxProviderImplTest {
         when(portletWindow2.getDelegationParentId()).thenReturn(portletWindowId1);
         when(portletEntity2.getLayoutNodeId()).thenReturn(subscribeId2);
         
+        urlSyntaxProvider.setCompactParamsForUriFragment("search");
         final PortalUrlBuilder portalUrlBuilder = new PortalUrlBuilder(urlSyntaxProvider, request, layoutNodeId, portletWindowId1, UrlType.RENDER);
         final IPortletUrlBuilder portletUrlBuilder1 = portalUrlBuilder.getPortletUrlBuilder(portletWindowId1);
         portletUrlBuilder1.setWindowState(WindowState.MINIMIZED);

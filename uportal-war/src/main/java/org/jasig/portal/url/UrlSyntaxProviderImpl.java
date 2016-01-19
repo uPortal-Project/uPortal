@@ -59,6 +59,7 @@ import org.jasig.portal.xml.xpath.XPathOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -240,6 +241,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
     private IPortalUrlProvider portalUrlProvider;
     private IUserInstanceManager userInstanceManager;
     private XPathOperations xpathOperations;
+
+    private String compactParamsForUriFragment;
+
+    @Value("${org.jasig.portal.url.UrlSyntaxProviderImpl.compactParamsForUriFragment:search}")
+    public void setCompactParamsForUriFragment(String compactParamsForUriFragment) {
+        this.compactParamsForUriFragment = compactParamsForUriFragment;
+    }
 
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
@@ -1091,7 +1099,9 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final String portletWindowIdStr = portletWindowId.toString();
             prefixedPortletWindowId = SEPARATOR + portletWindowIdStr;
             suffixedPortletWindowId = portletWindowIdStr + SEPARATOR;
-            if (portletUrlBuilder.getCopyCurrentRenderParameters()) {
+
+            // handle URI (i.e. search) that requires skipping additional portlet info
+            if (!request.getRequestURI().contains(this.compactParamsForUriFragment)) {
                 url.addParameter(PARAM_ADDITIONAL_PORTLET, portletWindowIdStr);
             }
 
