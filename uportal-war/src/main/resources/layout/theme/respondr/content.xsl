@@ -364,9 +364,14 @@
       </xsl:variable>
 
       <div class="portlet-controls">
-      <xsl:if test="$PORTLET_LOCKED='movable'">  <!-- Test to determine if the portlet is locked in the layout. -->
-          <div class="grab-handle hidden"><i class="fa fa-arrows"></i></div>
-      </xsl:if>
+          <!-- Test to determine if the portlet is locked in the layout. If not provide a grab handle the user could
+               see.  Otherwise, just provide an empty div for the grab-handle.  The 'grab-handle' class must be
+               present on every portlet else fluid will error when it encounters a portlet without the class. -->
+          <div class="grab-handle hidden">
+              <xsl:if test="$PORTLET_LOCKED='movable'">
+                  <i class="fa fa-arrows"></i>
+              </xsl:if>
+          </div>
 
     <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
