@@ -20,22 +20,13 @@
 
 -->
 <permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
-  <owner>UP_GROUPS</owner>
+  <owner>UP_SYSTEM</owner>
   <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
   <principal>
-                                                <group>Portal Administrators</group>
-                                            </principal>
-  <activity>CREATE_GROUP</activity>
+    <group>Portal Administrators</group>
+  </principal>
+  <activity>ALL_PERMISSIONS</activity>
   <target permission-type="GRANT">
-                                                <literal>ALL_CATEGORIES</literal>
-                                            </target>
-  <target permission-type="GRANT">
-                                                <literal>ALL_GROUPS</literal>
-                                            </target>
-  <target permission-type="GRANT">
-                                                        <group>Everyone</group>
-                                                    </target>
-  <target permission-type="GRANT">
-                                                        <group>All categories</group>
-                                                    </target>
+    <literal>ALL</literal>
+  </target>
 </permission-set>
