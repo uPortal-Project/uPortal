@@ -356,6 +356,23 @@
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
+      <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
+          <xsl:choose>
+              <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
+              <xsl:otherwise>movable</xsl:otherwise>
+          </xsl:choose>
+      </xsl:variable>
+
+      <div class="portlet-controls">
+          <!-- Test to determine if the portlet is locked in the layout. If not provide a grab handle the user could
+               see.  Otherwise, just provide an empty div for the grab-handle.  The 'grab-handle' class must be
+               present on every portlet else fluid will error when it encounters a portlet without the class. -->
+          <div class="grab-handle hidden">
+              <xsl:if test="$PORTLET_LOCKED='movable'">
+                  <i class="fa fa-arrows"></i>
+              </xsl:if>
+          </div>
+
     <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
       <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
@@ -396,33 +413,75 @@
           </li>
       </xsl:if>
 
-          <!-- Help Icon -->
-      <xsl:if test="$hasHelp='true'">
-        <xsl:variable name="portletHelpUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="HELP" copyCurrentRenderParameters="true" />
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
-        <li>
-          <a href="{$portletHelpUrl}#{@ID}" title="{upMsg:getMessage('view.help.for.portlet', $USER_LANG)}" class="up-portlet-control help"><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></a>
-        </li>
-      </xsl:if>
+          <!-- Favorites -->
+          <xsl:if test="$hasFavorites='true'">
+              <xsl:choose>
+                  <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
+                      <li>
+                          <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
+                             class="addToFavoriteLink{@chanID}">
+                              <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
+                          </a>
+                          <!-- used for the ajax call to add to favorites in up-favorite.js-->
+                          <script type="text/javascript">
+                              (function($) {
+                              $( document ).ready(function() {
+                              $('.addToFavoriteLink<xsl:value-of
+                              select="@chanID"/>').click({
+                              portletId : '<xsl:value-of select="@chanID"/>',
+                              context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
+                              });
+                              })(up.jQuery);
+                          </script>
+                      </li>
+                  </xsl:when>
+                  <xsl:otherwise><!-- Remove From favorites. -->
+                      <li>
+                          <a href="javascript:;"
+                             title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
+                             class="removeFromFavoriteLink{@chanID}">
+                              <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
+                          </a>
+                          <!-- used for the ajax call to remove from favorites in up-favorite.js-->
+                          <script type="text/javascript">
+                              (function($) {
+                              $( document ).ready(function() {
+                              $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
+                              });
+                              })(up.jQuery);
+                          </script>
+                      </li>
+                  </xsl:otherwise>
+              </xsl:choose>
+          </xsl:if>
 
-      <!-- Remove Icon -->
-      <!-- note: deleteAllowed will either be false or not present if set from
+          <xsl:if test="$PORTLET_LOCKED='movable'">
+              <xsl:variable name="moveText"><xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/></xsl:variable>
+              <li>
+                  <a id="movePortlet_{@ID}" title="{$moveText}" href="#" class="up-portlet-control move" data-move-text="{$moveText}" data-cancel-move-text="{upMsg:getMessage('cancel.portlet.move', $USER_LANG)}"><xsl:value-of select="$moveText"/></a>
+              </li>
+          </xsl:if>
+
+          <!-- Add to Layout Icon -->
+          <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
+              <li>
+                  <a id="focusedContentDialogLink" href="javascript:;"
+                     title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
+                      <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
+                  </a>
+              </li>
+          </xsl:if>
+
+          <!-- Remove Icon -->
+          <!-- note: deleteAllowed will either be false or not present if set from
            the admin ui;  not certain the last (3rd) criteria is needed or
            appropriate -->
-      <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
-        <!-- calls a layout api on click that removes the current node from the layout -->
-        <li>
-          <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
-        </li>
-      </xsl:if>
+          <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
+            <!-- calls a layout api on click that removes the current node from the layout -->
+            <li>
+              <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
+            </li>
+          </xsl:if>
 
       <!-- Focus Icon -->
       <xsl:if test="not(//focused) and not(//layout_fragment) and @windowState!='minimized'">
@@ -496,23 +555,6 @@
           </xsl:if>
       </xsl:if>
 
-      <!-- About Icon -->
-      <xsl:if test="$hasAbout='true'">
-        <xsl:variable name="portletAboutUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url mode="ABOUT" copyCurrentRenderParameters="true" />
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
-        <li>
-          <a href="{$portletAboutUrl}#{@ID}" title="{upMsg:getMessage('view.information.about.portlet', $USER_LANG)}" class="up-portlet-control about"><xsl:value-of select="upMsg:getMessage('view.information.about.portlet', $USER_LANG)"/></a>
-        </li>
-      </xsl:if>
-
       <!-- Edit Icon -->
       <xsl:if test="$editable='true'">
         <xsl:variable name="portletEditUrl">
@@ -566,58 +608,41 @@
         </li>
       </xsl:if>
 
-      <!-- Add to Layout Icon -->
-      <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
-        <li>
-            <a id="focusedContentDialogLink" href="javascript:;"
-            title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
-                <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
-            </a>
-        </li>
-      </xsl:if>
-      <!-- Favorites -->
-      <xsl:if test="$hasFavorites='true'">
-          <xsl:choose>
-          <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
-            <li>
-                <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
-                class="addToFavoriteLink{@chanID}">
-                    <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
-                </a>
-                    <!-- used for the ajax call to add to favorites in up-favorite.js-->
-                    <script type="text/javascript">
-                        (function($) {
-                            $( document ).ready(function() {
-                                $('.addToFavoriteLink<xsl:value-of
-                                    select="@chanID"/>').click({
-                                        portletId : '<xsl:value-of select="@chanID"/>',
-                                        context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.addToFavorite);
-                             });
-                         })(up.jQuery);
-                    </script>
-            </li>
-          </xsl:when>
-          <xsl:otherwise><!-- Remove From favorites. -->
-            <li>
-                <a href="javascript:;"
-                   title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
-                   class="removeFromFavoriteLink{@chanID}">
-                    <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
-                </a>
-                <!-- used for the ajax call to remove from favorites in up-favorite.js-->
-                <script type="text/javascript">
-                    (function($) {
-                        $( document ).ready(function() {
-                            $('.removeFromFavoriteLink<xsl:value-of select="@chanID"/>').click({portletId : '<xsl:value-of select="@chanID"/>', context : '<xsl:value-of select="$CONTEXT_PATH"/>'}, up.removeFromFavorite);
-                        });
-                    })(up.jQuery);
-                </script>
-            </li>
-          </xsl:otherwise>
-          </xsl:choose>
-      </xsl:if>
-      
-        <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
+          <!-- About Icon -->
+          <xsl:if test="$hasAbout='true'">
+              <xsl:variable name="portletAboutUrl">
+                  <xsl:call-template name="portalUrl">
+                      <xsl:with-param name="url">
+                          <url:portal-url>
+                              <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                              <url:portlet-url mode="ABOUT" copyCurrentRenderParameters="true" />
+                          </url:portal-url>
+                      </xsl:with-param>
+                  </xsl:call-template>
+              </xsl:variable>
+              <li>
+                  <a href="{$portletAboutUrl}#{@ID}" title="{upMsg:getMessage('view.information.about.portlet', $USER_LANG)}" class="up-portlet-control about"><xsl:value-of select="upMsg:getMessage('view.information.about.portlet', $USER_LANG)"/></a>
+              </li>
+          </xsl:if>
+
+          <!-- Help Icon -->
+          <xsl:if test="$hasHelp='true'">
+              <xsl:variable name="portletHelpUrl">
+                  <xsl:call-template name="portalUrl">
+                      <xsl:with-param name="url">
+                          <url:portal-url>
+                              <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                              <url:portlet-url mode="HELP" copyCurrentRenderParameters="true" />
+                          </url:portal-url>
+                      </xsl:with-param>
+                  </xsl:call-template>
+              </xsl:variable>
+              <li>
+                  <a href="{$portletHelpUrl}#{@ID}" title="{upMsg:getMessage('view.help.for.portlet', $USER_LANG)}" class="up-portlet-control help"><xsl:value-of select="upMsg:getMessage('help', $USER_LANG)"/></a>
+              </li>
+          </xsl:if>
+
+          <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
           <li>
             <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;"
                title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}">
@@ -626,6 +651,7 @@
         </xsl:if>
         </ul>
     </div>
+  </div>
   </xsl:template>
   
   <xsl:template name="focused-fragment-header">

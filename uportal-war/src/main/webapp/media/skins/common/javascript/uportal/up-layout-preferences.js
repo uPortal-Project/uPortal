@@ -537,7 +537,7 @@ var uportal = uportal || {};
 	                    modules: ".up-portlet-wrapper",
 	                    lockedModules: ".locked",
 	                    dropWarning: $("#portalDropWarning"),
-	                    grabHandle: "[id*=toolbar_]"
+	                    grabHandle: "[id*=toolbar_] .grab-handle"
 	                 },
 	                 listeners: {
 	                     afterMove: function(movedNode) {
@@ -553,6 +553,11 @@ var uportal = uportal || {};
 	                         }
 	                         var columns = $('#portalPageBodyColumns > [id^=column_]');
 	                         that.persistence.update({ action: 'movePortlet', method: method, elementID: up.defaultNodeIdExtractor(target), sourceID: up.defaultNodeIdExtractor(movedNode) });
+
+                             // Now revert the Move Portlet menu item and hide the grab handle
+                             var moveOptionsItem = $(movedNode).find(".up-portlet-control.move");
+                             moveOptionsItem.text(moveOptionsItem.attr('data-move-text'));
+                             $(movedNode).find(".up-portlet-titlebar .grab-handle").addClass('hidden');
 	                     }
 	                 },
 	                 styles: {
