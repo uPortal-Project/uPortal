@@ -22,13 +22,19 @@
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="compositeGroupService" class="org.jasig.portal.services.GroupService" factory-method="getCompositeGroupService" lazy-init="true">
         <aop:scoped-proxy/>
     </bean>
 
-    <bean id="smartLdapGroupStore" class="org.jasig.portal.groups.smartldap.SmartLdapGroupStore">
+    <!--
+     | NOTE:  The smartLdapGroupStore bean MUST specify lazy-init="false" (even though it's normally
+     | the default), because the LazyInitByDefaultBeanDefinitionDocumentReader will re-set the default
+     | to 'true' in the context of command line tools.  If SmartLDAP is in use (i.e. configured in
+     | compositeGroupServices.xml), the bean MUST be initialized before GroupService attempts to use it.
+     +-->
+    <bean id="smartLdapGroupStore" class="org.jasig.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false">
 
         <!--
          | This property is the ContextSource instance that will be used to connect to LDAP.  Uncomment the
