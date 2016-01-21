@@ -89,7 +89,6 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     public void setResolveDn(String resolveDn) {
         this.resolveDnList = Collections.singletonList(resolveDn);
     }
-    @SuppressWarnings("unused")
     public void setResolveDnList(List<String> resolveDnList) {
         this.resolveDnList = Collections.unmodifiableList(resolveDnList);
     }
@@ -425,7 +424,6 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
         throw new UnsupportedOperationException(UNSUPPORTED_MESSAGE);
     }
 
-    @SuppressWarnings("unused")
     public LdapRecord detectAndEliminateGroupReferences(LdapRecord record, List<String> groupChain) {
 
         LdapRecord rslt = record;  // default
@@ -449,7 +447,6 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     }
 
-    @SuppressWarnings("unused")
     public boolean hasUndiscoveredChildrenWithinDn(LdapRecord record, String referenceDn, Set<LdapRecord> groupsSet) {
 
         boolean rslt = false;  // default
@@ -835,6 +832,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         private int count = 0;
 
+        @SuppressWarnings("unused")
         public void increment() {
             ++count;
         }
