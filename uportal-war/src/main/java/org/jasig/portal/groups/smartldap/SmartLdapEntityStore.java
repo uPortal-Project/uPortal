@@ -31,7 +31,7 @@ public class SmartLdapEntityStore implements IEntityStore {
      */
 
     public static final class Factory implements IEntityStoreFactory {
-        
+
         /*
          * Public API.
          */
@@ -39,21 +39,21 @@ public class SmartLdapEntityStore implements IEntityStore {
         public IEntityStore newEntityStore() throws GroupsException {
             return new SmartLdapEntityStore();
         }
-    
+
     }
-    
+
     public IEntity newInstance(String key) throws GroupsException {
-    	return newInstance(key, null);
+        return newInstance(key, null);
     }
 
     public IEntity newInstance(String key, Class type) throws GroupsException {
-    	return new EntityImpl(key, type);
+        return new EntityImpl(key, type);
     }
-    
+
     /*
      * Implementation.
      */
 
     private SmartLdapEntityStore() {}
-    
+
 }

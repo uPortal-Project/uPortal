@@ -25,57 +25,57 @@ import org.jasig.portal.groups.IEntityGroup;
 
 public final class LdapRecord {
 
-	// Instance Members.
-	private final IEntityGroup group;
-	private final List<String> keysOfChildren;
+    // Instance Members.
+    private final IEntityGroup group;
+    private final List<String> keysOfChildren;
 
-	/*
-	 * Public API.
-	 */
-		
-	public LdapRecord(IEntityGroup group, List<String> keysOfChildren) {
+    /*
+     * Public API.
+     */
 
-		// Assertions.
-		if (group == null) {
-			String msg = "Argument 'group' cannot be null.";
-			throw new IllegalArgumentException(msg);
-		}
-		if (keysOfChildren == null) {
-			String msg = "Argument 'keysOfChildren' cannot be null.";
-			throw new IllegalArgumentException(msg);
-		}
-		
-		// Instance Members.
-		this.group = group;
-		this.keysOfChildren = Collections.unmodifiableList(keysOfChildren);
-		
-	}
-	
-	/**
-	 * <strong>NOTE</strong> two instances of {@link LdapRecord} are equal if 
-	 * the groups they contain share the same key.
-	 */
-	@Override
-	public boolean equals(Object o) {
-	    if (o == null || !(o instanceof LdapRecord)) {
-	        return false;
-	    }
-	    LdapRecord lr = (LdapRecord) o;
-	    // NB:  There is code that relies on this definition of equals()
-	    return lr.getGroup().getKey().equals(getGroup().getKey());
-	}
-	
-	public IEntityGroup getGroup() {
-		return group;
-	}
-	
-	public List<String> getKeysOfChildren() {
-		return keysOfChildren;
-	}
-	
-	@Override
-	public int hashCode() {
-	    return getGroup().getKey().hashCode();
-	}
-	
+    public LdapRecord(IEntityGroup group, List<String> keysOfChildren) {
+
+        // Assertions.
+        if (group == null) {
+            String msg = "Argument 'group' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+        if (keysOfChildren == null) {
+            String msg = "Argument 'keysOfChildren' cannot be null.";
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Instance Members.
+        this.group = group;
+        this.keysOfChildren = Collections.unmodifiableList(keysOfChildren);
+
+    }
+
+    /**
+     * <strong>NOTE</strong> two instances of {@link LdapRecord} are equal if 
+     * the groups they contain share the same key.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof LdapRecord)) {
+            return false;
+        }
+        LdapRecord lr = (LdapRecord) o;
+        // NB:  There is code that relies on this definition of equals()
+        return lr.getGroup().getKey().equals(getGroup().getKey());
+    }
+
+    public IEntityGroup getGroup() {
+        return group;
+    }
+
+    public List<String> getKeysOfChildren() {
+        return keysOfChildren;
+    }
+
+    @Override
+    public int hashCode() {
+        return getGroup().getKey().hashCode();
+    }
+
 }

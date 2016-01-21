@@ -26,15 +26,15 @@ import org.jasig.portal.groups.IEntitySearcherFactory;
 
 public class SmartLdapEntitySearcher implements IEntitySearcher {
 
-	// Instance Members.
-	private final IEntityGroupStore store;
-	
+    // Instance Members.
+    private final IEntityGroupStore store;
+
     /*
      * Public API.
      */
 
     public static final class Factory implements IEntitySearcherFactory {
-        
+
         /*
          * Public API.
          */
@@ -42,11 +42,11 @@ public class SmartLdapEntitySearcher implements IEntitySearcher {
         public IEntitySearcher newEntitySearcher() throws GroupsException {
             return new SmartLdapEntitySearcher(new SmartLdapGroupStore.Factory().newGroupStore());
         }
-    
+
     }
 
     public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
-    	return store.searchForGroups(query, method, type);
+        return store.searchForGroups(query, method, type);
     }
 
     /*
@@ -55,8 +55,8 @@ public class SmartLdapEntitySearcher implements IEntitySearcher {
 
     private SmartLdapEntitySearcher(IEntityGroupStore store) {
 
-    	// Instance Members.
-    	this.store = store;
+        // Instance Members.
+        this.store = store;
     }
 
 }
