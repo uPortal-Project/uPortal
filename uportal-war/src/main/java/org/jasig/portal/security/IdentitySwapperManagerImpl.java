@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.EntityIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service("identitySwapperManager")
@@ -34,7 +35,7 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
     private static final String SWAP_TARGET_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_UID";
     private static final String SWAP_TARGET_PROFILE = IdentitySwapperManagerImpl.class.getName() + ".SWAP_TARGET_PROFILE";
     private static final String SWAP_ORIGINAL_UID = IdentitySwapperManagerImpl.class.getName() + ".SWAP_ORIGINAL_UID";
-    
+    private static final String SWAP_ORIGINAL_AUTH = IdentitySwapperManagerImpl.class.getName() + ".SWAP_ORIGINAL_AUTH";
 
     private IAuthorizationService authorizationService;
     
@@ -84,18 +85,29 @@ public class IdentitySwapperManagerImpl implements IdentitySwapperManager {
 
     @Override
     public void setOriginalUser(HttpSession session, String currentUserName, String targetUsername) {
+        this.setOriginalUser(session, currentUserName, targetUsername, null);
+    }
+
+    @Override
+    public void setOriginalUser(
+            HttpSession session, String currentUserName, String targetUsername, Authentication originalAuth) {
         if (!canImpersonateUser(currentUserName, targetUsername)) {
             throw new RuntimeAuthorizationException(currentUserName, IPermission.IMPERSONATE_USER_ACTIVITY, targetUsername);
         }
-        
         session.setAttribute(SWAP_ORIGINAL_UID, currentUserName);
+        session.setAttribute(SWAP_ORIGINAL_AUTH, originalAuth);
     }
-    
+
     @Override
     public String getOriginalUsername(HttpSession session) {
         return (String) session.getAttribute(SWAP_ORIGINAL_UID);
     }
-    
+
+    @Override
+    public Authentication getOriginalAuthentication(HttpSession session) {
+        return (Authentication) session.getAttribute(SWAP_ORIGINAL_AUTH);
+    }
+
     @Override
     public String getTargetUsername(HttpSession session) {
         return (String) session.getAttribute(SWAP_TARGET_UID);

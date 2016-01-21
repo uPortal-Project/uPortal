@@ -22,6 +22,8 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.core.Authentication;
+
 /**
  * Manages workflow around use of the identity swapper features.
  * 
@@ -62,20 +64,36 @@ public interface IdentitySwapperManager {
      * @param profile The profile of which you want to login under
      */
     void impersonateUser(PortletRequest portletRequest, String currentUserName, String targetUsername, String profile);
-    
+
     /**
-     * During impersonation of targetUsername sets the original user to currentUserName for later
-     * retrieval by {@link #getOriginalUsername(HttpSession)}
+     * During impersonation of targetUsername sets the original user to currentUserName for later retrieval by 
+     * {@link #getOriginalUsername(HttpSession)}.  If the original authentication will also be needed for later 
+     * retrieval, use {@link #setOriginalUser(HttpSession, String, String, Authentication)} instead.
      * 
      * @throws RuntimeAuthorizationException if the current user cannot impersonate the target user
      */
     void setOriginalUser(HttpSession session, String currentUserName, String targetUsername);
-    
+
+    /**
+     * During impersonation of targetUsername sets the original user to currentUserName for later retrieval by 
+     * {@link #getOriginalUsername(HttpSession)} and the set the original authentication for later retrieval by 
+     * {@link #getOriginalAuthentication(HttpSession).
+     * 
+     * @throws RuntimeAuthorizationException if the current user cannot impersonate the target user
+     */
+    void setOriginalUser(
+            HttpSession session, String currentUserName, String targetUsername, Authentication originalAuth);
+
     /**
      * @return The original user if the current user is an impersonation, null if no impersonation is happening
      */
     String getOriginalUsername(HttpSession session);
-    
+
+    /**
+     * @return the authentication for the original user
+     */
+    Authentication getOriginalAuthentication(HttpSession session);
+
     /**
      * @return The target of impersonation, null if there is no impersonation target
      */
