@@ -26,6 +26,7 @@
   <description>Portal System Accounts</description>
   <children>
     <group>Fragment Owners</group>
+    <group>Portal Administrators</group>
     <group>Portal Developers</group>
   </children>
 </group>

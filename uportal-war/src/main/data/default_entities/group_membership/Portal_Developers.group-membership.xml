@@ -24,8 +24,5 @@
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
   <description>All IT developers</description>
-  <children>
-    <literal>admin</literal>
-    <literal>admin-lo</literal>
-  </children>
+  <children />
 </group>

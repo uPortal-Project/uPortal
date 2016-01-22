@@ -32,11 +32,9 @@
     </portlet-descriptor>
     <category>uPortal</category>
     <category>Administration</category>
-    <group>Portal Developers</group>
     <group>Portal Administrators</group>
     <permissions>
         <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">
-            <group>Portal Developers</group>
             <group>Portal Administrators</group>
         </permission>
     </permissions>
