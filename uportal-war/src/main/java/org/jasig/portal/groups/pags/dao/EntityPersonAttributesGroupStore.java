@@ -59,7 +59,7 @@ import org.springframework.context.ApplicationContext;
  * The Person Attributes Group Store uses attributes stored in the IPerson object to determine
  * group membership.  It can use attributes from any data source supported by the PersonDirectory
  * service.
- * 
+ *
  * @author Shawn Connolly, sconnolly@unicon.net
  * @since 4.1
  */
@@ -81,14 +81,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public boolean contains(IEntityGroup group, IGroupMember member) {
         logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
         PagsGroup groupDef = convertEntityToGroupDef(group);
-        if (member.isGroup()) 
+        if (member.isGroup())
         {
            String key = ((IEntityGroup)member).getLocalKey();
            return groupDef.hasMember(key);
-        } 
-        else 
+        }
+        else
         {
-           if (member.getEntityType() != IPERSON_CLASS) 
+           if (member.getEntityType() != IPERSON_CLASS)
                { return false; }
            IPerson person = null;
            try {
@@ -99,10 +99,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                if (personAttributes != null) {
                    rp.setAttributes(personAttributes.getAttributes());
                }
-               
+
                person = rp;
            }
-           catch (Exception ex) { 
+           catch (Exception ex) {
                logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
                return false;
            }
@@ -111,11 +111,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private PagsGroup convertEntityToGroupDef(IEntityGroup group) {
-        Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
-        IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
+        IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(group.getName());
         return initGroupDef(pagsGroup);
     }
-    
+
     private IEntityGroup convertPagsGroupToEntity(IPersonAttributesGroupDefinition group) {
         IEntityGroup entityGroup = new EntityTestingGroupImpl(group.getName(), IPERSON_CLASS);
         entityGroup.setName(group.getName());
@@ -158,7 +157,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                     PagsGroup parentGroupDef = (PagsGroup) convertEntityToGroupDef(parentGroup);
                     testPassed = parentGroupDef.test(person);
                 }
-                
+
                 if (!testPassed && logger.isWarnEnabled()) {
                     logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
                             + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
@@ -181,23 +180,21 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 return s;
             }
 
-    public Iterator<IEntityGroup> findContainingGroups(IGroupMember member) 
-    throws GroupsException 
+    public Iterator<IEntityGroup> findContainingGroups(IGroupMember member)
+    throws GroupsException
     {
         logger.debug("finding containing groups for member key {}", member.getKey());
-        return (member.isEntity()) 
+        return (member.isEntity())
           ? findContainingGroupsForEntity((IEntity)member)
           : findContainingGroupsForGroup((IEntityGroup)member);
     }
-    
-    private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group)
-    {
+
+    private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group) {
         logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
          Set<IEntityGroup> parents = getContainingGroups(group.getName(), new HashSet<IEntityGroup>());
-         return (parents !=null)
-            ? parents.iterator()
-            : Collections.EMPTY_LIST.iterator();
+         return parents.iterator();
     }
+
     private Iterator<IEntityGroup> findContainingGroupsForEntity(IEntity member)
     throws GroupsException {
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
@@ -224,15 +221,14 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         PagsGroup groupDef = convertEntityToGroupDef(group);
         if (groupDef != null)
         {
-             for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); ) 
+             for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); )
                   { keys.add(i.next()); }
         }
         return keys.toArray(new String[]{});
     }
 
     public Iterator<IEntityGroup> findMemberGroups(IEntityGroup group) throws GroupsException {
-        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(group.getName());
-        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
+        IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(group.getName());
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
         for (IPersonAttributesGroupDefinition member : pagsGroup.getMembers()) {
             results.add(convertPagsGroupToEntity(member));
@@ -293,7 +289,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public void updateMembers(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
     }
-    
+
 
 
     public IEntity newInstance(String key, Class type) throws GroupsException {
@@ -356,8 +352,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private IPersonTester initializeTester(IPersonAttributesGroupTestDefinition test) {
         try {
             Class<?> testerClass = Class.forName(test.getTesterClassName());
-            Constructor<?> c = testerClass.getConstructor(new Class[]{IPersonAttributesGroupTestDefinition.class});
-            Object o = c.newInstance(new Object[]{test});
+            Constructor<?> c = testerClass.getConstructor(IPersonAttributesGroupTestDefinition.class);
+            Object o = c.newInstance(test);
             return (IPersonTester) o;
         } catch (Exception e) {
             logger.error("Error in initializing tester class: {}", test.getTesterClassName(), e);
@@ -365,20 +361,37 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
    }
 
-    private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException
-    {
+    private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException {
         logger.debug("Looking up containing groups for {}", name);
-        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
-        IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
+        IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(name);
         Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
-        for (IPersonAttributesGroupDefinition parent : pagsParentGroups) {
+        for (IPersonAttributesGroupDefinition pagsParent : pagsParentGroups) {
+            IEntityGroup parent = convertPagsGroupToEntity(pagsParent);
             if (!groups.contains(parent)) {
-                groups.add(convertPagsGroupToEntity(parent));
-                getContainingGroups(parent.getName(), groups);
+                groups.add(parent);
+                getContainingGroups(pagsParent.getName(), groups);
             } else {
-                throw new RuntimeException("Recursive grouping detected! for " + name + " and parent " + parent.getName());
+                throw new RuntimeException("Recursive grouping detected! for " + name + " and parent " + pagsParent.getName());
             }
         }
         return groups;
+    }
+
+    /**
+     * Retrieve an implementation of {@code IPersonAttributesGroupDefinition} with the given {@code name} from
+     * the JPA DAO. There are two assumptions. First, that the DAO handles caching, so caching is not implemented here.
+     * Second, that group names are unique. A warning will be logged if more than one group is found with the same name.
+     *
+     * @param name      group name used to search for group definition
+     * @return          {@code IPersonAttributesGroupDefinition} of named group or null
+     * @see             IPersonAttributesGroupDefinitionDao#getPersonAttributesGroupDefinitionByName(String)
+     * @see             IPersonAttributesGroupDefinition
+     */
+    private IPersonAttributesGroupDefinition getPagsGroupDefByName(String name) {
+        Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
+        if (pagsGroups.size() > 1) {
+            logger.error("More than one PAGS group with name {} found.", name);
+        }
+        return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
     }
 }
