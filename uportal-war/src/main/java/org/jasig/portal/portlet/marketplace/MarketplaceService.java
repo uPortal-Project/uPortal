@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.apache.commons.lang3.Validate;
 import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.events.LoginEvent;
@@ -267,7 +268,15 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         final String portletPermissionEntityId = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
         return mayBrowse(principal, portletPermissionEntityId);
     }
-
+    
+    @Override
+	public boolean mayManagePortlet(final IAuthorizationPrincipal principal, final IPortletDefinition portletDefinition) {
+        Validate.notNull(principal, "Cannot determine if null principal can browse portlets.");
+        Validate.notNull(portletDefinition, "Cannot determine whether a user can browse a null portlet definition.");
+        final String portletPermissionEntityId = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
+        return mayManage(principal,portletPermissionEntityId);
+    }
+        
     @Override
     public Set<MarketplaceEntry> featuredEntriesForUser(final IPerson user, final Set<PortletCategory> categories) {
         Validate.notNull(user, "Cannot determine relevant featured portlets for null user.");
@@ -348,6 +357,16 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
         gathered.add(specified);
     }
 
+    
+    private static boolean mayManage(final IAuthorizationPrincipal principal, final String targetId) {
+        Validate.notNull(principal, "Cannot determine permissions for a null user.");
+        Validate.notNull(targetId, "Cannot determine permissions on a null target.");
+        
+        return (principal.hasPermission(IPermission.PORTAL_PUBLISH,
+                IPermission.PORTLET_MANAGER_ACTIVITY,
+                targetId));
+    }
+   
     /**
      * Answers whether the given user may add the portlet to their layout
      * @param user a non-null IPerson who might be permitted to add

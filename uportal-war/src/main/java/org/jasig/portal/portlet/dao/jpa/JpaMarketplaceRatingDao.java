@@ -27,7 +27,9 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
@@ -37,6 +39,8 @@ import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.jasig.portal.portlet.dao.jpa.MarketplaceRatingPK;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -55,6 +59,8 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
     }
 
     private CriteriaQuery<MarketplaceRatingImpl> findAllMarketPlaceRating;
+    
+    private CriteriaQuery<MarketplaceRatingImpl> findMarketPlaceRatingByPortlet;
 
     @Override
     public void afterPropertiesSet() throws Exception{
@@ -119,6 +125,37 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
         final TypedQuery<MarketplaceRatingImpl> query = this.createCachedQuery(this.findAllMarketPlaceRating);
         return new HashSet<IMarketplaceRating>(query.getResultList());
     }
+    
+    /**
+     * @param marketplaceRatingPK the primary key of the entity you want
+     * @return Set of ratings per portlet definition
+     */
+    @PortalTransactionalReadOnly
+    @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
+    public Set<IMarketplaceRating> getAllRatingsByPortlet(String fname) {
+    		    	
+    		//Build criteria to fetch MarketplaceRatingImpl based on the incoming portlet name. 
+    		final EntityManager entityManager = this.getEntityManager();
+    		final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    		final CriteriaQuery<IMarketplaceRating> getByPortlet = cb.createQuery(IMarketplaceRating.class);
+    		final Root<MarketplaceRatingImpl> imr = getByPortlet.from(MarketplaceRatingImpl.class);
+    		getByPortlet.select(imr);
+    		
+    		//Define the path to the portlet fName
+    		final Path<MarketplaceRatingPK> mrPK = imr.get("marketplaceRatingPK");
+    		final Path<PortletDefinitionImpl> mrIPD = mrPK.get("portletDefinition");
+    		
+    		final ParameterExpression<String> portletFName = cb.parameter(String.class,"portletFName");
+ 
+    		getByPortlet.where(cb.equal(mrIPD.get("fname"), portletFName));
+    		TypedQuery<IMarketplaceRating> tq = entityManager.createQuery(getByPortlet);
+    		tq.setParameter("portletFName", fname);
+    		List<IMarketplaceRating> resultList = tq.getResultList();
+    		Set<IMarketplaceRating> resultSet = new HashSet<IMarketplaceRating>(resultList);
+    		return (Set)resultSet;
+
+    }
+ 
     
     @Override
     @PortalTransactional

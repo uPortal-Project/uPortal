@@ -71,6 +71,14 @@ public interface IMarketplaceService {
     boolean mayBrowsePortlet(IAuthorizationPrincipal principal, IPortletDefinition portletDefinition);
 
     /**
+     * 
+     * @param principal
+     * @param portletDefinition
+     * @return true if permitted, false otherwise
+     */
+    boolean mayManagePortlet(IAuthorizationPrincipal principal, IPortletDefinition portletDefinition);
+    
+    /**
      * Provides the potentially empty non-null Set of featured Marketplace entries for the user.
      *
      * The user MUST have BROWSE permission on all members of the Set.
