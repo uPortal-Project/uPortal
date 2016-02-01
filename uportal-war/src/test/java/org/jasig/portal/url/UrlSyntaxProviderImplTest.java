@@ -21,6 +21,13 @@
  */
 package org.jasig.portal.url;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -54,13 +61,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
 
 /**
  * Test harness for {@link UrlSyntaxProviderImpl}.
@@ -287,7 +287,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2", url);
     }
     
     @Test
@@ -295,7 +295,7 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/n2/normal/render.uP");
-        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c");
+        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2");
         request.addParameter("pCt", "fname.s3");
         request.addParameter("pCs", "minimized");
         request.addParameter("pP_action", "dashboard");
@@ -380,7 +380,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/p/fname.s3/normal/resource.uP?pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c", url);
+        assertEquals("/uPortal/f/n2/p/fname.s3/normal/resource.uP?pP_action=dashboard&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2", url);
     }
     
     @Test
@@ -388,7 +388,7 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/n2/p/fname.s3/normal/resource.uP");
-        request.setQueryString("?pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c");
+        request.setQueryString("?pP_action=dashboard&pCd_pw2=pw1&pCr_pw2=delegateResourceId&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2");
         request.addParameter("pP_action", "dashboard");
         request.addParameter("pCa", "pw2");
         request.addParameter("pCd_pw2", "pw1");
@@ -476,7 +476,7 @@ public class UrlSyntaxProviderImplTest {
         
         final String url = portalUrlBuilder.getUrlString();
                      
-        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c", url);
+        assertEquals("/uPortal/f/n2/normal/render.uP?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2", url);
     }
     
     @Test
@@ -484,7 +484,7 @@ public class UrlSyntaxProviderImplTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/uPortal");
         request.setRequestURI("/f/n2/normal/render.uP");
-        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCa=pw2&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c");
+        request.setQueryString("?pCt=fname.s3&pCs=minimized&pP_action=dashboard&pCd_pw2=pw1&pCm_pw2=help&pP_pw2_a=b&pP_pw2_b=c&pCa=pw2");
         request.addParameter("pCt", "fname.s3");
         request.addParameter("pCs", "minimized");
         request.addParameter("pP_action", "dashboard");

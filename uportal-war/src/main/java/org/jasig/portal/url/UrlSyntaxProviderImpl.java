@@ -1083,6 +1083,8 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         //The targeted portlet doesn't need namespaced parameters
         final String prefixedPortletWindowId;
         final String suffixedPortletWindowId;
+        // Track whether or not we are adding parameters to the URL for non-targeted or delegate portlets.
+        boolean addedNonTargetedPortletParam = false;
         if (targeted) {
             prefixedPortletWindowId = "";
             suffixedPortletWindowId = "";
@@ -1091,13 +1093,13 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
             final String portletWindowIdStr = portletWindowId.toString();
             prefixedPortletWindowId = SEPARATOR + portletWindowIdStr;
             suffixedPortletWindowId = portletWindowIdStr + SEPARATOR;
-            url.addParameter(PARAM_ADDITIONAL_PORTLET, portletWindowIdStr);
 
             //targeted portlets can never be delegates (it is always the top most parent that is targeted)
             portletWindow = this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
             final IPortletWindowId delegationParentId = portletWindow.getDelegationParentId();
             if (delegationParentId != null) {
                 url.addParameter(PARAM_DELEGATE_PARENT + prefixedPortletWindowId, delegationParentId.getStringId());
+                addedNonTargetedPortletParam = true;
             }
         }
 
@@ -1106,11 +1108,15 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final String cacheability = portletUrlBuilder.getCacheability();
                 if(cacheability != null) {
                     url.addParameter(PARAM_CACHEABILITY + prefixedPortletWindowId, cacheability);
+                    addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
                 }
                 
                 final String resourceId = portletUrlBuilder.getResourceId();
                 if (!targeted && resourceId != null) {
                     url.addParameter(PARAM_RESOURCE_ID + prefixedPortletWindowId, resourceId);
+                    // We know we are !targeted, but kept the assignement consistent with the other similar
+                    // assignments for clarity.
+                    addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
                 }
                 
                 break;
@@ -1120,17 +1126,22 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
                 final PortletMode portletMode = portletUrlBuilder.getPortletMode();
                 if (portletMode != null) {
                     url.addParameter(PARAM_PORTLET_MODE + prefixedPortletWindowId, portletMode.toString());
+                    addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
                 }
                 else if (targeted && statelessUrl) {
                     portletWindow = portletWindow != null ? portletWindow : this.portletWindowRegistry.getPortletWindow(request, portletWindowId);
                     final PortletMode currentPortletMode = portletWindow.getPortletMode();
                     url.addParameter(PARAM_PORTLET_MODE + prefixedPortletWindowId, currentPortletMode.toString());
+                    // We know we are targeted, but kept the assignement consistent with the other similar
+                    // assignments for clarity. Will always be a nop.
+                    addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
                 }
                 
                 //Add requested window state if it isn't included on the path
                 final WindowState windowState = portletUrlBuilder.getWindowState();
                 if (windowState != null && (!targeted || !PATH_WINDOW_STATES.contains(windowState))) {
                     url.addParameter(PARAM_WINDOW_STATE + prefixedPortletWindowId, windowState.toString());
+                    addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
                 }
                 
                 break;
@@ -1139,11 +1150,22 @@ public class UrlSyntaxProviderImpl implements IUrlSyntaxProvider {
         
         if (portletUrlBuilder.getCopyCurrentRenderParameters()) {
             url.addParameter(PARAM_COPY_PARAMETERS + suffixedPortletWindowId);
+            addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
         }
             
         final Map<String, String[]> parameters = portletUrlBuilder.getParameters();
         if (!parameters.isEmpty()) {
             url.addParametersArray(PORTLET_PARAM_PREFIX + suffixedPortletWindowId, parameters);
+            addedNonTargetedPortletParam = !targeted ? true : addedNonTargetedPortletParam;
+        }
+
+        // UP-4566 If we have added a portlet parameter for a non-targeted (or delegate) portlet add in the
+        // additional-portlet parameter to aid in URL parsing later on.  Among other things the practical impact
+        // of this is when we do a search which sends an event to all porlets the user has access to which adds a
+        // bunch of portletUrlBuilders to the request, we don't add a bunch of unnecessary &PCa parameters to the
+        // URL since there are no parameters actually being passed to the searched portlets.
+        if (addedNonTargetedPortletParam) {
+            url.addParameter(PARAM_ADDITIONAL_PORTLET, portletWindowId.toString());
         }
     }
 
