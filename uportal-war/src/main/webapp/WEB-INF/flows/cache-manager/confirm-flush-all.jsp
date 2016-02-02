@@ -44,7 +44,7 @@
         </div>
         
         <!-- Buttons -->
-        <form action="${flushUrl}" method="POST">
+        <form action="${formUrl}" method="POST">
             <div class="buttons">
             	<input class="button btn primary" type="submit" value="<spring:message code="empty.all.caches"/>" name="_eventId_confirm"/>
             	<input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
