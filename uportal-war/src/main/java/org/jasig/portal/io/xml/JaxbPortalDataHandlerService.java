@@ -486,18 +486,6 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
         }
     }
 
-    protected void importXmlData(final Resource resource,
-            final BufferedInputStream resourceStream,
-            final PortalDataKey portalDataKey) {
-        try {
-            final String resourceUri = ResourceUtils.getResourceUri(resource);
-            this.importData(new StreamSource(resourceStream, resourceUri), portalDataKey);
-        }
-        finally {
-            IOUtils.closeQuietly(resourceStream);
-        }
-    }
-
     protected MediaType getMediaType(BufferedInputStream inputStream, String fileName) throws IOException {
         final TikaInputStream tikaInputStreamStream = TikaInputStream.get(new CloseShieldInputStream(inputStream));
         try {
