@@ -461,8 +461,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                         <tbody>
                                             <c:forEach items="${ portlet.groups }" var="group">
                                                 <c:set var="group_name" value="${fn:escapeXml(group.name)}" />
-                                                <c:set var="group_browse_perm" value="${group_name}_BROWSE" />
-                                                <c:set var="group_subscribe_perm" value="${group_name}_SUBSCRIBE" />
+                                                <c:set var="group_browse_perm" value="${group.typeAndIdHash}_BROWSE" />
+                                                <c:set var="group_subscribe_perm" value="${group.typeAndIdHash}_SUBSCRIBE" />
                                                 <tr>
                                                     <td><i class="fa fa-users"></i> ${group_name}</td>
                                                     <c:choose>
