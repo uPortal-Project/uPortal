@@ -250,8 +250,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                     form.addGroup(principalBean);
                 }
 
-                /* Assumption: group names are unique in this context */
-                form.addPermission(principalBean.getName() + "_" + activity);
+                form.addPermission(principalBean.getTypeAndIdHash() + "_" + activity);
             }
         }
     }
@@ -268,9 +267,10 @@ public final class PortletAdministrationHelper implements ServletContextAware {
 
         // pre-populate with top-level group
         final IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
-        form.addGroup(new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup)));
+        JsonEntityBean everyoneBean = new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
+        form.addGroup(everyoneBean);
         for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
-            form.addPermission(everyoneGroup.getName() + "_" + activity);
+            form.addPermission(everyoneBean.getTypeAndIdHash() + "_" + activity);
         }
         return form;
     }
@@ -329,9 +329,9 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         final Set<IGroupMember> subscribeList = new HashSet<>(form.getGroups().size());
         final Set<IGroupMember> browseList = new HashSet<>(form.getGroups().size());
         for (JsonEntityBean bean : form.getGroups()) {
-            final String subscribePerm = bean.getName() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
-            final String browsePerm = bean.getName() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
-            final EntityEnum entityEnum = EntityEnum.getEntityEnum(bean.getEntityTypeAsString());
+            final String subscribePerm = bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
+            final String browsePerm = bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
+            final EntityEnum entityEnum = bean.getEntityType();
             final IGroupMember group = entityEnum.isGroup() ?
                     (GroupService.findGroup(bean.getId())) :
                     (GroupService.getGroupMember(bean.getId(), entityEnum.getClazz()));

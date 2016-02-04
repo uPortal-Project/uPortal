@@ -166,6 +166,23 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
         this.targetString = targetString;
     }
 
+    /**
+     * Compute a hash based on type and ID to uniquely identify
+     * this bean. This method helps avoid the unlikely case where a
+     * group and person in the same principal list have the
+     * same ID.
+     *
+     * Periods are also replaced to avoid issues in JSP.
+     *
+     * @return  EntityType + "_" + ID
+     */
+    public String getTypeAndIdHash() {
+        assert(entityType != null);
+        assert(id != null);
+        String idStr = id.replace(".", "__");
+        return entityType.toString().toLowerCase() + "_" + idStr;
+    }
+
     public List<JsonEntityBean> getChildren() {
         return children;
     }
