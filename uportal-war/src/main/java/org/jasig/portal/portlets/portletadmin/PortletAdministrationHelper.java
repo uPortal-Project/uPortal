@@ -63,7 +63,6 @@ import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.channel.IPortletPublishingService;
-import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
@@ -95,8 +94,14 @@ import org.jasig.portal.portlets.StringListAttribute;
 import org.jasig.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
-import org.jasig.portal.security.*;
-import org.jasig.portal.services.AuthorizationService;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPermissionManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
@@ -117,11 +122,16 @@ import org.springframework.webflow.context.ExternalContext;
  * @revision $Revision$
  */
 @Service
-public class PortletAdministrationHelper implements ServletContextAware {
+public final class PortletAdministrationHelper implements ServletContextAware {
 
-    protected final Log logger = LogFactory.getLog(PortletAdministrationHelper.class);
+    private final Log logger = LogFactory.getLog(this.getClass());
 
     private static final String PORTLET_FNAME_FRAGMENT_ADMIN_PORTLET = "fragment-admin";
+
+    public static final String[] PORTLET_SUBSCRIBE_ACTIVITIES = {
+            IPermission.PORTLET_SUBSCRIBER_ACTIVITY,
+            IPermission.PORTLET_BROWSE_ACTIVITY
+    };
 
     /*
      * Autowired beans listed alphabetically by type
@@ -163,11 +173,12 @@ public class PortletAdministrationHelper implements ServletContextAware {
      * the PortletDefinition does not yet exist, a new default form will be
      * created.
      *
-     * @param person
-     * @param portletId
-     * @return
+     * @param person        user that is required to have related lifecycle permission
+     * @param portletId     identifier for the portlet definition
+     * @return              {@PortletDefinitionForm} with set values based on portlet definition
+     *                      or default category and group if no definition is found
      */
-    public PortletDefinitionForm getPortletDefinitionForm(IPerson person, String portletId) {
+    public PortletDefinitionForm createPortletDefinitionForm(IPerson person, String portletId) {
 
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(portletId);
 
@@ -185,12 +196,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
                 form.addCategory(new JsonEntityBean(cat));
             }
 
-            try {
-                getGroupPermissions(def, form, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
-                getGroupPermissions(def, form, IPermission.PORTLET_BROWSE_ACTIVITY);
-            } catch (GroupsException e) {
-                e.printStackTrace();
-            }
+            addSubscribePermissionsToForm(def, form);
         }
         else {
             form = createNewPortletDefinitionForm();
@@ -210,42 +216,43 @@ public class PortletAdministrationHelper implements ServletContextAware {
     }
 
     /*
-     * Add groups and permissions to form.
+     * Add to the form SUBSCRIBE and BROWSE activity permissions, along with their principals,
+     * assigned to the portlet.
      */
-    private void getGroupPermissions(IPortletDefinition def, PortletDefinitionForm form, String activity) {
-        final AuthorizationService authService = AuthorizationService.instance();
+    private void addSubscribePermissionsToForm(IPortletDefinition def, PortletDefinitionForm form) {
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
 
         /* We are concerned with PORTAL_SUBSCRIBE system */
-        final IPermissionManager pm = authService.newPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+        final IPermissionManager pm = authorizationService.newPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+            /* Obtain the principals that have permission for the activity on this portlet */
+            final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(activity, portletTargetId) ;
 
-        /* Obtain the principals that have permission for the activity on this portlet */
-        final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(activity, portletTargetId) ;
-        for (IAuthorizationPrincipal principal : principals) {
-            JsonEntityBean bean;
+            for (IAuthorizationPrincipal principal : principals) {
+                JsonEntityBean principalBean;
 
-            // first assume this is a group
-            IEntityGroup group = GroupService.findGroup(principal.getKey());
-            if (group != null) {
-                bean = new JsonEntityBean(group, EntityEnum.GROUP);
+                // first assume this is a group
+                IEntityGroup group = GroupService.findGroup(principal.getKey());
+                if (group != null) {
+                    // principal is a group
+                    principalBean = new JsonEntityBean(group, EntityEnum.GROUP);
+                } else {
+                    // not a group, so it must be a person
+                    IGroupMember member = authorizationService.getGroupMember(principal);
+                    principalBean = new JsonEntityBean(member, EntityEnum.PERSON);
+                    // set the name
+                    String name = groupListHelper.lookupEntityName(principalBean);
+                    principalBean.setName(name);
+                }
+
+                /* Make sure we capture the principal just once*/
+                if (!form.getGroups().contains(principalBean)) {
+                    form.addGroup(principalBean);
+                }
+
+                /* Assumption: group names are unique in this context */
+                form.addPermission(principalBean.getName() + "_" + activity);
             }
-
-            // if a matching group can't be found, try to find a matching
-            // non-group entity
-            else {
-                IGroupMember member = authService.getGroupMember(principal);
-                bean = new JsonEntityBean(member, EntityEnum.PERSON);
-                String name = groupListHelper.lookupEntityName(bean);
-                bean.setName(name);
-            }
-
-            /* Make sure we capture the principal */
-            if (!form.getGroups().contains(bean)) {
-                form.addGroup(bean);
-            }
-
-            /* Assumption: group names are unique in this context */
-            form.addPermission(bean.getName() + "_" + activity);
         }
     }
 
@@ -262,8 +269,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
         // pre-populate with top-level group
         final IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
         form.addGroup(new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup)));
-        form.addPermission(everyoneGroup.getName() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
-        form.addPermission(everyoneGroup.getName() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY);
+        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+            form.addPermission(everyoneGroup.getName() + "_" + activity);
+        }
         return form;
     }
 
@@ -317,9 +325,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
         }
 
         // create the group array from the form's group list -- only groups with permissions
-        final List<IGroupMember> groupList = new ArrayList<>(form.getGroups().size());
-        final List<IGroupMember> subscribeList = new ArrayList<>(form.getGroups().size());
-        final List<IGroupMember> browseList = new ArrayList<>(form.getGroups().size());
+        final Set<IGroupMember> groupList = new HashSet<>(form.getGroups().size());
+        final Set<IGroupMember> subscribeList = new HashSet<>(form.getGroups().size());
+        final Set<IGroupMember> browseList = new HashSet<>(form.getGroups().size());
         for (JsonEntityBean bean : form.getGroups()) {
             final String subscribePerm = bean.getName() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
             final String browsePerm = bean.getName() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
@@ -409,24 +417,23 @@ public class PortletAdministrationHelper implements ServletContextAware {
         updatePermissions(portletDef, subscribeList, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
         updatePermissions(portletDef, browseList, IPermission.PORTLET_BROWSE_ACTIVITY);
 
-        return this.getPortletDefinitionForm(publisher, portletDef.getPortletDefinitionId().getStringId());
+        return this.createPortletDefinitionForm(publisher, portletDef.getPortletDefinitionId().getStringId());
     }
 
     /*
      * Update permissions for activity for portlet definition. Adds new principals' permissions passed in and removes
      * principals' permissions if not in the list for the given activity.
      */
-    private void updatePermissions(IPortletDefinition def, List<IGroupMember> newPrincipals, String activity) {
-        final AuthorizationService authService = AuthorizationService.instance();
+    private void updatePermissions(IPortletDefinition def, Set<IGroupMember> newPrincipals, String activity) {
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
 
         /* We are concerned with PORTAL_SUBSCRIBE system */
-        final IUpdatingPermissionManager pm = authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
+        final IUpdatingPermissionManager pm = authorizationService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
 
         /* Create the new permissions array */
         final List<IPermission> newPermissions = new ArrayList<>();
         for (final IGroupMember newPrincipal : newPrincipals) {
-            final IAuthorizationPrincipal authorizationPrincipal = authService.newPrincipal(newPrincipal);
+            final IAuthorizationPrincipal authorizationPrincipal = authorizationService.newPrincipal(newPrincipal);
             final IPermission permission = pm.newPermission(authorizationPrincipal);
             permission.setType(IPermission.PERMISSION_TYPE_GRANT);
             permission.setActivity(activity);
@@ -590,8 +597,9 @@ public class PortletAdministrationHelper implements ServletContextAware {
     public void cleanOptions(PortletDefinitionForm form, PortletRequest request) {
         // Add permission parameters to permissions collection
         form.clearPermissions();
-        addPermissionsFromRequestToForm(form, request, IPermission.PORTLET_BROWSE_ACTIVITY);
-        addPermissionsFromRequestToForm(form, request, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
+        for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
+            addPermissionsFromRequestToForm(form, request, activity);
+        }
 
         //Names of valid preferences and parameters
         final Set<String> preferenceNames = new HashSet<String>();
@@ -865,7 +873,7 @@ public class PortletAdministrationHelper implements ServletContextAware {
 
     public boolean hasLifecyclePermission(IPerson person, PortletLifecycleState state, List<JsonEntityBean> categories) {
         EntityIdentifier ei = person.getEntityIdentifier();
-        IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
+        IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
 
         final String activity;
         switch (state) {

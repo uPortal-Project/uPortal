@@ -28,14 +28,14 @@
             value="portalRequestUtils.getPortletHttpRequest(externalContext.getNativeRequest())"/>
         <set name="flowScope.person"
             value="personManager.getPerson(servletRequest)"/>
-        <set name="flowScope.portletTypes" 
+        <set name="flowScope.portletTypes"
             value="portletTypeRegistry.getPortletTypes()"/>
     </on-start>
 
-    <!-- 
+    <!--
      | Portlet selection view
      |
-     | Present a list of currently configured portlets and allow the 
+     | Present a list of currently configured portlets and allow the
      | administrative user to either select a portlet to edit or to elect to
      | create a new portlet
      +-->
@@ -47,25 +47,25 @@
         <!-- If we're editing an already-existing portlet, create a form and
             populate it with the selected portlet's data -->
         <transition on="editPortlet" to="edit-portlet">
-            <set name="flowScope.portlet" 
-                value="portletAdministrationHelper.getPortletDefinitionForm(person, requestParameters.portletId)"/>
+            <set name="flowScope.portlet"
+                value="portletAdministrationHelper.createPortletDefinitionForm(person, requestParameters.portletId)"/>
         </transition>
         <!-- If we're creating a new portlet, create a new form -->
         <transition on="createPortlet" to="edit-portlet">
-            <set name="flowScope.portlet" 
+            <set name="flowScope.portlet"
                 value="new org.jasig.portal.portlets.portletadmin.PortletDefinitionForm()"/>
         </transition>
         <!-- If we're deleting a portlet, confirm the user wants to delete it -->
         <transition on="removePortlet" to="confirmRemove">
             <set name="flowScope.portlet"
-                value="portletAdministrationHelper.getPortletDefinitionForm(person, requestParameters.portletId)"/>
+                value="portletAdministrationHelper.createPortletDefinitionForm(person, requestParameters.portletId)"/>
         </transition>
     </view-state>
 
     <!--
      | Portlet editing subflow
      |
-     | Edit or create the selected portlet 
+     | Edit or create the selected portlet
      +-->
     <subflow-state id="edit-portlet" subflow="edit-portlet">
         <input name="portlet" value="portlet"/>
