@@ -443,18 +443,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                     <table class="table table-condensed permissions-options-table">
                                         <thead>
                                             <tr>
-                                                <td class="col-md-6"></td>
-                                                <td class="col-md-3">
-                                                    <spring:message code="edit.browse"/>&nbsp;
-                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
-                                                    </a>
+                                                <td class="col-sm-6"></td>
+                                                <td class="col-sm-3">
+                                                    <spring:message code="edit.browse"/>&nbsp;<a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.browse.tooltip'/>"><i class="fa fa-info-circle"></i></a>
                                                 </td>
-                                                <td class="col-md-3">
-                                                    <spring:message code="edit.subscribe"/>&nbsp;
-                                                    <a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>">
-                                                        <i class="fa fa-info-circle"></i>
-                                                    </a>
+                                                <td class="col-sm-3">
+                                                    <spring:message code="edit.subscribe"/>&nbsp;<a href="javascript:;" data-toggle="tooltip" data-placement="top" title="<spring:message code='edit.subscribe.tooltip'/>"><i class="fa fa-info-circle"></i></a>
                                                 </td>
                                             </tr>
                                         </thead>
