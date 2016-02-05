@@ -112,7 +112,7 @@
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
             <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)"/>
         </transition>
-        <transition on="chooseGroup" to="chooseGroup">
+        <transition on="choosePrincipal" to="choosePrincipal">
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
         <transition on="chooseCategory" to="chooseCategory">
@@ -152,7 +152,7 @@
 
 
     <!-- GROUPS view -->
-    <subflow-state id="chooseGroup" subflow="entity-selector">
+    <subflow-state id="choosePrincipal" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
@@ -174,8 +174,8 @@
         <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
 
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="portlet.groups"/>
-        <output name="selectedGroups" value="portlet.groups"/>
+        <input name="selectedGroups" value="portlet.principals"/>
+        <output name="selectedGroups" value="portlet.principals"/>
 
         <transition on="finish" to="portletConfig"/>
         <transition on="cancel" to="portletConfig"/>

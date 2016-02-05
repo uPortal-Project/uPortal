@@ -20,7 +20,6 @@ package org.jasig.portal.portlets.portletadmin;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -28,10 +27,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -176,7 +175,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
      * @param person        user that is required to have related lifecycle permission
      * @param portletId     identifier for the portlet definition
      * @return              {@PortletDefinitionForm} with set values based on portlet definition
-     *                      or default category and group if no definition is found
+     *                      or default category and principal if no definition is found
      */
     public PortletDefinitionForm createPortletDefinitionForm(IPerson person, String portletId) {
 
@@ -246,8 +245,8 @@ public final class PortletAdministrationHelper implements ServletContextAware {
                 }
 
                 /* Make sure we capture the principal just once*/
-                if (!form.getGroups().contains(principalBean)) {
-                    form.addGroup(principalBean);
+                if (!form.getPrincipals().contains(principalBean)) {
+                    form.addPrincipal(principalBean);
                 }
 
                 form.addPermission(principalBean.getTypeAndIdHash() + "_" + activity);
@@ -256,7 +255,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     }
 
     /*
-     * Create a {@code PortletDefinitionForm} and pre-populate it with default categories and group permissions.
+     * Create a {@code PortletDefinitionForm} and pre-populate it with default categories and principal permissions.
      */
     private PortletDefinitionForm createNewPortletDefinitionForm() {
         PortletDefinitionForm form = new PortletDefinitionForm();
@@ -268,7 +267,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // pre-populate with top-level group
         final IEntityGroup everyoneGroup = GroupService.getDistinguishedGroup(GroupService.EVERYONE);
         JsonEntityBean everyoneBean = new JsonEntityBean(everyoneGroup, groupListHelper.getEntityType(everyoneGroup));
-        form.addGroup(everyoneBean);
+        form.addPrincipal(everyoneBean);
         for (String activity : PORTLET_SUBSCRIBE_ACTIVITIES) {
             form.addPermission(everyoneBean.getTypeAndIdHash() + "_" + activity);
         }
@@ -276,10 +275,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
     }
 
     /**
-     * Persist a new or edited PortletDefinition.
+     * Persist a new or edited PortletDefinition from a form, replacing existing values.
      *
-     * @param form
-     * @param publisher
+     * @param publisher     {@code IPerson} that requires permission to save this definition
+     * @param form          form data to persist
+     * @return              new {@code PortletDefinitionForm} for this portlet ID
      */
     public PortletDefinitionForm savePortletRegistration(IPerson publisher,
             PortletDefinitionForm form) throws Exception {
@@ -300,7 +300,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             // in AT LEAST ONE previous category as well
             IPortletDefinition def = this.portletDefinitionRegistry.getPortletDefinition(form.getId());
             Set<PortletCategory> categories = portletCategoryRegistry.getParentCategories(def);
-            List<JsonEntityBean> categoryBeans = new ArrayList<JsonEntityBean>();
+            SortedSet<JsonEntityBean> categoryBeans = new TreeSet<>();
             for (PortletCategory cat : categories) {
                 categoryBeans.add(new JsonEntityBean(cat));
             }
@@ -324,39 +324,33 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             }
         }
 
-        // create the group array from the form's group list -- only groups with permissions
-        final Set<IGroupMember> groupList = new HashSet<>(form.getGroups().size());
-        final Set<IGroupMember> subscribeList = new HashSet<>(form.getGroups().size());
-        final Set<IGroupMember> browseList = new HashSet<>(form.getGroups().size());
-        for (JsonEntityBean bean : form.getGroups()) {
+        // create the principal array from the form's principal list -- only principals with permissions
+        final Set<IGroupMember> subscribePrincipalSet = new HashSet<>(form.getPrincipals().size());
+        final Set<IGroupMember> browsePrincipalSet = new HashSet<>(form.getPrincipals().size());
+        for (JsonEntityBean bean : form.getPrincipals()) {
             final String subscribePerm = bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_SUBSCRIBER_ACTIVITY;
             final String browsePerm = bean.getTypeAndIdHash() + "_" + IPermission.PORTLET_BROWSE_ACTIVITY;
             final EntityEnum entityEnum = bean.getEntityType();
-            final IGroupMember group = entityEnum.isGroup() ?
+            final IGroupMember principal = entityEnum.isGroup() ?
                     (GroupService.findGroup(bean.getId())) :
                     (GroupService.getGroupMember(bean.getId(), entityEnum.getClazz()));
-            if (form.getPermissions().contains(subscribePerm) || form.getPermissions().contains(browsePerm)) {
-                groupList.add(group);
-            }
             if (form.getPermissions().contains(subscribePerm)) {
-                subscribeList.add(group);
+                subscribePrincipalSet.add(principal);
             }
             if (form.getPermissions().contains(browsePerm)) {
-                browseList.add(group);
+                browsePrincipalSet.add(principal);
             }
         }
-        IGroupMember[] groupMembers = new IGroupMember[groupList.size()];
-        groupMembers = groupList.toArray(groupMembers);
 
-        // create the category array from the form's category list
-        PortletCategory[] categories = new PortletCategory[form.getCategories().size()];
-        for (ListIterator<JsonEntityBean> iter = form.getCategories().listIterator(); iter.hasNext();) {
-            String id = iter.next().getId();
+        // create the category list from the form's category bean list
+        List<PortletCategory> categories = new ArrayList<>();
+        for (JsonEntityBean category : form.getCategories()) {
+            String id = category.getId();
             String iCatID = id.startsWith("cat") ? id.substring(3) : id;
-            categories[iter.previousIndex()] = portletCategoryRegistry.getPortletCategory(iCatID);
+            categories.add(portletCategoryRegistry.getPortletCategory(iCatID));
         }
 
-        IPortletDefinition portletDef = null;
+        IPortletDefinition portletDef;
         if (form.getId() == null) {
             final String fname = form.getFname();
             final String name = form.getName();
@@ -399,7 +393,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         portletDef.addParameter(IPortletDefinition.HAS_ABOUT_PARAM, Boolean.toString(form.isHasAbout()));
 
         // Now add portlet preferences
-        List<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
+        List<IPortletPreference> preferenceList = new ArrayList<>();
         for (String key : form.getPortletPreferences().keySet()) {
             List<String> prefValues = form.getPortletPreferences().get(key).getValue();
             if (prefValues != null && prefValues.size() > 0) {
@@ -413,9 +407,10 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         // Lastly update the PortletDefinition's lifecycle state & lifecycle-related metadata
         updateLifecycleState(form, portletDef, publisher);
 
-        portletPublishingService.savePortletDefinition(portletDef, publisher, Arrays.asList(categories), Arrays.asList(groupMembers));
-        updatePermissions(portletDef, subscribeList, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
-        updatePermissions(portletDef, browseList, IPermission.PORTLET_BROWSE_ACTIVITY);
+        // The final parameter of IGroupMembers is used to set the initial SUBSCRIBE permission set
+        portletPublishingService.savePortletDefinition(portletDef, publisher, categories, new ArrayList<>(subscribePrincipalSet));
+        //updatePermissions(portletDef, subscribePrincipalSet, IPermission.PORTLET_SUBSCRIBER_ACTIVITY);
+        updatePermissions(portletDef, browsePrincipalSet, IPermission.PORTLET_BROWSE_ACTIVITY);
 
         return this.createPortletDefinitionForm(publisher, portletDef.getPortletDefinitionId().getStringId());
     }
@@ -845,7 +840,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         return PortletLifecycleState.values();
     }
 
-    public Set<PortletLifecycleState> getAllowedLifecycleStates(IPerson person, List<JsonEntityBean> categories) {
+    public Set<PortletLifecycleState> getAllowedLifecycleStates(IPerson person, SortedSet<JsonEntityBean> categories) {
         Set<PortletLifecycleState> states = new TreeSet<PortletLifecycleState>();
         if (hasLifecyclePermission(person, PortletLifecycleState.MAINTENANCE, categories)) {
             states.add(PortletLifecycleState.CREATED);
@@ -871,7 +866,7 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         return states;
     }
 
-    public boolean hasLifecyclePermission(IPerson person, PortletLifecycleState state, List<JsonEntityBean> categories) {
+    public boolean hasLifecyclePermission(IPerson person, PortletLifecycleState state, SortedSet<JsonEntityBean> categories) {
         EntityIdentifier ei = person.getEntityIdentifier();
         IAuthorizationPrincipal ap = authorizationService.newPrincipal(ei.getKey(), ei.getType());
 
