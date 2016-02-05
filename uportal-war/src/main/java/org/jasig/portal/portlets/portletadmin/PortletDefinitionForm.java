@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.StringUtils;
@@ -103,11 +105,11 @@ public class PortletDefinitionForm implements Serializable {
     private boolean configurable;
 
     /**
-     * Groups and categories
+     * Principals and categories
      */
 
-    private List<JsonEntityBean> groups = new ArrayList<>();
-    private List<JsonEntityBean> categories = new ArrayList<>();
+    private SortedSet<JsonEntityBean> principals = new TreeSet<>();
+    private SortedSet<JsonEntityBean> categories = new TreeSet<>();
     private Set<String> permissions = new HashSet<>();
 
 
@@ -182,10 +184,6 @@ public class PortletDefinitionForm implements Serializable {
         }
 
         for (IPortletPreference pref : def.getPortletPreferences()) {
-            List<Attribute> attributes = new ArrayList<>();
-            for (String value : pref.getValues()) {
-                attributes.add(new Attribute(value));
-            }
             this.portletPreferences.put(pref.getName(), new StringListAttribute(pref.getValues()));
             this.portletPreferenceReadOnly.put(pref.getName(), new BooleanAttribute(pref.isReadOnly()));
         }
@@ -451,16 +449,17 @@ public class PortletDefinitionForm implements Serializable {
         this.portletPreferenceReadOnly = portletPreferenceReadOnly;
     }
 
-    public List<JsonEntityBean> getGroups() {
-        return groups;
+    public SortedSet<JsonEntityBean> getPrincipals() {
+        return Collections.unmodifiableSortedSet(principals);
     }
 
-    public void setGroups(List<JsonEntityBean> groups) {
-        this.groups = groups;
+    public void setPrincipals(SortedSet<JsonEntityBean> principals) {
+        this.principals.clear();
+        this.principals.addAll(principals);
     }
 
-    public void addGroup(JsonEntityBean group) {
-        this.groups.add(group);
+    public void addPrincipal(JsonEntityBean principal) {
+        this.principals.add(principal);
     }
 
     public Set<String> getPermissions() {
@@ -480,12 +479,13 @@ public class PortletDefinitionForm implements Serializable {
         this.permissions.clear();
     }
 
-    public List<JsonEntityBean> getCategories() {
-        return categories;
+    public SortedSet<JsonEntityBean> getCategories() {
+        return Collections.unmodifiableSortedSet(categories);
     }
 
-    public void setCategories(List<JsonEntityBean> categories) {
-        this.categories = categories;
+    public void setCategories(SortedSet<JsonEntityBean> categories) {
+        this.categories.clear();
+        this.categories.addAll(categories);
     }
 
     public void addCategory(JsonEntityBean category) {
