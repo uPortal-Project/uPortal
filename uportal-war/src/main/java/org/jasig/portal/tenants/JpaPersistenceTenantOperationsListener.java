@@ -18,6 +18,11 @@
  */
 package org.jasig.portal.tenants;
 
+import java.util.Locale;
+
+import org.jasig.portal.tenants.TenantOperationResponse.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -31,22 +36,65 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public final class JpaPersistenceTenantOperationsListener extends AbstractTenantOperationsListener {
 
+    private static final String TENANT_CREATED_SUCCESSFULLY = "tenant.created.successfully";
+    private static final String TENANT_UPDATED_SUCCESSFULLY = "tenant.updated.successfully";
+    private static final String TENANT_DELETED_SUCCESSFULLY = "tenant.deleted.successfully";
+
+    private static final String FAILED_TO_CREATE_TENANT = "failed.to.create.tenant";
+    private static final String FAILED_TO_UPDATE_TENANT = "failed.to.update.tenant";
+    private static final String FAILED_TO_DELETE_TENANT = "failed.to.delete.tenant";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ITenantDao tenantDao;
 
     @Override
-    public void onCreate(final ITenant tenant) {
-        tenantDao.createOrUpdateTenant(tenant);
+    public TenantOperationResponse onCreate(final ITenant tenant) {
+        final Locale locale = getCurrentUserLocale();
+        try {
+            tenantDao.createOrUpdateTenant(tenant);
+        } catch (Exception e) {
+            log.error("Failed to create tenant {}", tenant.getName(), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(getMessageSource().getMessage(FAILED_TO_CREATE_TENANT, new String[] { tenant.getName() }, locale));
+            return error;
+        }
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(getMessageSource().getMessage(TENANT_CREATED_SUCCESSFULLY, new String[] { tenant.getName() }, locale));
+        return rslt;
     }
 
     @Override
-    public void onUpdate(final ITenant tenant) {
-        tenantDao.createOrUpdateTenant(tenant);
+    public TenantOperationResponse onUpdate(final ITenant tenant) {
+        final Locale locale = getCurrentUserLocale();
+        try {
+            tenantDao.createOrUpdateTenant(tenant);
+        } catch (Exception e) {
+            log.error("Failed to update tenant {}", tenant.getName(), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(getMessageSource().getMessage(FAILED_TO_UPDATE_TENANT, new String[] { tenant.getName() }, locale));
+            return error;
+        }
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(getMessageSource().getMessage(TENANT_UPDATED_SUCCESSFULLY, new String[] { tenant.getName() }, locale));
+        return rslt;
     }
 
     @Override
-    public void onDelete(final ITenant tenant) {
-        tenantDao.removeTenant(tenant);
+    public TenantOperationResponse onDelete(final ITenant tenant) {
+        final Locale locale = getCurrentUserLocale();
+        try {
+            tenantDao.removeTenant(tenant);
+        } catch (Exception e) {
+            log.error("Failed to remove tenant {}", tenant.getName(), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(getMessageSource().getMessage(FAILED_TO_DELETE_TENANT, new String[] { tenant.getName() }, locale));
+            return error;
+        }
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(getMessageSource().getMessage(TENANT_DELETED_SUCCESSFULLY, new String[] { tenant.getName() }, locale));
+        return rslt;
     }
 
 }

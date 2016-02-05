@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.tenants;
+
+import java.util.Set;
 
 /**
  * Interface that supports pluggable behavior when tenants are created, updated,
@@ -27,12 +30,34 @@ package org.jasig.portal.tenants;
  */
 public  interface ITenantOperationsListener {
 
-    boolean isFailOnError();
+    /**
+     * Provides a human-readable name for this listener suitable for displaying
+     * in the UI.  Internationalized.
+     */
+    String getName();
 
-    void onCreate(ITenant tenant);
+    /**
+     * Allows the listener to respond to the creation of a new tenant.
+     */
+    TenantOperationResponse onCreate(ITenant tenant);
 
-    void onUpdate(ITenant tenant);
+    /**
+     * Allows the listener to respond to a change in the metadata originally
+     * used to define a tenant.
+     */
+    TenantOperationResponse onUpdate(ITenant tenant);
 
-    void onDelete(ITenant tenant);
+    /**
+     * Allows the listener to respond to the removal of a tenant.
+     */
+    TenantOperationResponse onDelete(ITenant tenant);
+
+    /**
+     * Listeners may optionally define one or more operations that may be
+     * performed on an existing tenant.  Normally these actions might be the
+     * same as, or similar too, the behavior they implement for tenant CrUD
+     * operations.  Example:  'Re-send Tenant Admin Email'
+     */
+    Set<ITenantManagementAction> getAvaialableActions();
 
 }

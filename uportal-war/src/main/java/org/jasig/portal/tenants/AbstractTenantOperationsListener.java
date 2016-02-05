@@ -18,6 +18,21 @@
  */
 package org.jasig.portal.tenants;
 
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.jasig.portal.i18n.ILocaleStore;
+import org.jasig.portal.i18n.LocaleManager;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.tenants.TenantOperationResponse.Result;
+import org.jasig.portal.url.IPortalRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+
 /**
  * Implements all methods of {@link ITenantOperationsListener} as no-ops and can
  * therefore serve as a base class for concrete listeners that need to override
@@ -28,28 +43,62 @@ package org.jasig.portal.tenants;
  */
 public abstract class AbstractTenantOperationsListener implements ITenantOperationsListener {
 
-    private boolean failOnError = true;  // default
+    private static final String NO_OPERATIONS_PERFORMED = "no.operations.performed";
 
-    public void setFailOnError(boolean failOnError) {
-        this.failOnError = failOnError;
+    @Autowired
+    private IPortalRequestUtils portalRequestUtils;
+
+    @Autowired
+    private IPersonManager personManager;
+
+    @Autowired
+    private ILocaleStore localeStore;
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Override
+    public final String getName() {
+        return messageSource.getMessage(getClass().getName() + ".name", null, getCurrentUserLocale());
     }
 
-    /**
-     * Whether a failure in this listener represents total failure and brings 
-     * the process to an abrupt halt.  The default is <code>true</code>.
-     */
     @Override
-    public boolean isFailOnError() {
-        return failOnError;
+    public TenantOperationResponse onCreate(ITenant tenant) {
+        return getDefaultResponse();
     }
 
     @Override
-    public void onCreate(ITenant tenant) {}
+    public TenantOperationResponse onUpdate(ITenant tenant) {
+        return getDefaultResponse();
+    }
 
     @Override
-    public void onUpdate(ITenant tenant) {}
+    public TenantOperationResponse onDelete(ITenant tenant) {
+        return getDefaultResponse();
+    }
 
     @Override
-    public void onDelete(ITenant tenant) {}
+    public Set<ITenantManagementAction> getAvaialableActions() {
+        return Collections.emptySet();
+    }
+
+    protected Locale getCurrentUserLocale() {
+        final HttpServletRequest req = this.portalRequestUtils.getCurrentPortalRequest();
+        final IPerson person = personManager.getPerson(req);
+        final Locale[] userLocales = localeStore.getUserLocales(person);
+        final LocaleManager localeManager = new LocaleManager(person, userLocales);
+        final Locale locale = localeManager.getLocales()[0];
+        return locale;
+    }
+
+    protected MessageSource getMessageSource() {
+        return messageSource;
+    }
+
+    private TenantOperationResponse getDefaultResponse() {
+        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(getMessageSource().getMessage(NO_OPERATIONS_PERFORMED, null, getCurrentUserLocale()));
+        return rslt;
+    }
 
 }

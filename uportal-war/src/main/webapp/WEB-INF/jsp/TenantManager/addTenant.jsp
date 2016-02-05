@@ -50,11 +50,12 @@
 </style>
 
 <div id="${n}tenantManager">
+    <h2><spring:message code="tenant.manager.add" /></h2>
     <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="post">
         <div class="form-group">
             <label for="tenantName" class="col-sm-2 control-label"><spring:message code="tenant.manager.name" /></label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="name" id="tenantName" placeholder="Enter tenant name">
+                <input type="text" class="form-control" name="name" id="tenantName" placeholder="<spring:message code="enter.tenant.name" />">
                 <div class="field-error bg-danger">Field error message</div>
             </div>
         </div>
