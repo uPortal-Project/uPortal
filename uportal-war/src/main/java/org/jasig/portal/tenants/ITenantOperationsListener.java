@@ -37,6 +37,17 @@ public  interface ITenantOperationsListener {
     String getName();
 
     /**
+     * The (short) string that identifies this listener uniquely.
+     */
+    String getFname();
+
+    /**
+     * Is skipping this listener permissable?
+     * @return
+     */
+    boolean isOptional();
+
+    /**
      * Allows the listener to respond to the creation of a new tenant.
      */
     TenantOperationResponse onCreate(ITenant tenant);

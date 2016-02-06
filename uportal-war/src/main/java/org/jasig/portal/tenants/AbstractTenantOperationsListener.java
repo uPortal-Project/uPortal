@@ -45,6 +45,8 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
 
     private static final String NO_OPERATIONS_PERFORMED = "no.operations.performed";
 
+    private final String fname;
+
     @Autowired
     private IPortalRequestUtils portalRequestUtils;
 
@@ -57,9 +59,23 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     @Autowired
     private MessageSource messageSource;
 
+    protected AbstractTenantOperationsListener(final String fname) {
+        this.fname = fname;
+    }
+
     @Override
     public final String getName() {
         return messageSource.getMessage(getClass().getName() + ".name", null, getCurrentUserLocale());
+    }
+
+    @Override
+    public final String getFname() {
+        return fname;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return false;
     }
 
     @Override

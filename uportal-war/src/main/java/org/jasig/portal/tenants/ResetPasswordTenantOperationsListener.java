@@ -66,9 +66,21 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
 
     private IPasswordResetNotification passwordResetNotification;
 
+    public ResetPasswordTenantOperationsListener() {
+        super("reset-password");
+    }
+
     @Autowired
     public void setPasswordResetNotification(IPasswordResetNotification passwordResetNotification) {
         this.passwordResetNotification = passwordResetNotification;
+    }
+
+    /**
+     * This step is not required
+     */
+    @Override
+    public boolean isOptional() {
+        return true;
     }
 
     @Override

@@ -62,6 +62,7 @@ public class TenantService {
 
     @Resource(name="tenantOperationsListeners")
     private List<ITenantOperationsListener> tenantOperationsListeners;
+    private List<ITenantOperationsListener> optionalOperationsListeners;
 
     private Map<String,ITenantManagementAction> operationsListenerAvailableActions;
 
@@ -74,11 +75,16 @@ public class TenantService {
     @PostConstruct
     public void init() {
         Map<String,ITenantManagementAction> map = new HashMap<>();
+        List<ITenantOperationsListener> optional = new ArrayList<>();
         for (ITenantOperationsListener listener : tenantOperationsListeners) {
+            if (listener.isOptional()) {
+                optional.add(listener);
+            }
             for (ITenantManagementAction action : listener.getAvaialableActions()) {
                 map.put(action.getFname(), action);
             }
         }
+        optionalOperationsListeners = Collections.unmodifiableList(optional);
         operationsListenerAvailableActions = Collections.unmodifiableMap(map);
     }
 
@@ -102,7 +108,8 @@ public class TenantService {
     }
 
     public ITenant createTenant(final String name, final String fname, 
-            final Map<String,String> attributes, List<TenantOperationResponse> responses) {
+            final Map<String,String> attributes, List<TenantOperationResponse> responses,
+            final Set<String> skipListenerFnames) {
 
         /*
          * NB:  Ideally this method should be annotated with @PortalTransactional,
@@ -131,6 +138,12 @@ public class TenantService {
 
         // Invoke the listeners
         for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
+            // Skip listeners as requested
+            if (skipListenerFnames != null
+                    && listener.isOptional()
+                    && skipListenerFnames.contains(listener.getFname())) {
+                continue;
+            }
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onCreate(rslt);
@@ -191,7 +204,15 @@ public class TenantService {
     }
 
     /**
-     * Complete list of actions from all listeners
+     * List of the fnames of currently configured {@link ITenantOperationsListener}
+     * objects that may be omitted, presented in their natural (sequential) order.
+     */
+    public List<ITenantOperationsListener> getOptionalOperationsListeners() {
+        return optionalOperationsListeners;
+    }
+
+    /**
+     * Complete set of actions from all listeners
      */
     public Set<ITenantManagementAction> getAllAvaialableActions() {
         return new HashSet<ITenantManagementAction>(operationsListenerAvailableActions.values());

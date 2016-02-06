@@ -92,6 +92,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
 
     public TemplateDataTenantOperationsListener() {
+        super("template-data");
         this.reader = new SAXReader();
         this.reader.setMergeAdjacentText(true);
     }

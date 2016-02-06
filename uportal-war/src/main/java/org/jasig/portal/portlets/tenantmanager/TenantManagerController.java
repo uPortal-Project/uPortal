@@ -19,10 +19,13 @@
 package org.jasig.portal.portlets.tenantmanager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.portlet.ActionRequest;
@@ -33,6 +36,7 @@ import javax.portlet.RenderRequest;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.tenants.ITenantManagementAction;
+import org.jasig.portal.tenants.ITenantOperationsListener;
 import org.jasig.portal.tenants.TenantOperationResponse;
 import org.jasig.portal.tenants.TenantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +56,9 @@ public class TenantManagerController {
     private static final String ADD_TENANT_VIEW_NAME = "/jsp/TenantManager/addTenant";
     private static final String REPORT_VIEW_NAME = "/jsp/TenantManager/report";
 
+    private static final String TENANT_MANAGER_ATTRIBUTES = "tenantManagerAttributes";
+    private static final String OPTIONAL_OPERATIONS_LISTENERS = "optionalOperationsListeners";
+    private static final String OPTIONAL_LISTENER_PARAMETER = "optionalListener";
     private static final String OPERATION_NAME_CODE = "operationNameCode";
     private static final String OPERATIONS_LINTENER_RESPONSES = "operationsListenerResponses";
     private static final String OPERATIONS_LINTENER_AVAILABLE_ACTIONS = "operationsListenerAvailableActions";
@@ -75,7 +82,8 @@ public class TenantManagerController {
     @RenderMapping(params="action=showAddTenant")
     public ModelAndView showAddTenant() {
         Map<String,Object> model = new HashMap<String,Object>();
-        model.put("tenantManagerAttributes", Collections.unmodifiableMap(tenantManagerAttributes));
+        model.put(TENANT_MANAGER_ATTRIBUTES, Collections.unmodifiableMap(tenantManagerAttributes));
+        model.put(OPTIONAL_OPERATIONS_LISTENERS, tenantService.getOptionalOperationsListeners());
         return new ModelAndView(ADD_TENANT_VIEW_NAME, model);
     }
 
@@ -121,8 +129,19 @@ public class TenantManagerController {
             }
         }
 
+        // Honor the user's choices as far as optional listeners
+        final List<String> selectedListenerFnames = (req.getParameterValues(OPTIONAL_LISTENER_PARAMETER) != null)
+                ? Arrays.asList(req.getParameterValues(OPTIONAL_LISTENER_PARAMETER))
+                : new ArrayList<String>(0);  // None were selected
+        final Set<String> skipListenerFnames = new HashSet<>();
+        for (ITenantOperationsListener listener : tenantService.getOptionalOperationsListeners()) {
+            if (!selectedListenerFnames.contains(listener.getFname())) {
+                skipListenerFnames.add(listener.getFname());
+            }
+        }
+
         List<TenantOperationResponse> responses = new ArrayList<>();
-        tenantService.createTenant(name, fname, attributes, responses);
+        tenantService.createTenant(name, fname, attributes, responses, skipListenerFnames);
 
         // Need to store some items to share with user in the report;  would be
         // handy to have support for javax.portlet.actionScopedRequestAttributes

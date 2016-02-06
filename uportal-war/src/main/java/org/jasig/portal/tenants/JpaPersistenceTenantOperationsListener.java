@@ -49,6 +49,10 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
     @Autowired
     private ITenantDao tenantDao;
 
+    public JpaPersistenceTenantOperationsListener() {
+        super("jpa-persistence");
+    }
+
     @Override
     public TenantOperationResponse onCreate(final ITenant tenant) {
         final Locale locale = getCurrentUserLocale();
