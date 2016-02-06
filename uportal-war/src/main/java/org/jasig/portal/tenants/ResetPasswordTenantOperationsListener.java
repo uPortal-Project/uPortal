@@ -19,7 +19,6 @@
 package org.jasig.portal.tenants;
 
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -118,17 +117,16 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
      */
 
     private TenantOperationResponse prepareResponse(final ITenant tenant) {
-        final Locale locale = getCurrentUserLocale();
         try {
             sendResetPasswordEmail(tenant);
         } catch (Exception e) {
             log.error("Failed to send tenant admin email to address {} for tenant {}", tenant.getAttribute(ADMIN_CONTACT_EMAIL), tenant.getName(), e);
             final TenantOperationResponse error = new TenantOperationResponse(this, Result.FAIL);  // Just a warning
-            error.addMessage(getMessageSource().getMessage(UNABLE_TO_SEND_TENANT_ADMIN_EMAIL, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }, locale));
+            error.addMessage(createLocalizedMessage(UNABLE_TO_SEND_TENANT_ADMIN_EMAIL, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
             return error;
         }
         final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
-        rslt.addMessage(getMessageSource().getMessage(TENANT_ADMIN_EMAIL_SENT, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }, locale));
+        rslt.addMessage(createLocalizedMessage(TENANT_ADMIN_EMAIL_SENT, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
         return rslt;
     }
 

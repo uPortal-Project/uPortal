@@ -19,6 +19,13 @@
 
 package org.jasig.portal.tenants;
 
+/**
+ * Represents a behavior of an {@link ITenantOperationsListener} that may be
+ * invoked independent of a Create, Update, or Delete operation.  Actions are
+ * available from the Tenant Details screen.
+ *
+ * @author drewwills
+ */
 public interface ITenantManagementAction {
 
     /**

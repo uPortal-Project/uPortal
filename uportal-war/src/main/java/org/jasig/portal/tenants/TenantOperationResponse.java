@@ -58,13 +58,6 @@ public class TenantOperationResponse {
     private final ITenantOperationsListener listener;
     private final Result result;
     private final List<String> messages = new ArrayList<>();
-    private ITransactionCallbackHandler callbackHandler = new ITransactionCallbackHandler() {
-        // Default handler is a no-op.
-        @Override
-        public void commit() {}
-        @Override
-        public void rollback() {}
-    };
 
     public TenantOperationResponse(ITenantOperationsListener listener, Result result) {
         this.listener = listener;
@@ -85,26 +78,6 @@ public class TenantOperationResponse {
 
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
-    }
-
-    public void setCallbackHandler(ITransactionCallbackHandler callbackHandler) {
-        this.callbackHandler = callbackHandler;
-    }
-
-    public ITransactionCallbackHandler getCallbackHandler() {
-        return callbackHandler;
-    }
-
-    /*
-     * Nested Types
-     */
-
-    /**
-     * If an {@link ITenantOperationsListener} provides one of these in its response, the service
-     */
-    public interface ITransactionCallbackHandler {
-        void commit();
-        void rollback();
     }
 
 }

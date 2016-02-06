@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -136,8 +135,6 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     @Override
     public TenantOperationResponse onCreate(final ITenant tenant) {
 
-        final Locale locale = getCurrentUserLocale();
-
         /*
          * First load dom4j Documents and sort the entity files into the proper order 
          */
@@ -184,7 +181,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             log.error("Failed to process the specified template:  {}",
                     (rsc != null ? rsc.getFilename() : "null"), e);
             final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
-            error.addMessage(getMessageSource().getMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }, locale));
+            error.addMessage(createLocalizedMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }));
             return error;
         }
 
@@ -221,14 +218,14 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             log.error("Failed to process the specified template document:\n{}",
                                     (doc != null ? doc.asXML() : "null"), e);
             final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
-            error.addMessage(this.finalizeImportReport(importReport, locale));
-            error.addMessage(getMessageSource().getMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }, locale));
+            error.addMessage(this.finalizeImportReport(importReport));
+            error.addMessage(createLocalizedMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }));
             return error;
         }
 
         TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
-        rslt.addMessage(this.finalizeImportReport(importReport, locale));
-        rslt.addMessage(getMessageSource().getMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }, locale));
+        rslt.addMessage(this.finalizeImportReport(importReport));
+        rslt.addMessage(createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }));
         return rslt;
 
     }
@@ -294,8 +291,8 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         return rslt.toString();
     }
 
-    private String finalizeImportReport(StringBuilder message, Locale locale) {
-        final String preamble = getMessageSource().getMessage(IMPORTED_THE_FOLLOWING_ENTITIES, null, locale);
+    private String finalizeImportReport(StringBuilder message) {
+        final String preamble = createLocalizedMessage(IMPORTED_THE_FOLLOWING_ENTITIES, null);
         message.insert(0, "\n<ul>").insert(0, preamble);  // Reverse order
         message.append("\n</ul>");
         return message.toString();

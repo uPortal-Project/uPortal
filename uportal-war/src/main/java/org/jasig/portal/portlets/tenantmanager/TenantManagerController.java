@@ -141,15 +141,9 @@ public class TenantManagerController {
         }
 
         List<TenantOperationResponse> responses = new ArrayList<>();
-        tenantService.createTenant(name, fname, attributes, responses, skipListenerFnames);
+        tenantService.createTenant(name, fname, attributes, skipListenerFnames, responses);
 
-        // Need to store some items to share with user in the report;  would be
-        // handy to have support for javax.portlet.actionScopedRequestAttributes
-        session.setAttribute(OPERATION_NAME_CODE, "tenant.manager.add");
-        session.setAttribute(OPERATIONS_LINTENER_RESPONSES, responses);
-
-        // Send the user to the report screen
-        res.setRenderParameter("action", "showReport");
+        forwardToReportScreen(req, res, "tenant.manager.add", responses);
 
     }
 
@@ -160,13 +154,7 @@ public class TenantManagerController {
         List<TenantOperationResponse> responses = new ArrayList<>();
         tenantService.deleteTenantByFName(fname, responses);
 
-        // Need to store some items to share with user in the report;  would be
-        // handy to have support for javax.portlet.actionScopedRequestAttributes
-        session.setAttribute(OPERATION_NAME_CODE, "tenant.manager.remove.tenant");
-        session.setAttribute(OPERATIONS_LINTENER_RESPONSES, responses);
-
-        // Send the user to the report screen
-        res.setRenderParameter("action", "showReport");
+        forwardToReportScreen(req, res, "tenant.manager.remove.tenant", responses);
 
     }
 
@@ -181,14 +169,24 @@ public class TenantManagerController {
         }
         TenantOperationResponse response = action.invoke(tenant);
 
+        forwardToReportScreen(req, res, action.getMessageCode(), Collections.singletonList(response));
+
+    }
+
+    /*
+     * Implementation
+     */
+
+    private void forwardToReportScreen(final ActionRequest req, final ActionResponse res,
+            final String operationNameCode, final List<TenantOperationResponse> responses) {
+        final PortletSession session = req.getPortletSession();
         // Need to store some items to share with user in the report;  would be
         // handy to have support for javax.portlet.actionScopedRequestAttributes
-        session.setAttribute(OPERATION_NAME_CODE, action.getMessageCode());
-        session.setAttribute(OPERATIONS_LINTENER_RESPONSES, Collections.singletonList(response));
+        session.setAttribute(OPERATION_NAME_CODE, "tenant.manager.add");
+        session.setAttribute(OPERATIONS_LINTENER_RESPONSES, responses);
 
         // Send the user to the report screen
         res.setRenderParameter("action", "showReport");
-
     }
 
 }

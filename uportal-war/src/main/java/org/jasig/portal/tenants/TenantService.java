@@ -108,8 +108,8 @@ public class TenantService {
     }
 
     public ITenant createTenant(final String name, final String fname, 
-            final Map<String,String> attributes, List<TenantOperationResponse> responses,
-            final Set<String> skipListenerFnames) {
+            final Map<String,String> attributes, final Set<String> skipListenerFnames,
+            final List<TenantOperationResponse> responses) {
 
         /*
          * NB:  Ideally this method should be annotated with @PortalTransactional,

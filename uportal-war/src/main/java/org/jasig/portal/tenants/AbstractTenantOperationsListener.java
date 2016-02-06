@@ -98,7 +98,16 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return Collections.emptySet();
     }
 
-    protected Locale getCurrentUserLocale() {
+    protected String createLocalizedMessage(final String messageCode, final Object[] args) {
+        final Locale locale = getCurrentUserLocale();
+        return messageSource.getMessage(messageCode, args, locale);
+    }
+
+    /*
+     * Implementation
+     */
+
+    private Locale getCurrentUserLocale() {
         final HttpServletRequest req = this.portalRequestUtils.getCurrentPortalRequest();
         final IPerson person = personManager.getPerson(req);
         final Locale[] userLocales = localeStore.getUserLocales(person);
@@ -107,13 +116,9 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return locale;
     }
 
-    protected MessageSource getMessageSource() {
-        return messageSource;
-    }
-
     private TenantOperationResponse getDefaultResponse() {
         TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
-        rslt.addMessage(getMessageSource().getMessage(NO_OPERATIONS_PERFORMED, null, getCurrentUserLocale()));
+        rslt.addMessage(messageSource.getMessage(NO_OPERATIONS_PERFORMED, null, getCurrentUserLocale()));
         return rslt;
     }
 
