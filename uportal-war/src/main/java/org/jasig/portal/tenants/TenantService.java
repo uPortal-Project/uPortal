@@ -72,6 +72,9 @@ public class TenantService {
     @Autowired
     private IPortalTenantEventFactory tenantEventFactory;
 
+    /**
+     * @since uPortal 4.3
+     */
     @PostConstruct
     public void init() {
         Map<String,ITenantManagementAction> map = new HashMap<>();
@@ -88,6 +91,9 @@ public class TenantService {
         operationsListenerAvailableActions = Collections.unmodifiableMap(map);
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     public ITenant getTenantByFName(final String fname) {
         // Assertions
         if (fname == null) {
@@ -206,6 +212,8 @@ public class TenantService {
     /**
      * List of the fnames of currently configured {@link ITenantOperationsListener}
      * objects that may be omitted, presented in their natural (sequential) order.
+     *
+     * @since uPortal 4.3
      */
     public List<ITenantOperationsListener> getOptionalOperationsListeners() {
         return optionalOperationsListeners;
@@ -213,11 +221,16 @@ public class TenantService {
 
     /**
      * Complete set of actions from all listeners
+     *
+     * @since uPortal 4.3
      */
     public Set<ITenantManagementAction> getAllAvaialableActions() {
         return new HashSet<ITenantManagementAction>(operationsListenerAvailableActions.values());
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     public ITenantManagementAction getAction(final String fname) {
         // Assertions
         if (StringUtils.isBlank(fname)) {

@@ -24,6 +24,7 @@ package org.jasig.portal.tenants;
  * invoked independent of a Create, Update, or Delete operation.  Actions are
  * available from the Tenant Details screen.
  *
+ * @since uPortal 4.3
  * @author drewwills
  */
 public interface ITenantManagementAction {

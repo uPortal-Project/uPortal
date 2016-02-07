@@ -38,12 +38,15 @@ public  interface ITenantOperationsListener {
 
     /**
      * The (short) string that identifies this listener uniquely.
+     *
+     * @since uPortal 4.3
      */
     String getFname();
 
     /**
      * Is skipping this listener permissable?
-     * @return
+     *
+     * @since uPortal 4.3
      */
     boolean isOptional();
 
@@ -68,6 +71,8 @@ public  interface ITenantOperationsListener {
      * performed on an existing tenant.  Normally these actions might be the
      * same as, or similar too, the behavior they implement for tenant CrUD
      * operations.  Example:  'Re-send Tenant Admin Email'
+     *
+     * @since uPortal 4.3
      */
     Set<ITenantManagementAction> getAvaialableActions();
 

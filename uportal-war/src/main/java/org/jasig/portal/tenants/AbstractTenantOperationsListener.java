@@ -68,11 +68,17 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return messageSource.getMessage(getClass().getName() + ".name", null, getCurrentUserLocale());
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     @Override
     public final String getFname() {
         return fname;
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     @Override
     public boolean isOptional() {
         return false;
@@ -93,11 +99,17 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
         return getDefaultResponse();
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     @Override
     public Set<ITenantManagementAction> getAvaialableActions() {
         return Collections.emptySet();
     }
 
+    /**
+     * @since uPortal 4.3
+     */
     protected String createLocalizedMessage(final String messageCode, final Object[] args) {
         final Locale locale = getCurrentUserLocale();
         return messageSource.getMessage(messageCode, args, locale);
