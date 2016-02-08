@@ -23,6 +23,14 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
+	<!-- Data Table Bootstrap Includes -->
+    <css included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
+    
+	<!-- Data Table ColumnFilterWidgets Includes -->    <!-- Data Table ColumnFilterWidgets Includes -->
+	<css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
+    <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
+        
     <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
     
@@ -82,14 +90,10 @@
     <!-- Data Table Bootstrap Includes -->
     <js included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
     <js included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
-    <css included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
-    <css included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
 
     <!-- Data Table ColumnFilterWidgets Includes -->
     <js included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
     <js included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
-    <css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
-    <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
 
     <!-- jsTree Includes (entity-selector) -->
     <js included="plain" resource="true">/scripts/jstree/jstree.js</js>

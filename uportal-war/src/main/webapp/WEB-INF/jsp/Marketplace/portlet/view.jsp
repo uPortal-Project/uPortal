@@ -21,278 +21,12 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<style>
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables display
- */
-#${n}marketplace table.display {
-    margin: 0 auto;
-    clear: both;
-    width: 100%;
-}
-
-#${n}marketplace .dataTables_wrapper {
-    position: relative;
-    clear: both;
-    zoom: 1; /* Feeling sorry for IE */
-}
-
-#${n}marketplace  .dataTables_processing {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 250px;
-    height: 30px;
-    margin-left: -125px;
-    margin-top: -15px;
-    padding: 14px 0 2px 0;
-    border: 1px solid #ddd;
-    color: #999;
-    font-size: 14px;
-    background-color: white;
-}
-
-#${n}marketplace .dataTables_paginate{
-    white-space:nowrap;
-}
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables sorting
- */
-
-#${n}marketplace .sorting_asc {
-    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc.png"/>') no-repeat center right;
-}
-
-#${n}marketplace .sorting_desc {
-    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc.png"/>') no-repeat center right;
-}
-
-#${n}marketplace .sorting {
-    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_both.png"/>') no-repeat center right;
-}
-
-#${n}marketplace .sorting_asc_disabled {
-    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_asc_disabled.png"/>') no-repeat center right;
-}
-
-#${n}marketplace .sorting_desc_disabled {
-    background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png"/>') no-repeat center right;
-}
- 
-#${n}marketplace table.display thead th:active,
-#${n}marketplace table.display thead td:active {
-    outline: none;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * DataTables row classes
- */
-#${n}marketplace tr.odd {
-    background-color: #eee;
-}
-
-#${n}marketplace tr.even {
-    background-color: #fff;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Misc
- */
- 
-#${n}marketplace .top{
-    background-color: #F5F5F5;
- }
-
-#${n}marketplace label>input{
-    height: 30px;
-    margin-right: 10px;
- }
-
-#${n}marketplace.top .dataTables_info {
-    float: none;
-}
-
-#${n}marketplace .clear {
-    clear: both;
-}
-
-#${n}marketplace .dataTables_empty {
-    text-align: center;
-}
-
-#${n}marketplace .example_alt_pagination div.dataTables_info {
-    width: 40%;
-}
-
-#${n}marketplace .paging_full_numbers {
-    width: 400px;
-    height: 22px;
-    line-height: 22px;
-}
-
-#${n}marketplace .paging_full_numbers a:active {
-    outline: none;
-}
-
-#${n}marketplace .paging_full_numbers a:hover {
-    text-decoration: none;
-}
-
-#${n}marketplace .paging_full_numbers a.paginate_button,
-    .paging_full_numbers a.paginate_active {
-    border: 1px solid #aaa;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    padding: 2px 5px;
-    margin: 0 3px;
-    cursor: pointer;
-    *cursor: hand;
-    color: #333 !important;
-}
-
-#${n}marketplace .paging_full_numbers a.paginate_button {
-    background-color: #ddd;
-}
-
-#${n}marketplace .paging_full_numbers a.paginate_button:hover {
-    background-color: #ccc;
-    text-decoration: none !important;
-}
-
-#${n}marketplace .paging_full_numbers a.paginate_active {
-    background-color: #99B3FF;
-}
- 
-@media only screen and (max-width: 768px) {
-    #${n}marketplace #unseen table th:nth-child(1),
-    #unseen table th:nth-child(3),
-    #unseen table td:nth-child(2),
-    #unseen table th:nth-child(2){display: none;}
-    #${n}marketplace .dataTables_filter{
-        text-align: left;
-    }
-    #${n}marketplace .dataTables_filter>label{
-        width: 100%;
-        float: left;
-    }
-    #${n}marketplace .dataTables_filter>label>input{
-        width: 90%;
-        float: right:
-    }
-    
-    #${n}marketplacem tr.odd {
-        background-color: #fff;
-    }
-}
-
-#${n}marketplace .sort_info, .dataTables_info{
-    text-align: left;
-}
-
-#${n}marketplace .marketplace_center_text, .dataTables_paginate,
-.dataTables_processing{
-    text-align:center;
-}
-
-#${n}marketplace .marketplace_center_text {
-    margin-top: 30px;
-}
-
-#${n}marketplace .dataTables_length, .dataTables_filter {
-    text-align:right;
-}
-
-#${n}marketplace a:hover {
-    cursor:pointer;
-}
-
-#${n}marketplace .${n}bottom{
-    border-top: thin solid black;
-    padding-top: 1em;
-}
-
-#${n}marketplace .marketplaceSection .panel {
-    padding: 0;
-    border: none;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box {
-    height: 112px;
-    max-height: 112px;
-    margin: 0;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #dddddd;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-    -webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-    -moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-    overflow: hidden;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box:hover {
-    background-color: #eee;
-    cursor: pointer;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box a {
-    width: 100%;
-    display: block;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box a:hover {
-    text-decoration: none;
-    color: #000000;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon {
-    width: 92px;
-    height: 92px;
-    max-height: 92px;
-    background-color: #eee;
-    margin-right: 15px;
-    float: left;
-    border:3px solid #999;
-    text-align: center;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-icon img {
-    width: 72px;
-    height: 72px;
-    margin-top: 7px;
-
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details {
-    text-align: left;
-    color: #000;
-    margin-right: 0;
-}
-
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details h5 {
-    font-size: 16px;
-    margin: 0 0 3px 0;
-}
-
-
-#${n}marketplace .marketplaceSection .panel .portlet-box .portlet-details p {
-    font-size: 11px;
-    margin: 0;
-}
-</style>
-
-
 <div id="${n}marketplace">
 
 <c:if test="${fn:length(featuredList) > 0}">
     <div id="${n}featured" class="marketplaceSection">
-        <div>
-            <h3><strong><spring:message code="featured" text="Featured" /></strong></h3><br>
-        </div>
-        <div class="row">
+		<h3><spring:message code="featured" text="Featured" /></h3>
+			<div class="row">
             <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
             <c:forEach var="featuredPortlet" items="${featuredEntries}" varStatus="status">
                 <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
@@ -300,7 +34,7 @@
                     <portlet:param name="fName" value="${featuredPortlet.fname}"/>
                 </portlet:renderURL>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default marketplace-panel">
                         <div class="row portlet-box">
                             <a href="${entryURL}">
                                 <div class="portlet-icon">
@@ -337,28 +71,19 @@
         </div>
         <div class="col-sm-8">
             <div class="sort_buttons_group">
-                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default"><spring:message code="label.azIndex" text="A-Z Index" /></button>
+                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default active"><spring:message code="label.azIndex" text="A-Z Index" /></button>
                 <!-- Offer Browse By: Category (but only if there are categories in the list) -->
                 <c:if test="${not empty categoryList}">
                 <button type="button" id="${n}category-sort-button" class="btn btn-default"><spring:message code="label.category" text="Categories" /></button>
                 </c:if>
             </div>
         </div>
-        <div class="col-sm-3">
-            <div class="input-group">
-                <input type="text" class="form-control" id="${n}portletTable_filter" placeholder="Search Portlets">
-                <span class="input-group-btn">
-                    <button class="btn btn-default" id="${n}clear_filter_button"><spring:message code="label.clear" text="Clear" /></button>
-                </span>
-            </div>
-        </div>
     </div>
 </div>
 
-
-<div id="${n}categoryListContainer" class="marketplace_center_text panel panel-default" style="display:none">
+<div id="${n}categoryListContainer" class="panel panel-default" style="display:none">
     <div class="panel-body">
-        <c:set var="categoryCount" value="0" />
+    	<c:set var="categoryCount" value="0" />
         <c:forEach var="category" items="${categoryList}">
             <c:if test="${categoryCount mod 4 == 0}">
                 <div class="row">
@@ -374,39 +99,40 @@
         </c:forEach>
         <c:if test="${(categoryCount) mod 4 !=0}">
             </div>
-        </c:if>
+        </c:if> 
     </div>
 </div>
 
+
 <div id="unseen">
-    <table id="${n}portletTable" class="display table">
+    <table id="${n}portletTable" class="table table-striped">
         <thead>
             <tr>
-                <th class="essential" style="border:none;">
+                <th class="essential">
                     <spring:message code="label.title" text="Title" />
                 </th>
-                <th class="optional" style="border:none;">
+                <th class="optional">
                     <spring:message code="label.description" text="Description" />
                 </th>
-                    <th class="essential" style="border:none;">
+                    <th class="essential">
                 </th>
             </tr>
         </thead>
         <tbody>
             <c:forEach var="portlet" items="${marketplaceEntries}">
                 <tr>
-                    <td class="essential" style="white-space: nowrap; border:none;">
-                        <strong><a href="${portlet.renderUrl}">${portlet.title} <i class="fa fa-external-link"></i></a></strong>
-                    </td>
-                    <td class="optional" style="border:none;">
-                        ${portlet.description}
-                    </td>
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
                         <portlet:param name="fName" value="${portlet.fname}"/>
                     </portlet:renderURL>
-                    <td class="essential" style="border:none;">
-                        <a href="${entryURL}"><spring:message code="label.details" text="Details" /> <i class="fa fa-edit"></i></a>
+                    <td class="essential" style="white-space: nowrap;">
+                        <strong><a href="${entryURL}">${portlet.title}</a></strong>
+                    </td>
+                    <td class="optional">
+                        ${portlet.description}
+                    </td>
+                    <td class="essential">
+                        <a href="${portlet.renderUrl}">Go to ${portlet.title}</a>
                     </td>
                     <td>
                         <c:forEach var="category" items="${portlet.marketplacePortletDefinition.parentCategories}">
@@ -461,48 +187,37 @@
                 "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull){
                        applyEllipsis(nRow,1,75);
                       },
-                "sDom": '<rt'+
-                    '<"row ${n}bottom" <"col-xs-6 col-sm-8 col-md-3" i>'+
-                    '<"col-xs-6 col-md-push-6 col-sm-4 col-md-3"l>'+
-                    '<"col-xs-12 col-md-pull-3 col-md-6"p>>',
-                "bStateSave": false,
                 "bAutoWidth":false
             });
 
             $("#${n}featured").insertAfter($("#${n}marketplace .top"));
 
+            var alphabeticalSortButton = $("#${n}alphabetical-sort-button");
+            var categorySortButton = $("#${n}category-sort-button");
+            
             var setFilter = function(text){
+            	alphabeticalSortButton.removeClass("active");
                 myDataTable.fnFilter(text);
             };
-
-            var sortColumns = function(column){
-                myDataTable.fnSort([[column, 'asc']]);
-            }
-
+            
             $(".${n}marketplace_category_link").click(function(){
                 setFilter(this.textContent);
             });
 
-            $("#${n}alphabetical-sort-button").addClass("active");
-            $("#${n}category-sort-button").removeClass("active");
-
-            $("#${n}alphabetical-sort-button").click(function(){
-                sortColumns(0);
-                $(this).toggleClass("active");
-            });
-
-            $("#${n}category-sort-button").click(function(){
-                $("#${n}categoryListContainer").toggle();
-                $(this).toggleClass("active");
-            });
-
-            $("#${n}portletTable_filter").keyup(function(e) {
-                setFilter(this.value);
-            });
-
-            $("#${n}clear_filter_button").click(function(){
+            alphabeticalSortButton.click(function(){
                 myDataTable.fnFilter("");
-                $("#${n}portletTable_filter").val("").focus();
+            	myDataTable.fnSort([[0,'asc']]);
+            	alphabeticalSortButton.addClass("active");
+            	
+            	$("#${n}categoryListContainer").hide();
+            	categorySortButton.removeClass("active");
+            });
+
+            categorySortButton.click(function(){
+            	alphabeticalSortButton.removeClass("active");
+            	
+                $("#${n}categoryListContainer").toggle();
+                categorySortButton.toggleClass("active");
             });
 
             if("${initialFilter}"){

@@ -42,6 +42,7 @@
   <css included="plain" resource="true">/scripts/jstree/style.css</css>
   <css included="aggregated" resource="true">/scripts/jstree/style.min.css</css>
 
+  <css import="true">../common/common_skin.xml</css>
   <!--
    | The skin is applied in lieu of using the Dynamic Skin Portlet.  Follow configuration information in skinList.xml
    | and disable Dynamic Skin Portlet.
