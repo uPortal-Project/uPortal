@@ -19,6 +19,7 @@
 package org.jasig.portal.tenants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +40,9 @@ import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.SpELDataTemplatingStrategy;
 import org.jasig.portal.io.xml.group.GroupMembershipPortalDataType;
+import org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType;
 import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,18 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  */
 public final class TemplateDataTenantOperationsListener extends AbstractTenantOperationsListener implements ApplicationContextAware {
 
+    private static final String TENANT_ENTITIES_IMPORTED = "tenant.entities.imported";
+    private static final String IMPORTED_THE_FOLLOWING_ENTITIES = "imported.the.following.entities";
+
+    private static final String FAILED_TO_LOAD_TENANT_TEMPLATE = "failed.to.load.tenant.template";
+    private static final String FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA = "failed.to.import.tenant.template.data";
+
+    private static final Set<PortalDataKey> KEYS_TO_IGNORE = new HashSet<>(
+            Arrays.asList(new PortalDataKey[] {
+                    GroupMembershipPortalDataType.IMPORT_32_DATA_KEY,
+                    PersonAttributesGroupStorePortalDataType.IMPORT_PAGS_41_DATA_KEY
+            }));
+
     private ApplicationContext applicationContext;
     private Resource[] templateResources;
     private SAXReader reader;
@@ -76,6 +91,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
 
     public TemplateDataTenantOperationsListener() {
+        super("template-data");
         this.reader = new SAXReader();
         this.reader.setMergeAdjacentText(true);
     }
@@ -91,15 +107,13 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             final List<PortalDataKey> supportedDataKeys = portalDataType.getDataKeyImportOrder();
             for (final PortalDataKey portalDataKey : supportedDataKeys) {
                 /*
-                 * Special Handling:  GroupMembershipPortalDataType.IMPORT_32_DATA_KEY
-                 * 
-                 * Need to prevent the GroupMembershipPortalDataType.IMPORT_32_DATA_KEY
-                 * from entering our sorted list of keys because it attempts to import
-                 * both the group part and the membership part of a group_membership
-                 * file in one go.  We import several entities at once, so it's important
+                 * Special Handling:  Need to prevent some keys from entering our
+                 * sorted collection because they attempt to import both a group
+                 * part and the membership parts of a group (either local or PAGS)
+                 * in one go.  We import several entities at once, so it's important
                  * to do these in 2 phases.
                  */
-                if (!portalDataKey.equals(GroupMembershipPortalDataType.IMPORT_32_DATA_KEY)) {
+                if (!KEYS_TO_IGNORE.contains(portalDataKey)) {
                     dataKeyImportOrder.add(portalDataKey);
                 }
             }
@@ -119,7 +133,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     }
 
     @Override
-    public void onCreate(final ITenant tenant) {
+    public TenantOperationResponse onCreate(final ITenant tenant) {
 
         /*
          * First load dom4j Documents and sort the entity files into the proper order 
@@ -164,12 +178,19 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to process the specified template:  " 
-                                    + (rsc != null ? rsc.getFilename() : ""), e);
+            log.error("Failed to process the specified template:  {}",
+                    (rsc != null ? rsc.getFilename() : "null"), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(createLocalizedMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }));
+            return error;
         }
 
         log.trace("Ready to import data entity templates for new tenant '{}';  importQueue={}", 
                                                             tenant.getName(), importQueue);
+
+        // We're going to report on every item imported;  TODO it would be better
+        // if we could display human-friendly entity type name + sysid (fname, etc.)
+        final StringBuilder importReport = new StringBuilder();
 
         /*
          * Now import the identified entities each bucket in turn 
@@ -188,14 +209,24 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                         doc = tuple.getDocument();
                         Source data = templating.processTemplates(doc, tuple.getResource().getURL().toString());
                         dataHandlerService.importData(data, pdk);
+                        importReport.append(createImportReportLineItem(pdk, tuple));
                     }
                 }
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to process the specified template document:  " 
-                                    + (doc != null ? doc.asXML() : ""), e);
+            log.error("Failed to process the specified template document:\n{}",
+                                    (doc != null ? doc.asXML() : "null"), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(this.finalizeImportReport(importReport));
+            error.addMessage(createLocalizedMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }));
+            return error;
         }
+
+        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(this.finalizeImportReport(importReport));
+        rslt.addMessage(createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }));
+        return rslt;
 
     }
 
@@ -247,6 +278,24 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         // This pdk is not a match
         return false;
 
+    }
+
+    private String createImportReportLineItem(PortalDataKey pdk, BucketTuple tuple) {
+        final String versionPart = pdk.getVersion() != null
+                ? " (" + pdk.getVersion() + ")"
+                : "";
+        StringBuilder rslt = new StringBuilder();
+        rslt.append("\n  <li><span class=\"label label-info\">")
+                .append(pdk.getName().getLocalPart()).append(versionPart).append("</span>")
+                .append(" ").append(tuple.getResource().getFilename()).append("</li>");
+        return rslt.toString();
+    }
+
+    private String finalizeImportReport(StringBuilder message) {
+        final String preamble = createLocalizedMessage(IMPORTED_THE_FOLLOWING_ENTITIES, null);
+        message.insert(0, "\n<ul>").insert(0, preamble);  // Reverse order
+        message.append("\n</ul>");
+        return message.toString();
     }
 
     /*

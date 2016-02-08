@@ -50,11 +50,12 @@
 </style>
 
 <div id="${n}tenantManager">
+    <h2><spring:message code="tenant.manager.add" /></h2>
     <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="post">
         <div class="form-group">
             <label for="tenantName" class="col-sm-2 control-label"><spring:message code="tenant.manager.name" /></label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="name" id="tenantName" placeholder="Enter tenant name">
+                <input type="text" class="form-control" name="name" id="tenantName" placeholder="<spring:message code="enter.tenant.name" />">
                 <div class="field-error bg-danger">Field error message</div>
             </div>
         </div>
@@ -68,6 +69,23 @@
                 </div>
             </div>
         </c:forEach>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"><spring:message code="tenant.manager.optional.steps" /></label>
+            <div class="col-sm-10">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="checkbox">
+                            <c:forEach items="${optionalOperationsListeners}" var="listener">
+                                <label>
+                                    <input name="optionalListener" type="checkbox" value="${listener.fname}" checked="checked" /> <c:out value="${listener.name}" />
+                                </label>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="text-right">
             <input type="hidden" name="fname" id="fname" value="">

@@ -18,13 +18,19 @@
  */
 package org.jasig.portal.tenants;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlets.account.IPasswordResetNotification;
 import org.jasig.portal.portlets.account.UserAccountHelper;
+import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -43,6 +49,11 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
     public static final String ADMIN_CONTACT_USERNAME = "adminContactUsername";
     public static final String ADMIN_CONTACT_EMAIL = "adminContactEmail";
 
+    private static final String TENANT_ADMIN_EMAIL_SENT = "tenant.admin.email.sent";
+    private static final String UNABLE_TO_SEND_TENANT_ADMIN_EMAIL = "unable.to.send.tenant.admin.email";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private ILocalAccountDao localAccountDao;
 
@@ -54,25 +65,73 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
 
     private IPasswordResetNotification passwordResetNotification;
 
+    public ResetPasswordTenantOperationsListener() {
+        super("reset-password");
+    }
+
     @Autowired
     public void setPasswordResetNotification(IPasswordResetNotification passwordResetNotification) {
         this.passwordResetNotification = passwordResetNotification;
     }
 
+    /**
+     * This step is not required
+     */
     @Override
-    public void onCreate(final ITenant tenant) {
-        sendResetPasswordEmail(tenant);
+    public boolean isOptional() {
+        return true;
     }
 
     @Override
-    public void onUpdate(final ITenant tenant) {
-        // Send email here as well, in case the contact changes
-        sendResetPasswordEmail(tenant);
+    public TenantOperationResponse onCreate(final ITenant tenant) {
+        return prepareResponse(tenant);
+    }
+
+    @Override
+    public TenantOperationResponse onUpdate(final ITenant tenant) {
+        // Send the same email here as well, in case the contact changes
+        return prepareResponse(tenant);
+    }
+
+    /**
+     * @since uPortal 4.3
+     */
+    @Override
+    public Set<ITenantManagementAction> getAvaialableActions() {
+        ITenantManagementAction rslt = new ITenantManagementAction() {
+            @Override
+            public String getFname() {
+                return "resend-admin-email";
+            }
+            @Override
+            public String getMessageCode() {
+                return "resend.admin.email";
+            }
+            @Override
+            public TenantOperationResponse invoke(final ITenant tenant) {
+                return prepareResponse(tenant);
+            }
+        };
+        return Collections.singleton(rslt);
     }
 
     /*
      * Implementation
      */
+
+    private TenantOperationResponse prepareResponse(final ITenant tenant) {
+        try {
+            sendResetPasswordEmail(tenant);
+        } catch (Exception e) {
+            log.error("Failed to send tenant admin email to address {} for tenant {}", tenant.getAttribute(ADMIN_CONTACT_EMAIL), tenant.getName(), e);
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.FAIL);  // Just a warning
+            error.addMessage(createLocalizedMessage(UNABLE_TO_SEND_TENANT_ADMIN_EMAIL, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
+            return error;
+        }
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(createLocalizedMessage(TENANT_ADMIN_EMAIL_SENT, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
+        return rslt;
+    }
 
     private void sendResetPasswordEmail(final ITenant tenant) {
         ILocalAccountPerson admin = localAccountDao.getPerson(tenant.getAttribute(ADMIN_CONTACT_USERNAME));

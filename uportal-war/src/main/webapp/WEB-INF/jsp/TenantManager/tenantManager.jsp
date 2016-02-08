@@ -22,10 +22,10 @@
 <c:set var="n"><portlet:namespace/></c:set>
 
 <style>
-${n}tenantManager .panel {
+#${n}tenantManager .panel {
     margin-top: 15px;
 }
-${n}tenantManager .panel-heading {
+#${n}tenantManager .panel-heading {
     font-weight: bold;
     position: relative;
 }
@@ -65,8 +65,12 @@ ${n}tenantManager .panel-heading {
                                     <portlet:param name="action" value="doRemoveTenant"/>
                                     <portlet:param name="fname" value="${tenant.fname}"/>
                                 </portlet:actionURL>
+                                <portlet:renderURL var="detailsUrl">
+                                    <portlet:param name="action" value="showTenantDetails"/>
+                                    <portlet:param name="fname" value="${tenant.fname}"/>
+                                </portlet:renderURL>
                                 <tr>
-                                    <td><a href="" title="<spring:message code="tenant.manager.edit" /> ${tenant.name}"><c:out value="${tenant.name}" /></a></td>
+                                    <td><a href="${detailsUrl}" title="<spring:message code="tenant.manager.edit" /> ${tenant.name}"><c:out value="${tenant.name}" /></a></td>
                                     <td><c:out value="${tenant.fname}" /></td>
                                     <td><a href="mailto:${tenant.attributesMap['adminContactEmail']}" title="<spring:message code="tenant.manager.email.address.link" />">${tenant.attributesMap['adminContactUsername']}</a></td>
                                     <td class="text-right"><a href="${removeUrl}" title="<spring:message code="tenant.manager.remove.tenant" />" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
