@@ -25,11 +25,7 @@
   <creator>system</creator>
   <description>All IT developers</description>
   <children>
-    <literal>admin</literal>
-    <literal>admin-lo</literal>
     <literal>developer</literal>
     <literal>developer-lo</literal>
-    <literal>staff</literal>
-    <literal>staff-lo</literal>
   </children>
 </group>
