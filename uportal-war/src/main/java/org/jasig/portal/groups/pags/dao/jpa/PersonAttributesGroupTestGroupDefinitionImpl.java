@@ -94,6 +94,7 @@ public class PersonAttributesGroupTestGroupDefinitionImpl implements IPersonAttr
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="testGroup", targetEntity=PersonAttributesGroupTestDefinitionImpl.class, orphanRemoval=true)
     @JsonManagedReference // Managing infinite recursion;  this is a "forward" reference and WILL be included
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<IPersonAttributesGroupTestDefinition> tests = new HashSet<IPersonAttributesGroupTestDefinition>(0);
 
     @Override
