@@ -347,10 +347,11 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         IPersonAttributesGroupDefinition pagsGroup = pagsGroups.iterator().next();
         Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
-        for (IPersonAttributesGroupDefinition parent : pagsParentGroups) {
+        for (IPersonAttributesGroupDefinition pagsParent : pagsParentGroups) {
+            IEntityGroup parent = convertPagsGroupToEntity(pagsParent);
             if (!groups.contains(parent)) {
-                groups.add(convertPagsGroupToEntity(parent));
-                getContainingGroups(parent.getName(), groups);
+                groups.add(parent);
+                getContainingGroups(pagsParent.getName(), groups);
             } else {
                 throw new RuntimeException("Recursive grouping detected! for " + name + " and parent " + parent.getName());
             }
