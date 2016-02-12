@@ -24,58 +24,6 @@
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
 <c:set var="n"><portlet:namespace/></c:set>
-<style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
-    display: none;
-}
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}portletBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}portletBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}portletBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -89,11 +37,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
     
 <!-- Portlet -->
-<div id="${n}portletBrowser" class="fl-widget portlet" role="section">
+<div id="${n}portletBrowser" class="portlet" role="section">
 <form id="${n}form">
   
   <!-- Portlet Title -->
-  <div class="fl-widget-titlebar portlet-title" role="sectionhead">
+  <div class="portlet-title" role="sectionhead">
     <h2 role="heading"><spring:message code="most.frequently.added"/></h2>
   </div> <!-- end: portlet-title -->
   
@@ -110,13 +58,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
   </div> <!-- end: portlet-toolbar -->
         
     <!-- Portlet Body -->
-  <div class="fl-widget-content portlet-body" role="main">
+  <div class="portlet-body" role="main">
 
     <!-- Portlet Section -->
-    <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">      
+    <div id="${n}popularPortlets" class="portlet-section" role="region">      
 
       <div class="portlet-section-body">
-        <table id="${n}portletsTable" style="width:100%;">
+        <table id="${n}portletsTable" class="table table-stripped table-bordered">
           <thead>
             <tr rsf:id="header:">
               <th><spring:message code="title"/></th>
@@ -173,74 +121,51 @@ up.jQuery(function() {
             portletList_configuration.main.table.fnDestroy();
         }
         portletList_configuration.main.table = $("#${n}portletsTable").dataTable({
-            iDisplayLength: portletList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '${popularPortletCountsUrl}',
-            sAjaxDataProp: "counts",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: portletList_configuration.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+        	ajax: {
+        		url: '${popularPortletCountsUrl}',
+        		dataSrc: "counts",
+        		data: function(d) { return $("#${n}form").serialize() }
+        	},
+        	processing: true,
+        	autoWidth: false,
+        	pagingType: 'full_numbers',
+        	language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'portletFName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'count', sType: 'string', sWidth: '50%' }  // Times 
+            columns: [
+                { data: 'portletFName', type: 'string', width: '50%',
+                	render: function ( data, type, row, meta ) {
+                		return getDeepLinkAnchorTag(row.portletFName, row.portletDescription, row.portletTitle);
+                	}
+                },  // Name
+                { data: 'count', type: 'string', width: '50%' }  // Times 
             ],
-            fnInitComplete: function (oSettings) {
+            initComplete: function (oSettings) {
+            	$(".column-filter-widgets").prepend('<label><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></label>');                
+                $(".column-filter-widget select").addClass("form-control input-sm");
                 portletList_configuration.main.table.fnDraw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: $("#${n}form").serialize(),
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // get deeplink anchor tag
-                $('td:eq(0)', nRow).html( getDeepLinkAnchorTag(aData.portletFName, aData.portletDescription, aData.portletTitle) );
-            },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            dom: 	"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
             // Filtering
-            oColumnFilterWidgets: { }
+            oColumnFilterWidgets: { },
+            responsive: true
         });
     };
 
     initializeTable();
     $("#${n}days").change(initializeTable);
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>

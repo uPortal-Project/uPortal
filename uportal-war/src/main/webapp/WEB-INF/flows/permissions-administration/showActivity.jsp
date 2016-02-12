@@ -52,59 +52,6 @@
   <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
 </portlet:actionURL>
 
-<style>
-#${n}activityBrowser .dataTables_filter, #${n}activityBrowser .first.paginate_button, #${n}activityBrowser .last.paginate_button{
-    display: none;
-}
-#${n}activityBrowser .dataTables-inline, #${n}activityBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}activityBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}activityBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}activityBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}activityBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}activityBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}activityBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}activityBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}activityBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}activityBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}activityBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
-
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | For the standards and guidelines that govern
@@ -117,10 +64,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 -->
 
 <!-- Portlet -->
-<div id="${n}activityBrowser" class="fl-widget portlet prm-mgr" role="section">
+<div id="${n}activityBrowser" class="portlet prm-mgr" role="section">
   
   <!-- Portlet Titlebar -->
-    <div role="sectionhead" class="fl-widget-titlebar titlebar portlet-titlebar">
+    <div role="sectionhead" class="titlebar portlet-titlebar">
         <div class="breadcrumb">
             <span class="breadcrumb-1"><a href="${ ownersUrl }"><spring:message code="categories"/></a></span>
             <span class="separator">&gt; </span>
@@ -138,7 +85,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
     </div>
   
   <!-- Portlet Content -->
-  <div class="fl-widget-content portlet-content" role="main">
+  <div class="portlet-content" role="main">
   
     <!-- Portlet Section -->
     <div id="${n}permissionAddingTabs" class="portlet-section" role="region">
@@ -198,92 +145,69 @@ up.jQuery(function() {
 
     var initializeTable = function() {
         activityList_configuration.main.table = $("#${n}permissionsTable").dataTable({
-            iDisplayLength: activityList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: activityList_configuration.url,
-            sAjaxDataProp: "permissionsList",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: activityList_configuration.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+        	ajax: {
+        		url: activityList_configuration.url,
+        		dataSrc: "permissionsList",
+        		data: { 
+                    owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
+                    activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
+                }
+        	},
+        	processing: true,
+        	autoWidth: false,
+        	pagingType: 'full_numbers',
+        	language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'principalName', sType: 'html', sWidth: '30%' }, // Owner
-                { mData: 'targetName', sType: 'html', sWidth: '30%'}, // Principal
-                { mData: 'permissionType', sType: 'html', sWidth: '20%' }, // Activity
-                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '10%' }, // Target
-                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '10%' } // Edit Link
+            columns: [
+                { 	data: 'principalName', type: 'html', width: '30%' }, // Owner
+                { 	data: 'targetName', type: 'html', width: '30%'}, // Principal
+                { 	data: 'permissionType', type: 'html', width: '20%' }, // Activity
+                { 	data: 'targetName', type: 'html', searchable: false, width: '10%',
+                	render: function ( data, type, row, meta ) {
+                		return getEditAnchorTag(row.owner, row.activity, row.target);
+                	}
+                }, // Target
+                { 	data: 'targetName', type: 'html', searchable: false, width: '10%',
+                	render: function ( data, type, row, meta ) {
+                		return getDeleteAnchorTag(row.owner,
+                				row.principalName,
+                				row.principalKey,
+                				row.activity,
+                				row.target,
+                				row.permissionType);
+                	}
+                } // Edit Link
             ],
-            fnInitComplete: function (oSettings) {
+            initComplete: function (oSettings) {
+            	$(".column-filter-widgets").prepend('<label><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></label>');                
+                $(".column-filter-widget select").addClass("form-control input-sm");
                 activityList_configuration.main.table.fnDraw();
-            },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: { 
-                        owner: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ owner.fname }</spring:escapeBody>', 
-                        activity: '<spring:escapeBody htmlEscape="false" javaScriptEscape="true">${ activity.fname }</spring:escapeBody>' 
-                    },
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Get edit anchor tag
-                $('td:eq(3)', nRow).html( getEditAnchorTag(aData.owner, aData.activity, aData.target) );
-
-                // Get delete anchor tag
-                $('td:eq(4)', nRow).html( getDeleteAnchorTag(aData.owner,
-                                                             aData.principalName,
-                                                             aData.principalKey,
-                                                             aData.activity,
-                                                             aData.target,
-                                                             aData.permissionType) );
-
-            },
+            },           
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            dom: 	"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
                 aiExclude: [activityList_configuration.column.placeHolderForEditLink,
                             activityList_configuration.column.placeHolderForDeleteLink]
-            }
+            },
+            responsive: true
         });
     };
 
     initializeTable();
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>
