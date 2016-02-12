@@ -374,7 +374,7 @@
           </div>
 
     <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
-      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="#"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
+      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
       <ul class="dropdown-menu" style="right: 0; left: auto;">
     <!--
       Porlet Controls Display Order:
@@ -458,7 +458,7 @@
           <xsl:if test="$PORTLET_LOCKED='movable'">
               <xsl:variable name="moveText"><xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/></xsl:variable>
               <li>
-                  <a id="movePortlet_{@ID}" title="{$moveText}" href="#" class="up-portlet-control move" data-move-text="{$moveText}" data-cancel-move-text="{upMsg:getMessage('cancel.portlet.move', $USER_LANG)}"><xsl:value-of select="$moveText"/></a>
+                  <a id="movePortlet_{@ID}" title="{$moveText}" href="javascript:void(0);" class="up-portlet-control move" data-move-text="{$moveText}" data-cancel-move-text="{upMsg:getMessage('cancel.portlet.move', $USER_LANG)}"><xsl:value-of select="$moveText"/></a>
               </li>
           </xsl:if>
 
@@ -479,7 +479,7 @@
           <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
             <!-- calls a layout api on click that removes the current node from the layout -->
             <li>
-              <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="#" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
+              <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
             </li>
           </xsl:if>
 
