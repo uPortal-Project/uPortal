@@ -23,6 +23,16 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.jasig.org/uportal/web/skin https://source.jasig.org/schemas/resource-server/skin-configuration/skin-configuration-v1.2.xsd">
 
+	<!-- Data Table Includes
+		Styling:   	Bootstrap
+		Responsive:	Included
+	-->
+	<css included="plain" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.css</css>
+	<css included="aggregated" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.min.css</css>
+
+	<!-- Data Table ColumnFilterWidgets Includes --> 
+	<css included="both" resource="true">/rs/ColumnFilterWidgets/1.0.4/css/ColumnFilterWidgets.css</css>
+	
     <js included="plain">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/modernizr/2.6.2/modernizr-2.6.2.min.js</js>
     
@@ -71,26 +81,19 @@
     <js included="plain">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.js</js>
     <js included="aggregated">/ResourceServingWebapp/rs/jquery-plugins/noty/2.2.0/jquery.noty.packaged.min.js</js>
 
-    <!-- Data Table Includes -->
-    <js included="plain" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.js</js>
-    <js included="aggregated" resource="true">/rs/datatables/1.9.4/media/js/jquery.dataTables.min.js</js>
-
     <!-- Rating Includes -->
     <js included="plain" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.js</js>
     <js included="aggregated" resource="true">/rs/jquery-plugins/rating/1.0/bootstrap-rating-input.min.js</js>
+    
+    <!-- Data Table Includes
+     
+    -->
+    <js included="plain" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.js</js>
+    <js included="aggregated" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.min.js</js>
 
-    <!-- Data Table Bootstrap Includes -->
-    <js included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
-    <js included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.js</js>
-    <css included="plain" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
-    <css included="aggregated" resource="true">/rs/datatables/1.9.4/plugins/integration/bootstrap/3/dataTables.bootstrap.css</css>
-
-    <!-- Data Table ColumnFilterWidgets Includes -->
-    <js included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
-    <js included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/js/ColumnFilterWidgets.js</js>
-    <css included="plain" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
-    <css included="aggregated" resource="true">/rs/datatables/1.9.4/extras/column-filter-widgets/css/ColumnFilterWidgets.css</css>
-
+    <!-- Data Table ColumnFilterWidgets Includes -->  
+    <js included="both" resource="true">/rs/ColumnFilterWidgets/1.0.4/js/ColumnFilterWidgets.js</js>
+    
     <!-- jsTree Includes (entity-selector) -->
     <js included="plain" resource="true">/scripts/jstree/jstree.js</js>
     <js included="aggregated" resource="true">/scripts/jstree/jstree.min.js</js>

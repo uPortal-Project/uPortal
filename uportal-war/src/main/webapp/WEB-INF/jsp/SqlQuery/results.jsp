@@ -21,66 +21,13 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<style>
-#${n}resultBrowser .dataTables_filter, #${n}resultBrowser .first.paginate_button, #${n}resultBrowser .last.paginate_button{
-    display: none;
-}
-#${n}resultBrowser .dataTables-inline, #${n}resultBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}resultBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}resultBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}resultBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}resultBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}resultBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}resultBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}resultBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}resultBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}resultBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}resultBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
-
 <!-- Portlet -->
-<div class="fl-widget portlet" role="section">
+<div class="portlet" role="section">
   
   <!-- Portlet Body -->
-  <div id="${n}resultBrowser" class="fl-widget-content portlet-body" role="main">
+  <div id="${n}resultBrowser" class="portlet-body" role="main">
   
-        <table id="${n}sqlResults" style="width:100%;">
+        <table id="${n}sqlResults" class="table table-bordered">
             <thead>
                 <tr style="text-transform:capitalize">
                   <!-- Dynamically create number of columns -->
@@ -114,47 +61,42 @@
     };
     var initializeTable = function() {
         resultList_configuration.main.table = $("#${n}sqlResults").dataTable({
-            iDisplayLength: resultList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            sPaginationType: 'full_numbers',
-            bDeferRender: false,
-            bProcessing: true,
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: resultList_configuration.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+        	pagingType: 'full_numbers',
+        	processing: true,
+        	language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
             // use results right from the model instead of pulling from server via ajax
-            aaData: results,
+            data: results,
             // dynamically create columns
-            aoColumns: [
+            columns: [
                 <c:forEach items="${ results[0] }" var="row" varStatus="status">
-                { mData: 'column${ status.index }', sType: 'string' }${ status.last ? "" : ","}
+                { data: 'column${ status.index }', type: 'string' }${ status.last ? "" : ","}
                 </c:forEach>
             ],
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            initComplete: function (oSettings) {
+            	$(".column-filter-widgets").prepend('<label><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></label>');                
+                $(".column-filter-widget select").addClass("form-control input-sm");
             },
             // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            dom: 	"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
             // Filtering
-            oColumnFilterWidgets: { }
+            oColumnFilterWidgets: { },
+            responsive: true
         });
     };
     initializeTable();
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
  });
 </script>
