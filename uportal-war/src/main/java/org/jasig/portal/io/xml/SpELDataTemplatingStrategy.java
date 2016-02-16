@@ -74,6 +74,9 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
                         Attribute a = (Attribute) n;
                         inpt = a.getValue();
                         otpt = processText(inpt);
+                        if (otpt == null) {
+                            throw new RuntimeException("Invalid expression '" + inpt + "' in file " + filename);
+                        }
                         if (!otpt.equals(inpt)) {
                             a.setValue(otpt);
                         }
@@ -82,6 +85,9 @@ public class SpELDataTemplatingStrategy implements IDataTemplatingStrategy {
                     case org.w3c.dom.Node.CDATA_SECTION_NODE:
                         inpt = n.getText();
                         otpt = processText(inpt);
+                        if (otpt == null) {
+                            throw new RuntimeException("Invalid expression '" + inpt + "' in file " + filename);
+                        }
                         if (!otpt.equals(inpt)) {
                             n.setText(otpt);
                         }

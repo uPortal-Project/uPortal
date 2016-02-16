@@ -32,6 +32,7 @@
     </portlet-descriptor>
     <category>Administration</category>
     <group>Fragment Owners</group>
+    <group>Tenant Fragment Owners</group>
     <parameter>
         <name>iconUrl</name>
         <value>/ResourceServingWebapp/rs/tango/0.8.90/32x32/categories/applications-system.png</value>

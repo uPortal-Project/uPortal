@@ -321,7 +321,9 @@
         <bean class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener" />
         <!-- Persists the tenant object locally;  implemented as a listener so this behavior can occupy any position in the chain. -->
         <bean class="org.jasig.portal.tenants.JpaPersistenceTenantOperationsListener" />
-        <!-- Sends a "reset password" email to the named admin contact;  MUST BE LAST! -->
+        <!-- Listener that sends a "reset password" email to the named admin contact so they can
+             login using the local login form. Useful if you aren't using LDAP or other criteria for
+             authenticating tenant admins.  MUST BE LAST! -->
         <bean class="org.jasig.portal.tenants.ResetPasswordTenantOperationsListener">
             <property name="passwordResetNotification">
                 <bean class="org.jasig.portal.portlets.account.EmailPasswordResetNotificationImpl">

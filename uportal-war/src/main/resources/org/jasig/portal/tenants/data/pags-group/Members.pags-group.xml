@@ -25,7 +25,7 @@
   <selection-test>
     <test-group>
       <test>
-        <attribute-name>o</attribute-name>
+        <attribute-name>tenantOrg</attribute-name>
         <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
         <test-value>${tenant.attributesMap['tenantOrg']}</test-value>
       </test>
