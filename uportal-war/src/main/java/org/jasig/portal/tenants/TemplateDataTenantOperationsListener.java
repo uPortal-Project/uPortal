@@ -184,20 +184,20 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
         boolean didAtLeastOneCommandSucceed = false;  // until we know different
         for (DeleteTuple tuple : entitiesToRemoveOnDelete) {
+            final Expression x = portalSpELService.parseExpression(tuple.getSysid(), PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
+            final String sysid = x.getValue(ctx, String.class);
             try {
-                final Expression x = portalSpELService.parseExpression(tuple.getSysid(), PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
-                final String sysid = x.getValue(ctx, String.class);
                 dataHandlerService.deleteData(tuple.getType(), sysid);
                 successfulEntitiesMessage.append("\n  <li><span class=\"label label-info\">")
                         .append(tuple.getType()).append("</span>")
-                        .append(" ").append(tuple.getSysid()).append("</li>");
+                        .append(" ").append(sysid).append("</li>");
                 didAtLeastOneCommandSucceed = true;
             } catch (Exception e) {
                 log.error("Failed to process the specified delete command:  type={}, sysid={}",
                         tuple.getType(), tuple.getSysid(), e);
                 failedEntitiesMessage.append("\n  <li><span class=\"label label-info\">")
                         .append(tuple.getType()).append("</span>")
-                        .append(" ").append(tuple.getSysid()).append("</li>");
+                        .append(" ").append(sysid).append("</li>");
                 result = Result.FAIL;  // We will allow subsequent listeners to follow through
             }
         }
