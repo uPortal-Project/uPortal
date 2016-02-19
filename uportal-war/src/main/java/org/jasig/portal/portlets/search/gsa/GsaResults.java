@@ -55,7 +55,7 @@ public class GsaResults {
     @XmlElement(name="R")
     @XmlElementWrapper(name="RES")
     public List<GsaSearchResult> getSearchResults() {
-        return searchResults;
+        return (searchResults != null) ? searchResults: new ArrayList<GsaSearchResult>();
     }
 
     public void setSearchResults(List<GsaSearchResult> searchResults) {
