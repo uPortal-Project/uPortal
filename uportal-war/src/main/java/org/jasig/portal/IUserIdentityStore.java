@@ -23,9 +23,9 @@ import org.jasig.portal.security.IPerson;
 /**
  * Interface for managing creation and removal of User Portal Data
  * @author Susan Bramhall
- * @version $Revision$ $Date$
  */
 public interface IUserIdentityStore {
+
   /**
    * Returns a unique uPortal key for a user.
    * @param person the person object
@@ -74,5 +74,10 @@ public interface IUserIdentityStore {
    * @return true if the specified username is used as a default user for any other user in the portal
    */
   public boolean isDefaultUser(String username);
+
+  /**
+   * Returns true if the specified String satisfies all criteria for a valid username.
+   */
+  boolean validateUsername(String username);
 
 }

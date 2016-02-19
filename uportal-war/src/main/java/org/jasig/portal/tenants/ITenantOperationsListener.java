@@ -76,4 +76,12 @@ public  interface ITenantOperationsListener {
      */
     Set<ITenantManagementAction> getAvaialableActions();
 
+    /**
+     * Throws an exception if the specified value isn't allowable for the
+     * specified attribute.
+     *
+     * @since uPortal 4.3
+     */
+    void validateAttribute(String key, String value) throws Exception;
+
 }

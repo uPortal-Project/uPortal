@@ -108,6 +108,12 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     /**
+     * Default implementation is a no-op.
+     */
+    @Override
+    public void validateAttribute(final String key, final String value) throws Exception {}
+
+    /**
      * @since uPortal 4.3
      */
     protected String createLocalizedMessage(final String messageCode, final Object[] args) {
@@ -129,8 +135,7 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     private TenantOperationResponse getDefaultResponse() {
-        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
-        rslt.addMessage(messageSource.getMessage(NO_OPERATIONS_PERFORMED, null, getCurrentUserLocale()));
+        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.IGNORE);
         return rslt;
     }
 

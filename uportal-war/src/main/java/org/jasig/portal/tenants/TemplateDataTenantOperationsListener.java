@@ -42,6 +42,7 @@ import org.jasig.portal.io.xml.SpELDataTemplatingStrategy;
 import org.jasig.portal.io.xml.group.GroupMembershipPortalDataType;
 import org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType;
 import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 /**
@@ -64,6 +66,8 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     private static final String TENANT_ENTITIES_IMPORTED = "tenant.entities.imported";
     private static final String IMPORTED_THE_FOLLOWING_ENTITIES = "imported.the.following.entities";
+    private static final String DELETED_THE_FOLLOWING_ENTITIES = "deleted.the.following.entities";
+    private static final String UNABLE_TO_DELETE_THE_FOLLOWING_ENTITIES = "unable.to.delete.the.following.entities";
 
     private static final String FAILED_TO_LOAD_TENANT_TEMPLATE = "failed.to.load.tenant.template";
     private static final String FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA = "failed.to.import.tenant.template.data";
@@ -75,12 +79,8 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             }));
 
     private ApplicationContext applicationContext;
-    private Resource[] templateResources;
     private SAXReader reader;
     private final Logger log = LoggerFactory.getLogger(getClass());
-
-    @Value("${org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/jasig/portal/tenants/data/**/*.xml}")
-    private String templateLocation;
 
     @Autowired
     private IPortalDataHandlerService dataHandlerService;
@@ -89,6 +89,15 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     private IPortalSpELService portalSpELService;
 
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
+
+    @Value("${org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/jasig/portal/tenants/data/**/*.xml}")
+    private String templateLocation;
+
+    // Evaluated by scanning a package (see 'templateLocation' above)
+    private Set<Resource> entityResourcesToImportOnCreate;
+    // Optionally specified in the <bean> definition
+    private Set<Resource> entityResourcesToImportOnUpdate = Collections.emptySet();  // default
+    private List<DeleteTuple> entitiesToRemoveOnDelete = Collections.emptyList();  // default
 
     public TemplateDataTenantOperationsListener() {
         super("template-data");
@@ -122,6 +131,14 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.dataKeyImportOrder = Collections.unmodifiableList(dataKeyImportOrder);
     }
 
+    public void setEntityResourcesToImportOnUpdate(Set<Resource> entityResourcesToImportOnUpdate) {
+        this.entityResourcesToImportOnUpdate = entityResourcesToImportOnUpdate;
+    }
+
+    public void setEntitiesToRemoveOnDelete(List<DeleteTuple> entitiesToRemoveOnDelete) {
+        this.entitiesToRemoveOnDelete = entitiesToRemoveOnDelete;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -129,19 +146,142 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     @PostConstruct
     public void setup() throws Exception {
-        templateResources = applicationContext.getResources(templateLocation);
+        entityResourcesToImportOnCreate = new HashSet<Resource>(Arrays.asList(applicationContext.getResources(templateLocation)));
     }
 
     @Override
     public TenantOperationResponse onCreate(final ITenant tenant) {
+        return importWithResources(tenant, entityResourcesToImportOnCreate);
+    }
 
+    @Override
+    public TenantOperationResponse onUpdate(final ITenant tenant) {
+        return importWithResources(tenant, entityResourcesToImportOnUpdate);
+    }
+
+    @Override
+    public TenantOperationResponse onDelete(final ITenant tenant) {
+
+        // Deleting is optional;  we should IGNORE this whole
+        // business if no items are specified for delete
+        if (entitiesToRemoveOnDelete.isEmpty()) {
+            return super.onDelete(tenant);
+        }
+
+        Result result = Result.SUCCESS;  // detault
+
+        // We will prepare a list of items that succeeded...
+        final StringBuilder successfulEntitiesMessage = new StringBuilder();
+        successfulEntitiesMessage.append(createLocalizedMessage(DELETED_THE_FOLLOWING_ENTITIES, null)).append("\n<ul>");
+
+        // And one for items that failed, if any.
+        final StringBuilder failedEntitiesMessage = new StringBuilder();
+        failedEntitiesMessage.append(createLocalizedMessage(UNABLE_TO_DELETE_THE_FOLLOWING_ENTITIES, null)).append("\n<ul>");
+
+        // We support SpEL expressions in the sysid parameter (we don't have a choice)
+        final StandardEvaluationContext ctx = new StandardEvaluationContext();
+        ctx.setRootObject(new RootObjectImpl(tenant));
+
+        boolean didAtLeastOneCommandSucceed = false;  // until we know different
+        for (DeleteTuple tuple : entitiesToRemoveOnDelete) {
+            try {
+                final Expression x = portalSpELService.parseExpression(tuple.getSysid(), PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
+                final String sysid = x.getValue(ctx, String.class);
+                dataHandlerService.deleteData(tuple.getType(), sysid);
+                successfulEntitiesMessage.append("\n  <li><span class=\"label label-info\">")
+                        .append(tuple.getType()).append("</span>")
+                        .append(" ").append(tuple.getSysid()).append("</li>");
+                didAtLeastOneCommandSucceed = true;
+            } catch (Exception e) {
+                log.error("Failed to process the specified delete command:  type={}, sysid={}",
+                        tuple.getType(), tuple.getSysid(), e);
+                failedEntitiesMessage.append("\n  <li><span class=\"label label-info\">")
+                        .append(tuple.getType()).append("</span>")
+                        .append(" ").append(tuple.getSysid()).append("</li>");
+                result = Result.FAIL;  // We will allow subsequent listeners to follow through
+            }
+        }
+
+        // Finish our HTML lists...
+        successfulEntitiesMessage.append("\n</ul>");
+        failedEntitiesMessage.append("\n</ul>");
+
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, result);
+
+        // Did we succeed at all?
+        if (didAtLeastOneCommandSucceed) {
+            rslt.addMessage(successfulEntitiesMessage.toString());
+        }
+
+        switch (result) {
+            // Did we fail at all?
+            case FAIL:
+                rslt.addMessage(failedEntitiesMessage.toString());
+                break;
+            // Or succeed completely?
+            default:
+                // Might add another message here in future...
+                break;
+        }
+
+        return rslt;
+
+    }
+
+    /*
+     * Implementation
+     */
+
+    /**
+     * High-level implementation method that brokers the queuing, importing, and
+     * reporting that is common to Create and Update.
+     */
+    public TenantOperationResponse importWithResources(final ITenant tenant, final Set<Resource> resources) {
         /*
          * First load dom4j Documents and sort the entity files into the proper order 
          */
-        final Map<PortalDataKey,Set<BucketTuple>> importQueue = new HashMap<PortalDataKey,Set<BucketTuple>>();
+        final Map<PortalDataKey,Set<BucketTuple>> importQueue;
+        try {
+            importQueue = prepareImportQueue(tenant, resources);
+        } catch (Exception e) {
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(createLocalizedMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }));
+            return error;
+        }
+
+        log.trace("Ready to import data entity templates for new tenant '{}';  importQueue={}", 
+                                                            tenant.getName(), importQueue);
+
+        // We're going to report on every item imported;  TODO it would be better
+        // if we could display human-friendly entity type name + sysid (fname, etc.)
+        final StringBuilder importReport = new StringBuilder();
+
+        /*
+         * Now import the identified entities each bucket in turn 
+         */
+        try {
+            importQueue(tenant, importQueue, importReport);
+        } catch (Exception e) {
+            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            error.addMessage(finalizeImportReport(importReport));
+            error.addMessage(createLocalizedMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }));
+            return error;
+        }
+
+        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        rslt.addMessage(finalizeImportReport(importReport));
+        rslt.addMessage(createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }));
+        return rslt;
+    }
+
+    /**
+     * Loads dom4j Documents and sorts the entity files into the proper order for Import.
+     */
+    private Map<PortalDataKey,Set<BucketTuple>> prepareImportQueue(final ITenant tenant, final Set<Resource> templates) throws Exception {
+        final Map<PortalDataKey,Set<BucketTuple>> rslt = new HashMap<PortalDataKey,Set<BucketTuple>>();
         Resource rsc = null;
         try {
-            for (Resource r : templateResources) {
+            for (Resource r : templates) {
                 rsc = r;
                 if (log.isDebugEnabled()) {
                     log.debug("Loading template resource file for tenant " 
@@ -156,11 +296,11 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                         // Found the right bucket...
                         log.debug("Found PortalDataKey '{}' for data document {}", pdk, r.getURI());
                         atLeastOneMatchingDataKey = pdk;
-                        Set<BucketTuple> bucket = importQueue.get(atLeastOneMatchingDataKey);
+                        Set<BucketTuple> bucket = rslt.get(atLeastOneMatchingDataKey);
                         if (bucket == null) {
                             // First of these we've seen;  create the bucket;
                             bucket = new HashSet<BucketTuple>();
-                            importQueue.put(atLeastOneMatchingDataKey, bucket);
+                            rslt.put(atLeastOneMatchingDataKey, bucket);
                         }
                         BucketTuple tuple = new BucketTuple(rsc, doc);
                         bucket.add(tuple);
@@ -180,28 +320,24 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         } catch (Exception e) {
             log.error("Failed to process the specified template:  {}",
                     (rsc != null ? rsc.getFilename() : "null"), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
-            error.addMessage(createLocalizedMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }));
-            return error;
+            throw e;
         }
+        return rslt;
+    }
 
-        log.trace("Ready to import data entity templates for new tenant '{}';  importQueue={}", 
-                                                            tenant.getName(), importQueue);
+    /**
+     * Imports the specified entities in the proper order.
+     */
+    private void importQueue(final ITenant tenant, final Map<PortalDataKey,Set<BucketTuple>> queue,
+            final StringBuilder importReport) throws Exception {
 
-        // We're going to report on every item imported;  TODO it would be better
-        // if we could display human-friendly entity type name + sysid (fname, etc.)
-        final StringBuilder importReport = new StringBuilder();
-
-        /*
-         * Now import the identified entities each bucket in turn 
-         */
         final StandardEvaluationContext ctx = new StandardEvaluationContext();
         ctx.setRootObject(new RootObjectImpl(tenant));
         IDataTemplatingStrategy templating = new SpELDataTemplatingStrategy(portalSpELService, ctx);
         Document doc = null;
         try {
             for (PortalDataKey pdk : dataKeyImportOrder) {
-                Set<BucketTuple> bucket = importQueue.get(pdk);
+                Set<BucketTuple> bucket = queue.get(pdk);
                 if (bucket != null) {
                     log.debug("Importing the specified PortalDataKey tenant '{}':  {}",
                             tenant.getName(), pdk.getName());
@@ -217,22 +353,10 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         } catch (Exception e) {
             log.error("Failed to process the specified template document:\n{}",
                                     (doc != null ? doc.asXML() : "null"), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
-            error.addMessage(this.finalizeImportReport(importReport));
-            error.addMessage(createLocalizedMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }));
-            return error;
+            throw e;
         }
 
-        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
-        rslt.addMessage(this.finalizeImportReport(importReport));
-        rslt.addMessage(createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }));
-        return rslt;
-
     }
-
-    /*
-     * Implementation
-     */
 
     private boolean evaluatePortalDataKeyMatch(Document doc, PortalDataKey pdk) {
         // Matching is tougher because it's dom4j <> w3c...
@@ -302,6 +426,26 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
      * Nested Types
      */
 
+    /**
+     * Used in the implementation of onDelete.
+     */
+    public static final class DeleteTuple {
+        private String type;
+        private String sysid;
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+        public String getSysid() {
+            return sysid;
+        }
+        public void setSysid(String sysid) {
+            this.sysid = sysid;
+        }
+    }
+
     private static final class BucketTuple {
         private final Resource resource;
         private final Document document;
@@ -320,7 +464,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         }
         @SuppressWarnings("unused")
         public ITenant getTenant() {
-            return this.tenant;
+            return tenant;
         }
     }
 
