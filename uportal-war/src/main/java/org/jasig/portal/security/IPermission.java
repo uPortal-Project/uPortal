@@ -29,11 +29,11 @@ public interface IPermission {
   /*
     Activity names for Permissions whose targets are portlets.
   */
-  public String PORTLET_MANAGER_ACTIVITY = "MANAGE";
-  public String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  public static final String PORTLET_MANAGER_ACTIVITY = "MANAGE";
+  public static final String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
 
   /*
-   * Portlet subscribe permissions by lifecycle state 
+   * Portlet subscribe permissions by lifecycle state
    */
   public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
   public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
@@ -47,7 +47,7 @@ public interface IPermission {
 
   /*
    * Portlet render permissions by lifecycle state.  These permissions are not
-   * actually used in the codebase yet and are included here for future planning 
+   * actually used in the codebase yet and are included here for future planning
    * purposes only.
    */
   public static final String PORTLET_RENDERER_CREATED_ACTIVITY = "RENDER_CREATED";
@@ -129,7 +129,7 @@ public interface IPermission {
    */
 
   /**
-   * A String representing the uPortal framework, used, for example, for 
+   * A String representing the uPortal framework, used, for example, for
    * Permission.owner when the framework grants a Permission.
    */
   public static final String PORTAL_SYSTEM = "UP_SYSTEM";

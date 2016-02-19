@@ -23,8 +23,8 @@
     xsi:schemaLocation="http://www.springframework.org/schema/webflow
     http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <!-- 
-     | Portlet input 
+    <!--
+     | Portlet input
      |
      | The portlet object should be an instance of PortletDefinitionForm that
      | represents either a new or existing portlet definition.  This object
@@ -46,11 +46,11 @@
     </on-start>
 
     <!-- If we're creating a new portlet, display the first step in the workflow.
-        Otherwise, display the portlet summary view. --> 
+        Otherwise, display the portlet summary view. -->
     <decision-state id="isPortletNew">
         <if test="completed" then="portletConfig" else="isOnlyOnePortletTypeAvailable"/>
     </decision-state>
-    
+
     <decision-state id="isOnlyOnePortletTypeAvailable">
         <if test="portletTypes.size() == 1" then="chooseDefaultPortlet" else="chooseType" />
     </decision-state>
@@ -59,21 +59,21 @@
     <action-state id="chooseDefaultPortlet">
         <evaluate expression="portletAdministrationHelper.updateFormForSinglePortletType(portletTypes, portlet)"
         	result="flowScope.cpd" />
-        <transition to="afterChooseType"/> 
+        <transition to="afterChooseType"/>
     </action-state>
-    
+
     <!-- PORTLET TYPE view -->
     <view-state id="chooseType" model="portlet">
         <transition on="next" to="afterChooseType">
             <!-- Set default parameters based on portlet type -->
-            <set name="flowScope.cpd" 
+            <set name="flowScope.cpd"
                 value="channelPublishingDefinitionDao.getChannelPublishingDefinition(portlet.typeId)"/>
             <evaluate expression="portlet.setChannelPublishingDefinition(cpd)"/>
         </transition>
     </view-state>
 
     <decision-state id="afterChooseType">
-        <if test="portletAdministrationHelper.offerPortletSelection(portlet)" 
+        <if test="portletAdministrationHelper.offerPortletSelection(portlet)"
             then="choosePortlet" else="prepNewModel"/>
     </decision-state>
 
@@ -112,7 +112,7 @@
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
             <set name="flowScope.portlet" value="portletAdministrationHelper.savePortletRegistration(person, portlet)"/>
         </transition>
-        <transition on="chooseGroup" to="chooseGroup">
+        <transition on="choosePrincipal" to="choosePrincipal">
             <evaluate expression="portletAdministrationHelper.cleanOptions(portlet, externalContext.getNativeRequest())"/>
         </transition>
         <transition on="chooseCategory" to="chooseCategory">
@@ -153,7 +153,7 @@
 
 
     <!-- GROUPS view -->
-    <subflow-state id="chooseGroup" subflow="entity-selector">
+    <subflow-state id="choosePrincipal" subflow="entity-selector">
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
@@ -177,8 +177,8 @@
         <input name="pageSubtitleArgument" value="portlet.name != '' ? portlet.name : 'this portlet'" />
 
         <!-- Group input/output mapping -->
-        <input name="selectedGroups" value="portlet.groups"/>
-        <output name="selectedGroups" value="portlet.groups"/>
+        <input name="selectedGroups" value="portlet.principals"/>
+        <output name="selectedGroups" value="portlet.principals"/>
 
         <transition on="finish" to="portletConfig"/>
         <transition on="cancel" to="portletConfig"/>
@@ -186,10 +186,10 @@
 
 
     <decision-state id="configModeAction">
-        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).RESOURCE_PHASE" 
+        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).RESOURCE_PHASE"
             then="configModeResourceRequest"/>
 
-        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).ACTION_PHASE" 
+        <if test="externalContext.requestMap[T(javax.portlet.PortletRequest).LIFECYCLE_PHASE] == T(javax.portlet.PortletRequest).ACTION_PHASE"
             then="configModeActionRequest"
             else="configMode"/>
     </decision-state>
@@ -198,7 +198,7 @@
         <set name="flashScope.configComplete" value="portletAdministrationHelper.configModeAction(externalContext, portlet.getFname())" />
         <transition to="configMode" on="#{!flashScope.configComplete}" />
         <transition to="configModeSaved" on="#{flashScope.configComplete}">
-            <set name="flowScope.portlet" value="portletAdministrationHelper.getPortletDefinitionForm(person, portlet.id)"/>
+            <set name="flowScope.portlet" value="portletAdministrationHelper.createPortletDefinitionForm(person, portlet.id)"/>
         </transition>
     </action-state>
 
@@ -208,7 +208,7 @@
 
     <view-state id="configModeResourceRequest" view="portletDelegationView">
         <on-entry>
-            <set name="viewScope[T(org.jasig.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]" 
+            <set name="viewScope[T(org.jasig.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
                 value="portletAdministrationHelper.getDelegateWindowId(externalContext, portlet.getFname())"/>
         </on-entry>
     </view-state>
