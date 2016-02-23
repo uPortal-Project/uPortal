@@ -44,7 +44,7 @@
     padding: 3px;
     margin: 0 5px;
 }
-#${n}tenantManager .has-error div.field-error {
+#${n}tenantManager .has-error .field-error {
     display: block;
 }
 </style>
@@ -52,20 +52,44 @@
 <div id="${n}tenantManager">
     <h2><spring:message code="tenant.manager.add" /></h2>
     <form id="addTenantForm" role="form" class="form-horizontal" action="${doAddTenantUrl}" method="post">
-        <div class="form-group">
+        <c:set var="errorCssClass">
+            <c:choose>
+                <c:when test="${invalidFields['name'] ne null}">has-error</c:when>
+                <c:otherwise></c:otherwise>
+            </c:choose>
+        </c:set>
+        <div class="form-group ${errorCssClass}">
             <label for="tenantName" class="col-sm-2 control-label"><spring:message code="tenant.manager.name" /></label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="name" id="tenantName" placeholder="<spring:message code="enter.tenant.name" />">
-                <div class="field-error bg-danger">Field error message</div>
+                <c:set var="previousResponse">
+                    <c:choose>
+                        <c:when test="${previousResponses['name'] ne null}">${previousResponses['name']}</c:when>
+                        <c:otherwise></c:otherwise>
+                    </c:choose>
+                </c:set>
+                <input type="text" class="form-control" name="name" id="tenantName" value="${previousResponse}" placeholder="<spring:message code="enter.tenant.name" />" />
+                <div class="field-error bg-danger"><spring:message code="enter.tenant.name" /></div>
             </div>
         </div>
 
         <c:forEach items="${tenantManagerAttributes}" var="attribute">
-            <div class="form-group">
+            <c:set var="errorCssClass">
+                <c:choose>
+                    <c:when test="${invalidFields[attribute.key] ne null}">has-error</c:when>
+                    <c:otherwise></c:otherwise>
+                </c:choose>
+            </c:set>
+            <div class="form-group ${errorCssClass}">
                 <label for="${attribute.key}" class="col-sm-2 control-label"><spring:message code="${attribute.value}" /></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="${attribute.key}" id="${attribute.key}">
-                    <div class="field-error">Field error message</div>
+                    <c:set var="previousResponse">
+                        <c:choose>
+                            <c:when test="${previousResponses[attribute.key] ne null}">${previousResponses[attribute.key]}</c:when>
+                            <c:otherwise></c:otherwise>
+                        </c:choose>
+                    </c:set>
+                    <input type="text" class="form-control" name="${attribute.key}" id="${attribute.key}" value="${previousResponse}" placeholder="<spring:message code="tenant.manager.addTenant.placeholder.${attribute.key}" />" />
+                    <div class="field-error bg-danger"><spring:message code="tenant.manager.addTenant.placeholder.${attribute.key}" /></div>
                 </div>
             </div>
         </c:forEach>
@@ -89,35 +113,9 @@
 
         <div class="text-right">
             <input type="hidden" name="fname" id="fname" value="">
-            <button id="tenantFormSubmit" type="submit" class="btn btn-primary disabled">Submit</button>
+            <button id="tenantFormSubmit" type="submit" class="btn btn-primary">Submit</button>
             <a href="<portlet:renderURL />" class="btn btn-link">Cancel</a>
         </div>
     </form>
 
 </div>
-<script>
-    up.jQuery(function() {
-        var $ = up.jQuery;
-        $('#tenantName').blur(function(evt) {
-            var val = this.value;
-            var $this = $(this);
-            var $formGroup = $this.closest('div.form-group')
-            var fname = document.getElementById('fname')
-
-            if (!val.match(/^[\w\-\_\'\s]+$/)) {
-                $formGroup.addClass('has-error');
-                $('#tenantFormSubmit').addClass('disabled');
-                fname.value = '';
-                return;
-            }
-
-            val = val.replace(/[\s']/g, '_').toLowerCase();
-
-            fname.value = val;
-
-            $formGroup.removeClass('has-error');
-
-            $('#tenantFormSubmit').removeClass('disabled');
-        });
-    });
-</script>

@@ -317,8 +317,65 @@
      | Defines what happens when a Tenant is created/updated/deleted.
      +-->
     <util:list id="tenantOperationsListeners">
+        <!-- Enforce a required attribute that isn't hard-wired into the function of another listener -->
+        <bean class="org.jasig.portal.tenants.AttributeValidatingOperationsListener">
+            <property name="requiredAttributes">
+                <set>
+                    <!-- Matches entry in tenantManagerAttributes above -->
+                    <value>tenantOrg</value>
+                </set>
+            </property>
+        </bean>
         <!-- Processes templated entities -->
-        <bean class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener" />
+        <bean class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener">
+            <!--
+             | A collection of Resource objects upon which to run an Import when onUpate()
+             | is invoked;  presumably these are a subset of the entities inside
+             | org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation,
+             | but they don't have to be.
+             |
+             | You wouldn't want _all_ the entities in there re-imported because that
+             | approach would reset (undo) many changes made by the tenant admin since
+             | creation.  Typically you want to update the files that contain EL expressions
+             | that reference 'tenant.attributesMap' like the following:
+             |   - ${tenant.attributesMap['adminContactUsername']}
+             +-->
+            <property name="entityResourcesToImportOnUpdate">
+                <set>
+                    <!-- Updates the user in the tenant administrators group -->
+                    <value>classpath:/org/jasig/portal/tenants/data/group_membership/Administrators.group-membership.xml</value>
+                    <!-- Updates the org attribute value that links users with the tenancy -->
+                    <value>classpath:/org/jasig/portal/tenants/data/pags-group/Members.pags-group.xml</value>
+                    <!-- Updates the email address of or, if necessary, creates
+                         a new portal account for the admin contact user -->
+                    <value>classpath:/org/jasig/portal/tenants/data/user/contact.user.xml</value>
+                </set>
+            </property>
+            <!--
+             | Instructs the TemplateDataTenantOperationsListener how to clean
+             | up the portal database when a tenant is deleted.  The sysid field
+             | may contain SpEL expressions.  Works just like $ant data-delete
+             | from the command line.
+             +-->
+            <property name="entitiesToRemoveOnDelete">
+                <list>
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="fragment-definition" p:sysid="#{'$'}{tenant.fname}" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="fragment-layout" p:sysid="#{'$'}{tenant.fname}-lo" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="group-membership" p:sysid="#{'$'}{tenant.name}" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="group-membership" p:sysid="#{'$'}{tenant.name} Portlets" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  DELETE -->
+                    <bean p:type="pags-group" p:sysid="#{'$'}{tenant.name} Members" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="portlet-definition" p:sysid="#{'$'}{tenant.fname}-logo" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="portlet-definition" p:sysid="#{'$'}{tenant.fname}-skin" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="user" p:sysid="#{'$'}{tenant.fname}-lo" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <bean p:type="user" p:sysid="#{'$'}{tenant.attributesMap['adminContactUsername']}" class="org.jasig.portal.tenants.TemplateDataTenantOperationsListener$DeleteTuple" />
+                    <!-- TODO:  Find a way to identify and delete 'orphaned' portlets -->
+                </list>
+            </property>
+        </bean>
         <!-- Persists the tenant object locally;  implemented as a listener so this behavior can occupy any position in the chain. -->
         <bean class="org.jasig.portal.tenants.JpaPersistenceTenantOperationsListener" />
         <!-- Sends a "reset password" email to the named admin contact;  MUST BE LAST! -->

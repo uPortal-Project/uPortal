@@ -21,7 +21,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <c:set var="n"><portlet:namespace/></c:set>
 
-<h2>Report:  <spring:message code="${operationNameCode}" /></h2>
+<h2>Report:  <spring:message code="${operationNameCode}" htmlEscape="false" /></h2>
 
 <c:forEach items="${operationsListenerResponses}" var="response">
     <c:set var="resultCssClass">

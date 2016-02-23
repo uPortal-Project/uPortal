@@ -36,6 +36,14 @@ import java.util.Set;
     Set<ITenant> getAllTenants();
 
     /**
+     * Obtains the {@link ITenant} object with the specified name.
+     * 
+     * @param name The human-readable name for a tenant
+     * @return The tenant with the corresponding name, or <code>null</code>
+     */
+    ITenant getTenantByName(String name);
+
+    /**
      * Obtains the {@link ITenant} object with the specified fname.
      * 
      * @param fname The unique identifier for a tenant

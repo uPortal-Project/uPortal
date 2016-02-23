@@ -73,7 +73,7 @@
                                     <td><a href="${detailsUrl}" title="<spring:message code="tenant.manager.edit" /> ${tenant.name}"><c:out value="${tenant.name}" /></a></td>
                                     <td><c:out value="${tenant.fname}" /></td>
                                     <td><a href="mailto:${tenant.attributesMap['adminContactEmail']}" title="<spring:message code="tenant.manager.email.address.link" />">${tenant.attributesMap['adminContactUsername']}</a></td>
-                                    <td class="text-right"><a href="${removeUrl}" title="<spring:message code="tenant.manager.remove.tenant" />" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
+                                    <td class="text-right"><a href="${removeUrl}" onclick="return confirm('<spring:message code="tenant.manager.remove.tenant.confirm" arguments="${tenant.name}" />')" title="<spring:message code="tenant.manager.remove.tenant" />" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> <spring:message code="tenant.manager.remove" /></a></td>
                                 </tr>
                             </c:forEach>
                         </tbody>

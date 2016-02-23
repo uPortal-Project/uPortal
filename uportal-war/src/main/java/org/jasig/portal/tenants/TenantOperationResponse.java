@@ -52,7 +52,13 @@ public class TenantOperationResponse {
          * Indicates the {@link ITenantOperationsListener} was not successful and
          * that the operation should be cancelled and, if possible, rolled back.
          */
-        ABORT
+        ABORT,
+
+        /**
+         * Instructs the {@link TenantService} to keep this response out of the report.
+         */
+        IGNORE
+
     }
 
     // Instance Members

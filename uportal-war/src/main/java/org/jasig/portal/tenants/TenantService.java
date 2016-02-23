@@ -96,8 +96,8 @@ public class TenantService {
      */
     public ITenant getTenantByFName(final String fname) {
         // Assertions
-        if (fname == null) {
-            String msg = "Argument 'fname' cannot be null";
+        if (StringUtils.isBlank(fname)) {
+            String msg = "Argument 'fname' cannot be blank";
             throw new IllegalArgumentException(msg);
         }
         return tenantDao.getTenantByFName(fname);
@@ -129,8 +129,8 @@ public class TenantService {
                 "Invalid tenant name '%s'  -- names must match %s .", name, 
                 TENANT_NAME_VALIDATOR_REGEX);
         Validate.validState(TENANT_FNAME_VALIDATOR_PATTERN.matcher(fname).matches(),
-                "Invalid tenant fname '%s'  -- fnames must match %s .", name, 
-                TENANT_FNAME_VALIDATOR_PATTERN);
+                "Invalid tenant fname '%s'  -- fnames must match %s .", fname, 
+                TENANT_FNAME_VALIDATOR_REGEX);
 
         // Create the concrete tenant object
         final ITenant rslt = tenantDao.instantiate();
@@ -153,7 +153,9 @@ public class TenantService {
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onCreate(rslt);
-                responses.add(res);
+                if (!Result.IGNORE.equals(res.getResult())) {
+                    responses.add(res);
+                }
             } catch (Exception e) {
                 final String msg = "Error invoking ITenantOperationsListener '"
                         + listener.toString() + "' for tenant:  " + rslt.toString();
@@ -172,6 +174,52 @@ public class TenantService {
         tenantEventFactory.publishTenantCreatedTenantEvent(request, this, rslt);
 
         return rslt;
+
+    }
+
+    public ITenant updateTenant(final ITenant tenant, final Map<String, String> attributes,
+            final List<TenantOperationResponse> responses) {
+
+        /*
+         * NB:  Ideally this method should be annotated with @PortalTransactional,
+         * but (unfortunately) it doesn't work.  There are multiple approaches to
+         * persistence (JPA and pre-JPA) at play in the concrete
+         * ITenantOperationsListener objects.
+         */
+
+        for (Map.Entry<String,String> y : attributes.entrySet()) {
+            tenant.setAttribute(y.getKey(), y.getValue());
+        }
+
+        log.info("Updating tenant:  {}", tenant.toString());
+
+        // Invoke the listeners
+        for (ITenantOperationsListener listener : this.tenantOperationsListeners) {
+            TenantOperationResponse res = null;  // default
+            try {
+                res = listener.onUpdate(tenant);
+                if (!Result.IGNORE.equals(res.getResult())) {
+                    responses.add(res);
+                }
+            } catch (Exception e) {
+                final String msg = "Error invoking ITenantOperationsListener '"
+                        + listener.toString() + "' for tenant:  " + tenant.toString();
+                throw new RuntimeException(msg, e);
+            }
+            if (res.getResult().equals(Result.ABORT)) {
+                log.warn("ITenantOperationsListener {} aborted updating tenant:  ",
+                                                listener.toString(), tenant.toString());
+                // TODO:  Can we rollback somehow?
+                break;
+            }
+        }
+
+        // Fire an appropriate PortalEvent
+        final HttpServletRequest request = portalRequestUtils.getCurrentPortalRequest();
+        tenantEventFactory.publishTenantUpdatedTenantEvent(request, this, tenant);
+
+        return tenant;
+
     }
 
     public void deleteTenantByFName(String fname, List<TenantOperationResponse> responses) {
@@ -189,7 +237,9 @@ public class TenantService {
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onDelete(tenant);
-                responses.add(res);
+                if (!Result.IGNORE.equals(res.getResult())) {
+                    responses.add(res);
+                }
             } catch (Exception e) {
                 final String msg = "Error invoking ITenantOperationsListener '"
                         + listener.toString() + "' for tenant:  "
@@ -243,6 +293,78 @@ public class TenantService {
             throw new RuntimeException(msg);
         }
         return rslt;
+    }
+
+    /**
+     * Returns true if a tenant with the specified name exists, otherwise false.
+     *
+     * @since uPortal 4.3
+     */
+    public boolean nameExists(final String name) {
+        boolean rslt = false;  // default
+        try {
+            final ITenant tenant = this.tenantDao.getTenantByName(name);
+            rslt = tenant != null;
+        } catch (IllegalArgumentException iae) {
+            // This exception is completely fine;  it simply
+            // means there is no tenant with this name.
+            rslt = false;
+        }
+        return rslt;
+    }
+
+    /**
+     * Returns true if a tenant with the specified fname exists, otherwise false.
+     *
+     * @since uPortal 4.3
+     */
+    public boolean fnameExists(final String fname) {
+        boolean rslt = false;  // default
+        try {
+            final ITenant tenant = getTenantByFName(fname);
+            rslt = tenant != null;
+        } catch (IllegalArgumentException iae) {
+            // This exception is completely fine;  it simply
+            // means there is no tenant with this fname.
+            rslt = false;
+        }
+        return rslt;
+    }
+
+    /**
+     * Throws an exception if the specified String isn't a valid tenant name.
+     *
+     * @since uPortal 4.3
+     */
+    public void validateName(final String name) {
+        Validate.validState(TENANT_NAME_VALIDATOR_PATTERN.matcher(name).matches(),
+                "Invalid tenant name '%s'  -- names must match %s .", name, 
+                TENANT_NAME_VALIDATOR_REGEX);
+    }
+
+    /**
+     * Throws an exception if the specified String isn't a valid tenant fname.
+     *
+     * @since uPortal 4.3
+     */
+    public void validateFname(final String fname) {
+        Validate.validState(TENANT_FNAME_VALIDATOR_PATTERN.matcher(fname).matches(),
+                "Invalid tenant fname '%s'  -- fnames must match %s .", fname, 
+                TENANT_FNAME_VALIDATOR_REGEX);
+    }
+
+    /**
+     * Throws an exception if any {@linkITenantOperationsListener} indicates
+     * that the specified value isn't allowable for the specified attribute.
+     * @throws Exception 
+     *
+     * @since uPortal 4.3
+     */
+    public void validateAttribute(final String key, final String value) throws Exception {
+        for (ITenantOperationsListener listener : tenantOperationsListeners) {
+            // Will throw an exception if not valid
+            listener.validateAttribute(key, value);
+        }
     }
 
 }

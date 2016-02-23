@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -37,47 +38,71 @@ import com.google.common.base.Function;
 /* package-private */ class JpaTenantDao extends BasePortalJpaDao implements ITenantDao {
 
     private CriteriaQuery<JpaTenant> allTenantsQuery;
+    private CriteriaQuery<JpaTenant> tenantByNameQuery;
     private CriteriaQuery<JpaTenant> tenantByFNameQuery;
+    private ParameterExpression<String> nameParameter;
     private ParameterExpression<String> fnameParameter;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.fnameParameter = this.createParameterExpression(String.class, "fname");
+        nameParameter = createParameterExpression(String.class, "name");
+        fnameParameter = createParameterExpression(String.class, "fname");
 
-        this.allTenantsQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+        allTenantsQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
             @Override
             public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<JpaTenant> criteriaQuery = cb.createQuery(JpaTenant.class);
-                Root<JpaTenant> root = criteriaQuery.from(JpaTenant.class);
-                criteriaQuery.orderBy(cb.asc(root.get(JpaTenant_.name)));
-                return criteriaQuery;
+                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
+                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                rslt.orderBy(cb.asc(root.get(JpaTenant_.name)));
+                return rslt;
             }
         });
-        this.tenantByFNameQuery = this.createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+        tenantByNameQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
             @Override
             public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
-                final CriteriaQuery<JpaTenant> criteriaQuery = cb.createQuery(JpaTenant.class);
-                Root<JpaTenant> root = criteriaQuery.from(JpaTenant.class);
-                criteriaQuery.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
-                return criteriaQuery;
+                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
+                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                rslt.where(cb.equal(root.get(JpaTenant_.name), nameParameter));
+                return rslt;
+            }
+        });
+        tenantByFNameQuery = createCriteriaQuery(new Function<CriteriaBuilder, CriteriaQuery<JpaTenant>>() {
+            @Override
+            public CriteriaQuery<JpaTenant> apply(CriteriaBuilder cb) {
+                final CriteriaQuery<JpaTenant> rslt = cb.createQuery(JpaTenant.class);
+                Root<JpaTenant> root = rslt.from(JpaTenant.class);
+                rslt.where(cb.equal(root.get(JpaTenant_.fname), fnameParameter));
+                return rslt;
             }
         });
     }
 
     @Override
     public Set<ITenant> getAllTenants() {
-        final TypedQuery<JpaTenant> query = this.createCachedQuery(this.allTenantsQuery);
+        final TypedQuery<JpaTenant> query = createCachedQuery(allTenantsQuery);
         final List<JpaTenant> resultList = query.getResultList();
         return new HashSet<ITenant>(resultList);
     }
 
     @Override
-    public ITenant getTenantByFName(String fname) {
-        final TypedQuery<JpaTenant> query = createCachedQuery(this.tenantByFNameQuery);
-        query.setParameter(this.fnameParameter, fname);
+    public ITenant getTenantByName(String name) {
+        final TypedQuery<JpaTenant> query = createCachedQuery(tenantByNameQuery);
+        query.setParameter(nameParameter, name);
         final List<JpaTenant> list = query.getResultList();
         if (list.size() == 0) {
-            final String msg = "Tenant not found:  " + fname;
+            final String msg = "Tenant not found with name:  " + name;
+            throw new IllegalArgumentException(msg);
+        }
+        return list.get(0);
+    }
+
+    @Override
+    public ITenant getTenantByFName(String fname) {
+        final TypedQuery<JpaTenant> query = createCachedQuery(tenantByFNameQuery);
+        query.setParameter(fnameParameter, fname);
+        final List<JpaTenant> list = query.getResultList();
+        if (list.size() == 0) {
+            final String msg = "Tenant not found with fname:  " + fname;
             throw new IllegalArgumentException(msg);
         }
         return list.get(0);
@@ -92,9 +117,17 @@ import com.google.common.base.Function;
     @PortalTransactional
     public void createOrUpdateTenant(ITenant tenant) {
 
+        EntityManager entityManager = getEntityManager();
+
         // Assertions
         if (tenant instanceof JpaTenant) {
-            this.getEntityManager().persist(tenant);
+            final ITenant persistantTenant;
+            if (entityManager.contains(tenant)) {
+                persistantTenant = tenant;
+            } else {
+                persistantTenant = entityManager.merge(tenant);
+            }
+            entityManager.persist(persistantTenant);
         } else {
             // This object is not supported by this DAO
             final String msg = "The specified tenant is not an instanceof JpaTenant:  " + tenant.getFname();
@@ -113,7 +146,7 @@ import com.google.common.base.Function;
             throw new IllegalArgumentException(msg);
         }
 
-        this.getEntityManager().remove(tenant);
+        getEntityManager().remove(tenant);
 
     }
 
