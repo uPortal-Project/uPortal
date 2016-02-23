@@ -466,7 +466,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                 <tr>
                                                     <td><i class="fa fa-users"></i> ${principal_name}</td>
                                                     <c:choose>
-                                                      <c:when test="${portlet.permissions.contains(principal_browse_perm)}">
+                                                      <c:when test="${portlet.permissions.contains(principal_browse_perm) || !portlet.permissions.contains(principal_subscribe_perm)}">
                                                         <td class=text-center><input type="checkbox" name="${principal_browse_perm}" checked></td>
                                                       </c:when>
                                                       <c:otherwise>
@@ -474,7 +474,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                                       </c:otherwise>
                                                     </c:choose>
                                                     <c:choose>
-                                                      <c:when test="${portlet.permissions.contains(principal_subscribe_perm)}">
+                                                      <c:when test="${portlet.permissions.contains(principal_subscribe_perm) || !portlet.permissions.contains(principal_browse_perm)}">
                                                         <td class=text-center><input type="checkbox" name="${principal_subscribe_perm}" checked></td>
                                                       </c:when>
                                                       <c:otherwise>
