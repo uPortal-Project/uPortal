@@ -845,6 +845,10 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <outputDirectory>target/generated-sources/annotations</outputDirectory>
+                            <outputDiagnostics>false</outputDiagnostics>
+                            <processors>
+                                <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
+                            </processors>
                             <optionMap>
                                 <fullyAnnotationConfigured>false</fullyAnnotationConfigured>
                                 <addGeneratedAnnotation>true</addGeneratedAnnotation>
