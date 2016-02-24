@@ -22,14 +22,36 @@ package org.jasig.portal.layout.dlm;
  * This class is used to keep track of changes when integrating PLF and ILF
  * components.
  * 
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
  
-public class IntegrationResult
-{
-    public static final String RCS_ID = "@(#) $Header$";
+public class IntegrationResult {
 
-    public boolean changedPLF = false;
-    public boolean changedILF = false;
+    private boolean changedPLF = false;
+    private boolean changedILF = false;
+
+    /**
+     * Indicates whether the "personal layout fragment" (PLF) changed as a
+     * consequence of the merge.
+     */
+    public boolean isChangedPLF() {
+        return changedPLF;
+    }
+
+    public void setChangedPLF(boolean changedPLF) {
+        this.changedPLF = changedPLF;
+    }
+
+    /**
+     * Indicates whether the "incorporated layouts fragment" (ILF) changed as a
+     * consequence of the merge.
+     */
+    public boolean isChangedILF() {
+        return changedILF;
+    }
+
+    public void setChangedILF(boolean changedILF) {
+        this.changedILF = changedILF;
+    }
+
 }

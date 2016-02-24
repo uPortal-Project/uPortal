@@ -25,13 +25,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-/** Performs merging of PLF into ILF for DLM.
- * @version $Revision$ $Date$
+/**
+ * Performs merging of PLF into ILF for DLM.
+ *
  * @since uPortal 2.5
  */
-public class PLFIntegrator
-{
-    public static final String RCS_ID = "@(#) $Header$";
+public class PLFIntegrator {
+
     private static Log LOG = LogFactory.getLog(PLFIntegrator.class);
 
     /**
@@ -91,18 +91,15 @@ public class PLFIntegrator
             PositionManager.applyPositions( ilfParent,
                                             positions,
                                             posResult );
-            if( posResult.changedILF == false )
-            {
+            if(!posResult.isChangedILF()) {
                 if (LOG.isInfoEnabled())
                     LOG.info("removing positionSet");
                 plfParent.removeChild( positions );
-                result.changedPLF = true;
-            }
-            else
-            {
-                result.changedILF = true;
-                if ( posResult.changedPLF )
-                    result.changedPLF = true;
+                result.setChangedPLF(true);
+            } else {
+                result.setChangedILF(true);
+                if ( posResult.isChangedPLF() )
+                    result.setChangedPLF(true);
             }
         }
     }
@@ -129,7 +126,7 @@ public class PLFIntegrator
             {
                 // not there anymore, discard from plf
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
                 return;
             }
 
@@ -141,17 +138,17 @@ public class PLFIntegrator
             applyChildChanges( plfChild, original, childChanges );
 
             if ( attributeChanged == false &&
-                 childChanges.changedILF == false )
+                 !childChanges.isChangedILF() )
             {
                 // no changes were used so remove this guy from plf.
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
             }
             else
-                result.changedILF = true;
+                result.setChangedILF(true);
             // need to pass on up whether PLF changed in called methods
-            if ( childChanges.changedPLF )
-                result.changedPLF = true;
+            if ( childChanges.isChangedPLF() )
+                result.setChangedPLF(true);
         }
         else // plf channel
         {
@@ -165,12 +162,12 @@ public class PLFIntegrator
                     LOG.info("removing from plf disallowed add of channel "
                             + id );
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
             }
             else
             {
                 appendChild( plfChild, ilfParent, true );
-                result.changedILF = true;
+                result.setChangedILF(true);
             }
         }
     }
@@ -198,7 +195,7 @@ public class PLFIntegrator
             {
                 // not there anymore, discard from plf
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
                 return;
             }
 
@@ -210,17 +207,17 @@ public class PLFIntegrator
             applyChildChanges( plfChild, original, childChanges );
 
             if ( attributeChanged == false &&
-                 childChanges.changedILF == false )
+                 !childChanges.isChangedILF() )
             {
                 // no changes were used so remove this guy from plf.
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
             }
             else
-                result.changedILF = true;
+                result.setChangedILF(true);
             // need to pass on up whether PLF changed in called methods
-            if ( childChanges.changedPLF )
-                result.changedPLF = true;
+            if ( childChanges.isChangedPLF() )
+                result.setChangedPLF(true);
         }
         else
         {
@@ -236,17 +233,17 @@ public class PLFIntegrator
                 if (LOG.isInfoEnabled())
                     LOG.info("removing folder from plf " + id);
                 plfParent.removeChild( plfChild );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
                 return;
             }
             Element ilfChild = appendChild( plfChild, ilfParent, false );
-            result.changedILF = true;
+            result.setChangedILF(true);
 
             IntegrationResult childChanges = new IntegrationResult();
             applyChildChanges( plfChild, ilfChild, childChanges );
 
-            if ( childChanges.changedPLF )
-                result.changedPLF = true;
+            if ( childChanges.isChangedPLF() )
+                result.setChangedPLF(true);
         }
     }
 
