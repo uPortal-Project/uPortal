@@ -526,46 +526,62 @@ var uportal = uportal || {};
         });
 
         // initialize the portlet reorderer
-		// checks to see if chrome toolbars exist on the layout
-		// if so, initialize portlet reorderer
-		if ($("[id*=toolbar_]").length > 0) {
-	        that.components.portletReorderer = up.fluid.reorderLayout (
-	            "#portalPageBodyColumns",
-	            {
-	                selectors: {
-	                    columns: ".portal-page-column-inner",
-	                    modules: ".up-portlet-wrapper",
-	                    lockedModules: ".locked",
-	                    dropWarning: $("#portalDropWarning"),
-	                    grabHandle: "[id*=toolbar_] .grab-handle"
-	                 },
-	                 listeners: {
-	                     afterMove: function(movedNode) {
-	                         var method = 'insertBefore';
-	                         var target = null;
-	                         if ($(movedNode).nextAll('[id^=portlet_]').size() > 0) {
-	                             target = $(movedNode).nextAll('[id^=portlet_]').get(0);
-	                         } else if ($(movedNode).prevAll('[id^=portlet_]').size() > 0) {
-	                             target = $(movedNode).prevAll('[id^=portlet_]').get(0);
-	                             method = 'appendAfter';
-	                         } else {
-	                             target = $(movedNode).parent();
-	                         }
-	                         var columns = $('#portalPageBodyColumns > [id^=column_]');
-	                         that.persistence.update({ action: 'movePortlet', method: method, elementID: up.defaultNodeIdExtractor(target), sourceID: up.defaultNodeIdExtractor(movedNode) });
+        // checks to see if chrome toolbars exist on the layout
+        // if so, initialize portlet reorderer
+        if ($("[id*=toolbar_]").length > 0) {
+            that.components.portletReorderer = up.fluid.reorderLayout (
+                "#portalPageBodyColumns",
+                {
+                    selectors: {
+                        columns: ".portal-page-column-inner",
+                        modules: ".up-portlet-wrapper",
+                        lockedModules: ".locked",
+                        dropWarning: $("#portalDropWarning"),
+                        grabHandle: "[id*=toolbar_] .grab-handle"
+                     },
+                     listeners: {
+                         afterMove: function(movedNode) {
+                             var method = 'insertBefore';
+                             var target = null;
+                             if ($(movedNode).nextAll('[id^=portlet_]').size() > 0) {
+                                 target = $(movedNode).nextAll('[id^=portlet_]').get(0);
+                             } else if ($(movedNode).prevAll('[id^=portlet_]').size() > 0) {
+                                 target = $(movedNode).prevAll('[id^=portlet_]').get(0);
+                                 method = 'appendAfter';
+                             } else {
+                                 target = $(movedNode).parent();
+                             }
+                             var columns = $('#portalPageBodyColumns > [id^=column_]');
+
+                             var options = {
+                                 action: 'movePortlet',
+                                 method: method,
+                                 elementID: up.defaultNodeIdExtractor(target),
+                                 sourceID: up.defaultNodeIdExtractor(movedNode)
+                             };
+                             var succeeded = false;  // default... until we hear otherwise
+                             that.persistence.update(options, function(data) {
+                                 if (!data.error) {
+                                     succeeded = true;
+                                 }
+                             });
+
+                             if (!succeeded && confirm(that.options.messages.movePortletError)) {
+                                 location.reload();
+                             }
 
                              // Now revert the Move Portlet menu item and hide the grab handle
                              var moveOptionsItem = $(movedNode).find(".up-portlet-control.move");
                              moveOptionsItem.text(moveOptionsItem.attr('data-move-text'));
                              $(movedNode).find(".up-portlet-titlebar .grab-handle").addClass('hidden');
-	                     }
-	                 },
-	                 styles: {
-	                     mouseDrag: "fl-reorderer-movable-dragging-mouse"
-	                 }
-	            }
-	        );
-		}
+                         }
+                     },
+                     styles: {
+                         mouseDrag: "fl-reorderer-movable-dragging-mouse"
+                     }
+                }
+            );
+        }
 
         // Portlet deletion
         $('a[id*=removePortlet_]').click(function () {

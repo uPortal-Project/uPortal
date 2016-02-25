@@ -558,6 +558,7 @@
                 messages: {
                     confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
                     confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
+                    movePortletError: '<xsl:value-of select="upMsg:getMessage('move.this.portlet.error', $USER_LANG)"/>',
                     addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
                     column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
                     columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
