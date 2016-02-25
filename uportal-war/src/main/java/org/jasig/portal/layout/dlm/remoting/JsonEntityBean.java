@@ -179,7 +179,7 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
     public String getTypeAndIdHash() {
         assert(entityType != null);
         assert(id != null);
-        String idStr = id.replace(".", "__");
+        String idStr = id.replace(" ", "_").replace(".", "__");
         return entityType.toString().toLowerCase() + "_" + idStr;
     }
 
