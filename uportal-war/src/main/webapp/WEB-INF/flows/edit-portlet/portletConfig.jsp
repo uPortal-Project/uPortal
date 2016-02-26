@@ -495,8 +495,6 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                             <label class="col-sm-3 control-label h4"><spring:message code="categories"/></label>
                             <div class="col-sm-9">
                                 <button type="submit" class="button btn btn-primary" name="_eventId_chooseCategory"><spring:message code="edit.categories"/>&nbsp;&nbsp;<i class="fa fa-folder-open"></i></button>
-                            </div>
-                            <div class="col-sm-offset-4">
                                 <%-- If there are no categories selected and there are no lifecycle states, the
                                      user does not have the Manage ALL_CATEGORIES permission so they must specify a
                                      category to get a set of lifecycle states.  Give them a friendly message to
