@@ -172,14 +172,16 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
      * group and person in the same principal list have the
      * same ID.
      *
-     * Periods are also replaced to avoid issues in JSP.
+     * Periods are replaced to avoid issues in JSP EL and form names can't contain spaces.  Also SpEL parsing
+     * of form field names fails with characters such as dash or parenthesis (which PAGS groups can have) and
+     * likely other characters so they are also replaced with underscores.
      *
      * @return  EntityType + "_" + ID
      */
     public String getTypeAndIdHash() {
         assert(entityType != null);
         assert(id != null);
-        String idStr = id.replace(" ", "_").replace(".", "__");
+        String idStr = id.replaceAll("\\W", "__");
         return entityType.toString().toLowerCase() + "_" + idStr;
     }
 
