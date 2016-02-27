@@ -280,54 +280,68 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     }
 
     @Override
-    public void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir) {
+    public void dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir) {
         PortalShell.LOGGER.info("");
         PortalShell.LOGGER.info("");
 
-        if (!StringUtils.isBlank(file)) {
-            PortalShell.LOGGER.info("Importing Data from: " + file);
-            try {
-                portalDataHandlerService.importData(new FileSystemResource(file));
-            }
-            catch (Exception e) {
-                throw new RuntimeException(target + " for " + file + " failed", e);
+        if (!StringUtils.isBlank(filesList)) {
+            final String[] fileNames = filesList.split(",");
+            for (String fileName : fileNames) {
+                this.importFromFile(target, fileName);
             }
         }
         else if (!StringUtils.isBlank(archive)) {
-            PortalShell.LOGGER.info("Importing Data from: " + archive);
-            try {
-                portalDataHandlerService.importDataArchive(new FileSystemResource(archive),
-                        new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
-            }
-            catch (Exception e) {
-                throw new RuntimeException(target + " for " + archive + " failed", e);
-            }
-            
+            this.importFromArchive(target, logDir, archive);
         }
         else if (!StringUtils.isBlank(dataDir)) {
-            PortalShell.LOGGER.info("Importing Data from: " + dataDir + " that matches " + pattern);
-            pattern = StringUtils.trimToNull(pattern);
-
-            try {
-                portalDataHandlerService.importDataDirectory(new File(dataDir),
-                        pattern,
-                        new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
-            }
-            catch (Exception e) {
-                if (pattern != null) {
-                    throw new RuntimeException(target + " from " + dataDir + " matching " + pattern + " failed", e);
-                }
-                else {
-                    throw new RuntimeException(target + " from " + dataDir + " failed", e);
-                }
-            }
+            this.importFromDirectoryUsingPattern(target, logDir, dataDir, pattern);
         }
         else {
-            throw new RuntimeException(target + " failed: One of dataDir, file, or archive must be specified");
+            throw new RuntimeException(target + " failed: One of dataDir, files, or archive must be specified");
         }
     }
 
-    @Override
+    private void importFromFile(final String target, final String filePath) {
+        PortalShell.LOGGER.info("Importing Data from: " + filePath);
+        try {
+            portalDataHandlerService.importData(new FileSystemResource(filePath));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(target + " for " + filePath + " failed", e);
+        }
+    }
+
+    private void importFromArchive(final String target, final String logDir, final String archive) {
+        PortalShell.LOGGER.info("Importing Data from: " + archive);
+        try {
+            portalDataHandlerService.importDataArchive(new FileSystemResource(archive),
+                    new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(target + " for " + archive + " failed", e);
+        }
+    }
+
+    private void importFromDirectoryUsingPattern(final String target, final String logDir, final String dataDir, final String pattern) {
+        PortalShell.LOGGER.info("Importing Data from: " + dataDir + " that matches " + pattern);
+        final String patternToUse = StringUtils.trimToNull(pattern);
+
+        try {
+            portalDataHandlerService.importDataDirectory(new File(dataDir),
+                    patternToUse,
+                    new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
+        }
+        catch (Exception e) {
+            if (pattern != null) {
+                throw new RuntimeException(target + " from " + dataDir + " matching " + patternToUse + " failed", e);
+            }
+            else {
+                throw new RuntimeException(target + " from " + dataDir + " failed", e);
+            }
+        }
+    }
+
+@Override
     public void dataDelete(String target, String type, String sysid) {
             //Data Delete Script
             PortalShell.LOGGER.info("");

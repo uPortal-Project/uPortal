@@ -41,7 +41,8 @@ public interface PortalShellBuildHelper {
     @Deprecated
     void dataImport(String target, String dataDir, String pattern, String file, String logDir);
 
-    void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir);
+
+    void dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir);
 
     void dataDelete(String target, String type, String sysid);
 
