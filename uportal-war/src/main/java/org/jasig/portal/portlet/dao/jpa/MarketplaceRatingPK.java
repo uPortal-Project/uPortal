@@ -31,6 +31,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 
 @SecondaryTables({
 		@SecondaryTable(name="UP_PORTLET_DEF"),
@@ -68,7 +69,7 @@ public class MarketplaceRatingPK implements Serializable{
 		this.userName = userName;
 	}
 
-	public PortletDefinitionImpl getPortletDefinition() {
+	public IPortletDefinition getPortletDefinition() {
 		return portletDefinition;
 	}
 

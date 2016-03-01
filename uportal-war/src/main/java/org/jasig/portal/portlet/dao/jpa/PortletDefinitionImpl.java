@@ -291,6 +291,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * @return the rating
      */
+    @Override
     public Double getRating() {
         return rating;
     }
@@ -299,6 +300,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
      * @param rating the rating to set. Must be within marketplaceRating range (inclusive). Can not be null.
      * @throws IllegalArgumentException
      */
+    @Override
     public void setRating(Double rating) {
         Validate.notNull(rating, "Rating cannot be null.  Maybe you meant 0?");
         if(rating > IMarketplaceRating.MAX_RATING || rating < IMarketplaceRating.MIN_RATING){
@@ -310,6 +312,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * @return the count of users that rated this portlet.  Will not return null
      */
+    @Override
     public Long getUsersRated() {
         return usersRated == null? 0:usersRated;
     }
@@ -318,6 +321,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     /**
      * @param usersRated - Number of users that rated this portlet.
      */
+    @Override
     public void setUsersRated(Long usersRated) {
         Validate.isTrue(usersRated> -1L, "Number of Users that rated shouldn't be under zero");
         this.usersRated = usersRated;
