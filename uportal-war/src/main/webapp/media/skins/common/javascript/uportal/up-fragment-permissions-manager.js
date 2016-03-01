@@ -267,11 +267,9 @@ var up = up || {};
             listeners: {
                 onUpdatePermissions: function(element, newPermissions) {
                     if (!newPermissions.movable) {
-                        element.addClass("locked").removeClass("fl-reorderer-movable-default");
-                        element.find("[id*=toolbar_]").removeClass("ui-draggable");
+                        element.addClass("locked");
                     } else {
-                        element.removeClass("locked").addClass("fl-reorderer-movable-default");
-                        element.find("[id*=toolbar_]").addClass("ui-draggable");
+                        element.removeClass("locked");
                     }
                     // TODO: Apply portlet permissions: 
                     // includes refreshing reorderer and displaying/hiding delete
