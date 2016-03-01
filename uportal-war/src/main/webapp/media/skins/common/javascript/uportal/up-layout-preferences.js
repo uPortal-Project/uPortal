@@ -296,8 +296,9 @@ var uportal = uportal || {};
                                         options = { action: 'addPortlet', channelID: portlet.id };
 
                                         // get the first channel element that's
-                                        // unlocked
-                                        firstChannel = $("[id^=portlet_].movable:first");
+                                        // unlocked;  fragment owners may bypass
+                                        // these restrictions
+                                        firstChannel = $("[id^=portlet_].movable,[id^=portlet_].up-fragment-admin").first();
 
                                         // if the page has no content just add
                                         //  the new portlet to the tab
@@ -535,7 +536,7 @@ var uportal = uportal || {};
                     selectors: {
                         columns: ".portal-page-column-inner",
                         modules: ".up-portlet-wrapper",
-                        lockedModules: ".locked",
+                        lockedModules: ".locked:not(.up-fragment-admin)",
                         dropWarning: $("#portalDropWarning"),
                         grabHandle: "[id*=toolbar_] .grab-handle"
                      },
