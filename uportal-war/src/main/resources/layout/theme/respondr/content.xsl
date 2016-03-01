@@ -116,7 +116,16 @@
           </xsl:choose>
         </xsl:variable>
 
-        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+        <!-- Applied in the case of DLM fragment owners only;  tells the UI to
+             permit the fragment admin to manage content even when it it locked. -->
+        <xsl:variable name="FRAGMENT_OWNER_CSS">
+          <xsl:choose>
+            <xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">up-fragment-admin</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
                 <div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
@@ -479,15 +488,15 @@
               </li>
           </xsl:if>
 
-          <!-- Remove Icon -->
-          <!-- note: deleteAllowed will either be false or not present if set from
-           the admin ui;  not certain the last (3rd) criteria is needed or
-           appropriate -->
-          <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
-            <!-- calls a layout api on click that removes the current node from the layout -->
-            <li>
-              <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
-            </li>
+          <!-- 'Remove' Menu Option -->
+          <!-- note: deleteAllowed will either be false or not present if set from the admin ui -->
+          <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
+            <xsl:if test="not(//focused)"><!-- Don't offer 'Remove' in MAXIMIZED window state -->
+              <!-- calls a layout api on click that removes the current node from the layout -->
+              <li>
+                <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
+              </li>
+            </xsl:if>
           </xsl:if>
 
       <!-- Focus Icon -->

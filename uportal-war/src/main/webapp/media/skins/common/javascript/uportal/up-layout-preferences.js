@@ -32,6 +32,12 @@ var uportal = uportal || {};
        { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
    ];
 
+    /*
+     * A deletable column must either:
+     *   (1) be marked deletable and contain no locked children; or
+     *   (2) be marked up-fragment-admin, indicating the user is the fragment owner 
+     */
+    var deletableColumnsSelector = ".deletable:not(:has(.locked)),.up-fragment-admin";
 
     /*
      * GENERAL UTILITY METHODS
@@ -103,10 +109,7 @@ var uportal = uportal || {};
      */
     var getDeletableColumns = function() {
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-
-        // a deletable column must be marked deletable and contain no locked
-        // children
-        var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+        var deletableColumns = columns.filter(deletableColumnsSelector);
 
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
@@ -125,10 +128,7 @@ var uportal = uportal || {};
 
         var canAddColumns = $("#portalNavigation_" + getActiveTabId()).hasClass("canAddChildren");
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-
-        // a deletable column must be marked deletable and contain no locked
-        // children
-        var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+        var deletableColumns = columns.filter(deletableColumnsSelector);
 
         // set the minimum number of columns according to how
         // many deletable columns the layout currently contains

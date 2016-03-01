@@ -179,6 +179,14 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
+    <!-- Applied in the case of DLM fragment owners only;  tells the UI to
+         permit the fragment admin to manage content even when it it locked. -->
+    <xsl:variable name="FRAGMENT_OWNER_CSS">
+      <xsl:choose>
+        <xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">up-fragment-admin</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
     <xsl:variable name="NAV_TRANSIENT">
       <xsl:choose>
         <xsl:when test="@transient='true'">disabled</xsl:when>
@@ -233,7 +241,7 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <!-- For transient tabs, don't try to calculate an URL.  It display an exception in the logs. Use a safe URL. -->
         <xsl:choose>
@@ -262,7 +270,7 @@
         </a> <!-- Drag & drop gripper handle. -->
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
-        <xsl:if test="not(@dlm:deleteAllowed='false')">
+        <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
           <a href="javascript:;" class="nav-tab-controls portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
             <i class="fa fa-times"></i>
             <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
