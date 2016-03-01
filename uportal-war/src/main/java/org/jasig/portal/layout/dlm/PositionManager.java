@@ -21,12 +21,16 @@ package org.jasig.portal.layout.dlm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,30 +38,29 @@ import org.jasig.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /** 
  * Applies and updates position specifiers for child nodes in the
  * composite layout.
  * 
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
-public class PositionManager
-{
-    public static final String RCS_ID = "@(#) $Header$";
-    private static Log LOG = LogFactory.getLog(PositionManager.class);
+public class PositionManager {
 
+    private static Log LOG = LogFactory.getLog(PositionManager.class);
     private static IUserLayoutStore dls = null;
+
     /**
      * Hands back the single instance of RDBMDistributedLayoutStore. There is
-     * already a method
-     * for aquiring a single instance of the configured layout store so we
-     * delegate over there so that all references refer to the same instance.
-     * This method is solely for convenience so that we don't have to keep
-     * calling UserLayoutStoreFactory and casting the resulting class.
+     * already a method for acquiring a single instance of the configured layout
+     * store so we delegate over there so that all references refer to the same
+     * instance.  This method is solely for convenience so that we don't have to
+     * keep calling UserLayoutStoreFactory and casting the resulting class.
      */
     private static IUserLayoutStore getDLS() {
         if (dls == null) {
@@ -65,7 +68,7 @@ public class PositionManager
         }
         return dls;
     }
-    
+
     /**
        This method and ones that it delegates to have the responsibility of
        organizing the child nodes of the passed in composite view parent node
@@ -161,7 +164,7 @@ public class PositionManager
         if ( hasAffectOnCVP( order, compViewParent ) )
         {
             applyToNodes( order, compViewParent );
-            result.changedILF = true;
+            result.setChangedILF(true);;
         }
     }
 
@@ -192,7 +195,7 @@ public class PositionManager
                 // set to see if it is different. If so then indicate that
                 // something (the position set) has changed in the plf
                 if ( ni.positionDirective != nodeToMatch )
-                    result.changedPLF = true;
+                    result.setChangedPLF(true);;
 
                 // now bump the insertion point forward prior to
                 // moving on to the next position node to be evaluated
@@ -328,7 +331,7 @@ public class PositionManager
     {
         if ( isIllegalHoppingSpecified( order ) == true )
         {
-            ArrayList cvpNodeInfos = new ArrayList();
+            ArrayList<NodeInfo> cvpNodeInfos = new ArrayList<>();
 
             // pull those out of the position list from the CVP
             for ( int i = order.size()-1; i>=0; i-- )
@@ -338,9 +341,9 @@ public class PositionManager
             // what is left is coming from other parents. Now push them back in
             // in the order specified in the CVP
 
-            Object[] nodeInfos = cvpNodeInfos.toArray();
+            NodeInfo[] nodeInfos = cvpNodeInfos.toArray(new NodeInfo[cvpNodeInfos.size()]);
             Arrays.sort( nodeInfos, new NodeInfoComparator() );
-            List list = Arrays.asList( nodeInfos );
+            List<NodeInfo> list = Arrays.asList( nodeInfos );
             order.addAll( 0, list );
         }                            
     }
@@ -416,6 +419,7 @@ public class PositionManager
                                     Element compViewParent,
                                     Element positionSet )
     {
+
         int i = 0;
         while ( i<order.size() )
         {
@@ -423,8 +427,9 @@ public class PositionManager
             if ( ! ni.node.getParentNode().equals( compViewParent ) )
             {
                 ni.differentParent = true;
-                if ( isNotReparentable( ni ) )
-                {
+                if (isNotReparentable(ni, compViewParent, positionSet)) {
+                    LOG.info("Resetting the following NodeInfo because it is not reparentable:  " + ni);
+
                     // this node should not be reparented. If it was placed
                     // here by way of a position directive then delete that
                     // directive out of the ni and posSet will be updated later
@@ -441,31 +446,97 @@ public class PositionManager
     }
 
     /**
-       Return true if the passed in node or any of its up-stream (higher index
-       siblings have moveAllowed="false".
+     * Return true if the passed in node or any downstream (higher index)
+     * siblings <strong>relative to its destination location</strong> have
+     * moveAllowed="false".
      */
-    private static boolean isNotReparentable( NodeInfo ni )
-    {
-        if ( ni.node.getAttribute( Constants.ATT_MOVE_ALLOWED )
-             .equals( "false" ) )
+    private static boolean isNotReparentable(NodeInfo ni, Element compViewParent, Element positionSet) {
+
+        // This one is easy -- can't re-parent a node with dlm:moveAllowed=false
+        if (ni.node.getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false")) {
             return true;
-        
-        Precedence nodePrec = ni.precedence;
-        Element node = (Element) ni.node.getNextSibling();
-        
-        while ( node != null )
-        {
-            if ( node.getAttribute( Constants.ATT_MOVE_ALLOWED )
-                 .equals( "false" ) )
-            {
-                Precedence p = Precedence
-                .newInstance( node.getAttribute( Constants.ATT_FRAGMENT ) );
-                if ( nodePrec.isEqualTo( p ) )
+        }
+
+        try {
+            /*
+             *  Annoying to do in Java, but we need to find our own placeholder
+             *  element in the positionSet
+             */
+            final XPathFactory xpathFactory = XPathFactory.newInstance();
+            final XPath xpath = xpathFactory.newXPath();
+            final String findPlaceholderXpath = ".//*[local-name()='position' and @name='" + ni.id + "']";
+            final XPathExpression findPlaceholder = xpath.compile(findPlaceholderXpath);
+            final NodeList findPlaceholderList = (NodeList) findPlaceholder.evaluate(positionSet, XPathConstants.NODESET);
+            switch (findPlaceholderList.getLength()) {
+                case 0:
+                    LOG.warn("Node not found for XPathExpression=\"" + findPlaceholderXpath + "\" in positionSet=" + XmlUtilitiesImpl.toString(positionSet));
+                    return true;
+                case 1:
+                    // This is healthy
+                    break;
+                default:
+                    LOG.warn("More than one node found for XPathExpression=\"" + findPlaceholderXpath + "\" in positionSet=" + XmlUtilitiesImpl.toString(positionSet));
                     return true;
             }
-            node = (Element) node.getNextSibling();
+            final Element placeholder = (Element) findPlaceholderList.item(0);  // At last
+
+            for (Element nextPlaceholder = (Element) placeholder.getNextSibling();  // Start with the next dlm:position element after placeholder
+                    nextPlaceholder != null;                                       // As long as we have a placeholder to look at
+                    nextPlaceholder = (Element) nextPlaceholder.getNextSibling()) {    // Advance to the next placeholder
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Considering whether node ''" + ni.id
+                            + "' is Reparentable;  subsequent sibling is:  "
+                            + nextPlaceholder.getAttribute("name"));
+                }
+
+                /*
+                 * Next task:  we have to find the non-placeholder representation of
+                 * the nextSiblingPlaceholder within the compViewParent
+                 */
+                final String unmaskPlaceholderXpath = ".//*[@ID='" + nextPlaceholder.getAttribute("name") + "']";
+                final XPathExpression unmaskPlaceholder = xpath.compile(unmaskPlaceholderXpath);
+                final NodeList unmaskPlaceholderList = (NodeList) unmaskPlaceholder.evaluate(compViewParent, XPathConstants.NODESET);
+                switch (unmaskPlaceholderList.getLength()) {
+                    case 0:
+                        // Not a problem;  the nextSiblingPlaceholder also refers
+                        // to a node that has been moved to this context (afaik)
+                        continue;
+                    case 1:
+                        final Element nextSibling = (Element) unmaskPlaceholderList.item(0);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Considering whether node ''" + ni.id + "' is Reparentable;  subsequent sibling '"
+                                    + nextSibling.getAttribute("ID") + "' has dlm:moveAllowed="
+                                    + !nextSibling.getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false"));
+                        }
+
+                        // Need to perform some checks...
+                        if (nextSibling.getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false")) {
+
+                            /*
+                             *  The following check is a bit strange;  it seems to verify
+                             *  that the current NodeInfo and the nextSibling come from the
+                             *  same fragment.  If they don't, the re-parenting is allowable.
+                             *  I believe this check could only be unsatisfied in the case
+                             *  of tabs.
+                             */
+                            Precedence p = Precedence.newInstance(nextSibling.getAttribute(Constants.ATT_FRAGMENT));
+                            if (ni.precedence.isEqualTo(p)) {
+                                return true;
+                            }
+                        }
+                        break;
+                    default:
+                        LOG.warn("More than one node found for XPathExpression=\"" + unmaskPlaceholderXpath + "\" in compViewParent");
+                        return true;
+                }
+            }
+        } catch (XPathExpressionException xpe) {
+            throw new RuntimeException("Failed to evaluate XPATH", xpe);
         }
-        return false;
+
+        return false;  // Re-parenting is "not disallowed" (double-negative less readable)
+
     }
 
     /**
@@ -694,12 +765,9 @@ public class PositionManager
         return position;
     }
 
-    static class NodeInfoComparator
-        implements Comparator
-    {
-        public int compare(Object o1,
-                           Object o2)
-        {
+    private static class NodeInfoComparator implements Comparator<NodeInfo> {
+        @Override
+        public int compare(NodeInfo o1, NodeInfo o2) {
             return ((NodeInfo) o1).indexInCVP - ((NodeInfo) o2).indexInCVP;
         }
     }

@@ -99,7 +99,6 @@ import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNode
  * Provides targets for AJAX preference setting calls.
  *
  * @author jennifer.bourey@yale.edu
- * @version $Revision$ $Date$
  */
 @Controller
 @RequestMapping("/layout")
@@ -1257,6 +1256,10 @@ public class UpdatePreferencesServlet {
                                         String sourceId,
                                         String destinationId,
                                         String method) {
+
+      log.debug("moveElementInternal invoked for sourceId={}, destinationId={}, method={}",
+                                                      sourceId, destinationId, method);
+
       if(StringUtils.isEmpty(destinationId)) {//shortcut for beginning and end
         return true;
       }
@@ -1292,12 +1295,18 @@ public class UpdatePreferencesServlet {
       } else {
           boolean isInsert = method != null && method.equals("insertBefore");
           if (isFolder(ulm, destinationId)) {
-              ulm.moveNode(sourceId, destinationId, null);
+              final boolean moved = ulm.moveNode(sourceId, destinationId, null);
+              if (!moved) {
+                  log.info("moveNode returned false for sourceId={}, destinationId={}, method={};  "
+                          + "Aborting node movement", sourceId, destinationId, method);
+                  return false;
+              }
           } else {
               String siblingId = isInsert ? destinationId : null;
 
               if (!ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId)) {
-                  log.info("moveNode returned false. Aborting node movement");
+                  log.info("moveNode returned false for sourceId={}, destinationId={}, method={};  "
+                          + "Aborting node movement", sourceId, destinationId, method);
                   return false;
               }
           }

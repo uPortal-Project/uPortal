@@ -91,18 +91,18 @@ public class ParameterEditManager
             if ( applyEdit( (Element) edits.item(i), ilf ) == false )
             {
                 pSet.removeChild( edits.item(i) );
-                result.changedPLF = true;
+                result.setChangedPLF(true);
             }
             else
             {
-                result.changedILF = true;
+                result.setChangedILF(true);
             }
         }
 
         if ( pSet.getChildNodes().getLength() == 0 )
         {
             plf.getDocumentElement().removeChild( pSet );
-            result.changedPLF = true;
+            result.setChangedPLF(true);
         }
     }
 
