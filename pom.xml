@@ -129,7 +129,7 @@
         <CalendarPortlet.version>2.2.1</CalendarPortlet.version>
         <cas-server.version>3.5.2.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
-        <email-preview.version>2.1.1-M4</email-preview.version>
+        <email-preview.version>2.2.0</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.0</FunctionalTestsPortlet.version>
         <jasig-widget-portlets.version>2.2.0</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>4.0.0</NewsReaderPortlet.version>
