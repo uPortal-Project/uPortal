@@ -113,7 +113,7 @@ var uportal = uportal || {};
 
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
-            var acceptorColumns = columns.filter(".canAddChildren");
+            var acceptorColumns = columns.filter(".canAddChildren,.up-fragment-admin");
             // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
@@ -126,7 +126,7 @@ var uportal = uportal || {};
 
     var getPermittedLayouts = function() {
 
-        var canAddColumns = $("#portalNavigation_" + getActiveTabId()).hasClass("canAddChildren");
+        var canAddColumns = $("#portalNavigation_" + getActiveTabId()).filter(".canAddChildren,.up-fragment-admin");
         var columns = $('#portalPageBodyColumns > [id^=column_]');
         var deletableColumns = columns.filter(deletableColumnsSelector);
 
@@ -136,7 +136,7 @@ var uportal = uportal || {};
 
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
-            var acceptorColumns = columns.filter(".canAddChildren");
+            var acceptorColumns = columns.filter(".canAddChildren,.up-fragment-admin");
             // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
@@ -183,7 +183,7 @@ var uportal = uportal || {};
                 post.deleted.push(up.defaultNodeIdExtractor(deletables[deletables.length-i-1]));
             }
 
-            var acceptors = $("#portalPageBodyColumns > [id^=column_].canAddChildren");
+            var acceptors = $("#portalPageBodyColumns > [id^=column_]").filter(".canAddChildren,.up-fragment-admin");
             var acceptor = acceptors.filter(":first");
             post.acceptor = up.defaultNodeIdExtractor(acceptor);
         }
@@ -194,12 +194,13 @@ var uportal = uportal || {};
                 // add any new columns to the page
                 $(data.newColumnIds).each(function(){
                     var id = this;
-                    $("#portalPageBodyColumns")
-                        .append(
-                            $(document.createElement('div')).attr("id", 'column_' + id)
-                                .addClass("portal-page-column movable deletable editable canAddChildren")
-                                .html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>")
-                        );
+                    var newColumn = $(document.createElement('div')).attr("id", 'column_' + id)
+                            .addClass("portal-page-column movable deletable editable canAddChildren")
+                            .html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>");
+                    if ($("#portalPageBodyColumns").has(".up-fragment-admin")) {
+                        newColumn.addClass("up-fragment-admin");
+                    }
+                    $("#portalPageBodyColumns").append(newColumn);
                 });
 
                 // remove any deleted columns from the page

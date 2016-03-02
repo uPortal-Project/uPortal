@@ -413,7 +413,7 @@ var up = up || {};
             pseudoDropTarget: ".layout-draggable-drop-target",
             loader: "#galleryLoader",
             accept: ".portlet",
-            canAddChildren: ".canAddChildren",
+            canAddChildren: ".canAddChildren,.up-fragment-admin",
             portlet: "[id*=portlet_]",
             lastPortletLocked: "[id*=portlet_].locked:not(.up-fragment-admin):last",   // Fragment owners get the up-fragment-admin class,
             portletMovable: "[id*=portlet_].movable,[id*=portlet_].up-fragment-admin"  // which allows them to bypass the restrictions.
