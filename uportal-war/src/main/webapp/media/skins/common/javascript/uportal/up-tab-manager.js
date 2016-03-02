@@ -287,7 +287,7 @@ var up = up || {};
         // Find the last instance of a locked tab and add a 'locked' class name
         // to all previous tabs. Hide all drag & drop grab handles from 'locked' tabs.
         tabList = that.locate("tabList");
-        lastLockedTab = tabList.find(that.options.selectors.lockedModules + ":last");
+        lastLockedTab = tabList.find(that.options.selectors.lockedModules).last();
         
         if (lastLockedTab.length > 0) {
             lastLockedTab.find(that.options.selectors.grabHandle).hide();
@@ -336,8 +336,8 @@ var up = up || {};
             remove: ".portal-navigation-delete",
             add: ".portal-navigation-add",
             columns: ".flc-reorderer-column",
-            modules: ".movable",
-            lockedModules: ".locked",
+            modules: ".movable,.up-fragment-admin",
+            lockedModules: ".locked:not(.up-fragment-admin)",
             grabHandle: ".portal-navigation-gripper",
             tabList: "#portalNavigationList",
             tabListItems: ".portal-navigation",
