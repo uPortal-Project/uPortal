@@ -193,11 +193,11 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">flc-inlineEditable</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
@@ -209,11 +209,11 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">flc-inlineEdit-text</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
@@ -225,11 +225,11 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">Click to edit tab name</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
