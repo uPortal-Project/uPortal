@@ -185,8 +185,18 @@
 <xsl:param name="EXTERNAL_LOGIN_URL"></xsl:param>
 <xsl:variable name="IS_FRAGMENT_ADMIN_MODE">
   <xsl:choose>
+    <!-- This is a strange thing to test;  is there no signal sent from the structure transform? -->
     <xsl:when test="//channel[@fname = 'fragment-admin-exit']">true</xsl:when>
     <xsl:otherwise>false</xsl:otherwise>
+  </xsl:choose>
+</xsl:variable>
+<!-- In the case of DLM fragment owners, this CSS class will be applied to
+     columns and portlets;  it tells the UI to permit the fragment owner to
+     manage content, even when it it locked. -->
+<xsl:variable name="FRAGMENT_OWNER_CSS">
+  <xsl:choose>
+    <xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">up-fragment-admin</xsl:when>
+    <xsl:otherwise></xsl:otherwise>
   </xsl:choose>
 </xsl:variable>
 <xsl:param name="USE_AJAX" select="'true'"/>

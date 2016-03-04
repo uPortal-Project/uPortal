@@ -160,15 +160,6 @@
       </xsl:choose>
     </xsl:variable>
 
-    <!-- Applied in the case of DLM fragment owners only;  tells the UI to
-         permit the fragment admin to manage content even when it it locked. -->
-    <xsl:variable name="FRAGMENT_OWNER_CSS">
-      <xsl:choose>
-        <xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">up-fragment-admin</xsl:when>
-        <xsl:otherwise></xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-
     <xsl:variable name="PORTLET_CHROME"> <!-- Test to determine if the portlet has been given the highlight flag. -->
       <xsl:choose>
         <xsl:when test="./parameter[@name='chromeStyle']/@value='no-chrome'">no-chrome</xsl:when>
