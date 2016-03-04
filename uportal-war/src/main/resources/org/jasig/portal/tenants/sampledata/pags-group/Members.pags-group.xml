@@ -19,20 +19,16 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-    <paren mode="AND">
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Guests"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Tenant Administrators"/>
-      </paren>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-</fragment-definition>
+<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
+  <name>${tenant.name} Members</name>
+  <description>Users who belong to the ${tenant.name} tenancy by virtue of their attributes</description>
+  <selection-test>
+    <test-group>
+      <test>
+        <attribute-name>tenantOrg</attribute-name>
+        <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
+        <test-value>${tenant.attributesMap['tenantOrg']}</test-value>
+      </test>
+    </test-group>
+  </selection-test>
+</pags-group>

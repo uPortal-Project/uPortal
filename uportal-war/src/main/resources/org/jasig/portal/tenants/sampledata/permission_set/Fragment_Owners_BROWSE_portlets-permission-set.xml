@@ -19,20 +19,17 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-    <paren mode="AND">
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Guests"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Tenant Administrators"/>
-      </paren>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-</fragment-definition>
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+    <owner>UP_PORTLET_SUBSCRIBE</owner>
+    <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+    <principal>
+        <group>${tenant.name} Fragment Owners</group>
+    </principal>
+    <activity>BROWSE</activity>
+    <!-- NOTE:  Be aware as of uPortal 4.2 adding BROWSE to category groups (category element in the portlet definition
+         files) means the portlets in the category will show up in the Customize drawer, search auto-suggest, search
+         results, and the Marketplace.  -->
+    <target permission-type="GRANT">
+        <group>${tenant.name} Portlets</group>
+    </target>
+</permission-set>

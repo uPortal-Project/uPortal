@@ -19,16 +19,9 @@
     under the License.
 
 -->
-<pags-group script="classpath://org/jasig/portal/io/import-pags-group_v4-1.crn">
-  <name>${tenant.name} Members</name>
-  <description>Users who belong to the ${tenant.name} tenancy by virtue of their attributes</description>
-  <selection-test>
-    <test-group>
-      <test>
-        <attribute-name>o</attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
-        <test-value>${tenant.attributesMap['tenantOrg']}</test-value>
-      </test>
-    </test-group>
-  </selection-test>
-</pags-group>
+<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
+  <parent>Tenant Fragment Owners</parent>
+  <child> 
+    <group>${tenant.name} Fragment Owners</group>
+  </child>
+</membership>
