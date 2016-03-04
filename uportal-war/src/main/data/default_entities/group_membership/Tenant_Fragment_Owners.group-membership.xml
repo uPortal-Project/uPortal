@@ -19,9 +19,9 @@
     under the License.
 
 -->
-<membership script="classpath://org/jasig/portal/io/import-membership_v2-6.crn">
-  <parent>Fragment Owners</parent>
-  <child> 
-    <literal>${tenant.fname}-lo</literal> 
-  </child>
-</membership>
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+  <name>Tenant Fragment Owners</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>These are fragment layout owner accounts in tenants</description>
+</group>

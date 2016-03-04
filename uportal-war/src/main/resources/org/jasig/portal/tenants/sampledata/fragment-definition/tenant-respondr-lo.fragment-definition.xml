@@ -19,19 +19,16 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
+
+<!-- If in your tenant use case there will only be one tenant tab and you won't have multiple tabs such as
+     a students tab, a staff tab, etc. you can optionally collapse this layout fragment into the tenant-lo
+     fragment for a simpler implementation and fewer fragments. -->
+<fragment-definition script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
+  <dlm:fragment xmlns:dlm="http://org.jasig.portal.layout.dlm.config" name="${tenant.name} Respondr" ownerID="${tenant.fname}-respondr-lo" precedence="80">
     <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-    <paren mode="AND">
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Guests"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Tenant Administrators"/>
-      </paren>
+      <paren mode="AND">
+        <attribute mode="deepMemberOf" name="Respondr Theme Users"/>
+        <attribute mode="deepMemberOf" name="${tenant.name} Members"/>
       </paren>
     </dlm:audience>
   </dlm:fragment>

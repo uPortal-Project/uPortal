@@ -19,20 +19,18 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-    <paren mode="AND">
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Guests"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Tenant Administrators"/>
-      </paren>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-</fragment-definition>
+<permission-set script="classpath://org/jasig/portal/io/import-permission_set_v3-1.crn">
+  <owner>UP_USERS</owner>
+  <principal-type>org.jasig.portal.groups.IEntityGroup</principal-type>
+  <principal>
+    <group>${tenant.name} Administrators</group>
+  </principal>
+  <activity>IMPERSONATE</activity>
+  <target permission-type="GRANT">
+    <literal>${tenant.fname}-lo</literal>
+    <!-- We don't list ${tenant.fname}-respondr-lo here because that fragment is to provide the skin look
+         for all tenant layout fragments in case your tenant configuration has multiple layout fragments;
+         e.g. layout for students, layout for faculty, etc. and because the admin UI doesn't currently
+         allow managing the content in the regions area. -->
+  </target>
+</permission-set>

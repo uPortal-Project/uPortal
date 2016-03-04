@@ -19,20 +19,13 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
-    <paren mode="AND">
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Guests"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Portal Administrators"/>
-      </paren>
-      <paren mode="NOT">
-        <attribute mode="deepMemberOf" name="Tenant Administrators"/>
-      </paren>
-      </paren>
-    </dlm:audience>
-  </dlm:fragment>
-</fragment-definition>
+<group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
+  <name>${tenant.name} Fragment Owners</name>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <creator>system</creator>
+  <description>This is the group for layout owners at ${tenant.name}.</description>
+  <children>
+    <literal>${tenant.fname}-lo</literal>
+    <literal>${tenant.fname}-respondr-lo</literal>
+  </children>
+</group>
