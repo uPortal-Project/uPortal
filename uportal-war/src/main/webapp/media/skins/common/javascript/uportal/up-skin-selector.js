@@ -264,7 +264,7 @@ var up = up || {};
     /**
      * Private. Entry point for the SkinSelector component. Prepares UI
      * for SkinSelector component. This function calls the parseSkinListXML()
-     * function and surpresses the submit event for the SkinSelector form.
+     * function and suppresses the submit event for the SkinSelector form.
      * 
      * @param {Object} that - reference to up.SkinSelector component.
      */
