@@ -19,6 +19,7 @@
 package org.jasig.portal.portlets.dynamicskin;
 
 import javax.portlet.PortletRequest;
+import java.util.SortedSet;
 
 /**
  * Services for the DynamicRespondrSkin portlet.
@@ -73,4 +74,14 @@ public interface DynamicSkinService {
      * @return Hashcode of portlet preference configuration values.
      */
     String calculateTokenForCurrentSkin(PortletRequest request);
+
+    /**
+     * Return set of skins that exist. The collection is based on skins that currently exist in the filesystem.
+     *
+     * @param request Portlet request
+     * @return {@code SortedSet} of skin names. Set will be empty if there are errors.
+     * @since 4.3
+     */
+    SortedSet<String> getSkinNames(PortletRequest request);
+
 }

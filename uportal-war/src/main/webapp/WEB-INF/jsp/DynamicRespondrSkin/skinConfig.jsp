@@ -53,7 +53,14 @@
                     </div>
                     <div class="form-group">
                         <label for="{n}PREFdynamicSkinName" class="col-sm-4 control-label"><spring:message code="respondr.dynamic.skin.skinName"/></label>
-                        <input type="text" id="{n}PREFdynamicSkinName" name="PREFdynamicSkinName" value="${PREFdynamicSkinName}"/>
+                        <select id="{n}PREFdynamicSkinName" name="PREFdynamicSkinName">
+                            <option value="${PREFdynamicSkinName}" selected>${PREFdynamicSkinName}</option>
+                            <c:forEach items="${skinNames}" var="skinName">
+                            <c:if test="${skinName != PREFdynamicSkinName}">
+                            <option value="${skinName}">${skinName}</option>
+                            </c:if>
+                            </c:forEach>
+                        </select>
                     </div>
                     <div class="dynamicItems hidden">
                         <div class="row">
