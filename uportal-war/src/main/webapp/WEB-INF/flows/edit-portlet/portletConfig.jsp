@@ -426,7 +426,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
             <div class="portlet-section" role="region">
                 <div class="titlebar">
                     <h3 class="title" role="heading">
-                        <spring:message code="Permissions.and.categories" text="Permissions and Categories"/>
+                        <spring:message code="principals.and.categories" text="Principals and Categories"/>
                     </h3>
                 </div>
                 <div class="content row">
@@ -434,9 +434,9 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <!-- Portlet principals -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label h4"><spring:message code="permissions"/></label>
+                            <label class="col-sm-3 control-label h4"><spring:message code="principals"/></label>
                             <div class="col-sm-9">
-                                <button type="submit" class="button btn btn-primary" name="_eventId_choosePrincipal"><spring:message code="edit.permissions"/>&nbsp;&nbsp;<i class="fa fa-users"></i></button>
+                                <button type="submit" class="button btn btn-primary" name="_eventId_choosePrincipal"><spring:message code="edit.principals"/>&nbsp;&nbsp;<i class="fa fa-users"></i></button>
                                 <c:if test="${empty portlet.principals}">
                                     <p class="text-warning">You should specify a principal or no one will be able to view the portlet</p>
                                 </c:if>

@@ -48,7 +48,7 @@
 
 <div>
     <c:if test="${not empty resultTenantAddMessage}">
-        <spring:message code="${resultTenantAddMessage}"/>
+        <spring:message code="${resultTenantAddMessage}" htmlEscape="false"/>
     </c:if>
     <a class="btn btn-primary pull-right" href="<portlet:renderURL />" role="button"><spring:message code="done" /></a>
 </div>
