@@ -27,5 +27,6 @@
   <children>
     <group>${tenant.name} Administrators</group>
     <group>${tenant.name} Members</group>
+    <group>${tenant.name} Fragment Owners</group>
   </children>
 </group>
