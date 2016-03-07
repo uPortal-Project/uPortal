@@ -23,6 +23,8 @@
 
 <h2>Report:  <spring:message code="${operationNameCode}" htmlEscape="false" /></h2>
 
+<c:set var="resultTenantAddMessage" value="tenant.created.successfully.delay.message"/>
+
 <c:forEach items="${operationsListenerResponses}" var="response">
     <c:set var="resultCssClass">
         <c:choose>
@@ -39,7 +41,14 @@
             </c:forEach>
         </div>
     </div>
+    <c:if test="${resultCssClass ne 'success'}">
+        <c:set var="resultTenantAddMessage" value=""/>
+    </c:if>
 </c:forEach>
 
-<a class="btn btn-primary pull-right" href="<portlet:renderURL />" role="button"><spring:message code="done" /></a>
-
+<div>
+    <c:if test="${not empty resultTenantAddMessage}">
+        <spring:message code="${resultTenantAddMessage}"/>
+    </c:if>
+    <a class="btn btn-primary pull-right" href="<portlet:renderURL />" role="button"><spring:message code="done" /></a>
+</div>
