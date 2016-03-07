@@ -46,6 +46,7 @@
                     <value>50%</value>
                 </structure-attribute>
                 <channel fname="tenant-portal-administration" unremovable="false" hidden="false" immutable="false" ID="n1122"/>
+                <channel fname="instructions-for-new-tenants" unremovable="false" hidden="false" immutable="false" ID="n1124"/>
             </folder>
             <folder ID="s1140" hidden="false" immutable="false" name="Column" type="regular" unremovable="false">
                 <structure-attribute>
