@@ -18,25 +18,8 @@
  */
 package org.jasig.portal.portlets.dynamicskin;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.lesscss.LessCompiler;
-import org.lesscss.LessException;
-import org.lesscss.LessSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
-import javax.portlet.PortletContext;
-import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -47,6 +30,29 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import javax.portlet.PortletContext;
+import javax.portlet.PortletPreferences;
+import javax.portlet.PortletRequest;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import org.apache.commons.io.IOUtils;
+import org.lesscss.LessCompiler;
+import org.lesscss.LessException;
+import org.lesscss.LessSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * File system based implementation of services for the Skin Manager.
@@ -251,29 +257,37 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     }
 
     @Override
+    /**
+     * Returns the set of skins to use.  This implementation parses the skinList.xml file and returns the set of
+     * skin-key element values.  If there is an error parsing the XML file, return an empty set.
+     */
     public SortedSet<String> getSkinNames(PortletRequest request) {
         // Context to access the filesystem
         PortletContext ctx = request.getPortletSession().getPortletContext();
 
         // Determine the full path to the skins directory
-        String skinsFilepath = ctx.getRealPath(rootFolder);
+        String skinsFilepath = ctx.getRealPath(rootFolder + "/skinList.xml");
 
         // Create File object to access the filesystem
-        File skinsDir = new File(skinsFilepath);
+        File skinList = new File(skinsFilepath);
 
-        // Filter to *.less files
-        FilenameFilter lessFileFilter = new SuffixFileFilter(".less");
-
-        // Get the list of skin files
-        String[] skinFiles = skinsDir.list(lessFileFilter);
-
-        // Convert to names - remove file suffix
         TreeSet<String> skins = new TreeSet<>();
-        for (String skinFile : skinFiles) {
-            log.debug(skinFile);
-            String skin = skinFile.substring(0, skinFile.length() - 5);
-            log.debug(skin);
-            skins.add(skin);
+        try {
+            DocumentBuilderFactory dbFactory
+                    = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(skinList);
+            doc.getDocumentElement().normalize();
+
+            NodeList nList = doc.getElementsByTagName("skin-key");
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                org.w3c.dom.Element element = (org.w3c.dom.Element) nList.item(temp);
+                String skinName = element.getTextContent();
+                log.debug("Found skin-key value {}", skinName);
+                skins.add(skinName);
+            }
+        } catch (SAXException | ParserConfigurationException | IOException e) {
+            log.error("Error processing skinsFilepath {}", skinsFilepath, e);
         }
 
         return skins;
