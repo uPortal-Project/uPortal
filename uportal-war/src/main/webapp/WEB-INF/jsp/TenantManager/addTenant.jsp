@@ -94,7 +94,7 @@
             </div>
         </c:forEach>
 
-        <c:if test="${not empty optionalListener}">
+        <c:if test="${not empty optionalOperationsListeners}">
             <div class="form-group">
                 <label class="col-sm-2 control-label"><spring:message code="tenant.manager.optional.steps" /></label>
                 <div class="col-sm-10">
