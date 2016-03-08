@@ -507,7 +507,7 @@ var up = up || {};
             that.options.isOpen = true;
             that.locate("galleryHandle").addClass('handle-arrow-up');
             that.locate("galleryInner").slideDown(that.options.openSpeed);
-            if ($("#portalPageBodyColumns .portal-page-column").hasClass("canAddChildren")) {
+            if ($("#portalPageBodyColumns .portal-page-column").filter(".canAddChildren,.up-fragment-admin")) {
                 that.showPane("add-content");
             } else {
                 that.showPane("use-content");
@@ -548,7 +548,7 @@ var up = up || {};
         };
 
         that.refreshPaneLink = function (key) {
-            if ($("#portalPageBodyColumns .portal-page-column").hasClass("canAddChildren")) {
+            if ($("#portalPageBodyColumns .portal-page-column").filter(".canAddChildren,.up-fragment-admin")) {
                 that.showPaneLink("add-content");
             } else {
                 that.hidePaneLink("add-content");

@@ -185,11 +185,11 @@
         <xsl:otherwise></xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDITABLE"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">flc-inlineEditable</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
@@ -201,11 +201,11 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDIT_TEXT"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">flc-inlineEdit-text</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
@@ -217,11 +217,11 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine which navigation tab has edit permissions and is the active tab. Class name is leveraged by the fluid inline editor component.-->
+    <xsl:variable name="NAV_INLINE_EDIT_TITLE"><!--Determine whether the activeTab is editable. Class name is leveraged by the fluid inline editor component.-->
         <xsl:choose>
             <xsl:when test="$AUTHENTICATED='true'">
                 <xsl:choose>
-                    <xsl:when test="not(@dlm:editAllowed='false')">
+                    <xsl:when test="not(@dlm:editAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
                         <xsl:choose>
                             <xsl:when test="@activeTab='true'">Click to edit tab name</xsl:when>
                             <xsl:otherwise></xsl:otherwise>
@@ -233,7 +233,7 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <!-- For transient tabs, don't try to calculate an URL.  It display an exception in the logs. Use a safe URL. -->
         <xsl:choose>
@@ -255,14 +255,16 @@
         </span>
         <i class="fa fa-chevron-right visible-xs"></i>
       </a> <!-- Navigation item link. -->
-      <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused') and not(dlm:moveAllowed='false')">
-        <a href="javascript:;" class="nav-tab-controls portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
-          <i class="fa fa-align-justify"></i>
-          <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
-        </a> <!-- Drag & drop gripper handle. -->
+      <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused')">
+        <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
+          <a href="javascript:;" class="nav-tab-controls portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+            <i class="fa fa-align-justify"></i>
+            <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
+          </a> <!-- Drag & drop gripper handle. -->
+        </xsl:if>
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
-        <xsl:if test="not(@dlm:deleteAllowed='false')">
+        <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
           <a href="javascript:;" class="nav-tab-controls portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
             <i class="fa fa-times"></i>
             <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>

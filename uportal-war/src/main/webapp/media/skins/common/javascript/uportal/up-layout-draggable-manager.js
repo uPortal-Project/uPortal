@@ -143,7 +143,7 @@ var up = up || {};
      * @param {Object} target - reference to a DOM element. Specifically, a portal column.
      */
     var dragOverHandler = function (that, target) {
-        var column, portlets, portlet_locked, portlet_movable, children, dropTarget;
+        var column, portlets, portlet_locked, firstMovablePortlet, children, dropTarget;
         
         // Obtain reference to column, contained portlets and the dropTarget.
         column = $(target);
@@ -159,8 +159,8 @@ var up = up || {};
                 dropTarget.insertAfter(portlet_locked);
             } else {
                 // Insert drop target before the first movable portlet.
-                portlet_movable = column.find(that.options.selectors.firstPortletMovable);
-                dropTarget.insertBefore(portlet_movable);
+                firstMovablePortlet = column.find(that.options.selectors.portletMovable).first();
+                dropTarget.insertBefore(firstMovablePortlet);
             }//end:if.
         } else {
             // Column does not contain portlets. Does the column contain any children
@@ -413,11 +413,10 @@ var up = up || {};
             pseudoDropTarget: ".layout-draggable-drop-target",
             loader: "#galleryLoader",
             accept: ".portlet",
-            canAddChildren: ".canAddChildren",
+            canAddChildren: ".canAddChildren,.up-fragment-admin",
             portlet: "[id*=portlet_]",
-            lastPortletLocked: "[id*=portlet_].locked:last",
-            firstPortletMovable: "[id*=portlet_].movable:first",
-            portletMovable: "[id*=portlet_].movable"
+            lastPortletLocked: "[id*=portlet_].locked:not(.up-fragment-admin):last",   // Fragment owners get the up-fragment-admin class,
+            portletMovable: "[id*=portlet_].movable,[id*=portlet_].up-fragment-admin"  // which allows them to bypass the restrictions.
         },
         styles: {
             pseudoDropTarget: "layout-draggable-drop-target",

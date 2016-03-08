@@ -32,6 +32,12 @@ var uportal = uportal || {};
        { nameKey: "sixColumn", columns: [17, 17, 16, 16, 17, 17] }
    ];
 
+    /*
+     * A deletable column must either:
+     *   (1) be marked deletable and contain no locked children; or
+     *   (2) be marked up-fragment-admin, indicating the user is the fragment owner 
+     */
+    var deletableColumnsSelector = ".deletable:not(:has(.locked)),.up-fragment-admin";
 
     /*
      * GENERAL UTILITY METHODS
@@ -103,14 +109,11 @@ var uportal = uportal || {};
      */
     var getDeletableColumns = function() {
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-
-        // a deletable column must be marked deletable and contain no locked
-        // children
-        var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+        var deletableColumns = columns.filter(deletableColumnsSelector);
 
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
-            var acceptorColumns = columns.filter(".canAddChildren");
+            var acceptorColumns = columns.filter(".canAddChildren,.up-fragment-admin");
             // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
@@ -123,12 +126,9 @@ var uportal = uportal || {};
 
     var getPermittedLayouts = function() {
 
-        var canAddColumns = $("#portalNavigation_" + getActiveTabId()).hasClass("canAddChildren");
+        var canAddColumns = $("#portalNavigation_" + getActiveTabId()).filter(".canAddChildren,.up-fragment-admin");
         var columns = $('#portalPageBodyColumns > [id^=column_]');
-
-        // a deletable column must be marked deletable and contain no locked
-        // children
-        var deletableColumns = columns.filter(".deletable:not(:has(.locked))");
+        var deletableColumns = columns.filter(deletableColumnsSelector);
 
         // set the minimum number of columns according to how
         // many deletable columns the layout currently contains
@@ -136,7 +136,7 @@ var uportal = uportal || {};
 
         var contentColumns = deletableColumns.filter(":has(.up-portlet-wrapper)");
         if (contentColumns.size() > 0) {
-            var acceptorColumns = columns.filter(".canAddChildren");
+            var acceptorColumns = columns.filter(".canAddChildren,.up-fragment-admin");
             // if there are no acceptor columns, mark any columns that
             // have content as undeletable
             if (acceptorColumns.size() == 0) {
@@ -183,7 +183,7 @@ var uportal = uportal || {};
                 post.deleted.push(up.defaultNodeIdExtractor(deletables[deletables.length-i-1]));
             }
 
-            var acceptors = $("#portalPageBodyColumns > [id^=column_].canAddChildren");
+            var acceptors = $("#portalPageBodyColumns > [id^=column_]").filter(".canAddChildren,.up-fragment-admin");
             var acceptor = acceptors.filter(":first");
             post.acceptor = up.defaultNodeIdExtractor(acceptor);
         }
@@ -194,12 +194,13 @@ var uportal = uportal || {};
                 // add any new columns to the page
                 $(data.newColumnIds).each(function(){
                     var id = this;
-                    $("#portalPageBodyColumns")
-                        .append(
-                            $(document.createElement('div')).attr("id", 'column_' + id)
-                                .addClass("portal-page-column movable deletable editable canAddChildren")
-                                .html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>")
-                        );
+                    var newColumn = $(document.createElement('div')).attr("id", 'column_' + id)
+                            .addClass("portal-page-column movable deletable editable canAddChildren")
+                            .html("<div id=\"inner-column_" + id + "\" class=\"portal-page-column-inner\"></div>");
+                    if ($("#portalPageBodyColumns").has(".up-fragment-admin")) {
+                        newColumn.addClass("up-fragment-admin");
+                    }
+                    $("#portalPageBodyColumns").append(newColumn);
                 });
 
                 // remove any deleted columns from the page
@@ -296,8 +297,9 @@ var uportal = uportal || {};
                                         options = { action: 'addPortlet', channelID: portlet.id };
 
                                         // get the first channel element that's
-                                        // unlocked
-                                        firstChannel = $("[id^=portlet_].movable:first");
+                                        // unlocked;  fragment owners may bypass
+                                        // these restrictions
+                                        firstChannel = $("[id^=portlet_].movable,[id^=portlet_].up-fragment-admin").first();
 
                                         // if the page has no content just add
                                         //  the new portlet to the tab
@@ -535,7 +537,7 @@ var uportal = uportal || {};
                     selectors: {
                         columns: ".portal-page-column-inner",
                         modules: ".up-portlet-wrapper",
-                        lockedModules: ".locked",
+                        lockedModules: ".locked:not(.up-fragment-admin)",
                         dropWarning: $("#portalDropWarning"),
                         grabHandle: "[id*=toolbar_] .grab-handle"
                      },

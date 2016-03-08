@@ -116,7 +116,16 @@
           </xsl:choose>
         </xsl:variable>
 
-        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN}"> <!-- Unique column_ID needed for drag and drop. -->
+        <!-- Applied in the case of DLM fragment owners only;  tells the UI to
+             permit the fragment admin to manage content even when it it locked. -->
+        <xsl:variable name="FRAGMENT_OWNER_CSS">
+          <xsl:choose>
+            <xsl:when test="$IS_FRAGMENT_ADMIN_MODE='true'">up-fragment-admin</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+
+        <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
                 <div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
@@ -177,7 +186,7 @@
 
     <!-- ****** PORTLET CONTAINER ****** -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
-    <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
+    <section id="portlet_{@ID}" class="up-portlet-wrapper {@fname} {$PORTLET_LOCKED} {$DELETABLE} {$FRAGMENT_OWNER_CSS} {$PORTLET_CHROME} {$PORTLET_ALTERNATE} {$PORTLET_HIGHLIGHT}"> <!-- Main portlet container.  The unique ID is needed for drag and drop.  The portlet fname is also written into the class attribute to allow for unique rendering of the portlet presentation. -->
 
     <!-- Start of the Marketplace Modal Section -->
         <xsl:variable name="saveRatingPortletUrl">
@@ -194,7 +203,7 @@
                 </xsl:with-param>
             </xsl:call-template>
         </xsl:variable>
-        
+
       <xsl:variable name="getRatingPortletUrl">
             <xsl:call-template name="portalUrl">
                 <xsl:with-param name="url">
@@ -364,13 +373,11 @@
       </xsl:variable>
 
       <div class="portlet-controls">
-          <!-- Test to determine if the portlet is locked in the layout. If not provide a grab handle the user could
-               see.  Otherwise, just provide an empty div for the grab-handle.  The 'grab-handle' class must be
-               present on every portlet else fluid will error when it encounters a portlet without the class. -->
+          <!-- The 'grab-handle' class must be present on every portlet else fluid
+               will error when it encounters a portlet without the class.  Grab
+               handles for locked portlets will remain hidden. -->
           <div class="grab-handle hidden">
-              <xsl:if test="$PORTLET_LOCKED='movable'">
-                  <i class="fa fa-arrows"></i>
-              </xsl:if>
+              <i class="fa fa-arrows"></i>
           </div>
 
     <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
@@ -455,7 +462,7 @@
               </xsl:choose>
           </xsl:if>
 
-          <xsl:if test="$PORTLET_LOCKED='movable'">
+          <xsl:if test="$PORTLET_LOCKED='movable' or $IS_FRAGMENT_ADMIN_MODE='true'">
               <xsl:variable name="moveText"><xsl:value-of select="upMsg:getMessage('move.this.portlet', $USER_LANG)"/></xsl:variable>
               <li>
                   <a id="movePortlet_{@ID}" title="{$moveText}" href="javascript:void(0);" class="up-portlet-control move" data-move-text="{$moveText}" data-cancel-move-text="{upMsg:getMessage('cancel.portlet.move', $USER_LANG)}"><xsl:value-of select="$moveText"/></a>
@@ -472,15 +479,15 @@
               </li>
           </xsl:if>
 
-          <!-- Remove Icon -->
-          <!-- note: deleteAllowed will either be false or not present if set from
-           the admin ui;  not certain the last (3rd) criteria is needed or
-           appropriate -->
-          <xsl:if test="not(@dlm:deleteAllowed='false') and not(//focused) and not(/layout/navigation/tab[@activeTab='true']/@immutable='true')">
-            <!-- calls a layout api on click that removes the current node from the layout -->
-            <li>
-              <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
-            </li>
+          <!-- 'Remove' Menu Option -->
+          <!-- note: deleteAllowed will either be false or not present if set from the admin ui -->
+          <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
+            <xsl:if test="not(//focused)"><!-- Don't offer 'Remove' in MAXIMIZED window state -->
+              <!-- calls a layout api on click that removes the current node from the layout -->
+              <li>
+                <a id="removePortlet_{@ID}" title="{upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)}" href="javascript:void(0);" class="up-portlet-control remove"><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></a>
+              </li>
+            </xsl:if>
           </xsl:if>
 
       <!-- Focus Icon -->
@@ -653,7 +660,7 @@
     </div>
   </div>
   </xsl:template>
-  
+
   <xsl:template name="focused-fragment-header">
     <xsl:if test="//tab[@focusedFragment='true']">
         <div id="focused-fragment-header" class="container">
