@@ -29,7 +29,6 @@ import org.jasig.portal.portlet.om.PortletLifecycleState;
  * an <code>IChannel</code> or an <code>IPerson</code>.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IAuthorizationPrincipal {
 /**
@@ -134,6 +133,15 @@ public interface IAuthorizationPrincipal {
  * @return java.lang.Class
  */
     public Class getType();
+
+    /**
+     * Indicates whether the entity represented by this principal is a group
+     * (branch node) or user (leaf node).
+     *
+     * @since uPortal 4.3
+     */
+    boolean isGroup();
+
 /**
  * Answers if this <code>IAuthorizationPrincipal</code> has permission to perform the
  * <code>activity</code> on the <code>target</code>.  Params <code>owner</code> and

@@ -181,10 +181,43 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
 
     }
 
+    /**
+     * Allows an outside actor to force this policy to evaluate and cache an
+     * authorization decision.  Permissions checking can be expensive;  a
+     * well-primed cache can make the task perform better.  This method will
+     * create the cache entry whether it exists already or not, forcibly
+     * resetting the TTL.
+     *
+     * @since uPortal 4.3
+     */
+    public void loadInCache(IAuthorizationService service,
+            IAuthorizationPrincipal principal, IPermissionOwner owner,
+            IPermissionActivity activity, IPermissionTarget target) {
+
+        final Set<IGroupMember> seenGroups = new HashSet<>();
+        final CacheTuple cacheTuple = new CacheTuple(
+                principal.getPrincipalString(),
+                owner.getFname(),
+                activity.getFname(),
+                target.getKey());
+        final boolean answer = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+        Element element = new Element(cacheTuple, answer);
+        hasUnblockedGrantCache.put(element);
+
+    }
+
     private boolean hasUnblockedPathToGrantWithCache(IAuthorizationService service,
             IAuthorizationPrincipal principal, IPermissionOwner owner,
             IPermissionActivity activity, IPermissionTarget target,
             Set<IGroupMember> seenGroups) throws GroupsException {
+
+        /*
+         * We're only going to use the caches for groups;  caching these items
+         * for users would be (1) too large and (2) redundant with other caches.
+         */
+        if (!principal.isGroup()) {
+            return hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+        }
 
         final CacheTuple cacheTuple = new CacheTuple(
                 principal.getPrincipalString(),
@@ -193,7 +226,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
                 target.getKey());
         Element element = hasUnblockedGrantCache.get(cacheTuple);
         if (element == null) {
-            boolean answer = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
+            final boolean answer = hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
             element = new Element(cacheTuple, answer);
             hasUnblockedGrantCache.put(element);
         }
@@ -424,6 +457,11 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             } else if (!target.equals(other.target))
                 return false;
             return true;
+        }
+        @Override
+        public String toString() {
+            return "CacheTuple [principalName=" + principalName + ", owner=" + owner + ", activity=" + activity
+                    + ", target=" + target + "]";
         }
     }
 

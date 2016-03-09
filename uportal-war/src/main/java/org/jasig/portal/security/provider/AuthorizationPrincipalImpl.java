@@ -19,6 +19,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.AuthorizationException;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
@@ -58,6 +59,7 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
  * @param  channelPublishId String - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
+@Override
 public boolean canManage(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalManage(this, channelPublishId);
 }
@@ -66,6 +68,7 @@ public boolean canManage(String channelPublishId) throws org.jasig.portal.Author
  * @return boolean
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
+@Override
 public boolean canManage(PortletLifecycleState state, String categoryId) throws AuthorizationException {
 	return getAuthorizationService().canPrincipalManage(this, state, categoryId);
 }
@@ -79,6 +82,7 @@ public boolean canConfigure(String channelPublishId) throws AuthorizationExcepti
  * @param channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
+@Override
 public boolean canRender(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalRender(this, channelPublishId);
 }
@@ -88,6 +92,7 @@ public boolean canRender(String channelPublishId) throws org.jasig.portal.Author
  * @param  channelPublishId int - the Channel publish ID
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
+@Override
 public boolean canSubscribe(String channelPublishId) throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().canPrincipalSubscribe(this, channelPublishId);
 }
@@ -122,6 +127,7 @@ public boolean equals(Object obj) {
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
+@Override
 public IPermission[] getAllPermissions() throws AuthorizationException 
 {
     return getAllPermissions(null, null, null);
@@ -140,6 +146,7 @@ public IPermission[] getAllPermissions() throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
+@Override
 public IPermission[] getAllPermissions(String owner, String activity, String target) 
 throws AuthorizationException 
 {
@@ -157,12 +164,14 @@ IAuthorizationService getAuthorizationService()
  * @return a <code>java.util.Vector</code> of IChannels
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
+@Override
 public java.util.Vector getAuthorizedChannels() throws org.jasig.portal.AuthorizationException {
     return getAuthorizationService().getAuthorizedChannels(this);
 }
 /**
  * @return String
  */
+@Override
 public String getKey() {
 	return key;
 }
@@ -173,6 +182,7 @@ public String getKey() {
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
+@Override
 public IPermission[] getPermissions() throws AuthorizationException 
 {
     return getPermissions(null, null, null);
@@ -190,6 +200,7 @@ public IPermission[] getPermissions() throws AuthorizationException
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
+@Override
 public IPermission[] getPermissions(String owner, String activity, String target) 
 throws AuthorizationException 
 {
@@ -198,6 +209,7 @@ throws AuthorizationException
 /**
  * @return String
  */
+@Override
 public String getPrincipalString() 
 {
     return principalString;
@@ -205,8 +217,13 @@ public String getPrincipalString()
 /**
  * @return Class
  */
+@Override
 public Class getType() {
     return type;
+}
+@Override
+public boolean isGroup() {
+    return IEntityGroup.class.equals(type);
 }
 @Override
 public int hashCode() {
@@ -229,6 +246,7 @@ public int hashCode() {
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
+@Override
 public boolean hasPermission(String owner, String activity, String target) 
 throws org.jasig.portal.AuthorizationException 
 {
@@ -250,6 +268,7 @@ void setAuthorizationService(IAuthorizationService newAuthorizationService) {
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
  */
+@Override
 public String toString() 
 {
     return getPrincipalString();
@@ -269,6 +288,7 @@ public String toString()
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */
+@Override
 public boolean hasPermission(String owner, String activity, String target, IPermissionPolicy policy) 
 throws AuthorizationException
 {
