@@ -102,19 +102,18 @@
                         <value>SUBSCRIBE</value>
                     </set>
                 </entry>
-                <!-- Useful in delegated administration scenarios involving portlets. -->
-                <entry key="UP_PORTLET_PUBLISH">
+                <!-- Useful in delegated administration scenarios involving portlets.
+                     Typically delegated authority is granted to MANAGE_EXPIRED, but
+                     since MANAGE_* permissions are hierarchical we need all of them. -->
+                <!-- entry key="UP_PORTLET_PUBLISH">
                     <set>
-                        <!-- Typically delegated authority is granted to
-                             MANAGE_EXPIRED, but since MANAGE_* permissions are
-                             hierarchical we need all of them. -->
                         <value>MANAGE_CREATED</value>
                         <value>MANAGE_APPROVED</value>
                         <value>MANAGE</value>
                         <value>MANAGE_EXPIRED</value>
                         <value>MANAGE_MAINTENANCE</value>
                     </set>
-                </entry>
+                </entry -->
             </map>
         </property>
     </bean>
