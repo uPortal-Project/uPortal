@@ -83,4 +83,38 @@
     <bean id="casCopyAssertionAttributesToUserAttributes" class="java.lang.String">
         <constructor-arg index="0" value="${org.jasig.portal.security.cas.assertion.copyAttributesToUserAttributes:false}"/>
     </bean>
+
+    <!-- 
+     | Some operations in the portal rely on evaluating whether a permission is
+     | granted over every portlet in the registry.  As the number of portlets
+     | (or user groups) gets large, these operations can exhibit poor performance.
+     | This bean is designed to pre-load the AuthZ evaluation cache so that the
+     | answers are already known when needed.
+     +-->
+    <bean id="portletPermissionsCachePrimer" class="org.jasig.portal.security.provider.PortletPermissionsCachePrimer">
+        <property name="permissionsMap">
+            <!-- Use this property to tell the bean what to pre-load.  Keys are
+                 permissions owners;  value(s) are activities -->
+            <map>
+                <entry key="UP_PORTLET_SUBSCRIBE">
+                    <set>
+                        <value>BROWSE</value>
+                        <value>SUBSCRIBE</value>
+                    </set>
+                </entry>
+                <!-- Useful in delegated administration scenarios involving portlets.
+                     Typically delegated authority is granted to MANAGE_EXPIRED, but
+                     since MANAGE_* permissions are hierarchical we need all of them. -->
+                <!-- entry key="UP_PORTLET_PUBLISH">
+                    <set>
+                        <value>MANAGE_CREATED</value>
+                        <value>MANAGE_APPROVED</value>
+                        <value>MANAGE</value>
+                        <value>MANAGE_EXPIRED</value>
+                        <value>MANAGE_MAINTENANCE</value>
+                    </set>
+                </entry -->
+            </map>
+        </property>
+    </bean>
 </beans>
