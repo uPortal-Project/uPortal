@@ -211,14 +211,6 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
             IPermissionActivity activity, IPermissionTarget target,
             Set<IGroupMember> seenGroups) throws GroupsException {
 
-        /*
-         * We're only going to use the caches for groups;  caching these items
-         * for users would be (1) too large and (2) redundant with other caches.
-         */
-        if (!principal.isGroup()) {
-            return hasUnblockedPathToGrant(service, principal, owner, activity, target, seenGroups);
-        }
-
         final CacheTuple cacheTuple = new CacheTuple(
                 principal.getPrincipalString(),
                 owner.getFname(),
