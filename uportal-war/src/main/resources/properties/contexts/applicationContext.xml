@@ -34,16 +34,22 @@
     
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.portal">
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\."/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\..*"/>
     </context:component-scan>
-    
+
+    <!-- Required for TenantService -->
+    <context:component-scan base-package="org.jasig.portal.portlets" use-default-filters="false">
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.UserAccountHelper"/>
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.IPasswordResetNotification"/>
+    </context:component-scan>
+
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.ExtendedPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
