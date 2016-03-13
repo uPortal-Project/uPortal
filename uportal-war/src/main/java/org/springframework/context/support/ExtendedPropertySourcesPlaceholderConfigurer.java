@@ -19,7 +19,11 @@
 package org.springframework.context.support;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -28,6 +32,7 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+import org.springframework.core.io.Resource;
 
 
 /**
@@ -37,6 +42,30 @@ public class ExtendedPropertySourcesPlaceholderConfigurer extends PropertySource
     public static final String EXTENDED_PROPERTIES_SOURCE = "extendedPropertiesSource";
 
     private PropertyResolver propertyResolver;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /**
+     * uPortal defines some properties files in its primaryPropertyPlaceholderConfigurer
+     * bean that are considered (and documented) optional.  The parent class
+     * (PropertySourcesPlaceholderConfigurer) will operate properly without them, but
+     * puts a significant number of WARN messages into the log.  These are noisy, and
+     * could lead a new adopter to think that something's wrong.  This method removes
+     * absent properties files from the collection.
+     */
+    @Override
+    public void setLocations(Resource[] locations) {
+        final List<Resource> list = new ArrayList<>();
+        for (Resource r : locations) {
+            if (r.exists()) {
+                list.add(r);
+            } else {
+                // In our case this event is worth a DEBUG note.
+                logger.debug("The following Resource was not present (it may be "
+                        + "optional, or it's absence may lead to issues):  ", r);
+            }
+        }
+        super.setLocations(list.toArray(new Resource[0]));
+    }
 
 
     /**
