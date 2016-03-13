@@ -20,24 +20,11 @@
 
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
-  <name>Fragment Owners</name>
+  <name>Tenant Administrators</name>
   <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
-  <description>These are fragment layout owner accounts</description>
+  <description>Parent group that contains all the individual admin groups for tenants</description>
   <children>
-    <literal>academics-lo</literal>
-    <literal>admin-lo</literal>
-    <literal>all-lo</literal>
-    <literal>campus-lo</literal>
-    <literal>developer-lo</literal>
-    <literal>faculty-lo</literal>
-    <literal>fragmentTemplate</literal>
-    <literal>guest-lo</literal>
-    <literal>news-lo</literal>
-    <literal>staff-lo</literal>
-    <literal>student-lo</literal>
     <literal>tenant-admin-lo</literal>
-    <literal>welcome-lo</literal>
-    <group>Subscribable Fragments</group>
   </children>
 </group>

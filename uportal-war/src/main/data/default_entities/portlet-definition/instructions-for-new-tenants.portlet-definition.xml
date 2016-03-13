@@ -56,8 +56,7 @@
     <portlet-preference>
         <name>content</name>
         <readOnly>false</readOnly>
-        <value>&lt;p&gt;To configure a new district, district administrators (tenant administrators) should perform the following steps:&lt;/p&gt;
-
+        <value>&lt;h3&gt;To configure a new district, district administrators (tenant administrators) should perform the following steps:&lt;/h3&gt;
 
             &lt;ol&gt;
             &lt;li&gt;Upload your district logo to replace the text logo placeholder
@@ -78,9 +77,7 @@
             &lt;li&gt;Register and configure new instances of App Launcher portlets (see below)&lt;/li&gt;
             &lt;/ol&gt;
 
-
-            &lt;p&gt;Creating new App Launchers&lt;/p&gt;
-
+            &lt;h3&gt;Creating new App Launchers&lt;/h3&gt;
 
             &lt;ol&gt;
             &lt;li&gt;On the Tenant Administration, click on Register Portlets.&lt;/li&gt;
@@ -108,8 +105,6 @@
             &lt;/ol&gt;
             &lt;/li&gt;
             &lt;/ol&gt;
-
-
         </value>
     </portlet-preference>
 </portlet-definition>
