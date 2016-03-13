@@ -1280,8 +1280,28 @@
     </cache>
 
     <!--
-     | Caches queries for tenants
+     | Caches for tenancies
      +-->
+    <cache name="org.jasig.portal.tenants.JpaTenant"
+        eternal="false" maxElementsInMemory="25" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true,
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+    <cache name="org.jasig.portal.tenants.JpaTenant.attributes"
+        eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true,
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
     <cache name="org.jasig.portal.tenants.JpaTenant.Query"
         eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
