@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.PostConstruct;
 
@@ -91,7 +91,7 @@ public class PortletPermissionsCachePrimer {
         this.permissionsMap = Collections.unmodifiableMap(permissionsMap);
     }
 
-    private ExecutorService executor;
+    private ThreadPoolExecutor executor;
     private int executorThreadCount = 7;  // default
 
     public void setExecutorThreadCount(int executorThreadCount) {
@@ -100,10 +100,16 @@ public class PortletPermissionsCachePrimer {
 
     @PostConstruct
     public void initializeSearchExecutor() {
-        executor = Executors.newFixedThreadPool(executorThreadCount);
+        // Should be safe
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(executorThreadCount);
     }
 
     public void primeCache() {
+
+        if (executor.getActiveCount() != 0) {
+            log.warn("Skipping this run becasue there are active threads in the executor, signifying the previous run is not complete");
+            return;
+        }
 
         log.info("STARTING PortletPermissionsCachePrimer.primeCache()...");
         final long timestamp = System.currentTimeMillis();
@@ -113,7 +119,7 @@ public class PortletPermissionsCachePrimer {
          * minute to run in a single thread.  Going to use a divide-and-conquer
          * approach.
          */
-        final Map<NodeWalker,Future<Long>> futures = new HashMap<>();
+        final Map<NodeWalker,Future<NodeWalkerReport>> futures = new HashMap<>();
 
         final IEntityGroup rootGroup = GroupService.getRootGroup(IPerson.class);
         for (Map.Entry<String,Set<String>> y : permissionsMap.entrySet()) {
@@ -122,20 +128,25 @@ public class PortletPermissionsCachePrimer {
                 final IPermissionActivity activity = permissionOwnerDao.getPermissionActivity(y.getKey(), s);
                 final IPermissionTargetProvider targetProvider = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey());
                 final NodeWalker walker = new NodeWalker(rootGroup, owner, activity, targetProvider);
-                final Future<Long> future = this.executor.submit(walker);
+                final Future<NodeWalkerReport> future = this.executor.submit(walker);
                 futures.put(walker, future);
             }
         }
 
-        for (Map.Entry<NodeWalker,Future<Long>> y : futures.entrySet()) {
+        int totalCombinations = 0;
+        for (Map.Entry<NodeWalker,Future<NodeWalkerReport>> y : futures.entrySet()) {
             try {
-                log.debug("NodeWalker '{}' completed in {}ms", y.getKey(), y.getValue().get());
+                final NodeWalkerReport report = y.getValue().get();
+                totalCombinations += report.getCombinationCount();
+                log.debug("NodeWalker '{}' processed {} combinations in {}ms",
+                        y.getKey(), report.getCombinationCount(), report.getDuration());
             } catch (InterruptedException | ExecutionException e) {
                 log.error("NodeWalker '{}' failed", y.getKey());
             }
         }
 
-        log.info("COMPLETED PortletPermissionsCachePrimer.primeCache() in {}ms", Long.toString(System.currentTimeMillis() - timestamp));
+        log.info("COMPLETED PortletPermissionsCachePrimer.primeCache();  processed {} total combinations in {}ms",
+                totalCombinations, Long.toString(System.currentTimeMillis() - timestamp));
 
     }
 
@@ -143,7 +154,7 @@ public class PortletPermissionsCachePrimer {
      * Nested Types
      */
 
-    private /* non-static */ final class NodeWalker implements Callable<Long> {
+    private /* non-static */ final class NodeWalker implements Callable<NodeWalkerReport> {
 
         final IEntityGroup rootGroup;
         final IPermissionOwner owner;
@@ -158,13 +169,15 @@ public class PortletPermissionsCachePrimer {
         }
 
         @Override
-        public Long call() throws Exception {
+        public NodeWalkerReport call() throws Exception {
+            final NodeWalkerReport rslt = new NodeWalkerReport();
             final long timestamp = System.currentTimeMillis();
-            walk(rootGroup, new HashSet<EntityIdentifier>());
-            return System.currentTimeMillis() - timestamp;
+            walk(rootGroup, new HashSet<EntityIdentifier>(), rslt);
+            rslt.setDuration(System.currentTimeMillis() - timestamp);
+            return rslt;
         }
 
-        private void walk(IEntityGroup group, Set<EntityIdentifier> visitedNodes) {
+        private void walk(final IEntityGroup group, final Set<EntityIdentifier> visitedNodes, final NodeWalkerReport report) {
 
             /*
              * Recursive groups structures are a bad idea, but
@@ -184,6 +197,7 @@ public class PortletPermissionsCachePrimer {
                 final String targetString = PermissionHelper.permissionTargetIdForPortletDefinition(pdef);
                 final IPermissionTarget target = targetProvider.getTarget(targetString);
                 policy.loadInCache(authorizationService, principal, owner, activity, target);
+                report.incrementCombinationCount();
             }
 
             /*
@@ -195,7 +209,7 @@ public class PortletPermissionsCachePrimer {
                 for (IGroupMember next = (IGroupMember) members.next(); members.hasNext(); next = (IGroupMember) members.next()) {
                     if (next.isGroup()) {
                         IEntityGroup child = (IEntityGroup) next;
-                        walk(child, visitedNodes);
+                        walk(child, visitedNodes, report);
                     }
                 }
             }
@@ -205,6 +219,26 @@ public class PortletPermissionsCachePrimer {
         @Override
         public String toString() {
             return "NodeWalker [rootGroup=" + rootGroup + ", owner=" + owner + ", activity=" + activity + "]";
+        }
+
+    }
+
+    private static final class NodeWalkerReport {
+
+        private int combinationCount;
+        private long duration;
+
+        public int getCombinationCount() {
+            return combinationCount;
+        }
+        public void incrementCombinationCount() {
+            combinationCount += 1;
+        }
+        public long getDuration() {
+            return duration;
+        }
+        public void setDuration(long duration) {
+            this.duration = duration;
         }
 
     }
