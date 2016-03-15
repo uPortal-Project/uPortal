@@ -640,10 +640,12 @@
                     <isset property="dir" />
                     <isset property="file" />
                     <isset property="archive" />
+                    <isset property="files" />
+                    <isset property="filesListFile" />
                 </xor>
             </not>
             <then>
-                <fail>Either '-Ddir' or '-Dfile' or '-Darchive' must be specified for data import</fail>
+                <fail>One of either '-Ddir' or '-Dfile' or '-Darchive' or '-Dfiles' or '-DfilesListFile' must be specified for data import</fail>
             </then>
         </if>
 
@@ -651,21 +653,35 @@
         <property name="pattern" value=" " />
         <property name="file" value=" " />
         <property name="dir" value=" " />
-    	<property name="archive" value=" " />
+        <property name="archive" value=" " />
+        <property name="files" value=" " />
+        <property name="filesListFile" value=" " />
 
         <groovy-safe-path property="dirFullEscaped" input="${dir}" />
         <groovy-safe-path property="fileFullEscaped" input="${file}" />
-    	<groovy-safe-path property="archiveFullEscaped" input="${archive}" />
+        <groovy-safe-path property="archiveFullEscaped" input="${archive}" />
         <groovy-safe-path property="targetDirEscaped" input="${targetdir}" />
-
+        <groovy-safe-path property="filesFullEscaped" input="${files}" />
+        <groovy-safe-path property="filesListFileFullEscaped" input="${filesListFile}" />
 
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
-            //dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir)
+            //dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir)
+            String file = /${fileFullEscaped}/;
+            String files = /${filesFullEscaped}/;
+            String filesListFile = /${filesListFileFullEscaped}/;
+            String fileOrFilesFullEscaped = "";
+            if (!file.isAllWhitespace()) {
+                fileOrFilesFullEscaped = file;
+            } else if (!files.isAllWhitespace()) {
+                fileOrFilesFullEscaped = files;
+            } else if (!filesListFile.isAllWhitespace()) {
+                fileOrFilesFullEscaped = portalShellBuildHelper.getFilesListFromFile(filesListFile);
+            }
             portalShellBuildHelper.dataImport("data-import", 
                 /${dirFullEscaped}/,
                 /${pattern}/,
-                /${fileFullEscaped}/,
+                fileOrFilesFullEscaped,
                 /${archiveFullEscaped}/,
                 /${targetDirEscaped}/);
         </echo>

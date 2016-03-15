@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.shell;
 
+import java.io.IOException;
+
 public interface PortalShellBuildHelper {
 
     void dbTest();
@@ -41,7 +43,7 @@ public interface PortalShellBuildHelper {
     @Deprecated
     void dataImport(String target, String dataDir, String pattern, String file, String logDir);
 
-    void dataImport(String target, String dataDir, String pattern, String file, String archive, String logDir);
+    void dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir);
 
     void dataDelete(String target, String type, String sysid);
 
@@ -49,4 +51,5 @@ public interface PortalShellBuildHelper {
 
     void hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
 
+    String getFilesListFromFile(String filePathsFile) throws IOException;
 }
