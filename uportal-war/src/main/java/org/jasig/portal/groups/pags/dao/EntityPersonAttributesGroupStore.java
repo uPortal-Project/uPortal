@@ -69,6 +69,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
     private final Cache groupDefCache;
+    private final Cache membershipCache;
 
     public EntityPersonAttributesGroupStore() {
         super();
@@ -76,38 +77,49 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
         CacheManager cacheManager = applicationContext.getBean("cacheManager", CacheManager.class);
         this.groupDefCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore");
+        this.membershipCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership");
     }
 
     public boolean contains(IEntityGroup group, IGroupMember member) {
-        logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
-        PagsGroup groupDef = convertEntityToGroupDef(group);
-        if (member.isGroup())
-        {
-           String key = ((IEntityGroup)member).getLocalKey();
-           return groupDef.hasMember(key);
-        }
-        else
-        {
-           if (member.getEntityType() != IPERSON_CLASS)
-               { return false; }
-           IPerson person = null;
-           try {
-               IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
-               final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
 
-               RestrictedPerson rp = PersonFactory.createRestrictedPerson();
-               if (personAttributes != null) {
-                   rp.setAttributes(personAttributes.getAttributes());
+        final MembershipCacheKey cacheKey = new MembershipCacheKey(group.getEntityIdentifier(), member.getEntityIdentifier());
+        Element element = membershipCache.get(cacheKey);
+        if (element == null) {
+
+            logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
+
+            boolean answer = false;  // default
+            final PagsGroup groupDef = convertEntityToGroupDef(group);
+            if (member.isGroup()) {
+               final String key = ((IEntityGroup) member).getLocalKey();
+               answer = groupDef.hasMember(key);
+            } else {
+               if (member.getEntityType() != IPERSON_CLASS) {
+                   answer = false;
+               } else {
+                   try {
+                       final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
+                       final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
+
+                       if (personAttributes != null) {
+                           final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
+                           rp.setAttributes(personAttributes.getAttributes());
+                           answer = testRecursively(groupDef, rp, member);
+                       }
+                   } catch (Exception ex) {
+                       logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
+                       return false;
+                   }
                }
+            }
 
-               person = rp;
-           }
-           catch (Exception ex) {
-               logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
-               return false;
-           }
-           return testRecursively(groupDef, person, member);
+            element = new Element(cacheKey, answer);
+            membershipCache.put(element);
+
         }
+
+        return (Boolean) element.getObjectValue();
+
     }
 
     private PagsGroup convertEntityToGroupDef(IEntityGroup group) {
@@ -394,4 +406,47 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
         return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
     }
+
+    /*
+     * Nested Types
+     */
+
+    private static final class MembershipCacheKey {
+        private final EntityIdentifier groupId;
+        private final EntityIdentifier memberId;
+        public MembershipCacheKey(final EntityIdentifier groupId, final EntityIdentifier memberId) {
+            this.groupId = groupId;
+            this.memberId = memberId;
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
+            result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            MembershipCacheKey other = (MembershipCacheKey) obj;
+            if (groupId == null) {
+                if (other.groupId != null)
+                    return false;
+            } else if (!groupId.equals(other.groupId))
+                return false;
+            if (memberId == null) {
+                if (other.memberId != null)
+                    return false;
+            } else if (!memberId.equals(other.memberId))
+                return false;
+            return true;
+        }
+    }
+
 }

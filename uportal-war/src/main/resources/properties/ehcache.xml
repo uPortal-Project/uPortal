@@ -1875,6 +1875,9 @@
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!-- PAGS Store Cache, not replicated -->
     <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
