@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ExtendedPropertySourcesPlaceholderConfigurer;
+import org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;
@@ -66,7 +66,7 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired()
-    private ExtendedPropertySourcesPlaceholderConfigurer properties;
+    private PortalPropertySourcesPlaceholderConfigurer properties;
 
     @Autowired()
     private IPortalUrlProvider portalUrlProvider;
@@ -82,7 +82,7 @@ public final class JspInvokerPortletController implements ApplicationContextAwar
         this.applicationContext = applicationContext;
     }
 
-    public void setProperties(ExtendedPropertySourcesPlaceholderConfigurer props) {
+    public void setProperties(PortalPropertySourcesPlaceholderConfigurer props) {
         this.properties = props;
     }
 
