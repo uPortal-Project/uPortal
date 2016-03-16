@@ -19,7 +19,11 @@
 package org.springframework.context.support;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -28,15 +32,66 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertyResolver;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySourcesPropertyResolver;
+import org.springframework.core.io.Resource;
 
 
 /**
+ * Custom extension of {@link PropertySourcesPlaceholderConfigurer} that serves
+ * two purposes:
+ * <ul>
+ *   <li>Override postProcessing to provide access to "local" properties before
+ *   bean post-processing has completed</li>
+ *   <li>Force configuration setting ignoreResourceNotFound=true and (safely)
+ *   ignore noisy WARNings in the log concerning missing properties files that
+ *   are optional</li>
+ * </ul>
+ *
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public class ExtendedPropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
+public class PortalPropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
     public static final String EXTENDED_PROPERTIES_SOURCE = "extendedPropertiesSource";
 
     private PropertyResolver propertyResolver;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public PortalPropertySourcesPlaceholderConfigurer() {
+        /*
+         * We rely on this config for our optional properties files
+         */
+        super.setIgnoreResourceNotFound(true);
+    }
+
+    @Override
+    public void setIgnoreResourceNotFound(boolean value) {
+        if (value == false) {
+            final String msg = "Instances of PortalPropertySourcesPlaceholderConfigurer "
+                                            + "are always ignoreResourceNotFound=true";
+            throw new UnsupportedOperationException(msg);
+        }
+    }
+
+    /**
+     * uPortal defines some properties files in its primaryPropertyPlaceholderConfigurer
+     * bean that are considered (and documented) optional.  The parent class
+     * (PropertySourcesPlaceholderConfigurer) will operate properly without them, but
+     * puts a significant number of WARN messages into the log.  These are noisy, and
+     * could lead a new adopter to think that something's wrong.  This method removes
+     * absent properties files from the collection.
+     */
+    @Override
+    public void setLocations(Resource[] locations) {
+        final List<Resource> list = new ArrayList<>();
+        for (Resource r : locations) {
+            if (r.exists()) {
+                list.add(r);
+            } else {
+                // In our case this event is worth a DEBUG note.
+                logger.debug("The following Resource was not present (it may be "
+                        + "optional, or it's absence may lead to issues):  ", r);
+            }
+        }
+        super.setLocations(list.toArray(new Resource[0]));
+    }
 
 
     /**
