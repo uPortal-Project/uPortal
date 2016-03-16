@@ -36,13 +36,39 @@ import org.springframework.core.io.Resource;
 
 
 /**
+ * Custom extension of {@link PropertySourcesPlaceholderConfigurer} that serves
+ * two purposes:
+ * <ul>
+ *   <li>Override postProcessing to provide access to "local" properties before
+ *   bean post-processing has completed</li>
+ *   <li>Force configuration setting ignoreResourceNotFound=true and (safely)
+ *   ignore noisy WARNings in the log concerning missing properties files that
+ *   are optional</li>
+ * </ul>
+ *
  * @author Josh Helmer, jhelmer@unicon.net
  */
-public class ExtendedPropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
+public class PortalPropertySourcesPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
     public static final String EXTENDED_PROPERTIES_SOURCE = "extendedPropertiesSource";
 
     private PropertyResolver propertyResolver;
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    public PortalPropertySourcesPlaceholderConfigurer() {
+        /*
+         * We rely on this config for our optional properties files
+         */
+        super.setIgnoreResourceNotFound(true);
+    }
+
+    @Override
+    public void setIgnoreResourceNotFound(boolean value) {
+        if (value == false) {
+            final String msg = "Instances of PortalPropertySourcesPlaceholderConfigurer "
+                                            + "are always ignoreResourceNotFound=true";
+            throw new UnsupportedOperationException(msg);
+        }
+    }
 
     /**
      * uPortal defines some properties files in its primaryPropertyPlaceholderConfigurer

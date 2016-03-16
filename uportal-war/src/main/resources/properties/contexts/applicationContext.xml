@@ -44,7 +44,7 @@
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\."/>
     </context:component-scan>
     
-    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.ExtendedPropertySourcesPlaceholderConfigurer">
+    <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
         <property name="locations">
             <list>
               <value>classpath:/properties/rdbm.properties</value>
@@ -78,7 +78,6 @@
               <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
             </list>
         </property>
-        <property name="ignoreResourceNotFound" value="true" />
     </bean>
 
     <!-- resolver that can be used to dynamically look up property values at run-time -->
