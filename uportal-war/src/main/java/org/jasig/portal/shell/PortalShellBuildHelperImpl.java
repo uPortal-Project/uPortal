@@ -18,15 +18,13 @@
  */
 package org.jasig.portal.shell;
 
-import java.io.IOException;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.google.common.io.Files;
 import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserIdentityStore;
@@ -43,6 +41,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 
 /**
  * Utility used by the groovy scripts generated in build.xml and passed into PortalShell 
@@ -389,19 +388,21 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
     }
 
     @Override
-    public String getFilesListFromFile(String filePathsFile) throws IOException {
-        String filepaths = "";
-        List<String> lines = Files.readLines(new File(filePathsFile), Charsets.UTF_8);
-        boolean isFirst = true;
-        for (String line : lines) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                filepaths += ",";
-            }
-            filepaths += line;
+    public String getFilesListStringFromInput(String file, String files, String filesListFile) throws IOException {
+        if (StringUtils.isNotBlank(file)) {
+            return file;
+        } else if (StringUtils.isNotBlank(files)) {
+            return files;
+        } else if (StringUtils.isNotBlank(filesListFile)) {
+            return this.getFilesListStringFromFilesListFile(filesListFile);
+        } else {
+            return "";
         }
-        return filepaths;
+    }
+
+    private String getFilesListStringFromFilesListFile(String filesListFile) throws IOException {
+        List<String> lines = Files.readLines(new File(filesListFile), Charsets.UTF_8);
+        return StringUtils.join(lines, ",");
    }
 
 }

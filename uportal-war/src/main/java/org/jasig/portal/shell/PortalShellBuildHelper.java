@@ -51,5 +51,5 @@ public interface PortalShellBuildHelper {
 
     void hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
 
-    String getFilesListFromFile(String filePathsFile) throws IOException;
+    String getFilesListStringFromInput(String file, String files, String filesListFile) throws IOException;
 }

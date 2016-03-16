@@ -667,21 +667,10 @@
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
             //dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir)
-            String file = /${fileFullEscaped}/;
-            String files = /${filesFullEscaped}/;
-            String filesListFile = /${filesListFileFullEscaped}/;
-            String fileOrFilesFullEscaped = "";
-            if (!file.isAllWhitespace()) {
-                fileOrFilesFullEscaped = file;
-            } else if (!files.isAllWhitespace()) {
-                fileOrFilesFullEscaped = files;
-            } else if (!filesListFile.isAllWhitespace()) {
-                fileOrFilesFullEscaped = portalShellBuildHelper.getFilesListFromFile(filesListFile);
-            }
             portalShellBuildHelper.dataImport("data-import", 
                 /${dirFullEscaped}/,
                 /${pattern}/,
-                fileOrFilesFullEscaped,
+                portalShellBuildHelper.getFilesListStringFromInput(/${fileFullEscaped}/,/${filesFullEscaped}/,/${filesListFileFullEscaped}/),
                 /${archiveFullEscaped}/,
                 /${targetDirEscaped}/);
         </echo>
