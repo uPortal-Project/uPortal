@@ -63,6 +63,19 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
         
+        <!--
+         | Replacing the 3.2 jar with the 3.2.2 version because of the
+         | deserialization vulnerability.  When the version of CAS is updated,
+         | this dependency can (probably) be removed.  Pegging this version to
+         | 3.2.2, rather than following uPortal's version, because if uPortal
+         | moves to a later version it may not work with this CAS.
+         +-->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+        
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -191,6 +204,7 @@
                             <artifactId>cas-server-webapp</artifactId>
                             <excludes>
                                 <exclude>WEB-INF/lib/cas-client-core-3.2.1.jar</exclude>
+                                <exclude>WEB-INF/lib/commons-collections*jar</exclude>
                                 <exclude>WEB-INF/lib/xml-apis-1.0.b2.jar</exclude>
                             </excludes>
                         </overlay>
