@@ -208,7 +208,7 @@
         <org.springframework.webflow.version>2.3.2.RELEASE</org.springframework.webflow.version>
         <oro.version>2.0.8</oro.version>
         <persistence-api.version>1.0</persistence-api.version>
-        <person-directory.version>1.7.1-M1</person-directory.version>
+        <person-directory.version>1.7.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <quartz.version>2.2.1</quartz.version>
         <resource-server.version>1.0.43</resource-server.version>
