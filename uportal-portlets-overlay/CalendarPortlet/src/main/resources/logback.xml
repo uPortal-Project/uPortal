@@ -29,8 +29,8 @@
 <configuration scan="true" scanPeriod="30 seconds">
   <contextName>calendar</contextName>
 
-  <!-- 
-   | Propagate log levels to java.util.logging 
+  <!--
+   | Propagate log levels to java.util.logging
    +-->
   <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
     <resetJUL>true</resetJUL>
@@ -42,7 +42,7 @@
   <jmxConfigurator />
 
   <!-- 
-   | Specify a local property that sets up the logging directory
+   | Specify a local property that sets up the logging directory (to tomcat's logs directory).
    +-->
   <property scope="local" name="LOG_DIR" value="${environment.build.log.logfileDirectory}" />
 
@@ -98,10 +98,10 @@
     <!-- Enable to troubleshoot Exchange Web Services messages at the wire level. -->
     <!--
     <logger name="org.apache.http.wire" additivity="false" level="DEBUG">
-        <appender-ref ref="USD" />
+        <appender-ref ref="LOG" />
     </logger>
     <logger name="org.springframework.ws" additivity="false" level="DEBUG">
-        <appender-ref ref="USD" />
+        <appender-ref ref="LOG" />
     </logger>
     -->
 

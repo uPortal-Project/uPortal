@@ -126,11 +126,12 @@
         <AnnouncementsPortlet.version>2.2.0-M1</AnnouncementsPortlet.version>
         <basiclti-portlet.version>1.4.2</basiclti-portlet.version>
         <BookmarksPortlet.version>1.1.1</BookmarksPortlet.version>
-        <CalendarPortlet.version>2.2.1</CalendarPortlet.version>
+        <CalendarPortlet.version>2.3.1</CalendarPortlet.version>
         <cas-server.version>3.5.2.1</cas-server.version>
         <cas-proxy-test-portlet.version>1.0.0-RC3</cas-proxy-test-portlet.version>
         <email-preview.version>2.2.0</email-preview.version>
         <FunctionalTestsPortlet.version>1.1.4</FunctionalTestsPortlet.version>
+        <jasig-widget-portlets.version>2.2.1</jasig-widget-portlets.version>
         <jasig-widget-portlets.version>2.2.0</jasig-widget-portlets.version>
         <NewsReaderPortlet.version>4.0.0</NewsReaderPortlet.version>
         <NotificationPortlet.version>2.1.1</NotificationPortlet.version>
