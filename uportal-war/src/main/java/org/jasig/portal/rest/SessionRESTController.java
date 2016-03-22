@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.jasig.portal.events.IPortalEventFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
+import org.jasig.portal.security.IdentitySwapperManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class SessionRESTController {
 
     private IPersonManager personManager;
     private IPortalEventFactory portalEventFactory;
+    private IdentitySwapperManager swapperManager;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
     private String uPortalVersion;
@@ -56,6 +58,11 @@ public class SessionRESTController {
     @Autowired(required = true)
     public void setPersonManager(IPersonManager personManager) {
         this.personManager = personManager;
+    }
+    
+    @Autowired(required = true)
+    public void setSwapperManager(IdentitySwapperManager ism) {
+      this.swapperManager = ism;
     }
     
     @Autowired
@@ -81,6 +88,13 @@ public class SessionRESTController {
             attributes.put("displayName", person.isGuest() ? "Guest" : person.getFullName());
             attributes.put("sessionKey", person.isGuest() ? null: key); //only provide keys to non guest users
             attributes.put("version", uPortalVersion);
+            if(swapperManager != null) {
+              String originalUsername = swapperManager.getOriginalUsername(session);
+              if(originalUsername != null) {
+                attributes.put("originalUsername", originalUsername);
+              }
+            }
+            
             try {
                 attributes.put("serverName", InetAddress.getLocalHost().getHostName());
             } catch (UnknownHostException e) {
