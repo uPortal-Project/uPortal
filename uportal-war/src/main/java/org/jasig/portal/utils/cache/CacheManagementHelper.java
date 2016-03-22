@@ -36,11 +36,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-
 /**
  * This class exposes some limited functions around the provided
- * {@link CacheManager}.
+ * {@link CacheManager}.  It is used within SpEL expressions by the Cache
+ * Manager portlet.
  * 
  * @author Nicholas Blair, npblair@wisc.edu
  *
