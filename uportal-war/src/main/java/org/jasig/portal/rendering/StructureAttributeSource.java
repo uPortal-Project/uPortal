@@ -22,6 +22,8 @@ package org.jasig.portal.rendering;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Returns structure stylesheet descriptor and preferences data
@@ -30,8 +32,15 @@ import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScop
  * @version $Revision$
  */
 public class StructureAttributeSource extends StylesheetAttributeSource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StructureAttributeSource.class);
+
     @Override
     public PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request) {
         return PreferencesScope.STRUCTURE;
+    }
+
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 }
