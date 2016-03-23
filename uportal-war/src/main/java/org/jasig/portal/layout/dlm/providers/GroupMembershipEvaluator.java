@@ -35,6 +35,8 @@ import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -53,10 +55,9 @@ import org.jasig.portal.services.GroupService;
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class GroupMembershipEvaluator extends Evaluator
-{
+public class GroupMembershipEvaluator extends Evaluator {
     private static final int MEMBER_OF_MODE = 0;
-    
+
     private static final int DEEP_MEMBER_OF_MODE = 1;
 
     @Column(name = "GROUP_NAME")
@@ -132,6 +133,15 @@ public class GroupMembershipEvaluator extends Evaluator
               return false;
           
           IEntityGroup group = getGroup(groupKey);
+
+          // Should not happen, but with the XML to Entity PAGS change some sites may have altered their configuration
+          // but not updated their group keys in the database or vice versa, especially with an update.  To help
+          // troubleshoot this, try to catch this error and give a bit more useful error message than you'd get from
+          // the lower-level methods.
+          if (group == null) {
+              throw new RuntimeException("Error in evaluation. Group key " + groupKey + " for group name "
+                      + groupName + " did not find a group.");
+          }
           EntityIdentifier ei = p.getEntityIdentifier();
           
           try
