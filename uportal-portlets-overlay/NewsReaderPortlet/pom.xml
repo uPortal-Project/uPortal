@@ -40,7 +40,20 @@
             <scope>compile</scope>
         </dependency>
 
+         <!--
+         | UP-4643:  Replacing the 3.2 jar with the 3.2.2 version because of the
+         | deserialization vulnerability.  When the version of this portlet is updated,
+         | this dependency can (probably) be removed.  Pegging this version to
+         | 3.2.2, rather than following uPortal's version, because if uPortal
+         | moves to a later version it may not work with this this portlet.
+         +-->
         <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+
+       <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlet-api.version}</version>
@@ -84,7 +97,8 @@
                          to determine if a resource is available there, which allows for browser caching of common
                          libraries -->
                     <dependentWarExcludes>
-                        WEB-INF/lib/hsqldb-*.jar
+                        WEB-INF/lib/hsqldb-*.jar,
+                        WEB-INF/lib/commons-collections*jar
                     </dependentWarExcludes>
                 </configuration>
             </plugin>
