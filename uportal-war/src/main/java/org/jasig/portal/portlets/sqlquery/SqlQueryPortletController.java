@@ -71,11 +71,6 @@ public class SqlQueryPortletController extends AbstractController {
     public static final String DEFAULT_CACHE_NAME = "org.jasig.portal.portlets.sqlquery.SqlQueryPortletController.queryResults";
 
     /**
-     * True (default) to have sql results cached per-user if caching is enabled.
-     */
-    public static final String PREF_CACHE_PER_USER = "perUserCache";
-
-    /**
      * The bean name of the DataSource against which this portlet will
      * execute the SQL query is specified as a portlet preference parameter named
      * "dataSource".  This parameter is optional, defaulting to the uPortal 

@@ -71,9 +71,10 @@ public interface IPermission {
    */
   public static final String PORTLET_MANAGER_MAINTENANCE_ACTIVITY = "MANAGE_MAINTENANCE";
 
-  /*
-   * All management permissions in one handy array
+  /**
+   * All management permissions in one handy array.  Used within the edit-portlet flow.
    */
+  @SuppressWarnings("ucd")
   public static final String[] PORTLET_MANAGER_MANAGE_ACTIVITIES = new String[] {
       PORTLET_MANAGER_CREATED_ACTIVITY, PORTLET_MANAGER_APPROVED_ACTIVITY,
       PORTLET_MANAGER_ACTIVITY, PORTLET_MANAGER_EXPIRED_ACTIVITY,

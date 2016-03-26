@@ -53,14 +53,12 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 /**
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Service
 public class FragmentActivator
 {
     private static final String NEWLY_CREATED_ATTR = "newlyCreated";
-    public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(FragmentActivator.class);
 
     private final LoadingCache<String, List<Locale>> fragmentOwnerLocales = CacheBuilder.newBuilder()

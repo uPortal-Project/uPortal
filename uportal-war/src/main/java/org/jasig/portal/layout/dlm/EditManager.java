@@ -37,8 +37,6 @@ import org.w3c.dom.Node;
  */
 public class EditManager
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     private static IUserLayoutStore dls = null;
     private static final Log LOG = LogFactory.getLog(EditManager.class);
 

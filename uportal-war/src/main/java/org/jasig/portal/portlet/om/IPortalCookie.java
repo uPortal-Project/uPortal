@@ -27,11 +27,9 @@ import org.joda.time.DateTime;
  * Portlet Cookies to one HTTP Cookie.
  * 
  * @author Nicholas Blair
- * @version $Id$
  */
 public interface IPortalCookie {
-	
-	public static final String PORTAL_COOKIE_NAME = IPortalCookie.class.getPackage().getName() + ".PORTLET_COOKIE_TOKEN";
+
 	/**
 	 * 
 	 * @return the unique value for this cookie

@@ -35,7 +35,6 @@ import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Entity
@@ -47,9 +46,8 @@ public class Paren extends EvaluatorGroup {
         AND,
         NOT;
     }
-    
+
     // Static Members.
-    public static final String RCS_ID = "@(#) $Header$";
     private static Log LOG = LogFactory.getLog(Paren.class);
 
     // Instance Members.

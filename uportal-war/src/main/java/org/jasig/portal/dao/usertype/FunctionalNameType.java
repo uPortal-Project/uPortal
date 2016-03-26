@@ -33,7 +33,6 @@ public class FunctionalNameType extends AbstractSingleColumnUserType<String, Str
     private static final long serialVersionUID = 1L;
     
     public static final Pattern INVALID_CHARS_PATTERN = Pattern.compile("[^\\w-]");
-    public static final Pattern VALID_CHARS_PATTERN = Pattern.compile("[\\w-]");
     public static final Pattern VALID_FNAME_PATTERN = Pattern.compile("^[\\w-]+$");
     
     public static void validate(String fname) {

@@ -43,8 +43,6 @@ import org.jasig.portal.security.IPerson;
 public class AttributeEvaluator
     extends Evaluator
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     public static final int CONTAINS = 0;
     public static final int EQUALS = 1;
     public static final int STARTS_WITH = 2;

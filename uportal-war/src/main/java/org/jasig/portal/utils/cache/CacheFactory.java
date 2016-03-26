@@ -29,7 +29,6 @@ import net.sf.ehcache.Ehcache;
  * if they do not.
  *
  * @author Scott Battaglia
- * @version $Revision$ $Date$
  * @deprecated Inject the {@link Ehcache} instances directly into spring managed beans using @Qualifier to specify the cache name
  */
 public interface CacheFactory {
@@ -38,12 +37,6 @@ public interface CacheFactory {
     public static final String PRINCIPAL_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
     
     public static final String ENTITY_PARENTS_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE";
-
-	/** The cache to be used to hold names. */
-    public static final String NAME_CACHE = "org.jasig.portal.groups.CompositeEntityIdentifier.NAME_PARSE_CACHE";
-
-	/** The cache to be used to hold content. */
-    public static final String CONTENT_CACHE = "org.jasig.portal.channels.CONTENT_CACHE";
 
     /** Generic default cache that can be used for anything */
     public static final String DEFAULT = "org.jasig.portal.utils.cache.DEFAULT_CACHE";

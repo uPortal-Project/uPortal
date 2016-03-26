@@ -28,12 +28,10 @@ import org.w3c.dom.Element;
 /** 
  * Applies user prefs changes to the user's plf prior to persisting.
  * 
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class TabColumnPrefsHandler
 {
-    public static final String RCS_ID = "@(#) $Header$";
     private static Log LOG = LogFactory.getLog(TabColumnPrefsHandler.class);
 
     /**

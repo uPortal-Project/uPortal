@@ -92,14 +92,12 @@ import com.google.common.cache.Cache;
  * Simple Layout Manager implementation.
  *
  * @author George Lindholm
- * @version $Revision$ $Date$
  */
 public abstract class RDBMUserLayoutStore implements IUserLayoutStore, InitializingBean {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private static String PROFILE_TABLE = "UP_USER_PROFILE";
 
-    protected static final String DEFAULT_LAYOUT_FNAME = "default";
     private static final String UNSUPPORTED_MULTIPLE_LAYOUTS_FOUND = "User ID {}'s profiles contain more than one non-zero layout id.  This is currently not supported.";
 
     //This class is instantiated ONCE so NO class variables can be used to keep state between calls

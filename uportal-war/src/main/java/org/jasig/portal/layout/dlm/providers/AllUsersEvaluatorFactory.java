@@ -43,8 +43,6 @@ import org.w3c.dom.Node;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class AllUsersEvaluatorFactory extends Evaluator implements EvaluatorFactory
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     @Override
     public Evaluator getEvaluator( Node audience )
     {

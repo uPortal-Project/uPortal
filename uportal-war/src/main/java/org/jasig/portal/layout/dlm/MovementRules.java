@@ -26,13 +26,10 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
  * the left or right of another node based on getMovedAllowed() and
  * getPrecedence().
  *
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class MovementRules
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     /**
        Returns true if hopper is allowed to hop in the rightward, higher-
        sibling direction over the node being hopped; nbh. This is determined

@@ -27,12 +27,10 @@ import java.util.Comparator;
  * of the fragments location within the config file. For those with equal
  * precedence the one defined first when loading the file should take
  * precedence.
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 
 public class FragmentComparator implements Comparator<FragmentDefinition> {
-    public static final String RCS_ID = "@(#) $Header$";
 
     public int compare(FragmentDefinition obj1, FragmentDefinition obj2) {
         FragmentDefinition frag1 = (FragmentDefinition) obj1;

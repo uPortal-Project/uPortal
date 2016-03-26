@@ -29,13 +29,10 @@ import org.w3c.dom.Element;
  * Utility functions for applying user changes to the user's plf prior
  * to persisting.
  * 
- * @version $Revision$Date$
  * @since uPortal 2.5
  */
 public class HandlerUtils
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     /**
        This method returns the PLF version of the passed in compViewNode. If
        create is false and a node with the same id is not found in the PLF then

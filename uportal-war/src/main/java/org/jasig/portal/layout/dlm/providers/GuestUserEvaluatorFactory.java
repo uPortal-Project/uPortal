@@ -39,15 +39,12 @@ import org.w3c.dom.Node;
  * Used to target a fragment only to guest users.
  * 
  * @author mboyd@sungardsct.com
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 @Entity
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class GuestUserEvaluatorFactory extends Evaluator implements EvaluatorFactory {
-    
-    public static final String RCS_ID = "@(#) $Header$";
 
     @Transient
     private final Log log = LogFactory.getLog(getClass());
