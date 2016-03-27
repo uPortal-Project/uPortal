@@ -51,12 +51,10 @@ import org.jasig.portal.rdbm.DatabaseMetaDataImpl;
 import org.jasig.portal.rdbm.IDatabaseMetadata;
 import org.jasig.portal.rdbm.IJoinQueryString;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.slf4j.Logger;
@@ -68,8 +66,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -110,11 +106,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
     private ILocaleStore localeStore;
     protected IDatabaseMetadata databaseMetadata;
-    protected IPersonManager personManager;
-    protected ICounterStore counterStore;
     protected IPortletDefinitionRegistry portletDefinitionRegistry;
     protected IStylesheetDescriptorDao stylesheetDescriptorDao;
-    protected SQLExceptionTranslator exceptionTranslator;
 
     // I18n property
     protected static final boolean localeAware = LocaleManager.isLocaleAware();
@@ -141,22 +134,11 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     @Resource(name=BasePortalJpaDao.PERSISTENCE_UNIT_NAME)
     public void setDataSource(DataSource dataSource) {
         this.jdbcOperations = new JdbcTemplate(dataSource);
-        this.exceptionTranslator = new SQLErrorCodeSQLExceptionTranslator(dataSource);
     }
 
     @Autowired
     public void setDatabaseMetadata(IDatabaseMetadata databaseMetadata) {
         this.databaseMetadata = databaseMetadata;
-    }
-
-    @Autowired
-    public void setPersonManager(IPersonManager personManager) {
-        this.personManager = personManager;
-    }
-
-    @Autowired
-    public void setCounterStore(ICounterStore counterStore) {
-        this.counterStore = counterStore;
     }
 
     @Autowired

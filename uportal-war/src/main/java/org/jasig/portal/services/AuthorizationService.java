@@ -152,17 +152,6 @@ public class AuthorizationService
    {
        return m_authorization.newPrincipal(groupMember);
    }
-   
-  /**
-   * @param permission
-   * @return org.jasig.portal.security.IAuthorizationPrincipal
-   * @exception org.jasig.portal.AuthorizationException
-   */
-  public IAuthorizationPrincipal newPrincipal(IPermission permission)
-         throws AuthorizationException
-  {
-       return m_authorization.getPrincipal(permission);
-  }
 
   /**
    * @param owner java.lang.String

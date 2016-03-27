@@ -258,12 +258,7 @@ throws org.jasig.portal.AuthorizationException
 private void initialize() {
     principalString = getAuthorizationService().getPrincipalString(this); 
 }
-/**
- * @param newAuthorizationService org.jasig.portal.security.IAuthorizationService
- */
-void setAuthorizationService(IAuthorizationService newAuthorizationService) {
-    authorizationService = newAuthorizationService;
-}
+
 /**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver

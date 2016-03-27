@@ -18,11 +18,9 @@
  */
 package org.jasig.portal.groups;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.naming.InvalidNameException;
@@ -40,7 +38,6 @@ import com.google.common.cache.LoadingCache;
  * the key that identifies the entity in the local service.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class CompositeEntityIdentifier extends org.jasig.portal.EntityIdentifier 
 implements IGroupConstants
@@ -116,30 +113,7 @@ public synchronized String getLocalKey() {
         { cachedLocalKey = getCompositeKey().get(size() - 1); }
     return cachedLocalKey;
 }
-/**
- * @return javax.naming.NameParser
- */
-protected NameParser getParser() 
-{
-    return new NameParser() 
-    {
-        public Name parse(String s) throws InvalidNameException
-        {
-            int start = 0;
-            int separatorLength = separator.length();
-            int end = s.indexOf(separator, start);
-            List<String> list = new ArrayList<String>(4);
-            while (end != -1)
-            {
-                list.add(s.substring(start,end));
-                start = end + separatorLength;
-                end = s.indexOf(separator, start);
-            }
-            list.add(s.substring(start));
-            return new CompositeEntityIdentifier.NameImpl(list);
-        }
-    };
-}
+
 /**
  * If the composite key is either empty or has a single node, there is
  * no service name.
@@ -159,20 +133,6 @@ public synchronized Name getServiceName()
 public Name newName() throws InvalidNameException
 {
     return new NameImpl();
-}
-/**
- * @return String - the removed component
- */
-public String popNode() throws InvalidNameException
-{
-    return (String)getCompositeKey().remove(0);
-}
-/**
- * @return javax.naming.Name
- */
-public Name pushNode(String newNode) throws InvalidNameException
-{
-    return getCompositeKey().add(0,newNode);
 }
 /**
  * @param newCompositeKey javax.naming.Name
