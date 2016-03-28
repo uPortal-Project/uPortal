@@ -23,14 +23,14 @@ import org.springframework.binding.message.MessageContext;
 import org.springframework.stereotype.Component;
 
 /**
- * Validator for the permission editing subflow.
- * 
+ * This class validates {@link PermissionDefinitionForm} objects through the magic of
+ * Webflow:  http://docs.spring.io/spring-webflow/docs/current/reference/html/views.html#view-validation-programmatic-validator
+ *
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Component
 public class PermissionDefinitionFormValidator {
-    
+
     public void validateEditPermission(PermissionDefinitionForm form, MessageContext messageContext) {
 
         // ensure at least one principal has been assigned

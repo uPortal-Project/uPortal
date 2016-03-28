@@ -50,12 +50,10 @@ import org.w3c.dom.Node;
  * in the document identifier cache. No changes are made to the source
  * fragments passed in.
  * 
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class ILFBuilder
 {
-    public static final String RCS_ID = "@(#) $Header$";
     private static final Log LOG = LogFactory.getLog(ILFBuilder.class);
 
     public static Document constructILF( Document PLF, List<Document> sequence, IPerson person)

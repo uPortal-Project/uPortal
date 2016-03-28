@@ -23,13 +23,10 @@ import org.w3c.dom.Document;
 
 
 /**
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 class UserView
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     private final int userId;
     Document layout = null;
     int layoutId = 0;

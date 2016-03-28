@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
  * @author Eric Dalquist
  */
 public abstract class AbstractHttpServletResponseWrapper implements HttpServletResponse {
-    public static final String PORTAL_ATTRIBUTE_PREFIX = "org.jasig.portal.";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     

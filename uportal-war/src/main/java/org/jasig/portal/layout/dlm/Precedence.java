@@ -22,13 +22,10 @@ import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 
 /**
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public final class Precedence
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     private double precedence = 0.0;
     private int index = -1;
     private static Precedence userPrecedence = new Precedence();

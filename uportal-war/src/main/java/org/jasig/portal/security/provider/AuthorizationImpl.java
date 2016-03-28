@@ -222,17 +222,6 @@ protected void cacheRemove(IAuthorizationPrincipal ap) throws AuthorizationExcep
         { throw new AuthorizationException("Problem removing permissions for " + ap + " from cache", ce); }
 }
 
-/**
-* Updates the <code>IPermissionSet</code> in the entity cache.
-*/
-protected void cacheUpdate(IPermissionSet ps) throws AuthorizationException
-{
-    try
-        { EntityCachingService.getEntityCachingService().update(ps); }
-    catch (CachingException ce)
-        { throw new AuthorizationException("Problem updating permissions for " + ps + " in cache", ce); }
-}
-
 @Override
 @RequestCache
 public boolean canPrincipalConfigure(IAuthorizationPrincipal principal, String portletDefinitionId) throws AuthorizationException {
@@ -837,17 +826,6 @@ throws AuthorizationException
 {
     String pString = getPrincipalString(principal);
     return primRetrievePermissions(owner, pString, activity, target);
-}
-
-
-/**
- * Factory method for an <code>IPermission</code>.
- * @param owner String
- * @return org.jasig.portal.security.Permission
- */
-public IPermission newPermission(String owner)
-{
-    return newPermission(owner, null);
 }
 
 /**

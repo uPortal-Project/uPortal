@@ -22,17 +22,14 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IPermissionStore;
 
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$
  */
 public class PermissionManagerImpl implements IPermissionManager
 {
     private AuthorizationImpl authorizationService;
-    protected static IPermissionStore permissionStore;
     private java.lang.String owner;
     
   /**

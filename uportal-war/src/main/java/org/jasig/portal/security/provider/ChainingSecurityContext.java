@@ -19,7 +19,6 @@
 package org.jasig.portal.security.provider;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * chain to children security contexts.</p>
  *
  * @author Andrew Newman, newman@yale.edu
- * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu)
  * Added a new method named getSubContextNames() that returns an Enumeration of names
  * for the subcontexts.
@@ -59,7 +57,6 @@ public abstract class ChainingSecurityContext implements ISecurityContext
   protected ChainingPrincipal myPrincipal;
   protected ChainingOpaqueCredentials myOpaqueCredentials;
   protected IAdditionalDescriptor myAdditionalDescriptor;
-  protected Comparator myOrder;
 
   public ChainingSecurityContext() {
     myPrincipal = new ChainingPrincipal();

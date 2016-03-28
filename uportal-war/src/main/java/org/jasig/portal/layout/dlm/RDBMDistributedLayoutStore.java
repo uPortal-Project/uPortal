@@ -114,7 +114,6 @@ import com.google.common.cache.Cache;
  * @since uPortal 2.5
  */
 public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
-    public static final String RCS_ID = "@(#) $Header$";
 
     private static final Pattern VALID_PATHREF_PATTERN = Pattern.compile(".+\\:/.+");
     private static final String BAD_PATHREF_MESSAGE = "## DLM: ORPHANED DATA ##";

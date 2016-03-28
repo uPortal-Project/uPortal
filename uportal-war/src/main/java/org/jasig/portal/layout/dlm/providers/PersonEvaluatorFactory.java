@@ -31,14 +31,11 @@ import org.w3c.dom.NodeList;
  * gets a layout fragment.
  *   
  * @author mboyd@sungardsct.com
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class PersonEvaluatorFactory
     implements EvaluatorFactory
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     private static final int OR = 0;
     private static final int AND = 1;
     private static final int NOT = 2;

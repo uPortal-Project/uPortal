@@ -21,8 +21,9 @@ package org.jasig.portal.security;
 import java.io.IOException;
 
 /**
+ * Used by the md5passwd task to update a user's password.
+ *
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPasswordUpdateTool {
     

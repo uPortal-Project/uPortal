@@ -29,13 +29,10 @@ import org.w3c.dom.NodeList;
  * storage (not part of the layout structure) to the user's plf prior to
  * persisting.
  * 
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class UserPrefsHandler
 {
-    public static final String RCS_ID = "@(#) $Header$";
-
     /**
        Records changes made to element attributes that are defined as being
        part of a user's user preferences object and not part of the layout.

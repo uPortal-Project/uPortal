@@ -22,12 +22,9 @@ import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class FunctionalNameColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;
-    
-    public static final char NOT_NULL_PREFIX = '_';
 
     @Override
     public String fromNonNullValue(String s) {

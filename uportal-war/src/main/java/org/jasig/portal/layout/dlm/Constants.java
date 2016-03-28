@@ -26,7 +26,6 @@ package org.jasig.portal.layout.dlm;
  * @since uPortal 2.5
  */
 public class Constants {
-    public static final String RCS_ID = "@(#) $Header$";
 
     // define the namespace prefixe on dlm elements and attributes.
     public static final String NS = "dlm:";

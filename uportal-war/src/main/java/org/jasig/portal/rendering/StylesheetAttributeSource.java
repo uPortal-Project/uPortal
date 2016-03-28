@@ -30,17 +30,12 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.springframework.beans.factory.BeanNameAware;
@@ -50,24 +45,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Base implementation of layout attribute source that feeds off of {@link IStylesheetDescriptor} and {@link IStylesheetUserPreferences} data
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class StylesheetAttributeSource implements AttributeSource, BeanNameAware {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
     private String name;
-    protected IUserInstanceManager userInstanceManager;
-    protected IStylesheetDescriptorDao stylesheetDescriptorDao;
     protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
-
-    @Autowired
-    public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
-        this.userInstanceManager = userInstanceManager;
-    }
-
-    @Autowired
-    public void setStylesheetDescriptorDao(IStylesheetDescriptorDao stylesheetDescriptorDao) {
-        this.stylesheetDescriptorDao = stylesheetDescriptorDao;
-    }
 
     @Autowired
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {

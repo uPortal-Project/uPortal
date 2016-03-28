@@ -72,15 +72,7 @@ public abstract class BaseJpaDao implements InitializingBean, ApplicationContext
     @Override
     public void afterPropertiesSet() throws Exception {
     }
-    
-    protected final <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass) {
-        final EntityManager entityManager = this.getEntityManager();
-        final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();
-        final CriteriaBuilder criteriaBuilder = entityManagerFactory.getCriteriaBuilder();
-        
-        return criteriaBuilder.parameter(paramClass);
-    }
-    
+
     protected final <T> ParameterExpression<T> createParameterExpression(Class<T> paramClass, String name) {
         final EntityManager entityManager = this.getEntityManager();
         final EntityManagerFactory entityManagerFactory = entityManager.getEntityManagerFactory();

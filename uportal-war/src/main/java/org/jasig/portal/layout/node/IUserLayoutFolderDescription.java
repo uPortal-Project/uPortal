@@ -40,18 +40,21 @@ public interface IUserLayoutFolderDescription extends IUserLayoutNodeDescription
      * Type attribute value of header folders.
      * @since uPortal 4.1
      */
+    @Deprecated
     public static final String HEADER_TYPE = "header";
 
     /**
      * Type attribute value of footer folders.
      * @since uPortal 4.1
      */
+    @Deprecated
     public static final String FOOTER_TYPE = "footer";
 
     /**
      * Type attribute value of sidebar folders.
      * @since uPortal 4.1
      */
+    @Deprecated
     public static final String SIDEBAR_TYPE = "sidebar";
 
     /**

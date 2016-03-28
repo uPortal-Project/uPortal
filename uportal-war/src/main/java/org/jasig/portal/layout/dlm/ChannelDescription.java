@@ -85,39 +85,7 @@ public class ChannelDescription extends UserLayoutChannelDescription
             plfId = null;
         this.plfId = plfId;
     }
-    /**
-     * For DLM parameters starting with the dlm namespace are reserved for use
-     * by DLM and hence can't be overridden. The channel published definition
-     * may restrict updating. And finally, a fragment may restrict updating.
-     */
-    public boolean getParameterOverrideValue(String parameterName)
-    {
-        if (parameterName.startsWith(Constants.NS)
-                || (fragmentChannelInfo != null))
-            return false;
-        return true;
-    }
-    
-    /**
-     * Shadowing version of the same method in UserLayoutNodeDescription to
-     * produce DLM specific instances for channels.
-     *
-     * @param xmlNode a user layout DTD folder/channel <code>Element</code> value
-     * @return an <code>UserLayoutNodeDescription</code> value
-     * @exception PortalException if the xml passed is somehow invalid.
-     */
-    public static UserLayoutNodeDescription createUserLayoutNodeDescription(
-            Element xmlNode) throws PortalException
-    {
-        // is this a channel ?
-        String nodeName = xmlNode.getNodeName();
-        if (nodeName.equals("channel"))
-            return new ChannelDescription(xmlNode);
-        else
-            return UserLayoutNodeDescription
-                    .createUserLayoutNodeDescription(xmlNode);
-    }
-    
+
     /**
      * Overridden constructor of super class.
      */

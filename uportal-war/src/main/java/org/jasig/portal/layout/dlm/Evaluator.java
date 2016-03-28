@@ -57,10 +57,6 @@ import org.jasig.portal.security.IPerson;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="EVALUATOR_TYPE")
 public abstract class Evaluator {
-    
-    public static final String RCS_ID = "@(#) $Header$";
-    
-    public static final String NAMESPACE_URI = "http://org.jasig.portal.layout.dlm.config";
 
     @SuppressWarnings("unused")
     @Id
