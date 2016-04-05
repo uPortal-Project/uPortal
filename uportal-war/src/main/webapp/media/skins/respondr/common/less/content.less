@@ -130,13 +130,12 @@ section h4 {
 
     .portlet-controls {
         position: absolute;
-        top: 2px;
+        top: 0;
         right: 0;
         margin: 0;
 
-        > a {
+        .portlet-options-menu > a {
             color: @portlet-options-link-color;
-            font-size: 11px;
             font-weight: normal;
             .caret {
                 border-top-color: @portlet-options-link-color;
@@ -152,6 +151,8 @@ section h4 {
 
         .grab-handle {
             display: inline-block;
+            position: relative;
+            top: 3px;
             font-size: 18px;
             margin-left: 3px;
         }
