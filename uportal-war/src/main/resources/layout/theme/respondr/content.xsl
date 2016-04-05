@@ -266,8 +266,10 @@
                       <xsl:otherwise></xsl:otherwise>
                   </xsl:choose>
               </xsl:variable>
-              <div class="hover-toolbar {$hideIfNotMovable}">
-                <xsl:call-template name="portlet-toolbar"/>
+              <div id="toolbar_{@ID}" class="up-portlet-titlebar hover-toolbar {$hideIfNotMovable}">
+                <xsl:call-template name="controls">
+                  <xsl:with-param name="STYLE">hamburger</xsl:with-param>
+                </xsl:call-template>
               </div>
               <!-- ****** START: PORTLET CONTENT ****** -->
               <div id="portletContent_{@ID}" class="up-portlet-content-wrapper"> <!-- Portlet content container. -->
@@ -302,7 +304,7 @@
   <!-- ============================================== -->
   <!-- Renders the portlet toolbar -->
   <xsl:template name="portlet-toolbar">
-    <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar round-top"> <!-- Portlet toolbar. -->
+    <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar up-standard-chrome round-top"> <!-- Portlet toolbar. -->
       <!-- Portlet Title -->
       <h2 class="portlet-title round-top">
         <xsl:variable name="portletMaxUrl">
@@ -317,7 +319,9 @@
         </xsl:variable>
         <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
         <a id="{@ID}" href="{$portletMaxUrl}"><xsl:value-of select="@title"/></a>
-        <xsl:call-template name="controls"/>
+        <xsl:call-template name="controls">
+          <xsl:with-param name="STYLE">standard</xsl:with-param>
+        </xsl:call-template>
       </h2>
     </div>
   </xsl:template>
@@ -365,60 +369,68 @@
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
   <xsl:template name="controls">
+      <xsl:param name="STYLE" />
       <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
-          <xsl:choose>
-              <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
-              <xsl:otherwise>movable</xsl:otherwise>
-          </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
+          <xsl:otherwise>movable</xsl:otherwise>
+        </xsl:choose>
       </xsl:variable>
 
       <div class="portlet-controls">
-          <!-- The 'grab-handle' class must be present on every portlet else fluid
-               will error when it encounters a portlet without the class.  Grab
-               handles for locked portlets will remain hidden. -->
-          <div class="grab-handle hidden">
-              <i class="fa fa-arrows"></i>
-          </div>
+        <!-- The 'grab-handle' class must be present on every portlet else fluid
+             will error when it encounters a portlet without the class.  Grab
+             handles for locked portlets will remain hidden. -->
+        <div class="grab-handle hidden">
+          <i class="fa fa-arrows"></i>
+        </div>
 
-    <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
-      <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
-      <ul class="dropdown-menu" style="right: 0; left: auto;">
-    <!--
-      Porlet Controls Display Order:
-      help, remove, maximize, minimize, info, print, settings, ...
-    -->
-      <xsl:variable name="hasHelp">
-          <xsl:if test="parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="hasAbout">
-          <xsl:if test="parameter[@name='hasAbout']/@value = 'true'">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="editable">
-          <xsl:if test="parameter[@name='editable']/@value = 'true'">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="permissionChannelId">PORTLET_ID.<xsl:value-of select="@chanID"/></xsl:variable>
-      <xsl:variable name="canConfigure">
-          <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
-          <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', $permissionChannelId)">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="printable">
-          <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="hasFavorites">
-        <xsl:if test="//content/@hasFavorites = 'true' and $AUTHENTICATED='true'">true</xsl:if>
-      </xsl:variable>
-      <xsl:variable name="isInFavorites">
-        <xsl:variable name="curFname" select="@fname" />
-        <xsl:if test="/layout/favorites/favorite[@fname = $curFname]">true</xsl:if>
-      </xsl:variable>
+        <div class="portlet-options-menu btn-group hidden">  <!-- Start out hidden.  jQuery will unhide if there are menu options -->
+          <xsl:choose>
+            <xsl:when test="$STYLE = 'hamburger'">
+              <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            </xsl:when>
+            <xsl:otherwise>
+              <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" title="{upMsg:getMessage('portlet.menu.option', $USER_LANG)}" href="javascript:void(0);"><xsl:value-of select="upMsg:getMessage('portlet.menu.option', $USER_LANG)"/> <span class="{upMsg:getMessage('portlet.menu.option.caretclass', $USER_LANG)}"></span></a>
+            </xsl:otherwise>
+          </xsl:choose>
+          <ul class="dropdown-menu" style="right: 0; left: auto;">
+          <!--
+            Porlet Controls Display Order:
+            help, remove, maximize, minimize, info, print, settings, ...
+          -->
+          <xsl:variable name="hasHelp">
+            <xsl:if test="parameter[@name='hasHelp']/@value = 'true'">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="hasAbout">
+            <xsl:if test="parameter[@name='hasAbout']/@value = 'true'">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="editable">
+            <xsl:if test="parameter[@name='editable']/@value = 'true'">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="permissionChannelId">PORTLET_ID.<xsl:value-of select="@chanID"/></xsl:variable>
+          <xsl:variable name="canConfigure">
+            <!-- This option is special in that it evaluates both whether (1) the portlet supports CONFIG mode and (2) this user is allowed to access it. -->
+            <xsl:if test="parameter[@name='configurable']/@value = 'true' and upAuth:hasPermission('UP_PORTLET_PUBLISH', 'PORTLET_MODE_CONFIG', $permissionChannelId)">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="printable">
+            <xsl:if test="parameter[@name='printable']/@value = 'true'">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="hasFavorites">
+            <xsl:if test="//content/@hasFavorites = 'true' and $AUTHENTICATED='true'">true</xsl:if>
+          </xsl:variable>
+          <xsl:variable name="isInFavorites">
+            <xsl:variable name="curFname" select="@fname" />
+            <xsl:if test="/layout/favorites/favorite[@fname = $curFname]">true</xsl:if>
+          </xsl:variable>
 
-      <xsl:if test="$AUTHENTICATED='true'">
-          <li>
+          <xsl:if test="$AUTHENTICATED='true'">
+            <li>
               <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
-                  <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
+                <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
               </a>
-          </li>
-      </xsl:if>
+            </li>
+          </xsl:if>
 
           <!-- Favorites -->
           <xsl:if test="$hasFavorites='true'">
@@ -650,12 +662,10 @@
           </xsl:if>
 
           <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-          <li>
-            <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;"
-               title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}">
-                <xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
-          </li>
-        </xsl:if>
+            <li>
+              <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
+            </li>
+          </xsl:if>
         </ul>
     </div>
   </div>

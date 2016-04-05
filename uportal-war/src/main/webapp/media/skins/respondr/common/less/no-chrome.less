@@ -25,40 +25,22 @@
     }
 
     .hover-toolbar {
+        position: relative;  // required to use z-index
         z-index: 1000;
-        position: absolute;
-        opacity: 0;
-        transition: opacity 0.25s ease-in-out;
-        -moz-transition: opacity 0.25s ease-in-out;
-        -webkit-transition: opacity 0.25s ease-in-out;
+        text-align: right;
 
-
-        .up-portlet-titlebar {
-            background-color: @grayscale2;
-            border: 1px solid @grayscale1;
-
-            h2 {
-                height: 32px;
-                padding-top: 3px;
-                & > a {
-                    display: none;
-                }
-            }
-
-            .portlet-controls {
+        .portlet-controls {
+            .grab-handle {
+                display: inline-block;
                 position: relative;
-                top: 0;
-
-                .dropdown-menu {
-                    right: auto !important;
-                }
+                top: 3px;
+                font-size: 18px;
+                margin-left: 3px;
             }
-        }
-    }
-
-    &:hover {
-        .hover-toolbar {
-            opacity: 1.0;
+            .portlet-options-menu > a {
+                color: @grayscale10;
+                opacity: 0.8;
+            }
         }
     }
 }
