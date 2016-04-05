@@ -1675,7 +1675,24 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         </condition>
         <property name="windowsCmdArg1" value="-Djasig.ignore"/>
         <condition property="windowsCmdArg2" value="mvn.bat">
-            <os family="windows"/>
+            <and>
+              <os family="windows"/>
+              <!--
+               | Starting with v3.3.x, mvn.bat is now mvn.cmd
+               | See https://issues.jasig.org/browse/UP-4560
+               +-->
+              <available file="mvn.bat" filepath="${env.M2_HOME}\bin"/>
+            </and>
+        </condition>
+        <condition property="windowsCmdArg2" value="mvn.cmd">
+            <and>
+              <os family="windows"/>
+              <!--
+               | Starting with v3.3.x, mvn.bat is now mvn.cmd
+               | See https://issues.jasig.org/browse/UP-4560
+               +-->
+              <available file="mvn.cmd" filepath="${env.M2_HOME}\bin"/>
+            </and>
         </condition>
         <property name="windowsCmdArg2" value="-Djasig.ignore"/>
 
