@@ -76,11 +76,38 @@ var up = up || {};
               }
           });
       };
-      
+
+      var moveFavoriteGroup = function(sourceId, previousNodeId, nextNodeId){
+          var method = "" === nextNodeId ? "appendAfter" : "insertBefore";
+          var elementId = "" === nextNodeId ? previousNodeId : nextNodeId;
+          var saveOrderURL = context + "/api/layout?action=moveTab"
+              + "&sourceID=" + sourceId
+              + "&method=" + method
+              + "&elementID=" + elementId;
+          console.log(saveOrderURL);
+          $.ajax({
+              url: saveOrderURL,
+              type: "POST",
+              data: null,
+              dataType: "json",
+              async: true,
+              success: function (){
+                  console.log("favorite group move successful.");
+              },
+              error: function(request, text, error) {
+                  console.error("Error persisting favorite group reorder " + saveOrderURL);
+              }
+          });
+      };
     var sourceID = $(item).attr('sourceid');
     var nextId = $(item).next().length!=0 ? $(item).next().attr('sourceid') : "";
     var prevId = $(item).prev().length !=0 ? $(item).prev().attr('sourceid') : "";
-    //We need to insert item both before and after
-    insertNode(sourceID, prevId, nextId);
+
+    if ("Tab" === tabOrPortlet) {
+        moveFavoriteGroup(sourceID, prevId, nextId);
+    } else {
+        //We need to insert item both before and after
+        insertNode(sourceID, prevId, nextId);
+    }
   };
 })(jQuery);
