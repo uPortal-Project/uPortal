@@ -300,6 +300,16 @@ public class UpdatePreferencesServlet {
 
     }
 
+    /**
+     * Moves the portlet either before nextNodeId or after previousNodeId as appropriate.
+     *
+     * @param request HttpRequest
+     * @param response HttpResponse
+     * @param sourceId nodeId to move
+     * @param previousNodeId if nextNodeId is not blank, moves portlet to end of list previousNodeId is in
+     * @param nextNodeId nodeId to insert sourceId before.
+     * @return
+     */
     @RequestMapping(method = RequestMethod.POST, params = "action=movePortletAjax")
     public ModelAndView movePortletAjax(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -307,8 +317,13 @@ public class UpdatePreferencesServlet {
                                         @RequestParam String previousNodeId,
                                         @RequestParam String nextNodeId) {
         final Locale locale = RequestContextUtils.getLocale(request);
-        if(moveElementInternal(request, sourceId, previousNodeId, "appendAfter")
-                && moveElementInternal(request, sourceId, nextNodeId, "insertBefore") ) {
+        boolean success = false;
+        if (StringUtils.isNotBlank(nextNodeId)) {
+            success = moveElementInternal(request, sourceId, nextNodeId, "insertBefore");
+        } else {
+            success = moveElementInternal(request, sourceId, previousNodeId, "appendAfter");
+        }
+        if (success) {
             return new ModelAndView("jsonView",Collections.singletonMap("response", getMessage("success.move.element", "Element moved successfully", locale)));
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -323,6 +338,16 @@ public class UpdatePreferencesServlet {
      * The code is the same, but the naming better abstracts the action. This method is here for
      * backwards compatibility with anything using the "movePortlet" action of the API.
      *
+     * Used by Respondr UI when moving portlets around in content area. uPortal 4.2 and prior behavior:<ul>
+     *   <li>If destination is a tab either adds to end of 1st column or if no columns, creates one and adds it. AFAIK
+     *       this was not actually used by the UI.</li>
+     *   <li>If target is a column (2 down from root), portlet always added to end of column. Used by UI to drop
+     *       portlet into empty column (UI did insertBefore with elementId=columnId)</li>
+     *   <li>If method=insertBefore does insert before elementId (always a portlet in 4.2).</li>
+     *   <li>If method=appendAfter does append at end of parent(elementId), result of which is a column.
+     *       Used by UI to add to end of column (elementId is last portlet in column).</li>
+     * </ul>
+     *
      * @param request
      * @param response
      * @throws IOException
@@ -331,39 +356,55 @@ public class UpdatePreferencesServlet {
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=movePortlet")
     @Deprecated
-    public ModelAndView movePortlet(HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView movePortlet(HttpServletRequest request, HttpServletResponse response,
+                                    @RequestParam(value="sourceID") String  sourceId,
+                                    @RequestParam String method,
+                                    @RequestParam(value = "elementID") String destinationId)
             throws IOException, PortalException {
-        return moveElement(request, response);
+        return moveElement(request, response, sourceId, method, destinationId);
     }
 
     /**
      * Move an element to another location on the tab.
      *
+     * Used by Respondr UI when moving portlets around in content area. Will be made more generic
+     * to support ngPortal UI which supports arbitrary nesting of folders.  When that code is
+     * merged in, the behavior of this method will need to change slightly (make sure movePortlet
+     * behavior doesn't change though). Current behavior:<ul>
+     *   <li>If destination is a tab either adds to end of 1st column or if no columns, creates one and adds it. AFAIK
+     *       this was not actually used by the UI.</li>
+     *   <li>If target is a column (2 down from root), portlet always added to end of column. Used by UI to drop
+     *       portlet into empty column (UI did insertBefore with elementId=columnId)</li>
+     *   <li>If method=insertBefore does insert before elementId (always a portlet in 4.2).</li>
+     *   <li>If method=appendAfter does append at end of parent(elementId), result of which is a column.
+     *       Used by UI to add to end of column (elementId is last portlet in column).</li>
+     * </ul>
+     *
      * @param request
      * @param response
+     * @param sourceId id of the element to move
+     * @param method insertBefore or appendAfter
+     * @param destinationId Id of element. If a tab, sourceID added to end of a folder/column in the tab.
+     *         If a folder, sourceID added to the end of the folder. Otherwise sourceID added before
+     *         elementID.
      * @throws IOException
      * @throws PortalException
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=moveElement")
-    public ModelAndView moveElement(HttpServletRequest request, HttpServletResponse response)
+    public ModelAndView moveElement(HttpServletRequest request, HttpServletResponse response,
+                                    @RequestParam(value="sourceID") String  sourceId,
+                                    @RequestParam String method,
+                                    @RequestParam(value = "elementID") String destinationId)
             throws IOException, PortalException {
         final Locale locale = RequestContextUtils.getLocale(request);
 
-        // element to be moved
-        String sourceId = request.getParameter("sourceID");
-
-        // Either "insertBefore" or "appendAfter".
-        String method = request.getParameter("method");
-
-        // Target element to move the source element in front of.  This parameter
-        // isn't actually relevant if we're appending the source element.
-        String destinationId = request.getParameter("elementID");
-
         if(moveElementInternal(request, sourceId, destinationId, method)) {
-            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("success.move.element", "Element moved successfully", locale)));
+            return new ModelAndView("jsonView", Collections.singletonMap("response",
+                    getMessage("success.move.element", "Element moved successfully", locale)));
         } else {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.move.element", "Error moving element", locale)));
+            return new ModelAndView("jsonView", Collections.singletonMap("response",
+                    getMessage("error.move.element", "Error moving element", locale)));
         }
     }
 
@@ -482,28 +523,25 @@ public class UpdatePreferencesServlet {
     /**
      * Move a tab left or right.
      *
-     * @param per
-     * @param upm
-     * @param ulm
+     * @param sourceId node ID of tab to move
+     * @param method insertBefore or appendAfter. If appendAfter, tab is added as last tab (parent of destinationId).
+     * @param destinationId insertBefore: node ID of tab to move sourceId before. insertAfter: node ID of another tab
      * @param request
      * @param response
      * @throws PortalException
      * @throws IOException
      */
     @RequestMapping(method = RequestMethod.POST, params = "action=moveTab")
-    public ModelAndView moveTab(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+    public ModelAndView moveTab(HttpServletRequest request, HttpServletResponse response,
+                                @RequestParam(value="sourceID") String  sourceId,
+                                @RequestParam String method,
+                                @RequestParam(value = "elementID") String destinationId) throws IOException {
 
         IUserInstance ui = userInstanceManager.getUserInstance(request);
 
         UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
         IUserLayoutManager ulm = upm.getUserLayoutManager();
         final Locale locale = RequestContextUtils.getLocale(request);
-
-        // gather the parameters we need to move a channel
-        String destinationId = request.getParameter("elementID");
-        String sourceId = request.getParameter("sourceID");
-        String method = request.getParameter("method");
 
         // If we're moving this element before another one, we need
         // to know what the target is. If there's no target, just
@@ -750,19 +788,16 @@ public class UpdatePreferencesServlet {
     /**
      * Update the user's preferred skin.
      *
-     * @param per
-     * @param upm
-     * @param ulm
-     * @param request
-     * @param response
+     * @param request HTTP Request
+     * @param response HTTP Response
+     * @param skinName name of the Skin
      * @throws IOException
      * @throws PortalException
      */
     @RequestMapping(method = RequestMethod.POST, params="action=chooseSkin")
-    public ModelAndView chooseSkin(HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+    public ModelAndView chooseSkin(HttpServletRequest request, HttpServletResponse response,
+                                   @RequestParam String skinName) throws IOException {
 
-        String skinName = request.getParameter("skinName");
         this.stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME, "skin", skinName);
 
         return new ModelAndView("jsonView", Collections.EMPTY_MAP);
@@ -1140,11 +1175,11 @@ public class UpdatePreferencesServlet {
     /**
      * A folder is a tab if its parent element is the layout element
      *
-     * @param folder the folder in question
+     * @param ulm User Layout Manager
+     * @param folderId the folder in question
      * @return <code>true</code> if the folder is a tab, otherwise <code>false</code>
      */
-    protected boolean isTab(IUserLayoutManager ulm, String folderId)
-            throws PortalException {
+    protected boolean isTab(IUserLayoutManager ulm, String folderId) throws PortalException {
         // we could be a bit more careful here and actually check the type
         return ulm.getRootFolderId().equals(ulm.getParentId(folderId));
     }
@@ -1208,7 +1243,8 @@ public class UpdatePreferencesServlet {
     /**
      * A folder is a column if its parent is a tab element
      *
-     * @param folder the folder in question
+     * @param ulm User Layout Manager
+     * @param folderId the folder in question
      * @return <code>true</code> if the folder is a column, otherwise <code>false</code>
      */
     protected boolean isColumn(IUserLayoutManager ulm, String folderId) throws PortalException {
@@ -1245,12 +1281,15 @@ public class UpdatePreferencesServlet {
     }
 
     /**
-     * If the destination is a tab, the new element automatically goes to the end of the first column.
+     * Moves the source element.
      *
-     * Otherwise we check that the destination is a folder. If it is not and we aren't just trying to insert before it,
-     * the operation fails. If we haven't failed, if the "method" param is "insertBefore", we insert before the destination
-     * node, otherwise it goes to the end of that folder.
-     * @return
+     * - If the destination is a tab, the new element automatically goes to the end of the first column or in a
+     * new column.
+     * - If the destination is a folder, the element is added to the end of the folder.
+     * - Otherwise, the element is inserted before the destination (the destination can't be a
+     *   tab or folder so it must be a portlet).
+     *
+     * @return true if the element was moved and saved.
      */
     private boolean moveElementInternal(HttpServletRequest request,
                                         String sourceId,
@@ -1267,59 +1306,66 @@ public class UpdatePreferencesServlet {
       UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
       IUserLayoutManager ulm = upm.getUserLayoutManager();
 
+      boolean success = false;
       if (isTab(ulm, destinationId)) {
-          // if the target is a tab type node, move the element to
-          // the end of the first column
+          // If the target is a tab type node, move the element to the end of the first column.
+          // TODO Try to insert it into the first available column if multiple columns
           Enumeration<String> columns = ulm.getChildIds(destinationId);
           if (columns.hasMoreElements()) {
-              ulm.moveNode(sourceId, columns.nextElement(), null);
+              success = attemptNodeMove(ulm, sourceId, columns.nextElement(), null);
           } else {
+              // Attempt to create a new column
 
               IUserLayoutFolderDescription newColumn = new UserLayoutFolderDescription();
               newColumn.setName("Column");
               newColumn.setId("tbd");
-              newColumn
-                      .setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
+              newColumn.setFolderType(IUserLayoutFolderDescription.REGULAR_TYPE);
               newColumn.setHidden(false);
               newColumn.setUnremovable(false);
               newColumn.setImmutable(false);
 
               // add the column to our layout
-              IUserLayoutNodeDescription col = ulm.addNode(newColumn,
-                      destinationId, null);
+              IUserLayoutNodeDescription col = ulm.addNode(newColumn, destinationId, null);
 
-              // move the channel
-              ulm.moveNode(sourceId, col.getId(), null);
+              // If column was created (might not if the tab had addChild=false), move the channel.
+              if (col != null) {
+                  success = attemptNodeMove(ulm, sourceId, col.getId(), null);
+              } else {
+                  log.info("Unable to move item into existing columns on tab {} and unable to create new column",
+                          destinationId);
+              }
           }
 
       } else {
-          boolean isInsert = method != null && method.equals("insertBefore");
+          // If destination is a column, attempt to move into end of column
           if (isFolder(ulm, destinationId)) {
-              final boolean moved = ulm.moveNode(sourceId, destinationId, null);
-              if (!moved) {
-                  log.info("moveNode returned false for sourceId={}, destinationId={}, method={};  "
-                          + "Aborting node movement", sourceId, destinationId, method);
-                  return false;
-              }
+              success = attemptNodeMove(ulm, sourceId, destinationId, null);
           } else {
-              String siblingId = isInsert ? destinationId : null;
-
-              if (!ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId)) {
-                  log.info("moveNode returned false for sourceId={}, destinationId={}, method={};  "
-                          + "Aborting node movement", sourceId, destinationId, method);
-                  return false;
-              }
+              // If insertBefore move to prior to node else to end of folder containing node
+              success = attemptNodeMove(ulm, sourceId, ulm.getParentId(destinationId),
+                      "insertBefore".equals(method) ? destinationId : null);
           }
       }
 
       try {
-          ulm.saveUserLayout();
+          if (success) {
+              ulm.saveUserLayout();
+          }
       } catch (PortalException e) {
           log.warn("Error saving layout", e);
           return false;
       }
 
-      return true;
+      return success;
+    }
+
+    private boolean attemptNodeMove(IUserLayoutManager ulm, String sourceId, String destinationId, String beforeNode) {
+        boolean success = ulm.moveNode(sourceId, destinationId, beforeNode);
+        if (!success) {
+            log.warn("moveNode returned false for sourceId={}, destinationId={}, method={};  "
+                    + "Aborting node movement", sourceId, destinationId, beforeNode);
+        }
+        return success;
     }
 
     private boolean isFolder(IUserLayoutManager ulm, String id) {
