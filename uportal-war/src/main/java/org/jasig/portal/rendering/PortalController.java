@@ -19,6 +19,7 @@
 package org.jasig.portal.rendering;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -83,12 +84,26 @@ public class PortalController {
         final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
         this.portletExecutionManager.getPortletOutput(portletWindowId, request, response);
     }
-    
+
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // Set up some TRACE logging for performance troubleshooting
+        final long timestamp = System.currentTimeMillis();
+        UUID uuid = null;
+        if (logger.isTraceEnabled()) {
+            uuid = UUID.randomUUID();
+            logger.trace("STARTING PortalController.renderRequest() for " + uuid.toString() + " #milestone");
+        }
+
         this.portalRenderingPipeline.renderState(request, response);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace("FINISHED PortalController.renderRequest() for " + uuid.toString() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+        }
+
     }
-    
+
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION"})
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
