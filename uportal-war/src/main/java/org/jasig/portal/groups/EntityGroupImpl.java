@@ -53,7 +53,6 @@ import org.jasig.portal.services.GroupService;
  * or by synchronizing access from the caller.  
  *  
  * @author Dan Ellentuck
- * @version $Revision$
  * @see org.jasig.portal.groups.IEntityGroup
  * 
  * 
@@ -163,7 +162,7 @@ protected void clearPendingUpdates()
  */
 private Set copyMemberEntityKeys() throws GroupsException
 {
-   return castAndCopyHashSet(getMemberEntityKeys());
+   return new HashSet(getMemberEntityKeys());
 }
 /**
  * Clone the member group keys.
@@ -171,7 +170,7 @@ private Set copyMemberEntityKeys() throws GroupsException
  */
 private Set copyMemberGroupKeys() throws GroupsException
 {
-   return castAndCopyHashSet(getMemberGroupKeys());
+   return new HashSet(getMemberGroupKeys());
 }
 /**
  * Checks if <code>GroupMember</code> gm is a member of this.
@@ -451,12 +450,6 @@ public HashMap getRemovedMembers()
     return removedMembers;
 }
 /**
- * @return IGroupService
- */
-protected GroupService getService() throws GroupsException {
-    return GroupService.instance();
-}
-/**
  * Returns the Name of the group service of origin.
  * @return javax.naming.Nme
  */
@@ -725,9 +718,18 @@ public void update() throws GroupsException
 /**
  * Delegate to the factory.
  */
-public void updateMembers() throws GroupsException
-{
+public void updateMembers() throws GroupsException {
+
+    // Track objects to invalidate
+    Set<IGroupMember> invalidate = new HashSet<>();
+    invalidate.addAll(getAddedMembers().values());
+    invalidate.addAll(getRemovedMembers().values());
+
     getLocalGroupService().updateGroupMembers(this);
     clearPendingUpdates();
+
+    // Invalidate objects that changed their relationship with us
+    this.invalidateInContainingGroupsCache(invalidate);
+
 }
 }

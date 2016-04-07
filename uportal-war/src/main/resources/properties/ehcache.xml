@@ -372,12 +372,31 @@
 
     <!--
      | Caches IEntity objects
-     | - 1 x group member (channels, users)
+     | - 1 x group member (channels, users, groups)
      | - replicated by invalidation
      +-->
     <cache name="org.jasig.portal.groups.IEntity"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true,
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+
+    <!--
+     | Caches containing groups for GroupMemberImpl objects.  There is code to
+     | invalidate (and replicate) them when they change, but the GaP code is
+     | bloated and hard to follow.  TTL is set to 5 min in case invalidation
+     | doesn't cover all paths that make changes to relationships.
+     | - 1 x group member (channels, users, groups)
+     | - replicated by invalidation
+     +-->
+    <cache name="org.jasig.portal.groups.GroupMemberImpl.containingGroups"
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
             properties="replicateAsynchronously=true,

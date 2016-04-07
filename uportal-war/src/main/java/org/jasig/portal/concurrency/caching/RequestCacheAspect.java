@@ -49,12 +49,10 @@ import org.springframework.jmx.export.MBeanExportOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 
-
 /**
  * Aspect that caches the results of a method invocation in the current {@link RequestAttributes}
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Aspect
 @Component("requestCacheAspect")
@@ -138,7 +136,7 @@ public class RequestCacheAspect implements InitializingBean {
         }
         
         try {
-            //Execute the annotated emthod
+            //Execute the annotated method
             result = pjp.proceed();
             final long time = System.nanoTime() - start;
             cacheStatistics.recordMissAndLoad(time);

@@ -258,13 +258,6 @@ private String getRandomString(java.util.Random r, int length) {
     return new String(chars);
 }
 /**
- * @return org.jasig.portal.services.GroupService
- */
-private GroupService getService() throws GroupsException
-{
-    return GroupService.instance();
-}
-/**
  * Starts the application.
  * @param args an array of command-line arguments
  */
