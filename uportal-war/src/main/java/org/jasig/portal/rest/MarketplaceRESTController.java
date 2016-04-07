@@ -18,9 +18,11 @@
  */
 package org.jasig.portal.rest;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,6 +32,7 @@ import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.marketplace.IMarketplaceService;
 import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.rest.layout.MarketplaceEntryRating;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
@@ -96,7 +99,35 @@ public class MarketplaceRESTController {
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         return null;
     }
-
+  
+   
+    @RequestMapping(value="/marketplace/{fname}/ratings", method = RequestMethod.GET)
+    public ModelAndView getPortletRatings(HttpServletRequest request, @PathVariable String fname) {
+    	
+    	Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");
+    	IPortletDefinition marketplacePortletDefinition = (IPortletDefinition) marketplaceService.getOrCreateMarketplacePortletDefinitionIfTheFnameExists(fname);
+    	
+    	final IPerson user = personManager.getPerson(request);
+    	final IAuthorizationPrincipal principal = AuthorizationPrincipalHelper.principalFromUser(user);
+    	if(marketplaceService.mayManagePortlet(principal, marketplacePortletDefinition)){
+    		Set<IMarketplaceRating> portletRatings = marketplaceRatingDAO.getAllRatingsByPortlet(fname);
+    		
+    		if(portletRatings != null ) {
+            List ratingResults = new ArrayList<MarketplaceEntryRating>();
+            	for(IMarketplaceRating imr:portletRatings){
+            		ratingResults.add(new MarketplaceEntryRating(imr.getRating(), imr.getReview()));
+            	}
+    		
+    		return new ModelAndView("json", "ratings", ratingResults);
+          
+    		}
+    	}
+    	
+    	
+    	
+        return new ModelAndView("json", "rating", null);
+    }
+    
     @RequestMapping(value="/marketplace/{fname}/getRating", method = RequestMethod.GET)
     public ModelAndView getUserRating(HttpServletRequest request, @PathVariable String fname) {
         Validate.notNull(fname, "Please supply a portlet to get rating for - should not be null");

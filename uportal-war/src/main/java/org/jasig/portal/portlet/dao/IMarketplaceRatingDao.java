@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
+import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
 
 public interface IMarketplaceRatingDao{
     
@@ -29,6 +30,11 @@ public interface IMarketplaceRatingDao{
      * @return all ratings. Not null
      */
 	public Set<IMarketplaceRating> getAllRatings();
+	
+	/**
+	 * @return all ratings for a particular portlet
+	 */
+	public Set<IMarketplaceRating> getAllRatingsByPortlet(String fname);
 	
 	/**
 	 * @param IMarketplaceRating. Can not be null
@@ -59,6 +65,7 @@ public interface IMarketplaceRatingDao{
      */
     public IMarketplaceRating getRating(String userName,
             IPortletDefinition portletDefinition);
+    
     
     /**
      * Aggregates the IMarketplaceRating into IPortletDefinition
