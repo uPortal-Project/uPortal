@@ -152,7 +152,8 @@ public class PortalPreAuthenticatedProcessingFilter
         UUID uuid = null;
         if (logger.isTraceEnabled()) {
             uuid = UUID.randomUUID();
-            logger.trace("STARTING PortalPreAuthenticatedProcessingFilter.doFilter() for " + uuid.toString() + " #milestone");
+            final HttpServletRequest httpr = (HttpServletRequest) request;
+            logger.trace("STARTING [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " #milestone");
         }
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -201,7 +202,8 @@ public class PortalPreAuthenticatedProcessingFilter
         }
 
         if (logger.isTraceEnabled()) {
-            logger.trace("FINISHED PortalPreAuthenticatedProcessingFilter.doFilter() for " + uuid.toString() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+            final HttpServletRequest httpr = (HttpServletRequest) request;
+            logger.trace("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
         }
 
     }
