@@ -394,7 +394,7 @@
      | - 1 x group member (channels, users, groups)
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.groups.GroupMemberImpl.containingGroups"
+    <cache name="org.jasig.portal.groups.GroupMemberImpl.parentGroups"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory

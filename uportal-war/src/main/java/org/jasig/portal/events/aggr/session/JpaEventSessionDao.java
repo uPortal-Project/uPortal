@@ -215,7 +215,7 @@ public class JpaEventSessionDao extends BaseAggrEventsJpaDao implements EventSes
             final String userName = event.getUserName();
             final IGroupMember groupMember = this.compositeGroupService.getGroupMember(userName, IPerson.class);
             for (@SuppressWarnings("unchecked")
-            final Iterator<IEntityGroup> containingGroups = this.compositeGroupService.findContainingGroups(groupMember); containingGroups.hasNext(); ) {
+            final Iterator<IEntityGroup> containingGroups = this.compositeGroupService.findParentGroups(groupMember); containingGroups.hasNext(); ) {
                 final IEntityGroup group = containingGroups.next();
                 final AggregatedGroupMapping groupMapping = this.aggregatedGroupLookupDao.getGroupMapping(group.getServiceName().toString(), group.getName());
                 groupMappings.add(groupMapping);

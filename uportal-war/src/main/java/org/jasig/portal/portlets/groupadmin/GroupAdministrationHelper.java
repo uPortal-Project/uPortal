@@ -114,7 +114,7 @@ public class GroupAdministrationHelper {
 		// remove this group from the membership list of any current parent
 		// groups
 		@SuppressWarnings("unchecked")
-		Iterator<IEntityGroup> iter = (Iterator<IEntityGroup>) group.getContainingGroups();
+		Iterator<IEntityGroup> iter = (Iterator<IEntityGroup>) group.getParentGroups();
 		while (iter.hasNext()) {
 			IEntityGroup parent = (IEntityGroup) iter.next();
 			parent.removeMember(group);

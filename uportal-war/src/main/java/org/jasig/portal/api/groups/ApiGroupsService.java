@@ -80,7 +80,7 @@ public class ApiGroupsService implements GroupsService {
                 if(entityIdentifier.getType().equals(EntityEnum.PERSON.getClazz())) {
                     IGroupMember groupMember = GroupService.getGroupMember(entityIdentifier);
                     if(memberName.equalsIgnoreCase(groupMember.getKey())) {
-                        Iterator it = GroupService.findContainingGroups(groupMember);
+                        Iterator it = GroupService.findParentGroups(groupMember);
                         while(it.hasNext()) {
                             IEntityGroup g = (IEntityGroup)it.next();
                             Entity e = EntityFactory.createEntity(g,EntityEnum.getEntityEnum(g.getEntityType(),true));

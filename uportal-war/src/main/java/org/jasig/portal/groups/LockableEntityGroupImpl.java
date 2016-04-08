@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.groups;
 
+import java.util.Collections;
+
 import org.jasig.portal.concurrency.IEntityLock;
 
     /**
@@ -73,7 +75,7 @@ private void primUpdate(boolean renewLock) throws GroupsException
 {
     getLockableGroupService().updateGroup(this, renewLock);
     clearPendingUpdates();
-    setGroupKeysInitialized(false);
+    this.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) this));
 }
 
 /**
@@ -86,7 +88,7 @@ private void primUpdateMembers(boolean renewLock) throws GroupsException
 {
     getLockableGroupService().updateGroupMembers(this, renewLock);
     clearPendingUpdates();
-    setGroupKeysInitialized(false);
+    this.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) this));
 }
 
 /**

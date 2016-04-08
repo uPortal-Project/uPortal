@@ -220,7 +220,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    private java.util.Set<IEntityGroup> primGetAllContainingGroups(IEntityGroup group, Set<IEntityGroup> s)
    throws GroupsException
    {
-       Iterator i = findContainingGroups(group);
+       Iterator i = findParentGroups(group);
        while ( i.hasNext() )
        {
            IEntityGroup parentGroup = (IEntityGroup) i.next();
@@ -230,7 +230,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
        return s;
    }
 
-   public Iterator findContainingGroups(IGroupMember member) 
+   public Iterator findParentGroups(IGroupMember member) 
    throws GroupsException 
    {
       return (member.isEntity()) 

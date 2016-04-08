@@ -161,9 +161,9 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             {
                 IEntityGroup group = find(groupDef.getName());
                 IEntityGroup parentGroup = null;
-                Set<IEntityGroup> allParents = primGetAllContainingGroups(group, new HashSet<IEntityGroup>());
+                Set<IEntityGroup> ancestors = primGetAncestorGroups(group, new HashSet<IEntityGroup>());
                 boolean testPassed = true;
-                for (Iterator<IEntityGroup> i=allParents.iterator(); i.hasNext() && testPassed;)
+                for (Iterator<IEntityGroup> i=ancestors.iterator(); i.hasNext() && testPassed;)
                 {
                     parentGroup = i.next();
                     PagsGroup parentGroupDef = (PagsGroup) convertEntityToGroupDef(parentGroup);
@@ -179,35 +179,35 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 return testPassed;
             }
         }
-    private java.util.Set<IEntityGroup> primGetAllContainingGroups(IEntityGroup group, Set<IEntityGroup> s)
+    private java.util.Set<IEntityGroup> primGetAncestorGroups(IEntityGroup group, Set<IEntityGroup> s)
             throws GroupsException
             {
-                Iterator<IEntityGroup> i = findContainingGroups(group);
+                Iterator<IEntityGroup> i = findParentGroups(group);
                 while ( i.hasNext() )
                 {
                     IEntityGroup parentGroup = i.next();
                     s.add(parentGroup);
-                    primGetAllContainingGroups(parentGroup, s);
+                    primGetAncestorGroups(parentGroup, s);
                 }
                 return s;
             }
 
-    public Iterator<IEntityGroup> findContainingGroups(IGroupMember member)
+    public Iterator<IEntityGroup> findParentGroups(IGroupMember member)
     throws GroupsException
     {
         logger.debug("finding containing groups for member key {}", member.getKey());
         return (member.isEntity())
-          ? findContainingGroupsForEntity((IEntity)member)
-          : findContainingGroupsForGroup((IEntityGroup)member);
+          ? findParentGroupsForEntity((IEntity)member)
+          : findParentGroupsForGroup((IEntityGroup)member);
     }
 
-    private Iterator<IEntityGroup> findContainingGroupsForGroup(IEntityGroup group) {
+    private Iterator<IEntityGroup> findParentGroupsForGroup(IEntityGroup group) {
         logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
-         Set<IEntityGroup> parents = getContainingGroups(group.getName(), new HashSet<IEntityGroup>());
+         Set<IEntityGroup> parents = getParentGroups(group.getName(), new HashSet<IEntityGroup>());
          return parents.iterator();
     }
 
-    private Iterator<IEntityGroup> findContainingGroupsForEntity(IEntity member)
+    private Iterator<IEntityGroup> findParentGroupsForEntity(IEntity member)
     throws GroupsException {
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
@@ -373,7 +373,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         }
    }
 
-    private Set<IEntityGroup> getContainingGroups(String name, Set<IEntityGroup> groups) throws GroupsException {
+    private Set<IEntityGroup> getParentGroups(String name, Set<IEntityGroup> groups) throws GroupsException {
         logger.debug("Looking up containing groups for {}", name);
         IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(name);
         Set<IPersonAttributesGroupDefinition> pagsParentGroups = personAttributesGroupDefinitionDao.getParentPersonAttributesGroupDefinitions(pagsGroup);
@@ -381,7 +381,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             IEntityGroup parent = convertPagsGroupToEntity(pagsParent);
             if (!groups.contains(parent)) {
                 groups.add(parent);
-                getContainingGroups(pagsParent.getName(), groups);
+                getParentGroups(pagsParent.getName(), groups);
             } else {
                 throw new RuntimeException("Recursive grouping detected! for " + name + " and parent " + pagsParent.getName());
             }

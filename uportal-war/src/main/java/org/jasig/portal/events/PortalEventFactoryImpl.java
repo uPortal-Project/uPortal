@@ -565,7 +565,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
         final IGroupMember member = GroupService.getGroupMember(person.getEntityIdentifier());
 
         final Set<String> groupKeys = new LinkedHashSet<String>();
-        for (@SuppressWarnings("unchecked") final Iterator<IGroupMember> groupItr = member.getAllContainingGroups(); groupItr.hasNext();) {
+        for (@SuppressWarnings("unchecked") final Iterator<IGroupMember> groupItr = member.getAncestorGroups(); groupItr.hasNext();) {
             final IGroupMember group = groupItr.next();
             final String groupKey = group.getKey();
             

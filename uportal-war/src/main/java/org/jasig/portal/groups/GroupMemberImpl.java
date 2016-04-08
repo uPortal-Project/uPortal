@@ -16,13 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
@@ -37,7 +36,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 /**
- * GroupMemberImpl summary first sentence goes here.
+ * This is the base class for every node in the graph.
  * 
  * @author Dan Ellentuck
  * @see IGroupMember
@@ -50,17 +49,9 @@ public abstract class GroupMemberImpl implements IGroupMember {
      * that underlies the <code>IGroupMember</code>.
      */
     private EntityIdentifier underlyingEntityIdentifier;
-    private static volatile Class defaultEntityType;
 
-/*
- * The Set of keys to groups that contain this <code>IGroupMember</code>.
- * the groups themselves are cached by the service.
- */
-    private Set<String> groupKeys;
-    private boolean groupKeysInitialized;
-
-    private final Cache containingGroupsCache;
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private final Cache parentGroupsCache;
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
 /**
  * GroupMemberImpl constructor
@@ -74,27 +65,7 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
         { throw new GroupsException("Unknown entity type: " + newEntityIdentifier.getType()); }
     ApplicationContext context = ApplicationContextLocator.getApplicationContext();
     CacheManager cacheManager = context.getBean("cacheManager", CacheManager.class);
-    this.containingGroupsCache = cacheManager.getCache("org.jasig.portal.groups.GroupMemberImpl.containingGroups");
-}
-
-/**
- * Adds the key of the <code>IEntityGroup</code> to our <code>Set</code> of group keys
- * by copying the keys, updating the copy, and replacing the old keys with the copy.
- * This lets us confine synchronization to the getter and setter methods for the keys.
- * @param eg org.jasig.portal.groups.IEntityGroup
- */
-public void addGroup(IEntityGroup eg) throws GroupsException
-{
-    Set<String> newGroupKeys = copyGroupKeys();
-    newGroupKeys.add(eg.getEntityIdentifier().getKey());
-    setGroupKeys(newGroupKeys);
-}
-
-/**
- * @return boolean
- */
-private boolean areGroupKeysInitialized() {
-    return groupKeysInitialized;
+    this.parentGroupsCache = cacheManager.getCache("org.jasig.portal.groups.GroupMemberImpl.parentGroups");
 }
 
 /**
@@ -102,18 +73,10 @@ private boolean areGroupKeysInitialized() {
  * @param gm org.jasig.portal.groups.IGroupMember
  * @return boolean
  */
+@Override
 public boolean contains(IGroupMember gm) throws GroupsException
 {
     return false;
-}
-
-/**
- * Clone the group keys.
- * @return Set
- */
-private Set<String> copyGroupKeys() throws GroupsException
-{
-   return new HashSet<>(getGroupKeys());
 }
 
 /**
@@ -132,9 +95,9 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
  *
  * @return Iterator
  */
-public Iterator getAllContainingGroups() throws GroupsException
+public Iterator getAncestorGroups() throws GroupsException
 {
-    return primGetAllContainingGroups(this, new HashSet()).iterator();
+    return primGetAncestorGroups(this, new HashSet()).iterator();
 }
 
 /**
@@ -159,43 +122,39 @@ public Iterator getAllMembers() throws GroupsException
  * Synchronize the collection of keys with adds and removes.
  * @return Iterator
  */
-public Iterator getContainingGroups() throws GroupsException {
+public Iterator getParentGroups() throws GroupsException {
+    return getParentGroupsSet().iterator();
+}
+
+private Set<IEntityGroup> getParentGroupsSet() throws GroupsException {
 
     final EntityIdentifier cacheKey = getUnderlyingEntityIdentifier();
-    Element element = containingGroupsCache.get(cacheKey);
+    Element element = parentGroupsCache.get(cacheKey);
 
     if (element == null) {
-        log.debug("Constructing containingGroups for member='{}'", cacheKey);
-
-        final Set<String> groupKeys = getGroupKeys();
-        final List<IEntityGroup> groups = new ArrayList<>(groupKeys.size());
-        for (Iterator<String> itr = groupKeys.iterator(); itr.hasNext();) {
-            final String groupKey = (String) itr.next();
-            groups.add(GroupService.getCompositeGroupService().findGroup(groupKey));
-        }
-
+        final Set<IEntityGroup> groups = buildParentGroupsSet();
         element = new Element(cacheKey, groups);
-        containingGroupsCache.put(element);
+        parentGroupsCache.put(element);
     }
 
     @SuppressWarnings("unchecked")
-    final List<IEntityGroup> rslt = (List<IEntityGroup>) element.getObjectValue();
-    return rslt.iterator();
+    final Set<IEntityGroup> rslt = (Set<IEntityGroup>) element.getObjectValue();
+    return rslt;
 
 }
 
-/**
- * @return Class
- */
-private Class getDefaultEntityType()
-{
-    if (defaultEntityType == null)
-    {
-        Class cls = (new Object()).getClass();
-        defaultEntityType = cls;
+private synchronized Set<IEntityGroup> buildParentGroupsSet() throws GroupsException {
+    logger.debug("Constructing containingGroups for member='{}'", getUnderlyingEntityIdentifier());
+
+    final Set<IEntityGroup> rslt = new HashSet<>();
+    for (Iterator it = GroupService.getCompositeGroupService().findParentGroups(this); it.hasNext();) {
+        final IEntityGroup eg = (IEntityGroup) it.next();
+        rslt.add(eg);
     }
-    return defaultEntityType;
+
+    return Collections.unmodifiableSet(rslt);
 }
+
 /**
  * @return Iterator
  */
@@ -211,14 +170,7 @@ public Iterator getEntities() throws GroupsException
 {
     return getEmptyIterator();
 }
-/**
- * @return Set
- */
-private synchronized Set<String> getGroupKeys() throws GroupsException {
-    if ( ! groupKeysInitialized )
-        { initializeContainingGroupKeys(); }
-    return groupKeys;
-}
+
 /**
  * @return String
  */
@@ -254,13 +206,7 @@ public Class getType() {
 public EntityIdentifier getUnderlyingEntityIdentifier() {
     return underlyingEntityIdentifier;
 }
-/*
- * @return an integer hash code for the receiver
- * @see java.util.Hashtable
- */
-public int hashCode() {
-    return getKey().hashCode();
-}
+
 /**
  * Default implementation, overridden on EntityGroupImpl.
  * @return boolean
@@ -268,21 +214,6 @@ public int hashCode() {
 public boolean hasMembers() throws GroupsException
 {
     return false;
-}
-/**
- * Cache the keys for <code>IEntityGroups</code> that contain this <code>IGroupMember</code>.
- */
-private void initializeContainingGroupKeys() throws GroupsException
-{
-    log.debug("Initialzing keys for groups that contain member {}. Finding existing containing groups", this.getKey());
-    Set<String> keys = new HashSet(10);
-    for (Iterator it = GroupService.getCompositeGroupService().findContainingGroups(this); it.hasNext(); )
-    {
-        IEntityGroup eg = (IEntityGroup) it.next();
-        keys.add(eg.getEntityIdentifier().getKey());
-    }
-    setGroupKeys(keys);
-    setGroupKeysInitialized(true);
 }
 
 /**
@@ -323,12 +254,18 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
  * @param gm org.jasig.portal.groups.IGroupMember
  * @return boolean
  */
-public boolean isMemberOf(IGroupMember gm) throws GroupsException
-{
-    if ( gm==this || gm.isEntity() )
-        { return false; }
-    Object cacheKey = gm.getKey();
-    return getGroupKeys().contains(cacheKey);
+public boolean isMemberOf(IGroupMember gm) throws GroupsException {
+
+    if (gm instanceof IEntityGroup) {
+        final IEntityGroup group = (IEntityGroup) gm;
+        final Set<IEntityGroup> parents = getParentGroupsSet();
+        return parents.contains(group);
+    } else {
+        final String msg = "The specified member is not a group:  " + gm;
+        throw new IllegalArgumentException(msg);
+    }
+
+
 }
 /**
  * Returns the <code>Set</code> of groups in our member <code>Collection</code> and,
@@ -337,49 +274,49 @@ public boolean isMemberOf(IGroupMember gm) throws GroupsException
  * @param s Set - A Set that groups are added to.
  * @return Set
  */
-protected Set primGetAllContainingGroups(IGroupMember member, Set s) throws GroupsException
+protected Set primGetAncestorGroups(IGroupMember member, Set s) throws GroupsException
 {
-    Iterator i = member.getContainingGroups();
+    Iterator i = member.getParentGroups();
     while ( i.hasNext() )
     {
         IGroupMember gm = (IGroupMember) i.next();
         // avoid stack overflow in case of circular group dependencies
         if (!s.contains(gm)) {
             s.add(gm);
-            primGetAllContainingGroups(gm, s);
+            primGetAncestorGroups(gm, s);
         }
     }
     return s;
 }
-/**
- * Removes the key of the <code>IEntityGroup</code> from our <code>Set</code> of group keys
- * by copying the keys, updating the copy, and replacing the old keys with the copy.
- * This lets us confine synchronization to the getter and setter methods for the keys.
- * @param eg org.jasig.portal.groups.IEntityGroup
- */
-public void removeGroup(IEntityGroup eg) throws GroupsException
-{
-    Set<String> newGroupKeys = copyGroupKeys();
-    newGroupKeys.remove(eg.getEntityIdentifier().getKey());
-    setGroupKeys(newGroupKeys);
-}
-/**
- * @param newGroupKeys Set
- */
-private synchronized void setGroupKeys(Set<String> newGroupKeys)
-{
-    groupKeys = newGroupKeys;
-}
-/**
- * @param newGroupKeysInitialized boolean
- */
-protected void setGroupKeysInitialized(boolean newGroupKeysInitialized) {
-    groupKeysInitialized = newGroupKeysInitialized;
-}
 
-    protected void invalidateInContainingGroupsCache(Set<IGroupMember> members) {
+    @Override
+    public final int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((underlyingEntityIdentifier == null) ? 0 : underlyingEntityIdentifier.hashCode());
+        return result;
+    }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GroupMemberImpl other = (GroupMemberImpl) obj;
+        if (underlyingEntityIdentifier == null) {
+            if (other.underlyingEntityIdentifier != null)
+                return false;
+        } else if (!underlyingEntityIdentifier.equals(other.underlyingEntityIdentifier))
+            return false;
+        return true;
+    }
+
+    protected void invalidateInParentGroupsCache(Set<IGroupMember> members) {
         for (IGroupMember member : members) {
-            containingGroupsCache.remove(member.getEntityIdentifier());
+            parentGroupsCache.remove(member.getEntityIdentifier());
         }
     }
 

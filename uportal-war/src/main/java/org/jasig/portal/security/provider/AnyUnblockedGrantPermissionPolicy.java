@@ -287,7 +287,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         }
         seenGroups.add(principalAsGroupMember);
         @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> immediatelyContainingGroups = principalAsGroupMember.getContainingGroups();
+        Iterator<IGroupMember> immediatelyContainingGroups = principalAsGroupMember.getParentGroups();
         while (immediatelyContainingGroups.hasNext()) {
             IGroupMember parentGroup = immediatelyContainingGroups.next();
             try {

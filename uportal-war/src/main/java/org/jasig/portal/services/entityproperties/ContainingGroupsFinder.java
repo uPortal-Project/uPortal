@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
  * for any entity
  *
  * @author Alex Vigdor av317@columbia.edu
- * @version $Revision$
  */
 
 public class ContainingGroupsFinder implements IEntityPropertyFinder {
@@ -51,7 +50,7 @@ public class ContainingGroupsFinder implements IEntityPropertyFinder {
       StringBuffer buf = new StringBuffer();
       if (name.equals(names[0])){
         IGroupMember gm = GroupService.getGroupMember(entityID);
-        Iterator i = gm.getContainingGroups();
+        Iterator i = gm.getParentGroups();
         int x = 0;
         while (i.hasNext()){
           if (x > 0){

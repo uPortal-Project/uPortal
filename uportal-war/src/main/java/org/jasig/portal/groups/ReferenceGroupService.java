@@ -129,11 +129,11 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
  * Returns and caches the containing groups for the <code>IGroupMember</code>
  * @param gm IGroupMember
  */
-public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+public Iterator findParentGroups(IGroupMember gm) throws GroupsException
 {
     Collection groups = new ArrayList(10);
     IEntityGroup group = null;
-    for ( Iterator it = getGroupStore().findContainingGroups(gm); it.hasNext(); )
+    for ( Iterator it = getGroupStore().findParentGroups(gm); it.hasNext(); )
     {
         group = (IEntityGroup) it.next();
         groups.add(group);

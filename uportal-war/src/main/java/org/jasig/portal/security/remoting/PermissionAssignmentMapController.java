@@ -270,7 +270,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
         }
 
         AuthorizationService authService = AuthorizationService.instance();
-        Iterator<?> it = GroupService.getCompositeGroupService().findContainingGroups(member);
+        Iterator<?> it = GroupService.getCompositeGroupService().findParentGroups(member);
         if (it.hasNext()) {
             // This member must be nested within its parent(s)...
             while (it.hasNext()) {

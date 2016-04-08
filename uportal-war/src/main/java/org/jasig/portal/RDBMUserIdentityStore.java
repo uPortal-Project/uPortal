@@ -596,7 +596,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     protected void updateUser(final int userId, final IPerson person, final TemplateUser templateUser) throws Exception {
         // Remove my existing group memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        Iterator myExistingGroups = me.getContainingGroups();
+        Iterator myExistingGroups = me.getParentGroups();
         while (myExistingGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)myExistingGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
@@ -607,7 +607,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         // Copy template user's groups memberships
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), org.jasig.portal.security.IPerson.class);
-        Iterator templateGroups = template.getContainingGroups();
+        Iterator templateGroups = template.getParentGroups();
         while (templateGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)templateGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
@@ -728,7 +728,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         // Copy template user's groups memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
-        Iterator templateGroups = template.getContainingGroups();
+        Iterator templateGroups = template.getParentGroups();
         while (templateGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)templateGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);

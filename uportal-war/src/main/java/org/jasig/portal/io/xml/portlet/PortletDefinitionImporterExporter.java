@@ -431,7 +431,7 @@ public class PortletDefinitionImporterExporter
             // Delete existing category memberships for this channel
             if (!newChannel) {
                 @SuppressWarnings("unchecked")
-                final Iterator<IEntityGroup> iter = portletDefEntity.getAllContainingGroups();
+                final Iterator<IEntityGroup> iter = portletDefEntity.getAncestorGroups();
                 while (iter.hasNext()) {
                     final IEntityGroup group = iter.next();
                     group.removeMember(portletDefEntity);
@@ -502,7 +502,7 @@ public class PortletDefinitionImporterExporter
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
         IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
         @SuppressWarnings("unchecked")
-        Iterator<IEntityGroup> iter = channelDefEntity.getAllContainingGroups();
+        Iterator<IEntityGroup> iter = channelDefEntity.getAncestorGroups();
         while (iter.hasNext()) {
             IEntityGroup group = iter.next();
             group.removeMember(channelDefEntity);
@@ -629,7 +629,7 @@ public class PortletDefinitionImporterExporter
         final List<String> categoryList = rep.getCategories();
         final IGroupMember gm = GroupService.getGroupMember(def.getPortletDefinitionId().getStringId(), IPortletDefinition.class);
         @SuppressWarnings("unchecked")
-        final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findContainingGroups(gm);
+        final Iterator<IEntityGroup> categories = GroupService.getCompositeGroupService().findParentGroups(gm);
         while (categories.hasNext()) {
             IEntityGroup category = categories.next();
             categoryList.add(category.getName());

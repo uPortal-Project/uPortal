@@ -75,7 +75,6 @@ import edu.internet2.middleware.grouperClient.ws.beans.WsSubjectLookup;
  * 
  * @author Bill Brown
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public class GrouperEntityGroupStore implements IEntityGroupStore,
         IEntityStore, IEntitySearcher {
@@ -160,10 +159,10 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.groups.IEntityGroupStore#findContainingGroups(org.jasig.portal.groups.IGroupMember)
+     * @see org.jasig.portal.groups.IEntityGroupStore#findParentGroups(org.jasig.portal.groups.IGroupMember)
      */
     @SuppressWarnings("unchecked")
-    public Iterator findContainingGroups(IGroupMember gm)
+    public Iterator findParentGroups(IGroupMember gm)
             throws GroupsException {
         
         final List<IEntityGroup> parents = new LinkedList<IEntityGroup>();

@@ -77,10 +77,10 @@ public final class GroupService implements IGroupConstants {
      * Returns the groups that contain the <code>IGroupMember</code>.
      * @param gm IGroupMember
      */
-    public static Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+    public static Iterator findParentGroups(IGroupMember gm) throws GroupsException
     {
-        LOGGER.trace("Invoking findContainingGroups for IGroupMember [{}]", gm);
-        return instance().ifindContainingGroups(gm);
+        LOGGER.trace("Invoking findParentGroups for IGroupMember [{}]", gm);
+        return instance().ifindParentGroups(gm);
     }
 
     /**
@@ -238,9 +238,9 @@ private GroupServiceConfiguration getServiceConfiguration() throws GroupsExcepti
      * Returns the groups that contain the <code>IGroupMember</code>.
      * @param gm IGroupMember
      */
-    private Iterator ifindContainingGroups(IGroupMember gm) throws GroupsException
+    private Iterator ifindParentGroups(IGroupMember gm) throws GroupsException
     {
-        return compositeGroupService.findContainingGroups(gm);
+        return compositeGroupService.findParentGroups(gm);
     }
 
     /**

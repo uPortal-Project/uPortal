@@ -227,22 +227,7 @@ public void delete() throws GroupsException
 {
     getLocalGroupService().deleteGroup(this);
 }
-/**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- * @see java.util.Hashtable
- */
-public boolean equals(Object obj)
-{
-    if ( obj == null )
-        return false;
-    if ( obj == this )
-        return true;
-    if ( ! ( obj instanceof EntityGroupImpl))
-        return false;
 
-    return this.getKey().equals(((IGroupMember)obj).getKey());
-}
 /**
  * @return java.util.HashMap
  */
@@ -483,17 +468,7 @@ public boolean hasDeletes()
 {
     return (removedMembers != null) && (removedMembers.size() > 0);
 }
-/**
- * Generates a hash code for the receiver.
- * This method is supported primarily for
- * hash tables, such as those provided in java.util.
- * @return an integer hash code for the receiver
- * @see java.util.Hashtable
- */
-public int hashCode()
-{
-    return getKey().hashCode();
-}
+
 /**
  * @return boolean
  */
@@ -729,7 +704,7 @@ public void updateMembers() throws GroupsException {
     clearPendingUpdates();
 
     // Invalidate objects that changed their relationship with us
-    this.invalidateInContainingGroupsCache(invalidate);
+    this.invalidateInParentGroupsCache(invalidate);
 
 }
 }

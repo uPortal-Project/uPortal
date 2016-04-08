@@ -94,7 +94,7 @@ public interface IGroupService {
    * Returns the containing groups for the <code>IGroupMember</code>
    * @param gm IGroupMember
    */
-  public Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+  public Iterator findParentGroups(IGroupMember gm) throws GroupsException;
 
   /**
    * Returns the member groups for the <code>IEntityGroup</code>
