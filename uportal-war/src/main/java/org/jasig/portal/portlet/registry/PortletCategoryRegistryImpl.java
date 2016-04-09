@@ -167,24 +167,28 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.jasig.portal.portlet.om.PortletCategory)
-	 */
+     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.jasig.portal.portlet.om.PortletCategory)
+     */
     @Override
     public Set<IPortletDefinition> getChildPortlets(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<IPortletDefinition> portletDefs = new HashSet<IPortletDefinition>();
-    	@SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
         Iterator<IGroupMember> iter = parentGroup.getMembers();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isEntity()) {
-            	IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
-            	if(portletDefinition != null) {
-            		portletDefs.add(portletDefinition);
-            	} else {
-            		log.warn("portletDefinition was null for groupMember: " + gm );
-            	}   
+                IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
+                if(portletDefinition != null) {
+                    portletDefs.add(portletDefinition);
+                } else {
+                    /* 
+                     * It stinks that we're in this situation, but perhaps we should do more than
+                     * perpetually complaining?  (This warning seems to trigger on a per-login basis.) 
+                     */
+                    log.warn("portletDefinition was null for groupMember: " + gm);
+                }
             }
         }
         return portletDefs;

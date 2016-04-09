@@ -90,6 +90,11 @@ public java.lang.String getOwner() {
     return owner;
 }
 
+    @Override
+    public IPermission[] getPermissionsForTarget(final String target) {
+        return getAuthorizationService().getPermissionsForTarget(getOwner(), target);
+    }
+
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
    * will be ignored.

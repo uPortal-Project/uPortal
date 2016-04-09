@@ -118,7 +118,6 @@ import org.springframework.webflow.context.ExternalContext;
  * Helper methods for the portlet administration workflow.
  *
  * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  */
 @Service
 public final class PortletAdministrationHelper implements ServletContextAware {
@@ -469,7 +468,11 @@ public final class PortletAdministrationHelper implements ServletContextAware {
         }
 
         IPortletDefinition def = portletDefinitionRegistry.getPortletDefinition(form.getId());
-        portletDefinitionRegistry.deletePortletDefinition(def);
+        /*
+         * It's very important to remove portlets via the portletPublishingService
+         * because that API cleans up details like category memberships and permissions.
+         */
+        portletPublishingService.removePortletDefinition(def, person);
 
     }
 
