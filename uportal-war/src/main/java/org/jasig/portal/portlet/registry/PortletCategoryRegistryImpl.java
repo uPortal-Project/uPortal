@@ -183,11 +183,23 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
                 if(portletDefinition != null) {
                     portletDefs.add(portletDefinition);
                 } else {
-                    /* 
-                     * It stinks that we're in this situation, but perhaps we should do more than
-                     * perpetually complaining?  (This warning seems to trigger on a per-login basis.) 
-                     */
-                    log.warn("portletDefinition was null for groupMember: " + gm);
+                     // This isn't supposed to happen.
+                    log.warn("Failed to obtain a portletDefinition for groupMember '"
+                                + gm.getUnderlyingEntityIdentifier()
+                                + "';  this circumstance probably means a portlet was deleted "
+                                + "in a way that didn't clean up details like categpry memberships "
+                                + "and permissions;  all interfaces that delete portlets should go "
+                                + "through IPortletPublishingService.removePortletDefinition();  "
+                                + "memberships for this missing portlet will be removed.");
+
+                    // Delete existing category memberships for this portlet
+                    @SuppressWarnings("unchecked")
+                    Iterator<IEntityGroup> parents = gm.getContainingGroups();
+                    while (parents.hasNext()) {
+                        IEntityGroup group = parents.next();
+                        group.removeMember(gm);
+                        group.update();
+                    }
                 }
             }
         }

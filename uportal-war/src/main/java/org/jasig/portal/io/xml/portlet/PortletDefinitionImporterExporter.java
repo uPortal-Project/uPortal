@@ -506,7 +506,7 @@ public class PortletDefinitionImporterExporter
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
         IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
         @SuppressWarnings("unchecked")
-        Iterator<IEntityGroup> iter = channelDefEntity.getAllContainingGroups();
+        Iterator<IEntityGroup> iter = channelDefEntity.getContainingGroups();
         while (iter.hasNext()) {
             IEntityGroup group = iter.next();
             group.removeMember(channelDefEntity);
