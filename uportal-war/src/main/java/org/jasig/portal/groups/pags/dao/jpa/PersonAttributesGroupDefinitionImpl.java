@@ -109,6 +109,7 @@ public class PersonAttributesGroupDefinitionImpl implements IPersonAttributesGro
     @JoinTable(name="UP_PAGS_GROUP_MEMBERS", joinColumns = {@JoinColumn(name="PAGS_GROUP_ID")}, inverseJoinColumns={@JoinColumn(name="PAGS_GROUP_MEMBER_ID")})
     @JsonSerialize(using=PagsDefinitionJsonUtils.DefinitionLinkJsonSerializer.class)
     @JsonDeserialize(using=PagsDefinitionJsonUtils.DefinitionLinkJsonDeserializer.class)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<IPersonAttributesGroupDefinition> members = new HashSet<IPersonAttributesGroupDefinition>(0);
 
     @OneToMany(cascade=CascadeType.ALL, mappedBy="group", targetEntity=PersonAttributesGroupTestGroupDefinitionImpl.class, orphanRemoval=true)
