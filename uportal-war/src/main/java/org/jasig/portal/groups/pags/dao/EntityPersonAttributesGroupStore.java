@@ -80,7 +80,16 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         this.membershipCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership");
     }
 
+    @Override
     public boolean contains(IEntityGroup group, IGroupMember member) {
+
+        // PAGS groups may only contain other PAGS groups (and people, of course)
+        if (member.isGroup()) {
+            final IEntityGroup ieg = (IEntityGroup) member;
+            if (!PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
+                return false;
+            }
+        }
 
         final MembershipCacheKey cacheKey = new MembershipCacheKey(group.getEntityIdentifier(), member.getEntityIdentifier());
         Element element = membershipCache.get(cacheKey);
@@ -134,10 +143,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return entityGroup;
     }
 
+    @Override
     public void delete(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method delete() not supported.");
     }
 
+    @Override
     public IEntityGroup find(String name) throws GroupsException {
         Set<IPersonAttributesGroupDefinition> groups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitionByName(name);
         if (groups.size() == 0) {
@@ -149,18 +160,34 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return convertPagsGroupToEntity(pagsGroup);
     }
 
+    @Override
     public Iterator<IEntityGroup> findParentGroups(IGroupMember member) throws GroupsException {
 
         logger.debug("finding containing groups for member key {}", member.getKey());
-        return (member.isEntity())
-          ? findParentGroupsForEntity((IEntity)member)
-          : findParentGroupsForGroup((IEntityGroup)member);
+
+        final Set<IEntityGroup> set = Collections.emptySet();
+        Iterator<IEntityGroup> rslt = set.iterator();  // default
+
+        if (member.isGroup()) {
+
+            // PAGS groups may only contain other PAGS groups (and people, of course)
+            final IEntityGroup ieg = (IEntityGroup) member;
+            if (PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
+                rslt = findParentGroupsForGroup((IEntityGroup) member);
+            }
+
+        } else if (member.isEntity()) {
+            rslt = findParentGroupsForEntity((IEntity) member);
+        } else {
+            final String msg = "The specified member is neither a group nor an entity:  " + member;
+            throw new IllegalArgumentException(msg);
+        }
+
+        return rslt;
 
     }
 
     private Iterator<IEntityGroup> findParentGroupsForGroup(IEntityGroup group) {
-        // PAGS groups may not contain non-pags groups
-        // TODO:  Find a way to know if the IGroupMember is a PAGS group, and get out if not.
          logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
          Set<IEntityGroup> parents = getParentGroups(group.getName(), new HashSet<IEntityGroup>());
          return parents.iterator();
@@ -179,15 +206,18 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     }
 
+    @Override
     public Iterator<IEntityGroup> findEntitiesForGroup(IEntityGroup group) throws GroupsException {
         Set<IEntityGroup> rslt = Collections.emptySet();
         return rslt.iterator();
     }
 
+    @Override
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method findLockable() not supported");
     }
 
+    @Override
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
         List<String> keys = new ArrayList<String>();
@@ -200,6 +230,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return keys.toArray(new String[]{});
     }
 
+    @Override
     public Iterator<IEntityGroup> findMemberGroups(IEntityGroup group) throws GroupsException {
         IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(group.getName());
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
@@ -209,10 +240,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return results.iterator();
     }
 
+    @Override
     public IEntityGroup newInstance(Class entityType) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method newInstance() not supported");
     }
 
+    @Override
     public EntityIdentifier[] searchForGroups(String query, int method, Class leaftype) throws GroupsException {
         if ( leaftype != IPERSON_CLASS )
              { return EMPTY_SEARCH_RESULTS; }
@@ -255,14 +288,17 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return results.toArray(new EntityIdentifier[]{});
     }
 
+    @Override
     public void update(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method update() not supported.");
     }
 
+    @Override
     public void updateMembers(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
     }
 
+    @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypes.getEntityTypeID(type) == null) {
             throw new GroupsException("Invalid entity type: "+type.getName());
@@ -270,10 +306,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         return new EntityImpl(key, type);
     }
 
+    @Override
     public IEntity newInstance(String key) throws GroupsException {
         return new EntityImpl(key, null);
     }
 
+    @Override
     public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
         return EMPTY_SEARCH_RESULTS;
     }
