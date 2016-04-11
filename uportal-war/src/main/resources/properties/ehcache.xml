@@ -1910,10 +1910,28 @@
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
-    <!-- PAGS Group Definition Cache, not replicated -->
-    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore"
+    <!--
+     | Stores objects of type IEntityGroup (concrete class EntityGroupImpl), which are
+     | the things emitted by this flavor of GaP (or any flavor) and used by the rest
+     | of the portal.  Historically, it was a big problem if multiple copies of the same
+     | logical group existed simultaneously in memory.  Due to recent changes, that
+     | shouldn't be a major issue (but it's still a good idea to cache them).  Not
+     | replicated.
+     +-->
+    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!--
+     | Stores objects of type PagsGroup, which are used to test users' attributes for
+     | membership.  (It may make sens to refactor this class out of the picture when
+     | we have an opportunity.)  Not replicated.
+     +-->
+    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
+           eternal="false" overflowToDisk="false" diskPersistent="false"
+           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
+
+    <!-- Remembers membership decisions calculated by EntityPersonAttributesGroupStore -->
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>

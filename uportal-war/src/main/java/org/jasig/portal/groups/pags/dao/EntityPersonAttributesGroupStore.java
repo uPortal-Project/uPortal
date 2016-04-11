@@ -68,7 +68,20 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
-    private final Cache groupDefCache;
+
+    /**
+     * Caches IEntityGroup (EntityGroupImpl) instances
+     */
+    private final Cache entityGroupCache;
+
+    /**
+     * Caches PagsGroup instances
+     */
+    private final Cache pagsGroupCache;
+
+    /**
+     * Caches the result of evaluating a single IGroupMember's (direct) membership in a PAGS group
+     */
     private final Cache membershipCache;
 
     public EntityPersonAttributesGroupStore() {
@@ -76,7 +89,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         ApplicationContext applicationContext = ApplicationContextLocator.getApplicationContext();
         this.personAttributesGroupDefinitionDao = applicationContext.getBean("personAttributesGroupDefinitionDao", IPersonAttributesGroupDefinitionDao.class);
         CacheManager cacheManager = applicationContext.getBean("cacheManager", CacheManager.class);
-        this.groupDefCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore");
+        this.entityGroupCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup");
+        this.pagsGroupCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup");
         this.membershipCache = cacheManager.getCache("org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership");
     }
 
@@ -137,10 +151,20 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private IEntityGroup convertPagsGroupToEntity(IPersonAttributesGroupDefinition group) {
-        IEntityGroup entityGroup = new EntityTestingGroupImpl(group.getName(), IPERSON_CLASS);
-        entityGroup.setName(group.getName());
-        entityGroup.setDescription(group.getDescription());
-        return entityGroup;
+
+        final String cacheKey = group.getName();
+        Element element = entityGroupCache.get(cacheKey);
+
+        if (element == null) {
+            final IEntityGroup entityGroup = new EntityTestingGroupImpl(group.getName(), IPERSON_CLASS);
+            entityGroup.setName(group.getName());
+            entityGroup.setDescription(group.getDescription());
+            element = new Element(cacheKey, entityGroup);
+            entityGroupCache.put(element);
+        }
+
+        return (IEntityGroup) element.getObjectValue();
+
     }
 
     @Override
@@ -317,7 +341,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     private PagsGroup initGroupDef(IPersonAttributesGroupDefinition group) {
-        Element element = this.groupDefCache.get(group.getName());
+        Element element = this.pagsGroupCache.get(group.getName());
         if (element != null) {
             return (PagsGroup) element.getObjectValue();
         }
@@ -348,7 +372,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             groupDef.addTestGroup(tg);
         }
         element = new Element(group.getName(), groupDef);
-        this.groupDefCache.put(element);
+        this.pagsGroupCache.put(element);
         return groupDef;
     }
 
