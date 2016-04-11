@@ -41,18 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Controller
 @RequestMapping(value = "/**")
 public class PortalController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private IPortalRenderingPipeline portalRenderingPipeline;
     private IPortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
     private IUrlSyntaxProvider urlSyntaxProvider;
-    
+
     @Autowired
     @Qualifier("main")
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
@@ -83,18 +82,29 @@ public class PortalController {
         final IPortletWindowId portletWindowId = portletRequestInfo.getPortletWindowId();
         this.portletExecutionManager.getPortletOutput(portletWindowId, request, response);
     }
-    
+
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        // Set up some DEBUG logging for performance troubleshooting
+        final long timestamp = System.currentTimeMillis();
+        if (logger.isDebugEnabled()) {
+            logger.debug("STARTING PortalController.renderRequest() for user '{}' #milestone", request.getRemoteUser());
+        }
+
         this.portalRenderingPipeline.renderState(request, response);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("FINISHED PortalController.renderRequest() for user '{}' in {}ms #milestone", request.getRemoteUser(), Long.toString(System.currentTimeMillis() - timestamp));
+        }
+
     }
-    
+
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION"})
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
-        
-        
+
         final IPortalUrlBuilder actionRedirectUrl;
         if (portletRequestInfo != null) {
             final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();

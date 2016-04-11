@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -59,15 +60,14 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  * (as in, profile request parameter or target profile indicated by the swapper manager).
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
- * @version $Revision$
  */
 public class PortalPreAuthenticatedProcessingFilter
         extends AbstractPreAuthenticatedProcessingFilter {
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
-    
+
     private String loginPath = "/Login";
     private String logoutPath = "/Logout";
-    
+
     protected HashMap<String, String> credentialTokens;
     protected HashMap<String, String> principalTokens;
     protected Authentication authenticationService = null;
@@ -75,7 +75,7 @@ public class PortalPreAuthenticatedProcessingFilter
     private IdentitySwapperManager identitySwapperManager;
 
     private ApplicationEventPublisher eventPublisher;
-    
+
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
         this.identitySwapperManager = identitySwapperManager;
@@ -97,13 +97,13 @@ public class PortalPreAuthenticatedProcessingFilter
 
         this.credentialTokens = new HashMap<String,String>(1);
         this.principalTokens = new HashMap<String,String>(1);
-        
+
         try {
             String key;
             // We retrieve the tokens representing the credential and principal
             // parameters from the security properties file.
             Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
-            Enumeration propNames = props.propertyNames();
+            Enumeration<?> propNames = props.propertyNames();
             while (propNames.hasMoreElements()) {
                 String propName = (String) propNames.nextElement();
                 String propValue = props.getProperty(propName);
@@ -133,7 +133,7 @@ public class PortalPreAuthenticatedProcessingFilter
     public void setLoginPath(String loginPath) {
         this.loginPath = loginPath;
     }
-    
+
     /**
      * Set the path to the portal's local logout servlet.
      * 
@@ -142,14 +142,23 @@ public class PortalPreAuthenticatedProcessingFilter
     public void setLogoutPath(String logoutPath) {
         this.logoutPath = logoutPath;
     }
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
+        // Set up some DEBUG logging for performance troubleshooting
+        final long timestamp = System.currentTimeMillis();
+        UUID uuid = null;  // Tagging with a UUID (instead of username) because username changes in the /Login process
+        if (logger.isDebugEnabled()) {
+            uuid = UUID.randomUUID();
+            final HttpServletRequest httpr = (HttpServletRequest) request;
+            logger.debug("STARTING [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " #milestone");
+        }
+
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String currentPath = httpServletRequest.getServletPath();
-        
+
         /**
          * Override the base class's main filter method to bypass this filter if
          * we're currently at the login servlet.  Since that servlet sets up the 
@@ -168,7 +177,7 @@ public class PortalPreAuthenticatedProcessingFilter
             this.doPortalAuthentication((HttpServletRequest)request);
             chain.doFilter(request, response);
         }
-        
+
         else if (logoutPath.equals(currentPath)) {
 
             SecurityContextHolder.clearContext();
@@ -181,7 +190,7 @@ public class PortalPreAuthenticatedProcessingFilter
 
             chain.doFilter(request, response);
         }
-        
+
         // otherwise, call the base class logic
         else {
             if (logger.isTraceEnabled()) {
@@ -191,7 +200,12 @@ public class PortalPreAuthenticatedProcessingFilter
 
             super.doFilter(request, response, chain);
         }
-        
+
+        if (logger.isDebugEnabled()) {
+            final HttpServletRequest httpr = (HttpServletRequest) request;
+            logger.debug("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+        }
+
     }
 
     @Override
@@ -202,7 +216,7 @@ public class PortalPreAuthenticatedProcessingFilter
         if (session == null) {
             return null;
         }
-        
+
         // otherwise, use the person's current SecurityContext as the 
         // credentials
         final IPerson person = personManager.getPerson(request);
@@ -217,18 +231,17 @@ public class PortalPreAuthenticatedProcessingFilter
         if (session == null) {
             return null;
         }
-        
+
         // otherwise, use the current IPerson as the UserDetails
         final IPerson person = personManager.getPerson(request);       
         final UserDetails details = new PortalPersonUserDetails(person);
         return details;
     }
-    
+
     private void doPortalAuthentication(HttpServletRequest request) {
         // Clear out the existing session for the user if they have one
         String targetUid = null;
         String originalUid = null;
-        String originalEventSessionId = null;
         boolean swap = false;
         String swapperProfile = null;
 
@@ -241,7 +254,7 @@ public class PortalPreAuthenticatedProcessingFilter
 
             try {
                 HttpSession s = request.getSession(false);
-                
+
                 if (s != null) {
                     //Check if this is a swapped user hitting the Login servlet
                     originalUid = this.identitySwapperManager.getOriginalUsername(s);
@@ -307,7 +320,7 @@ public class PortalPreAuthenticatedProcessingFilter
             if (targetUid != null && originalUid != null) {
                 if (swap) {
                     swapperLog.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
-                    
+
                     //Track the originating user
                     this.identitySwapperManager.setOriginalUser(s, originalUid, targetUid);
 

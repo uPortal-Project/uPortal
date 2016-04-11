@@ -28,6 +28,8 @@ import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -35,11 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * via an {@link XMLEventReader} 
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class UserLayoutStoreComponent implements StAXPipelineComponent {
     private IUserInstanceManager userInstanceManager;
-    
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     public void setUserInstanceManager(IUserInstanceManager userInstanceManager) {
         this.userInstanceManager = userInstanceManager;
@@ -54,9 +57,15 @@ public class UserLayoutStoreComponent implements StAXPipelineComponent {
 
     @Override
     public PipelineEventReader<XMLEventReader, XMLEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {
+
+        final long timestamp = System.currentTimeMillis();
+        logger.debug("STARTING user layout fetch for user '{}' #milestone", request.getRemoteUser());
+
         final IUserLayoutManager userLayoutManager = getUserLayoutManager(request);
-        
+
         final XMLEventReader userLayoutReader = userLayoutManager.getUserLayoutReader();
+
+        logger.debug("FINISHED user layout fetch for user '{}' in {}ms #milestone", request.getRemoteUser(), Long.toString(System.currentTimeMillis() - timestamp));
 
         return new PipelineEventReaderImpl<XMLEventReader, XMLEvent>(userLayoutReader);
     }

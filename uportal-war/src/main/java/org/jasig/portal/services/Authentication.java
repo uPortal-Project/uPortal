@@ -134,15 +134,18 @@ public class Authentication {
             // so this needs to be done after authentication.
             final String userName = securityContext.getPrincipal().getUID();
             person.setAttribute(IPerson.USERNAME, userName);
-            
+            if (log.isDebugEnabled()) {
+                log.debug("FINISHED SecurityContext authentication for user '" + userName + "' in " + elapsed + "ms #milestone");
+            }
+
             threadNamingRequestFilter.updateCurrentUsername(userName);
-            
+
             //Clear all existing group data about the person
             GroupService.finishedSession(person);
-            
+
             //Clear all existing cached data about the person
             this.usernameTaggedCacheEntryPurger.purgeTaggedCacheEntries(userName);
-            
+
             // Retrieve the additional descriptor from the security context
             final IAdditionalDescriptor addInfo = person.getSecurityContext().getAdditionalDescriptor();
             // Process the additional descriptor if one was created
@@ -154,7 +157,7 @@ public class Authentication {
                 if (addInfo instanceof IPerson) {
                     final IPerson newPerson = (IPerson) addInfo;
                     person.setFullName(newPerson.getFullName());
-                    
+
                     for (final String attributeName : newPerson.getAttributeMap().keySet()) {
                         person.setAttribute(attributeName, newPerson.getAttribute(attributeName));
                     }
@@ -182,14 +185,22 @@ public class Authentication {
                     }
                 }
             }
-            
-            
+
             // Populate the person object using the PersonDirectory if applicable
             if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
                 // Retrieve all of the attributes associated with the person logging in
                 final String username = person.getUserName();
 
+                final long timestamp = System.currentTimeMillis();
+                if (log.isDebugEnabled()) {
+                    log.debug("STARTING user attribute gathering for user '" + userName + "' #milestone");
+                }
+
                 final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(username);
+
+                if (log.isDebugEnabled()) {
+                    log.debug("FINISHED user attribute gathering for user '" + userName + "' in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+                }
 
                 if (personAttributes != null) {
                     // attribs may be null.  IPersonAttributeDao returns null when it does not recognize a user at all, as
