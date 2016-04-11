@@ -64,7 +64,7 @@ import org.springframework.context.ApplicationContext;
  * @since 4.1
  */
 public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final Class<IPerson> IPERSON_CLASS = IPerson.class;
     private static final EntityIdentifier[] EMPTY_SEARCH_RESULTS = new EntityIdentifier[0];
     private IPersonAttributesGroupDefinitionDao personAttributesGroupDefinitionDao;
@@ -104,7 +104,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                        if (personAttributes != null) {
                            final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
                            rp.setAttributes(personAttributes.getAttributes());
-                           answer = testRecursively(groupDef, rp, member);
+                           answer = groupDef.contains(rp);
                        }
                    } catch (Exception ex) {
                        logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
@@ -146,69 +146,28 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             return null;
         }
         IPersonAttributesGroupDefinition pagsGroup = groups.iterator().next();
-        PagsGroup groupDef = initGroupDef(pagsGroup);
-        IEntityGroup group = new EntityTestingGroupImpl(groupDef.getKey(), IPERSON_CLASS);
-        group.setName(groupDef.getName());
-        group.setDescription(groupDef.getDescription());
-        return group;
+        return convertPagsGroupToEntity(pagsGroup);
     }
 
-    private boolean testRecursively(PagsGroup groupDef, IPerson person, IGroupMember member)
-        throws GroupsException {
-            if ( ! groupDef.contains(person) )
-                { return false;}
-            else
-            {
-                IEntityGroup group = find(groupDef.getName());
-                IEntityGroup parentGroup = null;
-                Set<IEntityGroup> ancestors = primGetAncestorGroups(group, new HashSet<IEntityGroup>());
-                boolean testPassed = true;
-                for (Iterator<IEntityGroup> i=ancestors.iterator(); i.hasNext() && testPassed;)
-                {
-                    parentGroup = i.next();
-                    PagsGroup parentGroupDef = (PagsGroup) convertEntityToGroupDef(parentGroup);
-                    testPassed = parentGroupDef.test(person);
-                }
+    public Iterator<IEntityGroup> findParentGroups(IGroupMember member) throws GroupsException {
 
-                if (!testPassed && logger.isWarnEnabled()) {
-                    logger.warn("PAGS group {} contained person {}, but the person failed to be contained in"
-                            + " ancesters of this group ({}). This may indicate a misconfigured PAGS group store."
-                            +" Please check PAGS Entity Files", group.getKey(), member.getKey(),
-                            parentGroup != null ? parentGroup.getKey() : "no parent");
-                }
-                return testPassed;
-            }
-        }
-    private java.util.Set<IEntityGroup> primGetAncestorGroups(IEntityGroup group, Set<IEntityGroup> s)
-            throws GroupsException
-            {
-                Iterator<IEntityGroup> i = findParentGroups(group);
-                while ( i.hasNext() )
-                {
-                    IEntityGroup parentGroup = i.next();
-                    s.add(parentGroup);
-                    primGetAncestorGroups(parentGroup, s);
-                }
-                return s;
-            }
-
-    public Iterator<IEntityGroup> findParentGroups(IGroupMember member)
-    throws GroupsException
-    {
         logger.debug("finding containing groups for member key {}", member.getKey());
         return (member.isEntity())
           ? findParentGroupsForEntity((IEntity)member)
           : findParentGroupsForGroup((IEntityGroup)member);
+
     }
 
     private Iterator<IEntityGroup> findParentGroupsForGroup(IEntityGroup group) {
-        logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
+        // PAGS groups may not contain non-pags groups
+        // TODO:  Find a way to know if the IGroupMember is a PAGS group, and get out if not.
+         logger.debug("Finding containing groups for group {} (key {})", group.getName(), group.getKey());
          Set<IEntityGroup> parents = getParentGroups(group.getName(), new HashSet<IEntityGroup>());
          return parents.iterator();
     }
 
-    private Iterator<IEntityGroup> findParentGroupsForEntity(IEntity member)
-    throws GroupsException {
+    private Iterator<IEntityGroup> findParentGroupsForEntity(IEntity member) throws GroupsException {
+
         Set<IPersonAttributesGroupDefinition> pagsGroups = personAttributesGroupDefinitionDao.getPersonAttributesGroupDefinitions();
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
         for (IPersonAttributesGroupDefinition pagsGroup : pagsGroups) {
@@ -217,10 +176,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 { results.add(group); }
         }
         return results.iterator();
+
     }
 
     public Iterator<IEntityGroup> findEntitiesForGroup(IEntityGroup group) throws GroupsException {
-        return Collections.EMPTY_LIST.iterator();
+        Set<IEntityGroup> rslt = Collections.emptySet();
+        return rslt.iterator();
     }
 
     public ILockableEntityGroup findLockable(String key) throws GroupsException {
@@ -301,8 +262,6 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public void updateMembers(IEntityGroup group) throws GroupsException {
         throw new UnsupportedOperationException("EntityPersonAttributesGroupStore: Method updateMembers() not supported.");
     }
-
-
 
     public IEntity newInstance(String key, Class type) throws GroupsException {
         if (EntityTypes.getEntityTypeID(type) == null) {
@@ -404,7 +363,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         if (pagsGroups.size() > 1) {
             logger.error("More than one PAGS group with name {} found.", name);
         }
-        return pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
+        final IPersonAttributesGroupDefinition rslt = pagsGroups.isEmpty() ? null : pagsGroups.iterator().next();
+        return rslt;
     }
 
     /*
@@ -446,6 +406,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             } else if (!memberId.equals(other.memberId))
                 return false;
             return true;
+        }
+        @Override
+        public String toString() {
+            return "MembershipCacheKey [groupId=" + groupId + ", memberId=" + memberId + "]";
         }
     }
 

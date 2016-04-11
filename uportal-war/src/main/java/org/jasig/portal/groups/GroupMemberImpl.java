@@ -51,7 +51,7 @@ public abstract class GroupMemberImpl implements IGroupMember {
     private EntityIdentifier underlyingEntityIdentifier;
 
     private final Cache parentGroupsCache;
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
 /**
  * GroupMemberImpl constructor
