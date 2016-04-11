@@ -147,13 +147,13 @@ public class PortalPreAuthenticatedProcessingFilter
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
-        // Set up some TRACE logging for performance troubleshooting
+        // Set up some DEBUG logging for performance troubleshooting
         final long timestamp = System.currentTimeMillis();
-        UUID uuid = null;
-        if (logger.isTraceEnabled()) {
+        UUID uuid = null;  // Tagging with a UUID (instead of username) because username changes in the /Login process
+        if (logger.isDebugEnabled()) {
             uuid = UUID.randomUUID();
             final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.trace("STARTING [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " #milestone");
+            logger.debug("STARTING [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " #milestone");
         }
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -201,9 +201,9 @@ public class PortalPreAuthenticatedProcessingFilter
             super.doFilter(request, response, chain);
         }
 
-        if (logger.isTraceEnabled()) {
+        if (logger.isDebugEnabled()) {
             final HttpServletRequest httpr = (HttpServletRequest) request;
-            logger.trace("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+            logger.debug("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
         }
 
     }

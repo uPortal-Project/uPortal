@@ -19,7 +19,6 @@
 package org.jasig.portal.rendering;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,18 +41,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Controller
 @RequestMapping(value = "/**")
 public class PortalController {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private IPortalRenderingPipeline portalRenderingPipeline;
     private IPortletExecutionManager portletExecutionManager;
     private IPortalUrlProvider portalUrlProvider;
     private IUrlSyntaxProvider urlSyntaxProvider;
-    
+
     @Autowired
     @Qualifier("main")
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
@@ -88,18 +86,16 @@ public class PortalController {
     @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // Set up some TRACE logging for performance troubleshooting
+        // Set up some DEBUG logging for performance troubleshooting
         final long timestamp = System.currentTimeMillis();
-        UUID uuid = null;
-        if (logger.isTraceEnabled()) {
-            uuid = UUID.randomUUID();
-            logger.trace("STARTING PortalController.renderRequest() for " + uuid.toString() + " #milestone");
+        if (logger.isDebugEnabled()) {
+            logger.debug("STARTING PortalController.renderRequest() for user '{}' #milestone", request.getRemoteUser());
         }
 
         this.portalRenderingPipeline.renderState(request, response);
 
-        if (logger.isTraceEnabled()) {
-            logger.trace("FINISHED PortalController.renderRequest() for " + uuid.toString() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
+        if (logger.isDebugEnabled()) {
+            logger.debug("FINISHED PortalController.renderRequest() for user '{}' in {}ms #milestone", request.getRemoteUser(), Long.toString(System.currentTimeMillis() - timestamp));
         }
 
     }
@@ -108,8 +104,7 @@ public class PortalController {
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
-        
-        
+
         final IPortalUrlBuilder actionRedirectUrl;
         if (portletRequestInfo != null) {
             final IPortletWindowId targetWindowId = portletRequestInfo.getPortletWindowId();

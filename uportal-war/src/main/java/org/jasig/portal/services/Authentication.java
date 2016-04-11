@@ -135,7 +135,7 @@ public class Authentication {
             final String userName = securityContext.getPrincipal().getUID();
             person.setAttribute(IPerson.USERNAME, userName);
             if (log.isDebugEnabled()) {
-                log.debug("SecurityContext authentication for user '" + userName + "' took " + elapsed + "ms");
+                log.debug("FINISHED SecurityContext authentication for user '" + userName + "' in " + elapsed + "ms #milestone");
             }
 
             threadNamingRequestFilter.updateCurrentUsername(userName);
