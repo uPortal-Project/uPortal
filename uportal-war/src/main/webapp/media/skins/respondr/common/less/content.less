@@ -22,6 +22,16 @@
 #portalPageBody {
     background-color: @content-background-color;
     min-height: 300px;
+
+    .portal-page-column {
+        .portal-page-column-inner {
+            min-height: 100px;
+
+            section {
+                margin-bottom: 20px;
+            }
+        }
+    }
 }
 
 /** Page Message for returned action messages */
@@ -105,7 +115,7 @@ section h4 {
     margin: 10px 0;
 }
 
-.up-portlet-titlebar {
+.up-portlet-titlebar.up-standard-chrome {
     background-color: @portlet-titlebar-background-color; /* Old browsers */
     background-color: @portlet-titlebar-background-color;
     #gradient > .vertical(lighten(@portlet-titlebar-background-color, 5%), darken(@portlet-titlebar-background-color, 10%), 0%, 100%);
@@ -130,13 +140,12 @@ section h4 {
 
     .portlet-controls {
         position: absolute;
-        top: 2px;
+        top: 0;
         right: 0;
         margin: 0;
 
-        > a {
+        .portlet-options-menu > a {
             color: @portlet-options-link-color;
-            font-size: 11px;
             font-weight: normal;
             .caret {
                 border-top-color: @portlet-options-link-color;
@@ -152,6 +161,8 @@ section h4 {
 
         .grab-handle {
             display: inline-block;
+            position: relative;
+            top: 3px;
             font-size: 18px;
             margin-left: 3px;
         }
