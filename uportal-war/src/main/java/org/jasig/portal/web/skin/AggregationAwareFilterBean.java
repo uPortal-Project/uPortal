@@ -35,7 +35,7 @@ import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Pays attention to the state of skin aggregation and only applies the fitler if it is disabled
+ * Pays attention to the state of skin aggregation and only applies the filter if it is disabled
  * 
  * @author Eric Dalquist
  * @version $Revision$
