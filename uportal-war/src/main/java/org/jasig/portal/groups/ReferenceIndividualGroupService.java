@@ -855,20 +855,27 @@ throws GroupsException
  * @param group org.jasig.portal.groups.IEntityGroup
  * @param member org.jasig.portal.groups.IGroupMember
  */
-public boolean contains(IEntityGroup group, IGroupMember member) 
-throws GroupsException 
-{
-    return ( isForeign(member) && ! isEditable() )
-      ? false
-      : getGroupStore().contains(group, member);
+public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
+    boolean rslt;
+    if (!member.getLeafType().equals(group.getLeafType())) {
+        // Group does not contain the type of thing that member is
+        rslt = false;
+    } else if (isForeignGroup(member) && !isEditable()) {
+        // Member is a group from another system, and there's
+        // no way to add it as a child in this one
+        rslt = false;
+    } else {
+        // This is an allowable relationship;  defer to the Group Store
+        rslt = getGroupStore().contains(group, member);
+    }
+    return rslt;
 }
 /**
  * A foreign member is a group from a different service.
  * @param member IGroupMember
  * @return boolean
  */
-protected boolean isForeign(IGroupMember member)
-{
+private boolean isForeignGroup(IGroupMember member) {
     if (member.isEntity())
         { return false; }
     else

@@ -97,8 +97,20 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     @Override
     public boolean contains(IEntityGroup group, IGroupMember member) {
 
-        // PAGS groups may only contain other PAGS groups (and people, of course)
+        /*
+         * This method has the potential to be called A LOT, especially if
+         * there's a lot of portal data (portlets & groups).  It's important
+         * not to waste time on nonsensical checks.
+         */
+
+        if (!IPERSON_CLASS.equals(member.getLeafType())) {
+            // Maybe this call to contains() shouldn't even happen, since
+            // group.getLeafType() is (presumably) IPerson.class.
+            return false;
+        }
+
         if (member.isGroup()) {
+            // PAGS groups may only contain other PAGS groups (and people, of course)
             final IEntityGroup ieg = (IEntityGroup) member;
             if (!PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
                 return false;
@@ -117,23 +129,19 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                final String key = ((IEntityGroup) member).getLocalKey();
                answer = groupDef.hasMember(key);
             } else {
-               if (member.getEntityType() != IPERSON_CLASS) {
-                   answer = false;
-               } else {
-                   try {
-                       final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
-                       final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
+                try {
+                    final IPersonAttributeDao pa = PersonAttributeDaoLocator.getPersonAttributeDao();
+                    final IPersonAttributes personAttributes = pa.getPerson(member.getKey());
 
-                       if (personAttributes != null) {
-                           final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
-                           rp.setAttributes(personAttributes.getAttributes());
-                           answer = groupDef.contains(rp);
-                       }
-                   } catch (Exception ex) {
-                       logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
-                       return false;
-                   }
-               }
+                    if (personAttributes != null) {
+                        final RestrictedPerson rp = PersonFactory.createRestrictedPerson();
+                        rp.setAttributes(personAttributes.getAttributes());
+                        answer = groupDef.contains(rp);
+                    }
+                } catch (Exception ex) {
+                    logger.error("Exception acquiring attributes for member " + member + " while checking if group " + group + " contains this member.", ex);
+                    return false;
+                }
             }
 
             element = new Element(cacheKey, answer);
@@ -187,6 +195,18 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     @Override
     public Iterator<IEntityGroup> findParentGroups(IGroupMember member) throws GroupsException {
 
+        /*
+         * This method has the potential to be called A LOT, especially if
+         * there's a lot of portal data (portlets & groups).  It's important
+         * not to waste time on nonsensical checks.
+         */
+
+        if (!IPERSON_CLASS.equals(member.getLeafType())) {
+            // This is going to happen;  GaP code is not responsible for
+            // knowing that PAGS only supports groups of IPerson (we are).
+            return Collections.emptyIterator();
+        }
+
         logger.debug("finding containing groups for member key {}", member.getKey());
 
         final Set<IEntityGroup> set = Collections.emptySet();
@@ -232,8 +252,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public Iterator<IEntityGroup> findEntitiesForGroup(IEntityGroup group) throws GroupsException {
-        Set<IEntityGroup> rslt = Collections.emptySet();
-        return rslt.iterator();
+        // PAGS groups are synthetic;  we don't support this behavior.
+        return Collections.emptyIterator();
     }
 
     @Override
@@ -245,9 +265,8 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     public String[] findMemberGroupKeys(IEntityGroup group) throws GroupsException {
 
         List<String> keys = new ArrayList<String>();
-        PagsGroup groupDef = convertEntityToGroupDef(group);
-        if (groupDef != null)
-        {
+        PagsGroup groupDef = convertEntityToGroupDef(group);  // Will prevent wasting time on non-PAGS groups, if those calls even happen
+        if (groupDef != null) {
              for (Iterator<String> i = groupDef.getMembers().iterator(); i.hasNext(); )
                   { keys.add(i.next()); }
         }
@@ -256,6 +275,11 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public Iterator<IEntityGroup> findMemberGroups(IEntityGroup group) throws GroupsException {
+
+        /*
+         * The GaP system prevents this method from being called with a nn-PAGS group.
+         */
+
         IPersonAttributesGroupDefinition pagsGroup = getPagsGroupDefByName(group.getName());
         List<IEntityGroup> results = new ArrayList<IEntityGroup>();
         for (IPersonAttributesGroupDefinition member : pagsGroup.getMembers()) {
@@ -324,6 +348,10 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public IEntity newInstance(String key, Class type) throws GroupsException {
+        /*
+         * NOTE:  It seems like something should be done to prevent emitting
+         * nonsense entities;  it's not clear what that would be.
+         */
         if (EntityTypes.getEntityTypeID(type) == null) {
             throw new GroupsException("Invalid entity type: "+type.getName());
         }
@@ -332,6 +360,9 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
 
     @Override
     public IEntity newInstance(String key) throws GroupsException {
+        /*
+         * Is any key valid?
+         */
         return new EntityImpl(key, null);
     }
 
