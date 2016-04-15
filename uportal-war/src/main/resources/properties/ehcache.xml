@@ -1917,6 +1917,8 @@
      | logical group existed simultaneously in memory.  Due to recent changes, that
      | shouldn't be a major issue (but it's still a good idea to cache them).  Not
      | replicated.
+     |
+     | - 1 x PAGS groups in the portal
      +-->
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
@@ -1924,14 +1926,20 @@
 
     <!--
      | Stores objects of type PagsGroup, which are used to test users' attributes for
-     | membership.  (It may make sens to refactor this class out of the picture when
+     | membership.  (It may make sense to refactor this class out of the picture when
      | we have an opportunity.)  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
      +-->
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
-    <!-- Remembers membership decisions calculated by EntityPersonAttributesGroupStore -->
+    <!--
+     | Remembers membership decisions calculated by EntityPersonAttributesGroupStore
+     |
+     | - 1 x PAGS groups in the portal x concurrent users since TTL
+     +-->
     <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true"/>
