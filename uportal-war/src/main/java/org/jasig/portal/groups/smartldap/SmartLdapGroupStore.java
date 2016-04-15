@@ -200,7 +200,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
      * @return java.util.Iterator
      * @param gm org.jasig.portal.groups.IEntityGroup
      */
-    public Iterator findContainingGroups(IGroupMember gm) throws GroupsException {
+    public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
 
         if (isTreeRefreshRequired()) {
             refreshTree();

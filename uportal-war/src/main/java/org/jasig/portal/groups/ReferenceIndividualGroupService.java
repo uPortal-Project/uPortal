@@ -20,6 +20,7 @@ package org.jasig.portal.groups;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -106,7 +107,7 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
  * fail anyway.
  * @param group ILockableEntityGroup
  */
-private void removeDeletedGroupFromContainingGroups(ILockableEntityGroup group)
+private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group)
 throws GroupsException
 {
     Iterator itr;
@@ -117,7 +118,7 @@ throws GroupsException
     try
     {
         String lockOwner = group.getLock().getLockOwner();
-        for ( itr=group.getContainingGroups(); itr.hasNext(); )
+        for ( itr=group.getParentGroups(); itr.hasNext(); )
         {
             containingGroup = (IEntityGroup) itr.next();
             lockableGroup=
@@ -148,7 +149,7 @@ throws GroupsException
             catch (LockingException le)
             {
                 log.error(
-                    "ReferenceIndividualGroupService.removeDeletedGroupFromContainingGroups(): " +
+                    "ReferenceIndividualGroupService.removeDeletedGroupFromParentGroups(): " +
                     "Problem unlocking parent group", le);
             }
         }
@@ -167,7 +168,7 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     {
         if ( group.getLock().isValid() )
         {
-            removeDeletedGroupFromContainingGroups(group);
+            removeDeletedGroupFromParentGroups(group);
             deleteGroup( (IEntityGroup)group );
         }
         else
@@ -199,12 +200,12 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
  * Returns and caches the containing groups for the <code>IGroupMember</code>
  * @param gm IGroupMember
  */
-public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+public Iterator findParentGroups(IGroupMember gm) throws GroupsException
 {
     log.debug("Finding containing groups for member {}", gm.getKey());
     Collection groups = new ArrayList(10);
     IEntityGroup group = null;
-    for ( Iterator it = getGroupStore().findContainingGroups(gm); it.hasNext(); )
+    for ( Iterator it = getGroupStore().findParentGroups(gm); it.hasNext(); )
     {
         group = (IEntityGroup) it.next();
         group.setLocalGroupService(this);
@@ -811,7 +812,7 @@ throws GroupsException
     for (Iterator it=group.getMembers(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
-        gmi.removeGroup(group);
+        gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
     }
@@ -832,7 +833,7 @@ throws GroupsException
     for (Iterator it=egi.getAddedMembers().values().iterator(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
-        gmi.addGroup(egi);
+        gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
     }
@@ -840,7 +841,7 @@ throws GroupsException
     for (Iterator it=egi.getRemovedMembers().values().iterator(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
-        gmi.removeGroup(egi);
+        gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
     }
@@ -854,20 +855,27 @@ throws GroupsException
  * @param group org.jasig.portal.groups.IEntityGroup
  * @param member org.jasig.portal.groups.IGroupMember
  */
-public boolean contains(IEntityGroup group, IGroupMember member) 
-throws GroupsException 
-{
-    return ( isForeign(member) && ! isEditable() )
-      ? false
-      : getGroupStore().contains(group, member);
+public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
+    boolean rslt;
+    if (!member.getLeafType().equals(group.getLeafType())) {
+        // Group does not contain the type of thing that member is
+        rslt = false;
+    } else if (isForeignGroup(member) && !isEditable()) {
+        // Member is a group from another system, and there's
+        // no way to add it as a child in this one
+        rslt = false;
+    } else {
+        // This is an allowable relationship;  defer to the Group Store
+        rslt = getGroupStore().contains(group, member);
+    }
+    return rslt;
 }
 /**
  * A foreign member is a group from a different service.
  * @param member IGroupMember
  * @return boolean
  */
-protected boolean isForeign(IGroupMember member)
-{
+private boolean isForeignGroup(IGroupMember member) {
     if (member.isEntity())
         { return false; }
     else

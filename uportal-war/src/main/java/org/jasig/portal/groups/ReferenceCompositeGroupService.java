@@ -60,7 +60,7 @@ public ReferenceCompositeGroupService() throws GroupsException
  * a membership for this member.
  * @param gm IGroupMember
  */
-public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+public Iterator findParentGroups(IGroupMember gm) throws GroupsException
 {
     Collection allGroups = new ArrayList();
     IIndividualGroupService service = null;
@@ -72,7 +72,7 @@ public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
           getComponentService(((IEntityGroup)gm).getServiceName()) == service )
         {
             {
-                for ( Iterator groups = service.findContainingGroups(gm); groups.hasNext(); )
+                for ( Iterator groups = service.findParentGroups(gm); groups.hasNext(); )
                     { allGroups.add((IEntityGroup) groups.next()); }
             }
         }

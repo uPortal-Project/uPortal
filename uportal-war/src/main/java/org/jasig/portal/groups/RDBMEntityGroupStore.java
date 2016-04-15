@@ -40,7 +40,6 @@ import org.jasig.portal.utils.SqlTransaction;
 /**
  * Store for <code>EntityGroupImpl</code>.
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants {
     private static final Log log = LogFactory.getLog(RDBMEntityGroupStore.class);
@@ -67,8 +66,8 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String countAMemberGroupSql;
     private static String countMemberGroupsNamedSql;
     private static String countAMemberEntitySql;
-    private static String findContainingGroupsForEntitySql;
-    private static String findContainingGroupsForGroupSql;
+    private static String findParentGroupsForEntitySql;
+    private static String findParentGroupsForGroupSql;
     private static String findGroupSql;
     private static String findGroupsByCreatorSql;
     private static String findMemberGroupKeysSql;
@@ -312,11 +311,11 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param ent the entity in question
      * @return java.util.Iterator
      */
-    public java.util.Iterator findContainingGroups(IEntity ent) throws GroupsException
+    public java.util.Iterator findParentGroups(IEntity ent) throws GroupsException
     {
         String memberKey = ent.getKey();
         Integer type = EntityTypes.getEntityTypeID(ent.getLeafType());
-        return findContainingGroupsForEntity(memberKey, type.intValue());
+        return findParentGroupsForEntity(memberKey, type.intValue());
     }
 
     /**
@@ -324,12 +323,12 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param group org.jasig.portal.groups.IEntityGroup
      * @return java.util.Iterator
      */
-    public java.util.Iterator findContainingGroups(IEntityGroup group) throws GroupsException
+    public java.util.Iterator findParentGroups(IEntityGroup group) throws GroupsException
     {
         String memberKey = group.getLocalKey();
         String serviceName = group.getServiceName().toString();
         Integer type = EntityTypes.getEntityTypeID(group.getLeafType());
-        return findContainingGroupsForGroup(serviceName, memberKey, type.intValue());
+        return findParentGroupsForGroup(serviceName, memberKey, type.intValue());
     }
 
     /**
@@ -337,17 +336,17 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param gm the group member in question
      * @return java.util.Iterator
      */
-    public Iterator findContainingGroups(IGroupMember gm) throws GroupsException
+    public Iterator findParentGroups(IGroupMember gm) throws GroupsException
     {
         if ( gm.isGroup() )
         {
             IEntityGroup group = (IEntityGroup) gm;
-            return findContainingGroups(group);
+            return findParentGroups(group);
         }
         else
         {
             IEntity ent = (IEntity) gm;
-            return findContainingGroups(ent);
+            return findParentGroups(ent);
         }
     }
 
@@ -357,7 +356,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param type
      * @return java.util.Iterator
      */
-    private java.util.Iterator findContainingGroupsForEntity(String memberKey, int type)
+    private java.util.Iterator findParentGroupsForEntity(String memberKey, int type)
             throws GroupsException
     {
         java.sql.Connection conn = null;
@@ -367,7 +366,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         try
         {
             conn = RDBMServices.getConnection();
-            String sql = getFindContainingGroupsForEntitySql();
+            String sql = getFindParentGroupsForEntitySql();
             PreparedStatement ps = conn.prepareStatement(sql);
             try
             {
@@ -375,7 +374,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setInt(2, type);
                 if (log.isDebugEnabled())
                     log.debug(
-                            "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + ps +
+                            "RDBMEntityGroupStore.findParentGroupsForEntity(): " + ps +
                                     " (" + memberKey + ", " + type + ", memberIsGroup = F)");
                 java.sql.ResultSet rs = ps.executeQuery();
                 try
@@ -394,7 +393,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         catch (Exception e)
         {
-            log.error( "RDBMEntityGroupStore.findContainingGroupsForEntity(): " + e);
+            log.error( "RDBMEntityGroupStore.findParentGroupsForEntity(): " + e);
             throw new GroupsException("Problem retrieving containing groups: " + e);
         }
 
@@ -411,7 +410,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      * @param type
      * @return java.util.Iterator
      */
-    private java.util.Iterator findContainingGroupsForGroup(String serviceName, String memberKey, int type)
+    private java.util.Iterator findParentGroupsForGroup(String serviceName, String memberKey, int type)
             throws GroupsException
     {
         java.sql.Connection conn = null;
@@ -421,7 +420,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         try
         {
             conn = RDBMServices.getConnection();
-            String sql = getFindContainingGroupsForGroupSql();
+            String sql = getFindParentGroupsForGroupSql();
             PreparedStatement ps = conn.prepareStatement(sql);
             try
             {
@@ -430,7 +429,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                 ps.setInt(3, type);
                 if (log.isDebugEnabled())
                     log.debug(
-                            "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + ps +
+                            "RDBMEntityGroupStore.findParentGroupsForGroup(): " + ps +
                                     " (" + serviceName + ", " + memberKey + ", " + type + ", memberIsGroup = T)");
                 java.sql.ResultSet rs = ps.executeQuery();
                 try
@@ -449,7 +448,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         catch (Exception e)
         {
-            log.error( "RDBMEntityGroupStore.findContainingGroupsForGroup(): " + e);
+            log.error( "RDBMEntityGroupStore.findParentGroupsForGroup(): " + e);
             throw new GroupsException("Problem retrieving containing groups: " + e);
         }
 
@@ -861,9 +860,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     /**
      * @return java.lang.String
      */
-    private static java.lang.String getFindContainingGroupsForEntitySql()
+    private static java.lang.String getFindParentGroupsForEntitySql()
     {
-        if ( findContainingGroupsForEntitySql == null)
+        if ( findParentGroupsForEntitySql == null)
         {
             StringBuffer buff = new StringBuffer(500);
             buff.append("SELECT ");
@@ -879,16 +878,16 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             buff.append(" AND ");
             buff.append(memberAlias(MEMBER_IS_GROUP_COLUMN) + EQ + sqlQuote(MEMBER_IS_ENTITY));
 
-            findContainingGroupsForEntitySql = buff.toString();
+            findParentGroupsForEntitySql = buff.toString();
         }
-        return findContainingGroupsForEntitySql;
+        return findParentGroupsForEntitySql;
     }
     /**
      * @return java.lang.String
      */
-    private static java.lang.String getFindContainingGroupsForGroupSql()
+    private static java.lang.String getFindParentGroupsForGroupSql()
     {
-        if ( findContainingGroupsForGroupSql == null)
+        if ( findParentGroupsForGroupSql == null)
         {
             StringBuffer buff = new StringBuffer(500);
             buff.append("SELECT ");
@@ -909,9 +908,9 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
             buff.append(" AND ");
             buff.append(memberAlias(MEMBER_IS_GROUP_COLUMN) + EQ + sqlQuote(MEMBER_IS_GROUP));
 
-            findContainingGroupsForGroupSql = buff.toString();
+            findParentGroupsForGroupSql = buff.toString();
         }
-        return findContainingGroupsForGroupSql;
+        return findParentGroupsForGroupSql;
     }
     /**
      * @return java.lang.String

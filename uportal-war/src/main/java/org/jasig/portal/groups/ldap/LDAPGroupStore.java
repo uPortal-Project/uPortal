@@ -502,7 +502,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   public IEntityGroup find(String key) throws GroupsException {
     return makeGroup((GroupShadow)this.groups.get(key));
   }
-  public Iterator findContainingGroups(IGroupMember gm) throws GroupsException {
+  public Iterator findParentGroups(IGroupMember gm) throws GroupsException {
      ArrayList al = new ArrayList();
      String key;
      GroupShadow[] shadows = getGroupShadows();

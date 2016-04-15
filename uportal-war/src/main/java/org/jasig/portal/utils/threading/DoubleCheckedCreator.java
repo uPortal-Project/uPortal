@@ -30,13 +30,12 @@ import org.apache.commons.logging.LogFactory;
  * Implementation of double-checked locking for object creation using a {@link ReadWriteLock}
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class DoubleCheckedCreator<T> {
-	private static String LOGGER_NAME = DoubleCheckedCreator.class.getName();
-	
+    private static String LOGGER_NAME = DoubleCheckedCreator.class.getName();
+
     private Log logger;
-    
+
     /**
      * Inits and/or returns already initialized logger.  <br>
      * You have to use this method in order to use the logger,<br> 
@@ -55,7 +54,7 @@ public abstract class DoubleCheckedCreator<T> {
 	  }
 	  return l;
 	}
-    
+
     private final ReadWriteLock readWriteLock;
     protected final Lock readLock;
     protected final Lock writeLock;
@@ -109,9 +108,9 @@ public abstract class DoubleCheckedCreator<T> {
             final T value = this.retrieve(args);
             if (!this.invalid(value, args)) {
                 if (getLogger().isDebugEnabled()) {
-                	getLogger().debug("Using retrieved Object='" + value + "'");
+                    getLogger().debug("Using retrieved (first attempt) Object='" + value + "'");
                 }
-                
+
                 return value;
             }
         }
@@ -119,26 +118,25 @@ public abstract class DoubleCheckedCreator<T> {
             //Release the read lock
             this.readLock.unlock();
         }
-        
-        
+
         //Object must not be valid, switch to a write lock
         this.writeLock.lock();
         try {
             //Check again if the object exists and is valid
             T value = this.retrieve(args);
             if (this.invalid(value, args)) {
-                
+
                 //Object is not valid, create it
                 value = this.create(args);
-                
+
                 if (getLogger().isDebugEnabled()) {
-                	getLogger().debug("Created new Object='" + value + "'");
+                    getLogger().debug("Created new Object='" + value + "'");
                 }
             }
             else if (getLogger().isDebugEnabled()) {
-            	getLogger().debug("Using retrieved Object='" + value + "'");
+                getLogger().debug("Using retrieved (second attempt) Object='" + value + "'");
             }
-            
+
             return value;
         }
         finally {

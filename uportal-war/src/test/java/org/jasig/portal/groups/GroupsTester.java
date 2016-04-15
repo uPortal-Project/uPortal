@@ -108,7 +108,7 @@ public class GroupsTester extends TestCase {
                 { numMembers++; }
             for (itr = group.getEntities(); itr.hasNext(); itr.next() )
                 { numEntities++; }
-            for (itr = group.getContainingGroups(); itr.hasNext(); itr.next() )
+            for (itr = group.getParentGroups(); itr.hasNext(); itr.next() )
                 { numContainingGroups++; }
 //          print (printID + " members: " + numMembers + " entities: " + numEntities + " containing groups: " + numContainingGroups);
         }
@@ -256,13 +256,6 @@ private String getRandomString(java.util.Random r, int length) {
         chars[i] = (char) charValue;
     }
     return new String(chars);
-}
-/**
- * @return org.jasig.portal.services.GroupService
- */
-private GroupService getService() throws GroupsException
-{
-    return GroupService.instance();
 }
 /**
  * Starts the application.
@@ -748,7 +741,7 @@ public void testDeleteChildGroup() throws Exception
     msg = "Retrieving containing groups from child.";
     print(msg);
     list = new ArrayList();
-    for( itr=child.getContainingGroups(); itr.hasNext(); )
+    for( itr=child.getParentGroups(); itr.hasNext(); )
         { list.add(itr.next()); }
     assertEquals(msg, (totNumGroups - 1), list.size());
 
@@ -1072,7 +1065,7 @@ public void testRetrieveParentGroups() throws Exception
     msg = "Getting containing groups for " + testEntity;
     print(msg);
     list = new ArrayList();
-    for (it = testEntity.getContainingGroups(); it.hasNext();)
+    for (it = testEntity.getParentGroups(); it.hasNext();)
         { list.add(it.next()); }
     assertEquals(msg, numContainingGroups, list.size());
 
@@ -1091,7 +1084,7 @@ public void testRetrieveParentGroups() throws Exception
     msg = "Getting ALL containing groups for " + testEntity;
     print(msg);
     list = new ArrayList();
-    for (it = testEntity.getAllContainingGroups(); it.hasNext();)
+    for (it = testEntity.getAncestorGroups(); it.hasNext();)
         { list.add(it.next()); }
     assertEquals(msg, numAllGroups, list.size());
     
@@ -1100,7 +1093,7 @@ public void testRetrieveParentGroups() throws Exception
     msg = "Getting ALL containing groups for DUPLICATE entity:" + testEntity;
     print(msg);
     list = new ArrayList();
-    for (it = duplicateTestEntity.getAllContainingGroups(); it.hasNext();)
+    for (it = duplicateTestEntity.getAncestorGroups(); it.hasNext();)
         { list.add(it.next()); }
     assertEquals(msg, numAllGroups, list.size());
       
@@ -1367,7 +1360,7 @@ public void testUpdateMembersVisibility() throws Exception
     list = new ArrayList();
     for(idx=1; idx<totNumGroups; idx++)
     { 
-        for (itr = groups[idx].getContainingGroups(); itr.hasNext();)
+        for (itr = groups[idx].getParentGroups(); itr.hasNext();)
             { list.add(itr.next()); }
         assertEquals(msg, 0, list.size());
     }
@@ -1414,7 +1407,7 @@ public void testUpdateMembersVisibility() throws Exception
     msg = "Checking child entity for ALL containing groups.";
     print(msg);
     list = new ArrayList();
-    for (itr = ent.getAllContainingGroups(); itr.hasNext();)
+    for (itr = ent.getAncestorGroups(); itr.hasNext();)
             { list.add(itr.next()); }
     assertEquals(msg, 2, list.size());
     

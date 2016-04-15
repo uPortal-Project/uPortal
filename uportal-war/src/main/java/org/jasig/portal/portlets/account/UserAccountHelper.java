@@ -179,7 +179,7 @@ public class UserAccountHelper {
     public List<JsonEntityBean> getParentGroups(String target) {
         IGroupMember member = GroupService.getEntity(target, IPerson.class);
         @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAllContainingGroups();
+        Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAncestorGroups();
         List<JsonEntityBean> parents = new ArrayList<JsonEntityBean>();
         while (iterator.hasNext()) {
             parents.add(groupListHelper.getEntity(iterator.next()));

@@ -200,7 +200,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
         @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childGroup.getContainingGroups();
+        Iterator<IGroupMember> iter = childGroup.getParentGroups();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isGroup()) {
@@ -221,7 +221,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
         @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childEntity.getContainingGroups();
+        Iterator<IGroupMember> iter = childEntity.getParentGroups();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isGroup()) {

@@ -53,7 +53,7 @@ public IEntityGroup find(String key) throws GroupsException;
  * @return java.util.Iterator
  * @param gm org.jasig.portal.groups.IEntityGroup
  */
-public Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+public Iterator findParentGroups(IGroupMember gm) throws GroupsException;
 /**
  * Returns an <code>Iterator</code> over the <code>Collection</code> of
  * <code>IEntities</code> that are members of this <code>IEntityGroup</code>.

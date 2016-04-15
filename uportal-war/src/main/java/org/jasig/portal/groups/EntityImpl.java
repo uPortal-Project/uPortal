@@ -44,22 +44,7 @@ public EntityImpl(EntityIdentifier ei) throws GroupsException
     String key = id + "." + ei.getKey();
     entityIdentifier = new EntityIdentifier(key, org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE);
 }
-/**
- * @param obj the Object to compare with
- * @return true if these Objects are equal; false otherwise.
- * @see java.util.Hashtable
- */
-public boolean equals(Object obj)
-{
-    if ( obj == null )
-        return false;
-    if ( obj == this )
-        return true;
-    if ( ! ( obj instanceof EntityImpl))
-        return false;
 
-    return this.getEntityIdentifier().equals( ((IEntity) obj).getEntityIdentifier() );
-}
 /**
  * @return org.jasig.portal.EntityIdentifier
  */

@@ -42,7 +42,7 @@ public interface ICompositeGroupService extends IComponentGroupService {
    * Returns the groups that contain the <code>IGroupMember</code>.
    * @param gm IGroupMember
    */
-  public Iterator findContainingGroups(IGroupMember gm) throws GroupsException;
+  public Iterator findParentGroups(IGroupMember gm) throws GroupsException;
   /**
    * Returns a pre-existing <code>IEntityGroup</code> or null if it does not
    * exist.
