@@ -662,10 +662,4 @@ public void updateMembers() throws GroupsException {
 
 }
 
-protected void invalidateInChildrenCache(Set<IEntityGroup> groups) {
-    for (IEntityGroup group : groups) {
-        childrenCache.remove(group.getEntityIdentifier());
-    }
-}
-
 }

@@ -37,7 +37,6 @@ import org.xml.sax.XMLReader;
  * elements of each service are stored in a ComponentGroupServiceDescriptor.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class GroupServiceConfiguration
 {
@@ -171,8 +170,5 @@ protected void parseXml() throws Exception
         reader.parse(xmlSource);
     }
 }
-public static synchronized void reset()
-{
-    configuration = null;
-}
+
 }

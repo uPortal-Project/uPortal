@@ -33,8 +33,6 @@ import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.IGroupService;
-import org.jasig.portal.groups.IGroupServiceFactory;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -63,7 +61,6 @@ public final class GroupService implements IGroupConstants {
     };
 
     // The group service:
-    private IGroupService groupService = null;  // Is there a point to this member variable?
     private ICompositeGroupService compositeGroupService = null;
 
     /** Creates new GroupService */
@@ -360,35 +357,7 @@ private IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
         catch (InvalidNameException ine)
             { throw new GroupsException("GroupService.inewGroup(): invalid service name", ine);}
     }
-    /**
-     * @exception org.jasig.portal.groups.GroupsException
-     */
-    private void initialize() throws GroupsException
-    {
-      String eMsg = null;
-      String factoryName =
-        PropertiesManager.getProperty("org.jasig.portal.groups.GroupServiceFactory");
 
-      if ( factoryName == null )
-      {
-          eMsg = "GroupService.initialize(): No entry for org.jasig.portal.groups.GroupServiceFactory in portal.properties.";
-          LOGGER.error(eMsg);
-          throw new GroupsException(eMsg);
-      }
-
-      try
-      {
-          IGroupServiceFactory groupServiceFactory =
-              (IGroupServiceFactory)Class.forName(factoryName).newInstance();
-          groupService = groupServiceFactory.newGroupService();
-      }
-      catch (Exception e)
-      {
-          eMsg = "GroupService.initialize(): Problem creating groups service...";
-          LOGGER.error(eMsg, e);
-          throw new GroupsException(eMsg, e);
-      }
-    }
 /**
  * @exception org.jasig.portal.groups.GroupsException
  */

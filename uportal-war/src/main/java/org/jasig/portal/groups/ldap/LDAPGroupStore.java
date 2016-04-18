@@ -63,7 +63,6 @@ import org.xml.sax.SAXException;
 /**
  * LDAPGroupStore.
  * @author Alex Vidgor
- * @version $Revision$
  */
 public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntitySearcher {
     private static final Log log = LogFactory.getLog(LDAPGroupStore.class);
@@ -676,23 +675,4 @@ throws GroupsException
     return found;
 }
 
-/**
- * Answers if <code>group</code> contains a member group named 
- * <code>name</code>.
- * @return boolean
- * @param group org.jasig.portal.groups.IEntityGroup
- * @param name java.lang.String
- */
-public boolean containsGroupNamed(IEntityGroup group, String name) 
-throws GroupsException 
-{
-    boolean found = false;
-    Iterator itr = findMemberGroups(group);
-    while ( itr.hasNext() && ! found )
-    {
-        String otherName = ((IEntityGroup)itr.next()).getName();
-        found = otherName != null && otherName.equals(name);
-    }
-    return found;
-}
 }

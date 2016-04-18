@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
  * Reference individual, or leaf, group service.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
 implements IIndividualGroupService, ILockableGroupService
@@ -242,15 +241,6 @@ public IEntityGroup findGroup(CompositeEntityIdentifier ent) throws GroupsExcept
     return ( cacheInUse() )
       ? findGroupWithCache(ent)
       : primFindGroup(ent.getLocalKey());
-}
-
-/**
- * Returns a pre-existing <code>IEntityGroup</code> or null if it
- * does not exist.
- */
-protected IEntityGroup findGroupWithCache(String key) throws GroupsException
-{
-    return findGroupWithCache(newCompositeEntityIdentifier(key));
 }
 
 /**
