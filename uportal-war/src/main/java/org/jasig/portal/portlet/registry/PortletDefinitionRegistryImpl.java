@@ -37,7 +37,6 @@ import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.ServletContextAware;
 
@@ -46,7 +45,6 @@ import org.springframework.web.context.ServletContextAware;
  * of {@link IPortletDefinition}s.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("portletDefinitionRegistry")
 public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry, ServletContextAware {
@@ -149,13 +147,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
         return this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
     }
-    
-    @Override
-    public void deletePortletDefinition(IPortletDefinition portletDefinition) {
-        Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        this.portletDefinitionDao.deletePortletDefinition(portletDefinition);
-    }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */

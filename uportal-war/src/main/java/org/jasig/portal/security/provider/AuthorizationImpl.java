@@ -734,6 +734,10 @@ throws AuthorizationException
     return primGetPermissionsForPrincipal(principal, owner, activity, target);
 }
 
+    public IPermission[] getPermissionsForTarget(final String owner, final String target) {
+        return getPermissionStore().select(owner, null, null, target, null);
+    }
+
 /**
  * @return org.jasig.portal.security.IPermissionStore
  */

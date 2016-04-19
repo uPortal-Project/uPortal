@@ -32,7 +32,6 @@ import org.springframework.dao.DataRetrievalFailureException;
  * Provides methods for creating and accessing {@link IPortletDefinition} and related objects.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletDefinitionRegistry {
     /**
@@ -65,8 +64,6 @@ public interface IPortletDefinitionRegistry {
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition);
 
     public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework);
-    
-    public void deletePortletDefinition(IPortletDefinition portletDefinition);
 
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
 

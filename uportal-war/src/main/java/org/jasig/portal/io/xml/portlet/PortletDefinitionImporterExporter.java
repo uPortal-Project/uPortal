@@ -47,6 +47,7 @@ import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.portlettype.ExternalPermissionDefinition;
+import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
@@ -84,6 +85,9 @@ public class PortletDefinitionImporterExporter
     private IPortletCategoryRegistry portletCategoryRegistry;
     private IUserIdentityStore userIdentityStore;
     private boolean errorOnChannel = true;
+
+    @Autowired
+    private IMarketplaceRatingDao marketplaceRatingDao;
 
     private IPerson systemUser = PersonFactory.createSystemPerson();
     private String systemUsername = SystemPerson.INSTANCE.getUserName();
@@ -498,7 +502,7 @@ public class PortletDefinitionImporterExporter
     public void removePortletDefinition(IPortletDefinition portletDefinition, IPerson person) {
         IPortletDefinition portletDef = portletDefinitionDao.getPortletDefinition(portletDefinition.getPortletDefinitionId());
 
-        // Delete existing category memberships for this channel
+        // Delete existing category memberships for this portlet
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
         IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
         @SuppressWarnings("unchecked")
@@ -509,14 +513,17 @@ public class PortletDefinitionImporterExporter
             group.update();
         }
 
-        // remove permissions
+        // Delete permissions records that refer to this portlet
         AuthorizationService authService = AuthorizationService.instance();
         String target = PermissionHelper.permissionTargetIdForPortletDefinition(portletDefinition);
         IUpdatingPermissionManager upm = authService.newUpdatingPermissionManager(IPermission.PORTAL_SUBSCRIBE);
-        IPermission[] oldPermissions = upm.getPermissions(IPermission.PORTLET_SUBSCRIBER_ACTIVITY, target);
+        IPermission[] oldPermissions = upm.getPermissionsForTarget(target);
         upm.removePermissions(oldPermissions);
 
-        // delete the channel
+        // Delete any ratings (incl. reviews) associated with the portlet
+        marketplaceRatingDao.clearRatingsForPortlet(portletDef);
+
+        //Delete the portlet itself.
         portletDefinitionDao.deletePortletDefinition(portletDef);
     }
 

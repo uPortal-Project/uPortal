@@ -25,7 +25,6 @@ import org.jasig.portal.AuthorizationException;
  * their <code>Permissions</code> on behalf of a <code>Permission</code> owner.
  *
  * @author Dan Ellentuck
- * @version $Revision$ 
  */
 public interface IPermissionManager {
 /**
@@ -56,6 +55,12 @@ public interface IPermissionManager {
  * @return java.lang.String
  */
     public String getOwner();
+
+    /**
+     * Obtains all permissions records with the specified target.
+     */
+    IPermission[] getPermissionsForTarget(String target);
+
   /**
    * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
    * will be ignored.

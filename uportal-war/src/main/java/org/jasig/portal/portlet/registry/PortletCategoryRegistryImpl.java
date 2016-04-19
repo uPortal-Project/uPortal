@@ -167,24 +167,40 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.jasig.portal.portlet.om.PortletCategory)
-	 */
+     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.jasig.portal.portlet.om.PortletCategory)
+     */
     @Override
     public Set<IPortletDefinition> getChildPortlets(PortletCategory parent) {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<IPortletDefinition> portletDefs = new HashSet<IPortletDefinition>();
-    	@SuppressWarnings("unchecked")
+        @SuppressWarnings("unchecked")
         Iterator<IGroupMember> iter = parentGroup.getMembers();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isEntity()) {
-            	IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
-            	if(portletDefinition != null) {
-            		portletDefs.add(portletDefinition);
-            	} else {
-            		log.warn("portletDefinition was null for groupMember: " + gm );
-            	}   
+                IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
+                if(portletDefinition != null) {
+                    portletDefs.add(portletDefinition);
+                } else {
+                     // This isn't supposed to happen.
+                    log.warn("Failed to obtain a portletDefinition for groupMember '"
+                                + gm.getUnderlyingEntityIdentifier()
+                                + "';  this circumstance probably means a portlet was deleted "
+                                + "in a way that didn't clean up details like categpry memberships "
+                                + "and permissions;  all interfaces that delete portlets should go "
+                                + "through IPortletPublishingService.removePortletDefinition();  "
+                                + "memberships for this missing portlet will be removed.");
+
+                    // Delete existing category memberships for this portlet
+                    @SuppressWarnings("unchecked")
+                    Iterator<IEntityGroup> parents = gm.getParentGroups();
+                    while (parents.hasNext()) {
+                        IEntityGroup group = parents.next();
+                        group.removeMember(gm);
+                        group.update();
+                    }
+                }
             }
         }
         return portletDefs;
