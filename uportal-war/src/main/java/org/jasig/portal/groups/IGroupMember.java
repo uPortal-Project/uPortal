@@ -118,12 +118,7 @@ public String getKey();
  * @see #getEntityType()
  */
   public Class getLeafType();
-/**
- * Returns the named <code>IEntityGroup</code> from our members <code>Collection</code>.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param name java.lang.String
- */
-public IEntityGroup getMemberGroupNamed(String name) throws GroupsException;
+
 /**
  * Returns an <code>Iterator</code> over the <code>IGroupMembers</code> in our
  * member <code>Collection</code>.

@@ -613,9 +613,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
     }
     return al.iterator();
   }
-  public IEntity newInstance(String key) throws GroupsException {
-    return new EntityImpl(key, null);
-  }
+
   public IEntity newInstance(String key, Class type) throws GroupsException {
     if ( org.jasig.portal.EntityTypes.getEntityTypeID(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }

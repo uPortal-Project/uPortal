@@ -29,13 +29,6 @@ import java.util.Iterator;
 public interface IIndividualGroupService extends ICompositeGroupService {
 
   /**
-   * Answers if <code>group</code> contains <code>member</code>.
-   * @return boolean
-   * @param group org.jasig.portal.groups.IEntityGroup
-   * @param member org.jasig.portal.groups.IGroupMember
-   */
-  public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException;
-  /**
    * Removes the <code>IEntityGroup</code> from the store.
    */
   public void deleteGroup(IEntityGroup group) throws GroupsException;

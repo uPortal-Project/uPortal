@@ -356,21 +356,6 @@ private Iterator<IGroupMember> getMemberEntities() throws GroupsException {
 }
 
 /**
- * Returns the named member <code>IEntityGroup</code>.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param name String
- */
-public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
-{
-    IGroupMember gm;
-    for (Iterator<IEntityGroup> itr=getMemberGroups(); itr.hasNext();) {
-        gm = (IGroupMember) itr.next();
-        if ( ((IEntityGroup)gm).getName().equals(name) )
-            { return (IEntityGroup)gm; }
-    }
-    return null;
-}
-/**
  * Returns an <code>Iterator</code> over the groups in our member
  * <code>Collection</code>.  Reflects pending changes.
  * @return Iterator

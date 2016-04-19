@@ -732,10 +732,7 @@ public IEntityGroup newInstance(Class entityType) throws GroupsException
     throw new UnsupportedOperationException(DEBUG_CLASS_NAME +
       ".newInstance(Class cl) not supported");
 }
-public IEntity newInstance(String key) throws GroupsException
-{
-    return newInstance(key, getDefaultEntityType());
-}
+
 public IEntity newInstance(String key, Class type) throws GroupsException
 {
     if ( org.jasig.portal.EntityTypes.getEntityTypeID(type) == null )

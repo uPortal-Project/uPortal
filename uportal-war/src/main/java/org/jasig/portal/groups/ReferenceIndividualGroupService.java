@@ -194,11 +194,12 @@ public void deleteGroup(ILockableEntityGroup group) throws GroupsException
     }
     return (EntityIdentifier[]) ar.toArray(new EntityIdentifier[0]);
   }
-  
+
 /**
  * Returns and caches the containing groups for the <code>IGroupMember</code>
  * @param gm IGroupMember
  */
+@Override
 public Iterator findParentGroups(IGroupMember gm) throws GroupsException
 {
     log.debug("Finding containing groups for member {}", gm.getKey());
@@ -837,29 +838,6 @@ throws GroupsException
     }
 }
 
-/**
- * Answers if <code>group</code> contains <code>member</code>.  
- * If the group belongs to another service and the present service is 
- * not editable, simply return false.
- * @return boolean
- * @param group org.jasig.portal.groups.IEntityGroup
- * @param member org.jasig.portal.groups.IGroupMember
- */
-public boolean contains(IEntityGroup group, IGroupMember member) throws GroupsException {
-    boolean rslt;
-    if (!member.getLeafType().equals(group.getLeafType())) {
-        // Group does not contain the type of thing that member is
-        rslt = false;
-    } else if (isForeignGroup(member) && !isEditable()) {
-        // Member is a group from another system, and there's
-        // no way to add it as a child in this one
-        rslt = false;
-    } else {
-        // This is an allowable relationship;  defer to the Group Store
-        rslt = getGroupStore().contains(group, member);
-    }
-    return rslt;
-}
 /**
  * A foreign member is a group from a different service.
  * @param member IGroupMember

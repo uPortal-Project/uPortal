@@ -177,15 +177,7 @@ public Iterator getEntities() throws GroupsException
 public String getKey() {
     return getUnderlyingEntityIdentifier().getKey();
 }
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @return org.jasig.portal.groups.IEntityGroup
- * @param name String
- */
-public IEntityGroup getMemberGroupNamed(String name) throws GroupsException
-{
-    return null;
-}
+
 /**
  * Default implementation, overridden on EntityGroupImpl.
  * @return Iterator
