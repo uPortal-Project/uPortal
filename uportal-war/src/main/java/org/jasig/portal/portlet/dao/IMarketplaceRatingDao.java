@@ -23,32 +23,36 @@ import java.util.Set;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 
-public interface IMarketplaceRatingDao{
-    
+public interface IMarketplaceRatingDao {
+
     /**
      * @return all ratings. Not null
      */
-	public Set<IMarketplaceRating> getAllRatings();
-	
-	/**
-	 * @param IMarketplaceRating. Can not be null
-	 */
-	public void deleteRating(IMarketplaceRating marketplaceRatingImplementation);
-	
-	/**
-	 * @param IMarketplaceRating. Can not be null
-	 * @return attached entity
-	 */
-	public IMarketplaceRating createOrUpdateRating(IMarketplaceRating marketplaceRatingImplementation);
+    Set<IMarketplaceRating> getAllRatings();
 
+    /**
+     * @param IMarketplaceRating. Can not be null
+     */
+    void deleteRating(IMarketplaceRating marketplaceRatingImplementation);
 
-	/**
-	 * Creates or updates a given a ratings, person, and user
-	 * @param parseInt
-	 * @param person
-	 * @param portletDefinitionByFname
-	 */
-    public IMarketplaceRating createOrUpdateRating(int rating, String userName, String review,
+    /**
+     * Useful for when you're about to delete a portlet.
+     */
+    void clearRatingsForPortlet(IPortletDefinition portletDefinition);
+
+    /**
+     * @param IMarketplaceRating. Can not be null
+     * @return attached entity
+     */
+    IMarketplaceRating createOrUpdateRating(IMarketplaceRating marketplaceRatingImplementation);
+
+    /**
+     * Creates or updates a given a ratings, person, and user
+     * @param parseInt
+     * @param person
+     * @param portletDefinitionByFname
+     */
+    IMarketplaceRating createOrUpdateRating(int rating, String userName, String review,
             IPortletDefinition portletDefinition);
 
     /**
@@ -57,11 +61,11 @@ public interface IMarketplaceRatingDao{
      * @param portletDefinition
      * @return - can be null
      */
-    public IMarketplaceRating getRating(String userName,
+    IMarketplaceRating getRating(String userName,
             IPortletDefinition portletDefinition);
-    
+
     /**
      * Aggregates the IMarketplaceRating into IPortletDefinition
      */
-    public void aggregateMarketplaceRating();
+    void aggregateMarketplaceRating();
 }

@@ -47,6 +47,7 @@ import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.portlettype.ExternalPermissionDefinition;
+import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
@@ -59,7 +60,6 @@ import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.security.*;
 import org.jasig.portal.services.AuthorizationService;
@@ -87,7 +87,7 @@ public class PortletDefinitionImporterExporter
     private boolean errorOnChannel = true;
 
     @Autowired
-    private IPortletDefinitionRegistry portletDefinitionRegistry;
+    private IMarketplaceRatingDao marketplaceRatingDao;
 
     private IPerson systemUser = PersonFactory.createSystemPerson();
     private String systemUsername = SystemPerson.INSTANCE.getUserName();
@@ -520,12 +520,11 @@ public class PortletDefinitionImporterExporter
         IPermission[] oldPermissions = upm.getPermissionsForTarget(target);
         upm.removePermissions(oldPermissions);
 
-        /* 
-         * Delete the portlet itself.  Currently, there doesn't appear to be an advantage in going
-         * through the portletDefinitionRegistry (as opposed to direct via the portletDefinitionDao),
-         * but doing so now in case the future brings some kind of value-add.
-         */
-        portletDefinitionRegistry.deletePortletDefinition(portletDef);
+        // Delete any ratings (incl. reviews) associated with the portlet
+        marketplaceRatingDao.clearRatingsForPortlet(portletDef);
+
+        //Delete the portlet itself.
+        portletDefinitionDao.deletePortletDefinition(portletDef);
     }
 
     @Override

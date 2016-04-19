@@ -148,12 +148,6 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
         return this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
     }
 
-    @Override
-    public void deletePortletDefinition(IPortletDefinition portletDefinition) {
-        Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        this.portletDefinitionDao.deletePortletDefinition(portletDefinition);
-    }
-
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
      */

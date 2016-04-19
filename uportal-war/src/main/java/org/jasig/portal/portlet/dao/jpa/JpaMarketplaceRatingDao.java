@@ -45,10 +45,13 @@ import com.google.common.base.Function;
 
 @Repository("marketplaceRatingDAO")
 @Qualifier("persistence")
-public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarketplaceRatingDao{
-    
+public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarketplaceRatingDao {
+
+    private static final String CLEAR_RATINGS_JPQL = "DELETE FROM MarketplaceRatingImpl m "
+                + "WHERE m.marketplaceRatingPK.portletDefinition = :portletDefinition";
+
     private IPortletDefinitionDao portletDefinitionDao;
-    
+
     @Autowired
     public void getPortletDefinitionDao(IPortletDefinitionDao dao) {
         this.portletDefinitionDao = dao;
@@ -172,8 +175,8 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
      */
     @Override
     @PortalTransactional
-    public void deleteRating(IMarketplaceRating marketplaceRatingImplementation){
-        Validate.notNull(marketplaceRatingImplementation, "ratingPK can not be null");
+    public void deleteRating(IMarketplaceRating marketplaceRatingImplementation) {
+        Validate.notNull(marketplaceRatingImplementation, "marketplaceRatingImplementation can not be null");
         final IMarketplaceRating persistantMarketplaceRatingImpl;
         final EntityManager entityManager = this.getEntityManager();
         if(entityManager.contains(marketplaceRatingImplementation)){
@@ -182,6 +185,17 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
             persistantMarketplaceRatingImpl=entityManager.merge(marketplaceRatingImplementation);
         }
         entityManager.remove(persistantMarketplaceRatingImpl);
+    }
+
+    @Override
+    @PortalTransactional
+    public void clearRatingsForPortlet(IPortletDefinition portletDefinition) {
+        Validate.notNull(portletDefinition, "portletDefinition can not be null");
+        final EntityManager em = getEntityManager();
+        final Query query = em.createQuery(CLEAR_RATINGS_JPQL);
+        query.setParameter("portletDefinition", portletDefinition);
+        final int deleteCount = query.executeUpdate();
+        logger.info("Cleared {} ratings from portlet {}", deleteCount, portletDefinition.getFName());
     }
 
     @Override
@@ -196,9 +210,10 @@ public class JpaMarketplaceRatingDao extends BasePortalJpaDao implements IMarket
                                              + "       m.marketplaceRatingPK.portletDefinition.internalPortletDefinitionId as portletId "
                                              + "  FROM MarketplaceRatingImpl m "
                                              + " GROUP BY m.marketplaceRatingPK.portletDefinition.internalPortletDefinitionId");
-        
+
+        @SuppressWarnings("unchecked")
         List<Object[]> aggregatedResults = aggregatedQuery.getResultList();
-        
+
         //update the portlet definition with the average rating
         for(Object[] result : aggregatedResults) {
             if(result != null && result.length == 3) {
