@@ -41,6 +41,10 @@
         <name>iconUrl</name>
         <value>${request.contextPath}/media/skins/icons/google.png</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/google.png</value>
+    </parameter>
     <portlet-preference>
         <name>googleApiKey</name>
         <readOnly>false</readOnly>

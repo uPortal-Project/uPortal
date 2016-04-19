@@ -77,4 +77,8 @@
         <name>showChrome</name>
         <value>true</value>
     </parameter>
+    <parameter>
+        <name>mobileIconUrl</name>
+        <value>/uPortal/media/skins/icons/mobile/announcements_admin.png</value>
+    </parameter>
 </portlet-definition>

@@ -75,7 +75,7 @@
     </parameter>
     <parameter>
         <name>mobileIconUrl</name>
-        <value>/uPortal/media/skins/icons/mobile/calendar.png</value>
+        <value>/uPortal/media/skins/icons/mobile/calendar_alt.png</value>
     </parameter>
     <parameter>
         <name>iconUrl</name>
