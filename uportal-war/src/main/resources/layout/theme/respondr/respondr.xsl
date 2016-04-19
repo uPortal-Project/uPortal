@@ -836,7 +836,7 @@
                                     <div class="container-fluid">
                                         <div class="portal-user">
                                             <div class="navbar-header">
-                                                <a href="/uPortal" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
+                                                <a href="javascript:window.location = document.referrer || '/uPortal';" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
                                             </div>
                                             <div class="navbar-collapse collapse">
                                                 <xsl:choose>
