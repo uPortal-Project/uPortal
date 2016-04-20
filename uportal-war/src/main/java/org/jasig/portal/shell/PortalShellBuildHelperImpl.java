@@ -337,7 +337,7 @@ public class PortalShellBuildHelperImpl implements PortalShellBuildHelper {
                     new IPortalDataHandlerService.BatchImportOptions().setLogDirectoryParent(logDir));
         }
         catch (Exception e) {
-            if (pattern != null) {
+            if (patternToUse != null) {
                 throw new RuntimeException(target + " from " + dataDir + " matching " + patternToUse + " failed", e);
             }
             else {

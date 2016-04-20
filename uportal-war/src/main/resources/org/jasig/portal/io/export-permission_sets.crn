@@ -135,6 +135,23 @@
                                             </otherwise>
                                         </choose>
                                     </when>
+                                    <when test="${jexl(TARGET.startsWith('PORTLET_ID.'))}">
+                                        <with-attribute key="PORTLET" value="${groovy(org.jasig.portal.spring.locator.ApplicationContextLocator.getApplicationContext().getBean('portletDefinitionRegistry').getPortletDefinition(new org.jasig.portal.portlet.dao.jpa.PortletDefinitionIdImpl(Long.parseLong(TARGET.substring(11)))))}">
+                                            <choose>
+                                                <when test="${jexl(PORTLET != null)}">
+                                                    <append-node>
+                                                        <target permission-type="${PERMISSION_TYPE}">
+                                                            <portlet>${jexl(PORTLET.getFName())}</portlet>
+                                                        </target>
+                                                    </append-node>
+                                                </when>
+                                                <otherwise>
+                                                    <log logger-name="org.jasig.portal.io.export-permissions" level="error">Permission target references a deleted portlet;  removing orphaned reference.</log>
+                                                    <append-node node="${attributeNode(cancel=true)}"/>
+                                                </otherwise>
+                                            </choose>
+                                        </with-attribute>
+                                    </when>
                                     <otherwise>
                                         <append-node>
                                             <target permission-type="${PERMISSION_TYPE}">
