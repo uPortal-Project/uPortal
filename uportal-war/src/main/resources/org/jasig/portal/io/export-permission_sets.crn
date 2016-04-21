@@ -38,14 +38,14 @@
                 <attribute key="Attributes.NODE">${newDoc(permission-set)}</attribute>
                 <subtasks>
                     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_set_v3-1.crn)}"/>
-    
+
                     <append-node>
                         <owner>${OWNER}</owner>
                     </append-node>
                     <append-node>
                         <principal-type>${ENTITY_TYPE_NAME}</principal-type>
                     </append-node>
-    
+
                     <!-- principal -->
                     <choose>
                         <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.groups.IEntityGroup'))}">
@@ -93,17 +93,18 @@
                         </otherwise>
                     </choose>
                     <!-- NB:  Needs to be enhanced to work w/ principals other than groups... -->
-    
+
                     <append-node>
                         <activity>${ACTIVITY}</activity>
                     </append-node>
-                    
+
                     <!-- targets -->
                     <sql-query>
                         <sql> 
                             SELECT UPP.TARGET, UPP.PERMISSION_TYPE
                             FROM UP_PERMISSION UPP
-                            WHERE UPP.ACTIVITY != 'SUBSCRIBE'
+                            WHERE NOT (UPP.ACTIVITY = 'SUBSCRIBE' AND UPP.TARGET LIKE 'PORTLET_ID.%')
+                                AND NOT (UPP.ACTIVITY = 'BROWSE' AND UPP.TARGET LIKE 'PORTLET_ID.%')
                                 AND UPP.OWNER = ?
                                 AND UPP.PRINCIPAL_TYPE = ? 
                                 AND UPP.PRINCIPAL_KEY = ?
@@ -146,7 +147,7 @@
                             </with-attribute>
                         </subtasks>
                     </sql-query>
-    
+
                     <return value="${Attributes.NODE}"/>
                 </subtasks>
             </with>
