@@ -36,7 +36,6 @@ import org.jasig.portal.services.GroupService;
 
 /**
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class ReferenceCompositeGroupService extends ReferenceComponentGroupService
 implements ICompositeGroupService
@@ -171,17 +170,7 @@ public IGroupMember getGroupMember(String key, Class type) throws GroupsExceptio
         gm = getEntity(key, type);
     return gm;
 }
-/**
- * Returns an <code>IGroupMember</code> representing either a group or a
- * portal entity, based on the <code>EntityIdentifier</code>, which refers
- * to the UNDERLYING entity for the <code>IGroupMember</code>.
- */
-public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
-throws GroupsException
-{
-    return getGroupMember(underlyingEntityIdentifier.getKey(),
-      underlyingEntityIdentifier.getType());
-}
+
 /**
  * Assembles the group services composite.  Once the leaf services have been
  * retrieved, they are held in a (one-dimensional) Map.  The composite
@@ -354,14 +343,6 @@ throws GroupsException
           }
     }
     return (EntityIdentifier[])allIds.toArray(new EntityIdentifier[allIds.size()]);
-}
-/**
- * Insert the method's description here.
- * Creation date: (10/31/2002 10:58:53 AM)
- * @param newComponentServices java.util.Map
- */
-protected void setComponentServices(java.util.Map newComponentServices) {
-    componentServices = newComponentServices;
 }
 
  /**

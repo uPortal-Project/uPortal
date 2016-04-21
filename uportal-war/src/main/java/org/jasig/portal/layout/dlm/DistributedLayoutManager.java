@@ -45,7 +45,6 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.events.IPortalLayoutEventFactory;
-import org.jasig.portal.layout.IFolderLocalNameResolver;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
@@ -82,8 +81,8 @@ import org.w3c.dom.NodeList;
  * @author Mark Boyd
  * @since uPortal 2.5
  */
-public class DistributedLayoutManager implements IUserLayoutManager, IFolderLocalNameResolver, InitializingBean {
-    public static final String RCS_ID = "@(#) $Header$";
+public class DistributedLayoutManager implements IUserLayoutManager, InitializingBean {
+
     private static final Log LOG = LogFactory.getLog(DistributedLayoutManager.class);
 
     private XmlUtilities xmlUtilities;
@@ -122,7 +121,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
                             + owner.getAttribute(IPerson.USERNAME) + ". A "
                             + "non-null profile must to be specified.");
         }
-        
+
         // cache the relatively lightweight userprofile for use in layout PLF loading
         owner.setAttribute(IUserProfile.USER_PROFILE, profile);
 
@@ -1541,7 +1540,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
         }
         return map;
     }
-    
+
     /**
      * Returns the IPerson that is the owner of this layout manager instance.
      * @return IPerson object
@@ -1550,48 +1549,5 @@ public class DistributedLayoutManager implements IUserLayoutManager, IFolderLoca
     {
         return owner;
     }
- 
-    /**
-     * Returns a resolver for local names. This layout manager supports this
-     * feature itself and hence returns itself as the interface.
-     * 
-     * @return
-     */
-    public IFolderLocalNameResolver getFolderNameResolver()
-    {
-       return this; 
-    }
-    
-    /**
-     * Returns the localized name of a folder node or null if none is available.
-     * This method also implements enforcement of user label overrides to 
-     * fragment folders purging those overrides if they are no longer allowed
-     * or needed. 
-     */
-    public String getFolderLabel(String nodeId)
-    {
-        IUserLayoutNodeDescription ndesc = getNode(nodeId);
-        if (!(ndesc instanceof IUserLayoutFolderDescription))
-            return null;
-        
-        IUserLayoutFolderDescription desc 
-            = (IUserLayoutFolderDescription) ndesc; 
-        boolean editAllowed = desc.isEditAllowed();
-        String label = desc.getName();
-        // assume user owned to begin with which means plfId equals nodeId
-        String plfId = nodeId; 
 
-        if (nodeId.startsWith(
-                org.jasig.portal.layout.dlm.Constants.FRAGMENT_ID_USER_PREFIX))
-        {
-            Document plf = RDBMDistributedLayoutStore.getPLF( owner );
-            Element plfNode = plf.getElementById( nodeId );
-            if (plfNode != null)
-                plfId = plfNode.getAttribute(Constants.ATT_PLF_ID);
-            else
-                plfId = null; // no user mods exist for this node
-        }
-    
-        return label;
-    }
 }

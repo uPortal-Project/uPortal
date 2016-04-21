@@ -24,7 +24,6 @@ import org.jasig.portal.concurrency.IEntityLock;
  * Defines an <code>IEntityGroup</code> that can be locked for update.   
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
 
 public interface ILockableEntityGroup extends IEntityGroup {
@@ -42,8 +41,4 @@ public void setLock(IEntityLock lock);
  */
 public void updateAndRenewLock() throws GroupsException;
 
-/**
- * Updates the members and renews the lock.
- */
-public void updateMembersAndRenewLock() throws GroupsException;
 }

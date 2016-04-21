@@ -37,18 +37,6 @@ public RDBMEntityStore()
 }
 
 /**
- * Throws UnsupportedOperationException.  This method is defined by {@link org.jasig.portal.groups.IEntityStore}, and
- * was at one time implemented by passing null for the second parameter.  Since that will always generate an exception,
- * this overload was updated to be more clear that its not supported.
- *
- * @param key java.lang.String
- * @throws java.lang.UnsupportedOperationException
- */
-public IEntity newInstance(String key) throws GroupsException
-{
-    throw new UnsupportedOperationException();
-}
-/**
  * @return org.jasig.portal.groups.IEntity
  * @param key java.lang.String
  * @param type java.lang.Class

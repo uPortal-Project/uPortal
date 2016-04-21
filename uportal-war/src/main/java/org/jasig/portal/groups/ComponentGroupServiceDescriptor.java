@@ -24,29 +24,21 @@ import java.util.HashMap;
  * A data holder for configuration information about a specific component group service.  
  *
  * @author Dan Ellentuck
- * @version $Revision$
  * @see ICompositeGroupService
  */
-public class ComponentGroupServiceDescriptor extends HashMap
-{
+public class ComponentGroupServiceDescriptor extends HashMap<String,Object> {
+
+    private static final long serialVersionUID = 1L;
+
     // Known service attributes (there may optionally be others.)
-    public static final String NAME="name";
-    public static final String FACTORY="service_factory";
-    public static final String ENTITY_STORE_FACTORY="entity_store_factory";
-    public static final String GROUP_STORE_FACTORY="group_store_factory";
-    public static final String ENTITY_SEARCHER_FACTORY="entity_searcher_factory";
-    public static final String INTERNALLY_MANAGED="internally_managed";
-    public static final String CACHE_ENABLED="cache_enabled";
-/**
- * ComponentGroupServiceDescriptor constructor comment.
- */
-public ComponentGroupServiceDescriptor() {
-	super();
-}
-public Object getAttribute(String attName) 
-{ 
-    return get(attName); 
-}
+    private static final String NAME="name";
+    private static final String FACTORY="service_factory";
+    private static final String ENTITY_STORE_FACTORY="entity_store_factory";
+    private static final String GROUP_STORE_FACTORY="group_store_factory";
+    private static final String ENTITY_SEARCHER_FACTORY="entity_searcher_factory";
+    private static final String INTERNALLY_MANAGED="internally_managed";
+    private static final String CACHE_ENABLED="cache_enabled";
+
 public String getEntitySearcherFactoryName() 
 { 
     return (String)get(ENTITY_SEARCHER_FACTORY); 
@@ -70,12 +62,12 @@ public String getServiceFactoryName()
 public boolean isCachingEnabled() 
 { 
     Boolean result = (Boolean)get(CACHE_ENABLED);
-	return (result == null) ? false : result.booleanValue();
+    return (result == null) ? false : result.booleanValue();
 }
 public boolean isInternallyManaged() 
 { 
     Boolean result = (Boolean)get(INTERNALLY_MANAGED);
-	return (result == null) ? false : result.booleanValue();
+    return (result == null) ? false : result.booleanValue();
 }
 public void setAttribute(String attName, Object attValue) 
 { 

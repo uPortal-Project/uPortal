@@ -34,7 +34,6 @@ import org.jasig.portal.EntityIdentifier;
  * and are serviced by the individual component services.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface ICompositeGroupService extends IComponentGroupService {
 
@@ -71,13 +70,7 @@ public interface ICompositeGroupService extends IComponentGroupService {
    * it is an <code>IEntity</code>.
    */
   public IGroupMember getGroupMember(String key, Class type) throws GroupsException;
-  /**
-   * Returns an <code>IGroupMember</code> representing either a group or a
-   * portal entity, based on the <code>EntityIdentifier</code>, which refers
-   * to the UNDERLYING entity for the <code>IGroupMember</code>.
-   */
-  public IGroupMember getGroupMember(EntityIdentifier underlyingEntityIdentifier)
-  throws GroupsException;
+
   /**
    * Returns a new <code>IEntityGroup</code> for the given Class with an unused
    * key from the named service.

@@ -32,7 +32,6 @@ import org.jasig.services.persondir.IPersonAttributes;
  * Implementation of <code>IEntityNameFinder</code> for <code>IPersons</code> by 
  * looking up displayName from an <code>IPersonAttributeDao</code>.
  * @author Alex Vigdor
- * @version $Revision$
  */
 public class PersonDirNameFinder
         implements IEntityNameFinder {
@@ -67,17 +66,6 @@ public class PersonDirNameFinder
         return  name;
     }
 
-
-    public Map<String, String> getNames (java.lang.String[] keys) {
-        Map<String, String> selectedNames = new HashMap<String, String>();
-        for (int i = 0; i < keys.length; i++) {
-            String name = getName(keys[i]);
-            selectedNames.put(keys[i], name);
-        }
-        return  selectedNames;
-    }
-
-
     public Class<IPerson> getType () {
         return  org.jasig.portal.security.IPerson.class;
     }
@@ -102,16 +90,6 @@ public class PersonDirNameFinder
             }
         }
         return  name;
-    }
-
-    /**
-     * Get a static singleton instance of this class backed by PersonDirectory.
-     * @return singleton PersonDirNameFinder backed by PersonDirectory
-     * @deprecated as of uP 2.5 instead use PersonDirNameFinderFactory
-     */
-    @Deprecated
-    public static IEntityNameFinder singleton () {
-        return new PersonDirNameFinderFactory().newFinder();
     }
 
     /**

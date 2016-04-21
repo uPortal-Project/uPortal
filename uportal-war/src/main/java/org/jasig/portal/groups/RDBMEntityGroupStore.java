@@ -69,7 +69,6 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     private static String findParentGroupsForEntitySql;
     private static String findParentGroupsForGroupSql;
     private static String findGroupSql;
-    private static String findGroupsByCreatorSql;
     private static String findMemberGroupKeysSql;
     private static String findMemberGroupsSql;
     private static String insertGroupSql;
@@ -227,48 +226,6 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         finally
         { RDBMServices.releaseConnection(conn); }
     }
-    public boolean containsGroupNamed(IEntityGroup containingGroup, String memberName)
-            throws GroupsException
-    {
-        String groupKey = containingGroup.getLocalKey();
-        String service = containingGroup.getServiceName().toString();
-
-        Connection conn = RDBMServices.getConnection();
-        try
-        {
-            String sql = getCountMemberGroupsNamedSql();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            try
-            {
-                ps.clearParameters();
-                ps.setString(1, groupKey);
-                ps.setString(2, memberName);
-                ps.setString(3, service);
-                if (log.isDebugEnabled())
-                    log.debug(
-                            "RDBMEntityGroupStore.containsGroupNamed(): " + ps +
-                                    " (" + groupKey + ", " + memberName + ", " + service + ")");
-                ResultSet rs = ps.executeQuery();
-                try
-                {
-                    return (rs.next()) &&
-                            (rs.getInt(1) > 0);
-                }
-                finally
-                { rs.close(); }
-            }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception e)
-        {
-            log.error( "RDBMEntityGroupStore.containsGroup(): " + e);
-            throw new GroupsException("Problem retrieving data from store: " + e);
-        }
-        finally
-        { RDBMServices.releaseConnection(conn); }
-    }
-
 
     /**
      * If this entity exists, delete it.
@@ -504,54 +461,6 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         { RDBMServices.releaseConnection(conn); }
 
         return entities.iterator();
-    }
-
-    /**
-     * Find the groups with this creatorID.
-     * @param creatorID
-     * @return java.util.Iterator
-     */
-    public java.util.Iterator findGroupsByCreator(String creatorID) throws GroupsException
-    {
-        java.sql.Connection conn = null;
-        Collection groups = new ArrayList();
-        IEntityGroup eg = null;
-
-        try
-        {
-            conn = RDBMServices.getConnection();
-            String sql = getFindGroupsByCreatorSql();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            try
-            {
-                ps.setString(1, creatorID);
-                if (log.isDebugEnabled())
-                    log.debug( "RDBMEntityGroupStore.findGroupsByCreator(): " + ps);
-                ResultSet rs = ps.executeQuery();
-                try
-                {
-                    while (rs.next())
-                    {
-                        eg = instanceFromResultSet(rs);
-                        groups.add(eg);
-                    }
-                }
-                finally
-                { rs.close(); }
-            }
-            finally
-            { ps.close(); }
-        }
-        catch (Exception e)
-        {
-            log.error( "RDBMEntityGroupStore.findGroupsByCreator(): " + e);
-            throw new GroupsException("Problem retrieving groups: " + e);
-        }
-
-        finally
-        { RDBMServices.releaseConnection(conn); }
-
-        return groups.iterator();
     }
 
     /**
@@ -912,25 +821,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         }
         return findParentGroupsForGroupSql;
     }
-    /**
-     * @return java.lang.String
-     */
-    private static java.lang.String getFindGroupsByCreatorSql()
-    {
-        if ( findGroupsByCreatorSql == null )
-        {
-            StringBuffer buff = new StringBuffer(200);
-            buff.append("SELECT ");
-            buff.append(getAllGroupColumns());
-            buff.append(" FROM ");
-            buff.append(GROUP_TABLE);
-            buff.append(" WHERE ");
-            buff.append(GROUP_CREATOR_COLUMN + EQUALS_PARAM);
 
-            findGroupsByCreatorSql = buff.toString();
-        }
-        return findGroupsByCreatorSql;
-    }
     /**
      * @return java.lang.String
      */
@@ -1121,19 +1012,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
         return eg;
     }
-    /**
-     *
-     */
-    protected static void logNoTransactionWarning()
-    {
-        if (log.isWarnEnabled()) {
-            String msg = "You are running the portal on a database that does not support transactions.  " +
-                    "This is not a supported production environment for uPortal.  " +
-                    "Sooner or later, your database will become corrupt.";
 
-            log.warn(msg);
-        }
-    }
     /**
      * @return org.jasig.portal.groups.IEntity
      */

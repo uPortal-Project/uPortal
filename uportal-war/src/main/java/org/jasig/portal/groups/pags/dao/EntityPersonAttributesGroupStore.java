@@ -359,14 +359,6 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
     }
 
     @Override
-    public IEntity newInstance(String key) throws GroupsException {
-        /*
-         * Is any key valid?
-         */
-        return new EntityImpl(key, null);
-    }
-
-    @Override
     public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
         return EMPTY_SEARCH_RESULTS;
     }

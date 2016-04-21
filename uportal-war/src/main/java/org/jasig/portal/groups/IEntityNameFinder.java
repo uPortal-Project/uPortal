@@ -23,7 +23,6 @@ import java.util.Map;
 /**
  * Interface for finding the names of portal entities of a given type.
  * @author Dan Ellentuck
- * @version $Revision$
  */
 
 public interface IEntityNameFinder {
@@ -32,11 +31,7 @@ public interface IEntityNameFinder {
  * @param key java.lang.String
  */
 public String getName(String key) throws Exception;
-/**
- * Given an array of keys, returns the names of the entities.
- * @param keys java.lang.String[]
- */
-public Map getNames(String[] keys) throws Exception;
+
 /**
  * Returns the entity type for this <code>IEntityFinder</code>.
  * @return java.lang.Class

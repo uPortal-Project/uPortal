@@ -97,23 +97,7 @@ public class PersonDirNameFinderTest extends TestCase {
     public void testGetNameUnknownUser() {
         assertEquals("unknownUser", this.finder.getName("unknownUser"));
     }
-    
-    /**
-     * Test getting display name for several users.  Uses individual users tested
-     * in other test methods in this testcase.
-     */
-    public void testGetNames() {
-        String[] keys = {"userWithDisplayName", "userWithEmptyDisplayName", "userWithoutDisplayName", "unknownUser"};
-        
-        Map expected = new HashMap();
-        expected.put("userWithDisplayName", "Display Name");
-        expected.put("userWithEmptyDisplayName", "userWithEmptyDisplayName");
-        expected.put("userWithoutDisplayName", "userWithoutDisplayName");
-        expected.put("unknownUser", "unknownUser");
-        
-        assertEquals(expected, this.finder.getNames(keys));
-    }
-    
+
     /**
      * Test that PersonDirNameFinders report their type as being IPerson.
      */

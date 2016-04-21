@@ -123,7 +123,6 @@ import org.jasig.portal.services.GroupService;
  * <p>
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class FileSystemGroupStore implements IEntityGroupStore, IEntityStore,
 IEntitySearcher
@@ -733,10 +732,7 @@ public IEntityGroup newInstance(Class entityType) throws GroupsException
     throw new UnsupportedOperationException(DEBUG_CLASS_NAME +
       ".newInstance(Class cl) not supported");
 }
-public IEntity newInstance(String key) throws GroupsException
-{
-    return newInstance(key, getDefaultEntityType());
-}
+
 public IEntity newInstance(String key, Class type) throws GroupsException
 {
     if ( org.jasig.portal.EntityTypes.getEntityTypeID(type) == null )
@@ -949,25 +945,6 @@ private boolean directoryContains(File directory, IGroupMember member)
         File[] files = directory.listFiles();
         for (int i=0; i<files.length & ! found; i++)
             { found = files[i].equals(memberFile); }
-    }
-    return found;
-}
-/**
- * Answers if <code>group</code> contains a member group named 
- * <code>name</code>.
- * @return boolean
- * @param group org.jasig.portal.groups.IEntityGroup
- * @param name java.lang.String
- */
-public boolean containsGroupNamed(IEntityGroup group, String name) 
-throws GroupsException 
-{
-    boolean found = false;
-    Iterator itr = findMemberGroups(group);
-    while ( itr.hasNext() && ! found )
-    {
-        String otherName = ((IEntityGroup)itr.next()).getName();
-        found = otherName != null && otherName.equals(name);
     }
     return found;
 }

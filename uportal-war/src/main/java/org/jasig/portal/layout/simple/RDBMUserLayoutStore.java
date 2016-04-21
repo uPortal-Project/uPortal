@@ -375,38 +375,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     }
 
     /**
-     * Dump a document tree structure on stdout
-     * @param node
-     * @param indent
-     */
-    public static final void dumpDoc (Node node, String indent) {
-        if (node == null) {
-            return;
-        }
-        if (node instanceof Element) {
-            System.err.print(indent + "element: tag=" + ((Element)node).getTagName() + " ");
-        }
-        else if (node instanceof Document) {
-            System.err.print("document:");
-        }
-        else {
-            System.err.print(indent + "node:");
-        }
-        System.err.println("name=" + node.getNodeName() + " value=" + node.getNodeValue());
-        NamedNodeMap nm = node.getAttributes();
-        if (nm != null) {
-            for (int i = 0; i < nm.getLength(); i++) {
-                System.err.println(indent + " " + nm.item(i).getNodeName() + ": '" + nm.item(i).getNodeValue() + "'");
-            }
-            System.err.println(indent + "--");
-        }
-        if (node.hasChildNodes()) {
-            dumpDoc(node.getFirstChild(), indent + "   ");
-        }
-        dumpDoc(node.getNextSibling(), indent);
-    }
-
-    /**
      * Return the next available channel structure id for a user
      * @param person
      * @return the next available channel structure id
@@ -472,20 +440,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 });
             }
         });
-    }
-
-    /**
-     * Return the Structure ID tag
-     * @param  structId
-     * @param  chanId
-     * @return ID tag
-     */
-    protected String getStructId(int structId, int chanId) {
-        if (chanId == 0) {
-            return folderPrefix + structId;
-        } else {
-            return channelPrefix + structId;
-        }
     }
 
     // private helper modules that retreive information from the DOM structure of the description files
@@ -1508,22 +1462,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
 
     private String getSystemBrowserMapping (String userAgent) {
         return  getUserBrowserMapping(this.getSystemUser(), userAgent);
-    }
-
-    public IUserProfile getUserProfile (IPerson person, String userAgent) {
-        String profileFname = getUserBrowserMapping(person, userAgent);
-        if (profileFname == null)
-            return  null;
-        return  this.getUserProfileByFname(person, profileFname);
-    }
-
-    public IUserProfile getSystemProfile (String userAgent) {
-        String profileFname = getSystemBrowserMapping(userAgent);
-        if (profileFname == null)
-            return  null;
-        IUserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
-        up.setSystemProfile(true);
-        return  up;
     }
 
     public IUserProfile getSystemProfileById (int profileId) {

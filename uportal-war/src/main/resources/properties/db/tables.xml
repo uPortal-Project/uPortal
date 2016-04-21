@@ -425,36 +425,6 @@
     <not-null>ENTITY_KEY</not-null>
   </table>
 
-  <!-- Used by the EntityPropertyRegistry to store arbitrary properties. -->
-  <table sinceMajor="2" sinceMinor="1">
-    <name>UP_ENTITY_PROP</name>
-    <desc>Each row represents a property of a portal entity.</desc>
-    <columns>
-      <column> <name>ENTITY_TYPE_ID</name>  <type>INTEGER</type>
-        <desc>The ID indicating the class of entity, foreign key ENTITY_TYPE_ID of table UP_ENTITY_TYPE</desc>
-      </column>
-      <column> <name>ENTITY_KEY</name>       <type>VARCHAR</type>     <param>255</param>
-        <desc>The unique key of the entity.</desc>
-      </column>
-      <column> <name>PROPERTY_NAME</name>  <type>VARCHAR</type>       <param>150</param>
-        <desc>The name or key for the property</desc>
-      </column>
-      <column> <name>PROPERTY_VALUE</name>  <type>VARCHAR</type>       <param>255</param>
-        <desc>The value of the property</desc>
-      </column>
-      <column> <name>LAST_MODIFIED</name>  <type>TIMESTAMP</type>
-        <desc>The last time this property was modified.</desc>
-      </column>
-     </columns>
-    <primary-key>ENTITY_TYPE_ID</primary-key>
-    <primary-key>ENTITY_KEY</primary-key>
-    <primary-key>PROPERTY_NAME</primary-key>
-    <not-null>PROPERTY_NAME</not-null>
-    <not-null>LAST_MODIFIED</not-null>
-    <not-null>ENTITY_TYPE_ID</not-null>
-    <not-null>ENTITY_KEY</not-null>
-  </table>
-
 </tables>
 
 

@@ -348,10 +348,6 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       return new EntityImpl(key, type);
    }
 
-   public IEntity newInstance(String key) throws GroupsException {
-      return new EntityImpl(key, null);
-   }
-
    public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
       return EMPTY_SEARCH_RESULTS;
    }

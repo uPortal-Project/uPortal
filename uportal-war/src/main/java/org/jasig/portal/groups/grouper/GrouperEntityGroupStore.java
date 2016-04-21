@@ -485,13 +485,6 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 		}
     
     }
-    
-    /**
-     * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String)
-     */
-    public IEntity newInstance(String key) throws GroupsException {
-        return new EntityImpl(key, null);
-    }
 
     /**
      * @see org.jasig.portal.groups.IEntityStore#newInstance(java.lang.String, java.lang.Class)

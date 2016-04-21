@@ -42,10 +42,6 @@ public class SmartLdapEntityStore implements IEntityStore {
 
     }
 
-    public IEntity newInstance(String key) throws GroupsException {
-        return newInstance(key, null);
-    }
-
     public IEntity newInstance(String key, Class type) throws GroupsException {
         return new EntityImpl(key, type);
     }

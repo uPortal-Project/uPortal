@@ -24,11 +24,7 @@ package org.jasig.portal.groups;
  * @version 1.0, 11/29/01
  */
 public interface IEntityStore {
-/**
- * @return org.jasig.portal.groups.IEntity
- * @param key java.lang.String
- */
-IEntity newInstance(String key) throws GroupsException;
+
 /**
  * @return org.jasig.portal.groups.IEntity
  * @param key java.lang.String - the entity's key
