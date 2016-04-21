@@ -61,11 +61,19 @@
     /* ==========================================================================
        Namespace: .region-pre-header
        ========================================================================== */
-    #region-pre-header {
-        padding-top: 2px;
+    #up-sticky-nav {
+        position: fixed;
+        top: 0px;
+        z-index: 1000;
+        width: 100%;
 
-        .up-portlet-wrapper {
-            display: inline-block;
+        #region-pre-header {
+            padding: 2px 0;
+
+            .up-portlet-wrapper {
+                display: inline-block;
+                margin-left: 4px;
+            }
         }
     }
 
@@ -139,23 +147,33 @@
 
 @media only screen and (min-width: 769px) {
 
-    #region-header-left {
-        padding-left: 32px;
+    .portal {
 
-        section.up-portlet-wrapper {
-            display : inline-block;
-            margin-top: 16px;
-            margin-left: 4px;
-            margin-right: 4px;
+        /* Undo sticky header styles */
+        #up-sticky-nav {
+            position: static;
+            z-index: auto;
         }
-    }
 
-    #region-header-right {
-        padding-right: 32px;
+        #region-header-left {
+            padding-left: 32px;
 
-        section.up-portlet-wrapper {
-            margin-top: 16px;
+            section.up-portlet-wrapper {
+                display : inline-block;
+                margin-top: 16px;
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         }
+
+        #region-header-right {
+            padding-right: 32px;
+
+            section.up-portlet-wrapper {
+                margin-top: 16px;
+            }
+        }
+
     }
 
 }

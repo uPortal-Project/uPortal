@@ -19,6 +19,12 @@
 
 @portletWrapperBorderRadius: 5px;
 
+body {
+    overflow-x: hidden; /* Prevent scroll on narrow devices */
+    background-color: @offcanvas-background-color;
+    background-image:none !important;
+}
+
 #portalPageBody {
     background-color: @content-background-color;
     min-height: 300px;
@@ -65,10 +71,6 @@
 .portlet {
     margin-bottom: 2px;
     padding: 10px;
-}
-
-.portlet-header {
-
 }
 
 .portlet-title {
@@ -278,7 +280,7 @@ section.emergency-alert {
     }
 }
 
-// large screens show all 6 columns.
+/* large screens show all 6 columns. */
 @media only screen and (min-width: 769px) {
     .portal-page-column.col-md-2 {
         width: 16.6666667%;
@@ -288,7 +290,7 @@ section.emergency-alert {
 
 
 @media only screen and (max-width: 769px) {
-    // collapse from 6 to 3 columns
+    /* collapse from 6 to 3 columns */
     .portal-page-column.col-md-2 {
         width: 33.3%;
         float: left;
@@ -296,7 +298,7 @@ section.emergency-alert {
 }
 
 @media only screen and (max-width: 600px) {
-    // collapse from 6 to 2 columns
+    /* collapse from 6 to 2 columns */
     .portal-page-column.col-md-2 {
         width: 50%;
         float: left;
@@ -304,9 +306,8 @@ section.emergency-alert {
 }
 
 @media only screen and (max-width: 240px) {
-    // on really small screen collapse to a single column
+    /* on really small screen collapse to a single column */
     .portal-page-column.col-md-2 {
         width: 100%;
     }
 }
-

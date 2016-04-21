@@ -23,7 +23,33 @@
 
     a {
         color: @header-link-color;
+        text-decoration: none;
     }
+
+    .menu-toggle {
+        margin: 2px 0 2px 12px;
+        padding: 0.25rem 1rem;
+        background: @menu-toggle-background-color;
+        border: 1px solid @menu-toggle-border-color;
+        color: @menu-toggle-text-color;
+        .border-radius;
+
+        &:hover, &:focus {
+            background: @menu-toggle-hover-background-color;
+            color: @menu-toggle-hover-text-color;
+            border: 1px solid @menu-toggle-hover-border-color;
+        }
+
+        i {
+            padding-right: 0.35em;
+        }
+    }
+
+    .portal-header-main {
+        /* Need a bit off padding because the eyebrow will float on top */
+        padding-top: 24px;
+    }
+
     .portal-nav {
         .container {
             padding: 0;
@@ -35,7 +61,6 @@
     /* TODO:  Convert the div.portal-global to be the div.region-pre-header
        (in the XSL) and move these styles to regions.less */
     padding: 6px 2px 2px 2px;
-    min-height: 43px;
     .gradient(@portal-global-background-color, @portal-global-background-gradient);
     border-bottom: 1px solid @portal-global-border-color;
     .drop-shadow;
@@ -86,10 +111,6 @@ h1.portal-logo a:hover {
 @media only screen and (min-width: 769px) {
     .portal-header {
 
-        .portal-global {
-            min-height: inherit;
-        }
-
         .container {
             padding: 0;
 
@@ -99,15 +120,17 @@ h1.portal-logo a:hover {
                 }
                 .notification-icon {
                     margin-right: 10px;
-                    a {
-                        text-decoration: none;
-                    }
                 }
             }
         }
 
         #webSearchContainer {
             margin-top: 48px;
+        }
+
+        .portal-header-main {
+            /* Undo padding from above */
+            padding-top: 0;
         }
 
     }

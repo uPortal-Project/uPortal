@@ -54,7 +54,7 @@
 <xsl:param name="TAB_CONTEXT" select="'header'"/><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
-<xsl:param name="USE_FLYOUT_MENUS" select="'false'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. -->
+<xsl:param name="USE_FLYOUT_MENUS" select="'false'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. TODO:  Move to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
 <xsl:param name="useTabGroups">false</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
@@ -105,27 +105,26 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the navigation. -->
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
       <nav class="portal-nav">
-        <div class="container-fluid">
-        <a href="#" class="menu-toggle"><i class="fa fa-align-justify"></i> Menu</a>
-        <div id="portalNavigation" class="fl-widget">
-          <div id="portalNavigationInner" class="fl-widget-inner header">
-              <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column">
-                 <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
-                   <xsl:with-param name="CONTEXT">header</xsl:with-param>
-                 </xsl:apply-templates>
+        <div id="sidebar" class="sidebar-offcanvas container-fluid">
+            <div id="portalNavigation" class="fl-widget">
+              <div id="portalNavigationInner" class="fl-widget-inner header">
+                  <ul id="portalNavigationList" class="menu fl-tabs flc-reorderer-column list-group list-group-horizontal">
+                     <xsl:apply-templates select="tab[$USE_TAB_GROUPS!='true' or @tabGroup=$ACTIVE_TAB_GROUP]">
+                       <xsl:with-param name="CONTEXT">header</xsl:with-param>
+                     </xsl:apply-templates>
 
-                <!-- invite the user to add a tab if permission to do so
-                and navigation element is flagged as allowing tab-adding -->
-                 <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and not($PORTAL_VIEW='focused')">
-                    <li class="portal-navigation-add-item">
-                        <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
-                          <i class="fa fa-plus-circle"></i>
-                        </a>
-                    </li>
-                 </xsl:if>
-              </ul>
-          </div>
-        </div>
+                    <!-- invite the user to add a tab if permission to do so
+                    and navigation element is flagged as allowing tab-adding -->
+                     <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and not($PORTAL_VIEW='focused')">
+                        <li class="portal-navigation-add-item list-group-item">
+                            <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
+                              <i class="fa fa-plus-circle"></i>
+                            </a>
+                        </li>
+                     </xsl:if>
+                  </ul>
+              </div>
+            </div>
         </div>
       </nav>
     <chunk-point/> <!-- Performance Optimization, see ChunkPointPlaceholderEventSource -->
@@ -233,7 +232,13 @@
             <xsl:otherwise></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
-    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+    <xsl:variable name="USE_FLYOUT">
+      <xsl:choose>
+        <xsl:when test="$USE_FLYOUT_MENUS='true'">useflyout</xsl:when>
+        <xsl:otherwise></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <li id="portalNavigation_{@ID}" class="portal-navigation {$NAV_POSITION} {$NAV_ACTIVE} {$NAV_MOVABLE} {$NAV_EDITABLE} {$NAV_DELETABLE} {$NAV_CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS} {$USE_FLYOUT} list-group-item"> <!-- Each navigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
       <xsl:variable name="tabLinkUrl">
         <!-- For transient tabs, don't try to calculate an URL.  It display an exception in the logs. Use a safe URL. -->
         <xsl:choose>
@@ -294,59 +299,65 @@
     <xsl:param name="CONTEXT"/>  <!-- Catches the context parameter to know how to render the subnavigation. -->
     <xsl:param name="TAB_POSITION"/> <!-- Provides the position of the tab -->
 
-    <div> <!-- Unique ID is needed for the flyout menus javascript. -->
-      <xsl:attribute name="id">portalSubnavigation_<xsl:value-of select="@ID"/></xsl:attribute>
-      <xsl:attribute name="class">portal-subnav-container</xsl:attribute>
-      <xsl:attribute name="style"></xsl:attribute>
+    <xsl:element name="a"> <!-- Navigation dropdown toogle. -->
+      <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
+      <xsl:attribute name="data-target">#</xsl:attribute>
+      <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
+      <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
+      <xsl:attribute name="role">button</xsl:attribute>
+      <xsl:attribute name="aria-expanded">false</xsl:attribute>
+      <xsl:attribute name="tabindex">0</xsl:attribute>
+      <xsl:element name="span"> <!-- Navigation dropdown toogle caret -->
+       <xsl:attribute name="class">caret</xsl:attribute>
+      </xsl:element>
+      <span class="sr-only">
+       <xsl:value-of select="upMsg:getMessage('toggle.menu', $USER_LANG)"/>
+      </span>
+    </xsl:element>
 
-      <div>  <!-- Inner div for additional presentation/formatting options. -->
-        <xsl:attribute name="id">portalSubnavigationInner_<xsl:value-of select="@ID"/></xsl:attribute>
-        <xsl:attribute name="class">portal-subnav-container-inner</xsl:attribute>
-        <ul class="portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-              <xsl:for-each select="//navigation/tab[@activeTab='true']/tabChannel">
-                <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
-                  <xsl:choose>
-                    <xsl:when test="position()=1 and position()=last()">single</xsl:when>
-                    <xsl:when test="position()=1">first</xsl:when>
-                    <xsl:when test="position()=last()">last</xsl:when>
-                    <xsl:otherwise></xsl:otherwise>
-                  </xsl:choose>
-                </xsl:variable>
-                <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
-                  <xsl:variable name="portletSubNavLink">
-                    <xsl:call-template name="portalUrl">
-                        <xsl:with-param name="url">
-                            <url:portal-url>
-                                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                                <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-                            </url:portal-url>
-                        </xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:variable>
-                  <xsl:element name="a"> <!-- Navigation item link. -->
-                    <xsl:attribute name="title"><xsl:value-of select="@description" /></xsl:attribute>
-                    <xsl:choose>
-                      <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
-                        <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
-                        <xsl:attribute name="target">_blank</xsl:attribute>
-                        <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:attribute name="href"><xsl:value-of select="$portletSubNavLink" /></xsl:attribute>
-                        <xsl:attribute name="class">portal-subnav-link</xsl:attribute>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                    <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
-                  </xsl:element>
-                </li>
-              </xsl:for-each>
-        </ul>
-    </div>
-    </div>
-
+    <ul class="dropdown-menu portal-subnav-list"> <!-- List of the subnavigation menu items. -->
+      <xsl:attribute name="aria-labelledby">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
+      <xsl:attribute name="role">menu</xsl:attribute>
+      <xsl:for-each select="tabChannel">
+        <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
+          <xsl:choose>
+            <xsl:when test="position()=1 and position()=last()">single</xsl:when>
+            <xsl:when test="position()=1">first</xsl:when>
+            <xsl:when test="position()=last()">last</xsl:when>
+            <xsl:otherwise></xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+          <xsl:variable name="portletSubNavLink">
+            <xsl:call-template name="portalUrl">
+              <xsl:with-param name="url">
+                <url:portal-url>
+                  <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                  <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+                </url:portal-url>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:variable>
+          <xsl:element name="a"> <!-- Navigation item link. -->
+            <xsl:attribute name="title"><xsl:value-of select="@description" /></xsl:attribute>
+            <xsl:choose>
+              <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
+                <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
+                <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:attribute name="href"><xsl:value-of select="$portletSubNavLink" /></xsl:attribute>
+                <xsl:attribute name="class">portal-subnav-link</xsl:attribute>
+              </xsl:otherwise>
+            </xsl:choose>
+            <span class="portal-subnav-label"><xsl:value-of select="@title"/></span>
+          </xsl:element>
+        </li>
+      </xsl:for-each>
+    </ul>
   </xsl:template>
   <!-- ================================================== -->
-
 
 
   <!-- ========== TEMPLATE: FLYOUT MENU SCRIPTS ========== -->
