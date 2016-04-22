@@ -27,8 +27,8 @@
 		Styling:   	Bootstrap
 		Responsive:	Included
 	-->
-	<css included="plain" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.css</css>
-	<css included="aggregated" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.min.css</css>
+	<css included="plain" resource="true">/rs/datatables/cdn/t/bs/dt-1.10.11,r-2.0.2/datatables.css</css>
+	<css included="aggregated" resource="true">/rs/datatables/cdn/t/bs/dt-1.10.11,r-2.0.2/datatables.min.css</css>
 
 	<!-- Data Table ColumnFilterWidgets Includes --> 
 	<css included="both" resource="true">/rs/ColumnFilterWidgets/1.0.4/css/ColumnFilterWidgets.css</css>
@@ -88,8 +88,8 @@
     <!-- Data Table Includes
      
     -->
-    <js included="plain" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.js</js>
-    <js included="aggregated" resource="false">//cdn.datatables.net/t/bs/dt-1.10.11,r-2.0.2/datatables.min.js</js>
+    <js included="plain" resource="true">/rs/datatables/cdn/t/bs/dt-1.10.11,r-2.0.2/datatables.js</js>
+    <js included="aggregated" resource="true">/rs/datatables/cdn/t/bs/dt-1.10.11,r-2.0.2/datatables.min.js</js>
 
     <!-- Data Table ColumnFilterWidgets Includes -->  
     <js included="both" resource="true">/rs/ColumnFilterWidgets/1.0.4/js/ColumnFilterWidgets.js</js>
