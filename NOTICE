@@ -38,6 +38,7 @@ This project includes:
   Apache Ant Core under The Apache Software License, Version 2.0
   Apache Ant Launcher under The Apache Software License, Version 2.0
   Apache Commons Codec under The Apache Software License, Version 2.0
+  Apache Commons Collections under Apache License, Version 2.0
   Apache Commons Compress under The Apache Software License, Version 2.0
   Apache Commons FileUpload under The Apache Software License, Version 2.0
   Apache Commons Lang under The Apache Software License, Version 2.0
@@ -61,7 +62,6 @@ This project includes:
   Cernunnos - Core under Apache 2
   cglib under Apache License, Version 2.0
   Commons CLI under The Apache Software License, Version 2.0
-  Commons Collections under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
