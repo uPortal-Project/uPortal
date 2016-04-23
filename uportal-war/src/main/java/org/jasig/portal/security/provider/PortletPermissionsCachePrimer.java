@@ -28,11 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-
-import javax.annotation.PostConstruct;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
@@ -84,24 +81,17 @@ public class PortletPermissionsCachePrimer {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private ThreadPoolExecutor executor;
     private Map<String,Set<String>> permissionsMap;
+
+    @Required
+    public void setExecutor(ThreadPoolExecutor executor) {
+        this.executor = executor;
+    }
 
     @Required
     public void setPermissionsMap(Map<String,Set<String>> permissionsMap) {
         this.permissionsMap = Collections.unmodifiableMap(permissionsMap);
-    }
-
-    private ThreadPoolExecutor executor;
-    private int executorThreadCount = 7;  // default
-
-    public void setExecutorThreadCount(int executorThreadCount) {
-        this.executorThreadCount = executorThreadCount;
-    }
-
-    @PostConstruct
-    public void initializeSearchExecutor() {
-        // Should be safe
-        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(executorThreadCount);
     }
 
     public void primeCache() {

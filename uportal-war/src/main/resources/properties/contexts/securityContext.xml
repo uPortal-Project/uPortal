@@ -92,6 +92,20 @@
      | answers are already known when needed.
      +-->
     <bean id="portletPermissionsCachePrimer" class="org.jasig.portal.security.provider.PortletPermissionsCachePrimer">
+        <property name="executor">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
+                <property name="corePoolSize" value="2" />
+                <property name="maxPoolSize" value="7" />
+                <property name="queueCapacity" value="0" />
+                <property name="threadGroupName" value="uP-PermCachePrime" />
+                <property name="threadNamePrefix" value="uP-PermCachePrime-" />
+                <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
+                <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
+                <property name="daemon" value="true" />
+                <property name="allowCoreThreadTimeOut" value="true" />
+                <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
+            </bean>
+        </property>
         <property name="permissionsMap">
             <!-- Use this property to tell the bean what to pre-load.  Keys are
                  permissions owners;  value(s) are activities -->
