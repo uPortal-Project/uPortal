@@ -11,8 +11,7 @@ uPortal uses Travis-CI for lightweight continuous integration.  You can see buil
 
 ## Requirements
 * JDK 1.8 - The JRE alone is NOT sufficient, a full JDK is required
-* Servlet 3.1 Container - Tomcat 8.0 is required.  (NOTE:  Tomcat 7 may continue to work in the early 4.3 period.  We reserve the right to use leverage Servlet 3.1, JSP 2.3, EL 3.0 and Web Socket 1.1)  There some configuration changes that
-must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM42/Installing+Tomcat).
+* Servlet 3.1 Container - Tomcat 8.0 is required.  (NOTE:  Tomcat 7 may continue to workin the early 4.3 period.  We reserve the right to use leverage Servlet 3.1, JSP 2.3, EL 3.0 and Web Socket 1.1)  There some configuration changes that must be made for Tomcat which are documented in the [uPortal manual](https://wiki.jasig.org/display/UPM42/Installing+Tomcat).
 * Maven 3.2.2 or later
 * Ant 1.8.2 or 1.9.3 or later.
 
@@ -27,7 +26,8 @@ Ant tasks. Ant 1.8.2 or 1.9.3 or later is required
 * **hsql** - Starts a HSQL database instance. The default uPortal configuration points
 to this database and it can be used for portal development.
 * **initportal** - Runs the 'deploy-ear' and 'init-db' ant targets, should be the first
-and only task run when setting up a new uPortal instance *WARNING*: This runs 'init-db' which **DROPS** and re-creates the uPortal database
+and only task run when setting up a new uPortal instance *WARNING*: This runs 'init-db'
+which **DROPS** and re-creates the uPortal database
 * **deploy-ear** - Ensures the latest changes have been compiled and packaged then
 deploys uPortal, shared libraries and all packaged portlets to the container
 * **initdb** - Sets up the uPortal database. **DROPS ALL EXISTING** uPortal tables
@@ -79,4 +79,5 @@ the logging level, where the file should be, or even choose a different logging
 approach.
 
 #### Database configuration
-Database configuration is configured in /uportal-war/src/main/resources/properties/rdbm.properties
+Database connection information is read from /uportal-war/src/main/resources/properties/rdbm.properties,
+but is normally configured in filters/{environment.name}.properties.
