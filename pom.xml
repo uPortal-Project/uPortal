@@ -1263,6 +1263,8 @@
                         <exclude>data/*</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
                         <exclude>**/jquerymobile-*.css</exclude>
+                        <exclude>**/jstree/**</exclude>
+                        <exclude>**/respond-*.js</exclude>
                         <exclude>**/*.channel</exclude>
                         <exclude>**/*.channel-type</exclude>
                         <exclude>**/*.entity-type</exclude>
