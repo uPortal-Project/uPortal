@@ -45,11 +45,7 @@ public final class Pathref {
     private final String layoutOwnerUsername;
     private final String uniquePath;
     private final String portletFname;
-    
-    public Pathref(String layoutOwnerUsername, String uniquePath) {
-        this(layoutOwnerUsername, uniquePath, null);
-    }
-    
+
     public Pathref(String layoutOwnerUsername, String uniquePath, String portletFname) {
         
         Validate.notNull(layoutOwnerUsername, "Argument 'layoutOwnerUsername' cannot be null.");

@@ -27,7 +27,6 @@ import org.jasig.portal.io.xml.IPortalData;
  * 
  * @author Ken Weiner, kweiner@unicon.net
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public interface IPortletType extends IPortalData {
 

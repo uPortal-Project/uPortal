@@ -214,7 +214,7 @@ public class FragmentActivator
         // not the default template user as determined by
         // the user identity store.
         if (owner.getAttribute(NEWLY_CREATED_ATTR) != null) {
-            owner.setAttribute(Constants.PLF, view.layout);
+            owner.setAttribute(Constants.PLF, view.getLayout());
             try {
                 saveLayout(view, owner);
             }
@@ -238,19 +238,7 @@ public class FragmentActivator
         final net.sf.ehcache.Element userViewElement = this.userViews.get(userViewKey);
         return (UserView)userViewElement.getObjectValue();
     }
-    
-    public boolean hasUserView(FragmentDefinition fd, Locale locale) {
 
-        // Assertions...
-        if (fd == null) {
-            String msg  = "Argument 'fd' [FragmentDefinition] cannot be null.";
-            throw new IllegalArgumentException(msg);
-        }
-
-        return getUserView(fd.getOwnerId(), locale) != null;
-
-    }
-    
     /**
      * Saves the loaded layout in the database for the user and profile.
      * @param view
@@ -260,8 +248,8 @@ public class FragmentActivator
     private void saveLayout(UserView view, IPerson owner) throws Exception
     {
         IUserProfile profile = new UserProfile();
-        profile.setProfileId(view.profileId);
-        userLayoutStore.setUserLayout(owner, profile, view.layout, true, false);
+        profile.setProfileId(view.getProfileId());
+        userLayoutStore.setUserLayout(owner, profile, view.getLayout(), true, false);
     }
 
     private IPerson bindToOwner( FragmentDefinition fragment )
@@ -365,33 +353,29 @@ public class FragmentActivator
         // fragment. Until this is resolved only one profile will be supported
         // and will have a hard coded id of 1 which is the default for profiles.
         // If anyone changes this user all heck could break loose for dlm. :-(
-        
+
         Document layout = null;
 
-        try
-        {
+        try {
             // fix hard coded 1 later for multiple profiles
             IUserProfile profile = userLayoutStore.getUserProfileByFname(owner, "default");
             profile.setLocaleManager(new LocaleManager(owner, new Locale[] { locale }));
-            
+
             // see if we have structure & theme stylesheets for this user yet.
             // If not then fall back on system's selected stylesheets.
             if (profile.getStructureStylesheetId() == 0 ||
                     profile.getThemeStylesheetId() == 0)
                 profile = userLayoutStore.getSystemProfileByFname(profile.getProfileFname());
-            
-            view.profileId = profile.getProfileId();
-            view.profileFname = profile.getProfileFname();
-            view.layoutId = profile.getLayoutId();
-//            view.structureStylesheetId = profile.getStructureStylesheetId();
-//            view.themeStylesheetId = profile.getThemeStylesheetId();
-            
+
+            view.setProfileId(profile.getProfileId());
+            view.setLayoutId(profile.getLayoutId());
+
             layout = userLayoutStore.getFragmentLayout( owner, profile ); 
             Element root = layout.getDocumentElement();
-            root.setAttribute( Constants.ATT_ID, 
+            root.setAttribute(Constants.ATT_ID, 
                     Constants.FRAGMENT_ID_USER_PREFIX + view.getUserId() +
-                    Constants.FRAGMENT_ID_LAYOUT_PREFIX + view.layoutId );
-            view.layout = layout;
+                    Constants.FRAGMENT_ID_LAYOUT_PREFIX + view.getLayoutId());
+            view.setLayout(layout);
         }
         catch( Exception e )
         {
@@ -423,9 +407,9 @@ public class FragmentActivator
                             FragmentDefinition fragment )
     {
         // if fragment not bound to user or layout empty due to error, return
-        if ( view.getUserId() == -1 ||
-             view.layout == null )
+        if (view.getUserId() == -1 || view.getLayout() == null) {
             return;
+        }
 
         // Choose what types of content to apply from the fragment
         Pattern contentPattern = STANDARD_PATTERN;  // default
@@ -436,7 +420,7 @@ public class FragmentActivator
 
         // remove all non-regular or hidden top level folders
         // skip root folder that is only child of top level layout element
-        Element layout = view.layout.getDocumentElement();
+        Element layout = view.getLayout().getDocumentElement();
         Element root = (Element) layout.getFirstChild();
         NodeList children = root.getChildNodes();
 

@@ -41,26 +41,6 @@ public interface IUserLayout {
      */
     public static final String ROOT_NODE_NAME = "root";
 
-
-    /**
-     * Writes user layout content (with appropriate markings) into
-     * a <code>Document</code> object
-     *
-     * @param document a <code>Document</code> value
-     * @exception PortalException if an error occurs
-     */
-    public void writeTo(Document document) throws PortalException;
-
-    /**
-     * Writes subtree of a user layout (with appropriate markings) defined by a particular node into
-     * a <code>Document</code>
-     *
-     * @param nodeId a <code>String</code> a node determining a user layout subtree.
-     * @param document a <code>Document</code> object
-     * @exception PortalException if an error occurs
-     */
-    public void writeTo(String nodeId, Document document) throws PortalException;
-
     /**
      * Obtain a description of a node (channel or a folder) in a given user layout.
      *
@@ -90,25 +70,6 @@ public interface IUserLayout {
     public Enumeration getChildIds(String nodeId) throws PortalException;
 
     /**
-     * Determine an Id of a next sibling node.
-     *
-     * @param nodeId a <code>String</code> value
-     * @return a <code>String</code> Id value of a next sibling node, or <code>null</code> if this is the last sibling.
-     * @exception PortalException if an error occurs
-     */
-    public String getNextSiblingId(String nodeId) throws PortalException;
-
-
-    /**
-     * Determine an Id of a previous sibling node.
-     *
-     * @param nodeId a <code>String</code> value
-     * @return a <code>String</code> Id value of a previous sibling node, or <code>null</code> if this is the first sibling.
-     * @exception PortalException if an error occurs
-     */
-    public String getPreviousSiblingId(String nodeId) throws PortalException;
-
-    /**
      * Return a cache key, uniqly corresponding to the composition and the structure of the user layout.
      *
      * @return a <code>String</code> value
@@ -123,15 +84,6 @@ public interface IUserLayout {
      */
     public String getId();
 
-    /**
-     * Returns a node id associated with the supplied functional name.
-     *
-     * @param fname  the functional name to lookup
-     * @return a <code>String</code> subscription id
-     * @exception PortalException if an error occurs
-     */
-    public String getNodeId(String fname) throws PortalException;
-    
     /**
      * Returns a node id as resolved by the supplied {@link XPathExpression}
      * 

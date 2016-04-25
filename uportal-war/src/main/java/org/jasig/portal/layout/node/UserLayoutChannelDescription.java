@@ -375,46 +375,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public String setParameterValue(String parameterName, String parameterValue) {
         // don't try to store a null value
-    	if (parameterValue==null)  return null;
+        if (parameterValue==null)  return null;
         return (String) parameters.put(parameterName,parameterValue);
-    }
-
-
-    /**
-     * Reset a channel parameter value. Since parameter changes by channels
-     * can be persisted if override is allowed this method enables resetting to
-     * the original value or, if the parameter is ad-hoc meaning that the
-     * channel definition does not provide a value for this parameter, then the
-     * parameter value is removed.
-     *
-     * @param parameterName a <code>String</code> value
-     */
-    public void resetParameter(String parameterName) throws PortalException
-    {
-        /*
-         * Since original channel definition parameter values that were 
-         * overridden are not maintained at this level we must consult the 
-         * channel definition to determine the original value and restore it
-         * or discover that this is an ad-hoc parameter and can be removed. 
-         */
-        try
-        {
-        	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
-            int pubId = Integer.parseInt(getChannelPublishId());
-            IPortletDefinition def = registry.getPortletDefinition(getChannelPublishId());
-            IPortletDefinitionParameter parm = def.getParameter(parameterName);
-
-            if (parm == null) // ad-hoc parm so delete
-            {
-                parameters.remove(parameterName);
-            }
-        }
-        catch(Exception e)
-        {
-            throw new PortalException("Unable to reset parameter [" +
-                    parameterName + "] for channel [" + getTitle() +
-                    "].", e);
-       }
     }
 
     /**
@@ -436,36 +398,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         return parameters.values();
     }
 
-
-    /**
-     * Determines the number of existing channel parameters.
-     *
-     * @return an <code>int</code> value
-     */
-    public int numberOfParameters() {
-        return parameters.size();
-    }
-
-
-    /**
-     * Clears all of the channel parameters.
-     *
-     */
-    public void clearParameters() {
-        parameters.clear();
-    }
-
-
-    /**
-     * Remove a channel parameter.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return an old parameter value.
-     */
-    public String remove(String parameterName) {
-        return (String) parameters.remove(parameterName);
-    }
-
     /**
      * Obtain a set of channel parameter names.
      *
@@ -482,25 +414,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public Map getParameterMap() {
         return Collections.unmodifiableMap(parameters);
-    }
-
-    /**
-     * Determine if the channel has any parameters.
-     *
-     * @return a <code>boolean</code> value
-     */
-    public boolean hasParameters() {
-        return !parameters.isEmpty();
-    }
-
-    /**
-     * Determines if a certain parameter name is present.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return a <code>boolean</code> value
-     */
-    public boolean containsParameter(String parameterName) {
-        return parameters.containsKey(parameterName);
     }
 
     /**

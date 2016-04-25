@@ -31,20 +31,19 @@ import org.jasig.portal.url.IUrlNodeSyntaxHelperRegistry;
  * Describes a XSL Stylesheet used in the rendering pipeline
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetDescriptor extends IPortalData {
-    
+
     /**
      * @return Unique ID of the descriptor
      */
     public long getId();
-    
+
     /**
      * Unique, human readable name of the stylesheet
      */
     public String getName();
-    
+
     /**
      * Optional description of the stylesheet
      */
@@ -53,7 +52,7 @@ public interface IStylesheetDescriptor extends IPortalData {
      * Optional description of the stylesheet
      */
     public String getDescription();
-    
+
     /**
      * Resource string used to locate the XSLT Stylesheet
      * Must be a valid Spring Resource string
@@ -64,7 +63,7 @@ public interface IStylesheetDescriptor extends IPortalData {
      * Resource string used to locate the XSLT Stylesheet
      */
     public String getStylesheetResource();
-    
+
     /**
      * The name of the {@link IUrlNodeSyntaxHelper} as it is registered in the {@link IUrlNodeSyntaxHelperRegistry}, can 
      * be null if no {@link IUrlNodeSyntaxHelper} is associated with this stylesheet.
@@ -86,15 +85,7 @@ public interface IStylesheetDescriptor extends IPortalData {
      * @see Map#get(Object)
      */
     public IOutputPropertyDescriptor getOutputPropertyDescriptor(String name);
-    /**
-     * @see Map#put(Object, Object)
-     */
-    public IOutputPropertyDescriptor setOutputPropertyDescriptor(IOutputPropertyDescriptor outputPropertyDescriptor);
-    /**
-     * @see Map#remove(Object)
-     */
-    public IOutputPropertyDescriptor removeOutputPropertyDescriptor(String name);
-    
+
     /**
      * Parameters to use on the {@link Transformer} for the stylesheet this defines
      * The returned Map is read-only 
@@ -105,15 +96,7 @@ public interface IStylesheetDescriptor extends IPortalData {
      * @see Map#get(Object)
      */
     public IStylesheetParameterDescriptor getStylesheetParameterDescriptor(String name);
-    /**
-     * @see Map#put(Object, Object)
-     */
-    public IStylesheetParameterDescriptor setStylesheetParameterDescriptor(IStylesheetParameterDescriptor stylesheetParameterDescriptor);
-    /**
-     * @see Map#remove(Object)
-     */
-    public IStylesheetParameterDescriptor removeStylesheetParameterDescriptor(String name);
-    
+
     /**
      * Attributes to be added to layout elements prior to transformation by the stylesheet this defines
      * The returned Map is read-only
@@ -124,12 +107,5 @@ public interface IStylesheetDescriptor extends IPortalData {
      * @see Map#get(Object)
      */
     public ILayoutAttributeDescriptor getLayoutAttributeDescriptor(String name);
-    /**
-     * @see Map#put(Object, Object)
-     */
-    public ILayoutAttributeDescriptor setLayoutAttributeDescriptor(ILayoutAttributeDescriptor layoutAttributeDescriptor);
-    /**
-     * @see Map#remove(Object)
-     */
-    public ILayoutAttributeDescriptor removeLayoutAttributeDescriptor(String name);
+
 }

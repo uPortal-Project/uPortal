@@ -433,28 +433,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         return properties;
     }
 
-    @Transactional
-    @Override
-    public void clearOutputProperties(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
-        if (stylesheetUserPreferences != null) {
-            stylesheetUserPreferences.clearOutputProperties();
-            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
-        }
-        
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString());
-        }
-        
-        request.removeAttribute(OUTPUT_PROPERTIES_KEY + stylesheetPreferencesKey.toString());
-    }
-    
-
-    
-
     @Override
     public String getStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
@@ -565,20 +543,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
     }
 
     @Override
-    public Iterable<String> getStylesheetParameterNames(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        final IStylesheetDescriptor stylesheetDescriptor = stylesheetPreferencesKey.stylesheetDescriptor;
-        final Collection<IStylesheetParameterDescriptor> stylesheetParameterDescriptors = stylesheetDescriptor.getStylesheetParameterDescriptors();
-        
-        return Collections2.transform(stylesheetParameterDescriptors, new Function<IStylesheetParameterDescriptor, String>() {
-            @Override
-            public String apply(IStylesheetParameterDescriptor input) {
-                return input.getName();
-            }
-        });
-    }
-
-    @Override
     public <P extends Populator<String, String>> P populateStylesheetParameters(HttpServletRequest request,
             PreferencesScope prefScope, P stylesheetParameters) {
         final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
@@ -651,25 +615,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         }
         
         return stylesheetParameters;
-    }
-
-    @Transactional
-    @Override
-    public void clearStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
-        if (stylesheetUserPreferences != null) {
-            stylesheetUserPreferences.clearStylesheetParameters();
-            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
-        }
-        
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString());
-        }
-        
-        request.removeAttribute(STYLESHEET_PARAMETERS_KEY + stylesheetPreferencesKey.toString());
     }
 
     @Override
@@ -1084,51 +1029,6 @@ public class StylesheetUserPreferencesServiceImpl implements IStylesheetUserPref
         return layoutAttributes;
     }
 
-    @Transactional
-    @Override
-    public void clearLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
-        if (stylesheetUserPreferences != null) {
-            stylesheetUserPreferences.clearLayoutAttributes(nodeId);
-            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
-        }
-        
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            final Map<String, Map<String, String>> sessionLayoutAttributes = getSessionLayoutAttributes(session, stylesheetPreferencesKey);
-            if (sessionLayoutAttributes != null) {
-                sessionLayoutAttributes.remove(nodeId);
-            }
-            
-        }
-
-        final Map<String, Map<String, String>> requestLayoutAttributes = getRequestLayoutAttributes(request, stylesheetPreferencesKey);
-        if (requestLayoutAttributes != null) {
-            requestLayoutAttributes.remove(nodeId);
-        }
-    }
-
-    @Transactional
-    @Override
-    public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope) {
-        final StylesheetPreferencesKey stylesheetPreferencesKey = this.getStylesheetPreferencesKey(request, prefScope);
-        
-        final IStylesheetUserPreferences stylesheetUserPreferences = this.getStylesheetUserPreferences(request, stylesheetPreferencesKey);
-        if (stylesheetUserPreferences != null) {
-            stylesheetUserPreferences.clearAllLayoutAttributes();
-            this.stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
-        }
-        
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString());
-        }
-        
-        request.removeAttribute(LAYOUT_ATTRIBUTES_KEY + stylesheetPreferencesKey.toString());
-    }
-    
     @Override
     public void setStructureStylesheetOverride(HttpServletRequest request, String override) {
         request.setAttribute(StylesheetUserPreferencesServiceImpl.STYLESHEET_STRUCTURE_OVERRIDE_REQUEST_ATTRIBUTE, override);

@@ -63,7 +63,6 @@ import com.google.common.collect.ImmutableMap.Builder;
  * JPA implementation of stylesheet user preferences data
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(
@@ -134,8 +133,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
     private final Map<String, LayoutNodeAttributesImpl> layoutAttributes = new LinkedHashMap<String, LayoutNodeAttributesImpl>(0);
-    
-    
+
     @SuppressWarnings("unused")
     private StylesheetUserPreferencesImpl() {
         this.id = -1;
@@ -173,21 +171,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     @Override
-    public long getStylesheetDescriptorId() {
-        return this.stylesheetDescriptor.getId();
-    }
-
-    @Override
-    public int getUserId() {
-        return this.userId;
-    }
-
-    @Override
-    public int getProfileId() {
-        return this.profileId;
-    }
-    
-    @Override
     public String getOutputProperty(String name) {
         Validate.notEmpty(name, "name cannot be null");
         
@@ -209,13 +192,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
         return this.outputProperties.remove(name);
     }
 
-    
-    @Override
-    public <P extends Populator<String, String>> P populateOutputProperties(P properties) {
-        properties.putAll(this.outputProperties);
-        return properties;
-    }
-    
     @Override
     public void clearOutputProperties() {
         this.outputProperties.clear();

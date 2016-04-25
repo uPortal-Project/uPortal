@@ -141,30 +141,6 @@ public interface IUserLayoutStore {
      */
     public Hashtable<Integer, UserProfile> getUserProfileList (IPerson person);
 
-    /** update system profile
-     *
-     * @param profile profile object
-     */
-    public void updateSystemProfile (IUserProfile profile);
-
-    /** remove system profile from the database
-     *
-     * @param profileId profile id
-     */
-    public void deleteSystemProfile (int profileId);
-
-    /** add a new system profile to the database. During this process, a new profile id will be assigned to the profile.
-     *
-     * @param profile profile object (profile id within will be overwritten)
-     * @return profile with an newly assigned id
-     */
-    public IUserProfile addSystemProfile (IUserProfile profile);
-
-    /** Obtain a system profile
-     * @param profileId system profile id
-     */
-    public IUserProfile getSystemProfileById (int profileId);
-
     public IUserProfile getSystemProfileByFname (String profileFname);
 
     /** obtain a list of system profiles
@@ -180,15 +156,6 @@ public interface IUserLayoutStore {
      * @param profileId profile id to which given user agent will be mapped
      */
     public void setUserBrowserMapping (IPerson person,String userAgent,int profileId);
-
-    /** establish system profile browser mapping
-     *
-     * @param userAgent User-Agent header string
-     * @param systemProfileId profile id of a profile to which given
-     *     user-agent will be mapped
-     */
-    public void setSystemBrowserMapping (String userAgent,int systemProfileId);
-
 
   /* ChannelRegistry */
   /**

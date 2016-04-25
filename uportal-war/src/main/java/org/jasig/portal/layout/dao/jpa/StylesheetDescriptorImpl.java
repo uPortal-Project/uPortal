@@ -60,7 +60,6 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
  * JPA implementation of stylesheet descriptor data
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(
@@ -236,20 +235,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Override
     public IOutputPropertyDescriptor getOutputPropertyDescriptor(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.outputProperties.get(name);
-    }
-
-    @Override
-    public IOutputPropertyDescriptor setOutputPropertyDescriptor(IOutputPropertyDescriptor outputPropertyDescriptor) {
-        return this.outputProperties.put(outputPropertyDescriptor.getName(), outputPropertyDescriptor);
-    }
-
-    @Override
-    public IOutputPropertyDescriptor removeOutputPropertyDescriptor(String name) {
-        Validate.notEmpty(name, "name cannot be null");
-        
-        return this.outputProperties.remove(name);
     }
 
     @Override
@@ -265,21 +251,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Override
     public IStylesheetParameterDescriptor getStylesheetParameterDescriptor(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.stylesheetParameters.get(name);
-    }
-
-    @Override
-    public IStylesheetParameterDescriptor setStylesheetParameterDescriptor(
-            IStylesheetParameterDescriptor stylesheetParameterDescriptor) {
-        return this.stylesheetParameters.put(stylesheetParameterDescriptor.getName(), stylesheetParameterDescriptor);
-    }
-
-    @Override
-    public IStylesheetParameterDescriptor removeStylesheetParameterDescriptor(String name) {
-        Validate.notEmpty(name, "name cannot be null");
-        
-        return this.stylesheetParameters.remove(name);
     }
 
     @Override
@@ -295,20 +267,9 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     @Override
     public ILayoutAttributeDescriptor getLayoutAttributeDescriptor(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.layoutAttributes.get(name);
     }
 
-    @Override
-    public ILayoutAttributeDescriptor setLayoutAttributeDescriptor(ILayoutAttributeDescriptor layoutAttributeDescriptor) {
-        return this.layoutAttributes.put(layoutAttributeDescriptor.getName(), layoutAttributeDescriptor);
-    }
-
-    @Override
-    public ILayoutAttributeDescriptor removeLayoutAttributeDescriptor(String name) {
-        return this.layoutAttributes.remove(name);
-    }
-    
     protected <T extends IStylesheetData> void setMap(Map<String, T> dataMap, Collection<T> dataCollection, Updater<T> updater) {
         final Set<String> oldDataKeys = new HashSet<String>(dataMap.keySet());
         

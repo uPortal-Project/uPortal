@@ -135,7 +135,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
                 collectiveTarget = targetProviderRegistry.getTargetProvider(activity.getTargetProviderKey()).getTarget(IPermission.ALL_GROUPS_TARGET);
                 break;
             default:
-            // This sort of handling does not apply;  just pass through
+                // This sort of handling does not apply;  just pass through
         }
         /*
          * NOTE:  Cannot generalize to a collective target if we are already on

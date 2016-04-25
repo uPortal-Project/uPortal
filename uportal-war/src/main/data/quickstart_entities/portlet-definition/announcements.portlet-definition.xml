@@ -30,7 +30,7 @@
         <ns2:webAppName>/Announcements</ns2:webAppName>
         <ns2:portletName>AnnouncementsDisplay</ns2:portletName>
     </portlet-descriptor>
-    <category>All categories</category>
+    <category>News</category>
     <group>Authenticated Users</group>
     <permissions>
         <permission system="UP_PORTLET_SUBSCRIBE" activity="BROWSE">

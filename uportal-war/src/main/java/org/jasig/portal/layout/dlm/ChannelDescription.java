@@ -35,32 +35,12 @@ public class ChannelDescription extends UserLayoutChannelDescription
     private String plfId = null;
     private String origin = null;
     private FragmentChannelInfo fragmentChannelInfo = null;
-    
+
     public FragmentChannelInfo getFragmentChannelInfo()
     {
         return fragmentChannelInfo;
     }
-    public void resetParameter(String parameterName) throws PortalException
-    {
-        /*
-         * If this channel is not from a fragment then let the parent handle
-         * resetting to potentially drop back to the publish time parameter
-         * value if not ad-hoc. If from a fragment then we drop back to the
-         * value held by the fragment or if ad-hoc remove it completely.
-         */
-        if (this.fragmentChannelInfo != null)
-        {
-            String value = fragmentChannelInfo.getParameterValue(parameterName);
-            if (value == null) // user, ad-hoc parm so delete
-            {
-                super.remove(parameterName);
-            }
-            else if (fragmentChannelInfo.canOverrideParameter(parameterName))
-                super.setParameterValue(parameterName, value);
-        }
-        else
-            super.resetParameter(parameterName);
-    }
+
     public void setFragmentChannelInfo(FragmentChannelInfo fragmentChannelInfo)
     {
         this.fragmentChannelInfo = fragmentChannelInfo;
@@ -106,22 +86,7 @@ public class ChannelDescription extends UserLayoutChannelDescription
         this.setPlfId(xmlNode.getAttributeNS(Constants.NS_URI, Constants.LCL_PLF_ID));
         this.setOrigin(xmlNode.getAttributeNS(Constants.NS_URI, Constants.LCL_ORIGIN));
     }
-    /**
-     * Overridden constructor of super class.
-     * 
-     * @param d an IUserLayoutChannelDescription
-     */
-    public ChannelDescription(IUserLayoutChannelDescription d)
-    {
-        super(d);
-        
-        if (d instanceof ChannelDescription)
-        {
-            ChannelDescription cd = (ChannelDescription)d;
-            this.setPlfId(cd.getPlfId());
-            this.setOrigin(cd.getOrigin());
-        }
-    }
+
     public Element getXML(Document root)
     {
         Element node = super.getXML(root);

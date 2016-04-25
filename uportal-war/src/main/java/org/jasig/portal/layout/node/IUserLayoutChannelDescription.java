@@ -22,17 +22,13 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
-import org.jasig.portal.PortalException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-
 
 /**
  * An interface managing information contained in a user layout channel node.
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescription {
 
@@ -204,20 +200,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      */
     public String setParameterValue(String parameterName, String parameterValue);
 
-
-    /**
-     * Reset a channel parameter value. Since parameter changes by channels
-     * can be persisted if override is allowed this method enables resetting to
-     * the original value or, if the parameter is ad-hoc meaning that the
-     * channel definition does not provide a value for this parameter, then the
-     * parameter value is removed.
-     *
-     * @param parameterName a <code>String</code> value
-     * @throws PortalException
-     */
-    public void resetParameter(String parameterName) throws PortalException;
-
-
     /**
      * Obtain a channel parameter value.
      *
@@ -234,27 +216,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
     public Collection getParameterValues();
 
     /**
-     * Determines the number of existing channel parameters.
-     *
-     * @return an <code>int</code> value
-     */
-    public int numberOfParameters();
-
-    /**
-     * Clears all of the channel parameters.
-     *
-     */
-    public void clearParameters();
-
-    /**
-     * Remove a channel parameter.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return an old parameter value.
-     */
-    public String remove(String parameterName);
-
-    /**
      * Obtain a set of channel parameter names.
      *
      * @return a <code>Set</code> of <code>String</code> parameter names.
@@ -267,21 +228,6 @@ public interface IUserLayoutChannelDescription extends IUserLayoutNodeDescriptio
      * @return a <code>Map</code> of parameter names on parameter values.
      */
     public Map getParameterMap();
-
-    /**
-     * Determine if the channel has any parameters.
-     *
-     * @return a <code>boolean</code> value
-     */
-    public boolean hasParameters();
-
-    /**
-     * Determines if a certain parameter name is present.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return a <code>boolean</code> value
-     */
-    public boolean containsParameter(String parameterName);
 
     /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current channel.

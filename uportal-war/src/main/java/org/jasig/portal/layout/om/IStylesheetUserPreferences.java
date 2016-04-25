@@ -30,7 +30,6 @@ import org.jasig.portal.utils.Populator;
  * Implementations and returned data structures MUST be thread-safe
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetUserPreferences {
     /**
@@ -38,12 +37,6 @@ public interface IStylesheetUserPreferences {
      */
     long getId();
 
-    long getStylesheetDescriptorId();
-
-    int getUserId();
-
-    int getProfileId();
-    
     /**
      * Get an output property
      * 
@@ -72,17 +65,11 @@ public interface IStylesheetUserPreferences {
      * @see Map#remove(Object)
      */
     String removeOutputProperty(String name);
-    
-    /**
-     * Add all output properties to the provided Properties object
-     */
-    <P extends Populator<String, String>> P populateOutputProperties(P properties);
-    
+
     /**
      * @see Properties#clear();
      */
     void clearOutputProperties();
-    
 
     /**
      * Get a stylesheet parameter
@@ -92,7 +79,7 @@ public interface IStylesheetUserPreferences {
      * @see Map#get(Object)
      */
     String getStylesheetParameter(String name);
-    
+
     /**
      * Set a transformer parameter
      * 

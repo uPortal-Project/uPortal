@@ -1456,18 +1456,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         });
     }
 
-    public void setSystemBrowserMapping (String userAgent, int profileId) {
-        this.setUserBrowserMapping(this.getSystemUser(), userAgent, profileId);
-    }
-
     private String getSystemBrowserMapping (String userAgent) {
         return  getUserBrowserMapping(this.getSystemUser(), userAgent);
-    }
-
-    public IUserProfile getSystemProfileById (int profileId) {
-        IUserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
-        up.setSystemProfile(true);
-        return  up;
     }
 
     public IUserProfile getSystemProfileByFname (String profileFname) {
@@ -1483,18 +1473,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
             up.setSystemProfile(true);
         }
         return  pl;
-    }
-
-    public void updateSystemProfile (IUserProfile profile) {
-        this.updateUserProfile(this.getSystemUser(), profile);
-    }
-
-    public IUserProfile addSystemProfile (IUserProfile profile) {
-        return  addUserProfile(this.getSystemUser(), profile);
-    }
-
-    public void deleteSystemProfile (int profileId) {
-        this.deleteUserProfile(this.getSystemUser(), profileId);
     }
 
     private static class SystemUser implements IPerson {

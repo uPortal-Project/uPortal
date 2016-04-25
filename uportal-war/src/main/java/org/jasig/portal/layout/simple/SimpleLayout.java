@@ -71,16 +71,6 @@ public class SimpleLayout implements IUserLayout {
     }
 
     @Override
-    public void writeTo(Document document) throws PortalException {
-        document.appendChild(document.importNode(layout.getDocumentElement(), true));
-    }
-
-    @Override
-    public void writeTo(String nodeId, Document document) throws PortalException {
-        document.appendChild(document.importNode(layout.getElementById(nodeId), true));
-    }
-
-    @Override
     public IUserLayoutNodeDescription getNodeDescription(String nodeId) throws PortalException {
         Element element = layout.getElementById(nodeId);
         return UserLayoutNodeDescription.createUserLayoutNodeDescription(element);
@@ -119,42 +109,6 @@ public class SimpleLayout implements IUserLayout {
     }
 
     @Override
-    public String getNextSiblingId(String nodeId) throws PortalException {
-        String nextSiblingId = null;
-        Element element = layout.getElementById(nodeId);
-        if (element != null) {
-            Node sibling = element.getNextSibling();
-            // Find the next element node
-            while (sibling != null && sibling.getNodeType() != Node.ELEMENT_NODE) {
-                sibling = sibling.getNextSibling();
-            }
-            if (sibling != null) {
-                Element e = (Element)sibling;
-                nextSiblingId = e.getAttribute("ID");
-            }
-        }
-        return nextSiblingId;
-    }
-
-    @Override
-    public String getPreviousSiblingId(String nodeId) throws PortalException {
-        String prevSiblingId = null;
-        Element element = layout.getElementById(nodeId);
-        if (element != null) {
-            Node sibling = element.getPreviousSibling();
-            // Find the previous element node
-            while (sibling != null && sibling.getNodeType() != Node.ELEMENT_NODE) {
-                sibling = sibling.getPreviousSibling();
-            }
-            if (sibling != null) {
-                Element e = (Element)sibling;
-                prevSiblingId = e.getAttribute("ID");
-            }
-        }
-        return prevSiblingId;
-    }
-
-    @Override
     public String getCacheKey() throws PortalException {
         return cacheKey;
     }
@@ -164,23 +118,6 @@ public class SimpleLayout implements IUserLayout {
         return layoutId;
     }
 
-    @Override
-    public String getNodeId(String fname) throws PortalException {
-        String nodeId = null;
-        NodeList nl = layout.getElementsByTagName("channel");
-        for (int i = 0; i < nl.getLength(); i++) {
-            Node node = nl.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                Element channelE = (Element)node;
-                if (fname.equals(channelE.getAttribute("fname"))) {
-                    nodeId = channelE.getAttribute("ID");
-                    break;
-                }
-            }
-        }
-        return nodeId;
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.layout.IUserLayout#findNodeId(javax.xml.xpath.XPathExpression)
      */

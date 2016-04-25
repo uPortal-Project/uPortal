@@ -38,11 +38,6 @@ public class JsonEntityBean implements Serializable, Comparable<JsonEntityBean> 
 
     private static final long serialVersionUID = 1L;
 
-    public static final String ENTITY_CATEGORY = "category";
-    public static final String ENTITY_CHANNEL = "channel";
-    public static final String ENTITY_GROUP = "group";
-    public static final String ENTITY_PERSON = "person";
-
     private EntityEnum entityType;
     private String id;
     private String name;

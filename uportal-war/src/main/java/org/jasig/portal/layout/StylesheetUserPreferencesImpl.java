@@ -37,49 +37,23 @@ import com.google.common.collect.ImmutableMap.Builder;
  * Stylesheet user preferences setup for memory or serialized storage. All APIs and returned objects are thread safe.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences, Serializable {
     private static final long serialVersionUID = 1L;
-    
-    private final long stylesheetDescriptorId;
-    private final int userId;
-    private final int profileId;
+
     private final ConcurrentMap<String, String> outputProperties = new ConcurrentHashMap<String, String>();
     private final ConcurrentMap<String, String> parameters = new ConcurrentHashMap<String, String>();
     //NodeId -> Name -> Value
     private final ConcurrentMap<String, ConcurrentMap<String, String>> layoutAttributes = new ConcurrentHashMap<String, ConcurrentMap<String,String>>();
-    
-    public StylesheetUserPreferencesImpl(long stylesheetDescriptorId, int userId, int profileId) {
-        this.stylesheetDescriptorId = stylesheetDescriptorId;
-        this.userId = userId;
-        this.profileId = profileId;
-    }
 
     @Override
     public long getId() {
         return -1;
     }
-    
-    @Override
-    public long getStylesheetDescriptorId() {
-        return this.stylesheetDescriptorId;
-    }
-
-    @Override
-    public int getUserId() {
-        return this.userId;
-    }
-
-    @Override
-    public int getProfileId() {
-        return this.profileId;
-    }
 
     @Override
     public String getOutputProperty(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.outputProperties.get(name);
     }
 
@@ -98,12 +72,6 @@ public class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences
         return this.outputProperties.remove(name);
     }
 
-    @Override
-    public <P extends Populator<String, String>> P populateOutputProperties(P properties) {
-        properties.putAll(this.outputProperties);
-        return properties;
-    }
-    
     @Override
     public void clearOutputProperties() {
         this.outputProperties.clear();

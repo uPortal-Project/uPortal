@@ -27,12 +27,10 @@ import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.io.xml.IPortalData;
 
-
 /**
  * A portlet definition is equivalent to a published ChannelDefinition.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletDefinition extends IBasicEntity, IPortalData {
     public static final String EDITABLE_PARAM = "editable";
