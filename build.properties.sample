@@ -30,8 +30,8 @@
 
 #==================== File and Directory Names ========================
 
-##### Replace server.home with the location of Tomcat 6 on your machine #####
-# path to tomcat binaries
+##### Replace server.home with the location of Tomcat 8 on your machine #####
+# path to root of tomcat installation; e.g. server.home=${env.CATALINA_HOME}
 server.home=@server.home@
 
 # path to tomcat servlet container (defaults to same directory as the tomcat binaries)
