@@ -25,7 +25,7 @@
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
         <version>41</version>
-        <relativePath></relativePath>
+        <relativePath />
     </parent>
     
     <prerequisites>
@@ -35,7 +35,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.0</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -46,7 +46,7 @@
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
         <url>https://github.com/Jasig/uPortal</url>
-      <tag>HEAD</tag>
+      <tag>uportal-4.3.0</tag>
   </scm>
 
     <issueManagement>
