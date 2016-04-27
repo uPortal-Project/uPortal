@@ -173,34 +173,18 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public String getOutputProperty(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.outputProperties.get(name);
-    }
-
-    @Override
-    public String setOutputProperty(String name, String value) {
-        Validate.notEmpty(name, "name cannot be null");
-        Validate.notEmpty(value, "value cannot be null");
-        
-        return this.outputProperties.put(name, value);
     }
 
     @Override
     public String removeOutputProperty(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.outputProperties.remove(name);
-    }
-
-    @Override
-    public void clearOutputProperties() {
-        this.outputProperties.clear();
     }
 
     @Override
     public String getStylesheetParameter(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.parameters.get(name);
     }
 
@@ -208,14 +192,12 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     public String setStylesheetParameter(String name, String value) {
         Validate.notEmpty(name, "name cannot be null");
         Validate.notEmpty(value, "value cannot be null");
-        
         return this.parameters.put(name, value);
     }
 
     @Override
     public String removeStylesheetParameter(String name) {
         Validate.notEmpty(name, "name cannot be null");
-        
         return this.parameters.remove(name);
     }
 
@@ -223,11 +205,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     public <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters) {
         stylesheetParameters.putAll(this.parameters);
         return stylesheetParameters;
-    }
-    
-    @Override
-    public void clearStylesheetParameters() {
-        this.parameters.clear();
     }
 
     protected LayoutNodeAttributesImpl getLayoutNodeAttributes(String nodeId, boolean create) {
@@ -318,18 +295,6 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     @Override
     public Collection<String> getAllLayoutAttributeNodeIds() {
         return Collections.unmodifiableSet(this.layoutAttributes.keySet());
-    }
-
-    @Override
-    public void clearLayoutAttributes(String nodeId) {
-        Validate.notEmpty(nodeId, "nodeId cannot be null");
-        
-        this.layoutAttributes.remove(nodeId);
-    }
-
-    @Override
-    public void clearAllLayoutAttributes() {
-        this.layoutAttributes.clear(); 
     }
 
     @Override

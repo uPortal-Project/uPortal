@@ -117,12 +117,6 @@ public interface IUserLayoutStore {
      */
     public IUserProfile addUserProfile (IPerson person,IUserProfile profile);
 
-    /**  Obtains a user profile by profile id.    
-     * @param person an <code>IPerson</code> object representing the user 
-     * @param profileId profile id
-     */
-    public IUserProfile getUserProfileById (IPerson person,int profileId);
-
     /**  Obtains a user profile by profile functional name.    
      * @param person an <code>IPerson</code> object representing the user 
      * @param profileFname profile functional name
@@ -143,19 +137,12 @@ public interface IUserLayoutStore {
 
     public IUserProfile getSystemProfileByFname (String profileFname);
 
-    /** obtain a list of system profiles
+    /**
+     * Obtain a list of system profiles.  Used in the User Manager.
      *
      * @return a <code>Hashtable</code> mapping system profile ids (<code>Integer</code> objects) to the {@link UserProfile} objects
      */
     public Hashtable getSystemProfileList ();
-
-    /** establish a browser - user profile mapping
-     *
-     * @param person User
-     * @param userAgent User-Agent header string
-     * @param profileId profile id to which given user agent will be mapped
-     */
-    public void setUserBrowserMapping (IPerson person,String userAgent,int profileId);
 
   /* ChannelRegistry */
   /**

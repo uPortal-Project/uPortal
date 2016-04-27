@@ -29,7 +29,6 @@ import org.w3c.dom.Element;
  * A class describing common features of user layout nodes that is channels and folders
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescription {
     protected String id=null;
@@ -45,24 +44,9 @@ public abstract class UserLayoutNodeDescription implements IUserLayoutNodeDescri
 
 
     public UserLayoutNodeDescription() {};
-    public UserLayoutNodeDescription(IUserLayoutNodeDescription d) {
-        this.id=d.getId();
-        this.name=d.getName();
-        this.immutable=d.isImmutable();
-        this.unremovable=d.isUnremovable();
-        this.hidden=d.isHidden();
 
-        // copy over DLM attributes
-        this.deleteAllowed = d.isDeleteAllowed();
-        this.editAllowed = d.isEditAllowed();
-        this.moveAllowed = d.isMoveAllowed();
-        this.addChildAllowed = d.isAddChildAllowed();
-        this.precedence = d.getPrecedence();
-    }
+    UserLayoutNodeDescription(Element xmlNode) throws PortalException {
 
-    UserLayoutNodeDescription( Element xmlNode )
-        throws PortalException
-    {
         // standard Node attributes
         this.setId(xmlNode.getAttribute("ID"));
         this.setName(xmlNode.getAttribute("name"));

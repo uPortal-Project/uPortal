@@ -124,14 +124,7 @@ public class StylesheetUserPreferencesServiceImplTest {
         assertNull(actual);
         actual = stylesheetUserPreferencesService.getLayoutAttribute(request, PreferencesScope.THEME, "u1l1n1", "minimized");
         assertEquals("true", actual);
-        
-        actual = stylesheetUserPreferencesService.getOutputProperty(request, PreferencesScope.THEME, "media");
-        assertNull(actual);
-        actual = stylesheetUserPreferencesService.setOutputProperty(request, PreferencesScope.THEME, "media", "text/html");
-        assertNull(actual);
-        actual = stylesheetUserPreferencesService.getOutputProperty(request, PreferencesScope.THEME, "media");
-        assertEquals("text/html", actual);
-        
+
         actual = stylesheetUserPreferencesService.getStylesheetParameter(request, PreferencesScope.THEME, "skin");
         assertNull(actual);
         actual = stylesheetUserPreferencesService.setStylesheetParameter(request, PreferencesScope.THEME, "skin", "red");

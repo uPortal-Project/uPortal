@@ -64,40 +64,5 @@ public class FragmentChannelInfo extends FragmentNodeInfo
         // provided this parameter
         return null;
     }
-    
-    /**
-     * Returns true if a parameter can be modified for a channel. This is based
-     * on a single dlm:editAllowed attribute for each channel parameter in
-     * fragments. If not included then edits to that channel parameter are
-     * allowed. If included with a value other than true then edits to that
-     * parameter for that channel are prevented.
-     * 
-     * @param name
-     * @return
-     */
-    public boolean canOverrideParameter(String name)
-    {
-        NodeList parms = node.getChildNodes();
-        
-        for (int i=0; i<parms.getLength(); i++)
-        {
-            Element parm = (Element) parms.item(i);
-            if (parm.getTagName().equals(Constants.ELM_PARAMETER))
-            {
-                String parmName = parm.getAttribute(Constants.ATT_NAME);
-                if (parmName.equals(name))
-                {
-                    Attr editAllowed = parm.getAttributeNodeNS(
-                            Constants.NS_URI, Constants.ATT_EDIT_ALLOWED);
-                    if (editAllowed == null || 
-                            ! editAllowed.getNodeValue().equals("false"))
-                        return true;
-                    else
-                        return false;
-                }
-            }
-        }
-        // if we get here then the fragment doesn't specify this param
-        return true;
-    }
+
 }

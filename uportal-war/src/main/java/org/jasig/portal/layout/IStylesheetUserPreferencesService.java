@@ -68,25 +68,7 @@ public interface IStylesheetUserPreferencesService {
      * @return The stylesheet descriptor for the current request and scope
      */
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request, PreferencesScope prefScope);
-    
-    /**
-     * Get an output property
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#getOutputProperty(String)
-     */
-    public String getOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
-    /**
-     * Set an output property
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#setOutputProperty(String, String)
-     */
-    public String setOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name, String value);
-    
+
     /**
      * Remove an output property
      * @param request The current request
@@ -95,7 +77,7 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#removeOutputProperty(String)
      */
     public String removeOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
+
     /**
      * Add all output properties to the provided Properties object
      * 

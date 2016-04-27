@@ -45,18 +45,7 @@ public interface IStylesheetUserPreferences {
      * @see Map#get(Object)
      */
     String getOutputProperty(String name);
-    
-    /**
-     * Set an output property
-     * 
-     * @param name output property name, cannot be null
-     * @param value output property value, cannot be null
-     * 
-     * @see Transformer#setOutputProperty(String, String)
-     * @see Map#put(Object, Object)
-     */
-    String setOutputProperty(String name, String value);
-    
+
     /**
      * Remove an output property
      * 
@@ -65,11 +54,6 @@ public interface IStylesheetUserPreferences {
      * @see Map#remove(Object)
      */
     String removeOutputProperty(String name);
-
-    /**
-     * @see Properties#clear();
-     */
-    void clearOutputProperties();
 
     /**
      * Get a stylesheet parameter
@@ -99,18 +83,13 @@ public interface IStylesheetUserPreferences {
      * @see Map#remove(Object)
      */
     String removeStylesheetParameter(String name);
-    
+
     /**
-     * Add all stylesheet parameters to the provided Map
+     * Add all stylesheet parameters to the provided Map.  IMPORTANT!  Used in
+     * exporting profiles.
      */
     <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearStylesheetParameters();
 
-    
     /**
      * Get a layout attribute
      * 
@@ -157,16 +136,5 @@ public interface IStylesheetUserPreferences {
      * @return Read-only view of all layout nodeIds stored in these preferences
      */
     Collection<String> getAllLayoutAttributeNodeIds();
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearLayoutAttributes(String nodeId);
-
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearAllLayoutAttributes();
 
 }

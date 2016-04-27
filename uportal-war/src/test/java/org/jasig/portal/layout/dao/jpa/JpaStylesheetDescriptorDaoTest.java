@@ -185,26 +185,24 @@ public class JpaStylesheetDescriptorDaoTest extends BasePortalJpaDaoTest {
 
         final IPerson person = mock(IPerson.class);
         when(person.getID()).thenReturn(1);
-        
-        
+
         final IUserProfile userProfile = mock(IUserProfile.class);
         when(userProfile.getProfileId()).thenReturn(1);
-        
+
         final long supId = this.execute(new Callable<Long>() {
             @Override
             public Long call() throws Exception {
                 final IStylesheetDescriptor stylesheetDescriptor = stylesheetDescriptorDao.getStylesheetDescriptor(ssdId);
-                
+
                 final IStylesheetUserPreferences stylesheetUserPreferences = stylesheetUserPreferencesDao.createStylesheetUserPreferences(stylesheetDescriptor, person, userProfile);
-                
+
                 assertNotNull(stylesheetUserPreferences);
-                
+
                 stylesheetUserPreferences.setStylesheetParameter("activeTab", "1");
-                stylesheetUserPreferences.setOutputProperty("media", "xhtml");
                 stylesheetUserPreferences.setLayoutAttribute("u1l1n1", "deletable", "false");
-                
+
                 stylesheetUserPreferencesDao.storeStylesheetUserPreferences(stylesheetUserPreferences);
-                
+
                 return stylesheetUserPreferences.getId();
             }
         });
