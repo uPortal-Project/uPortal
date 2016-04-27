@@ -31,20 +31,11 @@ import org.slf4j.Marker;
  * level to use when appending to be specified in the constructor
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class AppendableLogger implements Appendable, Logger {
 
     private final Writer loggingWriter;
     private final Logger logger;
-    
-    public AppendableLogger(String loggerName, LogLevel appendLevel) {
-        this(LoggerFactory.getLogger(loggerName), appendLevel);
-    }
-    
-    public AppendableLogger(Class<?> clazz, LogLevel appendLevel) {
-        this(LoggerFactory.getLogger(clazz), appendLevel);
-    }
 
     public AppendableLogger(Logger logger, LogLevel appendLevel) {
         Validate.notNull(logger);

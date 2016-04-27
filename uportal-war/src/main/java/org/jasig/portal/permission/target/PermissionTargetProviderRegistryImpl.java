@@ -31,7 +31,6 @@ import java.util.Map;
  * TODO: We still need to add Spring auto-wiring friendliness.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 public class PermissionTargetProviderRegistryImpl implements IPermissionTargetProviderRegistry {
@@ -42,7 +41,7 @@ public class PermissionTargetProviderRegistryImpl implements IPermissionTargetPr
      * Default constructor
      */
     public PermissionTargetProviderRegistryImpl() { }
-    
+
     /**
      * Construct a new target provider registry and initialize it with the 
      * supplied map of key -> provider pairs.
@@ -55,21 +54,13 @@ public class PermissionTargetProviderRegistryImpl implements IPermissionTargetPr
             this.providers.put(provider.getKey(), provider.getValue());
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see org.jasig.portal.permission.target.IPermissionTargetProviderRegistry#getTargetProvider(java.lang.String)
      */
     public IPermissionTargetProvider getTargetProvider(String key) {
         return providers.get(key);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.jasig.portal.permission.target.IPermissionTargetProviderRegistry#registerTargetProvider(java.lang.String, org.jasig.portal.permission.target.IPermissionTargetProvider)
-     */
-    public void registerTargetProvider(String key, IPermissionTargetProvider provider) {
-        this.providers.put(key, provider);
     }
 
     /*

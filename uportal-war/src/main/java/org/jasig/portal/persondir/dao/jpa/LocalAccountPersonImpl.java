@@ -249,11 +249,6 @@ class LocalAccountPersonImpl implements Serializable, ILocalAccountPerson {
         return false;
     }
 
-    @Override
-    public void clearAttributes() {
-        this.attributes.clear();
-    }
-
     /* (non-Javadoc)
      * @see org.jasig.portal.persondir.jpa.ILocalAccountPersonAttribute#setAttributes(java.util.Map)
      */

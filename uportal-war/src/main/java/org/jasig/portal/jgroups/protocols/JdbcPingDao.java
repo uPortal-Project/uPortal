@@ -33,13 +33,12 @@ import javax.persistence.Id;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Index;
 import org.jasig.portal.jpa.BasePortalJpaDao.PortalTransactional;
-import org.jasig.portal.logging.ConditionalExceptionLogger;
-import org.jasig.portal.logging.ConditionalExceptionLoggerImpl;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jgroups.Address;
 import org.jgroups.PhysicalAddress;
 import org.jgroups.util.Streamable;
 import org.jgroups.util.Util;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
@@ -157,13 +156,12 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             "DELETE FROM " + Table.NAME + " " +
             "WHERE " + Table.COL_CLUSTER_NAME + "=:" + PRM_CLUSTER_NAME;
 
-    
-    protected final ConditionalExceptionLogger logger = new ConditionalExceptionLoggerImpl(LoggerFactory.getLogger(getClass()));
-    
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private JdbcOperations jdbcOperations;
     private NamedParameterJdbcOperations namedParameterJdbcOperations;
     private volatile boolean ready = false; 
-    
+
     public void setJdbcOperations(JdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
         this.namedParameterJdbcOperations = new NamedParameterJdbcTemplate(this.jdbcOperations);
@@ -197,7 +195,11 @@ public class JdbcPingDao implements PingDao, InitializingBean {
             }
         }
         catch (Exception e) {
-            logger.warnDebug("Failed to store cluster address: " + paramMap, e);
+            if (logger.isDebugEnabled()) {
+                logger.warn("Failed to store cluster address: " + paramMap, e);
+            } else {
+                logger.warn("Failed to store cluster address: " + paramMap);
+            }
         }
     }
 
@@ -209,24 +211,28 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         
         final Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put(PRM_CLUSTER_NAME, clusterName);
-        
+
         return this.namedParameterJdbcOperations.query(SELECT_CLUSTER_SQL, paramMap, new ResultSetExtractor<Map<Address, PhysicalAddress>>() {
             @Override
             public Map<Address, PhysicalAddress> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 final Map<Address, PhysicalAddress> result = new HashMap<Address, PhysicalAddress>();
-                
+
                 while (rs.next()) {
                     try {
                         final Address memberAddress = getStreamableParam(rs, Table.COL_MEMBER_ADDRESS);
                         final PhysicalAddress physicalAddress = getStreamableParam(rs, Table.COL_PHYSICAL_ADDRESS);
-                        
+
                         result.put(memberAddress, physicalAddress);
                     }
                     catch (Exception e) {
-                        logger.warnDebug("Ignoring address result due to data parsing error", e);
+                        if (logger.isDebugEnabled()) {
+                            logger.warn("Ignoring address result due to data parsing error", e);
+                        } else {
+                            logger.warn("Ignoring address result due to data parsing error");
+                        }
                     }
                 }
-                
+
                 logger.debug("Found {} addresses in cluster: {}", result.size(), result);
                 return result;
             }
@@ -247,24 +253,28 @@ public class JdbcPingDao implements PingDao, InitializingBean {
         
         for (final Address address : includedAddresses) {
             final String paramPrefix = PRM_MEMBER_ADDRESS + paramMap.size();
-            
+
             deleteSqlBuilder.append(" AND (")
                 .append(Table.COL_MEMBER_ADDRESS_CLASS).append(" <> :").append(paramPrefix).append(CLASS_PRM_SUFFIX)
                 .append(" OR ").append(Table.COL_MEMBER_ADDRESS_DATA).append(" <> :").append(paramPrefix).append(DATA_PRM_SUFFIX)
             .append(")");
-            
+
             setStreamableParam(paramMap, paramPrefix, address);
         }
-        
+
         try {
             final int purged = this.namedParameterJdbcOperations.update(deleteSqlBuilder.toString(), paramMap);
             logger.debug("Purged {} addresses from '{}' cluster while retaining: {}", purged, clusterName, includedAddresses);
         }
         catch (DataIntegrityViolationException e) {
-            logger.warnDebug("Failed to purge old addresses for cluster '" + clusterName + "'", e);
+            if (logger.isDebugEnabled()) {
+                logger.warn("Failed to purge old addresses for cluster '{}'", clusterName, e);
+            } else {
+                logger.warn("Failed to purge old addresses for cluster '{}'", clusterName);
+            }
         }
     }
-    
+
     protected boolean isReady() {
         boolean r = this.ready;
         if (!r) {
