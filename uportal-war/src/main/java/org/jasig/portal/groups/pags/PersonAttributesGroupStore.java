@@ -126,7 +126,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
       } 
       else 
       {
-         if (member.getEntityType() != IPERSON_CLASS) 
+         if (member.getLeafType() != IPERSON_CLASS) 
              { return false; }
          IPerson person = null;
          try {
@@ -233,9 +233,9 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    public Iterator findParentGroups(IGroupMember member) 
    throws GroupsException 
    {
-      return (member.isEntity()) 
-        ? findContainingGroupsForEntity((IEntity)member)
-        : findContainingGroupsForGroup((IEntityGroup)member);
+      return member.isGroup()
+        ? findContainingGroupsForGroup((IEntityGroup) member)
+        : findContainingGroupsForEntity((IEntity) member);
    }
    
    private Iterator findContainingGroupsForGroup(IEntityGroup group)

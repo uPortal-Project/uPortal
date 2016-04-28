@@ -72,7 +72,6 @@ import com.googlecode.ehcache.annotations.Cacheable;
 /**
  * SQL implementation for managing creation and removal of User Portal Data
  * @author Susan Bramhall, Yale University (modify by Julien Marchal, University Nancy 2; Eric Dalquist - edalquist@unicon.net)
- * @version $Revision$
  */
 @Service("userIdentityStore")
 public class RDBMUserIdentityStore  implements IUserIdentityStore {
@@ -565,7 +564,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         }
         try {
             if (eg.isEditable()) {
-                eg.removeMember(me);
+                eg.removeChild(me);
                 eg.updateMembers();
             }
         } catch (Exception e) {
@@ -587,7 +586,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         }
         try {
             if (eg.isEditable()) {
-                eg.addMember(me);
+                eg.addChild(me);
                 eg.updateMembers();
             }
         } catch (Exception e) {
@@ -598,7 +597,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     protected void updateUser(final int userId, final IPerson person, final TemplateUser templateUser) throws Exception {
         // Remove my existing group memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        Iterator myExistingGroups = me.getParentGroups();
+        Iterator<IEntityGroup> myExistingGroups = me.getParentGroups().iterator();
         while (myExistingGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)myExistingGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
@@ -609,7 +608,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         // Copy template user's groups memberships
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), org.jasig.portal.security.IPerson.class);
-        Iterator templateGroups = template.getParentGroups();
+        Iterator<IEntityGroup> templateGroups = template.getParentGroups().iterator();
         while (templateGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)templateGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
@@ -730,7 +729,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         // Copy template user's groups memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
-        Iterator templateGroups = template.getParentGroups();
+        Iterator<IEntityGroup> templateGroups = template.getParentGroups().iterator();
         while (templateGroups.hasNext()) {
             IEntityGroup eg = (IEntityGroup)templateGroups.next();
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);

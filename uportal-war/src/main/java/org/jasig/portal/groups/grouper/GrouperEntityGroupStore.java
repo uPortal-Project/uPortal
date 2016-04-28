@@ -657,7 +657,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
         GcAddMember gcAddMember = new GcAddMember().assignGroupName(groupName);
 
-        Iterator<IGroupMember> membersIterator = group.getMembers();
+        Iterator<IGroupMember> membersIterator = group.getChildren().iterator();
 
         while (membersIterator != null && membersIterator.hasNext()) {
             IGroupMember iGroupMember = membersIterator.next();

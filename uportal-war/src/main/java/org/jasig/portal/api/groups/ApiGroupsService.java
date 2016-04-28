@@ -83,7 +83,7 @@ public class ApiGroupsService implements GroupsService {
                         Iterator it = GroupService.findParentGroups(groupMember);
                         while(it.hasNext()) {
                             IEntityGroup g = (IEntityGroup)it.next();
-                            Entity e = EntityFactory.createEntity(g,EntityEnum.getEntityEnum(g.getEntityType(),true));
+                            Entity e = EntityFactory.createEntity(g,EntityEnum.getEntityEnum(g.getLeafType(),true));
                             groups.add(e);
                         }
                         return groups;
@@ -123,10 +123,10 @@ public class ApiGroupsService implements GroupsService {
                     if(groupMember.getLeafType().equals(IPerson.class)) {
                         String groupMemberName = EntityService.instance().lookupEntityName(EntityEnum.GROUP,groupMember.getKey());
                         if(groupName.equalsIgnoreCase(groupMemberName)) {
-                            Iterator it = groupMember.getAllMembers();
+                            Iterator<IGroupMember> it = groupMember.asGroup().getDescendants().iterator();
 
                             while(it.hasNext()) {
-                                IEntity e = (IEntity)it.next();
+                                IEntity e = (IEntity) it.next();  // TODO:  Probably broken
                                 EntityIdentifier ident = e.getUnderlyingEntityIdentifier();
                                 Entity member = findMember(ident.getKey(),true);
                                 members.add(member);

@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Name;
-
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
@@ -109,7 +107,7 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
 private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group)
 throws GroupsException
 {
-    Iterator itr;
+    Iterator<IEntityGroup> itr;
     IEntityGroup containingGroup = null;
     ILockableEntityGroup lockableGroup = null;
     IEntityLock lock = null;
@@ -117,7 +115,7 @@ throws GroupsException
     try
     {
         String lockOwner = group.getLock().getLockOwner();
-        for ( itr=group.getParentGroups(); itr.hasNext(); )
+        for ( itr=group.getParentGroups().iterator(); itr.hasNext(); )
         {
             containingGroup = (IEntityGroup) itr.next();
             lockableGroup=
@@ -128,7 +126,7 @@ throws GroupsException
         for ( itr = lockableGroups.iterator(); itr.hasNext(); )
         {
             lockableGroup = (ILockableEntityGroup) itr.next();
-            lockableGroup.removeMember(group);
+            lockableGroup.removeChild(group);
             lockableGroup.updateMembers();
         }
     }
@@ -800,7 +798,7 @@ throws GroupsException
 {
     GroupMemberImpl gmi = null;
 
-    for (Iterator it=group.getMembers(); it.hasNext();)
+    for (Iterator it=group.getChildren().iterator(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
         gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
@@ -835,21 +833,6 @@ throws GroupsException
         gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
-    }
-}
-
-/**
- * A foreign member is a group from a different service.
- * @param member IGroupMember
- * @return boolean
- */
-private boolean isForeignGroup(IGroupMember member) {
-    if (member.isEntity())
-        { return false; }
-    else
-    {
-        Name memberSvcName = ((IEntityGroup)member).getServiceName();
-        return ( ! getServiceName().equals(memberSvcName) );
     }
 }
 

@@ -146,7 +146,7 @@ public final class PagsService {
                         String msg = "The specified group was created, but is not present in the store:  " + rslt.getName();
                         throw new RuntimeException(msg);
                     }
-                    parent.addMember(member);
+                    parent.addChild(member);
                     parent.updateMembers();
                     break;
                 case SERVICE_NAME_PAGS:

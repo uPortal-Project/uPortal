@@ -79,10 +79,10 @@ public class ApiPermissionsService implements PermissionsService {
             	}
             }
         }
-        
+
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(authP.getKey(), authP.getType());
-            for (@SuppressWarnings("unchecked") Iterator<IEntityGroup> iter = member.getAncestorGroups(); iter.hasNext();) {
+            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);

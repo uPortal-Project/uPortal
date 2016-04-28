@@ -46,7 +46,6 @@ import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 
-
 /**
  * @author Josh Helmer, jhelmer.unicon.net
  */
@@ -158,7 +157,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             };
             1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-            1 * portletDefEntity.getAncestorGroups() >> [].iterator();
+            1 * portletDefEntity.getAncestorGroups() >> [];
 
             1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
             1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
@@ -222,7 +221,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [].iterator();
+        1 * portletDefEntity.getAncestorGroups() >> [];
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
         1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
@@ -275,7 +274,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [].iterator();
+        1 * portletDefEntity.getAncestorGroups() >> [];
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
         1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
@@ -331,7 +330,7 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [].iterator();
+        1 * portletDefEntity.getAncestorGroups() >> [];
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
         1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
@@ -407,13 +406,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * compositeGroupService.findGroup("Portal Administrator") >> newGroupPortalAdmin;
             1 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher;
 
-            1 * oldGroupStudent.removeMember(portletDefEntity);
-            1 * oldGroupStaff.removeMember(portletDefEntity);
+            1 * oldGroupStudent.removeChild(portletDefEntity);
+            1 * oldGroupStaff.removeChild(portletDefEntity);
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
                     oldGroupStaff
-                ].iterator();
+                ];
             };
 
             1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
@@ -500,13 +499,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             2 * compositeGroupService.findGroup("Teacher") >> newGroupTeacher;
             1 * compositeGroupService.findGroup("Student") >> newGroupStudent;
 
-            1 * oldGroupStudent.removeMember(portletDefEntity);
-            1 * oldGroupStaff.removeMember(portletDefEntity);
+            1 * oldGroupStudent.removeChild(portletDefEntity);
+            1 * oldGroupStaff.removeChild(portletDefEntity);
             1 * portletDefEntity.getAncestorGroups() >> {
                 return [
                     oldGroupStudent,
                     oldGroupStaff
-                ].iterator();
+                ];
             };
 
             1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;

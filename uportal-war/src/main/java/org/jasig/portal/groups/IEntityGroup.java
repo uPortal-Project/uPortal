@@ -18,6 +18,9 @@
  */
 package org.jasig.portal.groups;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.naming.Name;
 
 /**
@@ -29,8 +32,8 @@ import javax.naming.Name;
  * implementation from storing references to its containing groups.)  These methods only
  * change the group structure in memory.
  * <p>
- *   <code>addMember(IGroupMember gm)</code><br>
- *   <code>removeMember(IGroupMember gm)</code><br>
+ *   <code>addChild(IGroupMember gm)</code><br>
+ *   <code>removeChild(IGroupMember gm)</code><br>
  * <p>
  * The following methods commit changes in the group structure to the
  * persistent store:
@@ -48,10 +51,38 @@ import javax.naming.Name;
  * <p>
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
-public interface IEntityGroup extends IGroupMember
-{
+public interface IEntityGroup extends IGroupMember {
+
+    /**
+     * Answers if this <code>IGroupMember</code> has any members.
+     * @return boolean
+     */
+    boolean hasMembers() throws GroupsException;
+
+    /**
+     * Answers if <code>IGroupMember</code> gm is a member of <code>this</code>.
+     */
+    boolean contains(IGroupMember gm) throws GroupsException;
+
+    /**
+     * Answers if <code>IGroupMember</code> gm is a recursive member of <code>this</code>.
+     * @return boolean
+     * @param gm org.jasig.portal.groups.IGroupMember
+     */
+    boolean deepContains(IGroupMember gm) throws GroupsException;
+
+    /**
+     * Returns a collection of this <code>IGroupMember's</code> children.
+     */
+    Set<IGroupMember> getChildren() throws GroupsException;
+
+    /**
+     * Returns a collection of this <code>IGroupMember's</code> recursively-retrieved
+     * <code>IGroupMembers</code>.
+     */
+    Set<IGroupMember> getDescendants() throws GroupsException;
+
 /**
  * Adds <code>IGroupMember</code> gm to this group, but does not commit it to the
  * data store.  Use <code>updateMembers()</code> to commit memberships to the data store.
@@ -60,77 +91,78 @@ public interface IEntityGroup extends IGroupMember
  * this group already has a group with the same name or if the addition
  * of the group creates a circular reference.
  */
-  public void addMember(IGroupMember gm) throws GroupsException;
+  void addChild(IGroupMember gm) throws GroupsException;
+
 /**
  * Deletes the <code>IEntityGroup</code> from the data store.
  * @exception GroupsException if the delete cannot be performed. 
  */
-  public void delete() throws GroupsException;
+  void delete() throws GroupsException;
 /**
  * Returns the name of the group creator.  May be null.
  * @return String
  */
-  public String getCreatorID();
+  String getCreatorID();
 /**
  * Returns the group description, which may be null.
  * @return String
  */
-  public String getDescription();
+  String getDescription();
 /**
  * Returns the key from the group service of origin.
  * @return String
  */
-  public String getLocalKey();
+  String getLocalKey();
 /**
  * Returns the group name.
  * @return String
  */
-  public String getName();
+  String getName();
 /**
  * Returns the Name of the group service of origin.
  * @return String
  */
-  public Name getServiceName();
+  Name getServiceName();
 /**
  * Answers if this <code>IEntityGroup</code> can be changed or deleted.
  * @return boolean
  * @exception GroupsException
  */
-  public boolean isEditable() throws GroupsException;
+  boolean isEditable() throws GroupsException;
 /**
  * Removes the <code>IGroupMember</code> from this group, but does not remove the
  * membership from the data store.
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-  public void removeMember(IGroupMember gm) throws GroupsException;
+  void removeChild(IGroupMember gm) throws GroupsException;
 /**
  * @param userID String (required)
  */
-  public void setCreatorID(String userID);
+  void setCreatorID(String userID);
 /**
  * @param name String (may be null)
  */
-  public void setDescription(String name);
+  void setDescription(String name);
 /**
  * Sets the group name which must be unique within any of its containing 
  * groups.  
  * @param name String
  * @exception GroupsException
  */
-  public void setName(String name) throws GroupsException;
+  void setName(String name) throws GroupsException;
 /**
  * Commit the <code>IEntityGroup</code> AND ITS MEMBERSHIPS to the data store.
  * @exception GroupsException if the update cannot be performed. 
  */
-  public void update() throws GroupsException;
+  void update() throws GroupsException;
 /**
  * Commit this <code>IEntityGroup's</code> memberships to the data store.
  * @exception GroupsException if the update cannot be performed. 
  */
-  public void updateMembers() throws GroupsException;
+  void updateMembers() throws GroupsException;
 
 /**
  * Sets the group service of origin.
  */
-  public void setLocalGroupService(IIndividualGroupService groupService) throws GroupsException;
+  void setLocalGroupService(IIndividualGroupService groupService) throws GroupsException;
 }

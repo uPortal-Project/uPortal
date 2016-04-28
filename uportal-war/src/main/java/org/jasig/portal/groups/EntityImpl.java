@@ -19,6 +19,7 @@
 package org.jasig.portal.groups;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 
 /**
  * Reference implementation for <code>IEntity</code>.
@@ -51,14 +52,7 @@ public EntityImpl(EntityIdentifier ei) throws GroupsException
 public EntityIdentifier getEntityIdentifier() {
     return entityIdentifier;
 }
-/**
- * Returns the type of the underyling entity.
- * @return java.lang.Class
- */
-public Class getEntityType()
-{
-    return getUnderlyingEntityIdentifier().getType();
-}
+
 /**
  * Returns the key of the underlying entity.
  * @return java.lang.String
@@ -70,34 +64,26 @@ public java.lang.String getKey() {
  * Returns the type of the underyling entity.
  * @return java.lang.Class
  */
-public Class getLeafType()
+public Class<? extends IBasicEntity> getLeafType()
 {
-    return getEntityType();
+    return getUnderlyingEntityIdentifier().getType();
 }
 /**
  * Returns this object's type, as opposed to the type of its
  * underlying entity.
- *
- * @return java.lang.Class
  */
 public Class getType()
 {
-    return getEntityType();
+    return getLeafType();
 }
-/**
- * @return boolean
- */
-public boolean isEntity()
-{
-    return true;
-}
+
 /**
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
  */
 public String toString()
 {
-    String clsName = getEntityType().getName();
+    String clsName = getLeafType().getName();
     return "EntityImpl (" + clsName + ") "  + getKey();
 }
 }

@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
@@ -63,7 +64,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-
 
 @Component("userAccountHelper")
 public class UserAccountHelper {
@@ -175,11 +175,10 @@ public class UserAccountHelper {
             return false;
         }
     }
-    
+
     public List<JsonEntityBean> getParentGroups(String target) {
         IGroupMember member = GroupService.getEntity(target, IPerson.class);
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iterator = (Iterator<IGroupMember>) member.getAncestorGroups();
+        Iterator<IEntityGroup> iterator = member.getAncestorGroups().iterator();
         List<JsonEntityBean> parents = new ArrayList<JsonEntityBean>();
         while (iterator.hasNext()) {
             parents.add(groupListHelper.getEntity(iterator.next()));
@@ -187,14 +186,14 @@ public class UserAccountHelper {
         Collections.sort(parents);
         return parents;
     }
-    
+
     public boolean canEditUser(IPerson currentUser, String target) {
-        
+
         // first check to see if this is a local user
         if (!isLocalAccount(target)) {
             return false;
         }
-        
+
         EntityIdentifier ei = currentUser.getEntityIdentifier();
         IAuthorizationPrincipal ap = AuthorizationService.instance().newPrincipal(ei.getKey(), ei.getType());
         

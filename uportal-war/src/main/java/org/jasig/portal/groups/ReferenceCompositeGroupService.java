@@ -67,7 +67,7 @@ public Iterator findParentGroups(IGroupMember gm) throws GroupsException
     for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
     {
         service = (IIndividualGroupService) services.next();
-        if ( gm.isEntity() || service.isEditable() ||
+        if (!gm.isGroup() || service.isEditable() ||
           getComponentService(((IEntityGroup)gm).getServiceName()) == service )
         {
             {

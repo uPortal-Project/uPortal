@@ -285,8 +285,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 			} else {
 				JsonEntityBean jsonBean = new JsonEntityBean(entity, entityEnum);
 				if (populateChildren) {
-					@SuppressWarnings("unchecked")
-					Iterator<IGroupMember> members = (Iterator<IGroupMember>) entity.getMembers();
+					Iterator<IGroupMember> members = entity.getChildren().iterator();
 					jsonBean = populateChildren(jsonBean, members);
 				}
                 if (jsonBean.getEntityType().isGroup() || EntityEnum.PERSON.equals(jsonBean.getEntityType())) {
@@ -417,11 +416,11 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	public EntityEnum getEntityType(IGroupMember entity) {
 		
 	    if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
-	        return EntityEnum.getEntityEnum(entity.getEntityType(), true);
+	        return EntityEnum.getEntityEnum(entity.getLeafType(), true);
 	    } 
 	    
 	    else {
-            return EntityEnum.getEntityEnum(entity.getEntityType(), false);
+            return EntityEnum.getEntityEnum(entity.getLeafType(), false);
 	    }
 	    
 	}

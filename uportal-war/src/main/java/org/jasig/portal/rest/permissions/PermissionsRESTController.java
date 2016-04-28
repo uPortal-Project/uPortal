@@ -49,7 +49,6 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,7 +64,6 @@ import org.springframework.web.servlet.ModelAndView;
  * and activities.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Controller
 public class PermissionsRESTController {
@@ -298,7 +296,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAncestorGroups(); iter.hasNext();) {
+            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
@@ -364,7 +362,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (@SuppressWarnings("unchecked") Iterator<IEntityGroup> iter = member.getAncestorGroups(); iter.hasNext();) {
+            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
                 IEntityGroup parent = iter.next();
 
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);

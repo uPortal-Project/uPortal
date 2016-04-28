@@ -57,7 +57,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        parentGroup.addMember(childGroup);
+        parentGroup.addChild(childGroup);
         parentGroup.updateMembers();
     }
 
@@ -154,8 +154,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<PortletCategory> categories = new HashSet<PortletCategory>();
-    	@SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = parentGroup.getMembers();
+        Iterator<IGroupMember> iter = parentGroup.getChildren().iterator();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isGroup()) {
@@ -174,11 +173,10 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<IPortletDefinition> portletDefs = new HashSet<IPortletDefinition>();
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = parentGroup.getMembers();
+        Iterator<IGroupMember> iter = parentGroup.getChildren().iterator();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
-            if (gm.isEntity()) {
+            if (!gm.isGroup()) {
                 IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
                 if(portletDefinition != null) {
                     portletDefs.add(portletDefinition);
@@ -193,11 +191,10 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
                                 + "memberships for this missing portlet will be removed.");
 
                     // Delete existing category memberships for this portlet
-                    @SuppressWarnings("unchecked")
-                    Iterator<IEntityGroup> parents = gm.getParentGroups();
+                    Iterator<IEntityGroup> parents = gm.getParentGroups().iterator();
                     while (parents.hasNext()) {
                         IEntityGroup group = parents.next();
-                        group.removeMember(gm);
+                        group.removeChild(gm);
                         group.update();
                     }
                 }
@@ -215,8 +212,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childGroup.getParentGroups();
+        Iterator<IEntityGroup> iter = childGroup.getParentGroups().iterator();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isGroup()) {
@@ -236,8 +232,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntity childEntity = GroupService.getEntity(childKey, IPortletDefinition.class);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childEntity.getParentGroups();
+        Iterator<IEntityGroup> iter = childEntity.getParentGroups().iterator();
         while (iter.hasNext()) {
             IGroupMember gm = iter.next();
             if (gm.isGroup()) {
@@ -285,7 +280,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        parentGroup.removeMember(childGroup);
+        parentGroup.removeChild(childGroup);
         parentGroup.updateMembers();
     }
 
