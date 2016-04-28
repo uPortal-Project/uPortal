@@ -129,8 +129,10 @@
     <import file="${bootstrap.dir}/build_includes.xml" />
 
 
-    <!-- ============================== Public Targets ============================== -->
-    
+    <!--                                                                                    -->
+    <!-- ================================= Public Targets ================================= -->
+    <!--                                                                                    -->
+
     <target name="deploy-less">
       <exec executable="lessc">
         <arg value="" />
@@ -147,11 +149,13 @@
       </exec>
     </target>
 
+    <!-- Public API -->
     <target name="help" description="Prints information about using this ant build file.">
         <loadfile property="helpMessage" srcFile="docs/antHelp.txt" />
         <echo message="${helpMessage}" />
     </target>
 
+    <!-- Public API -->
     <target name="initportal" depends="prodPrompt" description="Runs all the targets necessary to deploy the portal and prepare the portal database">
         <echo message="Initializing uPortal" />
         <antcall target="deploy-ear">
@@ -163,6 +167,7 @@
         <echo message="Finished initializing uPortal" />
     </target>
 
+    <!-- Public API -->
     <target name="initdb" depends="prodPrompt" description="Drops all tables, then runs all the targets necessary prepare the portal database">
         <echo message="Initializing database" />
         <up-shell-batch>
@@ -174,12 +179,14 @@
         </up-shell-batch>
         <echo message="Finished initializing database" />
     </target>
-	
+
+    <!-- Public API -->
 	<target name="db-update" depends="prodPrompt" description="Updates an existing database from one patch version to the next">
         <antcall target="db-hibernate-update" />
 	</target>
 
-    <target name="db-gen-update-script" description="Generates the SQL files for a database upgrade.">
+    <!-- Public API -->
+    <target name="db-gen-update-script" description="Generates the SQL files for a database upgrade without executing the SQL.">
     	<!-- Check arguments -->
         <fail message="'-DoutputDir=[output directory]' must be specified">
             <condition>
@@ -194,318 +201,13 @@
         </antcall>
     </target>
 
-    <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database">
-        <fail unless="ddlFile">
-            You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
-        </fail>
-
-        <tempfile property="db-ddl-file" destdir="${targetdir}" prefix="db-ddl." suffix=".sql" />
-        <tempfile property="db-hibernate-portal-ddl-file" destdir="${targetdir}" prefix="db-hibernate-portal-ddl." suffix=".sql" />
-        <tempfile property="db-hibernate-aggr-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-aggr-events-ddl." suffix=".sql" />
-        <tempfile property="db-hibernate-raw-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-raw-events-ddl." suffix=".sql" />
-
-        <echo message="Creating database DDL and writing to ${ddlFile}" />
-        <up-shell-batch>
-            <mkdir dir="${targetdir}" />
-            <antcall target="db">
-                <param name="scriptfile" value="${db-ddl-file}" />
-            </antcall>
-
-            <antcall target="db-hibernate-portal">
-                <param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-portal-ddl-file}" />
-            </antcall>
-
-            <antcall target="db-hibernate-raw-events">
-                <param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-raw-events-ddl-file}" />
-            </antcall>
-
-            <antcall target="db-hibernate-aggr-events">
-                <param name="export" value="false" />
-                <param name="outputFile" value="${db-hibernate-aggr-events-ddl-file}" />
-            </antcall>
-        </up-shell-batch>
-
-        <concat destfile="${ddlFile}" fixlastline="yes">
-            <fileset file="${db-ddl-file}" />
-            <fileset file="${db-hibernate-portal-ddl-file}" />
-            <fileset file="${db-hibernate-raw-events-ddl-file}" />
-            <fileset file="${db-hibernate-aggr-events-ddl-file}" />
-        </concat>
-
-        <echo message="Finished creating database DDL: ${ddlFile}" />
-    </target>
-
-    <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
-        <up-shell-batch>
-            <antcall target="db-hibernate-portal" />
-            <antcall target="db-hibernate-raw-events" />
-            <antcall target="db-hibernate-aggr-events" />
-            <antcall target="db-hibernate-portlets" />
-        </up-shell-batch>
-    </target>
-
-    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and event schemas">
-        <up-shell-batch>
-            <antcall target="db-hibernate-portal-update" />
-            <antcall target="db-hibernate-raw-events-update" />
-            <antcall target="db-hibernate-aggr-events-update" />
-        </up-shell-batch>
-    </target>
-
-	<target name="db-hibernate-gen-update-script" depends="prodPrompt" description="Generates hibernate update script for portal, raw events, and aggregator databases. Does not run updates.">
-		<property name="outputDir" value=" "/>
-        <up-shell-batch>
-            <antcall target="db-hibernate-gen-portal-update-script">
-                <param name="outputFile" value="${outputDir}/portalDb-update.sql" />
-            </antcall>
-        	<antcall target="db-hibernate-gen-portal-update-script">
-        		<param name="databaseQualifier" value="RawEventsDb" />
-                <param name="outputFile" value="${outputDir}/rawDb-update.sql" />
-            </antcall>
-	        <antcall target="db-hibernate-gen-portal-update-script">
-	        	<param name="databaseQualifier" value="AggrEventsDb" />
-                <param name="outputFile" value="${outputDir}/aggrDb-update.sql" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
-    	<property name="databaseQualifier" value="PortalDb" />
-        <property name="export" value="true" />
-        <property name="drop" value="true" />
-        <property name="create" value="true" />
-        <property name="outputFile" value=" " />
-
-        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
-
-        <echo>Creating HBM2DDL Script</echo>
-        <if>
-            <equals arg1="${drop}" arg2="true" />
-            <then>
-                <echo file="${portal-shell-script}" append="true">
-                    //hibernateDrop(String target, String databaseQualifier, boolean export, String outputFile)
-                    portalShellBuildHelper.hibernateDrop("db-hibernate",
-                        '${databaseQualifier}',
-                        Boolean.parseBoolean('${export}'),
-                        /${outputFileEscaped}/);
-                </echo>
-            </then>
-        </if>
-    	<if>
-    		<equals arg1="${create}" arg2="true" />
-            <then>
-                <echo file="${portal-shell-script}" append="true">
-                    //hibernateCreate(String target, String databaseQualifier, boolean export, String outputFile)
-                    portalShellBuildHelper.hibernateCreate("db-hibernate",
-                	    '${databaseQualifier}',
-                        Boolean.parseBoolean('${export}'),
-                        /${outputFileEscaped}/);
-                </echo>
-            </then>
-        </if>
-
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}" />
-        </antcall>
-    </target>
-
-    <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
-    	<property name="databaseQualifier" value="PortalDb" />
-        <property name="export" value="true" />
-        <property name="outputFile" value=" " />
-
-        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
-
-        <echo>Creating HBM2DDL Update Script</echo>
-        <echo file="${portal-shell-script}" append="true">
-        	logger.info("");
-        	logger.info("");
-        	logger.info("Update Database " + '${databaseQualifier}');
-        	
-        	//hibernateUpdate(String target, String databaseQualifier, boolean export, String outputFile)
-            portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
-        	    '${databaseQualifier}',
-                Boolean.parseBoolean('${export}'),
-                /${outputFileEscaped}/);
-        </echo>
-
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}" />
-        </antcall>
-    </target>
-	
-	<target name="db-hibernate-gen-portal-update-script" depends="prodPrompt" description="Generates script for hibernate updates. Does not run updates. Defaults to PortalDb.">
-	        <property name="databaseQualifier" value="PortalDb" />
-	        <property name="outputFile" value=" " />
-
-	        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
-
-	        <echo>Creating HBM2DDL Update Script</echo>
-	        <echo file="${portal-shell-script}" append="true">
-	            logger.info("");
-	            logger.info("");
-	            logger.info("Generate Update Script for Database " + '${databaseQualifier}');
-	            
-	            //hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
-	            portalShellBuildHelper.hibernateGenerateScript(
-	        	    "db-hibernate-update",
-	                '${databaseQualifier}',
-	                /${outputFileEscaped}/);
-	        </echo>
-
-	        <antcall target="up-shell">
-	            <param name="script" value="${portal-shell-script}" />
-	        </antcall>
-	    </target>
-
-    <target name="db-hibernate-stats" depends="prodPrompt">
-        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
-        <up-shell-batch>
-            <antcall target="db-hibernate-raw-events" />
-            <antcall target="db-hibernate-aggr-events" />
-        </up-shell-batch>
-    </target>
-
-    <target name="db-hibernate-stats-update" depends="prodPrompt">
-        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events-update and db-hibernate-aggr-events-update instead</echo>
-        <up-shell-batch>
-            <antcall target="db-hibernate-raw-events-update" />
-            <antcall target="db-hibernate-aggr-events-update" />
-        </up-shell-batch>
-    </target>
-
-    <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
-        <antcall target="db-hibernate-portal">
-        	<param name="databaseQualifier" value="RawEventsDb" />
-        </antcall>
-    </target>
-
-    <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
-        <antcall target="db-hibernate-portal-update">
-        	<param name="databaseQualifier" value="RawEventsDb" />
-        </antcall>
-    </target>
-
-    <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
-        <antcall target="db-hibernate-portal">
-        	<param name="databaseQualifier" value="AggrEventsDb" />
-        </antcall>
-    </target>
-
-    <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
-        <antcall target="db-hibernate-portal-update">
-        	<param name="databaseQualifier" value="AggrEventsDb" />
-        </antcall>
-    </target>
-
-    <target name="db-hibernate-portlets" depends="prodPrompt" description="Drops then creates Hibernate managed tables for bundled portlets">
-        <echo>Creating tables for bundled portlets [skipPackage=${skipPackage}]</echo>
-
-        <condition property="packageArg" value="-Djasig.ignore">
-            <equals arg1="${skipPackage}" arg2="true" />
-        </condition>
-        <property name="packageArg" value="package" />
-
-        <antcall target="mvn">
-            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
-            <param name="goal" value="${packageArg}" />
-            <param name="goal1" value="db-init" />
-        </antcall>
-    </target>
-
-    <target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
-        <property name="tablefile" value="/properties/db/tables.xml" />
-        <property name="datafile" value="/properties/db/data.xml" />
-        <property name="scriptfile" value=" " />
-        <property name="droptables" value="true" />
-        <property name="createtables" value="true" />
-        <property name="populatetables" value="true" />
-
-        <groovy-safe-path property="tablefileEscaped" input="${tablefile}" />
-        <groovy-safe-path property="datafileEscaped" input="${datafile}" />
-        <groovy-safe-path property="scriptfileEscaped" input="${scriptfile}" />
-
-        <echo>Creating DBLoader Script</echo>
-        <echo file="${portal-shell-script}" append="true">
-            //db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables, boolean createTables, boolean populateTables)
-            portalShellBuildHelper.db("db",
-                /${tablefileEscaped}/,
-                /${datafileEscaped}/,
-                /${scriptfileEscaped}/,
-                Boolean.parseBoolean('${droptables}'),
-                Boolean.parseBoolean('${createtables}'),
-                Boolean.parseBoolean('${populatetables}'));
-        </echo>
-
-        <antcall target="up-shell">
-            <param name="script" value="${portal-shell-script}" />
-        </antcall>
-    </target>
-
-    <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
-
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/${default_entities.location}" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
-        <!-- Use build.properties to override the entities.location setting -->
-        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
-
-        <up-shell-batch>
-            <antcall target="data-import">
-                <param name="dir" value="${basedir}/${quickstart_entities.location}" />
-            </antcall>
-        </up-shell-batch>
-    </target>
-
-    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
-        <up-shell-batch>
-            <antcall target="db-import-required" />
-
-            <if>
-                <not>
-                    <isset property="noDefaultData" />
-                </not>
-                <then>
-                    <antcall target="db-import-default" />
-                </then>
-            </if>
-
-            <if>
-                <not>
-                    <isset property="noQuickstartData" />
-                </not>
-                <then>
-                    <antcall target="db-import-quickstart" />
-                </then>
-            </if>
-        </up-shell-batch>
-        <antcall target="portlet-data-import" />
-    </target>
-
+    <!-- Public API -->
     <target name="dbtest" description="Displays information about the database defined in rdbm.properties">
-    	<echo>Creating DBTest Script</echo>
+        <echo>Creating DBTest Script</echo>
         <echo file="${portal-shell-script}" append="true">
             logger.info("");
             logger.info("");
-        	
+
             portalShellBuildHelper.dbTest();
         </echo>
 
@@ -514,70 +216,7 @@
         </antcall>
     </target>
 
-    <!-- Since uPortal 4.2.0 -->
-    <target name="pagsXmlToEntity" description="Script to convert PAGSGroupStoreConfig.xml to entity PAGS files">
-        <if>
-            <not>
-                    <isset property="dir" />
-            </not>
-            <then>
-                <fail>'-Ddir' output directory must be specified for PAGS conversion</fail>
-            </then>
-        </if>
-
-        <groovy-safe-path property="dirFullEscaped" input="${dir}" />
-
-        <echo>Executing PAGS Conversion Script</echo>
-
-        <antcall target="up-shell">
-            <param name="script" value="bootstrap/utilities/scripts/xmlPagsToEntityPags.groovy" />
-            <param name="arg1" value="uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"/>
-            <param name="arg2" value="${dir}"/>
-        </antcall>
-    </target>
-
-    <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
-        <if>
-            <not>
-                <istrue value="${skip-up-shell-execution}" />
-            </not>
-            <then>
-                <uportal-war-macro>
-                    <if>
-                        <and>
-                            <isset property="script" />
-                        </and>
-                        <then>
-                            <tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
-                            <copy file="${script}" tofile="${executed-portal-shell-script}" />
-
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                            	<jvmarg value="-XX:MaxPermSize=256m"/>
-                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
-                                <sysproperty key="java.awt.headless" value="true"/>
-                                <classpath refid="uportal-war-full.classpath" />
-                                <arg value="-s" />
-                                <arg value="${script}" />
-                                <arg value="${arg1}"/>
-                                <arg value="${arg2}"/>
-                            </java>
-                        </then>
-                        <else>
-                            <echo>Interactive Mode</echo>
-
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
-                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
-                                <sysproperty key="java.awt.headless" value="true"/>
-                                <classpath refid="uportal-war-full.classpath" />
-                            </java>
-                        </else>
-                    </if>
-
-                </uportal-war-macro>
-            </then>
-        </if>
-    </target>
-
+    <!-- Public API -->
     <target name="data-list" description="Lists portal data types and portal data for a type. Use the -Dtype parameter to specify a specific type">
         <property name="type" value=" " />
 
@@ -591,6 +230,7 @@
         </antcall>
     </target>
 
+    <!-- Public API -->
     <target name="data-export" description="Exports the specified entity or entities to XML on the file system">
         <fail unless="dir">
             You must specify a 'dir' parameter (-Ddir={some/directory})
@@ -605,11 +245,11 @@
         <echo>Creating Data Export Script</echo>
         <echo file="${portal-shell-script}" append="true">
             //dataExport(String target, String dataDir, String type, String sysid, String logDir)
-            portalShellBuildHelper.dataExport("data-export", 
-                /${dirFullEscaped}/,
-                '${type}',
-                '${sysid}',
-                /${targetDirEscaped}/);
+            portalShellBuildHelper.dataExport("data-export",
+            /${dirFullEscaped}/,
+            '${type}',
+            '${sysid}',
+            /${targetDirEscaped}/);
         </echo>
 
         <antcall target="up-shell">
@@ -617,22 +257,7 @@
         </antcall>
     </target>
 
-    <target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
-        <echo>Importing portlet-specific data [skipPackage=${skipPackage}]</echo>
-
-    	<condition property="packageArg" value="-Djasig.ignore">
-            <equals arg1="${skipPackage}" arg2="true" />
-        </condition>
-        <property name="packageArg" value="package" />
-
-        <antcall target="mvn">
-            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
-            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
-            <param name="goal" value="${packageArg}" />
-            <param name="goal1" value="data-import" />
-        </antcall>
-    </target>
-
+    <!-- Public API -->
     <target name="data-import" depends="prodPrompt" description="Imports the specified XML file or files">
         <if>
             <not>
@@ -667,12 +292,12 @@
         <echo>Creating Data Import Script</echo>
         <echo file="${portal-shell-script}" append="true">
             //dataImport(String target, String dataDir, String pattern, String filesList, String archive, String logDir)
-            portalShellBuildHelper.dataImport("data-import", 
-                /${dirFullEscaped}/,
-                /${pattern}/,
-                portalShellBuildHelper.getFilesListStringFromInput(/${fileFullEscaped}/,/${filesFullEscaped}/,/${filesListFileFullEscaped}/),
-                /${archiveFullEscaped}/,
-                /${targetDirEscaped}/);
+            portalShellBuildHelper.dataImport("data-import",
+            /${dirFullEscaped}/,
+            /${pattern}/,
+            portalShellBuildHelper.getFilesListStringFromInput(/${fileFullEscaped}/,/${filesFullEscaped}/,/${filesListFileFullEscaped}/),
+            /${archiveFullEscaped}/,
+            /${targetDirEscaped}/);
         </echo>
 
         <antcall target="up-shell">
@@ -680,6 +305,7 @@
         </antcall>
     </target>
 
+    <!-- Public API -->
     <target name="data-delete" depends="prodPrompt" description="Deletes the specified entity">
         <if>
             <not>
@@ -698,9 +324,9 @@
         <echo>Creating Data Delete Script</echo>
         <echo file="${portal-shell-script}" append="true">
             //dataDelete(String target, String type, String sysid)
-            portalShellBuildHelper.dataDelete("data-delete", 
-                '${type}',
-                '${sysid}');
+            portalShellBuildHelper.dataDelete("data-delete",
+            '${type}',
+            '${sysid}');
         </echo>
 
         <antcall target="up-shell">
@@ -708,25 +334,7 @@
         </antcall>
     </target>
 
-    <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
-        <mkdir dir="${server.base}/shared/lib" />
-        <delete>
-            <fileset dir="${server.base}/shared/lib">
-                <include name="*" />
-            </fileset>
-        </delete>
-    </target>
-
-    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the servlet container">
-        <uportal-parent-macro>
-            <!-- Clean out uPortal from Tomcat -->
-            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
-            <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
-            <echo>Deleting '${destDir}'</echo>
-            <delete dir="${destDir}" />
-        </uportal-parent-macro>
-    </target>
-
+    <!-- Public API -->
     <target name="clean" description="Runs 'mvn clean'">
         <!-- Execute the mvn clean lifecycle -->
         <antcall target="mvn">
@@ -735,6 +343,7 @@
         </antcall>
     </target>
 
+    <!-- Public API -->
     <target name="deploy-ear" depends="checkForTomcat" description="Deploy uPortal and dependent libraries and portlets to the servlet container">
         <uportal-ear-macro>
             <echo message="   extractWars=${extractWars}" />
@@ -769,6 +378,7 @@
         </uportal-ear-macro>
     </target>
 
+    <!-- Public API -->
     <target name="deploy-war" depends="checkForTomcat" description="Deploy the uPortal web application to the servlet container">
         <uportal-war-macro>
             <antcall target="fastWarDeploy">
@@ -777,6 +387,7 @@
         </uportal-war-macro>
     </target>
 
+    <!-- Public API -->
     <target name="deployPortletApp" depends="checkForTomcat" description="Deploys a portlet application">
         <!-- Check arguments -->
         <fail message="'-DportletApp=[WAR File]' must be specified">
@@ -834,29 +445,29 @@
 
 
     <target name="md5passwd" depends="prodPrompt" description="Creates a user in the UP_PERSON_DIR table">
-    	<property name="username" value="" />
-    	
-    	<input message="Enter userId:" addproperty="user.id" defaultvalue="${username}"/> 
-        <input message="Enter password:" addproperty="user.pw1"> 
-          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        <property name="username" value="" />
+
+        <input message="Enter userId:" addproperty="user.id" defaultvalue="${username}"/>
+        <input message="Enter password:" addproperty="user.pw1">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
         </input>
-    	<input message="Verify password:" addproperty="user.pw2"> 
-          <handler classname="org.apache.tools.ant.input.SecureInputHandler" /> 
+        <input message="Verify password:" addproperty="user.pw2">
+            <handler classname="org.apache.tools.ant.input.SecureInputHandler" />
         </input>
 
-    	<fail message="Passwords do not match.">
-    	    <condition>
-    	        <not>
-    	            <equals arg1="${user.pw1}" arg2="${user.pw2}"/>
-    	        </not>
-    	    </condition>
-    	</fail>    	
+        <fail message="Passwords do not match.">
+            <condition>
+                <not>
+                    <equals arg1="${user.pw1}" arg2="${user.pw2}"/>
+                </not>
+            </condition>
+        </fail>
 
         <echo file="${portal-shell-script}" append="true">
             logger.info("");
             logger.info("");
-        	
-        	passwordUpdateTool.updatePassword('${user.id}', /${user.pw1}/, true);
+
+            passwordUpdateTool.updatePassword('${user.id}', /${user.pw1}/, true);
         </echo>
 
         <antcall target="up-shell">
@@ -887,7 +498,7 @@
             <equals arg1="${spawn}" arg2="true" />
         </condition>
         <property name="failonerror" value="true" />
-    	
+
         <fail message="There is already a service running on port ${environment.build.hsql.port}, please shut it down before starting the quickstart">
             <condition>
                 <socket server="localhost" port="${environment.build.hsql.port}" />
@@ -924,10 +535,10 @@
 
             </java>
         </uportal-parent-macro>
-        
-    	<if>
-    		<equals arg1="${spawn}" arg2="true" />
-    	   <then>
+
+        <if>
+            <equals arg1="${spawn}" arg2="true" />
+            <then>
                 <!-- wait for hsql to start -->
                 <echo>Waiting for HSQL to Start, checking port ${environment.build.hsql.port}</echo>
                 <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-started">
@@ -935,12 +546,12 @@
                 </waitfor>
                 <fail if="hsql-not-started" message="HSQL Failed To Start" />
                 <echo>HSQL Started</echo>
-    	   	</then>
-	   	</if>
+            </then>
+        </if>
     </target>
 
     <target name="hsql-shutdown" description="Compacts then cleanly shuts down hsql, useful if the 'hsql' task was run with '-Dspawn=true'">
-    	<echo>${environment.token}</echo>
+        <echo>${environment.token}</echo>
         <uportal-parent-macro>
             <!--
              | Due to http://jira.codehaus.org/browse/MANTTASKS-246, use maven-artifact-macro to insure all
@@ -992,8 +603,8 @@
                 </catch>
             </trycatch>
         </uportal-parent-macro>
-    	
-    	<echo>Waiting for HSQL to stop, checking port ${environment.build.hsql.port}</echo>
+
+        <echo>Waiting for HSQL to stop, checking port ${environment.build.hsql.port}</echo>
         <waitfor maxwait="1" maxwaitunit="minute" checkevery="1" checkeveryunit="second" timeoutproperty="hsql-not-stopped">
             <not>
                 <socket server="localhost" port="${environment.build.hsql.port}" />
@@ -1006,37 +617,6 @@
             </then>
         </if>
         <echo>HSQL Stopped</echo>
-    </target>
-
-    <!-- ============================== Utility Targets ============================== -->
-
-    <target name="sync-schemas">
-        <fail unless="schemaDir">
-You must specify a 'schemaDir' parameter (-DschemaDir={/path/to/jasig/schemas/uportal/})
-NOTE THE TRAILING SLASH IS IMPORTANT
-        </fail>
-
-        <exec executable="rsync">
-            <arg value="-avC" />
-            <arg value="${basedir}/uportal-war/src/main/resources/xsd/" />
-            <arg value="${schemaDir}" />
-        </exec>
-    </target>
-
-    <!--
-     | Runs up-shell passing in the default shell script filename as the targeted script
-     +-->
-    <target name="up-shell-default">
-        <if>
-            <not>
-                <istrue value="${skip-up-shell-execution}" />
-            </not>
-            <then>
-                <antcall target="up-shell">
-                    <param name="script" value="${portal-shell-script}" />
-                </antcall>
-            </then>
-        </if>
     </target>
 
     <!--
@@ -1117,6 +697,452 @@ NOTE THE TRAILING SLASH IS IMPORTANT
         </if>
     </target>
 
+    <!-- Since uPortal 4.2.0 -->
+    <!-- Public API -->
+    <target name="pagsXmlToEntity" description="Script to convert PAGSGroupStoreConfig.xml to entity PAGS files">
+        <if>
+            <not>
+                <isset property="dir" />
+            </not>
+            <then>
+                <fail>'-Ddir' output directory must be specified for PAGS conversion</fail>
+            </then>
+        </if>
+
+        <groovy-safe-path property="dirFullEscaped" input="${dir}" />
+
+        <echo>Executing PAGS Conversion Script</echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="bootstrap/utilities/scripts/xmlPagsToEntityPags.groovy" />
+            <param name="arg1" value="uportal-war/src/main/resources/properties/groups/PAGSGroupStoreConfig.xml"/>
+            <param name="arg2" value="${dir}"/>
+        </antcall>
+    </target>
+
+    <!--                                                                                    -->
+    <!-- ================================ Internal Targets ================================ -->
+    <!--                                                                                    -->
+
+    <!-- Internal use -->
+    <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database without executing them.">
+        <fail unless="ddlFile">
+            You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
+        </fail>
+
+        <tempfile property="db-ddl-file" destdir="${targetdir}" prefix="db-ddl." suffix=".sql" />
+        <tempfile property="db-hibernate-portal-ddl-file" destdir="${targetdir}" prefix="db-hibernate-portal-ddl." suffix=".sql" />
+        <tempfile property="db-hibernate-aggr-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-aggr-events-ddl." suffix=".sql" />
+        <tempfile property="db-hibernate-raw-events-ddl-file" destdir="${targetdir}" prefix="db-hibernate-raw-events-ddl." suffix=".sql" />
+
+        <echo message="Creating database DDL and writing to ${ddlFile}" />
+        <up-shell-batch>
+            <mkdir dir="${targetdir}" />
+            <antcall target="db">
+                <param name="scriptfile" value="${db-ddl-file}" />
+            </antcall>
+
+            <antcall target="db-hibernate-portal">
+                <param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-portal-ddl-file}" />
+            </antcall>
+
+            <antcall target="db-hibernate-raw-events">
+                <param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-raw-events-ddl-file}" />
+            </antcall>
+
+            <antcall target="db-hibernate-aggr-events">
+                <param name="export" value="false" />
+                <param name="outputFile" value="${db-hibernate-aggr-events-ddl-file}" />
+            </antcall>
+        </up-shell-batch>
+
+        <concat destfile="${ddlFile}" fixlastline="yes">
+            <fileset file="${db-ddl-file}" />
+            <fileset file="${db-hibernate-portal-ddl-file}" />
+            <fileset file="${db-hibernate-raw-events-ddl-file}" />
+            <fileset file="${db-hibernate-aggr-events-ddl-file}" />
+        </concat>
+
+        <echo message="Finished creating database DDL: ${ddlFile}" />
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate" depends="prodPrompt" description="Drops then creates Hibernate managed tables">
+        <up-shell-batch>
+            <antcall target="db-hibernate-portal" />
+            <antcall target="db-hibernate-raw-events" />
+            <antcall target="db-hibernate-aggr-events" />
+            <antcall target="db-hibernate-portlets" />
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for both the portal and event schemas">
+        <up-shell-batch>
+            <antcall target="db-hibernate-portal-update" />
+            <antcall target="db-hibernate-raw-events-update" />
+            <antcall target="db-hibernate-aggr-events-update" />
+        </up-shell-batch>
+    </target>
+
+    <!-- For internal use.  Invoke db-gen-update-script instead -->
+	<target name="db-hibernate-gen-update-script" depends="prodPrompt" description="Generates hibernate update script for portal, raw events, and aggregator databases. Does not run updates.">
+		<property name="outputDir" value=" "/>
+        <up-shell-batch>
+            <antcall target="db-hibernate-gen-portal-update-script">
+                <param name="outputFile" value="${outputDir}/portalDb-update.sql" />
+            </antcall>
+        	<antcall target="db-hibernate-gen-portal-update-script">
+        		<param name="databaseQualifier" value="RawEventsDb" />
+                <param name="outputFile" value="${outputDir}/rawDb-update.sql" />
+            </antcall>
+	        <antcall target="db-hibernate-gen-portal-update-script">
+	        	<param name="databaseQualifier" value="AggrEventsDb" />
+                <param name="outputFile" value="${outputDir}/aggrDb-update.sql" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-portal" depends="prodPrompt" description="Drops then creates Hibernate managed tables for the portal">
+    	<property name="databaseQualifier" value="PortalDb" />
+        <property name="export" value="true" />
+        <property name="drop" value="true" />
+        <property name="create" value="true" />
+        <property name="outputFile" value=" " />
+
+        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+        <echo>Creating HBM2DDL Script</echo>
+        <if>
+            <equals arg1="${drop}" arg2="true" />
+            <then>
+                <echo file="${portal-shell-script}" append="true">
+                    //hibernateDrop(String target, String databaseQualifier, boolean export, String outputFile)
+                    portalShellBuildHelper.hibernateDrop("db-hibernate",
+                        '${databaseQualifier}',
+                        Boolean.parseBoolean('${export}'),
+                        /${outputFileEscaped}/);
+                </echo>
+            </then>
+        </if>
+    	<if>
+    		<equals arg1="${create}" arg2="true" />
+            <then>
+                <echo file="${portal-shell-script}" append="true">
+                    //hibernateCreate(String target, String databaseQualifier, boolean export, String outputFile)
+                    portalShellBuildHelper.hibernateCreate("db-hibernate",
+                	    '${databaseQualifier}',
+                        Boolean.parseBoolean('${export}'),
+                        /${outputFileEscaped}/);
+                </echo>
+            </then>
+        </if>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-portal-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for the portal schema">
+    	<property name="databaseQualifier" value="PortalDb" />
+        <property name="export" value="true" />
+        <property name="outputFile" value=" " />
+
+        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+        <echo>Creating HBM2DDL Update Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+        	logger.info("");
+        	logger.info("");
+        	logger.info("Update Database " + '${databaseQualifier}');
+        	
+        	//hibernateUpdate(String target, String databaseQualifier, boolean export, String outputFile)
+            portalShellBuildHelper.hibernateUpdate("db-hibernate-update",
+        	    '${databaseQualifier}',
+                Boolean.parseBoolean('${export}'),
+                /${outputFileEscaped}/);
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+	<target name="db-hibernate-gen-portal-update-script" depends="prodPrompt" description="Generates script for hibernate updates. Does not run updates. Defaults to PortalDb.">
+	        <property name="databaseQualifier" value="PortalDb" />
+	        <property name="outputFile" value=" " />
+
+	        <groovy-safe-path property="outputFileEscaped" input="${outputFile}" />
+
+	        <echo>Creating HBM2DDL Update Script</echo>
+	        <echo file="${portal-shell-script}" append="true">
+	            logger.info("");
+	            logger.info("");
+	            logger.info("Generate Update Script for Database " + '${databaseQualifier}');
+	            
+	            //hibernateGenerateScript(String target, String databaseQualifier, String outputFile);
+	            portalShellBuildHelper.hibernateGenerateScript(
+	        	    "db-hibernate-update",
+	                '${databaseQualifier}',
+	                /${outputFileEscaped}/);
+	        </echo>
+
+	        <antcall target="up-shell">
+	            <param name="script" value="${portal-shell-script}" />
+	        </antcall>
+	    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-stats" depends="prodPrompt">
+        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events and db-hibernate-aggr-events instead</echo>
+        <up-shell-batch>
+            <antcall target="db-hibernate-raw-events" />
+            <antcall target="db-hibernate-aggr-events" />
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-stats-update" depends="prodPrompt">
+        <echo level="warning">DEPRECATED: Use db-hibernate-raw-events-update and db-hibernate-aggr-events-update instead</echo>
+        <up-shell-batch>
+            <antcall target="db-hibernate-raw-events-update" />
+            <antcall target="db-hibernate-aggr-events-update" />
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-raw-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for raw portal event storage">
+        <antcall target="db-hibernate-portal">
+        	<param name="databaseQualifier" value="RawEventsDb" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-raw-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for raw portal event storage">
+        <antcall target="db-hibernate-portal-update">
+        	<param name="databaseQualifier" value="RawEventsDb" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-aggr-events" depends="prodPrompt" description="Drops then creates Hibernate managed tables used for aggregate portal event storage">
+        <antcall target="db-hibernate-portal">
+        	<param name="databaseQualifier" value="AggrEventsDb" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-aggr-events-update" depends="prodPrompt" description="Makes required changes to the portal database for patch upgrades for aggregate portal event storage">
+        <antcall target="db-hibernate-portal-update">
+        	<param name="databaseQualifier" value="AggrEventsDb" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-hibernate-portlets" depends="prodPrompt" description="Drops then creates Hibernate managed tables for bundled portlets">
+        <echo>Creating tables for bundled portlets [skipPackage=${skipPackage}]</echo>
+
+        <condition property="packageArg" value="-Djasig.ignore">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="db-init" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db" depends="prodPrompt" description="Loads legacy database tables and data. See: initdb">
+        <property name="tablefile" value="/properties/db/tables.xml" />
+        <property name="datafile" value="/properties/db/data.xml" />
+        <property name="scriptfile" value=" " />
+        <property name="droptables" value="true" />
+        <property name="createtables" value="true" />
+        <property name="populatetables" value="true" />
+
+        <groovy-safe-path property="tablefileEscaped" input="${tablefile}" />
+        <groovy-safe-path property="datafileEscaped" input="${datafile}" />
+        <groovy-safe-path property="scriptfileEscaped" input="${scriptfile}" />
+
+        <echo>Creating DBLoader Script</echo>
+        <echo file="${portal-shell-script}" append="true">
+            //db(String target, String tablesFile, String dataFile, String scriptFile, boolean dropTables, boolean createTables, boolean populateTables)
+            portalShellBuildHelper.db("db",
+                /${tablefileEscaped}/,
+                /${datafileEscaped}/,
+                /${scriptfileEscaped}/,
+                Boolean.parseBoolean('${droptables}'),
+                Boolean.parseBoolean('${createtables}'),
+                Boolean.parseBoolean('${populatetables}'));
+        </echo>
+
+        <antcall target="up-shell">
+            <param name="script" value="${portal-shell-script}" />
+        </antcall>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-import-required" depends="prodPrompt" description="Imports the required data files to the database">
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/uportal-war/src/main/data/required_entities" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-import-default" depends="prodPrompt" description="Imports the default data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="default_entities.location" value="uportal-war/src/main/data/default_entities" />
+
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/${default_entities.location}" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-import-quickstart" depends="prodPrompt" description="Imports the quickstart data files to the database">
+        <!-- Use build.properties to override the entities.location setting -->
+        <property name="quickstart_entities.location" value="uportal-war/src/main/data/quickstart_entities" />
+
+        <up-shell-batch>
+            <antcall target="data-import">
+                <param name="dir" value="${basedir}/${quickstart_entities.location}" />
+            </antcall>
+        </up-shell-batch>
+    </target>
+
+    <!-- Internal use -->
+    <target name="db-import" depends="prodPrompt" description="Imports the default XML files to the database">
+        <up-shell-batch>
+            <antcall target="db-import-required" />
+
+            <if>
+                <not>
+                    <isset property="noDefaultData" />
+                </not>
+                <then>
+                    <antcall target="db-import-default" />
+                </then>
+            </if>
+
+            <if>
+                <not>
+                    <isset property="noQuickstartData" />
+                </not>
+                <then>
+                    <antcall target="db-import-quickstart" />
+                </then>
+            </if>
+        </up-shell-batch>
+        <antcall target="portlet-data-import" />
+    </target>
+
+    <!-- Internal use -->
+    <target name="up-shell" description="Run a uPortal Groovy Shell. Interactive or scripted using -Dscript=">
+        <if>
+            <not>
+                <istrue value="${skip-up-shell-execution}" />
+            </not>
+            <then>
+                <uportal-war-macro>
+                    <if>
+                        <and>
+                            <isset property="script" />
+                        </and>
+                        <then>
+                            <tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
+                            <copy file="${script}" tofile="${executed-portal-shell-script}" />
+
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                            	<jvmarg value="-XX:MaxPermSize=256m"/>
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
+                                <classpath refid="uportal-war-full.classpath" />
+                                <arg value="-s" />
+                                <arg value="${script}" />
+                                <arg value="${arg1}"/>
+                                <arg value="${arg2}"/>
+                            </java>
+                        </then>
+                        <else>
+                            <echo>Interactive Mode</echo>
+
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                                <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
+                                <sysproperty key="java.awt.headless" value="true"/>
+                                <classpath refid="uportal-war-full.classpath" />
+                            </java>
+                        </else>
+                    </if>
+
+                </uportal-war-macro>
+            </then>
+        </if>
+    </target>
+
+    <!-- Internal use -->
+    <target name="portlet-data-import" depends="prodPrompt" description="Imports the default portlet-specific data">
+        <echo>Importing portlet-specific data [skipPackage=${skipPackage}]</echo>
+
+    	<condition property="packageArg" value="-Djasig.ignore">
+            <equals arg1="${skipPackage}" arg2="true" />
+        </condition>
+        <property name="packageArg" value="package" />
+
+        <antcall target="mvn">
+            <param name="pomDir" value="${basedir}/uportal-portlets-overlay" />
+            <!-- In case target is run separately, insure the project is packaged so all filtered substitutions occur -->
+            <param name="goal" value="${packageArg}" />
+            <param name="goal1" value="data-import" />
+        </antcall>
+    </target>
+
+    <!-- ============================== Utility Targets ============================== -->
+
+    <!-- Internal use -->
+    <target name="sync-schemas">
+        <fail unless="schemaDir">
+You must specify a 'schemaDir' parameter (-DschemaDir={/path/to/jasig/schemas/uportal/})
+NOTE THE TRAILING SLASH IS IMPORTANT
+        </fail>
+
+        <exec executable="rsync">
+            <arg value="-avC" />
+            <arg value="${basedir}/uportal-war/src/main/resources/xsd/" />
+            <arg value="${schemaDir}" />
+        </exec>
+    </target>
+
+    <!--
+     | Runs up-shell passing in the default shell script filename as the targeted script
+     +-->
+    <!-- Internal use -->
+    <target name="up-shell-default">
+        <if>
+            <not>
+                <istrue value="${skip-up-shell-execution}" />
+            </not>
+            <then>
+                <antcall target="up-shell">
+                    <param name="script" value="${portal-shell-script}" />
+                </antcall>
+            </then>
+        </if>
+    </target>
+
+    <!-- Internal use -->
     <target name="prodPrompt">
         <if>
             <and>
@@ -1136,6 +1162,7 @@ NOTE THE TRAILING SLASH IS IMPORTANT
         </if>
     </target>
 
+    <!-- Internal use -->
     <target name="checkForTomcat">
         <fail message="server.base build property must be set.">
             <condition>
@@ -1151,6 +1178,27 @@ NOTE THE TRAILING SLASH IS IMPORTANT
                 </not>
             </condition>
         </fail>
+    </target>
+
+    <!-- Internal use -->
+    <target name="clean-shared" depends="checkForTomcat" description="Removes ALL shared libraries from the servlet container.">
+        <mkdir dir="${server.base}/shared/lib" />
+        <delete>
+            <fileset dir="${server.base}/shared/lib">
+                <include name="*" />
+            </fileset>
+        </delete>
+    </target>
+
+    <!-- Internal use -->
+    <target name="clean-tomcat" depends="checkForTomcat" description="Removes the deployed uPortal from the servlet container">
+        <uportal-parent-macro>
+            <!-- Clean out uPortal from Tomcat -->
+            <artifact:pom file="${uportal-war.dir}/pom.xml" id="uportal-war.pom" settingsFile="${maven.settings}" inheritAllProperties="false" />
+            <property name="destDir" value="${server.base}/webapps/${uportal-war.pom.build.finalName}" />
+            <echo>Deleting '${destDir}'</echo>
+            <delete dir="${destDir}" />
+        </uportal-parent-macro>
     </target>
 
     <!-- ============================== Deprecated Targets ============================== -->
@@ -1242,7 +1290,9 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
     </target>
 
 
+    <!--                                                                                    -->
     <!-- ============================== Maven Support Macros ============================== -->
+    <!--                                                                                    -->
 
     <macrodef name="groovy-safe-path">
         <attribute name="property" />
