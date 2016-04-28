@@ -99,11 +99,15 @@ public class LayoutRESTController {
     
     
     /**
-     * A REST call to get a json feed of the current users layout
+     * A REST call to get a json feed of the current users layout.  Intent was to provide a layout
+     * document without per-tab information for mobile device rendering.
      * @param request The servlet request. Utilized to get the users instance and eventually there layout
      * @param tab The tab name of which you would like to filter; optional; if not provided, will return entire layout.
      * @return json feed of the layout
+     * @deprecated Use /api/v4-3/dlm/layout.json.  It has much more information about portlets and includes
+     *             regions and breakout per tab
      */
+    @Deprecated
     @RequestMapping(value="/layoutDoc", method = RequestMethod.GET)
     public ModelAndView getRESTController(HttpServletRequest request, @RequestParam(value = "tab", required = false) String tab) {
         final IPerson person = personManager.getPerson(request);
