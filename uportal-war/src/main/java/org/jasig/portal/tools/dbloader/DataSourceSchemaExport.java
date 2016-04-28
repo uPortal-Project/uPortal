@@ -19,6 +19,7 @@
 package org.jasig.portal.tools.dbloader;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 
@@ -125,20 +127,18 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
                     try {
                         jdbcOperations.execute(sqlCommand);
                         logger.info(sqlCommand);
-                    }
-                    catch (Exception e) {
-                        if (failFast) {
-                            logger.error("Failed to execute: {}\n\t{}", sqlCommand, e.getMessage());
-                            throw new RuntimeException("Failed to execute: " + sqlCommand, e);
+                    } catch (BadSqlGrammarException e) {
+                        // For HSQL database and ant db-update to avoid failing when attempting to
+                        // delete a sequence that does not exist.
+                        // Needed until Hibernate 5.  See https://hibernate.atlassian.net/browse/HHH-7002.
+                        if (sqlCommand.contains("drop constraint")) {
+                            logger.info("Failed to execute (probably ignorable): {}, error message {}", sqlCommand,
+                                    e.getMessage());
+                        } else {
+                            handleSqlException(failFast, sqlCommand, e);
                         }
-                        else {
-                            if (logger.isDebugEnabled()) {
-                                logger.info("Failed to execute: " + sqlCommand, e);
-                            }
-                            else {
-                                logger.info("Failed to execute (probably ignorable): {}", sqlCommand);
-                            }
-                        }
+                    } catch (Exception e) {
+                        handleSqlException(failFast, sqlCommand, e);
                     }
                 }
             }
@@ -148,11 +148,27 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
         }
     }
 
+    private void handleSqlException(boolean failFast, String sqlCommand, Exception e) {
+        if (failFast) {
+            logger.error("Failed to execute: {}\n\t{}", sqlCommand, e.getMessage());
+            throw new RuntimeException("Failed to execute: " + sqlCommand, e);
+        }
+        else {
+            logger.info("Failed to execute (probably ignorable): {}, error message {}", sqlCommand,
+                    e.getMessage());
+        }
+    }
+
     private PrintWriter getSqlWriter(String outputFile, boolean append) {
         final Writer sqlWriter;
         if (StringUtils.trimToNull(outputFile) != null) {
             try {
-                sqlWriter = new BufferedWriter(new FileWriter(outputFile, append));
+                // Insure any parent directories are created so we don't fail creating the SQL file.
+                File file = new File(outputFile);
+                if (!file.exists()) {
+                    file.getParentFile().mkdirs();
+                }
+                sqlWriter = new BufferedWriter(new FileWriter(file, append));
             }
             catch (IOException e) {
                 throw new RuntimeException("", e);
