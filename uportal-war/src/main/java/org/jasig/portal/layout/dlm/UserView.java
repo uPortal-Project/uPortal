@@ -18,37 +18,48 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.IUserProfile;
 import org.w3c.dom.Document;
-
 
 /**
  * @since uPortal 2.5
  */
-class UserView
-{
-    private final int userId;
-    Document layout = null;
-    int layoutId = 0;
-    int profileId = 1;
-    String profileFname = "default"; /* Was 1 when profileId was the key. */
+/* package-private */ class UserView {
 
-    UserView (int fragmentOwnerUserId)
-    {
+    private final int userId;
+    private Document layout = null;
+    private int layoutId = 0;
+    private int profileId = 1;
+
+    UserView (int fragmentOwnerUserId) {
         this.userId = fragmentOwnerUserId;
     }
-    
-    UserView(int fragmentOwnerUserId, IUserProfile profile, Document layout)
-    {
-        this.userId = fragmentOwnerUserId;
-        layoutId = profile.getLayoutId();
-        profileId = profile.getProfileId();
-        profileFname = profile.getProfileFname();
-        this.layout = layout;
-    }
-    
+
     public int getUserId() {
         return this.userId;
     }
-    
+
+    public Document getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Document layout) {
+        this.layout = layout;
+    }
+
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
+    }
+
 }

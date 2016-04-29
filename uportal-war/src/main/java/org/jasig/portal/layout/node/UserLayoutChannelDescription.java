@@ -30,8 +30,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -41,50 +39,27 @@ import org.w3c.dom.Node;
  * A class managing information contained in a user layout channel node.
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 public class UserLayoutChannelDescription extends UserLayoutNodeDescription implements IUserLayoutChannelDescription  {
 
-	private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
-	
+    private static final Log log = LogFactory.getLog(UserLayoutChannelDescription.class);
+
     Hashtable parameters=new Hashtable();
 
-    String title=null;
-    String description=null;
-    String className=null;
-    String channelPublishId=null;
-    String channelTypeId=null;
-    String functionalName=null;
-    long timeout=-1;
-    boolean editable=false;
-    boolean hasHelp=false;
-    boolean hasAbout=false;
-    boolean isSecure=false;
-    
+    private String title=null;
+    private String description=null;
+    private String className=null;
+    private String channelPublishId=null;
+    private String channelTypeId=null;
+    private String functionalName=null;
+    private long timeout=-1;
+    private boolean editable=false;
+    private boolean hasHelp=false;
+    private boolean hasAbout=false;
+    private boolean isSecure=false;
+
     public UserLayoutChannelDescription() {
         super();
-    }
-
-    public UserLayoutChannelDescription(IUserLayoutChannelDescription d) {
-
-        super(d);
-
-        this.title=d.getTitle();
-        this.name = d.getName();
-        this.description=d.getDescription();
-        this.setClassName(d.getClassName());
-        this.channelPublishId=d.getChannelPublishId();
-        this.channelTypeId=d.getChannelTypeId();
-        this.functionalName=d.getFunctionalName();
-        this.timeout=d.getTimeout();
-        this.editable=d.isEditable();
-        this.hasHelp=d.hasHelp();
-        this.hasAbout=d.hasAbout();
-
-        for(Enumeration enum1 = d.getParameterNames(); enum1.hasMoreElements();) {
-            String pName=(String)enum1.nextElement();
-            this.setParameterValue(pName,d.getParameterValue(pName));
-        }
     }
 
     /**
@@ -93,7 +68,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      * @param definition
      */
     public UserLayoutChannelDescription(IPortletDefinition definition) {
-        this();
         this.title = definition.getTitle();
         this.name = definition.getName();
         this.name = definition.getName();
@@ -102,10 +76,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         this.channelTypeId = String.valueOf(definition.getType().getId());
         this.functionalName = definition.getFName();
         this.timeout = definition.getTimeout();
-//        this.editable = definition.isEditable();
-//        this.hasHelp = definition.hasHelp();
-//        this.hasAbout = definition.hasAbout();
-        
+
         for (IPortletDefinitionParameter param : definition.getParameters()) {
             this.setParameterValue(param.getName(), param.getValue());
         }
@@ -145,12 +116,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
                     // get parameter name and value
                     String pName=e.getAttribute("name");
                     String pValue=e.getAttribute("value");
-
-                    Boolean canOverride=new Boolean(false);
-                    String str_override=e.getAttribute("override");
-                    if(str_override!=null && str_override.equals("yes")) {
-                        canOverride=new Boolean(true);
-                    }
 
                     if(pName!=null && pValue!=null) {
                         this.setParameterValue(pName,pValue);
@@ -375,46 +340,8 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
      */
     public String setParameterValue(String parameterName, String parameterValue) {
         // don't try to store a null value
-    	if (parameterValue==null)  return null;
+        if (parameterValue==null)  return null;
         return (String) parameters.put(parameterName,parameterValue);
-    }
-
-
-    /**
-     * Reset a channel parameter value. Since parameter changes by channels
-     * can be persisted if override is allowed this method enables resetting to
-     * the original value or, if the parameter is ad-hoc meaning that the
-     * channel definition does not provide a value for this parameter, then the
-     * parameter value is removed.
-     *
-     * @param parameterName a <code>String</code> value
-     */
-    public void resetParameter(String parameterName) throws PortalException
-    {
-        /*
-         * Since original channel definition parameter values that were 
-         * overridden are not maintained at this level we must consult the 
-         * channel definition to determine the original value and restore it
-         * or discover that this is an ad-hoc parameter and can be removed. 
-         */
-        try
-        {
-        	IPortletDefinitionRegistry registry = PortletDefinitionRegistryLocator.getPortletDefinitionRegistry();
-            int pubId = Integer.parseInt(getChannelPublishId());
-            IPortletDefinition def = registry.getPortletDefinition(getChannelPublishId());
-            IPortletDefinitionParameter parm = def.getParameter(parameterName);
-
-            if (parm == null) // ad-hoc parm so delete
-            {
-                parameters.remove(parameterName);
-            }
-        }
-        catch(Exception e)
-        {
-            throw new PortalException("Unable to reset parameter [" +
-                    parameterName + "] for channel [" + getTitle() +
-                    "].", e);
-       }
     }
 
     /**
@@ -436,36 +363,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         return parameters.values();
     }
 
-
-    /**
-     * Determines the number of existing channel parameters.
-     *
-     * @return an <code>int</code> value
-     */
-    public int numberOfParameters() {
-        return parameters.size();
-    }
-
-
-    /**
-     * Clears all of the channel parameters.
-     *
-     */
-    public void clearParameters() {
-        parameters.clear();
-    }
-
-
-    /**
-     * Remove a channel parameter.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return an old parameter value.
-     */
-    public String remove(String parameterName) {
-        return (String) parameters.remove(parameterName);
-    }
-
     /**
      * Obtain a set of channel parameter names.
      *
@@ -485,25 +382,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
     }
 
     /**
-     * Determine if the channel has any parameters.
-     *
-     * @return a <code>boolean</code> value
-     */
-    public boolean hasParameters() {
-        return !parameters.isEmpty();
-    }
-
-    /**
-     * Determines if a certain parameter name is present.
-     *
-     * @param parameterName a <code>String</code> parameter name.
-     * @return a <code>boolean</code> value
-     */
-    public boolean containsParameter(String parameterName) {
-        return parameters.containsKey(parameterName);
-    }
-
-    /**
      * Creates a <code>org.w3c.dom.Element</code> representation of the current channel.
      *
      * @param root a <code>Document</code> for which the <code>Element</code> should be created.
@@ -516,7 +394,7 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
         return node;
     }
 
-    public void addParameterChildren(Element node, Document root) {
+    private void addParameterChildren(Element node, Document root) {
         for(Enumeration enum1 = this.getParameterNames(); enum1.hasMoreElements();) {
             Element pElement=root.createElement("parameter");
             String pName=(String)enum1.nextElement();
@@ -568,7 +446,6 @@ public class UserLayoutChannelDescription extends UserLayoutNodeDescription impl
                 append("editAllowed", this.editAllowed).
                 append("precedence", this.precedence).
                 toString();
-
     }
 
 }

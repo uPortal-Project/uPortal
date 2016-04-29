@@ -24,8 +24,6 @@ import java.util.Map;
 
 /**
  * A person account stored in the local uPortal database
- * 
- * @version $Revision$
  */
 public interface ILocalAccountPerson {
     // common attribute names...
@@ -48,7 +46,7 @@ public interface ILocalAccountPerson {
     public static final String ATTR_MAIL = "mail";
 
     public long getId();
-    
+
     public String getName();
 
     public String getPassword();
@@ -66,13 +64,11 @@ public interface ILocalAccountPerson {
     public Map<String, List<Object>> getAttributes();
 
     public void setAttribute(String name, String... values);
-    
+
     public void setAttribute(String name, List<String> values);
 
     public void setAttributes(Map<String, List<String>> values);
 
     public boolean removeAttribute(String name);
-    
-    public void clearAttributes();
 
 }

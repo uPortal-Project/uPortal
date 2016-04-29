@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -74,9 +73,7 @@ import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import com.google.common.cache.Cache;
 
@@ -283,7 +280,7 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         }
         return layoutIds;
     }
-    
+
     private int getNextKey()
     {
         return CounterStoreLocator.getCounterStore().getNextId(PROFILE_TABLE);
@@ -440,92 +437,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                 });
             }
         });
-    }
-
-    // private helper modules that retreive information from the DOM structure of the description files
-    private String getName (Document descr) {
-        NodeList names = descr.getElementsByTagName("name");
-        Node name = null;
-        for (int i = names.getLength() - 1; i >= 0; i--) {
-            name = names.item(i);
-            if (name.getParentNode().getNodeName().equals("stylesheetdescription"))
-                break;
-            else
-                name = null;
-        }
-        if (name != null) {
-            return  this.getTextChildNodeValue(name);
-        }
-        else {
-            logger.debug("getName() : no \"name\" element was found under the \"stylesheetdescription\" node!");
-            return  null;
-        }
-    }
-
-    private String getRootElementTextValue (Document descr, String elementName) {
-        NodeList names = descr.getElementsByTagName(elementName);
-        Node name = null;
-        for (int i = names.getLength() - 1; i >= 0; i--) {
-            name = names.item(i);
-
-            if (name.getParentNode().getNodeName().equals("stylesheetdescription"))
-                break;
-            else
-                name = null;
-        }
-        if (name != null) {
-            return  this.getTextChildNodeValue(name);
-        }
-        else {
-            logger.debug("getRootElementTextValue() : no \"{}\" element was found under the \"stylesheetdescription\" node!", elementName);
-            return  null;
-        }
-    }
-
-    private String getDescription (Document descr) {
-        NodeList descriptions = descr.getElementsByTagName("description");
-        Node description = null;
-        for (int i = descriptions.getLength() - 1; i >= 0; i--) {
-            description = descriptions.item(i);
-            if (description.getParentNode().getNodeName().equals("stylesheetdescription"))
-                break;
-            else
-                description = null;
-        }
-        if (description != null) {
-            return  this.getTextChildNodeValue(description);
-        }
-        else {
-            logger.debug("getDescription() : no \"description\" element was found under the \"stylesheetdescription\" node!");
-            return  null;
-        }
-    }
-
-    private Vector getVectorOfSimpleTextElementValues (Document descr, String elementName) {
-        Vector v = new Vector();
-        // find "stylesheetdescription" node, take the first one
-        Element stylesheetdescriptionElement = (Element)(descr.getElementsByTagName("stylesheetdescription")).item(0);
-        if (stylesheetdescriptionElement == null) {
-            logger.error( "Could not obtain <stylesheetdescription> element");
-            return  null;
-        }
-        NodeList elements = stylesheetdescriptionElement.getElementsByTagName(elementName);
-        for (int i = elements.getLength() - 1; i >= 0; i--) {
-            v.add(this.getTextChildNodeValue(elements.item(i)));
-        }
-        return  v;
-    }
-
-    private String getTextChildNodeValue (Node node) {
-        if (node == null)
-            return  null;
-        NodeList children = node.getChildNodes();
-        for (int i = children.getLength() - 1; i >= 0; i--) {
-            Node child = children.item(i);
-            if (child.getNodeType() == Node.TEXT_NODE)
-                return  child.getNodeValue();
-        }
-        return  null;
     }
 
     /**
@@ -884,66 +795,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         });
     }
 
-    public IUserProfile getUserProfileById (final IPerson person, final int profileId) {
-        final int userId = person.getID();
-        return jdbcOperations.execute(new ConnectionCallback<IUserProfile>() {
-            @Override
-            public IUserProfile doInConnection(Connection con) throws SQLException, DataAccessException {
-
-                Statement stmt = con.createStatement();
-                try {
-                    String sQuery = "SELECT USER_ID, PROFILE_ID, PROFILE_FNAME, PROFILE_NAME, DESCRIPTION, LAYOUT_ID, STRUCTURE_SS_ID, THEME_SS_ID FROM UP_USER_PROFILE WHERE USER_ID="
-                            + userId + " AND PROFILE_ID=" + profileId;
-                    logger.debug("getUserProfileById(): {}", sQuery);
-                    ResultSet rs = stmt.executeQuery(sQuery);
-                    try {
-                        if (rs.next()) {
-                            String temp2 = rs.getString(3);
-                            String temp3 = rs.getString(4);
-                            String temp4 = rs.getString(5);
-                            int layoutId = rs.getInt(6);
-                            if (rs.wasNull()) {
-                                layoutId = 0;
-                            }
-                            int structSsId = rs.getInt(7);
-                            if (rs.wasNull()) {
-                                // This is probably a data issue and probably an export operation;  defer to the system user...
-                                if (!person.equals(getSystemUser())) {
-                                    structSsId = getSystemProfileByFname(temp2).getStructureStylesheetId();
-                                } else {
-                                    String msg = "The system user profile has no structure stylesheet Id.";
-                                    throw new IllegalStateException(msg);
-                                }
-                            }
-                            int themeSsId = rs.getInt(8);
-                            if (rs.wasNull()) {
-                                // This is probably a data issue and probably an export operation;  defer to the system user...
-                                if (!person.equals(getSystemUser())) {
-                                    themeSsId = getSystemProfileByFname(temp2).getThemeStylesheetId();
-                                } else {
-                                    String msg = "The system user profile has no theme stylesheet Id.";
-                                    throw new IllegalStateException(msg);
-                                }
-                            }
-                            IUserProfile userProfile = new UserProfile(profileId, temp2, temp3,temp4, layoutId, structSsId, themeSsId);
-                            final Locale[] userLocales = localeStore.getUserLocales(person);
-                            userProfile.setLocaleManager(new LocaleManager(person, userLocales));
-                            return userProfile;
-                        }
-                        else {
-                            throw new RuntimeException("Unable to find User Profile for user " + userId + " and profile " + profileId);
-                        }
-                    } finally {
-                        rs.close();
-                    }
-                } finally {
-                    stmt.close();
-                }
-
-            }
-        });
-    }
-
     private final ThreadLocal<Cache<Tuple<String, String>, UserProfile>> profileCacheHolder = new ThreadLocal<Cache<Tuple<String,String>,UserProfile>>();
     /**
      * Cache used during import/export operations
@@ -1114,60 +965,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
     protected abstract Element getStructure(Document doc, LayoutStructure ls);
 
     protected abstract int saveStructure (Node node, PreparedStatement structStmt, PreparedStatement parmStmt) throws SQLException;
-
-    public void setUserBrowserMapping (final IPerson person, final String userAgentArg, final int profileId) {
-        final int userId = person.getID();
-
-        this.transactionOperations.execute(new TransactionCallback<Object>() {
-            @Override
-            public Object doInTransaction(TransactionStatus status) {
-                return jdbcOperations.execute(new ConnectionCallback<Object>() {
-                    @Override
-                    public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-                        final String userAgent;
-                        if (userAgentArg.length() > 255){
-                            userAgent = userAgentArg.substring(0,254);
-                            logger.debug("userAgent trimmed to 255 characters. userAgent: {}", userAgentArg);
-                        }
-                        else {
-                            userAgent = userAgentArg;
-                        }
-
-                        // remove the old mapping and add the new one
-                        PreparedStatement ps = null;
-                        try{
-                            ps = con.prepareStatement("DELETE FROM UP_USER_UA_MAP WHERE USER_ID=? AND USER_AGENT=?");
-                            ps.setInt(1,userId);
-                            ps.setString(2,userAgent);
-                            ps.executeUpdate();
-                        }finally{
-                            try{
-                                ps.close();
-                            }catch(Exception e){
-                                //ignore
-                            }
-                        }
-                        try{
-                            logger.debug("writing to UP_USER_UA_MAP: userId: {}, userAgent: {}, profileId: {}", userId, userAgent, profileId);
-                            ps = con.prepareStatement("INSERT INTO UP_USER_UA_MAP (USER_ID,USER_AGENT,PROFILE_ID) VALUES (?,?,?)");
-                            ps.setInt(1,userId);
-                            ps.setString(2,userAgent);
-                            ps.setInt(3,profileId);
-                            ps.executeUpdate();
-                        }finally{
-                            try{
-                                ps.close();
-                            }catch(Exception e){
-                                //ignore
-                            }
-                        }
-
-                        return null;
-                    }
-                });
-            }
-        });
-    }
 
     /**
      * Save the user layout.
@@ -1367,27 +1164,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
                         }
 
                         if (firstLayout) {
-                            int defaultUserId;
-                            int defaultLayoutId;
-                            // Have to copy some of data over from the default user
-                            sql = "SELECT USER_DFLT_USR_ID,USER_DFLT_LAY_ID FROM UP_USER WHERE USER_ID=?";
-                            pstmt = con.prepareStatement(sql);
-                            try {
-                                pstmt.clearParameters();
-                                pstmt.setInt(1, userId);
-                                logger.debug(sql);
-                                rs = pstmt.executeQuery();
-                                try {
-                                    rs.next();
-                                    defaultUserId = rs.getInt(1);
-                                    defaultLayoutId = rs.getInt(2);
-                                } finally {
-                                    rs.close();
-                                }
-                            } finally {
-                                pstmt.close();
-                            }
-
                             sql = "UPDATE UP_USER_PROFILE SET LAYOUT_ID=1 WHERE USER_ID=? AND PROFILE_ID=?";
                             pstmt = con.prepareStatement(sql);
                             try {
@@ -1456,20 +1232,6 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         });
     }
 
-    public void setSystemBrowserMapping (String userAgent, int profileId) {
-        this.setUserBrowserMapping(this.getSystemUser(), userAgent, profileId);
-    }
-
-    private String getSystemBrowserMapping (String userAgent) {
-        return  getUserBrowserMapping(this.getSystemUser(), userAgent);
-    }
-
-    public IUserProfile getSystemProfileById (int profileId) {
-        IUserProfile up = this.getUserProfileById(this.getSystemUser(), profileId);
-        up.setSystemProfile(true);
-        return  up;
-    }
-
     public IUserProfile getSystemProfileByFname (String profileFname) {
         IUserProfile up = this.getUserProfileByFname(this.getSystemUser(), profileFname);
         up.setSystemProfile(true);
@@ -1485,19 +1247,8 @@ public abstract class RDBMUserLayoutStore implements IUserLayoutStore, Initializ
         return  pl;
     }
 
-    public void updateSystemProfile (IUserProfile profile) {
-        this.updateUserProfile(this.getSystemUser(), profile);
-    }
-
-    public IUserProfile addSystemProfile (IUserProfile profile) {
-        return  addUserProfile(this.getSystemUser(), profile);
-    }
-
-    public void deleteSystemProfile (int profileId) {
-        this.deleteUserProfile(this.getSystemUser(), profileId);
-    }
-
     private static class SystemUser implements IPerson {
+        private static final long serialVersionUID = 1L;
         private final int systemUserId;
 
         public SystemUser(int systemUserId) {

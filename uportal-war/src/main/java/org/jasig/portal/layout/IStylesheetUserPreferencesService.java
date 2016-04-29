@@ -33,7 +33,6 @@ import org.jasig.portal.utils.Populator;
  * stylesheet user preferences. All of the details around default values, scoping and persistence are taken care of here.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetUserPreferencesService {
     public enum PreferencesScope {
@@ -69,25 +68,7 @@ public interface IStylesheetUserPreferencesService {
      * @return The stylesheet descriptor for the current request and scope
      */
     public IStylesheetDescriptor getStylesheetDescriptor(HttpServletRequest request, PreferencesScope prefScope);
-    
-    /**
-     * Get an output property
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#getOutputProperty(String)
-     */
-    public String getOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
-    /**
-     * Set an output property
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#setOutputProperty(String, String)
-     */
-    public String setOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name, String value);
-    
+
     /**
      * Remove an output property
      * @param request The current request
@@ -96,7 +77,7 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#removeOutputProperty(String)
      */
     public String removeOutputProperty(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
+
     /**
      * Add all output properties to the provided Properties object
      * 
@@ -106,15 +87,6 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#populateOutputProperties(Populator)
      */
     public <P extends Populator<String, String>> P populateOutputProperties(HttpServletRequest request, PreferencesScope prefScope, P properties);
-    
-    /**
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#clearOutputProperties()
-     */
-    public void clearOutputProperties(HttpServletRequest request, PreferencesScope prefScope);
-    
 
     /**
      * Get a stylesheet parameter
@@ -142,16 +114,7 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#removeStylesheetParameter(String)
      */
     public String removeStylesheetParameter(HttpServletRequest request, PreferencesScope prefScope, String name);
-    
-    /**
-     * @return An iterable of all property names
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#getStylesheetParameter(String)
-     */
-    public Iterable<String> getStylesheetParameterNames(HttpServletRequest request, PreferencesScope prefScope);
-    
+
     /**
      * Add all stylesheet parameters to the provided Map
      * 
@@ -161,16 +124,7 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#populateStylesheetParameters(Populator)
      */
     public <P extends Populator<String, String>> P populateStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope, P stylesheetParameters);
-    
-    /**
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#clearStylesheetParameters()
-     */
-    public void clearStylesheetParameters(HttpServletRequest request, PreferencesScope prefScope);
 
-    
     /**
      * Get a layout attribute
      * @param request The current request
@@ -226,24 +180,8 @@ public interface IStylesheetUserPreferencesService {
      * @see IStylesheetUserPreferences#populateLayoutAttributes(String, Populator)
      */
     public <P extends Populator<String, String>> P populateLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId, P layoutAttributes);
-    
-    /**
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#clearLayoutAttributes(String)
-     */
-    public void clearLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope, String nodeId);
 
-    
-    /**
-     * @param request The current request
-     * @param prefScope The stylesheet preferences scope
-     * 
-     * @see IStylesheetUserPreferences#clearAllLayoutAttributes()
-     */
-    public void clearAllLayoutAttributes(HttpServletRequest request, PreferencesScope prefScope);
-    
     public void setStructureStylesheetOverride(HttpServletRequest request, String override);
     public void setThemeStyleSheetOverride(HttpServletRequest request, String override);
+
 }

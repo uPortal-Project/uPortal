@@ -27,11 +27,10 @@ import org.w3c.dom.Element;
  * A class describing a folder node fo the user layout structure.
  *
  * @author Peter Kharchenko  {@link <a href="mailto:pkharchenko@interactivebusiness.com"">pkharchenko@interactivebusiness.com"</a>}
- * @version 1.0
  */
 public class UserLayoutFolderDescription extends UserLayoutNodeDescription implements IUserLayoutFolderDescription {
 
-    protected String folderType = "regular";
+    private String folderType = "regular";
 
     /**
      * Reconstruct folder information from an xml <code>Element</code>
@@ -50,11 +49,6 @@ public class UserLayoutFolderDescription extends UserLayoutNodeDescription imple
     }
 
     public UserLayoutFolderDescription() {
-    }
-
-    public UserLayoutFolderDescription(IUserLayoutFolderDescription d) {
-        super(d);
-        setFolderType(d.getFolderType());
     }
 
     /**

@@ -32,13 +32,6 @@ public class Constants {
     public static final String NS_DECL = "xmlns:dlm";
     public static final String NS_URI = "http://www.uportal.org/layout/dlm";
 
-    // the following variables are to support backwards compatibility for
-    // users of the DLM functionality before it was rolled into the uPortal
-    // baseline code. This provides for just-in-time migration of any database
-    // values containing the old namespace prefix.
-    public static final String LEGACY_NS = "cp:";
-    public static final String LEGACY_ATT_ORIGIN      = LEGACY_NS + "origin";
-
     // define the names of attributes that hold layout adjustment permissions
     // LCL refers to the local name without a namespace prefix.
 
@@ -72,7 +65,6 @@ public class Constants {
     public static final String LCL_IS_TEMPLATE_USER    =    "isTemplateUser";
     public static final String ATT_IS_TEMPLATE_USER    = NS+LCL_IS_TEMPLATE_USER;
     public static final String ATT_TEMPLATE_LOGIN_ID   = NS+"templateLoginID";
-    public static final String ATT_DEBUG_PRINT         = NS+"debugPrint";
     public static final String ATT_TARGET              = NS+"target";
     public static final String ATT_USER_VALUE          = NS+"userValue";
 
@@ -91,9 +83,6 @@ public class Constants {
     public static final String ELM_PARM_EDIT           = NS+"parm";
 
     public static final String PLF = "RDBMDistributedLayoutStore.PLF";
-    public static final String STRUCTURE_PREFS
-                                    = "StructureStylesheetUserPreferences";
-    public static final String THEME_PREFS = "ThemeStylesheetUserPreferences";
 
     public static final String ROOT_FOLDER_ID="root";
     public static final String DIRECTIVE_PREFIX = "d";

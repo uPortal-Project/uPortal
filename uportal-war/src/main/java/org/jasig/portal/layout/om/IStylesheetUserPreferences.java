@@ -30,7 +30,6 @@ import org.jasig.portal.utils.Populator;
  * Implementations and returned data structures MUST be thread-safe
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IStylesheetUserPreferences {
     /**
@@ -38,12 +37,6 @@ public interface IStylesheetUserPreferences {
      */
     long getId();
 
-    long getStylesheetDescriptorId();
-
-    int getUserId();
-
-    int getProfileId();
-    
     /**
      * Get an output property
      * 
@@ -52,18 +45,7 @@ public interface IStylesheetUserPreferences {
      * @see Map#get(Object)
      */
     String getOutputProperty(String name);
-    
-    /**
-     * Set an output property
-     * 
-     * @param name output property name, cannot be null
-     * @param value output property value, cannot be null
-     * 
-     * @see Transformer#setOutputProperty(String, String)
-     * @see Map#put(Object, Object)
-     */
-    String setOutputProperty(String name, String value);
-    
+
     /**
      * Remove an output property
      * 
@@ -72,17 +54,6 @@ public interface IStylesheetUserPreferences {
      * @see Map#remove(Object)
      */
     String removeOutputProperty(String name);
-    
-    /**
-     * Add all output properties to the provided Properties object
-     */
-    <P extends Populator<String, String>> P populateOutputProperties(P properties);
-    
-    /**
-     * @see Properties#clear();
-     */
-    void clearOutputProperties();
-    
 
     /**
      * Get a stylesheet parameter
@@ -92,7 +63,7 @@ public interface IStylesheetUserPreferences {
      * @see Map#get(Object)
      */
     String getStylesheetParameter(String name);
-    
+
     /**
      * Set a transformer parameter
      * 
@@ -112,18 +83,13 @@ public interface IStylesheetUserPreferences {
      * @see Map#remove(Object)
      */
     String removeStylesheetParameter(String name);
-    
+
     /**
-     * Add all stylesheet parameters to the provided Map
+     * Add all stylesheet parameters to the provided Map.  IMPORTANT!  Used in
+     * exporting profiles.
      */
     <P extends Populator<String, String>> P populateStylesheetParameters(P stylesheetParameters);
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearStylesheetParameters();
 
-    
     /**
      * Get a layout attribute
      * 
@@ -170,16 +136,5 @@ public interface IStylesheetUserPreferences {
      * @return Read-only view of all layout nodeIds stored in these preferences
      */
     Collection<String> getAllLayoutAttributeNodeIds();
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearLayoutAttributes(String nodeId);
-
-    
-    /**
-     * @see Map#clear();
-     */
-    void clearAllLayoutAttributes();
 
 }

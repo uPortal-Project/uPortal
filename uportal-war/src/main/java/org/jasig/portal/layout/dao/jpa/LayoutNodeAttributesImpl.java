@@ -45,7 +45,6 @@ import org.hibernate.annotations.Type;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Entity
 @Table(
@@ -99,14 +98,6 @@ class LayoutNodeAttributesImpl {
         this.id = -1;
         this.entityVersion = -1;
         this.nodeId = nodeId;
-    }
-    
-    public LayoutNodeAttributesImpl(String nodeId, Map<String, String> attributes) {
-        Validate.notEmpty(nodeId, "nodeId cannot be null");
-        this.id = -1;
-        this.entityVersion = -1;
-        this.nodeId = nodeId;
-        this.attributes.putAll(attributes);
     }
 
     public long getId() {

@@ -37,11 +37,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import net.sf.ehcache.Ehcache;
 
 import org.apache.commons.lang.StringUtils;
@@ -84,16 +79,13 @@ import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.MapPopulator;
 import org.jasig.portal.utils.Tuple;
-import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
-import org.jasig.portal.xml.xpath.XPathOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -147,8 +139,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     };
     private IUserIdentityStore userIdentityStore;
     private IStylesheetUserPreferencesDao stylesheetUserPreferencesDao;
-    private XPathOperations xPathOperations;
-    private XmlUtilities xmlUtilities;
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletEntityDao portletEntityDao;
     private IPortalDataHandlerService portalDataHandlerService;
@@ -170,16 +160,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     public void setPortletEntityDao(@Qualifier("transient")
     IPortletEntityDao portletEntityDao) {
         this.portletEntityDao = portletEntityDao;
-    }
-
-    @Autowired
-    public void setXmlUtilities(XmlUtilities xmlUtilities) {
-        this.xmlUtilities = xmlUtilities;
-    }
-
-    @Autowired
-    public void setXPathOperations(XPathOperations xPathOperations) {
-        this.xPathOperations = xPathOperations;
     }
 
     @Autowired
@@ -232,7 +212,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                 logger.warn("No UserView found for FragmentDefinition {}, it will be skipped.", fragmentDefinition.getName());
                 continue;
             }
-            final Node copy = layout.importNode(userView.layout.getDocumentElement(), true);
+            final Node copy = layout.importNode(userView.getLayout().getDocumentElement(), true);
             layout.appendChild(copy);
             layouts.put(fragmentDefinition.getOwnerId(), layout);
         }
@@ -253,7 +233,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         return this.fragmentActivator;
     }
 
-    protected IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile,
+    private IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile,
             long stylesheetDescriptorId, Set<String> fragmentNames) {
         if (this.isFragmentOwner(person)) {
             return null;
@@ -265,8 +245,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         final IStylesheetUserPreferences stylesheetUserPreferences = this.stylesheetUserPreferencesDao
                 .getStylesheetUserPreferences(stylesheetDescriptor, person, profile);
 
-        final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl(
-                stylesheetDescriptorId, person.getID(), profile.getProfileId());
+        final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl();
 
         final FragmentActivator fragmentActivator = this.getFragmentActivator();
 
@@ -283,13 +262,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             //IStylesheetUserPreferences only exist if something was actually set
             final IStylesheetUserPreferences fragmentStylesheetUserPreferences = this.stylesheetUserPreferencesDao
-                    .getStylesheetUserPreferences(stylesheetDescriptor, userView.getUserId(), userView.profileId);
+                    .getStylesheetUserPreferences(stylesheetDescriptor, userView.getUserId(), userView.getProfileId());
             if (fragmentStylesheetUserPreferences == null) {
                 continue;
             }
 
             //Get the info needed to DLMify node IDs
-            final Element root = userView.layout.getDocumentElement();
+            final Element root = userView.getLayout().getDocumentElement();
             final String labelBase = root.getAttribute(Constants.ATT_ID);
 
             boolean modified = false;
@@ -641,7 +620,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
-    protected void addStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
+    private void addStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
             org.dom4j.Document layoutDoc, int stylesheetId, String attributeType) {
         final IStylesheetDescriptor structureStylesheetDescriptor = this.stylesheetDescriptorDao
                 .getStylesheetDescriptor(stylesheetId);
@@ -922,7 +901,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
     }
 
-    protected IPortletEntity getPortletEntity(String fName, String layoutNodeId, int userId) {
+    private IPortletEntity getPortletEntity(String fName, String layoutNodeId, int userId) {
         //Try getting the entity
         final IPortletEntity portletEntity = this.portletEntityDao.getPortletEntity(layoutNodeId, userId);
         if (portletEntity != null) {
@@ -948,7 +927,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         return this.portletEntityDao.createPortletEntity(portletDefinitionId, layoutNodeId, userId);
     }
 
-    protected void loadStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
+    private void loadStylesheetUserPreferencesAttributes(IPerson person, IUserProfile profile,
             org.dom4j.Element layout, final int structureStylesheetId, final String nodeType) {
 
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao
@@ -1327,8 +1306,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
                 if (fragmentDefinition.isApplicable(person)) {
                     final UserView userView = activator.getUserView(fragmentDefinition, locale);
-                    if (userView != null && userView.layout != null) {
-                        applicables.add(userView.layout);
+                    if (userView != null && userView.getLayout() != null) {
+                        applicables.add(userView.getLayout());
                     }
                     fragmentNames.add(fragmentDefinition.getName());
                 }
@@ -1441,7 +1420,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     continue;
                 }
 
-                final Element node = userView.layout.getElementById(sId);
+                final Element node = userView.getLayout().getElementById(sId);
                 if (node != null) // found it
                 {
                     if (node.getTagName().equals(Constants.ELM_CHANNEL)) {
@@ -1458,46 +1437,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         return info;
     }
 
-    /**
-       When user preferences are stored in the database for changes made to
-       an incorporated node the node id can not be used because it does not
-       represent a row in the up_layout_struct table for the user. The plfid
-       must be used. Null will never be returned unless the layout or
-       processing has really been screwed up. This is because changes made to
-       the user prefs calls UserPrefsHandler which generates a shadow node in
-       the db and sets the plfid of that node into the corresponding node in
-       the PLF prior to the call to update the user prefs in the db.
-     */
-    private String getPlfId(Document PLF, String incdId) {
-        Element element = null;
-        try {
-            final XPathFactory fac = XPathFactory.newInstance();
-            final XPath xp = fac.newXPath();
-            element = (Element) xp.evaluate("//*[@ID = '" + incdId + "']", PLF, XPathConstants.NODE);
-        }
-        catch (final XPathExpressionException xpee) {
-            throw new RuntimeException(xpee);
-        }
-        if (element == null) {
-            logger.warn("The specified folderId was not found in the user's PLF: {}", incdId);
-            return null;
-        }
-        final Attr attr = element.getAttributeNode(Constants.ATT_PLF_ID);
-        if (attr == null) {
-            return null;
-        }
-        return attr.getValue();
-    }
-
     @Override
     protected Element getStructure(Document doc, LayoutStructure ls) {
         Element structure = null;
 
-        // handle migration of legacy namespace
         String type = ls.getType();
-        if (type != null && type.startsWith(Constants.LEGACY_NS)) {
-            type = Constants.NS + type.substring(Constants.LEGACY_NS.length());
-        }
 
         if (ls.isChannel()) {
             final IPortletDefinition channelDef = this.portletDefinitionRegistry.getPortletDefinition(String.valueOf(ls
@@ -1507,20 +1451,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                         .getElementForChannel(doc, channelPrefix + ls.getStructId(), channelDef, ls.getLocale());
             }
             else {
-                // Create an error channel if channel is missing or not approved
-                String missingChannel = "Unknown";
-                if (channelDef != null) {
-                    missingChannel = channelDef.getName();
-                }
                 structure = this.getElementForChannel(doc,
                         channelPrefix + ls.getStructId(),
                         MissingPortletDefinition.INSTANCE,
                         null);
-                //        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId());
-                //        structure = MissingPortletDefinition.INSTANCE.getDocument(doc, channelPrefix + ls.getStructId(),
-                //                "The '" + missingChannel + "' channel is no longer available. " +
-                //                "Please remove it from your layout.",
-                //                -1);
             }
         }
         else {
@@ -1553,11 +1487,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             for (final Iterator itr = ls.getParameters().iterator(); itr.hasNext();) {
                 final StructureParameter sp = (StructureParameter) itr.next();
                 String pName = sp.getName();
-
-                // handle migration of legacy namespace
-                if (pName.startsWith(Constants.LEGACY_NS)) {
-                    pName = Constants.NS + sp.getName().substring(Constants.LEGACY_NS.length());
-                }
 
                 if (!ls.isChannel()) { // Folder
                     if (pName.startsWith(Constants.NS)) {
@@ -1877,10 +1806,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return "Missing channel";
         }
 
-        @Override public String getAlternativeMaximizedLink() {
+        @Override
+        public String getAlternativeMaximizedLink() {
             return null;
         }
-        
+
         @Override
         public String getTarget() {
           return null;
@@ -1940,14 +1870,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         @Override
         public void setResourceTimeout(Integer resourceTimeout) {
         }
-        
+
         @Override
         public Double getRating() {
             return null;
         }
 
         @Override
-        public void setRating(Double rating) {			
+        public void setRating(Double rating) {
         }
 
         @Override
@@ -1956,7 +1886,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         @Override
-        public void setUsersRated(Long usersRated) {			
+        public void setUsersRated(Long usersRated) {
         }
 
         public void addLocalizedDescription(String locale, String chanDesc) {
@@ -1969,9 +1899,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         public void addParameter(IPortletDefinitionParameter parameter) {
-        }
-
-        public void clearParameters() {
         }
 
         public Date getApprovalDate() {
@@ -2022,25 +1949,10 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             return 0;
         }
 
-        public boolean hasAbout() {
-            return false;
-        }
-
-        public boolean hasHelp() {
-            return false;
-        }
-
-        public boolean isEditable() {
-            return false;
-        }
-
         public void removeParameter(IPortletDefinitionParameter parameter) {
         }
 
         public void removeParameter(String name) {
-        }
-
-        public void replaceParameters(Set<IPortletDefinitionParameter> parameters) {
         }
 
         public void setApprovalDate(Date approvalDate) {
@@ -2052,9 +1964,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         public void setDescription(String descr) {
         }
 
-        public void setEditable(boolean editable) {
-        }
-
         public void setExpirationDate(Date expirationDate) {
         }
 
@@ -2062,12 +1971,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
 
         public void setFName(String fname) {
-        }
-
-        public void setHasAbout(boolean hasAbout) {
-        }
-
-        public void setHasHelp(boolean hasHelp) {
         }
 
         public void setName(String name) {
@@ -2177,51 +2080,40 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private static final class MissingPortletType implements IPortletType {
 
         public int getId() {
-            // TODO Auto-generated method stub
             return -1;
         }
 
         public String getName() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         public String getDescription() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         public String getCpdUri() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         public void setDescription(String descr) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void setCpdUri(String cpdUri) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public String getDataId() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String getDataTitle() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public String getDataDescription() {
-            // TODO Auto-generated method stub
             return null;
         }
 

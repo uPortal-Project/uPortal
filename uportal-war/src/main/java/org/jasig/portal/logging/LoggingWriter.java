@@ -23,36 +23,26 @@ import java.io.Writer;
 
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Writer that writes to a {@link Logger}
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LoggingWriter extends Writer {
     private static final String NEWLINE = System.getProperty("line.separator");
     private final StringBuilder builder = new StringBuilder();
     private final Logger logger;
     private final LogLevel appendLevel;
-    
-    public LoggingWriter(String loggerName, LogLevel appendLevel) {
-        this(LoggerFactory.getLogger(loggerName), appendLevel);
-    }
-    
-    public LoggingWriter(Class<?> clazz, LogLevel appendLevel) {
-        this(LoggerFactory.getLogger(clazz), appendLevel);
-    }
-    
+
     public LoggingWriter(Logger logger, LogLevel appendLevel) {
         Validate.notNull(logger);
         Validate.notNull(appendLevel);
-        
+
         this.logger = logger;
         this.appendLevel = appendLevel;
     }
-    
+
     private void logIfNeeded() {
         while (builder.length() > 0) {
             synchronized (builder) {
