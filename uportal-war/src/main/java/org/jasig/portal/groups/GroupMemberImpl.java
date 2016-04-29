@@ -169,8 +169,7 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
      */
     @Override
     public boolean isMemberOf(IEntityGroup group) throws GroupsException {
-        final Set<IEntityGroup> parents = getParentGroups();
-        return parents.contains(group);
+        return getParentGroups().contains(group);
     }
 
     /**

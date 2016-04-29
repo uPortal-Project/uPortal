@@ -467,8 +467,7 @@ private void primAddMember(IGroupMember gm) throws GroupsException {
  * @return Set
  */
 private Set<IGroupMember> primGetAllMembers(Set<IGroupMember> rslt) throws GroupsException {
-    final Set<IGroupMember> members = getChildren();
-    for (IGroupMember gm : members) {
+    for (IGroupMember gm : getChildren()) {
         rslt.add(gm);
         if (gm.isGroup()) {
             ((EntityGroupImpl) gm).primGetAllMembers(rslt);

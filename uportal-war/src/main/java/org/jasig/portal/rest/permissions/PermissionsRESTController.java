@@ -296,9 +296,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
-                IEntityGroup parent = iter.next();
-
+            for (IEntityGroup parent : member.getAncestorGroups()) {
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, null, null, parentPrincipal.getKey(), null);
                 for (IPermission permission : parentPermissions) {
@@ -362,9 +360,7 @@ public class PermissionsRESTController {
         Set<UniquePermission> inheritedAssignments = new HashSet<UniquePermission>();
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(p.getKey(), p.getType());
-            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
-                IEntityGroup parent = iter.next();
-
+            for (IEntityGroup parent : member.getAncestorGroups()) {
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);
                 for (IPermission permission : parentPermissions) {
