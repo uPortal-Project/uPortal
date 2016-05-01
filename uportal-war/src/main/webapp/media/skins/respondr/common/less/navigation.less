@@ -19,8 +19,6 @@
 
 .portal-nav {
     background: @navbar-background-color;
-    position : relative;
-    z-index  : 5px;
 
     .sidebar-offcanvas {
 
@@ -210,7 +208,8 @@
 
 }
 
-/* TODO:  this one is defined backwards;  we normally define "mobile first" and use media queries to alter styles for larger displays */
+/* TODO:  this one is defined backwards;  we normally define "mobile first" and
+   use media queries to alter styles for larger displays */
 @media only screen and (max-width: 769px) {
 
     /*
@@ -229,14 +228,12 @@
                 left: 300px; /* 6 columns */
             }
             .sidebar-offcanvas {
-                position: absolute;
-                top: -5px;
-                left: -300px; /* 6 columns */
+                position: fixed;
+                top: 60px;
+                left: 0; /* not sure why this is needed, but it is */
                 width: 300px; /* 6 columns */
 
                 .list-group-horizontal  {
-                    position: fixed;
-                    top: 24px;
                     width: 270px;
 
                     .list-group-item {
