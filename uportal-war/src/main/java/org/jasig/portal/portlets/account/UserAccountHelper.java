@@ -178,10 +178,9 @@ public class UserAccountHelper {
 
     public List<JsonEntityBean> getParentGroups(String target) {
         IGroupMember member = GroupService.getEntity(target, IPerson.class);
-        Iterator<IEntityGroup> iterator = member.getAncestorGroups().iterator();
-        List<JsonEntityBean> parents = new ArrayList<JsonEntityBean>();
-        while (iterator.hasNext()) {
-            parents.add(groupListHelper.getEntity(iterator.next()));
+        List<JsonEntityBean> parents = new ArrayList<>();
+        for (IEntityGroup ancestor : member.getAncestorGroups()) {
+            parents.add(groupListHelper.getEntity(ancestor));
         }
         Collections.sort(parents);
         return parents;

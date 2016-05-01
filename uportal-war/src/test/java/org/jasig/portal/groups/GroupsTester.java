@@ -103,11 +103,8 @@ public class GroupsTester extends TestCase {
         }
         private void runTest() throws GroupsException {
             int numMembers = 0, numContainingGroups = 0;
-            Iterator itr = null;
-            for (itr = group.getChildren().iterator(); itr.hasNext(); itr.next() )
-                { numMembers++; }
-            for (itr = group.getParentGroups().iterator(); itr.hasNext(); itr.next() )
-                { numContainingGroups++; }
+            numMembers = group.getChildren().size();
+            numContainingGroups = group.getParentGroups().size();
 //          print (printID + " members: " + numMembers + " entities: " + numEntities + " containing groups: " + numContainingGroups);
         }
     } 
@@ -195,8 +192,8 @@ private Collection getAllGroupMembers(IGroupMember gm) throws GroupsException
 {
     Collection list = new ArrayList();
     if (gm.isGroup()) {
-        for(Iterator itr=gm.asGroup().getDescendants().iterator(); itr.hasNext();) {
-            list.add(itr.next());
+        for (IGroupMember descendant : gm.asGroup().getDescendants()) {
+            list.add(descendant);
         }
     }
     return list;
@@ -449,15 +446,9 @@ public void testAddToALargeGroup() throws Exception
     assertNotNull(msg, dupBigGroup);
     msg = "Getting members from duplicate group.";
     print(msg);
-    Iterator itr = dupBigGroup.getChildren().iterator();
     msg = "Done retrieving members.  Will now count members.";
     print(msg);
-    int numMembers = 0;
-    while ( itr.hasNext() )
-    {
-        itr.next();
-        numMembers++;
-    }
+    int numMembers = dupBigGroup.getChildren().size();
     assertEquals(msg, numMembers, (numEntities + numAdditionalEntities));
     
 
@@ -483,18 +474,10 @@ public void testPagsContains() throws Exception
     
     
     message = "PAGS groups should contain no entity members";
-    Iterator itr = null;
-    Object o = null;
+    assertTrue(message, pagsUsers.getChildren().size() == 0);
+    assertTrue(message, pagsDs.getChildren().size() == 0);
 
-    for (itr = pagsUsers.getChildren().iterator(); itr.hasNext();)
-        { o = itr.next(); }
-    assertTrue(message, o==null);
-    
-    for (itr = pagsDs.getChildren().iterator(); itr.hasNext();)
-        { o = itr.next(); }
-    assertTrue(message, o==null);
-    
-    
+
     // Entities existing in UP_PERSON_DIR
     IEntity demo = GroupService.getEntity("demo",IPerson.class);
     IEntity admin = GroupService.getEntity("admin",IPerson.class);
@@ -564,9 +547,7 @@ public void testAddAndDeleteMembers() throws Exception
 
     msg = "Retrieving members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getChildren().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getChildren());
     assertEquals(msg, (totNumGroups - 1), list.size());
 
     msg = "Adding " + (totNumEntities - 2) + " to root group.";
@@ -592,9 +573,7 @@ public void testAddAndDeleteMembers() throws Exception
 
     msg = "Retrieving ALL members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getDescendants().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getDescendants());
     assertEquals(msg, (totNumGroups - 1 + totNumEntities), list.size());
 
     msg = "Deleting child group from root group.";
@@ -605,9 +584,7 @@ public void testAddAndDeleteMembers() throws Exception
 
     msg = "Retrieving ALL members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getDescendants().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getDescendants());
     assertEquals(msg, (totNumGroups - 2 + totNumEntities - 2 ), list.size());
 
 
@@ -740,9 +717,7 @@ public void testDeleteChildGroup() throws Exception
 
     msg = "Retrieving containing groups from child.";
     print(msg);
-    list = new ArrayList();
-    for( itr=child.getParentGroups().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(child.getParentGroups());
     assertEquals(msg, (totNumGroups - 1), list.size());
 
     msg = "Adding " + (totNumEntities) + " to child group.";
@@ -752,9 +727,7 @@ public void testDeleteChildGroup() throws Exception
 
     msg = "Retrieving members from child group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=child.getChildren().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(child.getChildren());
     assertEquals(msg, (totNumEntities), list.size());
 
     msg = "Updating child.";
@@ -793,9 +766,7 @@ public void testDeleteChildGroup() throws Exception
     { 
         String groupKey = groups[idx].getKey();
         IEntityGroup g = findGroup(groupKey);
-        list = new ArrayList();
-        for( itr=g.getChildren().iterator(); itr.hasNext(); )
-            { list.add(itr.next()); }
+        list = new ArrayList(g.getChildren());
         assertEquals(msg, 0, list.size());
 	}
     
@@ -1083,18 +1054,14 @@ public void testRetrieveParentGroups() throws Exception
 
     msg = "Getting ALL containing groups for " + testEntity;
     print(msg);
-    list = new ArrayList();
-    for (it = testEntity.getAncestorGroups().iterator(); it.hasNext();)
-        { list.add(it.next()); }
+    list = new ArrayList(testEntity.getAncestorGroups());
     assertEquals(msg, numAllGroups, list.size());
     
 
     IEntity duplicateTestEntity = GroupService.getEntity(testEntity.getKey(), testEntity.getType());
     msg = "Getting ALL containing groups for DUPLICATE entity:" + testEntity;
     print(msg);
-    list = new ArrayList();
-    for (it = duplicateTestEntity.getAncestorGroups().iterator(); it.hasNext();)
-        { list.add(it.next()); }
+    list = new ArrayList(duplicateTestEntity.getAncestorGroups());
     assertEquals(msg, numAllGroups, list.size());
       
     
@@ -1325,9 +1292,7 @@ public void testUpdateMembersVisibility() throws Exception
 
     msg = "Retrieving members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getChildren().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getChildren());
     assertEquals(msg, (totNumGroups - 1), list.size());
 
     msg = "Adding " + (totNumEntities - 2) + " to root group.";
@@ -1337,9 +1302,7 @@ public void testUpdateMembersVisibility() throws Exception
 
     msg = "Retrieving members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getChildren().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getChildren());
     assertEquals(msg, (totNumGroups - 1 + totNumEntities - 2), list.size());
 
     msg = "Adding 2 entities to child group.";
@@ -1349,9 +1312,7 @@ public void testUpdateMembersVisibility() throws Exception
 
     msg = "Retrieving ALL members from root group.";
     print(msg);
-    list = new ArrayList();
-    for( itr=rootGroup.getDescendants().iterator(); itr.hasNext(); )
-        { list.add(itr.next()); }
+    list = new ArrayList(rootGroup.getDescendants());
     assertEquals(msg, (totNumGroups - 1 + totNumEntities), list.size());
 
     // At this point, the child group members should not yet be aware of their parents.
@@ -1360,8 +1321,7 @@ public void testUpdateMembersVisibility() throws Exception
     list = new ArrayList();
     for(idx=1; idx<totNumGroups; idx++)
     { 
-        for (itr = groups[idx].getParentGroups().iterator(); itr.hasNext();)
-            { list.add(itr.next()); }
+        list.addAll(groups[idx].getParentGroups());
         assertEquals(msg, 0, list.size());
     }
 
@@ -1406,9 +1366,7 @@ public void testUpdateMembersVisibility() throws Exception
     // Child entity should now be aware of both of its parents.
     msg = "Checking child entity for ALL containing groups.";
     print(msg);
-    list = new ArrayList();
-    for (itr = ent.getAncestorGroups().iterator(); itr.hasNext();)
-            { list.add(itr.next()); }
+    list = new ArrayList(ent.getAncestorGroups());
     assertEquals(msg, 2, list.size());
     
 

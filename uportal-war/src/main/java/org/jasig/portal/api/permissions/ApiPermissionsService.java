@@ -82,8 +82,7 @@ public class ApiPermissionsService implements PermissionsService {
 
         if (includeInherited) {
             IGroupMember member = GroupService.getGroupMember(authP.getKey(), authP.getType());
-            for (Iterator<IEntityGroup> iter = member.getAncestorGroups().iterator(); iter.hasNext();) {
-                IEntityGroup parent = iter.next();
+            for (IEntityGroup parent : member.getAncestorGroups()) {
 
                 IAuthorizationPrincipal parentPrincipal = this.authorizationService.newPrincipal(parent);
                 IPermission[] parentPermissions = permissionStore.select(null, parentPrincipal.getPrincipalString(), null, null, null);

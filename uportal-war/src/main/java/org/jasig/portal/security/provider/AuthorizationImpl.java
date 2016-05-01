@@ -1011,8 +1011,8 @@ throws AuthorizationException
                     }
 
                     if (targetEntity != null) {
-                        for (Iterator containing = targetEntity.getAncestorGroups().iterator(); containing.hasNext();) {
-                            containingGroups.add(((IEntityGroup)containing.next()).getKey());
+                        for (IEntityGroup ancestor : targetEntity.getAncestorGroups()) {
+                            containingGroups.add(ancestor.getKey());
                         }
                     }
                 }

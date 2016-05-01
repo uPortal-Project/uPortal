@@ -82,9 +82,7 @@ public class GroupAdministrationHelper {
 		form.setType(groupListHelper.getEntityType(group).toString());
 		
 		// add child groups to our group form bean
-		Iterator<IGroupMember> groupIter = group.getChildren().iterator();
-		while (groupIter.hasNext()) {
-			IGroupMember child = groupIter.next();
+		for (IGroupMember child : group.getChildren()) {
 			JsonEntityBean childBean = groupListHelper.getEntity(child);
 			form.addMember(childBean);
 		}
@@ -111,9 +109,7 @@ public class GroupAdministrationHelper {
 		
 		// remove this group from the membership list of any current parent
 		// groups
-		Iterator<IEntityGroup> iter = group.getParentGroups().iterator();
-		while (iter.hasNext()) {
-			IEntityGroup parent = (IEntityGroup) iter.next();
+		for (IEntityGroup parent : group.getParentGroups()) {
 			parent.removeChild(group);
 			parent.updateMembers();
 		}
@@ -170,9 +166,7 @@ public class GroupAdministrationHelper {
 		IEntityGroup group = GroupService.findGroup(groupForm.getKey());
 		
 		// clear the current group membership list
-		Iterator<IGroupMember> groupIter = group.getChildren().iterator();
-		while (groupIter.hasNext()) {
-			IGroupMember child = groupIter.next();
+		for (IGroupMember child : group.getChildren()) {
 			group.removeChild(child);
 		}
 		

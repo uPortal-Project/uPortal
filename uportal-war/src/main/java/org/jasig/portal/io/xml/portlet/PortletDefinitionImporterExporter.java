@@ -504,9 +504,7 @@ public class PortletDefinitionImporterExporter
         // Delete existing category memberships for this portlet
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
         IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
-        Iterator<IEntityGroup> iter = channelDefEntity.getAncestorGroups().iterator();
-        while (iter.hasNext()) {
-            IEntityGroup group = iter.next();
+        for (IEntityGroup group : channelDefEntity.getAncestorGroups()) {
             group.removeChild(channelDefEntity);
             group.update();
         }
