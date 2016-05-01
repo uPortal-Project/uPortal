@@ -597,9 +597,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     protected void updateUser(final int userId, final IPerson person, final TemplateUser templateUser) throws Exception {
         // Remove my existing group memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        Iterator<IEntityGroup> myExistingGroups = me.getParentGroups().iterator();
-        while (myExistingGroups.hasNext()) {
-            IEntityGroup eg = (IEntityGroup)myExistingGroups.next();
+        for (IEntityGroup eg : me.getParentGroups()) {
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
             if (leg != null) {
                 removePersonFromGroup(person, me, leg);
@@ -608,9 +606,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
 
         // Copy template user's groups memberships
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), org.jasig.portal.security.IPerson.class);
-        Iterator<IEntityGroup> templateGroups = template.getParentGroups().iterator();
-        while (templateGroups.hasNext()) {
-            IEntityGroup eg = (IEntityGroup)templateGroups.next();
+        for (IEntityGroup eg : template.getParentGroups()) {
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
             if (leg != null) {
                 addPersonToGroup(person, me, leg);
@@ -729,9 +725,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         // Copy template user's groups memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
         IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
-        Iterator<IEntityGroup> templateGroups = template.getParentGroups().iterator();
-        while (templateGroups.hasNext()) {
-            IEntityGroup eg = (IEntityGroup)templateGroups.next();
+        for (IEntityGroup eg : template.getParentGroups()) {
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
             if (leg != null) {
                 addPersonToGroup(person, me, leg);

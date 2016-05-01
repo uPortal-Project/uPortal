@@ -434,9 +434,7 @@ public class PortletDefinitionImporterExporter
         synchronized(this.groupUpdateLock) {
             // Delete existing category memberships for this channel
             if (!newChannel) {
-                final Iterator<IEntityGroup> iter = portletDefEntity.getAncestorGroups().iterator();
-                while (iter.hasNext()) {
-                    final IEntityGroup group = iter.next();
+                for (IEntityGroup group : portletDefEntity.getAncestorGroups()) {
                     group.removeChild(portletDefEntity);
                     group.update();
                 }
@@ -448,7 +446,7 @@ public class PortletDefinitionImporterExporter
                 categoryGroup.addChild(portletDefEntity);
                 categoryGroup.updateMembers();
             }
-    
+
             // Set groups
             final AuthorizationService authService = AuthorizationService.instance();
             final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);

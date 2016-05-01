@@ -22,22 +22,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApiGroupsService implements GroupsService {
-    private static final Log log = LogFactory.getLog(ApiGroupsService.class);
     private static final String ROOT_GROUP_KEY = "local.0";
 
     @Override
@@ -123,13 +118,12 @@ public class ApiGroupsService implements GroupsService {
                     if(groupMember.getLeafType().equals(IPerson.class)) {
                         String groupMemberName = EntityService.instance().lookupEntityName(EntityEnum.GROUP,groupMember.getKey());
                         if(groupName.equalsIgnoreCase(groupMemberName)) {
-                            Iterator<IGroupMember> it = groupMember.asGroup().getDescendants().iterator();
-
-                            while(it.hasNext()) {
-                                IEntity e = (IEntity) it.next();  // TODO:  Probably broken
-                                EntityIdentifier ident = e.getUnderlyingEntityIdentifier();
-                                Entity member = findMember(ident.getKey(),true);
-                                members.add(member);
+                            for (IGroupMember gm : groupMember.asGroup().getDescendants()) {
+                                if (!gm.isGroup()) {
+                                    EntityIdentifier ident = gm.getUnderlyingEntityIdentifier();
+                                    Entity member = findMember(ident.getKey(), true);
+                                    members.add(member);
+                                }
                             }
                             return members;
                         }

@@ -104,28 +104,20 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
  * fail anyway.
  * @param group ILockableEntityGroup
  */
-private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group)
-throws GroupsException
-{
-    Iterator<IEntityGroup> itr;
-    IEntityGroup containingGroup = null;
-    ILockableEntityGroup lockableGroup = null;
-    IEntityLock lock = null;
-    List lockableGroups = new ArrayList();
+private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group) throws GroupsException {
+
+//    IEntityLock lock = null;
+    List<ILockableEntityGroup> lockableGroups = new ArrayList<>();
     try
     {
         String lockOwner = group.getLock().getLockOwner();
-        for ( itr=group.getParentGroups().iterator(); itr.hasNext(); )
-        {
-            containingGroup = (IEntityGroup) itr.next();
-            lockableGroup=
+        for (IEntityGroup containingGroup : group.getParentGroups()) {
+            ILockableEntityGroup lockableGroup =
                 GroupService.findLockableGroup(containingGroup.getKey(), lockOwner);
                 if ( lockableGroup != null )
                      { lockableGroups.add(lockableGroup); }
         }
-        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
-        {
-            lockableGroup = (ILockableEntityGroup) itr.next();
+        for (ILockableEntityGroup lockableGroup : lockableGroups) {
             lockableGroup.removeChild(group);
             lockableGroup.updateMembers();
         }
@@ -133,13 +125,10 @@ throws GroupsException
     catch (GroupsException ge)
         { throw new GroupsException("Could not remove deleted group " + group.getKey() +
                 " from parent", ge); }
-    finally
-    {
-        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
-        {
-            lock = ((ILockableEntityGroup) itr.next()).getLock();
-            try
-            {
+    finally {
+        for (ILockableEntityGroup lockableGroup : lockableGroups) {
+            IEntityLock lock = lockableGroup.getLock();
+            try {
                 if ( lock.isValid() )
                     { lock.release(); }
             }

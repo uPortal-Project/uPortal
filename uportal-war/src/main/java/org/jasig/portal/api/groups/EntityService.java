@@ -55,7 +55,7 @@ public final class EntityService {
         Set<Entity> results = new HashSet<Entity>();
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
         EntityIdentifier[] identifiers;
-        Class identifierType;
+        Class<?> identifierType;
 
         // if the entity type is a group, use the group service's findGroup method
         // to locate it
