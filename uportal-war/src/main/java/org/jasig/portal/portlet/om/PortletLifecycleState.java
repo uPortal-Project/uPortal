@@ -21,36 +21,47 @@ package org.jasig.portal.portlet.om;
 /**
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 public enum PortletLifecycleState {
-	
-	CREATED(0), APPROVED(1), PUBLISHED(2), EXPIRED(3), MAINTENANCE(4);
+
+    CREATED(0), APPROVED(1), PUBLISHED(2), EXPIRED(3), MAINTENANCE(4);
 
     public static final String MAINTENANCE_MODE_PARAMETER_NAME = "PortletLifecycleState.inMaintenanceMode";
 
-	private int order;
+    private int order;
 
-	private PortletLifecycleState(int order) {
-		this.order = order;
-	}
-	
-	public int getOrder() {
-		return this.order;
-	}
-	
-	public boolean isBefore(PortletLifecycleState state) {
-		return (this.getOrder() < state.getOrder());
-	}
+    private PortletLifecycleState(int order) {
+        this.order = order;
+    }
 
+    public int getOrder() {
+        return this.order;
+    }
+
+    /**
+     * Ordering methods are used in Import/Export and Webflow XML.
+     */
+    public boolean isBefore(PortletLifecycleState state) {
+        return (this.getOrder() < state.getOrder());
+    }
+
+    /**
+     * Ordering methods are used in Import/Export and Webflow XML.
+     */
     public boolean isEqualToOrBefore(PortletLifecycleState state) {
         return (this.getOrder() <= state.getOrder());
     }
 
-	public boolean isAfter(PortletLifecycleState state) {
-		return (this.getOrder() > state.getOrder());
-	}
+    /**
+     * Ordering methods are used in Import/Export and Webflow XML.
+     */
+    public boolean isAfter(PortletLifecycleState state) {
+        return (this.getOrder() > state.getOrder());
+    }
 
+    /**
+     * Ordering methods are used in Import/Export and Webflow XML.
+     */
     public boolean isEqualToOrAfter(PortletLifecycleState state) {
         return (this.getOrder() >= state.getOrder());
     }

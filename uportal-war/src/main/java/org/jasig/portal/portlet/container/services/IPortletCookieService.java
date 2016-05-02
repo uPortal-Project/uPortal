@@ -28,31 +28,30 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * Service interface for implementing Cookie support for Portlets.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletCookieService {
     public static final String DEFAULT_PORTAL_COOKIE_NAME = "org.jasig.portal.PORTLET_COOKIE";
     public static final String DEFAULT_PORTAL_COOKIE_COMMENT = "uPortal Portlet Master Cookie";
-    
+
     /**
      * Check if the portal cookie already exists, if it does update its feilds, if not
      * create it.
      * Should be called for every request via a Servlet Filter.
      */
     public void updatePortalCookie(HttpServletRequest request, HttpServletResponse response);
-    
+
     /**
      * Get all cookies that are visible to the portlet
      */
     public Cookie[] getAllPortletCookies(HttpServletRequest request, IPortletWindowId portletWindowId);
-    
+
     /**
      * Adds the specified cookie for the specified portlet.
      */
     public void addCookie(HttpServletRequest request, IPortletWindowId portletWindowId, Cookie cookie);
-    
+
     /**
-     * Purges expired cookies
+     * Purges expired cookies.  Managed in schedulerContext.xml.
      */
     public boolean purgeExpiredCookies();
 }

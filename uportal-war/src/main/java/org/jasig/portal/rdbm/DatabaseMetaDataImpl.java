@@ -39,10 +39,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-
 /**
  * @author Eric Dalquist <a href="mailto:edalquist@unicon.net">edalquist@unicon.net</a>
- * @version $Revision$ $Date$
  */
 public class DatabaseMetaDataImpl implements IDatabaseMetadata, InitializingBean {
     public static final class PostgreSQLDb extends JoinQueryString {

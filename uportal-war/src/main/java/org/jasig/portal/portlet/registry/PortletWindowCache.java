@@ -33,14 +33,11 @@ import org.jasig.portal.portlet.om.IPortletWindowDescriptor;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.threading.NoopLock;
 
-import com.google.common.base.Function;
-
 /**
  * Utility for caching portlet windows and window data in memory. Ensures a consistent view for accessing the data by
  * different sets of keys
  * 
  * @author Eric Dalquist
- * @version $Revision$
  * @param <T>
  */
 class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializable {
@@ -70,33 +67,7 @@ class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializ
             readLock = NoopLock.INSTANCE;
         }
     }
-    
-    public T storeIfAbsentWindow(IPortletWindowId portletWindowId, Function<IPortletWindowId, T> windowCreator) {
-        //Check if the entity already exists (uses a read lock)
-        T existingWindow = this.getWindow(portletWindowId);
-        if (existingWindow != null) {
-            return existingWindow;
-        }
-        
-        writeLock.lock();
-        try {
-            //Check again inside the write lock
-            existingWindow = this.windowsById.get(portletWindowId);
-            if (existingWindow != null) {
-                return existingWindow;
-            }
-            
-            final T window = windowCreator.apply(portletWindowId);
 
-            this.storeWindow(window);
-            
-            return window;
-        }
-        finally {
-            writeLock.unlock();
-        }
-    }
-    
     public T storeIfAbsentWindow(T window) {
         final IPortletWindowId portletWindowId = window.getPortletWindowId();
         
@@ -170,12 +141,12 @@ class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializ
             readLock.unlock();
         }
     }
-    
+
     public T getWindow(IPortletWindowId portletWindowId) {
         if (this.windowsById.isEmpty()) {
             return null;
         }
-        
+
         readLock.lock();
         try {
             return this.windowsById.get(portletWindowId);
@@ -184,25 +155,8 @@ class PortletWindowCache<T extends IPortletWindowDescriptor> implements Serializ
             readLock.unlock();
         }
     }
-    
-    public void removeWindow(IPortletWindowId portletWindowId) {
-        writeLock.lock();
-        try {
-            final T window = this.windowsById.remove(portletWindowId);
-            if (window != null) {
-                final IPortletEntityId portletEntityId = window.getPortletEntityId();
-                final Set<T> windowSet = this.getWindowSet(portletEntityId, false);
-                if (windowSet != null) {
-                    windowSet.remove(window);
-                }
-            }
-        }
-        finally {
-            writeLock.unlock();
-        }
-    }
 
-    protected Set<T> getWindowSet(final IPortletEntityId portletEntityId, boolean create) {
+    private Set<T> getWindowSet(final IPortletEntityId portletEntityId, boolean create) {
         Set<T> windowSet = this.windowSetByEntityId.get(portletEntityId);
         if (windowSet == null && create) {
             windowSet = new LinkedHashSet<T>();

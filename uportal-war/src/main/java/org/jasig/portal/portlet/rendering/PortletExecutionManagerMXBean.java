@@ -20,7 +20,6 @@ package org.jasig.portal.portlet.rendering;
 
 import java.util.Map;
 
-
 public interface PortletExecutionManagerMXBean {
 
     /**

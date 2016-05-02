@@ -287,7 +287,8 @@
                 </property>
             </bean>
         </entry>
-        <entry key="location">
+        <!-- For the Map portlet, which is not included in the quickstart data set -->
+        <!-- entry key="location">
             <bean class="org.jasig.portal.redirect.PortletRedirectionUrl"
                     p:fname="map" p:mode="VIEW" p:type="RENDER">
                 <property name="dynamicParameters">
@@ -296,7 +297,7 @@
                     </map>
                 </property>
             </bean>
-        </entry>
+        </entry -->
     </util:map>
 
     <!--

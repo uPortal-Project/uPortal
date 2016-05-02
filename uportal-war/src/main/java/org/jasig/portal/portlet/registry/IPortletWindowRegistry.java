@@ -163,12 +163,7 @@ public interface IPortletWindowRegistry {
      * Get all of the portlet windows for all of the portlets in the users layout.
      */
     public Set<IPortletWindow> getAllLayoutPortletWindows(HttpServletRequest request);
-    
-    /**
-     * Get all of the portlet windows for all of the portlets in the users layout and any stateless portlets
-     */
-    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request);
-    
+
     /**
      * Disable persistent window states for this request 
      */

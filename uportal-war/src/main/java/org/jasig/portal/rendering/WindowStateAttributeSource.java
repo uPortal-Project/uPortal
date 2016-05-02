@@ -18,11 +18,7 @@
  */
 package org.jasig.portal.rendering;
 
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
-import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletWindow;
-import org.springframework.beans.factory.annotation.Required;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;

@@ -51,25 +51,7 @@ public class BadPropertyException extends RuntimeException {
         this.propertyValue = propertyValue;
         this.desiredType = desiredType;
     }
-    
-    /**
-     * Instantiate a new BadPropertyException with the given underlying cause.
-     * @param propertyName - the name of the property
-     * @param propertyValue - the bad value of the property.
-     * @param desiredType - the name of the desired type which the value wasn't, making it bad.
-     * @param cause - underlying cause
-     */
-    public BadPropertyException(
-        String propertyName,
-        String propertyValue,
-        String desiredType, 
-        Throwable cause) {
-        super(cause);
-        this.propertyName = propertyName;
-        this.propertyValue = propertyValue;
-        this.desiredType = desiredType;
-    }
-    
+
     public String getMessage(){
         return "The property [" + this.propertyName + "] had value [" + 
         this.propertyValue + "] which could not be parsed as type [" + 

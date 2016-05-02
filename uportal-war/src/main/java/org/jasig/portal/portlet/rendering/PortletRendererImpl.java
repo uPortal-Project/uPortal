@@ -73,12 +73,11 @@ import org.springframework.stereotype.Service;
  * Executes methods on portlets using Pluto
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletRendererImpl implements IPortletRenderer {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private IPersonManager personManager;
     private IPortletWindowRegistry portletWindowRegistry;
     private PortletContainer portletContainer;
@@ -119,8 +118,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             IPortletCacheControlService portletCacheControlService) {
         this.portletCacheControlService = portletCacheControlService;
     }
-    
-    
+
     /*
      * PLT 22.1 If the content of a portlet is cached and the portlet is target of request 
      * with an action-type semantic (e.g. an action or event call), the portlet container should discard the cache and
@@ -132,14 +130,14 @@ public class PortletRendererImpl implements IPortletRenderer {
     @Override
     public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest);
-        
+
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 
         enforceConfigPermission(httpServletRequest, portletWindow);
-        
+
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = new PortletHttpServletResponseWrapper(httpServletResponse, portletWindow);
-        
+
         //Execute the action, 
         this.logger.debug("Executing portlet action for window '{}'", portletWindow);
 
@@ -156,14 +154,14 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing action.", portletWindow, ioe);
         }
-        
+
         final long executionTime = System.nanoTime() - start;
-        
+
         this.portalEventFactory.publishPortletActionExecutionEvent(httpServletRequest, this, portletWindowId, executionTime);
-        
+
         return executionTime;
     }
-    
+
     /*
      * PLT 22.1 If the content of a portlet is cached and the portlet is target of request 
      * with an action-type semantic (e.g. an action or event call), the portlet container should discard the cache and
@@ -176,14 +174,14 @@ public class PortletRendererImpl implements IPortletRenderer {
     public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, Event event) {
         this.portletCacheControlService.purgeCachedPortletData(portletWindowId, httpServletRequest);
-        
+
         final IPortletWindow portletWindow = this.portletWindowRegistry.getPortletWindow(httpServletRequest, portletWindowId);
 
         enforceConfigPermission(httpServletRequest, portletWindow);
-        
+
         httpServletRequest = this.setupPortletRequest(httpServletRequest);
         httpServletResponse = new PortletHttpServletResponseWrapper(httpServletResponse, portletWindow);
-        
+
         //Execute the action, 
         this.logger.debug("Executing portlet event for window '{}'", portletWindow);
 
@@ -200,29 +198,28 @@ public class PortletRendererImpl implements IPortletRenderer {
         catch (IOException ioe) {
             throw new PortletDispatchException("The portlet window '" + portletWindow + "' threw an exception while executing event.", portletWindow, ioe);
         }
-        
+
         final long executionTime = System.nanoTime() - start;
 
         this.portalEventFactory.publishPortletEventExecutionEvent(httpServletRequest, this, portletWindowId, executionTime, event.getQName());
-        
+
         return executionTime;
     }
-    
+
     @Override
     public PortletRenderResult doRenderHeader(IPortletWindowId portletWindowId,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException  {
 
         // enforce CONFIG mode restriction through its enforcement in doRender();
-        
+
         return doRender(portletWindowId,
                 httpServletRequest,
                 httpServletResponse,
                 portletOutputHandler,
                 RenderPart.HEADERS);
     }
-    
-    
+
     /**
      * Interacts with the {@link IPortletCacheControlService} to determine if the markup should come from cache or not.
      * If cached data doesn't exist or is expired, this delegates to {@link #doRender(IPortletWindowId, HttpServletRequest,
@@ -234,14 +231,13 @@ public class PortletRendererImpl implements IPortletRenderer {
             HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler) throws IOException {
 
         // enforce CONFIG mode access restriction through its enforcement in the doRender() impl.
-        
         return doRender(portletWindowId,
                 httpServletRequest,
                 httpServletResponse,
                 portletOutputHandler,
                 RenderPart.MARKUP);
     }
-    
+
     /**
      * Describes the part of the render request and defines the part specific behaviors
      */
@@ -269,7 +265,7 @@ public class PortletRendererImpl implements IPortletRenderer {
             public void publishRenderExecutionEvent(IPortletExecutionEventFactory portalEventFactory, PortletRendererImpl source,
                     HttpServletRequest request, IPortletWindowId portletWindowId, long executionTime,
                     boolean targeted, boolean cached) {
-                
+
                 portalEventFactory.publishPortletRenderHeaderExecutionEvent(request,
                         source,
                         portletWindowId,
@@ -309,27 +305,27 @@ public class PortletRendererImpl implements IPortletRenderer {
                         cached);
             }
         };
-        
+
         private final String renderPart;
-        
+
         private RenderPart(String renderPart) {
             this.renderPart = renderPart;
         }
-        
+
         /**
          * Get the cache state for the request
          */
         public abstract CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> getCacheState(
                 IPortletCacheControlService portletCacheControlService, HttpServletRequest request,
                 IPortletWindowId portletWindowId);
-        
+
         /**
          * Cache the portlet output
          */
         public abstract void cachePortletOutput(IPortletCacheControlService portletCacheControlService,
                 IPortletWindowId portletWindowId, HttpServletRequest request,
                 CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState, CachedPortletData<PortletRenderResult> cachedPortletData);
-        
+
         /**
          * Public portlet event
          */
@@ -344,26 +340,12 @@ public class PortletRendererImpl implements IPortletRenderer {
             return renderPart;
         }
 
-        /**
-         * Determine the {@link RenderPart} from the {@link PortletRequest#RENDER_PART}
-         */
-        public static RenderPart getRenderPart(String renderPart) {
-            if (PortletRequest.RENDER_HEADERS.equals(renderPart)) {
-                return HEADERS;
-            }
-            
-            if (PortletRequest.RENDER_MARKUP.equals(renderPart)) {
-                return MARKUP;
-            }
-
-            throw new IllegalArgumentException("Unknown " + PortletRequest.RENDER_PART + " specified: " + renderPart);
-        }
     }
-        
+
     protected PortletRenderResult doRender(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse, PortletOutputHandler portletOutputHandler, RenderPart renderPart)
             throws IOException {
-        
+
         final CacheState<CachedPortletData<PortletRenderResult>, PortletRenderResult> cacheState = renderPart
                 .getCacheState(this.portletCacheControlService, httpServletRequest, portletWindowId);
 

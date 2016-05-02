@@ -32,7 +32,6 @@ import org.joda.time.DateTime;
  * are only stored in the {@link HttpSession} (e.g. those with maxAge = -1).
  * 
  * @author Nicholas Blair
- * @version $Id$
  */
 class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 
@@ -49,14 +48,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 	private int version = 0;
 	private boolean secure;
 	private DateTime expires;
-	
-	/**
-	 * 
-	 */
-	SessionOnlyPortletCookieImpl(String name) {
-		this.name = name;
-	}
-	
+
 	SessionOnlyPortletCookieImpl(Cookie cookie) {
 		this.name = cookie.getName();
 		this.value = cookie.getValue();

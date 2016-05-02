@@ -29,12 +29,11 @@ import org.springframework.core.Ordered;
  * this class and switches it back after the method completes
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class ThreadContextClassLoaderAspect implements Ordered {
     private static final ClassLoader PORTAL_CLASS_LOADER = ThreadContextClassLoaderAspect.class.getClassLoader();
     private static final ThreadLocal<Deque<ClassLoader>> PREVIOUS_CLASS_LOADER = new ThreadLocal<Deque<ClassLoader>>();
-    
+
     public static ClassLoader getPreviousClassLoader() {
         final Deque<ClassLoader> deque = PREVIOUS_CLASS_LOADER.get();
         if (deque == null) {
@@ -43,15 +42,15 @@ public class ThreadContextClassLoaderAspect implements Ordered {
 
         return deque.peekFirst();
     }
-    
+
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
-    
+
     /**
      * Wraps the targeted execution, switching the current thread's context class loader
-     * to this classes class loader.
+     * to this classes class loader.  Usage defined in persistanceContext.xml.
      */
     public Object doThreadContextClassLoaderUpdate(ProceedingJoinPoint pjp) throws Throwable {
         final Thread currentThread = Thread.currentThread();
@@ -61,7 +60,7 @@ public class ThreadContextClassLoaderAspect implements Ordered {
             deque = new LinkedList<ClassLoader>();
             PREVIOUS_CLASS_LOADER.set(deque);
         }
-        
+
         deque.push(previousClassLoader);
 
         try {

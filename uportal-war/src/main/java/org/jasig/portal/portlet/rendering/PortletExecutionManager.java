@@ -46,7 +46,6 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
@@ -67,7 +66,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.WebUtils;
 
@@ -120,7 +118,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     private IPortletEventCoordinationService eventCoordinationService;
     private IPortletWorkerFactory portletWorkerFactory;
     private IPortletExecutionEventFactory portletExecutionEventFactory;
-    
+
     /**
      * @param maxEventIterations The maximum number of iterations to spend dispatching events. Defaults to 100
      */
@@ -129,7 +127,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     public void setMaxEventIterations(int maxEventIterations) {
         this.maxEventIterations = maxEventIterations;
     }
-    
+
     @Override
     public int getMaxEventIterations() {
         return this.maxEventIterations;
@@ -195,7 +193,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     public void setPortletWindowRegistry(IPortletWindowRegistry portletWindowRegistry) {
         this.portletWindowRegistry = portletWindowRegistry;
     }
-    
+
     @Autowired
     public void setPortletExecutionEventFactory(IPortletExecutionEventFactory portletExecutionEventFactory) {
         this.portletExecutionEventFactory = portletExecutionEventFactory;
@@ -209,7 +207,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         for (final IPortletRenderExecutionWorker portletRenderExecutionWorker : portletHeaderRenderingMap.values()) {
             checkWorkerCompletion(request, portletRenderExecutionWorker);
         }
-        
+
         final Map<IPortletWindowId, IPortletRenderExecutionWorker> portletRenderingMap = this.getPortletRenderingMap(request);
         for (final IPortletRenderExecutionWorker portletRenderExecutionWorker : portletRenderingMap.values()) {
             checkWorkerCompletion(request, portletRenderExecutionWorker);
@@ -257,7 +255,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         this.portletExecutionEventFactory.publishPortletHungEvent(request, this, portletExecutionWorker);
         hungWorkers.offer(portletExecutionWorker);
     }
-    
+
     @Scheduled(fixedRate=1000)
     public void cleanupHungWorkers() {
         if (this.hungWorkers.isEmpty()) {
@@ -309,15 +307,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
         final AtomicInteger counter = this.executionCount.get(portletDescriptorKey);
         counter.incrementAndGet();
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletEntityId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public void doPortletAction(IPortletEntityId portletEntityId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindow(request, portletEntityId);
-        this.doPortletAction(portletWindow.getPortletWindowId(), request, response);
     }
 
     /* (non-Javadoc)
@@ -456,26 +445,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
             cancelWorker(request, eventWorker);
         }
     }
-    
-    
-    
-    /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeadRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	@Override
-	public void startPortletHeaderRender(String subscribeId,
-			HttpServletRequest request, HttpServletResponse response) {
-		Assert.notNull(subscribeId, "subscribeId cannot be null");
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        
-        if(portletWindow != null) {
-        	this.startPortletHeaderRender(portletWindow.getPortletWindowId(), request, response);
-        } else {
-        	this.logger.debug("ignoring startPortletHeadRender since getDefaultPortletWindow returned null for subscribeId " + subscribeId);
-        }
-        
-	}
+
     /**
      * Only actually starts rendering the head if the portlet has the 'javax.portlet.renderHeaders' container-runtime-option
      * present and set to "true."
@@ -510,22 +480,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		return result;
 	}
 
-	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        Assert.notNull(subscribeId, "subscribeId cannot be null");
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        
-        if(null != portletWindow) {
-        	this.startPortletRenderInternal(portletWindow.getPortletWindowId(), request, response);
-        } else {
-        	this.logger.debug("skipping startPortletRender due to null result from getDefaultPortletWindow for subscribeId " + subscribeId);
-        }
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -582,40 +536,8 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         final IPortletRenderExecutionWorker tracker = portletRenderingMap.get(portletWindowId);
         
         return tracker != null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletHeaderRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	@Override
-	public boolean isPortletRenderHeaderRequested(String subscribeId,
-			HttpServletRequest request, HttpServletResponse response) {
-	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-
-		if(portletWindow == null) {
-			this.logger.debug("returning false since getDefaultPortletWindow returned null for subscribeId " + subscribeId); 
-			return false;
-		}
-		return this.isPortletRenderHeaderRequested(portletWindow.getPortletWindowId(), request, response);
-	}
-
-	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        
-        if (portletWindow == null) {
-        	this.logger.warn("returning false for isPortletRenderRequested due to null result for getDefaultPortletWindow on subscribeId " + subscribeId);
-        	return false;
-        }
-        
-        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-        return this.isPortletRenderRequested(portletWindowId, request, response);
-        
     }
-    
+
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -649,42 +571,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		return "";
     }
 
-	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletHeadOutput(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	@Override
-	public String getPortletHeadOutput(String subscribeId,
-			HttpServletRequest request, HttpServletResponse response) {
-	    final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-		
-		if (portletWindow == null) {
-		    this.logger.warn("Could not find portlet window for layout node id, empty header content will be returned: " + subscribeId);
-            return "";
-		}
-
-		final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-
-		return this.getPortletHeadOutput(portletWindowId, request, response);
-	}
-
-	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public String getPortletOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-            Assert.notNull(subscribeId, "subscribeId cannot be null");
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        
-        if (portletWindow == null) {
-            this.logger.warn("Could not find portlet window for layout node id, empty missing content text will be returned: " + subscribeId);
-            return "This portlet does not exist or is not deployed correctly.";
-        }
-
-        final IPortletWindowId portletWindowId = portletWindow.getPortletWindowId();
-        return this.getPortletOutput(portletWindowId, request, response);
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -710,35 +596,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 		}
     }
 
-    @Override
-    public long getPortletRenderTime(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
-        try {
-            final PortletRenderResult portletRenderResult = getPortletRenderResult(portletWindowId, request, response);
-            return portletRenderResult.getRenderTime();
-        } catch (Exception e) {
-            logger.warn("unable to get portlet render time, returning -1 " + portletWindowId);
-        }
-        
-        return -1;
-    }
-
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(java.lang.String, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
-    @Override
-    public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        Assert.notNull(subscribeId, "subscribeId cannot be null");
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        
-        if (portletWindow == null) {
-            this.logger.warn("Could not find portlet window for layout node id, empty title content will be returned: " + subscribeId);
-            return "";
-        }
-
-        return this.getPortletTitle(portletWindow.getPortletWindowId(), request, response);
-    }
-    
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -767,18 +624,6 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
         
 		// return portlet title from channel definition
         return portletDefinition.getTitle(locale);
-    }
-
-    @Override
-    public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response) {
-        Assert.notNull(subscribeId, "subscribeId cannot be null");
-        
-        final IPortletWindow portletWindow = this.portletWindowRegistry.getOrCreateDefaultPortletWindowByLayoutNodeId(request, subscribeId);
-        if (portletWindow == null) {
-            return 0;
-        }
-
-        return this.getPortletNewItemCount(portletWindow.getPortletWindowId(), request, response);
     }
 
     @Override

@@ -47,7 +47,6 @@ import org.apache.commons.logging.LogFactory;
  * @author Ken Weiner, kweiner@unicon.net
  * @author howard.gilbert@yale.edu
  * @author andrew.petro@yale.edu
- * @version $Revision$ $Date$
  * @since uPortal 2.4, this class existed in the main package since uPortal 2.0
  */
 public class PropertiesManager {
@@ -332,35 +331,6 @@ public class PropertiesManager {
         return returnValue;
     }
 
-
-    
-    /**
-     * Get the value of a property for the given name 
-     * including any whitespace that may be at the beginning or end of the property value.
-     * This method returns the supplied default value if the requested property cannot be found.
-     * This error handling behavior makes this method attractive for use in static initializers.
-     * @param name - the name of the requested property
-     * @param defaultValue - a default value to fall back on if the property cannot be found
-     * @return the value of the property with the given name, or the supplied default value if the property could not be found.
-     * @since uPortal 2.4
-     */
-    public static String getPropertyUntrimmed(String name, String defaultValue) {
-        if (PropertiesManager.props == null)
-            loadProps();
-        String returnValue = defaultValue;
-        try {
-            returnValue = getPropertyUntrimmed(name);
-        } catch (MissingPropertyException mpe) {
-            // do nothing, since we have already logged the missing property
-        }
-        return returnValue;
-
-    }
-
-
-
-
-
     /**
      * Get a property as a boolean, specifying a default value.
      * If for any reason we are unable to lookup the desired property, 
@@ -383,8 +353,6 @@ public class PropertiesManager {
         return returnValue;
     }
 
-
-    
     /**
      * Get the value of the given property as a byte, specifying a fallback default value.
      * If for any reason we are unable to lookup the desired property,
@@ -526,4 +494,5 @@ public class PropertiesManager {
     public static Set getMissingProperties(){
         return PropertiesManager.missingProperties;
     }
+
 }
