@@ -40,6 +40,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IPortalInfoProvider;
 import org.jasig.portal.events.PortalEvent.PortalEventBuilder;
 import org.jasig.portal.events.PortletExecutionEvent.PortletExecutionEventBuilder;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
@@ -563,11 +564,10 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
     protected Set<String> getGroupsForUser(IPerson person) {
         final IGroupMember member = GroupService.getGroupMember(person.getEntityIdentifier());
 
-        final Set<String> groupKeys = new LinkedHashSet<String>();
-        for (@SuppressWarnings("unchecked") final Iterator<IGroupMember> groupItr = member.getAncestorGroups(); groupItr.hasNext();) {
-            final IGroupMember group = groupItr.next();
+        final Set<String> groupKeys = new LinkedHashSet<>();
+        for (IGroupMember group : member.getAncestorGroups()) {
             final String groupKey = group.getKey();
-            
+
             if (IncludeExcludeUtils.included(groupKey, this.groupIncludes, this.groupExcludes)) {
                 groupKeys.add(groupKey);
             }
@@ -575,7 +575,7 @@ public class PortalEventFactoryImpl implements IPortalEventFactory, ApplicationE
 
         return groupKeys;
     }
-    
+
     protected Map<String, List<String>> getAttributesForUser(IPerson person) {
         final IPersonAttributes personAttributes = this.personAttributeDao.getPerson(person.getUserName());
 

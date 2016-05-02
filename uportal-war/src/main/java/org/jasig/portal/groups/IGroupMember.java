@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups;
 
-import java.util.Iterator;
+import java.util.Set;
 
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IBasicEntity;
@@ -46,93 +46,48 @@ import org.jasig.portal.IBasicEntity;
  * @author Dan Ellentuck
  */
 public interface IGroupMember extends IBasicEntity {
-/**
- * Answers if <code>IGroupMember</code> gm is a member of <code>this</code>.
- * @return boolean
- * @param gm org.jasig.portal.groups.IGroupMember
- */
-public boolean contains(IGroupMember gm) throws GroupsException;
-/**
- * Answers if <code>IGroupMember</code> gm is a recursive member of <code>this</code>.
- * @return boolean
- * @param gm org.jasig.portal.groups.IGroupMember
- */
-public boolean deepContains(IGroupMember gm) throws GroupsException;
-/**
- * Answers if Object o is an <code>IGroupMember</code> that refers to the same underlying
- * entity(ies) as <code>this</code>.
- * @param o
- * @return boolean
- */
-public boolean equals(Object o);
+
 /**
  * Returns an <code>Iterator</code> over the <code>Set</code> of this
  * <code>IGroupMember's</code> recursively-retrieved parent groups.
  *
  * @return java.util.Iterator
  */
-public Iterator getAncestorGroups() throws GroupsException;
-/**
- * Returns an <code>Iterator</code> over the <code>Set</code> of this
- * <code>IGroupMember's</code> recursively-retrieved members that are
- * <code>IEntities</code>.
- * @return java.util.Iterator
- */
-public Iterator getAllEntities() throws GroupsException;
-/**
- * Returns an <code>Iterator</code> over the <code>Set</code> of recursively-retrieved
- * <code>IGroupMembers</code> that are members of <code>this</code>.
- * @return java.util.Iterator
- */
-public Iterator getAllMembers() throws GroupsException;
+Set<IEntityGroup> getAncestorGroups() throws GroupsException;
+
 /**
  * Returns an <code>Iterator</code> over this <code>IGroupMember's</code> parent groups.
  * @return java.util.Iterator
  */
-public Iterator getParentGroups() throws GroupsException;
-/**
- * Returns an <code>Iterator</code> over this <code>IGroupMember's</code>
- * members that are <code>IEntities</code>.
- * @return java.util.Iterator
- */
-public Iterator getEntities() throws GroupsException;
-/**
- * Returns the underlying entity type.  For an <code>IEntityGroup</code>, this is
- * analagous to <code>Class</code> as applied to an <code>Array</code>; it is an
- * attribute of the group object.  For an <code>IEntity</code>, it is the entity
- * type of the group the entity belongs to, which may be any <code>Class</code>
- * the underlying entity can be legally cast to.  Thus, an <code>IEntity</code>
- * with an underlying entity of type <code>Manager</code> could have an entity
- * type of <code>Employee</code> as long as <code>Employee</code> was a
- * superclass of <code>Manager</code>.
- *
- * @return java.lang.Class
- */
-public Class getEntityType();
+Set<IEntityGroup> getParentGroups() throws GroupsException;
+
 /**
  * Returns the key of the underlying entity.
  * @return String
  */
-public String getKey();
-/**
- * @see #getEntityType()
- */
-  public Class getLeafType();
+String getKey();
 
-/**
- * Returns an <code>Iterator</code> over the <code>IGroupMembers</code> in our
- * member <code>Collection</code>.
- * @return java.util.Iterator
- */
-public Iterator getMembers() throws GroupsException;
+    /**
+     * Returns the underlying entity type.  For an <code>IEntityGroup</code>, this is
+     * analogous to <code>Class</code> as applied to an <code>Array</code>; it is an
+     * attribute of the group object.  For an <code>IEntity</code>, it is the entity
+     * type of the group the entity belongs to, which may be any <code>Class</code>
+     * the underlying entity can be legally cast to.  Thus, an <code>IEntity</code>
+     * with an underlying entity of type <code>Manager</code> could have an entity
+     * type of <code>Employee</code> as long as <code>Employee</code> was a
+     * superclass of <code>Manager</code>.
+     */
+    Class<? extends IBasicEntity> getLeafType();
+
 /**
  * Returns the type of the underlying entity.  For a group this will be
  * <code>IEntityGroup</code>.  For an entity, it will be the type of the
  * underlying <code>EntityIdentifier</code>.
  *
- * @return java.lang.Class
+ * @deprecated Too confusing side-by-side with getLeafType
  */
-public Class getType();
+@Deprecated
+Class getType();
 /**
  * Returns <code>EntityIdentifier</code> for this <code>IGroupMember's</code>
  * underlying entity.  In the case of an <code>IEntityGroup</code>, it will
@@ -142,34 +97,30 @@ public Class getType();
  *
  * @return org.jasig.portal.EntityIdentifier
  */
-public EntityIdentifier getUnderlyingEntityIdentifier();
-/**
- * @return int
- */
-public int hashCode();
-/**
- * Answers if this <code>IGroupMember</code> has any members.
- * @return boolean
- */
-public boolean hasMembers() throws GroupsException;
+EntityIdentifier getUnderlyingEntityIdentifier();
+
 /**
  * Answers if <code>this</code> is a recursive member of <code>IGroupMember</code> gm.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException;
+boolean isDeepMemberOf(IEntityGroup group) throws GroupsException;
+
 /**
  * @return boolean
  */
-public boolean isEntity();
-/**
- * @return boolean
- */
-public boolean isGroup();
+boolean isGroup();
 /**
  * Answers if <code>this</code> is a member of <code>IGroupMember</code> gm.
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public boolean isMemberOf(IGroupMember gm) throws GroupsException;
+boolean isMemberOf(IEntityGroup group) throws GroupsException;
+
+    /**
+     * If this group member is an IEntityGroup, this method will return a
+     * reference to it as such;  otherwise throws an exception.
+     */
+    IEntityGroup asGroup();
+
 }

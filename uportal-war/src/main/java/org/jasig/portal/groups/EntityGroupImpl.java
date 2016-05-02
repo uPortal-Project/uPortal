@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.naming.Name;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.IBasicEntity;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,24 +38,24 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 /**
- * Reference implementation for <code>IEntityGroup</code>.
+ * Reference implementation for <code>IEntityGroup</code>
  * <p>
- * Groups do not keep references to their members but instead cache 
+ * Groups do not keep references to their members but instead cache
  * member keys.  The members are cached externally.  The rules
- * for controlling access to the key caches are a bit obscure, but you 
- * should understand them before writing code that updates groups.  
- * Access to the caches themselves is synchronized via the cache 
- * getters and setters.  All requests to get group members and to add or 
- * remove group members ultimately go through these methods.  The 
- * mutating methods, <code>addMember()</code> and <code>removeMember()</code> 
- * however, do a copy-on-write.  That is, they first make a copy of the 
- * cache, add or remove the member key, and then replace the original 
- * cache with the copy.  This permits multiple read and write threads to run 
- * concurrently without throwing <code>ConcurrentModificationExceptions</code>.  
- * But it still leaves open the danger of data races because nothing in 
- * this class guarantees serialized write access.  You must impose this 
- * from without, either via explicit locking (<code>GroupService.getLockableGroup()</code>) 
- * or by synchronizing access from the caller.  
+ * for controlling access to the key caches are a bit obscure, but you
+ * should understand them before writing code that updates groups.
+ * Access to the caches themselves is synchronized via the cache
+ * getters and setters.  All requests to get group members and to add or
+ * remove group members ultimately go through these methods.  The
+ * mutating methods, <code>addChild()</code> and <code>removeChild()</code>
+ * however, do a copy-on-write.  That is, they first make a copy of the
+ * cache, add or remove the member key, and then replace the original
+ * cache with the copy.  This permits multiple read and write threads to run
+ * concurrently without throwing <code>ConcurrentModificationExceptions</code>.
+ * But it still leaves open the danger of data races because nothing in
+ * this class guarantees serialized write access.  You must impose this
+ * from without, either via explicit locking (<code>GroupService.getLockableGroup()</code>)
+ * or by synchronizing access from the caller.
  *
  * @author Dan Ellentuck
  * @see org.jasig.portal.groups.IEntityGroup
@@ -69,7 +70,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
     private final Cache childrenCache;
 
     // A group and its members share an entityType.
-    private Class<?> leafEntityType;
+    private Class<? extends IBasicEntity> leafEntityType;
 
 /*
  * References to updated group members.  These updates do not become visible to
@@ -80,7 +81,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
 /**
  * EntityGroupImpl
  */
-public EntityGroupImpl(String groupKey, Class<?> entityType) throws GroupsException {
+public EntityGroupImpl(String groupKey, Class<? extends IBasicEntity> entityType) throws GroupsException {
     super(new CompositeEntityIdentifier(groupKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
     if (isKnownEntityType(entityType)) {
         leafEntityType = entityType;
@@ -98,7 +99,8 @@ public EntityGroupImpl(String groupKey, Class<?> entityType) throws GroupsExcept
  * update the database if necessary.
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public void addMember(IGroupMember gm) throws GroupsException {
+@Override
+public void addChild(IGroupMember gm) throws GroupsException {
 
     try {
         checkProspectiveMember(gm);
@@ -137,8 +139,9 @@ private void checkProspectiveMember(IGroupMember gm) throws GroupsException
         { throw new GroupsException(this + " and " + gm + " have different entity types."); } 
 
     // Circular reference check:
-    if ( gm.isGroup() &&  gm.deepContains(this) )
-        { throw new GroupsException("Adding " + gm + " to " + this + " creates a circular reference."); }
+    if (gm.isGroup() && gm.asGroup().deepContains(this)) {
+        throw new GroupsException("Adding " + gm + " to " + this + " creates a circular reference.");
+    }
 }
 /**
  * Clear out caches for pending adds and deletes of group members.
@@ -154,25 +157,9 @@ protected void clearPendingUpdates()
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
+@Override
 public boolean contains(IGroupMember gm) throws GroupsException {
-    return getChildrenSet().contains(gm);
-}
-
-private Set<IGroupMember> getChildrenSet() throws GroupsException {
-
-    final EntityIdentifier cacheKey = getUnderlyingEntityIdentifier();
-    Element element = childrenCache.get(cacheKey);
-
-    if (element == null) {
-        final Set<IGroupMember> children = buildChildrenSet();
-        element = new Element(cacheKey, children);
-        childrenCache.put(element);
-    }
-
-    @SuppressWarnings("unchecked")
-    final Set<IGroupMember> rslt = (Set<IGroupMember>) element.getObjectValue();
-    return rslt;
-
+    return getChildren().contains(gm);
 }
 
 private synchronized Set<IGroupMember> buildChildrenSet() throws GroupsException {
@@ -192,6 +179,7 @@ private synchronized Set<IGroupMember> buildChildrenSet() throws GroupsException
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
+@Override
 public boolean deepContains(IGroupMember gm) throws GroupsException
 {
     if ( this.contains(gm) )
@@ -220,6 +208,7 @@ public boolean deepContains(IGroupMember gm) throws GroupsException
 /**
  * Delegates to the factory.
  */
+@Override
 public void delete() throws GroupsException
 {
     getLocalGroupService().deleteGroup(this);
@@ -234,24 +223,16 @@ public HashMap<String,IGroupMember> getAddedMembers()
         this.addedMembers = new HashMap<>();
     return addedMembers;
 }
-/**
- * Returns an <code>Iterator</code> over the <code>Set</code> of this
- * <code>IEntityGroup's</code> recursively-retrieved members that are
- * <code>IEntities</code>.
- * @return Iterator
- */
-public Iterator<IGroupMember> getAllEntities() throws GroupsException
-{
-    return primGetAllEntities(new HashSet<IGroupMember>()).iterator();
-}
+
 /**
  * Returns an <code>Iterator</code> over the <code>Set</code> of recursively-retrieved
  * <code>IGroupMembers</code> that are members of this <code>IEntityGroup</code>.
  * @return Iterator
  */
-public Iterator<IGroupMember> getAllMembers() throws GroupsException
+@Override
+public Set<IGroupMember> getDescendants() throws GroupsException
 {
-    return primGetAllMembers(new HashSet<IGroupMember>()).iterator();
+    return primGetAllMembers(new HashSet<IGroupMember>());
 }
 /**
  * Returns the <code>EntityIdentifier</code> cast to a 
@@ -260,34 +241,28 @@ public Iterator<IGroupMember> getAllMembers() throws GroupsException
  *
  * @return CompositeEntityIdentifier
  */
-protected CompositeEntityIdentifier getCompositeEntityIdentifier()
-{
-    return (CompositeEntityIdentifier)getEntityIdentifier();
+private CompositeEntityIdentifier getCompositeEntityIdentifier() {
+    return (CompositeEntityIdentifier) getEntityIdentifier();
 }
 /**
  * @return String
  */
+@Override
 public String getCreatorID() {
     return creatorID;
 }
 /**
  * @return String
  */
+@Override
 public String getDescription() {
     return description;
 }
-/**
- * Returns an <code>Iterator</code> over this <code>IEntityGroup's</code>
- * members that are <code>IEntities</code>.
- * @return Iterator
- */
-public Iterator<IGroupMember> getEntities() throws GroupsException
-{
-    return getMemberEntities();
-}
+
 /**
  * @return EntityIdentifier
  */
+@Override
 public EntityIdentifier getEntityIdentifier() {
     return getUnderlyingEntityIdentifier();
 }
@@ -299,15 +274,7 @@ public String getEntityKey()
 {
     return getKey();
 }
-/**
- * Returns the entity type of this groups's leaf members.
- *
- * @return Class
- * @see org.jasig.portal.EntityTypes
- */
-public Class<?> getEntityType() {
-    return leafEntityType;
-}
+
 /**
  * @return String
  */
@@ -320,7 +287,8 @@ public String getGroupID() {
  * @return Class
  * @see org.jasig.portal.EntityTypes
  */
- public Class<?> getLeafType() {
+@Override
+public Class<? extends IBasicEntity> getLeafType() {
     return leafEntityType;
 }
 /**
@@ -333,26 +301,10 @@ protected IIndividualGroupService getLocalGroupService() {
  * Returns the key from the group service of origin.
  * @return String
  */
+@Override
 public String getLocalKey()
 {
     return getCompositeEntityIdentifier().getLocalKey();
-}
-/**
- * Returns an <code>Iterator</code> over the entities in our member
- * <code>Collection</code>.  Reflects pending changes.
- * @return Iterator
- */
-private Iterator<IGroupMember> getMemberEntities() throws GroupsException {
-
-    Set<IGroupMember> rslt = new HashSet<>();
-    for (IGroupMember child : this.getChildrenSet()) {
-        if (child.isEntity()) {
-            rslt.add(child);
-        }
-    }
-
-    return rslt.iterator();
-
 }
 
 /**
@@ -360,10 +312,10 @@ private Iterator<IGroupMember> getMemberEntities() throws GroupsException {
  * <code>Collection</code>.  Reflects pending changes.
  * @return Iterator
  */
-protected Iterator<IEntityGroup> getMemberGroups() throws GroupsException {
+private Iterator<IEntityGroup> getMemberGroups() throws GroupsException {
 
     Set<IEntityGroup> rslt = new HashSet<>();
-    for (IGroupMember child : getChildrenSet()) {
+    for (IGroupMember child : getChildren()) {
         if (child.isGroup()) {
             rslt.add((IEntityGroup) child);
         }
@@ -378,14 +330,28 @@ protected Iterator<IEntityGroup> getMemberGroups() throws GroupsException {
  * member <code>Collection</code>.  Reflects pending changes.
  * @return Iterator
  */
-public Iterator<IGroupMember> getMembers() throws GroupsException {
-    Set<IGroupMember> rslt = getChildrenSet();
-    return rslt.iterator();
+@Override
+public Set<IGroupMember> getChildren() throws GroupsException {
+
+    final EntityIdentifier cacheKey = getUnderlyingEntityIdentifier();
+    Element element = childrenCache.get(cacheKey);
+
+    if (element == null) {
+        final Set<IGroupMember> children = buildChildrenSet();
+        element = new Element(cacheKey, children);
+        childrenCache.put(element);
+    }
+
+    @SuppressWarnings("unchecked")
+    final Set<IGroupMember> rslt = (Set<IGroupMember>) element.getObjectValue();
+    return rslt;
+
 }
 
 /**
  * @return String
  */
+@Override
 public String getName() {
     return name;
 }
@@ -402,6 +368,7 @@ public HashMap<String,IGroupMember> getRemovedMembers()
  * Returns the Name of the group service of origin.
  * @return javax.naming.Nme
  */
+@Override
 public Name getServiceName()
 {
     return getCompositeEntityIdentifier().getServiceName();
@@ -412,6 +379,7 @@ public Name getServiceName()
  *
  * @return Class
  */
+@Override
 public Class<?> getType()
 {
     return org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE;
@@ -420,7 +388,7 @@ public Class<?> getType()
  * Answers if there are any added memberships not yet committed to the database.
  * @return boolean
  */
-public boolean hasAdds()
+/* package-private */ boolean hasAdds()
 {
     return (addedMembers != null) && (addedMembers.size() > 0);
 }
@@ -428,7 +396,7 @@ public boolean hasAdds()
  * Answers if there are any deleted memberships not yet committed to the database.
  * @return boolean
  */
-public boolean hasDeletes()
+/* package-private */ boolean hasDeletes()
 {
     return (removedMembers != null) && (removedMembers.size() > 0);
 }
@@ -436,9 +404,10 @@ public boolean hasDeletes()
 /**
  * @return boolean
  */
+@Override
 public boolean hasMembers() throws GroupsException
 {
-    return getMembers().hasNext();
+    return !getChildren().isEmpty();
 }
 
 /**
@@ -454,6 +423,7 @@ public boolean isDirty()
  * @return boolean
  * @exception GroupsException
  */
+@Override
 public boolean isEditable() throws GroupsException
 {
     return getLocalGroupService().isEditable(this);
@@ -461,6 +431,7 @@ public boolean isEditable() throws GroupsException
 /**
  * @return boolean
  */
+@Override
 public boolean isGroup()
 {
     return true;
@@ -489,41 +460,20 @@ private void primAddMember(IGroupMember gm) throws GroupsException {
 }
 
 /**
- * Returns the <code>Set</code> of <code>IEntities</code> in our member <code>Collection</code>
- * and, recursively, in the <code>Collections</code> of our members.
- * @param entities a Set that IEntity-GroupMembers are added to.
- * @return Set
- */
-protected Set<IGroupMember> primGetAllEntities(Set<IGroupMember> entities) throws GroupsException
-{
-    Iterator<IGroupMember> i = getMembers();
-    while ( i.hasNext() )
-    {
-        GroupMemberImpl gmi = (GroupMemberImpl) i.next();
-        if ( gmi.isEntity() )
-            { entities.add(gmi); }
-        else
-            { ((EntityGroupImpl)gmi).primGetAllEntities(entities); }
-    }
-    return entities;
-}
-/**
  * Returns the <code>Set</code> of <code>IGroupMembers</code> in our member
  * <code>Collection</code> and, recursively, in the <code>Collections</code>
  * of our members.
- * @param s Set - a Set that members are added to.
+ * @param rslt Set - a Set that members are added to.
  * @return Set
  */
-protected Set<IGroupMember> primGetAllMembers(Set<IGroupMember> s) throws GroupsException {
-    Iterator<IGroupMember> i = getMembers();
-    while (i.hasNext()) {
-        IGroupMember gm = i.next();
-        s.add(gm);
+private Set<IGroupMember> primGetAllMembers(Set<IGroupMember> rslt) throws GroupsException {
+    for (IGroupMember gm : getChildren()) {
+        rslt.add(gm);
         if (gm.isGroup()) {
-            ((EntityGroupImpl)gm).primGetAllMembers(s);
+            ((EntityGroupImpl) gm).primGetAllMembers(rslt);
         }
     }
-    return s;
+    return rslt;
 }
 
 /**
@@ -561,7 +511,8 @@ public void primSetName(String newName)
  * have removed it so we can update the database, if necessary.
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public void removeMember(IGroupMember gm) throws GroupsException {
+@Override
+public void removeChild(IGroupMember gm) throws GroupsException {
     String cacheKey = gm.getEntityIdentifier().getKey();
 
     if (getAddedMembers().containsKey(cacheKey)) {
@@ -575,18 +526,21 @@ public void removeMember(IGroupMember gm) throws GroupsException {
 /**
  * @param newCreatorID String
  */
+@Override
 public void setCreatorID(String newCreatorID) {
     creatorID = newCreatorID;
 }
 /**
  * @param newDescription String
  */
+@Override
 public void setDescription(String newDescription) {
     description = newDescription;
 }
 /**
  * @param newIndividualGroupService IIndividualGroupService
  */
+@Override
 public void setLocalGroupService(IIndividualGroupService newIndividualGroupService)
 throws GroupsException
 {
@@ -598,6 +552,7 @@ throws GroupsException
  * We used to check duplicate sibling names but no longer do.  
  * @param newName String
  */
+@Override
 public void setName(String newName) throws GroupsException
 {
     primSetName(newName);
@@ -617,6 +572,7 @@ public void setServiceName(Name newServiceName) throws GroupsException
  * Returns a String that represents the value of this object.
  * @return a string representation of the receiver
  */
+@Override
 public String toString()
 {
     return "EntityGroupImpl (" + getKey() + ") "  + getName();
@@ -624,6 +580,7 @@ public String toString()
 /**
  * Delegate to the factory.
  */
+@Override
 public void update() throws GroupsException
 {
     getLocalGroupService().updateGroup(this);
@@ -632,6 +589,7 @@ public void update() throws GroupsException
 /**
  * Delegate to the factory.
  */
+@Override
 public void updateMembers() throws GroupsException {
 
     // Track objects to invalidate
@@ -646,5 +604,13 @@ public void updateMembers() throws GroupsException {
     this.invalidateInParentGroupsCache(invalidate);
 
 }
+
+    /**
+     * Casts to IEntityGroup.
+     */
+    @Override
+    public IEntityGroup asGroup() {
+        return (IEntityGroup) this;
+    }
 
 }

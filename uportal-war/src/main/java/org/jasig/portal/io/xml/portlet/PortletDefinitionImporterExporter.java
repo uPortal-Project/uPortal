@@ -434,22 +434,19 @@ public class PortletDefinitionImporterExporter
         synchronized(this.groupUpdateLock) {
             // Delete existing category memberships for this channel
             if (!newChannel) {
-                @SuppressWarnings("unchecked")
-                final Iterator<IEntityGroup> iter = portletDefEntity.getAncestorGroups();
-                while (iter.hasNext()) {
-                    final IEntityGroup group = iter.next();
-                    group.removeMember(portletDefEntity);
+                for (IEntityGroup group : portletDefEntity.getAncestorGroups()) {
+                    group.removeChild(portletDefEntity);
                     group.update();
                 }
             }
-    
+
             // For each category ID, add channel to category
             for (PortletCategory category : categories) {
                 final IEntityGroup categoryGroup = GroupService.findGroup(category.getId());
-                categoryGroup.addMember(portletDefEntity);
+                categoryGroup.addChild(portletDefEntity);
                 categoryGroup.updateMembers();
             }
-    
+
             // Set groups
             final AuthorizationService authService = AuthorizationService.instance();
             final String target = PermissionHelper.permissionTargetIdForPortletDefinition(definition);
@@ -505,11 +502,8 @@ public class PortletDefinitionImporterExporter
         // Delete existing category memberships for this portlet
         String portletDefinitionId = portletDefinition.getPortletDefinitionId().getStringId();
         IEntity channelDefEntity = GroupService.getEntity(portletDefinitionId, IPortletDefinition.class);
-        @SuppressWarnings("unchecked")
-        Iterator<IEntityGroup> iter = channelDefEntity.getAncestorGroups();
-        while (iter.hasNext()) {
-            IEntityGroup group = iter.next();
-            group.removeMember(channelDefEntity);
+        for (IEntityGroup group : channelDefEntity.getAncestorGroups()) {
+            group.removeChild(channelDefEntity);
             group.update();
         }
 

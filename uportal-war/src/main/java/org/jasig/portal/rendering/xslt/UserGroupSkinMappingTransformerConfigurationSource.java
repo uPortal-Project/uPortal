@@ -43,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * using the {@link #setSkinParameterName(String)} parameter.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMappingTransformerConfigurationSource {
     private final SingletonDoubleCheckedCreator<Map<IGroupMember, String>> groupMemberToSkinMappingCreator = new GroupMemberMappingCreator();
@@ -87,7 +86,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
     }
 
     protected String getSkinName(HttpServletRequest request) {
-    	
+
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
         final IPerson person = userInstance.getPerson();
 
@@ -97,7 +96,7 @@ public class UserGroupSkinMappingTransformerConfigurationSource extends SkinMapp
         final Map<IGroupMember, String> groupMemberToSkinMapping = groupMemberToSkinMappingCreator.get();
         for (final Entry<IGroupMember, String> groupToSkinEntry : groupMemberToSkinMapping.entrySet()) {
             final IGroupMember group = groupToSkinEntry.getKey();
-            if (groupMember.isDeepMemberOf(group)) {
+            if (group.isGroup() && groupMember.isDeepMemberOf(group.asGroup())) {
                 final String skin = groupToSkinEntry.getValue();
                 getLogger().debug("Setting skin override {} for {} because they are a member of {}",
                         new Object[] { skin, person.getUserName(), group });

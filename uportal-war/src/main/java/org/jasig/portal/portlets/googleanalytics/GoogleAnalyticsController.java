@@ -27,6 +27,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.PortletPreferencesJsonDao;
 import org.jasig.portal.security.IPerson;
@@ -128,29 +129,28 @@ public class GoogleAnalyticsController {
             }
         }
     }
-    
+
     /**
      * Check if the user is a member of the specified group name
      */
     protected boolean isMember(IGroupMember groupMember, String groupName) {
         try {
-            IGroupMember group = GroupService.findGroup(groupName);
+            IEntityGroup group = GroupService.findGroup(groupName);
             if (group != null) {
                 return groupMember.isDeepMemberOf(group);
             }
-    
-            
+
             final EntityIdentifier[] results = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
                 this.logger.warn("No portal group found for '{}' no users will be placed in that group for analytics", groupName);
                 return false;
             }
-            
+
             if (results.length > 1) {
                 this.logger.warn("{} groups were found for groupName '{}'. The first result will be used.", results.length, groupName);
             }
-            
-            group = GroupService.getGroupMember(results[0]);
+
+            group = (IEntityGroup) GroupService.getGroupMember(results[0]);
             return groupMember.isDeepMemberOf(group);
         }
         catch (Exception e) {

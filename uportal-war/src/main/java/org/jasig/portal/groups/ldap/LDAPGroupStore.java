@@ -505,7 +505,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
      ArrayList al = new ArrayList();
      String key;
      GroupShadow[] shadows = getGroupShadows();
-     if (gm.isEntity()){
+     if (!gm.isGroup()){
        key = gm.getKey();
        for (int i=0; i < shadows.length; i++){
         String[] keys = getPersonKeys(shadows[i].key);

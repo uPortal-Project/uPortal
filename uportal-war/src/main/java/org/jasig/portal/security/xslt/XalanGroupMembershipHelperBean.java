@@ -130,22 +130,22 @@ public class XalanGroupMembershipHelperBean implements IXalanGroupMembershipHelp
         if (results == null || results.length == 0) {
             return false;
         }
-        
+
         if (results.length > 1) {
             this.logger.warn(results.length + " groups were found for '" + groupName + "'. The first result will be used.");
         }
-            
+
         final IGroupMember group = GroupService.getGroupMember(results[0]);
-        
+
         final IEntity entity = GroupService.getEntity(userName, IPerson.class);
         if (entity == null) {
             if (this.logger.isDebugEnabled()) {
                 this.logger.debug("No user found for key '" + userName + "'");
             }
-            
+
             return false;
         }
-        
-        return group.deepContains(entity);
+
+        return group.asGroup().deepContains(entity);
     }
 }

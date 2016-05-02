@@ -57,7 +57,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        parentGroup.addMember(childGroup);
+        parentGroup.addChild(childGroup);
         parentGroup.updateMembers();
     }
 
@@ -154,10 +154,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<PortletCategory> categories = new HashSet<PortletCategory>();
-    	@SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = parentGroup.getMembers();
-        while (iter.hasNext()) {
-            IGroupMember gm = iter.next();
+        for (IGroupMember gm : parentGroup.getChildren()) {
             if (gm.isGroup()) {
                 String categoryId = gm.getKey();
                 categories.add(getPortletCategory(categoryId));
@@ -174,11 +171,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
         Set<IPortletDefinition> portletDefs = new HashSet<IPortletDefinition>();
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = parentGroup.getMembers();
-        while (iter.hasNext()) {
-            IGroupMember gm = iter.next();
-            if (gm.isEntity()) {
+        for (IGroupMember gm : parentGroup.getChildren()) {
+            if (!gm.isGroup()) {
                 IPortletDefinition portletDefinition = portletDefinitionRegistry.getPortletDefinition(gm.getKey());
                 if(portletDefinition != null) {
                     portletDefs.add(portletDefinition);
@@ -193,11 +187,8 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
                                 + "memberships for this missing portlet will be removed.");
 
                     // Delete existing category memberships for this portlet
-                    @SuppressWarnings("unchecked")
-                    Iterator<IEntityGroup> parents = gm.getParentGroups();
-                    while (parents.hasNext()) {
-                        IEntityGroup group = parents.next();
-                        group.removeMember(gm);
+                    for (IEntityGroup group : gm.getParentGroups()) {
+                        group.removeChild(gm);
                         group.update();
                     }
                 }
@@ -215,10 +206,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childGroup.getParentGroups();
-        while (iter.hasNext()) {
-            IGroupMember gm = iter.next();
+        for (IGroupMember gm : childGroup.getParentGroups()) {
             if (gm.isGroup()) {
                 String categoryId = gm.getKey();
                 parents.add(getPortletCategory(categoryId));
@@ -236,10 +224,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntity childEntity = GroupService.getEntity(childKey, IPortletDefinition.class);
         Set<PortletCategory> parents = new HashSet<PortletCategory>();
 
-        @SuppressWarnings("unchecked")
-        Iterator<IGroupMember> iter = childEntity.getParentGroups();
-        while (iter.hasNext()) {
-            IGroupMember gm = iter.next();
+        for (IGroupMember gm : childEntity.getParentGroups()) {
             if (gm.isGroup()) {
                 String categoryId = gm.getKey();
                 parents.add(getPortletCategory(categoryId));
@@ -285,7 +270,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
         IEntityGroup childGroup = GroupService.findGroup(childKey);
         String parentKey = String.valueOf(parent.getId());
         IEntityGroup parentGroup = GroupService.findGroup(parentKey);
-        parentGroup.removeMember(childGroup);
+        parentGroup.removeChild(childGroup);
         parentGroup.updateMembers();
     }
 

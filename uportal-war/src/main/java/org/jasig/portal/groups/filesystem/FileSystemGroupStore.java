@@ -918,9 +918,9 @@ throws GroupsException
     Collection ids=null;
     try 
     {
-        ids = ( member.isEntity() )
-          ? getEntityIdsFromFile(file)
-          : getGroupIdsFromFile(file);
+        ids = member.isGroup()
+          ? getGroupIdsFromFile(file)
+          : getEntityIdsFromFile(file);
     }
     catch (Exception ex)
     {

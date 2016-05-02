@@ -55,7 +55,7 @@ public final class EntityService {
         Set<Entity> results = new HashSet<Entity>();
         EntityEnum entityEnum = EntityEnum.getEntityEnum(entityType);
         EntityIdentifier[] identifiers;
-        Class identifierType;
+        Class<?> identifierType;
 
         // if the entity type is a group, use the group service's findGroup method
         // to locate it
@@ -95,8 +95,7 @@ public final class EntityService {
             } else {
                 Entity entity = EntityFactory.createEntity(entityGroup,entityEnum);
                 if (populateChildren) {
-                    @SuppressWarnings("unchecked")
-                    Iterator<IGroupMember> members = (Iterator<IGroupMember>) entityGroup.getMembers();
+                    Iterator<IGroupMember> members = entityGroup.getChildren().iterator();
                     entity = populateChildren(entity,members);
                 }
                 IAuthorizationPrincipal authP = getPrincipalForEntity(entity);
@@ -157,9 +156,9 @@ public final class EntityService {
     public EntityEnum getEntityType(IGroupMember entity) {
 
         if (IEntityGroup.class.isAssignableFrom(entity.getClass())) {
-            return EntityEnum.getEntityEnum(entity.getEntityType(), true);
+            return EntityEnum.getEntityEnum(entity.getLeafType(), true);
         } else {
-            return EntityEnum.getEntityEnum(entity.getEntityType(), false);
+            return EntityEnum.getEntityEnum(entity.getLeafType(), false);
         }
 
     }

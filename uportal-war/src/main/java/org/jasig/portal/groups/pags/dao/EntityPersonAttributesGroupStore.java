@@ -121,7 +121,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         Element element = membershipCache.get(cacheKey);
         if (element == null) {
 
-            logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getEntityType().getSimpleName());
+            logger.debug("Checking if group {} contains member {}/{}", group.getName(), member.getKey(), member.getLeafType().getSimpleName());
 
             boolean answer = false;  // default
             final PagsGroup groupDef = convertEntityToGroupDef(group);
@@ -213,18 +213,13 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
         Iterator<IEntityGroup> rslt = set.iterator();  // default
 
         if (member.isGroup()) {
-
             // PAGS groups may only contain other PAGS groups (and people, of course)
             final IEntityGroup ieg = (IEntityGroup) member;
             if (PagsService.SERVICE_NAME_PAGS.equals(ieg.getServiceName().toString())) {
                 rslt = findParentGroupsForGroup((IEntityGroup) member);
             }
-
-        } else if (member.isEntity()) {
-            rslt = findParentGroupsForEntity((IEntity) member);
         } else {
-            final String msg = "The specified member is neither a group nor an entity:  " + member;
-            throw new IllegalArgumentException(msg);
+            rslt = findParentGroupsForEntity((IEntity) member);
         }
 
         return rslt;

@@ -120,7 +120,7 @@
                                         def log = LoggerFactory.getLogger(this.getClass());
 
                                         log.debug("Removing members from group $group")
-                                        group.getMembers().each() {group.removeMember(it)}
+                                        group.getChildren().each() {group.removeChild(it)}
 
                                         Attributes.NODE.selectNodes('children/*').each {
                                             String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
@@ -132,11 +132,11 @@
                                                 log.debug("Created key $key")
                                                 IEntityGroup member = GroupService.findGroup(key)
                                                 log.debug("Adding group $member")
-                                                group.addMember(member)
+                                                group.addChild(member)
                                             } else {
                                                 IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE_NAME))
                                                 log.debug("Adding entity $member")
-                                                group.addMember(member)
+                                                group.addChild(member)
                                             }
                                         }
                                         group.updateMembers()

@@ -276,7 +276,7 @@ public class PermissionAssignmentMapController extends AbstractPermissionsContro
             while (it.hasNext()) {
                 IEntityGroup group = (IEntityGroup) it.next();
 
-                EntityEnum beanType = EntityEnum.getEntityEnum(group.getEntityType(), true);
+                EntityEnum beanType = EntityEnum.getEntityEnum(group.getLeafType(), true);
 
                 JsonEntityBean bean = new JsonEntityBean(group, beanType);
                 Assignment parent = null;

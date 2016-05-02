@@ -51,7 +51,6 @@ implements ICompositeGroupService
 public ReferenceCompositeGroupService() throws GroupsException
 {
     super();
-//	initializeComponentServices();
 }
 /**
  * Returns groups that contain the <code>IGroupMember</code>.  Delegates to the
@@ -62,12 +61,9 @@ public ReferenceCompositeGroupService() throws GroupsException
 public Iterator findParentGroups(IGroupMember gm) throws GroupsException
 {
     Collection allGroups = new ArrayList();
-    IIndividualGroupService service = null;
 
-    for ( Iterator services = getComponentServices().values().iterator(); services.hasNext(); )
-    {
-        service = (IIndividualGroupService) services.next();
-        if ( gm.isEntity() || service.isEditable() ||
+    for (IIndividualGroupService service : (Collection<IIndividualGroupService>) getComponentServices().values()) {
+        if (!gm.isGroup() || service.isEditable() ||
           getComponentService(((IEntityGroup)gm).getServiceName()) == service )
         {
             {

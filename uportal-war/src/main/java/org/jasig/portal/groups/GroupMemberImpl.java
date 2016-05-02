@@ -56,8 +56,7 @@ public abstract class GroupMemberImpl implements IGroupMember {
 /**
  * GroupMemberImpl constructor
  */
-public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsException
-{
+public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsException {
     super();
     if ( isKnownEntityType(newEntityIdentifier.getType()) )
         { underlyingEntityIdentifier = newEntityIdentifier; }
@@ -69,52 +68,14 @@ public GroupMemberImpl(EntityIdentifier newEntityIdentifier) throws GroupsExcept
 }
 
 /**
- * Default implementation, overridden on EntityGroupImpl.
- * @param gm org.jasig.portal.groups.IGroupMember
- * @return boolean
- */
-@Override
-public boolean contains(IGroupMember gm) throws GroupsException
-{
-    return false;
-}
-
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @param gm org.jasig.portal.groups.IGroupMember
- * @return boolean
- */
-public boolean deepContains(IGroupMember gm) throws GroupsException
-{
-    return false;
-}
-
-/**
  * Returns an <code>Iterator</code> over the <code>Set</code> of this
  * <code>IGroupMember's</code> recursively-retrieved parent groups.
  *
  * @return Iterator
  */
-public Iterator getAncestorGroups() throws GroupsException
-{
-    return primGetAncestorGroups(this, new HashSet()).iterator();
-}
-
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @return Iterator
- */
-public Iterator getAllEntities() throws GroupsException
-{
-    return getEmptyIterator();
-}
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @return Iterator
- */
-public Iterator getAllMembers() throws GroupsException
-{
-    return getEmptyIterator();
+@Override
+public Set<IEntityGroup> getAncestorGroups() throws GroupsException {
+    return primGetAncestorGroups(this, new HashSet<IEntityGroup>());
 }
 
 /**
@@ -122,11 +83,8 @@ public Iterator getAllMembers() throws GroupsException
  * Synchronize the collection of keys with adds and removes.
  * @return Iterator
  */
-public Iterator getParentGroups() throws GroupsException {
-    return getParentGroupsSet().iterator();
-}
-
-private Set<IEntityGroup> getParentGroupsSet() throws GroupsException {
+@Override
+public Set<IEntityGroup> getParentGroups() throws GroupsException {
 
     final EntityIdentifier cacheKey = getUnderlyingEntityIdentifier();
     Element element = parentGroupsCache.get(cacheKey);
@@ -156,56 +114,26 @@ private synchronized Set<IEntityGroup> buildParentGroupsSet() throws GroupsExcep
 }
 
 /**
- * @return Iterator
- */
-private Iterator getEmptyIterator()
-{
-    return Collections.EMPTY_LIST.iterator();
-}
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @return Iterator
- */
-public Iterator getEntities() throws GroupsException
-{
-    return getEmptyIterator();
-}
-
-/**
  * @return String
  */
+@Override
 public String getKey() {
     return getUnderlyingEntityIdentifier().getKey();
 }
 
 /**
- * Default implementation, overridden on EntityGroupImpl.
- * @return Iterator
- */
-public Iterator getMembers() throws GroupsException
-{
-    return getEmptyIterator();
-}
-/**
  * @return Class
  */
+@Override
 public Class getType() {
     return getUnderlyingEntityIdentifier().getType();
 }
 /**
  * @return EntityIdentifier
  */
+@Override
 public EntityIdentifier getUnderlyingEntityIdentifier() {
     return underlyingEntityIdentifier;
-}
-
-/**
- * Default implementation, overridden on EntityGroupImpl.
- * @return boolean
- */
-public boolean hasMembers() throws GroupsException
-{
-    return false;
 }
 
 /**
@@ -213,22 +141,15 @@ public boolean hasMembers() throws GroupsException
  * @return boolean
  * @param gm org.jasig.portal.groups.IGroupMember
  */
-public boolean isDeepMemberOf(IGroupMember gm) throws GroupsException {
+@Override
+public boolean isDeepMemberOf(IEntityGroup group) throws GroupsException {
+    return isMemberOf(group) ? true : group.deepContains(this);
+}
 
-    if ( this.isMemberOf(gm) )
-        { return true; }
-    return gm.deepContains( this );
-}
 /**
  * @return boolean
  */
-public boolean isEntity()
-{
-    return false;
-}
-/**
- * @return boolean
- */
+@Override
 public boolean isGroup()
 {
     return false;
@@ -241,44 +162,41 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
     return ( org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType) != null );
 }
 
-/**
- * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
- * @param gm org.jasig.portal.groups.IGroupMember
- * @return boolean
- */
-public boolean isMemberOf(IGroupMember gm) throws GroupsException {
-
-    if (gm instanceof IEntityGroup) {
-        final IEntityGroup group = (IEntityGroup) gm;
-        final Set<IEntityGroup> parents = getParentGroupsSet();
-        return parents.contains(group);
-    } else {
-        final String msg = "The specified member is not a group:  " + gm;
-        throw new IllegalArgumentException(msg);
+    /**
+     * Answers if this <code>IGroupMember</code> is a member of <code>IGroupMember</code> gm.
+     * @param gm org.jasig.portal.groups.IGroupMember
+     * @return boolean
+     */
+    @Override
+    public boolean isMemberOf(IEntityGroup group) throws GroupsException {
+        return getParentGroups().contains(group);
     }
 
+    /**
+     * @throws UnsupportedOperationException
+     */
+    @Override
+    public IEntityGroup asGroup() {
+        throw new UnsupportedOperationException("This member is not a group:  " + this.getKey());
+    }
 
-}
 /**
  * Returns the <code>Set</code> of groups in our member <code>Collection</code> and,
  * recursively, in the <code>Collections</code> of our members.
  * @param member org.jasig.portal.groups.IGroupMember - The current group member in the recursive execution.
- * @param s Set - A Set that groups are added to.
+ * @param rslt Set - A Set that groups are added to.
  * @return Set
  */
-protected Set primGetAncestorGroups(IGroupMember member, Set s) throws GroupsException
-{
-    Iterator i = member.getParentGroups();
-    while ( i.hasNext() )
+protected Set<IEntityGroup> primGetAncestorGroups(IGroupMember member, Set<IEntityGroup> rslt) throws GroupsException {
+    for (IEntityGroup group : getParentGroups())
     {
-        IGroupMember gm = (IGroupMember) i.next();
         // avoid stack overflow in case of circular group dependencies
-        if (!s.contains(gm)) {
-            s.add(gm);
-            primGetAncestorGroups(gm, s);
+        if (!rslt.contains(group)) {
+            rslt.add(group);
+            primGetAncestorGroups(group, rslt);
         }
     }
-    return s;
+    return rslt;
 }
 
     @Override

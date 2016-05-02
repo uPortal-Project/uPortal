@@ -218,7 +218,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     rslt.add(groupsTree.getGroups().get(s));
                 }
             }
-        } else if (gm.isEntity() && gm.getEntityType().equals(root.getEntityType())) {
+        } else if (!gm.isGroup() && gm.getLeafType().equals(root.getLeafType())) {
 
             // Ask the individual...
             EntityIdentifier ei = gm.getUnderlyingEntityIdentifier();
@@ -354,7 +354,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
         // We only match the IPerson leaf type...
         final IEntityGroup root = getRootGroup();
-        if (!leaftype.equals(root.getEntityType())) {
+        if (!leaftype.equals(root.getLeafType())) {
             return new EntityIdentifier[0];
         }
 

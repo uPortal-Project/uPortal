@@ -26,8 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Name;
-
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
@@ -106,42 +104,31 @@ public void deleteGroup(IEntityGroup group) throws GroupsException
  * fail anyway.
  * @param group ILockableEntityGroup
  */
-private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group)
-throws GroupsException
-{
-    Iterator itr;
-    IEntityGroup containingGroup = null;
-    ILockableEntityGroup lockableGroup = null;
-    IEntityLock lock = null;
-    List lockableGroups = new ArrayList();
+private void removeDeletedGroupFromParentGroups(ILockableEntityGroup group) throws GroupsException {
+
+//    IEntityLock lock = null;
+    List<ILockableEntityGroup> lockableGroups = new ArrayList<>();
     try
     {
         String lockOwner = group.getLock().getLockOwner();
-        for ( itr=group.getParentGroups(); itr.hasNext(); )
-        {
-            containingGroup = (IEntityGroup) itr.next();
-            lockableGroup=
+        for (IEntityGroup containingGroup : group.getParentGroups()) {
+            ILockableEntityGroup lockableGroup =
                 GroupService.findLockableGroup(containingGroup.getKey(), lockOwner);
                 if ( lockableGroup != null )
                      { lockableGroups.add(lockableGroup); }
         }
-        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
-        {
-            lockableGroup = (ILockableEntityGroup) itr.next();
-            lockableGroup.removeMember(group);
+        for (ILockableEntityGroup lockableGroup : lockableGroups) {
+            lockableGroup.removeChild(group);
             lockableGroup.updateMembers();
         }
     }
     catch (GroupsException ge)
         { throw new GroupsException("Could not remove deleted group " + group.getKey() +
                 " from parent", ge); }
-    finally
-    {
-        for ( itr = lockableGroups.iterator(); itr.hasNext(); )
-        {
-            lock = ((ILockableEntityGroup) itr.next()).getLock();
-            try
-            {
+    finally {
+        for (ILockableEntityGroup lockableGroup : lockableGroups) {
+            IEntityLock lock = lockableGroup.getLock();
+            try {
                 if ( lock.isValid() )
                     { lock.release(); }
             }
@@ -800,7 +787,7 @@ throws GroupsException
 {
     GroupMemberImpl gmi = null;
 
-    for (Iterator it=group.getMembers(); it.hasNext();)
+    for (Iterator it=group.getChildren().iterator(); it.hasNext();)
     {
         gmi = (GroupMemberImpl) it.next();
         gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
@@ -835,21 +822,6 @@ throws GroupsException
         gmi.invalidateInParentGroupsCache(Collections.singleton((IGroupMember) gmi));
         if ( cacheInUse() )
            { cacheUpdate(gmi); }
-    }
-}
-
-/**
- * A foreign member is a group from a different service.
- * @param member IGroupMember
- * @return boolean
- */
-private boolean isForeignGroup(IGroupMember member) {
-    if (member.isEntity())
-        { return false; }
-    else
-    {
-        Name memberSvcName = ((IEntityGroup)member).getServiceName();
-        return ( ! getServiceName().equals(memberSvcName) );
     }
 }
 

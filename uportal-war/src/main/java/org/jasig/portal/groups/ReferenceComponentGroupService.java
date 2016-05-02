@@ -26,7 +26,6 @@ import javax.naming.Name;
 /**
  * Reference implementation of IComponentGroupService.
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class ReferenceComponentGroupService implements IComponentGroupService 
 {
@@ -45,21 +44,21 @@ public class ReferenceComponentGroupService implements IComponentGroupService
  * ReferenceComponentGroupService constructor comment.
  */
 public ReferenceComponentGroupService() {
-	super();
+    super();
 }
 /**
  * Returns a <code>Map</code> of the services contained by this component,
  * keyed on the name of the service WITHIN THIS COMPONENT.  
  */
 public Map getComponentServices() {
-	return componentServices;
+    return componentServices;
 }
 /**
  * Returns the FULLY-QUALIFIED <code>Name</code> of the service, which 
  * may not be known until the composite service is assembled.  
  */
 public javax.naming.Name getServiceName() {
-	return serviceName;
+    return serviceName;
 }
 /**
  * Answers if this service is a leaf in the composite; a service that

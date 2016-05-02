@@ -68,11 +68,11 @@
                     log.debug("Created key $key")
                     IEntityGroup member = GroupService.findGroup(key);
                     log.debug("Adding group $member")
-                    group.addMember(member);
+                    group.addChild(member);
                 } else {
                     IGroupMember member = GroupService.getGroupMember(memberId, group.getEntityType())
                     log.debug("Adding entity $member")
-                    group.addMember(member);
+                    group.addChild(member);
                 }
             }
 

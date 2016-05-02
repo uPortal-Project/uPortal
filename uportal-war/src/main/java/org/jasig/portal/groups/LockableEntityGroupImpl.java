@@ -44,6 +44,7 @@ public LockableEntityGroupImpl(String groupKey, Class groupType) throws GroupsEx
 /**
  * Delegates to the factory.
  */
+@Override
 public void delete() throws GroupsException
 {
     getLockableGroupService().deleteGroup(this);
@@ -52,6 +53,7 @@ public void delete() throws GroupsException
 /**
  * @return org.jasig.portal.concurrency.IEntityLock
  */
+@Override
 public IEntityLock getLock() {
     return lock;
 }
@@ -93,37 +95,31 @@ private void primUpdateMembers(boolean renewLock) throws GroupsException
 /**
  * @param newLock org.jasig.portal.concurrency.IEntityLock
  */
+@Override
 public void setLock(IEntityLock newLock)
 {
     lock = newLock;
 }
 
-/**
- */
+@Override
 public String toString()
 {
     return "LockableEntityGroupImpl (" + getKey() + ") "  + getName();
 }
 
-/**
- *
- */
+@Override
 public void update() throws GroupsException
 {
     primUpdate(false);
 }
 
-/**
- *
- */
+@Override
 public void updateAndRenewLock() throws GroupsException
 {
     primUpdate(true);
 }
 
-/**
- *
- */
+@Override
 public void updateMembers() throws GroupsException
 {
     primUpdateMembers(false);

@@ -34,6 +34,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.EntityIdentifier;
+import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
@@ -201,26 +202,30 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
         if (super.getSession(false) == null) {
             return super.isUserInRole(role);
         }
-        
+
         //Check the wrapped request first
         final boolean isUserInRole = super.isUserInRole(role);
         if (isUserInRole) {
             return true;
         }
-        
+
         //Find the group for the role, if not found return false
-        IGroupMember groupForRole = GroupService.findGroup(role);
+        IEntityGroup groupForRole = GroupService.findGroup(role);
         if (groupForRole == null) {
             final EntityIdentifier[] results = GroupService.searchForGroups(role, GroupService.IS, IPerson.class);
             if (results == null || results.length == 0) {
                 return false;
             }
-            
+
             if (results.length > 1) {
                 this.logger.warn(results.length + " groups were found for role '" + role + "'. The first result will be used.");
             }
-            
-            groupForRole = GroupService.getGroupMember(results[0]);
+
+            IGroupMember member = GroupService.getGroupMember(results[0]);
+            if (member == null || !member.isGroup()) {
+                return false;
+            }
+            groupForRole = member.asGroup();
         }
 
         //Load the group information about the current user

@@ -661,7 +661,7 @@ private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
 {
     IGroupMember gm = getGroupMemberForPrincipal(principal);
-    return gm.getAncestorGroups();
+    return gm.getAncestorGroups().iterator();
 }
 
 /**
@@ -1011,8 +1011,8 @@ throws AuthorizationException
                     }
 
                     if (targetEntity != null) {
-                        for (Iterator containing = targetEntity.getAncestorGroups(); containing.hasNext();) {
-                            containingGroups.add(((IEntityGroup)containing.next()).getKey());
+                        for (IEntityGroup ancestor : targetEntity.getAncestorGroups()) {
+                            containingGroups.add(ancestor.getKey());
                         }
                     }
                 }

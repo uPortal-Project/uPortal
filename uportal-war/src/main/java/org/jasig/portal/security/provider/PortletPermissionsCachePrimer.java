@@ -22,7 +22,6 @@ package org.jasig.portal.security.provider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -194,11 +193,10 @@ public class PortletPermissionsCachePrimer {
              * Then we load our children.
              */
             if (group.hasMembers()) {
-                @SuppressWarnings("rawtypes")
-                final Iterator members = group.getMembers();
-                for (IGroupMember next = (IGroupMember) members.next(); members.hasNext(); next = (IGroupMember) members.next()) {
-                    if (next.isGroup()) {
-                        IEntityGroup child = (IEntityGroup) next;
+                final Set<IGroupMember> members = group.getChildren();
+                for (IGroupMember member : members) {
+                    if (member.isGroup()) {
+                        IEntityGroup child = (IEntityGroup) member;
                         walk(child, visitedNodes, report);
                     }
                 }

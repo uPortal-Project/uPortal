@@ -44,7 +44,6 @@ import org.springframework.stereotype.Service;
  * as saving information supplied to a group form.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Service
 public class GroupAdministrationHelper {
@@ -83,10 +82,7 @@ public class GroupAdministrationHelper {
 		form.setType(groupListHelper.getEntityType(group).toString());
 		
 		// add child groups to our group form bean
-		@SuppressWarnings("unchecked")
-		Iterator<IGroupMember> groupIter = (Iterator<IGroupMember>) group.getMembers();
-		while (groupIter.hasNext()) {
-			IGroupMember child = groupIter.next();
+		for (IGroupMember child : group.getChildren()) {
 			JsonEntityBean childBean = groupListHelper.getEntity(child);
 			form.addMember(childBean);
 		}
@@ -113,11 +109,8 @@ public class GroupAdministrationHelper {
 		
 		// remove this group from the membership list of any current parent
 		// groups
-		@SuppressWarnings("unchecked")
-		Iterator<IEntityGroup> iter = (Iterator<IEntityGroup>) group.getParentGroups();
-		while (iter.hasNext()) {
-			IEntityGroup parent = (IEntityGroup) iter.next();
-			parent.removeMember(group);
+		for (IEntityGroup parent : group.getParentGroups()) {
+			parent.removeChild(group);
 			parent.updateMembers();
 		}
 		
@@ -173,11 +166,8 @@ public class GroupAdministrationHelper {
 		IEntityGroup group = GroupService.findGroup(groupForm.getKey());
 		
 		// clear the current group membership list
-		@SuppressWarnings("unchecked")
-		Iterator<IGroupMember> groupIter = (Iterator<IGroupMember>) group.getMembers();
-		while (groupIter.hasNext()) {
-			IGroupMember child = groupIter.next();
-			group.removeMember(child);
+		for (IGroupMember child : group.getChildren()) {
+			group.removeChild(child);
 		}
 		
 		// add all the group membership information from the group form
@@ -186,10 +176,10 @@ public class GroupAdministrationHelper {
 			EntityEnum type = EntityEnum.getEntityEnum(child.getEntityTypeAsString());
 			if (type.isGroup()) {
 				IEntityGroup member = GroupService.findGroup(child.getId());
-				group.addMember(member);
+				group.addChild(member);
 			} else {
 				IGroupMember member = GroupService.getGroupMember(child.getId(), type.getClazz());
-				group.addMember(member);
+				group.addChild(member);
 			}
 		}
 		
@@ -236,10 +226,10 @@ public class GroupAdministrationHelper {
 			EntityEnum childType = EntityEnum.getEntityEnum(child.getEntityTypeAsString());
 			if (childType.isGroup()) {
 				IEntityGroup member = GroupService.findGroup(child.getId());
-				group.addMember(member);
+				group.addChild(member);
 			} else {
 				IGroupMember member = GroupService.getGroupMember(child.getId(), type.getClazz());
-				group.addMember(member);
+				group.addChild(member);
 			}
 		}
 		
@@ -248,7 +238,7 @@ public class GroupAdministrationHelper {
 		
 		// add this group to the membership list for the specified parent
 		IEntityGroup parentGroup = GroupService.findGroup(parent.getId());
-		parentGroup.addMember(group);
+		parentGroup.addChild(group);
 		parentGroup.updateMembers();
 
 	}

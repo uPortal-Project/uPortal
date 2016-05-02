@@ -194,6 +194,13 @@ public final class GroupService implements IGroupConstants {
      */
     public static IGroupMember getGroupMember(String key, Class<?> type) throws GroupsException
     {
+        /*
+         * WARNING:  The 'type' parameter is not the leafType;  you're obligated
+         * to say whether you want a group or a non-group (i.e. some type of
+         * entity).  In fact, the underlying implementation blindly instantiates
+         * whatever you tell it to.
+         */
+
         LOGGER.trace("Invoking getEntity for key='{}', type='{}'", key, type);
         return instance().igetGroupMember(key, type);
     }
