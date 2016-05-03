@@ -54,6 +54,14 @@
         </preference>
 
         <preference>
+            <name>Whitelist.regexValues</name>
+            <label>whitelist.regexvalues</label>
+            <description></description>
+            <example>http://feeds.nytimes.com/nyt/rss/HomePage</example>
+            <single-text-preference-input display="text"/>
+        </preference>
+
+        <preference>
             <name>summaryView</name>
             <label>summary.view</label>
             <description></description>
@@ -61,6 +69,7 @@
                 <default>flyout</default>
                 <option value="flyout" label="flyout"/>
                 <option value="full" label="full"/>
+                <option value="titleAndAbstract" label="Title and Abstract"/>
             </single-choice-preference-input>
         </preference>
 
@@ -71,6 +80,42 @@
             <single-text-preference-input display="text">
                 <default>5</default>
             </single-text-preference-input>
+        </preference>
+
+        <preference>
+            <name>titlePolicy</name>
+            <label>antisamy.title.policy</label>
+            <description>Policy for allowable HTML tags</description>
+            <!-- see applicationContext.xml in NewsReader for values -->
+            <single-choice-preference-input display="select">
+                <!-- default should match NewsReader portlet preference -->
+                <default>antisamy-textonly</default>
+                <option value="antisamy-textonly" label="text only"/>
+                <option value="antisamy-xkcd" label="XKCD"/>
+                <option value="antisamy-ebay" label="eBay"/>
+                <option value="antisamy-slashdot" label="Slash Dot"/>
+                <option value="antisamy-img" label="img"/>
+                <option value="antisamy-manchester" label="Manchester"/>
+                <option value="antisamy-anythinggoes" label="Anything Goes"/>
+            </single-choice-preference-input>
+        </preference>
+
+        <preference>
+            <name>descriptionPolicy</name>
+            <label>antisamy.desc.policy</label>
+            <description>Policy for allowable HTML tags</description>
+            <!-- see applicationContext.xml in NewsReader for values -->
+            <single-choice-preference-input display="select">
+                <!-- default should match NewsReader portlet preference -->
+                <default>antisamy-slashdot</default>
+                <option value="antisamy-textonly" label="text only"/>
+                <option value="antisamy-xkcd" label="XKCD"/>
+                <option value="antisamy-ebay" label="eBay"/>
+                <option value="antisamy-slashdot" label="Slash Dot"/>
+                <option value="antisamy-img" label="img"/>
+                <option value="antisamy-manchester" label="Manchester"/>
+                <option value="antisamy-anythinggoes" label="Anything Goes"/>
+            </single-choice-preference-input>
         </preference>
 
     </step>
