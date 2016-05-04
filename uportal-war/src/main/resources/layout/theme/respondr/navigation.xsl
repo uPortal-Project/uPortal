@@ -54,7 +54,7 @@
 <xsl:param name="TAB_CONTEXT" select="'header'"/><!-- Sets the location of the navigation. Values are 'header' or 'sidebar'. -->
 <xsl:param name="CONTEXT" select="'header'"/>
 <xsl:param name="subscriptionsSupported">true</xsl:param>
-<xsl:param name="USE_FLYOUT_MENUS" select="'false'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. TODO:  Move to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
+<xsl:param name="USE_FLYOUT_MENUS" select="'true'" /> <!-- Sets the use of flyout menus.  Values are 'true' or 'false'. TODO:  Move to parameter in renderingPipelineContext.xml with configuration in portal.properties. -->
 <xsl:param name="useTabGroups">false</xsl:param>
 <xsl:param name="PORTAL_VIEW">
   <xsl:choose>
@@ -301,7 +301,7 @@
 
     <xsl:element name="a"> <!-- Navigation dropdown toogle. -->
       <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
-      <xsl:attribute name="data-target">#</xsl:attribute>
+      <xsl:attribute name="href">javascript:;</xsl:attribute>
       <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
       <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
       <xsl:attribute name="role">button</xsl:attribute>
