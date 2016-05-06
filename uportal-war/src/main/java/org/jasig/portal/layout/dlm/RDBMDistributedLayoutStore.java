@@ -1146,7 +1146,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             final IntegrationResult integrationResult = new IntegrationResult();
             ILF = this.createCompositeILF(person, PLF, applicableLayouts, integrationResult);
             // push optimizations made during merge back into db.
-            if (integrationResult.changedPLF) {
+            if (integrationResult.isChangedPLF()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Saving PLF for {} due to changes during merge.", person.getAttribute(IPerson.USERNAME));
                 }
