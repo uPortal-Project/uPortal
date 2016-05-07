@@ -1,4 +1,3 @@
-uportal-war/src/main/data/default_entities/group_membership/Portal_Developers.group-membership.xml
 uportal-war/src/main/data/default_entities/group_membership/Tenant_Fragment_Owners.group-membership.xml
 uportal-war/src/main/data/default_entities/permission_owner/UP_PORTLET_PUBLISH.permission-owner.xml
 uportal-war/src/main/data/default_entities/permission_owner/UP_SYSTEM.permission-owner.xml
