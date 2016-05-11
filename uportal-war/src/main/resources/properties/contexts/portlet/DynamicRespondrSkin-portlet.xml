@@ -23,14 +23,62 @@
        xmlns="http://www.springframework.org/schema/beans" 
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.dynamicskin"/>
+    <context:component-scan base-package="org.jasig.portal.portlets.dynamicskin">
+        <context:exclude-filter type="regex" expression=".+\.*Aws.+"/>
+    </context:component-scan>
 
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors"><bean class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor"/></property>
     </bean>
+
+    <bean id="dynamicSkinUniqueTokenGenerator" class="org.jasig.portal.portlets.dynamicskin.ConfigurablePreferencesBasedTokenGenerator" />
+
+    <bean id="uniqueTokenBasedDynamicSkinCssFileNamer" class="org.jasig.portal.portlets.dynamicskin.UniqueTokenBasedDynamicSkinCssFileNamer">
+        <constructor-arg value="skin" />
+        <constructor-arg ref="dynamicSkinUniqueTokenGenerator" />
+    </bean>
+
+    <!--
+     | To read/write Dynamic Skin CSS from/to an AWS S3 bucket, follow these step:
+     |
+     | 1. Set up the AWS S3 bucket properties by doing a.) or b.) below:
+     |    a.) update the dynamic-skin-aws-s3-bucket.properties and add the following to the 
+     |        "primaryPropertyPlaceholderConfigurer" bean "locations" property list:
+     |            <value>classpath:/properties/dynamic-skin-aws-s3-bucket.properties</value>
+     |    b.) copy properties from dynamic-skin-aws-s3-bucket.properties to your property overrides
+     |        file, update the values, and set up property overrides
+     |        see:  https://wiki.jasig.org/display/UPM43/Properties+Files+and+Properties+Overrides
+     | 2. Replace the ".+\.*Aws.+" component scan exclude filter regex expression with:
+     |    ".+\.FileSystemDynamicSkinService"
+     | 3. Comment out the "uniqueTokenBasedDynamicSkinCssFileNamer" bean definition above.
+     | 4. Uncomment out the "prefValueDynamicSkinCssFileNamer" and "amazonS3Client" beans listed at
+     |    the bottom of this file.
+     | 5. Add the following portlet preference to your dynamic-respondr-skin.portlet-definition.xml
+     |    file, change the value to the desired file name, and import the portlet definition to 
+     |    apply the preference:
+     |        <portlet-preference>
+     |            <name>dynamicSkinCssFileName</name>
+     |            <readOnly>true</readOnly>
+     |            <value>myskin.css</value>
+     |        </portlet-preference>
+     +-->
+    <!--
+    <bean id="prefValueDynamicSkinCssFileNamer" class="org.jasig.portal.portlets.dynamicskin.PrefValueDynamicSkinCssFileNamer" />
+    <bean id="amazonS3Client" class="com.amazonaws.services.s3.AmazonS3Client">
+    -->
+        <!--
+         | Uncomment this only if the aws-credentials.properties file (or an overrides.properties file) will be used to retrieve the 
+         | credentials. Otherwise, the default behavior (which searches a number of sources) will be used.
+         | See: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3Client.html#AmazonS3Client() 
+         +-->
+        <!-- <constructor-arg ref="awsCredentialsConfig" /> -->
+    <!--
+    </bean>
+    -->
+
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
 
 </beans>
