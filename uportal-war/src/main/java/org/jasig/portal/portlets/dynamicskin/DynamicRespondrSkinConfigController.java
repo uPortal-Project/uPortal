@@ -74,7 +74,7 @@ public class DynamicRespondrSkinConfigController {
                 } else {
                     log.warn("Skin name {} is not recognized", formValue);
                 }
-            } else if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+            } else if (name.startsWith(DynamicRespondrSkinConstants.CONFIGURABLE_PREFIX)) {
                 String formValue = request.getParameter(name);
                 prefs.setValue(name, formValue != null ? formValue : "");
             }
@@ -112,7 +112,7 @@ public class DynamicRespondrSkinConfigController {
         Enumeration<String> preferenceNames = preferences.getNames();
         while (preferenceNames.hasMoreElements()) {
             String name = preferenceNames.nextElement();
-            if (name.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
+            if (name.startsWith(DynamicRespondrSkinConstants.CONFIGURABLE_PREFIX)) {
                 model.addAttribute(name, preferences.getValue(name, ""));
             }
         }
