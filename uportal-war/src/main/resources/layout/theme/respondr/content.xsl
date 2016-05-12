@@ -372,7 +372,7 @@
       <xsl:param name="STYLE" />
       <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
         <xsl:choose>
-          <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
+          <xsl:when test="@dlm:moveAllowed='false' or //focused">locked</xsl:when>
           <xsl:otherwise>movable</xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
