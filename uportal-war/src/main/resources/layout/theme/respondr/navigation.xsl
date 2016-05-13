@@ -310,6 +310,7 @@
                     <xsl:otherwise></xsl:otherwise>
                   </xsl:choose>
                 </xsl:variable>
+                <xsl:sort select="@title" /> <!-- sort sub menu items by hyperlink text alphabetically -->
                 <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
                   <xsl:variable name="portletSubNavLink">
                     <xsl:call-template name="portalUrl">
