@@ -26,12 +26,12 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.context.request.async.WebAsyncUtils;
 
 /**
  * Scopes set request attributes to just this request.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequestWrapper {
     /**
@@ -39,9 +39,9 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
      * will be available.
      */
     public static final String ATTRIBUTE__HTTP_SERVLET_REQUEST = PortletHttpServletRequestWrapper.class.getName() + ".PORTLET_HTTP_SERVLET_REQUEST";
-    
+
     private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
-    
+
     public PortletHttpServletRequestWrapper(HttpServletRequest httpServletRequest) {
         super(httpServletRequest);
     }
@@ -51,10 +51,21 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
         if (ATTRIBUTE__HTTP_SERVLET_REQUEST.equals(name)) {
             return this;
         }
-        
+
         final Object attribute = this.attributes.get(name);
         if (attribute != null) {
             return attribute;
+        }
+
+        if (WebAsyncUtils.WEB_ASYNC_MANAGER_ATTRIBUTE.equals(name)) {
+            /*
+             * Spring WebAsyncManager has an issue with cross-context request
+             * dispatching;  it has the potential to break the portlet
+             * container.  See the following page:
+             *
+             *   - http://stackoverflow.com/questions/22128150/spring-and-cross-context-webasyncmanager-cannot-be-cast-to-webasyncmanager
+             */
+            return null;
         }
 
         return super.getAttribute(name);
@@ -75,4 +86,5 @@ public class PortletHttpServletRequestWrapper extends AbstractHttpServletRequest
     public void setAttribute(String name, Object o) {
         this.attributes.put(name, o);
     }
+
 }
