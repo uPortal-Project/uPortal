@@ -54,7 +54,7 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
             
             final String localPart = name.getLocalPart();
             if ("channel".equals(localPart) || "folder".equals(localPart)) {
-                return new ImmutableStartElementWrapper(startElement);
+                return new ImmutableStartElementWrapper(startElement, "folder".equals(localPart));
             }
         }
         
@@ -62,8 +62,14 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
     }
 
     private static final class ImmutableStartElementWrapper extends StartElementWrapper {
-        public ImmutableStartElementWrapper(StartElement startElement) {
+        private static final String dlmNamespaceURI = "http://www.uportal.org/layout/dlm";
+        private static final String dlmPrefix = "dlm";
+
+        private final boolean isFolder;
+
+        public ImmutableStartElementWrapper(StartElement startElement, boolean isFolder) {
             super(startElement);
+            this.isFolder = isFolder;
         }
 
         @Override
@@ -72,7 +78,11 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
             if ("unremovable".equals(localPart) || "immutable".equals(localPart)) {
                 return EVENT_FACTORY.createAttribute(name, "true");
             }
-            
+            if ("deleteAllowed".equals(localPart) || "editAllowed".equals(localPart) || "moveAllowed".equals(localPart)
+                    || "addChildAllowed".equals(localPart)) {
+                return EVENT_FACTORY.createAttribute(name, "false");
+            }
+
             return super.getAttributeByName(name);
         }
 
@@ -92,7 +102,25 @@ public class ImmutableUserLayoutXMLEventReader extends FilteringXMLEventReader {
             final QName unremovableName = new QName("unremovable");
             final Attribute unremovableAttribute = EVENT_FACTORY.createAttribute(unremovableName, "true");
             attributes.put(unremovableName, unremovableAttribute);
-            
+
+            final QName dlmDeleteName = new QName(dlmNamespaceURI, "deleteAllowed", dlmPrefix);
+            final Attribute dlmDeleteNameAttribute = EVENT_FACTORY.createAttribute(dlmDeleteName, "false");
+            attributes.put(dlmDeleteName, dlmDeleteNameAttribute);
+
+            final QName dlmMoveName = new QName(dlmNamespaceURI, "moveAllowed", dlmPrefix);
+            final Attribute dlmMoveNameAttribute = EVENT_FACTORY.createAttribute(dlmMoveName, "false");
+            attributes.put(dlmMoveName, dlmMoveNameAttribute);
+
+            if (isFolder) {
+                final QName dlmEditName = new QName(dlmNamespaceURI, "editAllowed", dlmPrefix);
+                final Attribute dlmEditNameAttribute = EVENT_FACTORY.createAttribute(dlmEditName, "false");
+                attributes.put(dlmEditName, dlmEditNameAttribute);
+
+                final QName dlmAddChildName = new QName(dlmNamespaceURI, "addChildAllowed", dlmPrefix);
+                final Attribute dlmAddChildNameAttribute = EVENT_FACTORY.createAttribute(dlmAddChildName, "false");
+                attributes.put(dlmAddChildName, dlmAddChildNameAttribute);
+            }
+
             return Collections.unmodifiableCollection(attributes.values()).iterator();
         }
     }
