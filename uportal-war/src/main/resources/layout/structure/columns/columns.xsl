@@ -193,7 +193,7 @@
                             <!-- Detect whether a focused channel is present in the user's layout -->
                             <xsl:attribute name="in-user-layout">
                                 <xsl:choose>
-                                    <xsl:when test="//folder[@type='regular' and @hidden='false']/channel[@ID = $userLayoutRoot]">yes</xsl:when>
+                                    <xsl:when test="//folder[@type='regular' and @hidden='false' and not(@transient='true')]/channel[@ID = $userLayoutRoot]">yes</xsl:when>
                                     <xsl:otherwise>no</xsl:otherwise>
                                 </xsl:choose>
                             </xsl:attribute>
