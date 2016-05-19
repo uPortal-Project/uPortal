@@ -433,7 +433,7 @@
           </xsl:if>
 
           <!-- Favorites -->
-          <xsl:if test="$hasFavorites='true'">
+          <xsl:if test="$hasFavorites='true' and $AUTHENTICATED='true'">
               <xsl:choose>
                   <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
                       <li>
@@ -482,7 +482,8 @@
           </xsl:if>
 
           <!-- Add to Layout Icon -->
-          <xsl:if test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')"> <!-- Add to layout. -->
+          <!-- Add if not in layout and user has BROWSE permission to portlet -->
+          <xsl:if test="//focused[@in-user-layout='no'] and $AUTHENTICATED='true' and upAuth:hasPermission('UP_PORTLET_SUBSCRIBE', 'BROWSE', $permissionChannelId)">
               <li>
                   <a id="focusedContentDialogLink" href="javascript:;"
                      title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
@@ -575,7 +576,7 @@
       </xsl:if>
 
       <!-- Edit Icon -->
-      <xsl:if test="$editable='true'">
+      <xsl:if test="$editable='true' and $AUTHENTICATED='true'">
         <xsl:variable name="portletEditUrl">
           <xsl:call-template name="portalUrl">
             <xsl:with-param name="url">
@@ -593,7 +594,7 @@
 
       <!-- Configure Icon -->
       <xsl:if test="@portletMode!='config' and @windowState!='minimized'">
-        <xsl:if test="$canConfigure='true'">
+        <xsl:if test="$canConfigure='true' and $AUTHENTICATED='true'">
           <xsl:variable name="portletConfigureUrl">
             <xsl:call-template name="portalUrl">
               <xsl:with-param name="url">

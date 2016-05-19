@@ -433,15 +433,16 @@
  -->
 <xsl:template name="page.dialogs">
 
+    <xsl:variable name="permissionChannelId">PORTLET_ID.<xsl:value-of select="//focused/channel/@chanID"/></xsl:variable>
     <xsl:choose>
         <!-- The normal/usual case:  Dashboard (non-focused) mode -->
         <xsl:when test="not(//focused)">
             <xsl:call-template name="page.dialogs.dashboard" />
         </xsl:when>
-        <!-- UseIt use case:  We are focused on a portlet that is (1) not currently
-             in the user's layout and (2) not a "hidden" portlet.  (Portlets that 
-             are not a member of any category are hidden.) -->
-        <xsl:when test="//focused[@in-user-layout='no'] and upGroup:isChannelDeepMemberOf(//focused/channel/@fname, 'local.1')">
+        <!-- UseIt/ Add to My Layout use case:  We are focused on a portlet that is (1) not currently
+             in the user's layout and (2) not a "hidden" portlet (user has BROWSE
+             permission to portlet). -->
+        <xsl:when test="//focused[@in-user-layout='no'] and $AUTHENTICATED='true' and upAuth:hasPermission('UP_PORTLET_SUBSCRIBE', 'BROWSE', $permissionChannelId)">
             <xsl:call-template name="page.dialogs.useit" />
         </xsl:when>
         <xsl:otherwise>
