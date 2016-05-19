@@ -70,7 +70,7 @@
                     log.debug("Adding group $member")
                     group.addChild(member);
                 } else {
-                    IGroupMember member = GroupService.getGroupMember(memberId, group.getEntityType())
+                    IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType())
                     log.debug("Adding entity $member")
                     group.addChild(member);
                 }
