@@ -301,7 +301,7 @@
 
     <xsl:element name="a"> <!-- Navigation dropdown toogle. -->
       <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
-      <xsl:attribute name="data-target">#</xsl:attribute>
+      <xsl:attribute name="href">javascript:;</xsl:attribute>
       <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
       <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
       <xsl:attribute name="role">button</xsl:attribute>

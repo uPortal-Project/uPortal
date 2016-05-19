@@ -294,8 +294,8 @@
             //alert("Handler for .click() called.");
             menu.toggleClass("show");
             $('html, body').animate({
-                    scrollTop: 0
-               });
+                scrollTop: 0
+            });
             return false;
           });
           // Console for debugging.
@@ -304,7 +304,7 @@
 
         navMenuToggle();
       });
-      
+
       up.jQuery(document).ready(function () {
            var $ = up.jQuery;
            // Toggle the off-canvas menu when the button is clicked.
@@ -312,7 +312,7 @@
                 $('.row-offcanvas').toggleClass('active');
            });
       });
-      
+
       $(document).ready(function() {
           if (up.lightboxConfig) {
             up.lightboxConfig.init();
@@ -707,7 +707,7 @@
             <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
-          <div class="row-offcanvas row-offcanvas-left">
+          <div class="row-offcanvas">
             <div id="up-notification"></div>
             <div id="wrapper">
                 <xsl:call-template name="region.hidden-top" />
@@ -715,7 +715,7 @@
                 <header class="portal-header" role="banner">
                     <div id="up-sticky-nav" class="container-fluid">
                         <div class="portal-global row">
-                            <a href="javascript:;" class="menu-toggle pull-left visible-xs" data-toggle="offcanvas">
+                            <a href="javascript:;" class="menu-toggle pull-left" data-toggle="offcanvas">
                                 <i class="fa fa-align-justify"></i> <xsl:value-of select="upMsg:getMessage('menu', $USER_LANG)"/>
                             </a>
                             <xsl:call-template name="region.pre-header" />
