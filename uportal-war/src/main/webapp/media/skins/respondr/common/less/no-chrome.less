@@ -25,11 +25,14 @@
     }
 
     .hover-toolbar {
-        position: relative;  // required to use z-index
+        position: relative;  /* required to use z-index */
         z-index: 1000;
         text-align: right;
 
         .portlet-controls {
+            position: absolute;  /* Place on top */
+            width: 100%;         /* Hamburger on the right */
+
             .grab-handle {
                 display: inline-block;
                 position: relative;
