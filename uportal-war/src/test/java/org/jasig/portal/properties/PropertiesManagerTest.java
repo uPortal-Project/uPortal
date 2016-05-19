@@ -360,22 +360,6 @@ public class PropertiesManagerTest extends TestCase {
     }
 
     /**
-     * Test getPropertyUntrimmed() with default value where property is present.
-     */
-    public void testGetPropertyUntrimmedWithDefault() {
-        String result = PropertiesManager.getPropertyUntrimmed("trailingWhitespace", "defaultValue");
-        assertEquals("oneSpaceAfter ", result);
-    }
-
-    /**
-     * Test getPropertyUntrimmed() with default value where property is missing.
-     */
-    public void testGetPropertyUntrimmedWithDefaultPropertyMissing(){
-        String result = PropertiesManager.getPropertyUntrimmed("missingProperty", "defaultValue");
-        assertEquals("defaultValue", result);
-    }
-    
-    /**
      * Test getPropertyAsBoolean with default value where property is present.
      */
     public void testGetPropertyAsBooleanWithDefault() {

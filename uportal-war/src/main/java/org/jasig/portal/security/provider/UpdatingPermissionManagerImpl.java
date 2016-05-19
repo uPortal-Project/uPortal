@@ -25,7 +25,6 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 
 /**
  * @author Dan Ellentuck (de3@columbia.edu)
- * @version $Revision$
  */
 public class UpdatingPermissionManagerImpl extends PermissionManagerImpl implements IUpdatingPermissionManager
 {
@@ -46,22 +45,6 @@ public class UpdatingPermissionManagerImpl extends PermissionManagerImpl impleme
   public void addPermissions (IPermission[] newPermissions) throws AuthorizationException
   {
     getAuthorizationService().addPermissions(newPermissions);
-  }
-
-  /**
-   * Retrieve an array of <code>IPermission</code> objects based on the given parameters.
-   * Includes inherited <code>IPermissions</code>.  Any null parameters will be ignored.
-   *
-   * @param principal IAuthorizationPrincipal
-   * @param activity String
-   * @param target String
-   * @return IPermission[]
-   * @exception AuthorizationException
-   */
-  public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target)
-  throws AuthorizationException
-  {
-      return principal.getAllPermissions(getOwner(), activity, target);
   }
 
   /**

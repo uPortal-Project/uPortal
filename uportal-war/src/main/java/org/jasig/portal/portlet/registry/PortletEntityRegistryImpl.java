@@ -624,13 +624,6 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         return this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
     }
 
-    protected IPortletEntityId createConsistentPortletEntityId(PortletEntityData portletEntityData) {
-        final IPortletDefinitionId portletDefinitionId = portletEntityData.getPortletDefinitionId();
-        final String layoutNodeId = portletEntityData.getLayoutNodeId();
-        final int userId = portletEntityData.getUserId();
-        return this.createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
-    }
-
     protected IPortletEntityId createConsistentPortletEntityId(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
         final String compositeId = portletDefinitionId.getStringId() + ID_PART_SEPERATOR + layoutNodeId + ID_PART_SEPERATOR + userId;
         return new PortletEntityIdImpl(portletDefinitionId, layoutNodeId, userId, compositeId);

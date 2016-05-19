@@ -25,23 +25,11 @@ public class RuntimeAuthorizationException extends RuntimeException {
     public RuntimeAuthorizationException() {
         super();
     }
-    
-    public RuntimeAuthorizationException(String message, Throwable throwable) {
-        super(message, throwable);
-    }
 
-    public RuntimeAuthorizationException(String message) {
-        super(message);
-    }
-
-    public RuntimeAuthorizationException(Throwable throwable) {
-        super(throwable);
-    }
-    
     public RuntimeAuthorizationException(IPerson person, String activity, String target) {
         super("Person [" + person.getUserName() + "] does not have permission " + activity + " on " + target);
     }
-    
+
     public RuntimeAuthorizationException(String userName, String activity, String target) {
         super("Person [" + userName + "] does not have permission " + activity + " on " + target);
     }

@@ -19,8 +19,6 @@
 package org.jasig.portal.rendering.predicates;
 
 import com.google.common.base.Predicate;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;

@@ -22,7 +22,6 @@ import org.jasig.portal.PortalException;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class RenderingPipelineConfigurationException extends PortalException {
     private static final long serialVersionUID = 1L;

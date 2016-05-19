@@ -56,16 +56,15 @@ import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class PortletDefinitionParameterImpl implements IPortletDefinitionParameter, Serializable {
     private static final long serialVersionUID = 1L;
-    
-    @SuppressWarnings("unused")
+
     @Id
     @GeneratedValue(generator = "UP_PORTLET_DEF_PARAM_GEN")
     @Column(name="PARAM_ID")
     private final long id;
-    
+
     @Column(name = "PARAM_NAME", length = 255, nullable = false)
     private final String name;
-    
+
 	@Column(name = "PARAM_VAL", length = 2000)
 	private String value;
 
@@ -92,21 +91,6 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
         this.name = name;
         this.value = value;
     }
-    
-    /**
-     * Construct a new ChannelParameterImpl from an IChannelParameter 
-     * 
-     * @param param
-     */
-    public PortletDefinitionParameterImpl(IPortletDefinitionParameter param) {
-        this.id = -1;
-        this.name = param.getName();
-    	this.value = param.getValue();
-    	this.descr = param.getDescription();
-    }
-    
-    
-	// Getter methods
 
     /*
      * (non-Javadoc)

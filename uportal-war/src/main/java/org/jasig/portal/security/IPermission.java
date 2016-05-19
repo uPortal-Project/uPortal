@@ -46,16 +46,6 @@ public interface IPermission {
   public static final String PORTLET_BROWSE_ACTIVITY = "BROWSE";
 
   /*
-   * Portlet render permissions by lifecycle state.  These permissions are not
-   * actually used in the codebase yet and are included here for future planning
-   * purposes only.
-   */
-  public static final String PORTLET_RENDERER_CREATED_ACTIVITY = "RENDER_CREATED";
-  public static final String PORTLET_RENDERER_APPROVED_ACTIVITY = "RENDER_APPROVED";
-  public static final String PORTLET_RENDERER_PUBLISHED_ACTIVITY = "RENDER_PUBLISHED";
-  public static final String PORTLET_RENDERER_EXPIRED_ACTIVITY = "RENDER_EXPIRED";
-
-  /*
    * Portlet management permissions by portlet type.
    */
   public static final String PORTLET_MANAGER_SELECT_PORTLET_TYPE = "SELECT_PORTLET_TYPE";

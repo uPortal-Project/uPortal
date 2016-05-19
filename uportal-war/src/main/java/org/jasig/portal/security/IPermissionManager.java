@@ -17,7 +17,7 @@
  * under the License.
  */
 package org.jasig.portal.security;
- 
+
 import org.jasig.portal.AuthorizationException;
 
  /**
@@ -27,19 +27,7 @@ import org.jasig.portal.AuthorizationException;
  * @author Dan Ellentuck
  */
 public interface IPermissionManager {
-/**
- * Returns <code>IPermissions</code> granted to the <code>IAuthorizationPrincipal</code> 
- * by the owner of this <code>IPermissionManager</code>, for the given <code>activity</code> 
- * and <code>target</code>.  This includes inherited <code>IPermissions</code>.  If any 
- * parameter is null, it is ignored.  
- *
- * @return IPermission[]
- * @param principal IAuthorizationPrincipal
- * @param activity String - the Permission activity
- * @param target String - the Permission target
- */
-    public IPermission[] getAllPermissions(IAuthorizationPrincipal principal, String activity, String target) 
-    throws AuthorizationException;
+
 /**
  * Returns <code>IAuthorizationPrincipals</code> granted <code>Permissions</code>
  * by the owner of this <code>IPermissionManager</code>, for the given <code>activity</code> 
@@ -71,16 +59,5 @@ public interface IPermissionManager {
    * @exception AuthorizationException
    */
     public IPermission[] getPermissions (String activity, String target) throws AuthorizationException;
-/**
- * Returns <code>IPermissions</code> granted to the <code>IAuthorizationPrincipal</code> 
- * by the owner of this <code>IPermissionManager</code>, for the given <code>activity</code> 
- * and <code>target</code>.  If any parameter is null, it is ignored.  
- *
- * @return IPermission[]
- * @param principal IAuthorizationPrincipal
- * @param activity String - the Permission activity
- * @param target String - the Permission target
- */
-    public IPermission[] getPermissions(IAuthorizationPrincipal principal, String activity, String target) 
-    throws AuthorizationException;
+
 }

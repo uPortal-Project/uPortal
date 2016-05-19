@@ -74,7 +74,6 @@ import com.google.common.collect.Sets;
  * of IPortletWindow objects is a Map stored in the HttpSession for the user.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
@@ -608,28 +607,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
         
         return allLayoutWindows;
     }
-    
-    @Override
-    @RequestCache(keyMask = {false})
-    public Set<IPortletWindow> getAllPortletWindows(HttpServletRequest request) {
-        final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
-        final IUserPreferencesManager preferencesManager = userInstance.getPreferencesManager();
-        final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
-        final Set<String> allSubscribedChannels = userLayoutManager.getAllSubscribedChannels();
-        
-        final Set<IPortletWindow> allLayoutWindows = new LinkedHashSet<IPortletWindow>(allSubscribedChannels.size());
 
-        for (final String channelSubscribeId : allSubscribedChannels) {
-            final IPortletEntity portletEntity = this.portletEntityRegistry.getOrCreatePortletEntity(request, userInstance, channelSubscribeId);
-            
-            final IPortletEntityId portletEntityId = portletEntity.getPortletEntityId();
-            final Set<IPortletWindow> portletWindows = this.getAllPortletWindowsForEntity(request, portletEntityId);
-            allLayoutWindows.addAll(portletWindows);
-        }
-        
-        return allLayoutWindows;
-    }
-    
     protected PortletWindowIdImpl convertPortletWindowId(HttpServletRequest request, IPortletWindowId portletWindowId) {
         if (portletWindowId instanceof PortletWindowIdImpl) {
             return (PortletWindowIdImpl)portletWindowId;

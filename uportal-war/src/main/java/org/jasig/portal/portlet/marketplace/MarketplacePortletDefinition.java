@@ -278,7 +278,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
     private void setParentCategories(Set<PortletCategory> parentCategories) {
         this.parentCategories = parentCategories;
     }
-    
+
     /**
      * @return a set of categories that this portlet directly belongs too.  Will
      * not traverse up the category tree and return grandparent categories and
@@ -291,12 +291,7 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
         return this.parentCategories;
     }
 
-    private void setRelatedPortlets(Set<MarketplacePortletDefinition> relatedPortlets){
-        this.relatedPortlets = relatedPortlets;
-    }
-
     /**
-     * 
      * @return a set of portlets that include all portlets in this portlets immediate categories and children categories
      * Will not return null. Will not include self in list.  Might return an empty set.
      */
@@ -686,10 +681,6 @@ public class MarketplacePortletDefinition implements IPortletDefinition{
 
     public void setShortURL(String shortURL) {
         this.shortURL = shortURL;
-    }
-    
-    public IPortletDefinitionParameter getPortletDefinitionParameter(String parameterKey) {
-        return this.portletDefinition.getParameter(parameterKey);
     }
 
     @Override

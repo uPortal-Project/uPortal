@@ -43,22 +43,6 @@ public class PermissionManagerImpl implements IPermissionManager
     owner = newOwner;
     authorizationService = authService;
   }
-  
-  /**
-   * Retrieve an array of <code>IPermission</code> objects based on the given parameters.
-   * Includes inherited <code>Permissions</code>.  Any null parameters will be ignored.
-   *
-   * @param principal IAuthorizationPrincipal
-   * @param activity String
-   * @param target String
-   * @return IPermission[]
-   * @exception AuthorizationException
-   */
-public IPermission[] getAllPermissions (IAuthorizationPrincipal principal, String activity, String target)
-throws AuthorizationException
-{
-    return principal.getAllPermissions(getOwner(), activity, target);
-}
 
 /**
  * @return org.jasig.portal.security.provider.AuthorizationImpl
@@ -110,19 +94,4 @@ throws AuthorizationException
     return getAuthorizationService().getPermissionsForOwner(getOwner(), activity, target);
 }
 
-  /**
-   * Retrieve an array of IPermission objects based on the given parameters. Any null parameters
-   * will be ignored.
-   *
-   * @param principal IAuthorizationPrincipal
-   * @param activity String
-   * @param target String
-   * @return IPermission[]
-   * @exception AuthorizationException
-   */
-public IPermission[] getPermissions (IAuthorizationPrincipal principal, String activity, String target)
-throws AuthorizationException
-{
-    return principal.getPermissions(getOwner(), activity, target);
-}
 }

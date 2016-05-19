@@ -18,12 +18,9 @@
  */
 package org.jasig.portal.portlet.rendering;
 
-import java.io.Writer;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
@@ -42,18 +39,10 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * to invoke them in either order.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletExecutionManager {
 
-    public void doPortletAction(IPortletEntityId portletEntityId, HttpServletRequest request, HttpServletResponse response);
-
-    public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * @see #startPortletHeaderRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     */
-    public void startPortletHeaderRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Initiates the rendering worker for the portlet's HEAD output.
@@ -63,12 +52,7 @@ public interface IPortletExecutionManager {
      * @param request
      * @param response
      */
-    public void startPortletHeaderRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * @see #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     */
-    public void startPortletRender(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    void startPortletHeaderRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Initiates the rendering worker for the portlet's BODY output.
@@ -78,45 +62,26 @@ public interface IPortletExecutionManager {
      * @param request
      * @param response
      */
-    public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
+    void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+
     /**
      * 
      * @param portletWindowId
      * @param request
      * @param response
      */
-    public void doPortletServeResource(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * @see #isPortletRenderHeaderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     */
-    public boolean isPortletRenderHeaderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response);
-    
+    void doPortletServeResource(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+
     /**
      * @return true if the specified portlet been requested to render it's output for the HEAD during this request.
      */
-    public boolean isPortletRenderHeaderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * @see #isPortletRenderRequested(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     */
-    public boolean isPortletRenderRequested(String subscribeId, HttpServletRequest request, HttpServletResponse response);
-    
+    boolean isPortletRenderHeaderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+
     /**
      * @return true if the specified portlet been requested to render it's output for the BODY during this request.
      */
-    public boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
-    /**
-     * @see #getPortletHeadOutput(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     * @param subscribeId
-     * @param request
-     * @param response
-     * @return the HEAD output for the specified portlet
-     */
-    public String getPortletHeadOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response);
-    
     /**
      * 
      * @param portletWindowId
@@ -124,39 +89,22 @@ public interface IPortletExecutionManager {
      * @param response
      * @return the HEAD output for the specified portlet
      */
-    public String getPortletHeadOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * @see #outputPortlet(IPortletWindowId, HttpServletRequest, HttpServletResponse, Writer)
-     */
-    public String getPortletOutput(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    String getPortletHeadOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Writes the specified portlet content to the Writer. If the portlet was already rendering due to a previous call to
      * {@link #startPortletRender(IPortletWindowId, HttpServletRequest, HttpServletResponse)} the output from that render will
      * be used. If the portlet is not already rendering it will be started.
      */
-    public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-    
-    /**
-     * Get the duration it took for the portlet to render.
-     */
-    public long getPortletRenderTime(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
-
-
-    /**
-     * @see #getPortletTitle(IPortletWindowId, HttpServletRequest, HttpServletResponse)
-     */
-    public String getPortletTitle(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Gets the title for the specified portlet
      */
-    public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
-    public int getPortletNewItemCount(String subscribeId, HttpServletRequest request, HttpServletResponse response);
+    int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
 
-    public int getPortletNewItemCount(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response);
+    String getPortletLink(IPortletWindowId portletWindowId, String defaultUrl, HttpServletRequest request, HttpServletResponse response);
 
-    public String getPortletLink(IPortletWindowId portletWindowId, String defaultUrl, HttpServletRequest request, HttpServletResponse response);
 }
