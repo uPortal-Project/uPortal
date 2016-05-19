@@ -35,7 +35,6 @@
             top: 60px;
             left: 0; /* not sure why this is needed, but it is */
             width: 300px; /* 6 columns */
-
             /* When the sidebar div is active? */
             .active {
                 .list-group-horizontal {
@@ -47,18 +46,18 @@
             ul.menu {
                 .inline-block-list;
                 display: none;
-                background-color: @color1;
+                background-color: transparent;
                 width: 270px;
 
                 li.list-group-item {
                     padding: 0px;
-                    border-bottom: 1px solid @grayscale8;
+                    // border-bottom: 1px solid @grayscale8;
                     background-color: @grayscale10;
 
                     &.active, &.active:hover, &.active:focus {
                         z-index: 2;
                         color: @white;
-                        background-color: inherit;
+                        background-color: @color1;
                         border-color: transparent;
                     }
                     &.active {
@@ -124,7 +123,7 @@
                         padding: 8px 12px;
                     }
                     &:last-child {
-                        border-bottom: 1px solid @color1;
+                        // border-bottom: 1px solid @color1;
                     }
                     &.useFlyout {
                         a.portal-navigation-link, div.fl-inlineEditContainer {
@@ -138,7 +137,7 @@
                             background: @navbar-item-background-color;
                             font-weight: inherit;
                             text-decoration: none;
-                            padding: 8px 14px;
+                            padding: 8px 24px;
 
                             &.disabled {
                                 pointer-events: none;
@@ -170,6 +169,11 @@
 
                             &:hover, &:focus, &:active {
                                 background-color: inherit;
+                            }
+                            
+                            .caret {
+                                margin-top: 18px;
+                                margin-left: 6px;
                             }
                         }
                     }
@@ -216,6 +220,7 @@
                             a {
                                 &:hover, &:focus {
                                     background: @navbar-item-active-hover-background-color;
+                                    color: white;
                                 }
                             }
                         }
@@ -283,7 +288,7 @@
                             a.portal-navigation-link {
                                 display: inline-block;
                                 line-height: 30px;
-                                padding: 6px 20px;
+                                padding: 6px 24px;
                                 &:hover, &:focus {
                                    color: @navbar-item-hover-text-color;
                                 }
