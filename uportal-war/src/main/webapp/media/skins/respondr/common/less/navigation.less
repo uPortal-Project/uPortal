@@ -31,9 +31,9 @@
         background: @navbar-background-color;
 
         .sidebar-offcanvas {
-            position: fixed;
+            position: absolute;
             top: 60px;
-            left: 0; /* not sure why this is needed, but it is */
+            left: -300px; /* 6 columns */
             width: 300px; /* 6 columns */
             /* When the sidebar div is active? */
             .active {
@@ -61,13 +61,6 @@
                         border-color: transparent;
                     }
                     &.active {
-                        &.open {
-                            a.dropdown-toggle {
-                                &:focus, &:active {
-                                     color: @color1;
-                                }
-                            }
-                        }
                         a {
                             &.portal-navigation-gripper {
                                 position: absolute;
@@ -80,10 +73,12 @@
                                 cursor: move;
                                 line-height: normal;
                                 display: inline;
+                                opacity: .2;
                                 z-index: 100;
 
                                 &:hover {
                                     color: @navbar-controls-hover-color;
+                                    opacity: .9;
                                 }
                                 span {
                                     display: none;
@@ -111,19 +106,10 @@
                                     display: none;
                                 }
                             }
-                            &.dropdown-toggle {
-                                &:link, &:hover, &:focus, &:active {
-                                    /* background-color: @navbar-item-active-background-color; */
-                                    color: @color1;
-                                }
-                            }
                         }
                     }
                     &.portal-navigation-add-item {
                         padding: 8px 12px;
-                    }
-                    &:last-child {
-                        // border-bottom: 1px solid @color1;
                     }
                     &.useFlyout {
                         a.portal-navigation-link, div.fl-inlineEditContainer {
@@ -170,7 +156,7 @@
                             &:hover, &:focus, &:active {
                                 background-color: inherit;
                             }
-                            
+
                             .caret {
                                 margin-top: 18px;
                                 margin-left: 6px;
@@ -220,7 +206,7 @@
                             a {
                                 &:hover, &:focus {
                                     background: @navbar-item-active-hover-background-color;
-                                    color: white;
+                                    color: @white;
                                 }
                             }
                         }

@@ -293,6 +293,9 @@
           menuToggle.click(function() {
             //alert("Handler for .click() called.");
             menu.toggleClass("show");
+            $('html, body').animate({
+                scrollTop: 0
+            });
             return false;
           });
           // Console for debugging.
