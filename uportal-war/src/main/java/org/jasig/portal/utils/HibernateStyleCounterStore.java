@@ -49,6 +49,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.Resource;
+
 import org.hibernate.id.IdentifierGeneratorHelper;
 import org.hibernate.id.IntegralDataTypeHolder;
 import org.hibernate.id.enhanced.AccessCallback;
@@ -74,14 +76,17 @@ import org.springframework.transaction.support.TransactionOperations;
  * Mostly cloned from {@link TableGenerator}
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository("counterStore")
 public class HibernateStyleCounterStore implements ICounterStore {
+
+    private static final String TRANSACTION_OPERATIONS_BEAN_ID = "counterStoreTransactionOperations";
+
     private static final String SELECT_QUERY = "SELECT SEQUENCE_VALUE FROM UP_SEQUENCE WHERE SEQUENCE_NAME=?";
     private static final String UPDATE_QUERY = "UPDATE UP_SEQUENCE SET SEQUENCE_VALUE=? WHERE SEQUENCE_NAME=? AND SEQUENCE_VALUE=?";
     private static final String INSERT_QUERY = "INSERT INTO UP_SEQUENCE (SEQUENCE_NAME, SEQUENCE_VALUE) VALUES (?, ?)";
 
+    private static final int MAX_ATTEMPTS = 3;
     private final Type identifierType = IntegerType.INSTANCE;
 
     private final ConcurrentMap<String, Callable<Optimizer>> counterOptimizers = new ConcurrentHashMap<String, Callable<Optimizer>>();
@@ -89,9 +94,9 @@ public class HibernateStyleCounterStore implements ICounterStore {
     private JdbcOperations jdbcOperations;
     private int incrementSize = 50;
     private int initialValue = 10;
-    
-    @Autowired
-    public void setTransactionOperations(@Qualifier(BasePortalJpaDao.PERSISTENCE_UNIT_NAME) TransactionOperations transactionOperations) {
+
+    @Resource(name=TRANSACTION_OPERATIONS_BEAN_ID)
+    public void setTransactionOperations(TransactionOperations transactionOperations) {
         this.transactionOperations = transactionOperations;
     }
 
@@ -115,28 +120,28 @@ public class HibernateStyleCounterStore implements ICounterStore {
         if (optimizer == null) {
             optimizer = new Callable<Optimizer>() {
                 private volatile Optimizer optimizer;
-                
+
                 @Override
                 public Optimizer call() throws Exception {
                     Optimizer o = optimizer;
                     if (o != null) {
                         return o;
                     }
-                    
+
                     synchronized (this) {
                         o = optimizer;
                         if (o != null) {
                             return o;
                         }
-                    
+
                         o = OptimizerFactory.buildOptimizer(
-                            OptimizerFactory.StandardOptimizerDescriptor.POOLED.getExternalName(), 
+                            OptimizerFactory.StandardOptimizerDescriptor.POOLED.getExternalName(),
                             identifierType.getReturnedClass(), 
                             incrementSize, 
                             initialValue);
                         this.optimizer = o;
                     }
-                    
+
                     return o;
                 }
             };
@@ -162,21 +167,24 @@ public class HibernateStyleCounterStore implements ICounterStore {
         synchronized (counterOptimizer) {
             id = getNextIdInternal(counterOptimizer, counterName);
         }
-        
         return id;
     }
 
     private int getNextIdInternal(final Optimizer optimizer, final String counterName) {
+
         return (Integer) optimizer.generate(new AccessCallback() {
             @Override
             public IntegralDataTypeHolder getNextValue() {
-                return transactionOperations.execute(new TransactionCallback<IntegralDataTypeHolder>() {
-                    @Override
-                    public IntegralDataTypeHolder doInTransaction(TransactionStatus status) {
-                        final IntegralDataTypeHolder value = IdentifierGeneratorHelper.getIntegralDataTypeHolder(identifierType.getReturnedClass());
-                        int rows;
-                        do {
-                            //Try and load the current value, returns true if the exepected row exists, null otherwise
+
+                IntegralDataTypeHolder rslt = null;
+                for (int i=0; rslt == null && i < MAX_ATTEMPTS; i++) {
+
+                    rslt =  transactionOperations.execute(new TransactionCallback<IntegralDataTypeHolder>() {
+                        @Override
+                        public IntegralDataTypeHolder doInTransaction(TransactionStatus status) {
+                            final IntegralDataTypeHolder value = IdentifierGeneratorHelper.getIntegralDataTypeHolder(identifierType.getReturnedClass());
+
+                            //Try and load the current value, returns true if the expected row exists, null otherwise
                             final boolean selected = jdbcOperations.query(SELECT_QUERY, new ResultSetExtractor<Boolean>() {
                                         @Override
                                         public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -187,11 +195,11 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                             return false;
                                         }
                                 }, counterName);
-                            
+
                             //No row exists for the counter, insert it
                             if (!selected) {
                                 value.initialize(initialValue);
-                                
+
                                 jdbcOperations.update(INSERT_QUERY, new PreparedStatementSetter() {
                                     @Override
                                     public void setValues(PreparedStatement ps) throws SQLException {
@@ -200,7 +208,7 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                     }
                                 });
                             }
-                            
+
                             //Increment the counter row value
                             final IntegralDataTypeHolder updateValue = value.copy();
                             if (optimizer.applyIncrementSizeToSourceValues()) {
@@ -209,9 +217,9 @@ public class HibernateStyleCounterStore implements ICounterStore {
                             else {
                                 updateValue.increment();
                             }
-                            
+
                             //Update the counter row, if rows returns 0 the update failed due to a race condition, it will be retried
-                            rows = jdbcOperations.update(UPDATE_QUERY, new PreparedStatementSetter() {
+                            int rowsAltered = jdbcOperations.update(UPDATE_QUERY, new PreparedStatementSetter() {
                                 @Override
                                 public void setValues(PreparedStatement ps) throws SQLException {
                                     updateValue.bind(ps, 1);
@@ -219,11 +227,23 @@ public class HibernateStyleCounterStore implements ICounterStore {
                                     value.bind(ps, 3);
                                 }
                             });
-                        } while (rows == 0);
 
-                        return value;
-                    }
-                });
+                            return rowsAltered > 0
+                                    ? value  // Success
+                                    : null;  // Failed;  try again...
+
+                        }
+
+                    });
+
+                } // End for loop
+
+                if (rslt == null) {
+                    throw new RuntimeException("Failed to fetch a new batch of sequence values after " + MAX_ATTEMPTS + " tries");
+                }
+
+                return rslt;
+
             }
         });
     }
