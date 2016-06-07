@@ -33,7 +33,7 @@
 
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
-    
+
     <dependencies>
         <!-- ***** Portal JDBC Driver ***** -->
         <dependency>
@@ -232,6 +232,17 @@
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apereo.portal</groupId>
+            <artifactId>soffit</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
