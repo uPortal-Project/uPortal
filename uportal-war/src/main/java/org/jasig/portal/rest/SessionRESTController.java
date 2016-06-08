@@ -76,7 +76,7 @@ public class SessionRESTController {
         final ModelAndView mv = new ModelAndView();
         
         HttpSession session = request.getSession(false);
-        
+
         if (session == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -100,11 +100,6 @@ public class SessionRESTController {
             // Timing information for smarter frontends
             long timeoutMS = 1000l * (long)session.getMaxInactiveInterval();
             attributes.put("timeoutMS", timeoutMS);
-
-            long inactiveMS = new Date().getTime() - session.getLastAccessedTime();
-            long remainingMS = timeoutMS - inactiveMS;
-
-            attributes.put("remainingMS", remainingMS);
 
             try {
                 attributes.put("serverName", InetAddress.getLocalHost().getHostName());
