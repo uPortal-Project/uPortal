@@ -89,7 +89,7 @@ var up = up || {};
             dataType: "json"
         });
     };
-    
+
     /**
      * Instantiate a FragmentBrowser component
      * 
@@ -97,7 +97,7 @@ var up = up || {};
      * @param {Object} options configuration options for the components
      */
     up.FragmentBrowser = function (container, options) {
-        
+
         // construct the new component
         var that = fluid.initView("up.FragmentBrowser", container, options);
 
@@ -109,18 +109,18 @@ var up = up || {};
             { id: "fragmentDescription", selector: that.options.selectors.fragmentDescription },
             { id: "selectFragmentLink", selector: that.options.selectors.selectFragmentLink }
         ];
-        
+
         // collect the defined DLM fragments for the current user
         findFragments(that);
-        
+
         that.refresh = function () {
-            
+
             if (that.state.pager) {
                 that.state.pager.refresh(that.state.fragments);
             } else {
 
                 var columnDefs = [
-                    { key: "fragment", valuebinding: "*.owner",
+                    { key: "fragment", valuebinding: "*.ownerID",
                         components: function (row) {
                             return { decorators: [
                                 { type: "addClass", classes: row.subscribed ? "fragment-disabled" : "" }
@@ -129,7 +129,7 @@ var up = up || {};
                     },
                     { key: "fragmentTitle", valuebinding: "*.name" },
                     { key: "fragmentDescription", valuebinding: "*.description" },
-                    { key: "selectFragmentLink", valuebinding: "*.owner",
+                    { key: "selectFragmentLink", valuebinding: "*.ownerID",
                         components: function (row) {
                             return { decorators: [
                                 { type: "jQuery", func: "click", args: function () {
@@ -140,48 +140,48 @@ var up = up || {};
                         }
                     }
                 ];
-                
+
                 // set the other pager options
                 var pagerOptions = {
                     dataModel: that.state.fragments,
                     annotateColumnRange: 'fragmentTitle',
                     columnDefs: columnDefs,
-                    bodyRenderer: {
-                        type: "fluid.pager.selfRender",
-                        options: {
-                            selectors: {
-                                root: that.options.selectors.pagerRoot
-                            },
-                            row: "fragmentContainer:",
-                            renderOptions: {
-                                cutpoints: cutpoints
+                    components: {
+                        bodyRenderer: {
+                            type: "fluid.table.selfRender",
+                            options: {
+                                selectors: {
+                                    root: that.options.selectors.pagerRoot
+                                },
+                                row: "fragmentContainer:",
+                                rendererOptions: {
+                                    cutpoints: cutpoints
+                                }
                             }
-                        }
-                    },
-                    pagerBar: {
-                        type: "fluid.pager.pagerBar", 
-                        options: {
-                            pageList: {
-                                type: "fluid.pager.renderedPageList",
-                                options: { 
-                                    linkBody: "a"
+                        },
+                        pagerBar: {
+                            type: "fluid.pager.pagerBar",
+                            options: {
+                                pageList: {
+                                    type: "fluid.pager.renderedPageList",
+                                    options: {
+                                        linkBody: "a"
+                                    }
                                 }
                             }
                         }
                     }
                 };
-                
-                that.state.pager = fluid.pager($(container).find(".package-results"), pagerOptions);
+
+                that.state.pager = fluid.pagedTable($(container).find(".package-results"), pagerOptions);
                 that.state.pager.events.initiatePageSizeChange.fire(6);
             }
         };
 
         that.refresh();
-        that.events.onLoad.fire(that);
         return that;
     };
 
-    
     // defaults
     fluid.defaults("up.FragmentBrowser", {
         fragmentServiceUrl: null,
@@ -202,5 +202,5 @@ var up = up || {};
             onLoad: null
         }
     });
-    
+
 })(jQuery, fluid);

@@ -238,15 +238,15 @@ var up = up || {};
                     components: {
                         bodyRenderer: {
                             type: "fluid.table.selfRender",
-                                options: {
-                                    selectors: {
-                                        root: ".portlet-list"
-                                    },
-                                    row: "portlet:",
-                                    rendererOptions: {
-                                        cutpoints: cutpoints
-                                    }
+                            options: {
+                                selectors: {
+                                    root: ".portlet-list"
+                                },
+                                row: "portlet:",
+                                rendererOptions: {
+                                    cutpoints: cutpoints
                                 }
+                            }
                         },
                         pagerBar: {
                             type: "fluid.pager.pagerBar",
