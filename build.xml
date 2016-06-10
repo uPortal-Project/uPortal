@@ -1683,6 +1683,11 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <property name="goal8" value="-Djasig.ignore" />
         <property name="goal9" value="-Djasig.ignore" />
 
+        <condition property="threads" value="-T ${maven.threads}C">
+            <isset property="maven.threads" />
+        </condition>
+        <property name="threads" value="-Djasig.ignore" />
+
         <condition property="test.skip" value="-Dmaven.test.skip=true">
             <isset property="maven.test.skip" />
         </condition>
@@ -1753,6 +1758,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <arg value="-Djava.awt.headless=true"/>
             <arg value="-s${maven.settings}" />
             <arg value="-B"/>
+            <arg value="${threads}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />

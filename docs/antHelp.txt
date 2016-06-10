@@ -183,7 +183,9 @@ Options you can pass to maven for building:
     -Dmaven.quiet=true - Run maven with -q to produce less output (see
         https://issues.jasig.org/browse/UP-4372 for examples).
 
-    -o - run maven in offline mode (won't download artifacts).
+    -Dmaven.offline=true - Run maven in offline mode (won't download artifacts).
+
+    -Dmaven.threads=# - Run maven with -T #C to multithread # threads per core.
  
 
 ********** Run 'ant help | less' to make this document easier to read **********
