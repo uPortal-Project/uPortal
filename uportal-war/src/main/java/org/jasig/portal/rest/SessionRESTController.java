@@ -20,7 +20,6 @@ package org.jasig.portal.rest;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
