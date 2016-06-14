@@ -60,6 +60,7 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- ===== Provided Dependencies ============================== -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
