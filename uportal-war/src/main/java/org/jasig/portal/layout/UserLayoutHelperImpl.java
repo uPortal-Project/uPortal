@@ -30,7 +30,6 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
-import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -50,6 +49,13 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
 	
 	protected final Log logger = LogFactory.getLog(this.getClass());
 	private IUserIdentityStore userIdentityStore;
+	
+    private IUserLayoutStore userLayoutStore;
+    
+    @Autowired(required = true)
+    public void setUserLayoutStore(IUserLayoutStore userLayoutStore) {
+        this.userLayoutStore = userLayoutStore;
+    }
 
 	/**
 	 * @param userIdentityStore the userIdentityStore to set
@@ -74,7 +80,6 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
 		int uid = userIdentityStore.getPortalUID( person, false );
 		person.setID(uid);
 
-		IUserLayoutStore userLayoutStore = UserLayoutStoreLocator.getUserLayoutStore();
 		try {
 			// determine user profile            
 			IUserProfile userProfile = userLayoutStore.getUserProfileByFname(person, DEFAULT_LAYOUT_FNAME);
