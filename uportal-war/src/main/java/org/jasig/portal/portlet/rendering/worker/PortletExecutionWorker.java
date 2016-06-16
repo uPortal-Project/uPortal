@@ -42,6 +42,8 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Base for portlet execution dispatching. Tracks the target, request, response objects as well as
@@ -60,7 +62,8 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     final long timeout;
     final HttpServletRequest request;
     final HttpServletResponse response;
-    
+    final SecurityContext springSecurityContext;
+
     private volatile Future<V> future;
     private volatile Thread workerThread;
     private volatile long submitted = 0;
@@ -82,6 +85,40 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
         this.portletWindowId = portletWindow.getPortletWindowId();
         this.portletFname = portletWindow.getPortletEntity().getPortletDefinition().getFName();
         this.timeout = timeout;
+
+        // For now, use the SpringSecurityContext for the currently-executing HTTP Thread as the
+        // SpringSecurityContext for the portlet worker thread.  In the future we may want to do
+        // more sophisticated behavior such as setting up the worker thread's GrantedAuthorities
+        // based on the information from the portlet.xml, such as the <security-role-ref> and
+        // <user-attribute> elements.
+        //
+        // However one IMPORTANT thing to note is that when SpringSecurity is in the mix the response
+        // objects are org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper
+        // objects which save the current SpringSecurityContext to the
+        // HttpSessionSecurityContextRepository when the response is flushed or closed,
+        // when an error occurs, or when an HTTP redirect is issued.
+        //
+        // At least when Spring Webflow is in the mix (which the admin pages currently use, and who
+        // knows when else it might occur), response objects (including the
+        // response objects GuardingHttpServletResponse delegates method calls to) are also
+        // org.springframework.security.web.context.SaveContextOnUpdateOrErrorResponseWrapper objects.
+        //
+        // If using the standard HTTP Session storage strategy, this means each portlet worker thread could replace
+        // the SpringSecurityContext in HTTP Session if the SpringSecurityContext object in the worker
+        // thread is not set or it was different than what was in HTTP Session, though once all
+        // worker threads complete (ASSUMING there is no issue and they all complete or abort BEFORE
+        // the HTTP Thread), the completion of the HTTP Thread would restore its thread-local
+        // SpringSecurityContext back into the HTTP Session.  Still, there is an uncomfortable and
+        // VERY error-prone period of time where the SpringSecurityContext in HTTP Session
+        // is wrong.  If another HTTP thread simultaneously executes for the same HTTP Session, it would
+        // execute using the wrong SpringSecurityContext object which would be very bad.
+        //
+        // So for now and possibly forever, we want the same SpringSecurityContext object in the worker
+        // thread as was in the HTTP thread.  However in the future we could create a smarter
+        // SecurityContextRepository implementation (similar to HttpSessionSecurityContextRepository)
+        // that would save the SpringSecurityContext into HTTP Session for an HTTP thread
+        // but for a portlet worker thread save it into a portlet's session or not save it at all.
+        this.springSecurityContext = SecurityContextHolder.getContext();
     }
 
     @Override
@@ -189,9 +226,13 @@ abstract class PortletExecutionWorker<V> implements IPortletExecutionWorker<V> {
     private void startExecution() {
         //grab the current thread
         workerThread = Thread.currentThread();
+
+        // Initialize the Spring Security Context for this thread.
+        SecurityContextHolder.setContext(springSecurityContext);
         
-        //signal any threads waiting for the worker to start
         started = System.currentTimeMillis();
+
+        //signal any threads waiting for the worker to start
         startLatch.countDown();
     }
     
