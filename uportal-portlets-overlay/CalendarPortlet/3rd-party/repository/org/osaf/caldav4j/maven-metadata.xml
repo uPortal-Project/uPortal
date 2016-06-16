@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.osaf</groupId>
+  <artifactId>caldav4j</artifactId>
+  <version>0.7-SNAPSHOT</version>
+  <versioning>
+    <versions>
+      <version>0.7-SNAPSHOT</version>
+      <version>0.7</version>
+      <version>0.8-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20140806141452</lastUpdated>
+  </versioning>
+</metadata>
