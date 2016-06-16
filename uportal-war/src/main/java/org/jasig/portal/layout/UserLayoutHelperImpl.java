@@ -21,6 +21,9 @@
  */
 package org.jasig.portal.layout;
 
+import java.util.Hashtable;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
@@ -28,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
+import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -64,6 +68,35 @@ public class UserLayoutHelperImpl extends JdbcDaoSupport implements IUserLayoutH
 	public void setUserIdentityStore(IUserIdentityStore userIdentityStore) {
 		this.userIdentityStore = userIdentityStore;
 	}
+	
+    
+    /**
+     * Resets a users layout for all the users profiles
+     * @param personAttributes
+     */
+    public void resetUserLayoutAllProfiles(final IPersonAttributes personAttributes){
+
+        RestrictedPerson person = PersonFactory.createRestrictedPerson();       
+        person.setAttributes(personAttributes.getAttributes());
+        // get the integer uid into the person object without creating any new person data       
+        int uid = userIdentityStore.getPortalUID( person, false );
+        person.setID(uid);
+
+        try {
+            Hashtable<Integer, UserProfile> userProfileList = userLayoutStore.getUserProfileList(person);
+            for(Integer key: userProfileList.keySet()){
+                UserProfile userProfile = userProfileList.get(key);
+                userProfile.setLayoutId(0);
+                userLayoutStore.updateUserProfile(person, userProfile);
+                logger.info("resetUserLayout complete for " + person + "for profile "+userProfile);
+            }
+        } catch (Exception e) {
+            final String msg = "Exception caught during resetUserLayout for " + person;
+            logger.error(msg, e);
+            throw new PortalException(msg, e);
+        }
+        return;
+    }
 
 	/**
 	 * @param personAttributes
