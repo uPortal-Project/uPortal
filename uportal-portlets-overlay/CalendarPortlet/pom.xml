@@ -14,6 +14,17 @@
     <name>Calendar Portlet</name>
     <description>Overlay on Calendar Portlet.</description>
 
+<!--
+    HACK! Remove this repo stanza and the 3rd-party directory
+          once CalDav4j is available in Maven Central!
+  -->
+    <repositories>
+        <repository>
+            <id>3rd-party-embedded</id>
+            <url>file://${project.basedir}/3rd-party/repository</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
         <dependency>

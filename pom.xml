@@ -1277,6 +1277,7 @@
                         <exclude>**/src/test/resources/org/jasig/portal/io/xml/**/*expected.*.xml</exclude>
                         <exclude>.idea/**</exclude>  <!-- for intelliJ Idea -->
                         <exclude>**/overlays/**</exclude>  <!-- for intelliJ Idea -->
+                        <exclude>**/3rd-party/**</exclude>
                     </excludes>
                     <mapping>
                         <crn>XML_STYLE</crn>
