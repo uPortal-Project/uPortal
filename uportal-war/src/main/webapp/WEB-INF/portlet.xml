@@ -1129,6 +1129,12 @@
                 <!-- This preference identifies the remote service -->
                 <name>org.apereo.portlet.soffit.connector.SoffitConnectorController.serviceUrl</name>
             </preference>
+            <preference>
+                <!-- This preference specifies the Java class to use for the
+                     payload;  it's a strategy for versioning. -->
+                <name>org.apereo.portlet.soffit.connector.SoffitConnectorController.payloadClass</name>
+                <value>org.apereo.portlet.soffit.model.v1_0.Payload</value>
+            </preference>
         </portlet-preferences>
     </portlet>
 
