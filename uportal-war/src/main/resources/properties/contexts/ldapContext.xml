@@ -47,7 +47,7 @@
                 <property name="url" value="${ldap.url}"/>
                 <property name="userDn" value="${ldap.userName}"/>
                 <property name="password" value="${ldap.password}"/>
-                <property name="pooled" value="false"/>
+                <property name="pooled" value="${ldap.pooled}"/>
             </bean>
         </property>
         <property name="uidAttribute" value="uid"/>
@@ -90,7 +90,7 @@
         <property name="base" value="${ldap.baseDn}"/>
         <property name="userDn" value="${ldap.userName}"/>
         <property name="password" value="${ldap.password}"/>
-        <property name="pooled" value="false"/>
+        <property name="pooled" value="${ldap.pooled}"/>
     </bean>
     -->
 
