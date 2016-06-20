@@ -30,6 +30,9 @@
      | Determine if a named environment has been specified in the command.  
      | Examples:  dev, test, prod, local, etc.
      +-->
+    <!-- Load build properties here to be able to load the env property if defined -->
+    <property file="${basedir}/build.properties" />
+
     <condition property="environment.token" value="${env}">
         <isset property="env" />
     </condition>
@@ -49,7 +52,7 @@
      +-->
     <property environment="env" />
     <property file="${basedir}/filters/${environment.token}.properties" />
-    <property file="${basedir}/build.properties" />
+    <!-- Removed as loaded before : <property file="${basedir}/build.properties" />-->
     <property name="targetdir" value="${basedir}/target"/>
 
     <!--
