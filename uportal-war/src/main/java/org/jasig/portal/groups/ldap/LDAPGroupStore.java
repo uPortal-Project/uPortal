@@ -626,7 +626,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
       return new EntityIdentifier[0];
     // Guarantee that LDAP injection is prevented by replacing LDAP special characters
     // with escaped versions of the character
-    query = LdapQueryUtils.escapeSpecialCharacters(query);
+    query = LdapQueryUtils.escapeLdapSearchFilterTerms(query);
     ArrayList ids = new ArrayList();
     switch (method){
       case STARTS_WITH:
