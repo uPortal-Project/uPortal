@@ -9,8 +9,7 @@ public class LdapQueryUtilsTest {
 	@Test
 	public void testEscapeSpecialCharacters() {
 		assertEquals("abcd", LdapQueryUtils.escapeLdapSearchFilterTerms("abcd"));
-		assertEquals("abcd\\)\\(\\*\\)", LdapQueryUtils.escapeLdapSearchFilterTerms("abcd)(*)"));
-		assertEquals("abcd\\)\\(name=\\$\\.\\?\\)", LdapQueryUtils.escapeLdapSearchFilterTerms("abcd)(name=$.?)"));
+		assertEquals("abcd\\29\\28\\2a\\29", LdapQueryUtils.escapeLdapSearchFilterTerms("abcd)(*)"));
+		assertEquals("abcd\\29\\28name=$.?\\29", LdapQueryUtils.escapeLdapSearchFilterTerms("abcd)(name=$.?)"));
 	}
-
 }

@@ -14,34 +14,36 @@ public class LdapQueryUtils {
 	 * this would potentially return additional information beyond what was 
 	 * intended.
 	 * <p>By escaping LDAP special characters, the query above would actually 
-	 * be (cn=baseball\\)\\(cn=\\*)".
+	 * be (cn=baseball\\29\\28cn=\\2a\\29".
 	 * <p>See <a href=https://docs.ldap.com/specs/rfc4515.txt>https://docs.ldap.com/specs/rfc4515.txt</a> for
 	 * additional information about LDAP special characters
 	 * @param query Search term that needs to have special characters replaced
 	 * @return Search term with special characters replaced with escaped versions.
 	 */
-	public static String escapeLdapSearchFilterTerms(String query) {
-        // We need to escape regex special characters that appear in the query string...
-        final String[][] specials = new String[][] {
-                            /* backslash must come first! */
-                            new String[] { "\\", "\\\\"}, 
-                            new String[] { "[", "\\[" }, 
-                            /* closing ']' isn't needed b/c it's a normal character w/o a preceding '[' */
-                            new String[] { "{", "\\{" }, 
-                            /* closing '}' isn't needed b/c it's a normal character w/o a preceding '{' */
-                            new String[] { "^", "\\^" },
-                            new String[] { "$", "\\$" },
-                            new String[] { ".", "\\." },
-                            new String[] { "|", "\\|" },
-                            new String[] { "?", "\\?" },
-                            new String[] { "*", "\\*" },
-                            new String[] { "+", "\\+" },
-                            new String[] { "(", "\\(" },
-                            new String[] { ")", "\\)" }
-                        };
-        for (String[] s : specials) {
-            query = query.replace(s[0], s[1]);
-        }
-        return query;
-	}
+    public static final String escapeLdapSearchFilterTerms(String filter) {
+        StringBuffer sb = new StringBuffer(); 
+        for (int i = 0; i < filter.length(); i++) {
+        	char curChar = filter.charAt(i);
+        	switch (curChar) {
+                case '\\':
+                    sb.append("\\5c");
+                    break;
+                case '*':
+                    sb.append("\\2a");
+                    break;
+                case '(':
+                    sb.append("\\28");
+                    break;
+                case ')':
+                    sb.append("\\29");
+                    break;
+                case '\u0000': 
+                    sb.append("\\00"); 
+                    break;
+                default:
+                    sb.append(curChar);
+            }
+       }
+       return sb.toString();
+   }
 }
