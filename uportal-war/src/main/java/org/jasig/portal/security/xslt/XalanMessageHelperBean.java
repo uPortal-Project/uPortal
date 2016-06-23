@@ -20,6 +20,7 @@ package org.jasig.portal.security.xslt;
 
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jasig.portal.i18n.LocaleManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -57,5 +58,25 @@ public class XalanMessageHelperBean implements IXalanMessageHelper, MessageSourc
     public String getMessage(String code, String language, String arg1, String arg2, String arg3) {
         final Locale locale = LocaleManager.parseLocale(language);
         return messageSource.getMessage(code, new Object[] { arg1, arg2, arg3 }, locale);
+    }
+
+    @Override
+    public String getMessageForEmacsScript(String code, String language) {
+        return StringEscapeUtils.escapeEcmaScript(this.getMessage(code, language));
+    }
+
+    @Override
+    public String getMessageForEmacsScript(String code, String language, String arg1) {
+        return StringEscapeUtils.escapeEcmaScript(this.getMessage(code, language, arg1));
+    }
+
+    @Override
+    public String getMessageForEmacsScript(String code, String language, String arg1, String arg2) {
+        return StringEscapeUtils.escapeEcmaScript(this.getMessage(code, language, arg1, arg2));
+    }
+
+    @Override
+    public String getMessageForEmacsScript(String code, String language, String arg1, String arg2, String arg3) {
+        return StringEscapeUtils.escapeEcmaScript(this.getMessage(code, language, arg1, arg2, arg3));
     }
 }

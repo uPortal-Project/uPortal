@@ -49,4 +49,20 @@ public final class XalanMessageHelper {
     public static String getMessage(String code, String language, String arg1, String arg2, String arg3) {
         return messageHelper.getMessage(code, language, arg1, arg2, arg3);
     }
+
+    public static String getMessageForEmacsScript(String code, String language) {
+        return messageHelper.getMessageForEmacsScript(code, language);
+    }
+
+    public static String getMessageForEmacsScript(String code, String language, String arg1) {
+        return messageHelper.getMessageForEmacsScript(code, language, arg1);
+    }
+
+    public static String getMessageForEmacsScript(String code, String language, String arg1, String arg2) {
+        return messageHelper.getMessageForEmacsScript(code, language, arg1, arg2);
+    }
+
+    public static String getMessageForEmacsScript(String code, String language, String arg1, String arg2, String arg3) {
+        return messageHelper.getMessageForEmacsScript(code, language, arg1, arg2, arg3);
+    }
 }

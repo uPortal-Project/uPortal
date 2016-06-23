@@ -38,4 +38,12 @@ public interface IXalanMessageHelper {
     public String getMessage(String code, String language, String arg1, String arg2);
     
     public String getMessage(String code, String language, String arg1, String arg2, String arg3);
+
+    public String getMessageForEmacsScript(String code, String language);
+
+    public String getMessageForEmacsScript(String code, String language, String arg1);
+
+    public String getMessageForEmacsScript(String code, String language, String arg1, String arg2);
+
+    public String getMessageForEmacsScript(String code, String language, String arg1, String arg2, String arg3);
 }
