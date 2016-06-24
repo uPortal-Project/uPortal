@@ -23,3 +23,38 @@
  * skin designers will copy defaultSkin and use it as a starting point, then
  * modify to taste.
  */
+
+/**
+ * Advices for styling the main navigation ( aka mobile skicky nav > Animated toggle button + nav element + optional subnav (fly-out))
+ * On mobile, the main nav is hided not with display:none for accessibility reasons but with negative z-index. And when a user clicks 
+ * on the toggle button, the offcanvas folds and the inner elements of the nav move with a positive z-index on the left in the offcanvas region.
+ * The animations are made with GPU animated CSS properties like transform: translate3d(x,y,z) or scale3d(x,y,z) etc.
+ * Beware of bugs with z-index, static and fixed position (other than the fixed position of the sticky nav), 
+ * these css properties should be use with delicacy and lots of tests...
+ * 
+ * Because the cascade of the nav's styles is hard to handle, use a mobile first partitioning strategy to override styles of the nav like follow. 
+ * It will be more safer for you.
+ */
+
+ /** 
+ // Mobile first partitioning strategy for styling the nav
+@media screen {
+    @media (max-width: 768px) {
+    // Styles for mobile nav and offcanvas and optional fly-out
+        .portal {
+            .row-offcanvas {
+                .portal-nav {}
+            }
+        }
+    }
+    @media (min-width: 769px) {
+    // Styles for nav and optional fly-out on desktop and large displays
+        .portal {
+            .row-offcanvas {
+                .portal-nav {}
+            }
+        }
+    }
+}
+
+*/

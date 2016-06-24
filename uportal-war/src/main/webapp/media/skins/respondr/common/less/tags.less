@@ -24,11 +24,18 @@ html {
     min-width: 100%; 
 
     body {
-        background-image: @body-background-image;
+        // background-color: @offcanvas-background-color;
+        background: -moz-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* FF3.6+ */
+        background: -webkit-gradient(left top, right top, color-stop(0%, @offcanvas-background-color), color-stop(260px, darken(@offcanvas-background-color, 10%)), color-stop(270px, darken(@offcanvas-background-color, 50%)), color-stop(271px, @offcanvas-background-color), color-stop(100%, @offcanvas-background-color));/* Chrome, Safari4+ */
+        background: -webkit-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* Opera 11.10+ */
+        background: -ms-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* IE 10+ */
+        background: linear-gradient(to right, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%);/* W3C */
         overflow-x: hidden;
 
         #wrapper {
-            background-color: @body-background-color; 
+            background-color: @body-background-color;
+            background-image: @body-background-image; 
         }
     }
 }

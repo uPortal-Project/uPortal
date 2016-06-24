@@ -19,14 +19,13 @@
 
 @portletWrapperBorderRadius: 5px;
 
-body {
-    background-color: @offcanvas-background-color;
-    background-image:none !important;
-}
-
 #portalPageBody {
     background-color: @content-background-color;
+    background-image: @portal-page-body-background-image;
     min-height: 300px;
+    /* Need for the offcanvas open effect */
+    position: relative;
+    z-index: 1;
 
     .portal-page-column {
         .portal-page-column-inner {
@@ -148,6 +147,8 @@ section h4 {
         .portlet-options-menu > a {
             color: @portlet-options-link-color;
             font-weight: normal;
+            padding: 9px;
+            padding-right: 15px;
             .caret {
                 border-top-color: @portlet-options-link-color;
             }
