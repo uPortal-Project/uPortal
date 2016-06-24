@@ -23,6 +23,31 @@ html {
     min-height: 100%; /* do not use height element on body -> bug on chrome and safari with scrollTop effect */
     min-width: 100%; 
 
+    &.touch {
+        .portal-navigation-dropdown:after {
+            content:'';
+            position:absolute;
+            top:0; bottom:-10px; 
+            left:-10px; right:-10px;
+        }
+        @media screen {
+            @media (min-width: 769px) {
+                .portal-navigation-gripper:after {
+                     content:'';
+                     position:absolute;
+                     top:-10px; bottom:0px; 
+                     left:0px; right:-10px;
+                }
+                .portal-navigation-delete:after {
+                     content:'';
+                     position:absolute;
+                     top:-10px; bottom:0px; 
+                     left:-10px; right:0px;
+                }
+            }
+        }
+    }
+
     body {
         // background-color: @offcanvas-background-color;
         background: -moz-linear-gradient(left, @offcanvas-background-color 0%, darken(@offcanvas-background-color, 10%) 260px, darken(@offcanvas-background-color, 50%) 270px, @offcanvas-background-color 271px, @offcanvas-background-color 100%); /* FF3.6+ */
