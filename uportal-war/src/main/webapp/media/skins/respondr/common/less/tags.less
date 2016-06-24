@@ -18,11 +18,14 @@
  */
 
 html {
-    min-height: 100%;
-    background-color: @body-background-color; 
+    background-color: @body-background-color;
+    overflow-x: hidden; /* prevent horizontal scrollbar on desktop */
+    min-height: 100%; /* do not use height element on body -> bug on chrome and safari with scrollTop effect */
+    min-width: 100%; 
 
     body {
         background-image: @body-background-image;
+        overflow-x: hidden;
 
         #wrapper {
             background-color: @body-background-color; 
