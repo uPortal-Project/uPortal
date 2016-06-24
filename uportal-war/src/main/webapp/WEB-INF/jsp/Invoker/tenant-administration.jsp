@@ -24,7 +24,7 @@
 <div id="${n}tenantAdmin" class="up-portlet-content-wrapper-inner">
     <h2>Portal Administration</h2>
     <ul>
-        <li><a href="/uPortal/p/portlet-admin">Manage portlets</a></li>
+        <li><a href="<c:url value="/p/portlet-admin"/>">Manage portlets</a></li>
         <li class="respondr-admin-link" style="display: none;">
             <a href="" data-lightbox-url="" data-lightbox-title="Manage This Skin">
                 Manage This Skin
