@@ -62,7 +62,7 @@ public class TagTrackingCacheEventListener extends CacheEventListenerAdapter imp
                 @Override
                 public LoadingCache<CacheEntryTag, Set<Object>> load(String key) throws Exception {
                     // Key Tag -> Set of Tagged Cache Keys
-                    return CacheBuilder.newBuilder().build(new CacheLoader<CacheEntryTag, Set<Object>>() {
+                    return CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<CacheEntryTag, Set<Object>>() {
                         @Override
                         public Set<Object> load(CacheEntryTag key) throws Exception {
                             // Set of Tagged Cache Keys
