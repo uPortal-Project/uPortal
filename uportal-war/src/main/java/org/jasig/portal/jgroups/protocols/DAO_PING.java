@@ -41,13 +41,16 @@ import org.jgroups.protocols.Discovery;
  * @author Eric Dalquist
  */
 public class DAO_PING extends Discovery {
+
+    // Static configuration
     static {
         //Register the protocol with jGroups
         ClassConfigurator.addProtocol((short) 600, DAO_PING.class);
     }
-    
+
+    // Set volatile for "thread safety"
     private static volatile PingDao pingDao;
-    
+
     public static void setPingDao(PingDao pingDao) {
         if (DAO_PING.pingDao != null) {
             LogFactory.getLog(DAO_PING.class).warn("A PingDao was already set. " + DAO_PING.pingDao + " will be replaced with " + pingDao);
@@ -56,7 +59,7 @@ public class DAO_PING extends Discovery {
     }
     
     @Property(description="Interval (in milliseconds) at which the own Address is written. 0 disables it.")
-    protected long interval=60000;
+    protected long interval = 60000;
     
     private Future<?> writer_future;
 
@@ -70,20 +73,24 @@ public class DAO_PING extends Discovery {
         return true;
     }
 
+    @Override
     public void start() throws Exception {
         super.start();
-        if(interval > 0) {
-            writer_future=timer.scheduleWithFixedDelay(new WriterTask(), interval, interval, TimeUnit.MILLISECONDS);
+        if (interval > 0) {
+            // Call getAndSavePhysicalAddress(group_addr) at interval
+            writer_future = timer.scheduleWithFixedDelay(new WriterTask(), interval, interval, TimeUnit.MILLISECONDS);
         }
     }
 
+    @Override
     public void stop() {
         final Future<?> wf = writer_future;
-        if(wf != null) {
+        if (wf != null) {
+            // Shutdown timer
             wf.cancel(false);
-            writer_future=null;
+            writer_future = null;
         }
-        
+        // TODO? Remove local_addr from table
         super.stop();
     }
     
@@ -101,17 +108,18 @@ public class DAO_PING extends Discovery {
             log.info("No PingDao set, returning empty set for current cluster members");
             return Collections.emptyList();
         }
-        
+
         //Get the current cluster members
         final Map<Address, PhysicalAddress> existing_mbrs = pingDao.getAddresses(clusterName);
 
         //Add our address to the store
         getAndSavePhysicalAddress(clusterName);
-        
+
         //Return current members
         return existing_mbrs.values();
     }
 
+    @Override
     public Object down(Event evt) {
         final Object retval = super.down(evt);
         
@@ -134,6 +142,7 @@ public class DAO_PING extends Discovery {
     }
 
     protected void handleView(View view) {
+        log.warn("Change in JGroup membership: " + view.toString());
         if (pingDao == null) {
             //If no dao is set yet ignore the view change.
             log.info("No PingDao set, ignoring view change.");
@@ -142,8 +151,12 @@ public class DAO_PING extends Discovery {
         
         final Collection<Address> mbrs = view.getMembers();
         final boolean is_coordinator = !mbrs.isEmpty() && mbrs.iterator().next().equals(local_addr);
-        if (is_coordinator) {
+        if (is_coordinator != is_coord) {
+            log.warn("Inconsistent state: is_cood != calculated is_coordinator");
+        }
+        if (is_coordinator || is_coord) {
             //Delete all member addresses other than those in the current view
+            log.warn("Resetting JGroup membership in DB: " + view.toString());
             pingDao.purgeOtherAddresses(group_addr, mbrs);
         }
     }
