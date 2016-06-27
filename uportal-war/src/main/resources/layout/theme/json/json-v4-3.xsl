@@ -74,6 +74,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
+    xmlns:upJsonTool="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanRestJsonHelper"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle"
@@ -235,11 +236,11 @@
                                             "_objectType": "portlet",
                                             "url": "<xsl:value-of select="$portletUrl"/>",
                                             "iconUrl": "<xsl:value-of select="$iconUrl"/>",
-                                            <xsl:for-each select="@*[local-name() != 'hidden' and local-name() != 'immutable' and local-name() != 'unremovable']">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
+                                            <xsl:for-each select="@*[local-name() != 'hidden' and local-name() != 'immutable' and local-name() != 'unremovable']">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(.)"/>",
                                             </xsl:for-each>
                                             "parameters": {
                                                 <xsl:for-each select="parameter">
-                                                    "<xsl:value-of select="@name"/>": "<xsl:value-of select="@value"/>"<xsl:if test="position() != last()">,</xsl:if>
+                                                    "<xsl:value-of select="@name"/>": "<xsl:value-of select="upJsonTool:escapeForJson(@value)"/>"<xsl:if test="position() != last()">,</xsl:if>
                                                 </xsl:for-each>
                                             }
                                         }<xsl:if test="position() != last()">,</xsl:if>
@@ -306,7 +307,7 @@
                     <xsl:for-each select="tabGroupsList/tabGroup">
                     {
                         <xsl:for-each select="@*">
-                            "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>"<xsl:if test="position() != last()">,</xsl:if>
+                            "<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(.)"/>"<xsl:if test="position() != last()">,</xsl:if>
                         </xsl:for-each>
                     }<xsl:if test="position() != last()">,</xsl:if>
                     </xsl:for-each>
@@ -315,7 +316,7 @@
             "tabs": [
                 <xsl:for-each select="tab">
                 {
-                    <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="."/>",
+                    <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(.)"/>",
                     </xsl:for-each>
                     "content": [
                     <xsl:for-each select="*">
@@ -335,7 +336,7 @@
 <xsl:template match="folder">
                             {
                                  "_objectType": "folder",
-                                <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
+                                <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(normalize-space(.))"/>",
                                 </xsl:for-each>
                                 "content": [
                                     <xsl:for-each select="*">
@@ -372,7 +373,7 @@
 
 <xsl:template match="favoriteGroup">
     {
-        <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="normalize-space(.)"/>",
+        <xsl:for-each select="@*">"<xsl:value-of select ="local-name()"/>": "<xsl:value-of select="upJsonTool:escapeForJson(normalize-space(.))"/>",
         </xsl:for-each>
         "content": [
         <xsl:for-each select="*">
