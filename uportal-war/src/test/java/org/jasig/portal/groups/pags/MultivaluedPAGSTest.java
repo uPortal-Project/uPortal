@@ -24,8 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.portal.groups.pags.testers.IntegerLTTester;
-import org.jasig.portal.groups.pags.testers.RegexTester;
+import org.jasig.portal.groups.pags.testers.*;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.junit.Before;
@@ -33,49 +32,110 @@ import org.junit.Test;
 
 /**
  * Test PAGS IPersonTester implementations against multi-valued attributes.
- * 
+ *
  * @author Jen Bourey, jbourey@unicon.net
  * @version $Revision$
  */
 public class MultivaluedPAGSTest {
-    
-    IPerson person;
-    
-    String strAttributeName = "mail";
-    String intAttributeName = "num";
-    
-    @Before
-    public void setUp() {
-        person = new PersonImpl();
-        person.setUserName("testuser");
-        
-        List<Object> emailAddresses = new ArrayList<Object>();
-        emailAddresses.add("testuser1@somewhere.com");
-        emailAddresses.add("testuser1@elsewhere.com");
-        person.setAttribute(strAttributeName, emailAddresses);
-        
-        List<Object> nums = new ArrayList<Object>();
-        nums.add("123");
-        nums.add("246");
-        person.setAttribute(intAttributeName, nums);
-    }
-    
-    @Test
-    public void testMultivaluedRegex() {
-        IPersonTester tester = new RegexTester(strAttributeName, ".*somewhere.*");
-        assertTrue(tester.test(person));
-        
-        tester = new RegexTester(strAttributeName, ".*nowhere.*");
-        assertFalse(tester.test(person));
-    }
-    
-    @Test
-    public void testIntegerLT() {
-        IPersonTester tester = new IntegerLTTester(intAttributeName, "124");
-        assertTrue(tester.test(person));
-        
-        tester = new IntegerLTTester(intAttributeName, "122");
-        assertFalse(tester.test(person));
-    }
+
+	IPerson person;
+	String strAttributeName = "mail";
+	int strNbValues = 0;
+	String intAttributeName = "num";
+
+	@Before
+	public void setUp() {
+		person = new PersonImpl();
+		person.setUserName("testuser");
+
+		List<Object> emailAddresses = new ArrayList<Object>();
+		emailAddresses.add("testuser1@somewhere.com");
+		emailAddresses.add("testuser1@elsewhere.com");
+		strNbValues = emailAddresses.size();
+		person.setAttribute(strAttributeName, emailAddresses);
+
+		List<Object> nums = new ArrayList<Object>();
+		nums.add("123");
+		nums.add("246");
+		person.setAttribute(intAttributeName, nums);
+	}
+
+	@Test
+	public void testMultivaluedRegex() {
+		IPersonTester tester = new RegexTester(strAttributeName, ".*somewhere.*");
+		assertTrue(tester.test(person));
+
+		tester = new RegexTester(strAttributeName, ".*nowhere.*");
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testIntegerLT() {
+		IPersonTester tester = new IntegerLTTester(intAttributeName, "124");
+		assertTrue(tester.test(person));
+
+		tester = new IntegerLTTester(intAttributeName, "122");
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testNbValuesGT() {
+		IPersonTester tester = new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues - 1));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues));
+		assertFalse(tester.test(person));
+
+		tester = new NbValuesGTTester(strAttributeName, Integer.toString(strNbValues + 1));
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testNbValuesGE() {
+		IPersonTester tester = new NbValuesGETester(strAttributeName, Integer.toString(strNbValues));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesGETester(strAttributeName, Integer.toString(strNbValues - 1));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesGETester(strAttributeName, Integer.toString(strNbValues + 1));
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testNbValuesLT() {
+		IPersonTester tester = new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues + 1));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues));
+		assertFalse(tester.test(person));
+
+		tester = new NbValuesLTTester(strAttributeName, Integer.toString(strNbValues - 1));
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testNbValuesLE() {
+		IPersonTester tester = new NbValuesLETester(strAttributeName, Integer.toString(strNbValues));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesLETester(strAttributeName, Integer.toString(strNbValues + 1));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesLETester(strAttributeName, Integer.toString(strNbValues - 1));
+		assertFalse(tester.test(person));
+	}
+
+	@Test
+	public void testNbValuesEQ() {
+		IPersonTester tester = new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues));
+		assertTrue(tester.test(person));
+
+		tester = new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues + 1));
+		assertFalse(tester.test(person));
+
+		tester = new NbValuesEQTester(strAttributeName, Integer.toString(strNbValues - 1));
+		assertFalse(tester.test(person));
+	}
 
 }
