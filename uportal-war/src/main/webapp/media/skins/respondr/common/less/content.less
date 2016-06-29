@@ -25,7 +25,8 @@
     min-height: 300px;
     /* Need for the offcanvas open effect */
     position: relative;
-    z-index: 1;
+    /* Do not change this z-index value without side effects on bootstrap modal for rate this portlet see comments and further references in defaultSkin/skin.less */ 
+    z-index: auto;
 
     .portal-page-column {
         .portal-page-column-inner {
