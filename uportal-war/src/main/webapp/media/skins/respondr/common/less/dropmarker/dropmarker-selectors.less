@@ -1,0 +1,51 @@
+.layout-draggable-target-dropped span{
+	display:none;
+}
+
+.fl-reorderer-movable-hover{
+	cursor:move;	
+}
+
+.fl-reorderer-movable-dragging-mouse{
+	display:none;
+}
+
+.fl-reorderer-movable-dragging{
+	.opacity(0.5);
+}
+
+.fl-reorderer-movable-selected{
+	outline-color:@brand-primary;
+}
+
+.fl-reorderer-avatar{
+	background-color:#fff;
+	/*border:1px dotted #999;*/
+	width:auto;
+	.opacity(0.5);
+}
+
+.fl-reorderer-dropMarker{
+	height:200px!important;
+	background-color:@brand-primary;
+	.opacity(0.5);
+	border:1px dotted #000;
+	margin-bottom:1em;
+}
+
+.drop-warning{
+	position:absolute;
+	top:50px;
+	left:10px;
+	border:1px solid @alert-warning-border;
+	background-color:@alert-warning-bg;
+	display:none;
+	padding:10px;
+	margin:5px;
+	z-index:65535;
+	p{
+		margin:0;
+		padding:.5em 1em;
+		color: @alert-warning-text;
+	}
+}
