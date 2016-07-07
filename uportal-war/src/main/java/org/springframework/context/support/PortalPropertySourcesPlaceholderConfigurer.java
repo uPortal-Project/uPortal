@@ -48,7 +48,7 @@ import org.springframework.util.CollectionUtils;
  *   <li>Force configuration setting ignoreResourceNotFound=true and (safely)
  *   ignore noisy WARNings in the log concerning missing properties files that
  *   are optional</li>
- *   <li>...</li>
+ *   <li>Provide support for encrypted property values based on Jasypt</li>
  * </ul>
  *
  * @author Josh Helmer, jhelmer@unicon.net
