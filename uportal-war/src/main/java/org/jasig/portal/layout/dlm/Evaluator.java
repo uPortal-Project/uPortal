@@ -58,24 +58,22 @@ import org.jasig.portal.security.IPerson;
 @DiscriminatorColumn(name="EVALUATOR_TYPE")
 public abstract class Evaluator {
 
-    @SuppressWarnings("unused")
     @Id
     @GeneratedValue(generator = "UP_DLM_EVALUATOR_GEN")
     @Column(name = "EVALUATOR_ID")
     private final long evaluatorId;
-        
-    @SuppressWarnings("unused")
+
     @Version
     @Column(name = "ENTITY_VERSION")
     private final long entityVersion;
-    
+
     public Evaluator() {
         evaluatorId = -1L;
         entityVersion = -1;
     }
 
     public abstract boolean isApplicable( IPerson person );
-    
+
     /**
      * Serializes this {@link Evaluator} into the same XML format supported 
      * by dlm.xml.  <b>NOTE:</b>  this method will only yield usable XML if 
@@ -85,9 +83,9 @@ public abstract class Evaluator {
      * @param parent The XML structure (starting with &lt;dlm:fragment&gt;) so far
      */
     public abstract void toElement(Element parent);
-    
+
     public abstract Class<? extends EvaluatorFactory> getFactoryClass();
-    
+
     /**
      * Provides a one-line, human-readable description of the users who are 
      * members of the fragment audience based on this {@link Evaluator}.
