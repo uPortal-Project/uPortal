@@ -35,7 +35,7 @@ public class GuestUserTester implements IPersonTester {
      * @since 4.3
      */
     public GuestUserTester(IPersonAttributesGroupTestDefinition definition) {
-        this.guestValue = Boolean.getBoolean(definition.getTestValue());
+        this.guestValue = Boolean.parseBoolean(definition.getTestValue());
     }
 
     /**
@@ -44,7 +44,7 @@ public class GuestUserTester implements IPersonTester {
      */
     @Deprecated
     public GuestUserTester(String attribute, String guestValue) {
-        this.guestValue = Boolean.getBoolean(guestValue);
+        this.guestValue = Boolean.parseBoolean(guestValue);
     }
 
     public boolean test(IPerson person) {
