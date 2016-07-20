@@ -26,7 +26,7 @@ public class GuestUserTester implements IPersonTester {
     public boolean guestValue;
 
     public GuestUserTester(String attribute, String guestValue) {
-        this.guestValue = Boolean.getBoolean(guestValue);
+        this.guestValue = Boolean.parseBoolean(guestValue);
     }
     
     public boolean test(IPerson person) {
