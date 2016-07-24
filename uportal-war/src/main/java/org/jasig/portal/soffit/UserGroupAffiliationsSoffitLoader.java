@@ -26,7 +26,7 @@ import javax.portlet.RenderResponse;
 
 import org.apereo.portlet.soffit.connector.AbstractSoffitLoader;
 import org.apereo.portlet.soffit.connector.ISoffitLoader;
-import org.apereo.portlet.soffit.model.v1_0.Role;
+import org.apereo.portlet.soffit.model.v1_0.Group;
 import org.apereo.portlet.soffit.model.v1_0.User;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
@@ -69,12 +69,12 @@ public class UserGroupAffiliationsSoffitLoader extends AbstractSoffitLoader {
             Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
             User user = soffit.getUser();
             for (IEntityGroup g : ancestors) {
-                final Role role = new Role();
-                role.setId(g.getKey());
-                role.setName(g.getName());
-                user.addRole(role);
+                final Group group = new Group();
+                group.setId(g.getKey());
+                group.setName(g.getName());
+                user.addGroup(group);
             }
-            logger.debug("Loaded the following group affiliations for username='{}':  {}", username, user.getRoles());
+            logger.debug("Loaded the following group affiliations for username='{}':  {}", username, user.getGroups());
         }
 
     }

@@ -100,8 +100,6 @@ public class PortletDefinitionSoffitLoader extends AbstractSoffitLoader {
         }
         definition.setDescription(mpdef.getDescription())
             .setFname(mpdef.getFName())
-            .setName(mpdef.getName())
-            .setTimeout(mpdef.getTimeout())
             .setTitle(mpdef.getTitle(locale.toString()));
         for (IPortletDefinitionParameter param : mpdef.getParameters()) {
             definition.setParameter(param.getName(), Collections.singletonList(param.getValue()));
