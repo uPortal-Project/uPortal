@@ -21,7 +21,6 @@
 -->
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
-
     <!--
      | NOTE:  The smartLdapGroupStore bean MUST specify lazy-init="false" (even though it's normally
      | the default), because the LazyInitByDefaultBeanDefinitionDocumentReader will re-set the default
@@ -51,7 +50,27 @@
          |   ...PartialResultException: [LDAP: error code 10...
          | it probably means your baseGroupDn isn't correct!
          +-->
-        <property name="baseGroupDn" value="OU=Membership,DC=unicon,DC=net"/>
+        <property name="baseGroupDn" value="ou=groups"/>
+
+        <!--
+         | This parameter is used to extract the id path of the groups
+         | form their dn. The id path is expected to be catched from the first group
+         | of the regex.
+         +-->
+        <property name="childGroupKeyRegex" value="cn=(.*),ou=groups,${ldap.baseDn}"/>
+
+        <!--
+         | This parameter is used to avoid performance problems with large people's members groups
+         | on groups manager. Default value is false, so comment to disable.
+         +-->
+        <property name="displayPersonMembers" value="true" />
+
+        <!--
+         | Group Tree Separator is used to set the char that is used to compose
+         | Group Id in grouper that represent each tree paths.
+         | Override it if the default value ":" doesn't match
+        -->
+        <!--<property name="groupTreeSeparator" value=":" />-->
 
         <!--
          | LDAP query string that will be passed to the search.
@@ -62,7 +81,7 @@
          | Period, in seconds, after which SmartLdap will drop and re-init the groups
          | tree.  A value of zero or less (negative) disables this feature.
          +-->
-        <property name="groupsTreeRefreshIntervalSeconds" value="900"/>
+        <property name="groupsTreeRefreshIntervalSeconds" value="${smartldapgroupstore.groupsTreeRefreshIntervalSeconds}"/>
 
         <!--
          | These next 2 properties tell smartLdap whether to gather additional groups that
@@ -85,7 +104,7 @@
          | implementation used in reading the groups records from LDAP.
          +-->
         <property name="attributesMapper">
-            <bean id="attributesMapper" class="org.jasig.portal.groups.smartldap.SimpleAttributesMapper">
+            <bean class="org.jasig.portal.groups.smartldap.SimpleAttributesMapper">
                 <!--
                  | Name of the group attribute that tells you its key.
                  +-->
