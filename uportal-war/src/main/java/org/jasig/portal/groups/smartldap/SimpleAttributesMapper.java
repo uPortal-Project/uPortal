@@ -21,6 +21,7 @@ package org.jasig.portal.groups.smartldap;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
@@ -79,8 +80,8 @@ public final class SimpleAttributesMapper implements AttributesMapper {
         if (log.isDebugEnabled()) {
             String msg = "SimpleAttributesMapper.mapFromAttributes() :: settings:  keyAttributeName='" 
                             + keyAttributeName + "', groupNameAttributeName='" 
-                            + groupNameAttributeName + "', groupNameAttributeName='" 
-                            + groupNameAttributeName + "'";
+                            + groupNameAttributeName + "', membershipAttributeName='"
+                            + membershipAttributeName + "'";
             log.debug(msg);
         }
 
