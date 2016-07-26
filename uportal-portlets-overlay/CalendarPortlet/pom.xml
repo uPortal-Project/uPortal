@@ -187,6 +187,14 @@
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>log4j-over-slf4j</artifactId>
                             </exclusion>
+                            <exclusion>
+                                <groupId>org.osaf</groupId>
+                                <artifactId>caldav4j</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>slide</groupId>
+                                <artifactId>jakarta-slide-webdavlib</artifactId>
+                            </exclusion>
                         </exclusions>
                     </dependency>
                 </dependencies>
@@ -219,6 +227,14 @@
                             <exclusion>
                                 <groupId>xalan</groupId>
                                 <artifactId>serializer</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>org.osaf</groupId>
+                                <artifactId>caldav4j</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>slide</groupId>
+                                <artifactId>jakarta-slide-webdavlib</artifactId>
                             </exclusion>
                         </exclusions>
                     </dependency>
