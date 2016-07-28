@@ -51,6 +51,7 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jasig.portal.utils.LdapQueryUtils;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SmartCache;
 import org.w3c.dom.Document;
@@ -623,6 +624,9 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   throws GroupsException {
     if (type != group && type != iperson)
       return new EntityIdentifier[0];
+    // Guarantee that LDAP injection is prevented by replacing LDAP special characters
+    // with escaped versions of the character
+    query = LdapQueryUtils.escapeLdapSearchFilterTerms(query);
     ArrayList ids = new ArrayList();
     switch (method){
       case STARTS_WITH:
