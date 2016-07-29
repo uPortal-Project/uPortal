@@ -184,17 +184,17 @@ public class PositionManager {
         .createElement( "INSERT_POINT" );
         positionSet.insertBefore( nodeToInsertBefore, nodeToMatch );
 
-        for ( Iterator iter = order.iterator();
+        for ( Iterator<NodeInfo> iter = order.iterator();
               iter.hasNext(); )
         {
-            NodeInfo ni = (NodeInfo) iter.next();
+            NodeInfo ni = iter.next();
 
-            if ( ni.positionDirective != null )
+            if ( ni.getPositionDirective() != null )
             {
                 // found one check it against the current one in the position
                 // set to see if it is different. If so then indicate that
                 // something (the position set) has changed in the plf
-                if ( ni.positionDirective != nodeToMatch )
+                if ( ni.getPositionDirective() != nodeToMatch )
                     result.setChangedPLF(true);;
 
                 // now bump the insertion point forward prior to
@@ -203,7 +203,7 @@ public class PositionManager {
                     nodeToMatch = nodeToMatch.getNextSibling();
 
                 // now insert it prior to insertion point
-                positionSet.insertBefore( ni.positionDirective,
+                positionSet.insertBefore( ni.getPositionDirective(),
                                           nodeToInsertBefore );
             }
         }
@@ -227,27 +227,26 @@ public class PositionManager {
     {
         if ( order.size() == 0 )
             return false;
-        
-        
+
         int idx = 0;
         Element child = (Element) compViewParent.getFirstChild();
-        NodeInfo ni = (NodeInfo) order.get( idx );
+        NodeInfo ni = order.get( idx );
 
         if ( child == null && ni != null ) // most likely nodes to be pulled in
             return true;
-        
+
         while ( child != null )
         {
             if ( child.getAttribute( "hidden" ).equals( "false" ) &&
                  ( ! child.getAttribute( "chanID" ).equals( "" ) ||
                    child.getAttribute( "type" ).equals( "regular" ) ) )
             {
-                if ( ni.id.equals( child.getAttribute( Constants.ATT_ID ) ) )
+                if ( ni.getId().equals( child.getAttribute( Constants.ATT_ID ) ) )
                 {
                     if ( idx >= order.size()-1 ) // at end of order list
                         return false;
 
-                    ni = (NodeInfo) order.get( ++idx );
+                    ni = order.get( ++idx );
                 }
                 else // if not equal then return true
                     return true;
@@ -279,8 +278,7 @@ public class PositionManager {
 
         // now pass through the order list inserting the nodes as you go
         for ( int i = 0; i<order.size(); i++ )
-            compViewParent.insertBefore( ( (NodeInfo) order.get( i ) ).node,
-                                         insertPoint );
+            compViewParent.insertBefore(order.get(i).getNode(), insertPoint);
 
         compViewParent.removeChild( insertPoint );
     }                                 
@@ -296,15 +294,15 @@ public class PositionManager {
     {
         for ( int i = 0; i<order.size(); i++ )
         {
-            NodeInfo ni = (NodeInfo) order.get( i );
-            if ( ni.node.getAttribute( Constants.ATT_MOVE_ALLOWED )
+            NodeInfo ni = order.get( i );
+            if ( ni.getNode().getAttribute( Constants.ATT_MOVE_ALLOWED )
                  .equals( "false" ) )
             {
                 for ( int j=0; j<i; j++ )
                 {
-                    NodeInfo lefty = (NodeInfo) order.get( j );
-                    if ( lefty.precedence == null ||
-                         lefty.precedence.isLessThan( ni.precedence ) )
+                    NodeInfo lefty = order.get( j );
+                    if ( lefty.getPrecedence() == null ||
+                         lefty.getPrecedence().isLessThan( ni.getPrecedence() ) )
                     {
                         order.remove( j );
                         order.add( i, lefty );
@@ -335,7 +333,7 @@ public class PositionManager {
 
             // pull those out of the position list from the CVP
             for ( int i = order.size()-1; i>=0; i-- )
-                if ( ((NodeInfo) order.get( i )).indexInCVP != -1 )
+                if (order.get( i ).getIndexInCVP() != -1)
                     cvpNodeInfos.add( order.remove( i ) );
 
             // what is left is coming from other parents. Now push them back in
@@ -345,7 +343,7 @@ public class PositionManager {
             Arrays.sort( nodeInfos, new NodeInfoComparator() );
             List<NodeInfo> list = Arrays.asList( nodeInfos );
             order.addAll( 0, list );
-        }                            
+        }
     }
 
     /**
@@ -366,7 +364,7 @@ public class PositionManager {
             NodeInfo ni = ( NodeInfo ) order.get( i );
 
             // look for move restricted nodes
-            if ( ! ni.node.getAttribute( Constants.ATT_MOVE_ALLOWED )
+            if ( ! ni.getNode().getAttribute( Constants.ATT_MOVE_ALLOWED )
                  .equals( "false" ) )
                 continue;
 
@@ -379,28 +377,28 @@ public class PositionManager {
 
                 // skip lower precedence nodes from this parent. These will get
                 // bumped during the lower precedence check
-                if ( niSib.precedence == Precedence.getUserPrecedence() )
+                if ( niSib.getPrecedence() == Precedence.getUserPrecedence() )
                     continue;
 
-                if ( niSib.precedence.isEqualTo( ni.precedence ) && 
-                     ( niSib.indexInCVP == -1 || // from another parent
-                     ni.indexInCVP < niSib.indexInCVP ) ) // niSib hopping left
+                if ( niSib.getPrecedence().isEqualTo( ni.getPrecedence() ) && 
+                     ( niSib.getIndexInCVP() == -1 || // from another parent
+                     ni.getIndexInCVP() < niSib.getIndexInCVP() ) ) // niSib hopping left
                     return true;
             }
 
             // now check upper positioned nodes to see if they "hopped"
-            
+
             for ( int j=i+1; j<order.size(); j++ )
             {
                 NodeInfo niSib = ( NodeInfo ) order.get( j );
 
                 // ignore nodes from other parents and user precedence nodes
-                if ( niSib.indexInCVP == -1 ||
-                     niSib.precedence == Precedence.getUserPrecedence() )
+                if ( niSib.getIndexInCVP() == -1 ||
+                     niSib.getPrecedence() == Precedence.getUserPrecedence() )
                     continue;
-                
-                if ( ni.indexInCVP > niSib.indexInCVP && // niSib hopped right
-                     niSib.precedence.isEqualTo( ni.precedence ) )
+
+                if ( ni.getIndexInCVP() > niSib.getIndexInCVP() && // niSib hopped right
+                     niSib.getPrecedence().isEqualTo( ni.getPrecedence() ) )
                     return true;
             }
         }
@@ -423,17 +421,17 @@ public class PositionManager {
         int i = 0;
         while ( i<order.size() )
         {
-            NodeInfo ni = (NodeInfo) order.get( i );
-            if ( ! ni.node.getParentNode().equals( compViewParent ) )
+            NodeInfo ni = order.get( i );
+            if ( ! ni.getNode().getParentNode().equals( compViewParent ) )
             {
-                ni.differentParent = true;
+                ni.setDifferentParent(true);
                 if (isNotReparentable(ni, compViewParent, positionSet)) {
                     LOG.info("Resetting the following NodeInfo because it is not reparentable:  " + ni);
 
                     // this node should not be reparented. If it was placed
                     // here by way of a position directive then delete that
                     // directive out of the ni and posSet will be updated later
-                    ni.positionDirective = null;
+                    ni.setPositionDirective(null);
 
                     // now we need to remove it from the ordering list but
                     // skip incrementing i, deleted ni now filled by next ni
@@ -453,7 +451,7 @@ public class PositionManager {
     private static boolean isNotReparentable(NodeInfo ni, Element compViewParent, Element positionSet) {
 
         // This one is easy -- can't re-parent a node with dlm:moveAllowed=false
-        if (ni.node.getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false")) {
+        if (ni.getNode().getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false")) {
             return true;
         }
 
@@ -464,7 +462,7 @@ public class PositionManager {
              */
             final XPathFactory xpathFactory = XPathFactory.newInstance();
             final XPath xpath = xpathFactory.newXPath();
-            final String findPlaceholderXpath = ".//*[local-name()='position' and @name='" + ni.id + "']";
+            final String findPlaceholderXpath = ".//*[local-name()='position' and @name='" + ni.getId() + "']";
             final XPathExpression findPlaceholder = xpath.compile(findPlaceholderXpath);
             final NodeList findPlaceholderList = (NodeList) findPlaceholder.evaluate(positionSet, XPathConstants.NODESET);
             switch (findPlaceholderList.getLength()) {
@@ -485,7 +483,7 @@ public class PositionManager {
                     nextPlaceholder = (Element) nextPlaceholder.getNextSibling()) {    // Advance to the next placeholder
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Considering whether node ''" + ni.id
+                    LOG.debug("Considering whether node ''" + ni.getId()
                             + "' is Reparentable;  subsequent sibling is:  "
                             + nextPlaceholder.getAttribute("name"));
                 }
@@ -505,7 +503,7 @@ public class PositionManager {
                     case 1:
                         final Element nextSibling = (Element) unmaskPlaceholderList.item(0);
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Considering whether node ''" + ni.id + "' is Reparentable;  subsequent sibling '"
+                            LOG.debug("Considering whether node ''" + ni.getId() + "' is Reparentable;  subsequent sibling '"
                                     + nextSibling.getAttribute("ID") + "' has dlm:moveAllowed="
                                     + !nextSibling.getAttribute(Constants.ATT_MOVE_ALLOWED).equals("false"));
                         }
@@ -521,7 +519,7 @@ public class PositionManager {
                              *  of tabs.
                              */
                             Precedence p = Precedence.newInstance(nextSibling.getAttribute(Constants.ATT_FRAGMENT));
-                            if (ni.precedence.isEqualTo(p)) {
+                            if (ni.getPrecedence().isEqualTo(p)) {
                                 return true;
                             }
                         }
@@ -547,31 +545,31 @@ public class PositionManager {
      */
     static void applyOrdering( List<NodeInfo> order,
                                Element compViewParent,
-                               Element positionSet )
-    {
+                               Element positionSet ) {
+
         // first pull out all visible channel or visible folder children and
         // put their id's in a list of available children and record their
         // relative order in the CVP.
-        
+
         final Map<String, NodeInfo> available = new LinkedHashMap<String, NodeInfo>();
 
         Element child = (Element) compViewParent.getFirstChild();
         Element next = null;
         int indexInCVP = 0;
-        
+
         while( child != null )
         {
             next = (Element) child.getNextSibling();
-            
+
             if ( child.getAttribute( "hidden" ).equals( "false" ) &&
                  ( ! child.getAttribute( "chanID" ).equals( "" ) ||
                    child.getAttribute( "type" ).equals( "regular" ) ) ) {
                 final NodeInfo nodeInfo = new NodeInfo( child,
                                              indexInCVP++ );
-                
-                final NodeInfo prevNode = available.put( nodeInfo.id, nodeInfo );
+
+                final NodeInfo prevNode = available.put( nodeInfo.getId(), nodeInfo );
                 if (prevNode != null) {
-                    throw new IllegalStateException("Infinite loop detected in layout. Triggered by " + nodeInfo.id + " with already visited node ids: " + available.keySet());
+                    throw new IllegalStateException("Infinite loop detected in layout. Triggered by " + nodeInfo.getId() + " with already visited node ids: " + available.keySet());
                 }
             }
             child = next;
@@ -600,14 +598,14 @@ public class PositionManager {
                 // does not include an index in the CVP parent. In either case
                 // indicate the position directive responsible for placing this
                 // NodeInfo object in the list.
-                
+
                 final String childId = child.getAttribute( Constants.ATT_ID );
                 NodeInfo ni = available.remove(childId);
                 if (ni == null) {
                     ni = new NodeInfo( child );
                 }
-                
-                ni.positionDirective = directive;
+
+                ni.setPositionDirective(directive);
                 order.add( ni );
             }
             directive = next;
@@ -617,6 +615,7 @@ public class PositionManager {
         // the order that they have there.
 
         order.addAll(available.values());
+
     }
 
     /**
@@ -768,7 +767,7 @@ public class PositionManager {
     private static class NodeInfoComparator implements Comparator<NodeInfo> {
         @Override
         public int compare(NodeInfo o1, NodeInfo o2) {
-            return ((NodeInfo) o1).indexInCVP - ((NodeInfo) o2).indexInCVP;
+            return o1.getIndexInCVP() - o2.getIndexInCVP();
         }
     }
 

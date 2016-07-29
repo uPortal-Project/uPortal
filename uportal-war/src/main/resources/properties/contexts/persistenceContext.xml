@@ -131,8 +131,7 @@
         <qualifier value="PortalDb"/>
         <property name="dataSource" ref="PortalDb" />
     </bean>
-    
-    
+
     <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
@@ -148,13 +147,25 @@
     </bean>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
-    
+
     <!-- ********** Database Utilities ********** -->
     <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="PortalDbEntityManagerFactory,hibernateConfigurationAwareInjector">
-    	<qualifier value="PortalDb"/>
+        <qualifier value="PortalDb"/>
         <property name="jdbcOperations" ref="jdbcOperations" />
         <property name="persistenceUnit">
             <util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
     </bean>
+
+    <!--
+     | Providing HibernateStyleCounterStore.java with its own TransactionTemplate
+     | where propagationBehavior=Propagation.REQUIRES_NEW because it's the only
+     | class that touches this table, and because failure elsewhere in a shared
+     | transaction is orthogonal to fetching a new batch of sequence numbers.
+     +-->
+    <bean id="counterStoreTransactionOperations" class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="propagationBehavior" value="#{T(org.springframework.transaction.TransactionDefinition).PROPAGATION_REQUIRES_NEW}" />
+    </bean>
+
 </beans>

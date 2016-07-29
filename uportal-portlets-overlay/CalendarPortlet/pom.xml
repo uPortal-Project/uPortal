@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,6 +33,17 @@
 
     <name>Calendar Portlet</name>
     <description>Overlay on Calendar Portlet.</description>
+
+<!--
+    HACK! Remove this repo stanza and the 3rd-party directory
+          once CalDav4j is available in Maven Central!
+  -->
+    <repositories>
+        <repository>
+            <id>3rd-party-embedded</id>
+            <url>file://${project.basedir}/3rd-party/repository</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- ===== Compile Time Dependencies ============================== -->
@@ -43,6 +54,21 @@
             <type>war</type>
         </dependency>
 
+        <!-- Use same version as uPortal to ease debugging -->
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- ===== Provided Dependencies ============================== -->
         <dependency>
             <groupId>org.jasig.portlet</groupId>
             <artifactId>CalendarPortlet</artifactId>
@@ -60,20 +86,6 @@
                     <artifactId>cas-client-core</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- Use same version as uPortal to ease debugging -->
-        <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-db</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-            <scope>compile</scope>
         </dependency>
 
     </dependencies>
@@ -175,6 +187,14 @@
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>log4j-over-slf4j</artifactId>
                             </exclusion>
+                            <exclusion>
+                                <groupId>org.osaf</groupId>
+                                <artifactId>caldav4j</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>slide</groupId>
+                                <artifactId>jakarta-slide-webdavlib</artifactId>
+                            </exclusion>
                         </exclusions>
                     </dependency>
                 </dependencies>
@@ -207,6 +227,14 @@
                             <exclusion>
                                 <groupId>xalan</groupId>
                                 <artifactId>serializer</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>org.osaf</groupId>
+                                <artifactId>caldav4j</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>slide</groupId>
+                                <artifactId>jakarta-slide-webdavlib</artifactId>
                             </exclusion>
                         </exclusions>
                     </dependency>

@@ -1,0 +1,218 @@
+<!--
+   Copyright 2005-2006 Open Source Applications Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion> 
+ <name>CalDav4j</name>
+  <groupId>org.osaf</groupId>
+  <artifactId>caldav4j</artifactId>
+  <version>0.7</version>
+  <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>2.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>net.fortuna.ical4j</groupId>
+      <artifactId>ical4j</artifactId>
+      <!--version>1.0-rc1-SNAPSHOT</version--><!-- patched on localhost-->
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.8</version>
+    </dependency>
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4-20040521</version>
+    </dependency>
+    <dependency>
+      <groupId>slide</groupId>
+      <artifactId>jakarta-slide-webdavlib</artifactId>
+      <version>2.2pre1-httpclient-3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>castor</groupId>
+      <artifactId>castor</artifactId>
+      <version>0.9.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.9.1</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>1.3.02</version>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>serializer</artifactId>
+      <version>2.7.0</version>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>2.7.0</version> 
+    </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.4</version>
+            <scope>test</scope>
+        </dependency>  
+    </dependencies>
+  <description>The Caldav Java Library</description>
+  <url>http://code.google.com/p/caldav4j/</url>
+  <issueManagement>
+  	<system>Google Code</system>
+  	<url>http://code.google.com/p/caldav4j/issues/list</url>
+  </issueManagement>
+  <scm>
+  	<url>https://caldav4j.googlecode.com/svn/trunk</url>
+  </scm>
+  <build>
+    <pluginManagement>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.5</source>
+                <target>1.5</target>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <excludes>
+                    <exclude>**/*TestCase.java</exclude>
+                </excludes>
+            </configuration>
+        </plugin>
+
+        <plugin>
+        	<groupId>org.codehaus.mojo</groupId>
+        	<artifactId>failsafe-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+    </pluginManagement>
+    <plugins>
+    	<plugin>
+    		<groupId>org.apache.maven.plugins</groupId>
+    		<artifactId>maven-source-plugin</artifactId>
+    		<version>2.1.2</version>
+    		<executions>
+    			<execution>
+    				<id>attach-sources</id>
+    				<phase>install</phase>
+    				<goals>
+    					<goal>jar</goal>
+    				</goals>
+    			</execution>
+    		</executions>
+    	</plugin>
+    	<plugin>
+    		<groupId>org.apache.maven.plugins</groupId>
+    		<artifactId>maven-javadoc-plugin</artifactId>
+    		<version>2.7</version>
+    		<executions>
+    			<execution>
+    				<id>attach-javadocs</id>
+    				<phase>install</phase>
+    				<goals>
+    					<goal>jar</goal>
+    				</goals>
+    			</execution>
+    		</executions>
+    	</plugin>
+    </plugins>
+  </build>
+  <repositories>
+      <repository>
+          <id>caldav4j</id>
+          <name>Caldav4j repos</name>
+          <url>http://caldav4j.googlecode.com/svn/maven/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
+      <repository>
+          <id>osafoundation.org</id>
+          <name>OSAF's repository</name>
+          <layout>default</layout>
+          <url>http://builds.osafoundation.org/maven2</url>
+          <snapshots>
+              <enabled>true</enabled>
+          </snapshots>
+      </repository>
+      <repository>
+          <id>modularity-releases</id>
+          <name>Modularity Releases Repository</name>
+          <url>http://m2.modularity.net.au/releases</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+      </repository>
+  </repositories>
+  <distributionManagement>
+      <repository>
+          <id>local-m2</id>
+          <name>local M2 Repository</name>
+          <url>file:///home/rpolli/workspace/caldav4j-maven</url>
+      </repository>
+      <snapshotRepository>
+          <id>local-m2</id>
+          <name>local M2 Repository</name>
+          <url>file:///home/rpolli/workspace/caldav4j-maven</url>
+      </snapshotRepository>
+  </distributionManagement>
+</project>

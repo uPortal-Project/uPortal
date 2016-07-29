@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 
@@ -127,7 +128,7 @@ public class DataSourceSchemaExport implements ISchemaExport, HibernateConfigura
                     try {
                         jdbcOperations.execute(sqlCommand);
                         logger.info(sqlCommand);
-                    } catch (BadSqlGrammarException e) {
+                    } catch (BadSqlGrammarException | UncategorizedSQLException e) {
                         // For HSQL database and ant db-update to avoid failing when attempting to
                         // delete a sequence that does not exist.
                         // Needed until Hibernate 5.  See https://hibernate.atlassian.net/browse/HHH-7002.

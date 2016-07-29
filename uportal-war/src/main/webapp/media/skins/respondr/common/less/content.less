@@ -19,15 +19,14 @@
 
 @portletWrapperBorderRadius: 5px;
 
-body {
-    overflow-x: hidden; /* Prevent scroll on narrow devices */
-    background-color: @offcanvas-background-color;
-    background-image:none !important;
-}
-
 #portalPageBody {
     background-color: @content-background-color;
+    background-image: @portal-page-body-background-image;
     min-height: 300px;
+    /* Need for the offcanvas open effect */
+    position: relative;
+    /* Do not change this z-index value without side effects on bootstrap modal for rate this portlet see comments and further references in defaultSkin/skin.less */ 
+    z-index: auto;
 
     .portal-page-column {
         .portal-page-column-inner {
@@ -149,6 +148,8 @@ section h4 {
         .portlet-options-menu > a {
             color: @portlet-options-link-color;
             font-weight: normal;
+            padding: 9px;
+            padding-right: 15px;
             .caret {
                 border-top-color: @portlet-options-link-color;
             }

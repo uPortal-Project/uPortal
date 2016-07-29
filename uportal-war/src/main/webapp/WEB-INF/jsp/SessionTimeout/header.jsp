@@ -61,13 +61,15 @@
 <script src="<c:url value='/scripts/session-timeout.js'/>"></script>
 <script>
     <rs:compressJs>
-        up.SessionTimeout({
+        up.SessionTimeoutInstance = up.SessionTimeout({
             enabled: ${enabled},
             sessionTimeoutMS: ${sessionTimeoutMS},
             dialogDisplayMS: ${dialogDisplayMS},
             dialogId: '${n}session-timeout-dlg',
             logoutURL: '<c:url value="${logoutURLFragment}"/>',
             resetSessionURL: '<c:url value="${resetSessionURLFragment}"/>'
-        }).startTimer();
+        });
+
+        up.SessionTimeoutInstance.startTimer();
     </rs:compressJs>
 </script>

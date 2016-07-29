@@ -301,11 +301,13 @@
 
     <xsl:element name="a"> <!-- Navigation dropdown toogle. -->
       <xsl:attribute name="id">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
-      <xsl:attribute name="href">javascript:;</xsl:attribute>
+      <xsl:attribute name="href">javascript:void(0);</xsl:attribute>
       <xsl:attribute name="class">dropdown-toggle portal-navigation-dropdown</xsl:attribute>
       <xsl:attribute name="data-toggle">dropdown</xsl:attribute>
       <xsl:attribute name="role">button</xsl:attribute>
       <xsl:attribute name="aria-expanded">false</xsl:attribute>
+      <xsl:attribute name="aria-haspopup">true</xsl:attribute>
+      <xsl:attribute name="aria-controls">portal-subnavigation_<xsl:value-of select="@ID"/></xsl:attribute>
       <xsl:attribute name="tabindex">0</xsl:attribute>
       <xsl:element name="span"> <!-- Navigation dropdown toogle caret -->
        <xsl:attribute name="class">caret</xsl:attribute>
@@ -316,7 +318,7 @@
     </xsl:element>
 
     <ul class="dropdown-menu portal-subnav-list"> <!-- List of the subnavigation menu items. -->
-      <xsl:attribute name="aria-labelledby">portalSubnavigationToggle_<xsl:value-of select="@ID"/></xsl:attribute>
+      <xsl:attribute name="id">portal-subnavigation_<xsl:value-of select="@ID"/></xsl:attribute>
       <xsl:attribute name="role">menu</xsl:attribute>
       <xsl:for-each select="tabChannel">
         <xsl:variable name="SUBNAV_POSITION"> <!-- Determine the position of the navigation option within the whole navigation list and add css hooks for the first and last positions. -->
@@ -327,7 +329,7 @@
             <xsl:otherwise></xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
-        <li id="uPfname_{@fname}" class="portal-subnav {$SUBNAV_POSITION}"> <!-- Each subnavigation menu item.  The unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. -->
+        <li id="uPfname_{@fname}_{@ID}" class="portal-subnav {$SUBNAV_POSITION}" role="menuitem"> <!-- Each subnavigation menu item.  The really* unique ID can be used in the CSS to give each menu item a unique icon, color, or presentation. *(when the same fname portlet is in two different tabs) -->
           <xsl:variable name="portletSubNavLink">
             <xsl:call-template name="portalUrl">
               <xsl:with-param name="url">

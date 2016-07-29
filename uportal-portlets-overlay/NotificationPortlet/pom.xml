@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -42,7 +42,15 @@
             <version>${NotificationPortlet.version}</version>
             <type>war</type>
         </dependency>
-        
+
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-db</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- ===== Provided Dependencies ============================== -->
         <dependency>
             <groupId>org.jasig.portlet.notification</groupId>
