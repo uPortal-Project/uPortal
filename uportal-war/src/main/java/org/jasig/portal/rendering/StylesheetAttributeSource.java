@@ -38,8 +38,14 @@ import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.EvaluationException;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ParseException;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * Base implementation of layout attribute source that feeds off of {@link IStylesheetDescriptor} and {@link IStylesheetUserPreferences} data
@@ -49,7 +55,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class StylesheetAttributeSource implements AttributeSource, BeanNameAware {
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
     private String name;
+    protected IPortalSpELService portalSpELService;
     protected IStylesheetUserPreferencesService stylesheetUserPreferencesService;
+
+    @Autowired
+    public void setPortalSpELService(IPortalSpELService portalSpELService) {
+        this.portalSpELService = portalSpELService;
+    }
 
     @Autowired
     public void setStylesheetUserPreferencesService(IStylesheetUserPreferencesService stylesheetUserPreferencesService) {
@@ -85,8 +97,14 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
                 }
                 
                 if (value != null) {
-                    final Attribute attribute = xmlEventFactory.createAttribute(name, value);
-                    attributes.add(attribute);
+                    if (this.shouldDoSpelEvaluationForAttributeValue(value)) {
+                        final ServletWebRequest webRequest = new ServletWebRequest(request, response);
+                        value = this.doSpelEvaluationForAttributeValue(webRequest, value);
+                    }
+                    if (value != null) {
+                        final Attribute attribute = xmlEventFactory.createAttribute(name, value);
+                        attributes.add(attribute);
+                    }
                 }
             }
         }
@@ -115,4 +133,35 @@ public abstract class StylesheetAttributeSource implements AttributeSource, Bean
     }
     
     public abstract PreferencesScope getStylesheetPreferencesScope(HttpServletRequest request);
+
+    protected abstract Logger getLogger();
+
+    protected boolean shouldDoSpelEvaluationForAttributeValue(final String attributeValue) {
+        return this.portalSpELService != null && attributeValue != null && attributeValue.startsWith("${") && attributeValue.endsWith("}");
+    }
+
+    protected String getValueForSpelEvaluation(final String attributeValue) {
+        if (attributeValue != null && attributeValue.startsWith("${") && attributeValue.endsWith("}")) {
+            return attributeValue.substring(2, attributeValue.length()-1);
+        } else {
+            return attributeValue;
+        }
+    }
+
+    protected String doSpelEvaluationForAttributeValue(final WebRequest request, final String attributeValue) {
+        String result;
+        try {
+            final String valueForEvaluation = this.getValueForSpelEvaluation(attributeValue);
+            final Expression expression = this.portalSpELService.parseExpression(valueForEvaluation);
+            result = this.portalSpELService.getValue(expression, request, String.class);
+        } catch (ParseException e) {
+            this.getLogger().info("SpEL parse exception parsing: {}; Exception: {}", attributeValue, e);
+            result = attributeValue;
+        } catch (EvaluationException e) {
+            this.getLogger().info("SpEL evaluation exception evaluating: {}; Exception: {}", attributeValue, e);
+            result = attributeValue;
+        }
+        return result;
+    }
+
 }
