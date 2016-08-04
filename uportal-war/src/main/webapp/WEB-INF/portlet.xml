@@ -163,7 +163,7 @@
 
     <portlet>
         <portlet-name>FragmentAdministration</portlet-name>
-        <display-name xml:lang="en">Exit Fragment Administration</display-name>
+        <display-name xml:lang="en">Fragment Administration</display-name>
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
