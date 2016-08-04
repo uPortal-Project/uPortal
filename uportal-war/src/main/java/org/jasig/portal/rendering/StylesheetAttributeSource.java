@@ -18,24 +18,13 @@
  */
 package org.jasig.portal.rendering;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
@@ -46,6 +35,17 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.ParseException;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.StartElement;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Base implementation of layout attribute source that feeds off of {@link IStylesheetDescriptor} and {@link IStylesheetUserPreferences} data
