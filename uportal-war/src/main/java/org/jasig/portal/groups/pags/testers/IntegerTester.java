@@ -20,6 +20,8 @@ package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class tests the possibly multiple values of an 
@@ -31,6 +33,8 @@ import org.jasig.portal.security.IPerson;
 
 public abstract class IntegerTester extends BaseAttributeTester {
     protected int testInteger = Integer.MIN_VALUE;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * @since 4.3
@@ -52,31 +56,51 @@ public abstract class IntegerTester extends BaseAttributeTester {
     public int getTestInteger() {
         return testInteger;
     }
+
     public boolean test(IPerson person) {
+
         boolean result = false;
         Object[] atts = person.getAttributeValues(getAttributeName());
-        if ( atts != null )
-        {
-            for (int i=0; i<atts.length && result == false; i++)
-            {
-                try 
-                {
-                    int integerAtt = Integer.parseInt((String)atts[i]);
-                    result = test( integerAtt );
-                    
-                    // Assume that we should perform OR matching on multi-valued 
-                    // attributes.  If the current attribute matches, return true
-                    // for the person.
-                    if (result) {
-                        return true;
+
+        if (atts != null) {
+            for (int i=0; i<atts.length && result == false; i++) {
+                Object objValue = atts[i];
+                try {
+                    Integer intValue = null;
+
+                    if (objValue == null) {
+                        continue;
                     }
-                    
+
+                    if (objValue instanceof Integer) {
+                        intValue = (Integer) objValue;
+                    } else if (objValue instanceof Long) {
+                        Long lngValue = (Long) objValue;
+                        if (lngValue <= Integer.MAX_VALUE && lngValue >= Integer.MIN_VALUE) {
+                            // A value outside this range is not valid to test
+                            intValue = lngValue.intValue();
+                        }
+                    } else if (objValue instanceof String) {
+                        String strValue = (String) objValue;
+                        intValue = Integer.parseInt(strValue);
+                    }
+
+                    if (intValue != null) {
+                        // A positive result breaks the loop
+                        result = test(intValue);
+                    }
                 }
-                catch (NumberFormatException nfe) {  } // result stays false
+                catch (NumberFormatException nfe) {
+                    // result stays false
+                    logger.debug("Value not parsable to an int:  {}", objValue, nfe);
+                }
             }
         }
+
         return result;
+
     }
-    public boolean test(int attributeValue) {return false;}
+
+    public abstract boolean test(int attributeValue);
 
 }
