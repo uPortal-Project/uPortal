@@ -34,6 +34,7 @@
     
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.portal">
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\.dynamicskin\..+"/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\."/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\."/>
         <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\."/>
