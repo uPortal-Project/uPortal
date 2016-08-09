@@ -18,12 +18,11 @@
  */
 package org.jasig.portal.layout;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Collections;
 
@@ -43,6 +42,7 @@ import org.jasig.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
+import org.jasig.portal.utils.IFragmentDefinitionUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -63,6 +63,7 @@ public class StylesheetUserPreferencesServiceImplTest {
         final IStylesheetDescriptorDao stylesheetDescriptorDao = mock(IStylesheetDescriptorDao.class);
         final IUserInstanceManager userInstanceManager = mock(IUserInstanceManager.class);
         final IStylesheetUserPreferencesDao stylesheetUserPreferencesDao = mock(IStylesheetUserPreferencesDao.class);
+        final IFragmentDefinitionUtils fragmentUtils = mock(IFragmentDefinitionUtils.class);
         
         final IUserInstance userInstance = mock(IUserInstance.class);
         when(userInstanceManager.getUserInstance(request)).thenReturn(userInstance);
@@ -114,6 +115,7 @@ public class StylesheetUserPreferencesServiceImplTest {
         stylesheetUserPreferencesService.setStylesheetDescriptorDao(stylesheetDescriptorDao);
         stylesheetUserPreferencesService.setUserInstanceManager(userInstanceManager);
         stylesheetUserPreferencesService.setStylesheetUserPreferencesDao(stylesheetUserPreferencesDao);
+        stylesheetUserPreferencesService.setFragmentDefinitionUtils(fragmentUtils);
         
         //Run test
         String actual;

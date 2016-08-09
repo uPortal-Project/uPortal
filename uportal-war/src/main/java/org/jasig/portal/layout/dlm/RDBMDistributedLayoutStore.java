@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -77,6 +76,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.DocumentFactory;
+import org.jasig.portal.utils.IFragmentDefinitionUtils;
 import org.jasig.portal.utils.MapPopulator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
@@ -113,7 +113,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private String systemDefaultUser = null;
     private boolean systemDefaultUserLoaded = false;
 
-    private ConfigurationLoader configurationLoader;
     private FragmentActivator fragmentActivator;
 
     private Ehcache fragmentNodeInfoCache;
@@ -142,6 +141,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private IPortletEntityRegistry portletEntityRegistry;
     private IPortletEntityDao portletEntityDao;
     private IPortalDataHandlerService portalDataHandlerService;
+    private IFragmentDefinitionUtils fragmentUtils;
 
     @Autowired
     private NodeReferenceFactory nodeReferenceFactory;
@@ -173,6 +173,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     @Autowired
+    public void setFragmentDefinitionUtils(IFragmentDefinitionUtils utils) {
+        this.fragmentUtils = utils;
+    }
+
+    @Autowired
     public void setFragmentNodeInfoCache(
             @Qualifier("org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache")
             Ehcache fragmentNodeInfoCache) {
@@ -195,19 +200,16 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
      * structure of the cached fragments use this to obtain copies.
      * @return Map
      */
-    public Map<String, Document> getFragmentLayoutCopies()
-
-    {
-        // since this is only visible in fragment list in administrative protlet, use default portal locale
+    public Map<String, Document> getFragmentLayoutCopies() {
+        // since this is only visible in fragment list in administrative portlet, use default portal locale
         final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
-        final FragmentActivator activator = this.getFragmentActivator();
 
         final Map<String, Document> layouts = new HashMap<String, Document>();
 
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         for (final FragmentDefinition fragmentDefinition : definitions) {
             final Document layout = DocumentFactory.getThreadDocument();
-            final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
+            final UserView userView = this.fragmentUtils.getUserView(fragmentDefinition, defaultLocale);
             if (userView == null) {
                 logger.warn("No UserView found for FragmentDefinition {}, it will be skipped.", fragmentDefinition.getName());
                 continue;
@@ -220,24 +222,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     }
 
     @Autowired
-    public void setConfigurationLoader(ConfigurationLoader configurationLoader) {
-        this.configurationLoader = configurationLoader;
-    }
-
-    @Autowired
     public void setFragmentActivator(FragmentActivator fragmentActivator) {
         this.fragmentActivator = fragmentActivator;
     }
 
-    private FragmentActivator getFragmentActivator() {
-        return this.fragmentActivator;
-    }
-
     private IStylesheetUserPreferences loadDistributedStylesheetUserPreferences(IPerson person, IUserProfile profile,
             long stylesheetDescriptorId, Set<String> fragmentNames) {
-        if (this.isFragmentOwner(person)) {
-            return null;
-        }
+        final boolean isFragmentOwner = this.isFragmentOwner(person);
 
         final Locale locale = profile.getLocaleManager().getLocales()[0];
         final IStylesheetDescriptor stylesheetDescriptor = this.stylesheetDescriptorDao
@@ -247,13 +238,11 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         final IStylesheetUserPreferences distributedStylesheetUserPreferences = new StylesheetUserPreferencesImpl();
 
-        final FragmentActivator fragmentActivator = this.getFragmentActivator();
-
         for (final String fragName : fragmentNames) {
-            final FragmentDefinition fragmentDefinition = this.configurationLoader.getFragmentByName(fragName);
+            final FragmentDefinition fragmentDefinition = this.fragmentUtils.getFragmentDefinitionByName(fragName);
 
             //UserView may be missing if the fragment isn't defined correctly
-            final UserView userView = fragmentActivator.getUserView(fragmentDefinition, locale);
+            final UserView userView = this.fragmentUtils.getUserView(fragmentDefinition, locale);
             if (userView == null) {
                 logger.warn("No UserView is present for fragment {} it will be skipped when loading distributed stylesheet user preferences",
                             fragmentDefinition.getName());
@@ -273,17 +262,14 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
             boolean modified = false;
 
-            //Copy all of the fragment preferences into the distributed preferences
+            // Copy all of the fragment preferences into the distributed preferences
             final Collection<String> allLayoutAttributeNodeIds = fragmentStylesheetUserPreferences
                     .getAllLayoutAttributeNodeIds();
             for (final String fragmentNodeId : allLayoutAttributeNodeIds) {
-                final String userNodeId;
-                if (!fragmentNodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) {
-                    userNodeId = labelBase + fragmentNodeId;
-                }
-                else {
-                    userNodeId = fragmentNodeId;
-                }
+                final String userNodeId =
+                    (isFragmentOwner || fragmentNodeId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX)) ?
+                        fragmentNodeId :
+                        labelBase + fragmentNodeId;
 
                 final MapPopulator<String, String> layoutAttributesPopulator = new MapPopulator<String, String>();
                 fragmentStylesheetUserPreferences.populateLayoutAttributes(fragmentNodeId, layoutAttributesPopulator);
@@ -292,11 +278,13 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
                     final String name = layoutAttributesEntry.getKey();
                     final String value = layoutAttributesEntry.getValue();
 
-                    //Fragmentize the nodeId here
+                    // Fragmentize the nodeId here
                     distributedStylesheetUserPreferences.setLayoutAttribute(userNodeId, name, value);
 
-                    //Clean out user preferences data that matches data from the fragment.
-                    if (stylesheetUserPreferences != null) {
+                    // Clean out user preferences data that matches data from the fragment.
+                    // Skip for fragment owners since their user preference data and the fragment stylesheet user prefs
+                    // are identical and removing layout attributes here would affect the fragment layout.
+                    if (stylesheetUserPreferences != null && !isFragmentOwner) {
                         final String userValue = stylesheetUserPreferences.getLayoutAttribute(userNodeId, name);
                         if (userValue != null && userValue.equals(value)) {
                             stylesheetUserPreferences.removeLayoutAttribute(userNodeId, name);
@@ -317,7 +305,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     @Override
     public double getFragmentPrecedence(int index) {
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         if (index < 0 || index > definitions.size() - 1) {
             return 0;
         }
@@ -1125,39 +1113,89 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     {
         final String userName = (String) person.getAttribute("username");
-        final FragmentDefinition ownedFragment = this.getOwnedFragment(person);
+        final FragmentDefinition ownedFragment = this.fragmentUtils.getFragmentDefinitionByOwner(person);
         final boolean isLayoutOwnerDefault = this.isLayoutOwnerDefault(person);
+        final Set<String> fragmentNames = new LinkedHashSet<String>();
 
-        // if this user is an owner then ownedFragment will be non null. For
+        final Document ILF;
+        final Document PLF = this.getPLF(person, profile);
+
+        // If this user is an owner then ownedFragment will be non null. For
         // fragment owners and owners of any default layout from which a
         // fragment owners layout is copied there should not be any imported
-        // distributed layouts. Instead, load their plf, mark as an owned
+        // distributed layouts. Instead, load their PLF, mark as an owned
         // if a fragment owner, and return.
-
         if (ownedFragment != null || isLayoutOwnerDefault) {
-            Document PLF, ILF = null;
-            PLF = this._safeGetUserLayout(person, profile);
             ILF = (Document) PLF.cloneNode(true);
-
             final Element layoutNode = ILF.getDocumentElement();
 
             if (ownedFragment != null) {
+                fragmentNames.add(ownedFragment.getName());
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_FRAGMENT_NAME, ownedFragment.getName());
                 logger.debug("User '{}' is owner of '{}' fragment.", userName, ownedFragment.getName());
-
             }
             else if (isLayoutOwnerDefault) {
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_IS_TEMPLATE_USER, "true");
-                layoutNode.setAttributeNS(Constants.NS_URI,
-                        Constants.ATT_TEMPLATE_LOGIN_ID,
-                        (String) person.getAttribute("username"));
+                layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_TEMPLATE_LOGIN_ID, (String) person.getAttribute("username"));
             }
-            // cache in person as PLF for storage later like normal users
-            person.setAttribute(Constants.PLF, PLF);
-            return new DistributedUserLayout(ILF);
         }
+        else {
+            final Locale locale = profile.getLocaleManager().getLocales()[0];
+            final List<FragmentDefinition> applicableFragmentDefinitions = this.fragmentUtils.getFragmentDefinitionsApplicableToPerson(person);
+            final List<Document> applicableLayouts = this.fragmentUtils.getFragmentDefinitionUserViewLayouts(applicableFragmentDefinitions, locale);
+            final IntegrationResult integrationResult = new IntegrationResult();
+            ILF = this.createCompositeILF(person, PLF, applicableLayouts, integrationResult);
+            // push optimizations made during merge back into db.
+            if (integrationResult.isChangedPLF()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Saving PLF for {} due to changes during merge.", person.getAttribute(IPerson.USERNAME));
+                }
+                super.setUserLayout(person, profile, PLF, false);
+            }
+            fragmentNames.addAll(this.fragmentUtils.getFragmentNames(applicableFragmentDefinitions));
+        }
+        return this.createDistributedUserLayout(person, profile, ILF, fragmentNames);
+    }
 
-        return this.getCompositeLayout(person, profile);
+    private Document getPLF(final IPerson person, final IUserProfile profile) {
+        Document PLF = (Document) person.getAttribute(Constants.PLF);
+        if (null == PLF) {
+            PLF = this._safeGetUserLayout(person, profile);
+            person.setAttribute(Constants.PLF, PLF);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("PLF for {} immediately after loading\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
+        }
+        return PLF;
+    }
+
+    /**
+     * Creates a composite ILF (incorporated layouts fragment) by first using the applicable fragment layouts, then merging in the
+     * PLF (personal layout fragment).
+     */
+    private Document createCompositeILF(
+            final IPerson person, final Document PLF, final List<Document> applicableLayouts, final IntegrationResult integrationResult) {
+        final Document ILF = ILFBuilder.constructILF(PLF, applicableLayouts, person);
+        PLFIntegrator.mergePLFintoILF(PLF, ILF, integrationResult);
+        if (logger.isDebugEnabled()) {
+            logger.debug("PLF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
+            logger.debug("ILF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(ILF));
+        }
+        return ILF;
+    }
+
+    private DistributedUserLayout createDistributedUserLayout(
+            final IPerson person, final IUserProfile profile, final Document ILF, final Set<String> fragmentNames) {
+        final int structureStylesheetId = profile.getStructureStylesheetId();
+        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = this
+                .loadDistributedStylesheetUserPreferences(person, profile, structureStylesheetId, fragmentNames);
+
+        final int themeStylesheetId = profile.getThemeStylesheetId();
+        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = this
+                .loadDistributedStylesheetUserPreferences(person, profile, themeStylesheetId, fragmentNames);
+
+        return new DistributedUserLayout(ILF, fragmentNames, distributedStructureStylesheetUserPreferences,
+                distributedThemeStylesheetUserPreferences);
     }
 
     /**
@@ -1190,11 +1228,9 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         // need to make a copy that we can fragmentize
         layout = (Document) layout.cloneNode(true);
 
-        final FragmentActivator activator = this.getFragmentActivator();
-
         // Fix later to handle multiple profiles
         final Element root = layout.getDocumentElement();
-        final UserView userView = activator.getUserView(fragment, locale);
+        final UserView userView = this.fragmentUtils.getUserView(fragment, locale);
         if (userView == null) {
             throw new IllegalStateException("No UserView found for fragment: " + fragment.getName());
         }
@@ -1202,8 +1238,8 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         root.setAttribute(Constants.ATT_ID, Constants.FRAGMENT_ID_USER_PREFIX + userView.getUserId()
                 + Constants.FRAGMENT_ID_LAYOUT_PREFIX + "1");
         try {
-            activator.clearChacheForOwner(fragment.getOwnerId());
-            activator.getUserView(fragment, locale);
+            this.fragmentActivator.clearChacheForOwner(fragment.getOwnerId());
+            this.fragmentUtils.getUserView(fragment, locale);
         }
         catch (final Exception e) {
             logger.error("An exception occurred attempting to update a layout.", e);
@@ -1217,7 +1253,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private boolean isLayoutOwnerDefault(IPerson person) {
         final String userName = (String) person.getAttribute("username");
 
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         if (userName != null && definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 if (fragmentDefinition.defaultLayoutOwnerID != null
@@ -1249,7 +1285,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     @Override
     public boolean isFragmentOwner(IPerson person) {
-        return this.getOwnedFragment(person) != null;
+        return this.fragmentUtils.getFragmentDefinitionByOwner(person) != null;
     }
 
     @Override
@@ -1257,7 +1293,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
         boolean rslt = false; // default
 
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> definitions = this.fragmentUtils.getFragmentDefinitions();
         if (definitions != null) {
             for (final FragmentDefinition fragmentDefinition : definitions) {
                 if (fragmentDefinition.getOwnerId().equals(username)) {
@@ -1271,85 +1307,6 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
 
     }
 
-    /**
-       Returns the fragment owned by this user if any. If this user is not a
-       fragment owner then null is returned.
-    */
-    private FragmentDefinition getOwnedFragment(IPerson person) {
-        final String userName = person.getUserName();
-        return this.configurationLoader.getFragmentByOwnerId(userName);
-    }
-
-    /**
-    This method passed through the set of ordered fragments asking each one if
-    it is applicable to this user. If so then it is included in a list of
-    applicable layout fragments. These are then combined into an ILF,
-    incorporated layouts fragment, and finally the user's PLF, personal layout
-    fragment, is merged in and the composite layout returned.
-    */
-    private DistributedUserLayout getCompositeLayout(IPerson person, IUserProfile profile)
-
-    {
-        final Set<String> fragmentNames = new LinkedHashSet<String>();
-        final List<Document> applicables = new LinkedList<Document>();
-        final Locale locale = profile.getLocaleManager().getLocales()[0];
-
-        final List<FragmentDefinition> definitions = this.configurationLoader.getFragments();
-
-        logger.debug("About to check applicability of {} fragments", definitions.size());
-
-        final FragmentActivator activator = this.getFragmentActivator();
-
-        if (definitions != null) {
-            for (final FragmentDefinition fragmentDefinition : definitions) {
-                logger.debug("Checking applicability of the following fragment: {}", fragmentDefinition.getName());
-
-                if (fragmentDefinition.isApplicable(person)) {
-                    final UserView userView = activator.getUserView(fragmentDefinition, locale);
-                    if (userView != null && userView.getLayout() != null) {
-                        applicables.add(userView.getLayout());
-                    }
-                    fragmentNames.add(fragmentDefinition.getName());
-                }
-            }
-        }
-
-        Document PLF = (Document) person.getAttribute(Constants.PLF);
-
-        if (null == PLF) {
-            PLF = this._safeGetUserLayout(person, profile);
-        }
-        if (logger.isDebugEnabled()) {
-            logger.debug("PLF for {} immediately after loading\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
-        }
-
-        final Document ILF = ILFBuilder.constructILF(PLF, applicables, person);
-        person.setAttribute(Constants.PLF, PLF);
-        final IntegrationResult result = new IntegrationResult();
-        PLFIntegrator.mergePLFintoILF(PLF, ILF, result);
-        if (logger.isDebugEnabled()) {
-            logger.debug("PLF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(PLF));
-            logger.debug("ILF for {} after MERGING\n{}", person.getAttribute(IPerson.USERNAME), XmlUtilitiesImpl.toString(ILF));
-        }
-        // push optimizations made during merge back into db.
-        if (result.isChangedPLF()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Saving PLF for {} due to changes during merge.", person.getAttribute(IPerson.USERNAME));
-            }
-            super.setUserLayout(person, profile, PLF, false);
-        }
-
-        final int structureStylesheetId = profile.getStructureStylesheetId();
-        final IStylesheetUserPreferences distributedStructureStylesheetUserPreferences = this
-                .loadDistributedStylesheetUserPreferences(person, profile, structureStylesheetId, fragmentNames);
-
-        final int themeStylesheetId = profile.getThemeStylesheetId();
-        final IStylesheetUserPreferences distributedThemeStylesheetUserPreferences = this
-                .loadDistributedStylesheetUserPreferences(person, profile, themeStylesheetId, fragmentNames);
-
-        return new DistributedUserLayout(ILF, fragmentNames, distributedStructureStylesheetUserPreferences,
-                distributedThemeStylesheetUserPreferences);
-    }
 
     /**
        This method overrides the same method in the super class to persist
@@ -1382,7 +1339,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         super.setUserLayout(person, profile, plf, channelsAdded);
 
         if (updateFragmentCache) {
-            final FragmentDefinition fragment = this.getOwnedFragment(person);
+            final FragmentDefinition fragment = this.fragmentUtils.getFragmentDefinitionByOwner(person);
 
             if (fragment != null) {
                 this.updateCachedLayout(plf, profile, fragment);
@@ -1403,17 +1360,15 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     @Override
     public FragmentNodeInfo getFragmentNodeInfo(String sId) {
         // grab local pointers to variables subject to change at any time
-        final List<FragmentDefinition> fragments = this.configurationLoader.getFragments();
+        final List<FragmentDefinition> fragments = this.fragmentUtils.getFragmentDefinitions();
         final Locale defaultLocale = LocaleManager.getPortalLocales()[0];
-
-        final FragmentActivator activator = this.getFragmentActivator();
 
         final net.sf.ehcache.Element element = this.fragmentNodeInfoCache.get(sId);
         FragmentNodeInfo info = element != null ? (FragmentNodeInfo) element.getObjectValue() : null;
 
         if (info == null) {
             for (final FragmentDefinition fragmentDefinition : fragments) {
-                final UserView userView = activator.getUserView(fragmentDefinition, defaultLocale);
+                final UserView userView = this.fragmentUtils.getUserView(fragmentDefinition, defaultLocale);
                 if (userView == null) {
                     logger.warn("No UserView is present for fragment {} it will be skipped when fragment node information",
                                 fragmentDefinition.getName());
