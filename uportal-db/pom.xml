@@ -40,54 +40,119 @@
         packaged modules/portlets.
     </description>
 
-    <dependencies>
-        <!-- Add any db drivers that are applicable to *any* of your environments -->
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!--
-         | The following db drivers should be uncommented and/or modified as needed for server 
-         | deployments.  (Add all thaat are needed.)  Don't forget to add appropriate  .version 
-         | properties to the root pom.xml, or simply enter the appropriate version below.
-         +-->
-        <!--
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgres.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.ibm.db2</groupId>
-            <artifactId>db2-jdbc</artifactId>
-            <version>${db2.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>${mssql.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc6_g</artifactId>
-            <version>${oracle.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sybase</groupId>
-            <artifactId>sybase-jconnect</artifactId>
-            <version>${sybase.version}</version>
-        </dependency>
-        -->
-    </dependencies>
+    <profiles>
+        <!-- add profiles with needed db drivers to match filters/${env}.properties -->
+        <profile>
+            <id>local</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>local</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>${hsqldb.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>live-nightly</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>live-nightly</value>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- replace with database drivers needed for this env -->
+                <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>${hsqldb.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>data-test</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>data-test</value>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- replace with database drivers needed for this env -->
+                <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>${hsqldb.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>prod</value>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- replace with database drivers needed for this env -->
+                <dependency>
+                    <groupId>org.hsqldb</groupId>
+                    <artifactId>hsqldb</artifactId>
+                    <version>${hsqldb.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <!--
+                 | The following db drivers should be uncommented and/or modified as needed for server 
+                 | deployments.  (Add all that are needed.)  Don't forget to add appropriate  .version 
+                 | properties to the root pom.xml, or simply enter the appropriate version below.
+                 +-->
+                <!--
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>${postgres.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.ibm.db2</groupId>
+                    <artifactId>db2-jdbc</artifactId>
+                    <version>${db2.version}</version>
+                    <scope>compile</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>sqljdbc4</artifactId>
+                    <version>${mssql.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                    <version>${mysql.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc6_g</artifactId>
+                    <version>${oracle.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.sybase</groupId>
+                    <artifactId>sybase-jconnect</artifactId>
+                    <version>${sybase.version}</version>
+                </dependency>
+                -->
+            </dependencies>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
