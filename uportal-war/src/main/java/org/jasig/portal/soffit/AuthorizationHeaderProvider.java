@@ -1,0 +1,113 @@
+/**
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.jasig.portal.soffit;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.apereo.portlet.soffit.Headers;
+import org.apereo.portlet.soffit.connector.IHeaderProvider;
+import org.apereo.portlet.soffit.model.v1_0.Bearer;
+import org.apereo.portlet.soffit.service.BearerService;
+import org.jasig.portal.groups.IEntityGroup;
+import org.jasig.portal.groups.IGroupMember;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.services.GroupService;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.IPersonAttributes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+/**
+ * Prepares the standard HTTP Authorization header.  This component is defined
+ * explicitly in the portlet context (not by annotation).
+ *
+ * @since 5.0
+ * @author drewwills
+ */
+public class AuthorizationHeaderProvider implements IHeaderProvider {
+
+    @Autowired
+    private IPersonAttributeDao personAttributeDao;
+
+    @Autowired
+    private BearerService bearerService;
+
+    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name:guest}")
+    private String guestUserName;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Override
+    public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Username
+        final String username = renderRequest.getRemoteUser() != null
+                ? renderRequest.getRemoteUser()
+                : guestUserName;
+
+        // Attributes
+        final Map<String,List<String>> attributes = new HashMap<>();
+        final IPersonAttributes person = personAttributeDao.getPerson(username);
+        if (person != null) {
+            for (Entry<String, List<Object>> y : person.getAttributes().entrySet()) {
+                final List<String> values = new ArrayList<>();
+                for (Object value : y.getValue()) {
+                    if (value instanceof String) {
+                        values.add((String) value);
+                    }
+                }
+                attributes.put(y.getKey(), values);
+            }
+        }
+        logger.debug("Found the following user attributes for username='{}':  {}", username, attributes);
+
+        // Groups
+        final List<String> groups = new ArrayList<>();
+        final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
+        if (groupMember != null) {
+            Set<IEntityGroup> ancestors = groupMember.getAncestorGroups();
+            for (IEntityGroup g : ancestors) {
+                groups.add(g.getName());
+            }
+        }
+        logger.debug("Found the following group affiliations for username='{}':  {}", username, groups);
+
+        // Authorization header
+        final Bearer bearer = bearerService.createBearer(username, attributes, groups);
+        final Header rslt = new BasicHeader(Headers.AUTHORIZATION.getName(), Headers.BEARER_TOKEN_PREFIX + bearer.getEncryptedToken());
+        logger.debug("Produced the following Authorization header for username='{}':  {}", username, rslt);
+
+        return rslt;
+
+    }
+
+}
