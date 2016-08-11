@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import junit.framework.TestCase;
 
+import org.hsqldb.jdbc.JDBCDriver;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -40,7 +41,7 @@ public class PortalPersonDirUserPasswordDaoTest extends TestCase {
      */
     @Override
     protected void setUp() throws Exception {
-        this.dataSource = new SimpleDriverDataSource(new org.hsqldb.jdbcDriver(), "jdbc:hsqldb:mem:CasTest", "sa", "");
+        this.dataSource = new SimpleDriverDataSource(new JDBCDriver(), "jdbc:hsqldb:mem:CasTest", "sa", "");
         
         this.jdbcTemplate = new JdbcTemplate(this.dataSource);
         this.jdbcTemplate.execute("CREATE TABLE UP_PERSON_DIR (USER_NAME VARCHAR(1000), ENCRPTD_PSWD VARCHAR(1000))");

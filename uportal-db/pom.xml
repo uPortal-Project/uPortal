@@ -154,6 +154,15 @@
         </profile>
     </profiles>
 
+    <dependencies>
+        <!-- required for tests in dependencies -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <!-- Kind of dumb but to avoid wasting time and always re-building uportal-db project since a
