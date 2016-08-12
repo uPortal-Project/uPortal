@@ -20,12 +20,14 @@
 package org.jasig.portal.soffit;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -101,9 +103,17 @@ public class AuthorizationHeaderProvider implements IHeaderProvider {
         }
         logger.debug("Found the following group affiliations for username='{}':  {}", username, groups);
 
+        // Expiration of the Bearer token
+        final PortletSession portletSession = renderRequest.getPortletSession();
+        final Date expires = new Date(
+                    portletSession.getLastAccessedTime() + ((long) portletSession.getMaxInactiveInterval() * 1000L)
+                );
+
         // Authorization header
-        final Bearer bearer = bearerService.createBearer(username, attributes, groups);
-        final Header rslt = new BasicHeader(Headers.AUTHORIZATION.getName(), Headers.BEARER_TOKEN_PREFIX + bearer.getEncryptedToken());
+        final Bearer bearer = bearerService.createBearer(username, attributes, groups, expires);
+        final Header rslt = new BasicHeader(
+                Headers.AUTHORIZATION.getName(),
+                Headers.BEARER_TOKEN_PREFIX + bearer.getEncryptedToken());
         logger.debug("Produced the following Authorization header for username='{}':  {}", username, rslt);
 
         return rslt;
