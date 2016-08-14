@@ -34,7 +34,7 @@ import javax.portlet.RenderResponse;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 import org.apereo.portlet.soffit.Headers;
-import org.apereo.portlet.soffit.connector.IHeaderProvider;
+import org.apereo.portlet.soffit.connector.AbstractHeaderProvider;
 import org.apereo.portlet.soffit.model.v1_0.Bearer;
 import org.apereo.portlet.soffit.service.BearerService;
 import org.jasig.portal.groups.IEntityGroup;
@@ -43,10 +43,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Prepares the standard HTTP Authorization header.  This component is defined
@@ -55,7 +52,7 @@ import org.springframework.beans.factory.annotation.Value;
  * @since 5.0
  * @author drewwills
  */
-public class AuthorizationHeaderProvider implements IHeaderProvider {
+public class AuthorizationHeaderProvider extends AbstractHeaderProvider {
 
     @Autowired
     private IPersonAttributeDao personAttributeDao;
@@ -63,18 +60,11 @@ public class AuthorizationHeaderProvider implements IHeaderProvider {
     @Autowired
     private BearerService bearerService;
 
-    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name:guest}")
-    private String guestUserName;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     @Override
     public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
 
         // Username
-        final String username = renderRequest.getRemoteUser() != null
-                ? renderRequest.getRemoteUser()
-                : guestUserName;
+        final String username = getUsername(renderRequest);
 
         // Attributes
         final Map<String,List<String>> attributes = new HashMap<>();
