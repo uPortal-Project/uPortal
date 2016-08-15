@@ -19,16 +19,23 @@
 
 package org.jasig.portal.soffit;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apereo.portlet.soffit.connector.AbstractSoffitLoader;
-import org.apereo.portlet.soffit.connector.ISoffitLoader;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.apereo.portlet.soffit.Headers;
+import org.apereo.portlet.soffit.connector.AbstractHeaderProvider;
 import org.apereo.portlet.soffit.model.v1_0.Definition;
+import org.apereo.portlet.soffit.service.DefinitionService;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.portlet.marketplace.IMarketplaceService;
@@ -42,19 +49,16 @@ import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
- * Concrete {@link ISoffitLoader} implementation responsible for loading the
- * payload with metadata from the {@link IPortletDefinition}.
+ * Prepares the custom HTTP X-Soffit-Definition header.  This component is
+ * defined explicitly in the portlet context (not by annotation).
  *
+ * @since 5.0
  * @author drewwills
  */
-@Component
-public class PortletDefinitionSoffitLoader extends AbstractSoffitLoader {
+public class DefinitionHeaderProvider extends AbstractHeaderProvider {
 
     @Autowired
     private IPortalRequestUtils portalRequestUtils;
@@ -71,15 +75,14 @@ public class PortletDefinitionSoffitLoader extends AbstractSoffitLoader {
     @Autowired
     private ILocaleStore localeStore;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public PortletDefinitionSoffitLoader() {
-        super(ISoffitLoader.DEFAULT_LOADER_ORDER + 1);
-    }
+    @Autowired
+    private DefinitionService definitionService;
 
     @Override
-    public void load(org.apereo.portlet.soffit.model.v1_0.Payload soffit,
-            RenderRequest renderRequest, RenderResponse renderResponse) {
+    public Header createHeader(RenderRequest renderRequest, RenderResponse renderResponse) {
+
+        // Username
+        final String username = getUsername(renderRequest);
 
         // Obtain the MarketplacePortletDefinition for this soffit
         final HttpServletRequest httpr = portalRequestUtils.getCurrentPortalRequest();
@@ -91,25 +94,35 @@ public class PortletDefinitionSoffitLoader extends AbstractSoffitLoader {
         final IPerson user = personManager.getPerson(httpr);
         final Locale locale = getUserLocale(user);
 
-        // Load metadata into the payload Definition
-        Definition definition = soffit.getDefinition();
-        if (definition == null) {
-            // Create & set
-            definition = new Definition();
-            soffit.setDefinition(definition);
+        // Title
+        final String title = mpdef.getTitle(locale.toString());
+
+        // FName
+        final String fname = mpdef.getFName();
+
+        // Description
+        final String description = mpdef.getDescription(locale.toString());
+
+        // Categories
+        List<String> categories = new ArrayList<>();
+        for (PortletCategory pc : mpdef.getCategories()) {
+            categories.add(pc.getName());
         }
-        definition.setDescription(mpdef.getDescription())
-            .setFname(mpdef.getFName())
-            .setTitle(mpdef.getTitle(locale.toString()));
+
+        // Parameters
+        Map<String,List<String>> parameters = new HashMap<>();
         for (IPortletDefinitionParameter param : mpdef.getParameters()) {
-            definition.setParameter(param.getName(), Collections.singletonList(param.getValue()));
-        }
-        for (PortletCategory category : mpdef.getCategories()) {
-            definition.addCategory(category.getName());
+            parameters.put(param.getName(), Collections.singletonList(param.getValue()));
         }
 
-        logger.debug("Loading the following soffit Definition for user='{}':  ", renderRequest.getRemoteUser(), definition);
+        final Definition definition = definitionService.createDefinition(title, fname,
+                description, categories, parameters, username, getExpiration(renderRequest));
+        final Header rslt = new BasicHeader(
+                Headers.DEFINITION.getName(),
+                definition.getEncryptedToken());
+        logger.debug("Produced the following {} header for username='{}':  {}", Headers.DEFINITION.getName(), username, rslt);
 
+        return rslt;
     }
 
     /*
