@@ -32,10 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.apereo.portlet.soffit.Headers;
-import org.apereo.portlet.soffit.connector.AbstractHeaderProvider;
-import org.apereo.portlet.soffit.model.v1_0.Definition;
-import org.apereo.portlet.soffit.service.DefinitionService;
+import org.apereo.portal.soffit.Headers;
+import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
+import org.apereo.portal.soffit.model.v1_0.Definition;
+import org.apereo.portal.soffit.service.DefinitionService;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.portlet.marketplace.IMarketplaceService;

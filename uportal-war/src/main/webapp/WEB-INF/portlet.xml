@@ -1111,7 +1111,7 @@
         <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
         <init-param>
             <name>contextConfigLocation</name>
-            <value>classpath:/org/apereo/portlet/soffit/mvc/soffit-connector.xml</value>
+            <value>classpath:/org/apereo/portal/soffit/connector/connector-portlet.xml</value>
         </init-param>
         <expiration-cache>0</expiration-cache><!-- Never cache;  we'll cache internally -->
         <supports>

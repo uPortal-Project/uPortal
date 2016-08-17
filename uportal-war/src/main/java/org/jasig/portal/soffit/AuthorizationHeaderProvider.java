@@ -33,10 +33,10 @@ import javax.portlet.RenderResponse;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.apereo.portlet.soffit.Headers;
-import org.apereo.portlet.soffit.connector.AbstractHeaderProvider;
-import org.apereo.portlet.soffit.model.v1_0.Bearer;
-import org.apereo.portlet.soffit.service.BearerService;
+import org.apereo.portal.soffit.Headers;
+import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
+import org.apereo.portal.soffit.model.v1_0.Bearer;
+import org.apereo.portal.soffit.service.BearerService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
