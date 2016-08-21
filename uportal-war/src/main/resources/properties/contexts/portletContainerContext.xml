@@ -118,7 +118,7 @@
      -->
     <!--bean id="cachedPasswordUserInfoService"
         class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">
-        <property name="decryptPassword" value="false"/>
+        <property name="decryptPassword" value="true"/>
     </bean-->
     
     <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
