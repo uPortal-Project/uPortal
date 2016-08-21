@@ -48,6 +48,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
 import org.jasig.portal.dao.usertype.NullSafeStringColumnMapper;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
@@ -84,6 +85,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     
     @Column(name = "PREF_NAME", length=100000)
     @Lob
+    @Type(type="org.hibernate.type.StringClobType") 
     private String name = null;
     
     @Column(name = "READ_ONLY", nullable = false)
@@ -99,6 +101,7 @@ public class PortletPreferenceImpl implements IPortletPreference, Cloneable {
     @Column(name = "PREF_VALUE", length=100000)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @Fetch(FetchMode.JOIN)
+    @Type(type="org.hibernate.type.StringClobType")
     private List<String> values = new ArrayList<String>(0);
     
     @Column(name = "NULL_VALUES", nullable = false)
