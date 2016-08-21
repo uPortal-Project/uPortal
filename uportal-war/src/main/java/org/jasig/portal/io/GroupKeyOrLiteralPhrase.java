@@ -34,10 +34,15 @@ import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
+/**
+ * Class that parses an XML element to determine if it is
+ * <group>groupName</group>
+ * <literal>usernameSpecialPermissionStringEtc</literal>
+ */
 public class GroupKeyOrLiteralPhrase implements Phrase {
 
     // Instance Members.
-    private Phrase element;
+    protected Phrase element;
 
     /*
      * Public API.
@@ -55,7 +60,6 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
 
         // Instance Members.
         this.element = (Phrase) config.getValue(ELEMENT);
-
     }
 
     public Object evaluate(TaskRequest req, TaskResponse res) {
@@ -64,37 +68,7 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
 
         Element e = (Element) element.evaluate(req, res);
         if (e.getName().equals("group")) {
-            // This is a group name, we need to look up the key...
-            try {
-
-                Class[] types = new Class[] {IPerson.class, IPortletDefinition.class};
-
-                for (Class c : types) {
-                    EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);
-                    switch (eis.length) {
-                        case 1:
-                            // This is good -- what we hope for...
-                            rslt = GroupService.findGroup(eis[0].getKey()).getKey();
-                            break;
-                        case 0:
-                            // This is ok -- try the next type...
-                            continue;
-                        default:
-                            String msg2 = "Ambiguous group name:  " + e.getText();
-                        throw new RuntimeException(msg2);
-                    }
-                }
-
-                // We better have a match by now...
-                if (rslt == null) {
-                    String msg = "No group with the specified name was found:  " + e.getText();
-                    throw new RuntimeException(msg);
-                }
-
-            } catch (Throwable t) {
-                String msg = "Error looking up the specified group:  " + e.getText();
-                throw new RuntimeException(msg, t);
-            }
+            rslt = getValidatedGroupName(e);
         } else if (e.getName().equals("literal")) {
             rslt = e.getText();
         } else {
@@ -103,7 +77,42 @@ public class GroupKeyOrLiteralPhrase implements Phrase {
         }
 
         return rslt;
+    }
 
+    protected String getValidatedGroupName(Element e) {
+        String result = null;
+        // This is a group name, we need to look up the key...
+        try {
+
+            Class[] types = new Class[] {IPerson.class, IPortletDefinition.class};
+
+            for (Class c : types) {
+                EntityIdentifier[] eis = GroupService.searchForGroups(e.getText(), IGroupConstants.IS, c);
+                switch (eis.length) {
+                    case 1:
+                        // This is good -- what we hope for...
+                        result = GroupService.findGroup(eis[0].getKey()).getKey();
+                        break;
+                    case 0:
+                        // This is ok -- try the next type...
+                        continue;
+                    default:
+                        String msg2 = "Ambiguous group name:  " + e.getText();
+                    throw new RuntimeException(msg2);
+                }
+            }
+
+            // We better have a match by now...
+            if (result == null) {
+                String msg = "No group with the specified name was found:  " + e.getText();
+                throw new RuntimeException(msg);
+            }
+
+        } catch (Throwable t) {
+            String msg = "Error looking up the specified group:  " + e.getText();
+            throw new RuntimeException(msg, t);
+        }
+        return result;
     }
 
 }
