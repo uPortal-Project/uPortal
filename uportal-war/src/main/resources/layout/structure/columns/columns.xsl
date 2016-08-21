@@ -46,19 +46,20 @@
     </xsl:variable>
 
     <xsl:variable name="activeTabIdx">
-        <!-- If focusing on a favorite_collection, the activeTabInx is 1 (the favorite collection). -->
-        <!-- Else if the activeTab is a number then it is the active tab index -->
-        <!-- otherwise it is the ID of the active tab. If it is the ID -->
-        <!-- then check to see if that tab is still in the layout and -->
-        <!-- if so use its index. if not then default to an index of 1. -->
+        <!-- Rules for choosing activeTabIdx:
+               - If focusing on a favorite_collection, the activeTabIdx will be 1 (the favorite collection)
+               - Else it will be the index of the focusedTabID *IF* it is non-empty and points to a
+                 non-hidden tab that is present in the layout
+               - Otherwise use the value of defaultTab
+        -->
         <xsl:choose>
             <xsl:when test="$focusedFolderId!='none'">1</xsl:when>
             <xsl:when test="$focusedTabID!='none' and /layout/folder/folder[@ID=$focusedTabID and @type='regular' and @hidden='false']">
-                <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false'])+1"/>
+                <xsl:value-of select="count(/layout/folder/folder[@ID=$focusedTabID]/preceding-sibling::folder[@type='regular' and @hidden='false']) + 1"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:value-of select="$defaultTab" />
-            </xsl:otherwise> <!-- if not found, use first tab -->
+                <xsl:value-of select="$defaultTab" /><!-- Always 1? -->
+            </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
 
