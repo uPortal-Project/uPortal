@@ -128,7 +128,7 @@
         <ant.version>1.8.4</ant.version>
         <aspectjrt.version>1.7.3</aspectjrt.version>
         <aspectjweaver.version>1.7.3</aspectjweaver.version>
-        <casclient.version>3.2.1</casclient.version>
+        <casclient.version>3.3.2</casclient.version>
         <ccpp.version>1.0</ccpp.version>
         <cernunnos.version>1.2.2</cernunnos.version>
         <cglib.version>2.2.2</cglib.version>
@@ -742,6 +742,82 @@
                 <groupId>org.jasig.cas.client</groupId>
                 <artifactId>cas-client-core</artifactId>
                 <version>${casclient.version}</version>
+                
+                <exclusions>
+                  <exclusion>
+                    <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>commons-httpclient</groupId>
+                    <artifactId>commons-httpclient</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.apache.santuario</groupId>
+                    <artifactId>xmlsec</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.apache.santuario</groupId>
+                    <artifactId>xmlsec</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>opensaml</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>openws</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.opensaml</groupId>
+                    <artifactId>xmltooling</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.owasp.esapi</groupId>
+                    <artifactId>esapi</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jul-to-slf4j</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>velocity</groupId>
+                    <artifactId>velocity</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>serializer</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                  </exclusion>
+                  <exclusion>
+                    <groupId>xml-resolver</groupId>
+                    <artifactId>xml-resolver</artifactId>
+                  </exclusion>
+                </exclusions>
+                
             </dependency>
             <dependency>
                 <groupId>org.jasig.cas</groupId>
