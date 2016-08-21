@@ -140,7 +140,7 @@ public class AbstractPortletPreferencesImplTest {
         assertEquals("FOOBAR", value);
         
         value = portletPreferences.getValue("key3", "FOOBAR");
-        assertNull(value);
+        assertEquals("FOOBAR", value);
         
         value = portletPreferences.getValue("key4", "FOOBAR");
         assertEquals("value1", value);

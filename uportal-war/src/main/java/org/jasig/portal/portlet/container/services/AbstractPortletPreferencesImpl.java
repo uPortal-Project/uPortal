@@ -154,7 +154,7 @@ public abstract class AbstractPortletPreferencesImpl<C> implements PortletPrefer
                 return def;
             }
             
-            return values[0];
+            return values[0] != null ? values[0] : def; // A null value is treated as a non-existent value
         }
         
         return def;
