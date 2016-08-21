@@ -84,6 +84,12 @@
         <value>/uPortal/media/skins/common/backgroundImages/thumbnails/nebula.jpg</value>
     </portlet-preference>
     <portlet-preference>
+        <name>defaultBackgroundThumbnailImages</name>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/galaxy.jpg</value>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/mountain.jpg</value>
+        <value>/uPortal/media/skins/universality/backgroundImages/thumbnails/nebula.jpg</value>
+    </portlet-preference>
+    <portlet-preference>
         <name>mobileBackgroundImages</name>
         <value>/uPortal/media/skins/muniversality/backgroundImages/galaxy.jpg</value>
         <value>/uPortal/media/skins/muniversality/backgroundImages/mountain.jpg</value>
