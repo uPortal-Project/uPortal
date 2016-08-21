@@ -28,21 +28,31 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 
+/**
+ * Unit tests for PortalPersonUserDetails.
+ */
 public class PortalPersonUserDetailsTest {
 
     @Mock IPerson person;
-    
+
+    /**
+     * Initialize the test.
+     */
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         when(person.getName()).thenReturn("testuser");
         when(person.isGuest()).thenReturn(false);
     }
-    
+
+    /**
+     * Test that reflects the wrapped user details.
+     */
     @Test
     public void testUserDetails() {
-        UserDetails details = new PortalPersonUserDetails(person);
+        PortalPersonUserDetails details = new PortalPersonUserDetails(person);
         assertEquals("testuser", details.getUsername());
+        assertEquals(person, details.getIPerson());
     }
     
 }
