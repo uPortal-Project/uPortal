@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.tenants;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -80,7 +83,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     private ApplicationContext applicationContext;
     private SAXReader reader;
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger log = LoggerFactory.getLogger(TemplateDataTenantOperationsListener.class);
 
     @Autowired
     private IPortalDataHandlerService dataHandlerService;
@@ -131,8 +134,32 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.dataKeyImportOrder = Collections.unmodifiableList(dataKeyImportOrder);
     }
 
-    public void setEntityResourcesToImportOnUpdate(Set<Resource> entityResourcesToImportOnUpdate) {
-        this.entityResourcesToImportOnUpdate = entityResourcesToImportOnUpdate;
+    public void setEntityResourcesToImportOnUpdate(Set<ClassPathResource> entityResourcesToImportOnUpdate) {
+        this.entityResourcesToImportOnUpdate = determineImportOnUpdatePaths(templateLocation,
+                entityResourcesToImportOnUpdate);
+    }
+
+    /**
+     * Determine resources based on defined template location and context resource values
+     * in servicesContext.xml. If the values are relative, prepend template location path.
+     * This is determined by checking that the value starts with "classpath:".
+     *
+     * @param templateLoc       tenant template location defined in portal.properties
+     * @param updateResources   importOnUpdate values defined in servicesContext.xml
+     * @return                  resources as absolute paths.
+     */
+    /*package*/ static Set<Resource> determineImportOnUpdatePaths(String templateLoc, Set<ClassPathResource> updateResources) {
+        final String templateLocPath = templateLoc.split("\\*")[0];
+        final Set<Resource> fullpathSet = new HashSet<>();
+        for (ClassPathResource resource : updateResources) {
+                if (resource.getPath().startsWith("classpath:")) {
+                    fullpathSet.add(resource);
+                } else {
+                    File newPath = new File(templateLocPath, resource.getPath());
+                    fullpathSet.add(new ClassPathResource(newPath.getPath()));
+                }
+        }
+        return fullpathSet;
     }
 
     public void setEntitiesToRemoveOnDelete(List<DeleteTuple> entitiesToRemoveOnDelete) {
