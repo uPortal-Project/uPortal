@@ -335,6 +335,11 @@
              | org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation,
              | but they don't have to be.
              |
+             | Example of value relative to templateLocation:
+             |    templateLocation = classpath://org/jasig/portal/tenants/sampledata/**/*.xml
+             |    value = user/contact.user.xml
+             |    effective path = classpath://org.jasig/portal/tenants/sampledata/user/contact.user.xml
+             |
              | You wouldn't want _all_ the entities in there re-imported because that
              | approach would reset (undo) many changes made by the tenant admin since
              | creation.  Typically you want to update the files that contain EL expressions
