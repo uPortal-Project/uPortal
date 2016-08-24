@@ -210,7 +210,7 @@
                             <div class="form-group">
                                 <label for="groupName" class="col-sm-4 control-label">Group Name</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="groupName" placeholder="Group Name">
+                                    <input type="text" class="form-control" id="groupName" placeholder="<spring:message code="group.name.validation.placeholder"/>">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -319,10 +319,10 @@
             var nameRegex = /^[\w ]{5,500}$/;
             if (nameRegex.test($(this).val())) {
                 $("#${n}saveAdHocButton").removeAttr('disabled');
-                $(this).removeClass("invalid");
+                $(this).parent().removeClass("has-error");
             } else {
                 $("#${n}saveAdHocButton").attr('disabled', 'disabled');
-                $(this).addClass("invalid");
+                $(this).parent().addClass("has-error");
             }
         });
 
@@ -383,7 +383,7 @@
         var resetAdHocDialog = function () {
             console.log("resetting ad hoc dialog");
             $("#groupName").val("");
-            $("#groupName").removeClass("invalid");
+            $("#groupName").parent().removeClass("has-error");
             $("#${n}saveAdHocButton").attr('disabled', 'disabled');
 
             $(":jstree").each(function () {
