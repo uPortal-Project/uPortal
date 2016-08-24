@@ -71,28 +71,33 @@
         <name>showChrome</name>
         <value>false</value>
     </parameter>
+    <!--
+     | Beginning with uPortal 5.0, image paths in this portlet-definition
+     | support ${portalContext} as a replacement token for the context path of
+     | the portal (typically '/uPortal').
+     +-->
     <portlet-preference>
         <name>defaultBackgroundImages</name>
-        <value>/uPortal/media/skins/common/backgroundImages/galaxy.jpg</value>
-        <value>/uPortal/media/skins/common/backgroundImages/mountain.jpg</value>
-        <value>/uPortal/media/skins/common/backgroundImages/nebula.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/galaxy.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/mountain.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/nebula.jpg</value>
     </portlet-preference>
     <portlet-preference>
         <name>defaultBackgroundThumbnailImages</name>
-        <value>/uPortal/media/skins/common/backgroundImages/thumbnails/galaxy.jpg</value>
-        <value>/uPortal/media/skins/common/backgroundImages/thumbnails/mountain.jpg</value>
-        <value>/uPortal/media/skins/common/backgroundImages/thumbnails/nebula.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/thumbnails/galaxy.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/thumbnails/mountain.jpg</value>
+        <value>${portalContext}/media/skins/common/backgroundImages/thumbnails/nebula.jpg</value>
     </portlet-preference>
     <portlet-preference>
         <name>mobileBackgroundImages</name>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/galaxy.jpg</value>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/mountain.jpg</value>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/nebula.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/galaxy.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/mountain.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/nebula.jpg</value>
     </portlet-preference>
     <portlet-preference>
         <name>mobileBackgroundThumbnailImages</name>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/galaxy.jpg</value>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/mountain.jpg</value>
-        <value>/uPortal/media/skins/muniversality/backgroundImages/thumbnails/nebula.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/thumbnails/galaxy.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/thumbnails/mountain.jpg</value>
+        <value>${portalContext}/media/skins/muniversality/backgroundImages/thumbnails/nebula.jpg</value>
     </portlet-preference>
 </portlet-definition>

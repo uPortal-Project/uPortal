@@ -975,6 +975,9 @@
             <value>classpath:/properties/contexts/portlet/BackgroundPreference-portlet.xml</value>
         </init-param>
 
+        <!-- Five minutes -->
+        <expiration-cache>300</expiration-cache>
+
         <supports>
             <mime-type>text/html</mime-type>
             <portlet-mode>view</portlet-mode>
@@ -992,7 +995,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>defaultBackgroundContainerSelector</name>
-                <value>#portalPageBody</value>
+                <value>body.portal #portalPageBody</value>
             </preference>
             <preference>
                 <name>defaultBackgroundImages</name>
@@ -1000,7 +1003,7 @@
             <!-- HTML element or class to apply background image to -->
             <preference>
                 <name>mobileBackgroundContainerSelector</name>
-                <value>#portalPageBody</value>
+                <value>body.portal #portalPageBody</value>
             </preference>
             <preference>
                 <name>mobileBackgroundImages</name>

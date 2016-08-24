@@ -19,6 +19,7 @@
 package org.jasig.portal.portlets.backgroundpreference;
 
 import org.jasig.portal.rest.AjaxSuccessController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,11 +37,8 @@ import javax.portlet.PortletPreferences;
 @RequestMapping("VIEW")
 public class ViewBackgroundPreferenceController {
 
-    BackgroundSetSelectionStrategy imageSetSelectionStrategy = new RoleBasedBackgroundSetSelectionStrategy();
-
-    public void setImageSetSelectionStrategy(BackgroundSetSelectionStrategy imageSetSelectionStrategy) {
-        this.imageSetSelectionStrategy = imageSetSelectionStrategy;
-    }
+    @Autowired
+    private BackgroundSetSelectionStrategy imageSetSelectionStrategy;
 
     /**
      * Display the main user-facing view of the portlet.
@@ -51,19 +49,19 @@ public class ViewBackgroundPreferenceController {
     @RenderMapping
     public String getView(RenderRequest req, Model model) {
 
-        String[] images = imageSetSelectionStrategy.getImageSet(req);
+        final String[] images = imageSetSelectionStrategy.getImageSet(req);
         model.addAttribute("images", images);
 
-        String[] thumbnailImages = imageSetSelectionStrategy.getImageThumbnailSet(req);
+        final String[] thumbnailImages = imageSetSelectionStrategy.getImageThumbnailSet(req);
         model.addAttribute("thumbnailImages", thumbnailImages);
 
-        String preferredBackgroundImage = imageSetSelectionStrategy.getSelectedImage(req);
+        final String preferredBackgroundImage = imageSetSelectionStrategy.getSelectedImage(req);
         model.addAttribute("backgroundImage", preferredBackgroundImage);
 
-        String backgroundContainerSelector = imageSetSelectionStrategy.getBackgroundContainerSelector(req);
+        final String backgroundContainerSelector = imageSetSelectionStrategy.getBackgroundContainerSelector(req);
         model.addAttribute("backgroundContainerSelector", backgroundContainerSelector);
 
-        PortletPreferences prefs = req.getPreferences();
+        final PortletPreferences prefs = req.getPreferences();
         model.addAttribute("applyOpacityTo", prefs.getValue("applyOpacityTo", null));
         model.addAttribute("opacityCssValue", prefs.getValue("opacityCssValue", "1.0"));
 
