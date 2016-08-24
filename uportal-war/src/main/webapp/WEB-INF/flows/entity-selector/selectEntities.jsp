@@ -315,6 +315,19 @@
          * Ad Hoc Groups (jsTree)
          */
 
+        $("#groupName").on('input', function () {
+            var nameRegex = /^[\w ]{5,500}$/;
+            if (nameRegex.test($(this).val())) {
+                $("#${n}saveAdHocButton").removeAttr('disabled');
+                $(this).removeClass("invalid");
+            } else {
+                $("#${n}saveAdHocButton").attr('disabled', 'disabled');
+                $(this).addClass("invalid");
+            }
+        });
+
+
+
         var setGroupDescription = function() {
             var includes, excludes, description;
             descInput = $("#groupDesc");
@@ -370,6 +383,8 @@
         var resetAdHocDialog = function () {
             console.log("resetting ad hoc dialog");
             $("#groupName").val("");
+            $("#groupName").removeClass("invalid");
+            $("#${n}saveAdHocButton").attr('disabled', 'disabled');
 
             $(":jstree").each(function () {
                 $(this).jstree("deselect_all",false);
