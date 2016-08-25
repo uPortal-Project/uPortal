@@ -18,26 +18,8 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import java.io.StringWriter;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Pattern;
-
+import com.google.common.cache.Cache;
 import net.sf.ehcache.Ehcache;
-
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Namespace;
 import org.dom4j.io.DOMReader;
@@ -46,7 +28,6 @@ import org.dom4j.io.DocumentSource;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.PortalException;
@@ -65,11 +46,8 @@ import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
@@ -92,7 +70,22 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.google.common.cache.Cache;
+import java.io.StringWriter;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
@@ -1129,6 +1122,16 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             ILF = (Document) PLF.cloneNode(true);
             final Element layoutNode = ILF.getDocumentElement();
 
+            final Element ownerDocument = layoutNode.getOwnerDocument().getDocumentElement();
+            final NodeList channelNodes = ownerDocument.getElementsByTagName("channel");
+            for (int i=0; i < channelNodes.getLength(); i++) {
+                Element channelNode = (Element)channelNodes.item(i);
+                final Node chanIdNode = channelNode.getAttributeNode("chanID");
+                if (chanIdNode == null || MissingPortletDefinition.CHANNEL_ID.equals(chanIdNode.getNodeValue())) {
+                    channelNode.getParentNode().removeChild(channelNode);
+                }
+            }
+
             if (ownedFragment != null) {
                 fragmentNames.add(ownedFragment.getName());
                 layoutNode.setAttributeNS(Constants.NS_URI, Constants.ATT_FRAGMENT_NAME, ownedFragment.getName());
@@ -1735,343 +1738,5 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
             }
 
             }));
-
-    private static final class MissingPortletDefinition implements IPortletDefinition {
-        public static final IPortletDefinition INSTANCE = new MissingPortletDefinition();
-
-        private final String fname = "DLMStaticMissingChannel";
-
-        public String getName() {
-            return "Missing channel";
-        }
-
-        public String getName(String locale) {
-            return "Missing channel";
-        }
-
-        public int getTimeout() {
-            return 20000;
-        }
-
-        public String getTitle() {
-            return "Missing channel";
-        }
-
-        public String getTitle(String locale) {
-            return "Missing channel";
-        }
-
-        @Override
-        public String getAlternativeMaximizedLink() {
-            return null;
-        }
-
-        @Override
-        public String getTarget() {
-          return null;
-        }
-
-        public String getFName() {
-            return this.fname;
-        }
-
-        @Override
-        public String getDataId() {
-            return null;
-        }
-
-        @Override
-        public String getDataTitle() {
-            return this.getName();
-        }
-
-        @Override
-        public String getDataDescription() {
-            return this.getDescription();
-        }
-
-        @Override
-        public Integer getActionTimeout() {
-            return null;
-        }
-
-        @Override
-        public Integer getEventTimeout() {
-            return null;
-        }
-
-        @Override
-        public Integer getRenderTimeout() {
-            return null;
-        }
-
-        @Override
-        public Integer getResourceTimeout() {
-            return null;
-        }
-
-        @Override
-        public void setActionTimeout(Integer actionTimeout) {
-        }
-
-        @Override
-        public void setEventTimeout(Integer eventTimeout) {
-        }
-
-        @Override
-        public void setRenderTimeout(Integer renderTimeout) {
-        }
-
-        @Override
-        public void setResourceTimeout(Integer resourceTimeout) {
-        }
-
-        @Override
-        public Double getRating() {
-            return null;
-        }
-
-        @Override
-        public void setRating(Double rating) {
-        }
-
-        @Override
-        public Long getUsersRated() {
-            return null;
-        }
-
-        @Override
-        public void setUsersRated(Long usersRated) {
-        }
-
-        public void addLocalizedDescription(String locale, String chanDesc) {
-        }
-
-        public void addLocalizedName(String locale, String chanName) {
-        }
-
-        public void addLocalizedTitle(String locale, String chanTitle) {
-        }
-
-        public void addParameter(IPortletDefinitionParameter parameter) {
-        }
-
-        public Date getApprovalDate() {
-            return null;
-        }
-
-        public int getApproverId() {
-            return 0;
-        }
-
-        public String getDescription() {
-            return null;
-        }
-
-        public String getDescription(String locale) {
-            return null;
-        }
-
-        public EntityIdentifier getEntityIdentifier() {
-            return null;
-        }
-
-        public Date getExpirationDate() {
-            return null;
-        }
-
-        public int getExpirerId() {
-            return 0;
-        }
-
-        public IPortletDefinitionParameter getParameter(String key) {
-            return null;
-        }
-
-        public Set<IPortletDefinitionParameter> getParameters() {
-            return Collections.emptySet();
-        }
-
-        public Map<String, IPortletDefinitionParameter> getParametersAsUnmodifiableMap() {
-            return Collections.emptyMap();
-        }
-
-        public Date getPublishDate() {
-            return null;
-        }
-
-        public int getPublisherId() {
-            return 0;
-        }
-
-        public void removeParameter(IPortletDefinitionParameter parameter) {
-        }
-
-        public void removeParameter(String name) {
-        }
-
-        public void setApprovalDate(Date approvalDate) {
-        }
-
-        public void setApproverId(int approvalId) {
-        }
-
-        public void setDescription(String descr) {
-        }
-
-        public void setExpirationDate(Date expirationDate) {
-        }
-
-        public void setExpirerId(int expirerId) {
-        }
-
-        public void setFName(String fname) {
-        }
-
-        public void setName(String name) {
-        }
-
-        public void setParameters(Set<IPortletDefinitionParameter> parameters) {
-        }
-
-        public void setPublishDate(Date publishDate) {
-        }
-
-        public void setPublisherId(int publisherId) {
-        }
-
-        public void setTimeout(int timeout) {
-        }
-
-        public void setTitle(String title) {
-        }
-
-        public IPortletType getType() {
-            return new MissingPortletType();
-        }
-
-        public void setType(IPortletType channelType) {
-        }
-
-        public PortletLifecycleState getLifecycleState() {
-            return null;
-        }
-
-        public IPortletDefinitionId getPortletDefinitionId() {
-            return new MissingPortletDefinitionId();
-        }
-
-        @Override
-        public List<IPortletPreference> getPortletPreferences() {
-            return Collections.emptyList();
-        }
-
-        public void addParameter(String name, String value) {
-        }
-
-        @Override
-        public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {
-            return false;
-        }
-
-        @Override
-        public IPortletDescriptorKey getPortletDescriptorKey() {
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return "MissingPortletDefinition [fname=" + this.fname + "]";
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + (this.fname == null ? 0 : this.fname.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (!IPortletDefinition.class.isAssignableFrom(obj.getClass())) {
-                return false;
-            }
-            final IPortletDefinition other = (IPortletDefinition) obj;
-            if (this.fname == null) {
-                if (other.getFName() != null) {
-                    return false;
-                }
-            }
-            else if (!this.fname.equals(other.getFName())) {
-                return false;
-            }
-            return true;
-        }
-    }
-
-    private static final class MissingPortletDefinitionId implements IPortletDefinitionId {
-        private static final long serialVersionUID = 1L;
-
-        private final long id = -1;
-        private final String strId = Long.toString(id);
-
-        public String getStringId() {
-            return strId;
-        }
-
-        @Override
-        public long getLongId() {
-            return id;
-        }
-    }
-
-    private static final class MissingPortletType implements IPortletType {
-
-        public int getId() {
-            return -1;
-        }
-
-        public String getName() {
-            return null;
-        }
-
-        public String getDescription() {
-            return null;
-        }
-
-        public String getCpdUri() {
-            return null;
-        }
-
-        public void setDescription(String descr) {
-        }
-
-        @Override
-        public void setCpdUri(String cpdUri) {
-        }
-
-        @Override
-        public String getDataId() {
-            return null;
-        }
-
-        @Override
-        public String getDataTitle() {
-            return null;
-        }
-
-        @Override
-        public String getDataDescription() {
-            return null;
-        }
-
-    }
 
 }

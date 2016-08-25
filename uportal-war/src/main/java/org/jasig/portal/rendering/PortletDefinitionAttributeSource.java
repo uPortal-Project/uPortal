@@ -96,12 +96,16 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
         if (fnameAttribute != null) {
             final String fname = fnameAttribute.getValue();
             IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
-            IPortletDescriptorKey descriptorKey = def.getPortletDescriptorKey();
-            attributes.add(xmlEventFactory.createAttribute(PORTLET_NAME_ATTRIBUTE, descriptorKey.getPortletName()));
-            if (descriptorKey.isFrameworkPortlet()) {
-                attributes.add(xmlEventFactory.createAttribute(FRAMEWORK_PORTLET_ATTRIBUTE, "true"));
+            if (def == null) {
+                this.logger.warn("Cannot get portlet definition attributes.  No portlet definition found for fname: '" + fname + "'.");
             } else {
-                attributes.add(xmlEventFactory.createAttribute(WEBAPP_NAME_ATTRIBUTE, descriptorKey.getWebAppName()));
+                IPortletDescriptorKey descriptorKey = def.getPortletDescriptorKey();
+                attributes.add(xmlEventFactory.createAttribute(PORTLET_NAME_ATTRIBUTE, descriptorKey.getPortletName()));
+                if (descriptorKey.isFrameworkPortlet()) {
+                    attributes.add(xmlEventFactory.createAttribute(FRAMEWORK_PORTLET_ATTRIBUTE, "true"));
+                } else {
+                    attributes.add(xmlEventFactory.createAttribute(WEBAPP_NAME_ATTRIBUTE, descriptorKey.getWebAppName()));
+                }
             }
         }
 
