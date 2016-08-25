@@ -448,6 +448,10 @@
     <session-config>
       <tracking-mode>COOKIE</tracking-mode>
       <!-- Specify the HTTP session duration in <tomcatHome>/conf/web.xml so it is the same for all webapps. -->
+      <cookie-config>
+        <http-only>true</http-only>
+        <secure>${secureSessionCookie}</secure>
+      </cookie-config>
     </session-config>
     
     <welcome-file-list>

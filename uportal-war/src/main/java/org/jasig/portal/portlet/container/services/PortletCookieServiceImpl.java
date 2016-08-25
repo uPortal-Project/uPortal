@@ -148,6 +148,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     /**
 	 * @param portalCookieAlwaysSecure Set a value of true to set the portal cookie's secure flag to 'true' regardless of the request's secure flag.
 	 */
+    @Value("${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure}")
 	public void setPortalCookieAlwaysSecure(boolean portalCookieAlwaysSecure) {
 		this.portalCookieAlwaysSecure = portalCookieAlwaysSecure;
 	}
