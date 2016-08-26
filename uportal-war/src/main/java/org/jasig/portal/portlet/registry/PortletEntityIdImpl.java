@@ -28,7 +28,7 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
  * @version $Revision$
  */
 class PortletEntityIdImpl implements IPortletEntityId {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private final IPortletDefinitionId portletDefinitionId;
     private final String layoutNodeId;
@@ -36,13 +36,13 @@ class PortletEntityIdImpl implements IPortletEntityId {
     
     private final String compositeIdString;
     
-    public PortletEntityIdImpl(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId, String compositeIdString) {
+    public PortletEntityIdImpl(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
         this.portletDefinitionId = portletDefinitionId;
         this.layoutNodeId = layoutNodeId;
         this.userId = userId;
-        this.compositeIdString = compositeIdString;
+        this.compositeIdString = PortletEntityIdStringUtils.format(portletDefinitionId.getStringId(), layoutNodeId, userId);
     }
-    
+
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.portletDefinitionId;
     }
@@ -54,8 +54,6 @@ class PortletEntityIdImpl implements IPortletEntityId {
     public int getUserId() {
         return this.userId;
     }
-
-
 
     /* (non-Javadoc)
      * @see org.jasig.portal.portlet.om.IObjectId#getStringId()
