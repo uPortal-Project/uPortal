@@ -24,22 +24,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract class tests the possibly multiple values of an 
- * <code>IPerson</code> integer attribute. 
- * <p>
+ * Abstract base class for testers that test the value(s) of an
+ * <code>IPerson</code> integer attribute.
+ *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 
-public abstract class IntegerTester extends BaseAttributeTester {
-    protected int testInteger = Integer.MIN_VALUE;
+public abstract class AbstractIntegerTester extends BaseAttributeTester {
+
+    private final int testInteger;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * @since 4.3
      */
-    public IntegerTester(IPersonAttributesGroupTestDefinition definition) {
+    public AbstractIntegerTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
         this.testInteger = Integer.parseInt(definition.getTestValue());
     }
@@ -49,51 +49,59 @@ public abstract class IntegerTester extends BaseAttributeTester {
      * the single-argument constructor.
      */
     @Deprecated
-    public IntegerTester(String attribute, String test) {
+    public AbstractIntegerTester(String attribute, String test) {
         super(attribute, test); 
         testInteger = Integer.parseInt(test);
     }
+
     public int getTestInteger() {
         return testInteger;
     }
 
     public boolean test(IPerson person) {
 
-        boolean result = false;
-        Object[] atts = person.getAttributeValues(getAttributeName());
+        boolean result = false;  // default
+        final Object[] atts = person.getAttributeValues(getAttributeName());
 
         if (atts != null) {
             for (int i=0; i<atts.length && result == false; i++) {
-                Object objValue = atts[i];
+
+                final Object objValue = atts[i];
+                if (objValue == null) {
+                    continue;
+                }
+
+                /*
+                 * Currently we support:
+                 *   - Integer
+                 *   - Long
+                 *   - String
+                 */
                 try {
                     Integer intValue = null;
-
-                    if (objValue == null) {
-                        continue;
-                    }
 
                     if (objValue instanceof Integer) {
                         intValue = (Integer) objValue;
                     } else if (objValue instanceof Long) {
-                        Long lngValue = (Long) objValue;
-                        if (lngValue <= Integer.MAX_VALUE && lngValue >= Integer.MIN_VALUE) {
+                        final Long lngValue = (Long) objValue;
+                        if (lngValue >= Integer.MIN_VALUE && lngValue <= Integer.MAX_VALUE) {
                             // A value outside this range is not valid to test
                             intValue = lngValue.intValue();
                         }
                     } else if (objValue instanceof String) {
-                        String strValue = (String) objValue;
+                        final String strValue = (String) objValue;
                         intValue = Integer.parseInt(strValue);
                     }
 
                     if (intValue != null) {
-                        // A positive result breaks the loop
+                        // A positive result will break the loop
                         result = test(intValue);
                     }
-                }
-                catch (NumberFormatException nfe) {
+                } catch (NumberFormatException nfe) {
                     // result stays false
                     logger.debug("Value not parsable to an int:  {}", objValue, nfe);
                 }
+
             }
         }
 
