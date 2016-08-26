@@ -52,8 +52,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
@@ -99,6 +99,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     // Evaluated by scanning a package (see 'templateLocation' above)
     private Set<Resource> entityResourcesToImportOnCreate;
     // Optionally specified in the <bean> definition
+    private Set<String> entityResourcePathsToImportOnUpdate = Collections.emptySet();  // default
     private Set<Resource> entityResourcesToImportOnUpdate = Collections.emptySet();  // default
     private List<DeleteTuple> entitiesToRemoveOnDelete = Collections.emptyList();  // default
 
@@ -134,32 +135,49 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         this.dataKeyImportOrder = Collections.unmodifiableList(dataKeyImportOrder);
     }
 
-    public void setEntityResourcesToImportOnUpdate(Set<ClassPathResource> entityResourcesToImportOnUpdate) {
-        this.entityResourcesToImportOnUpdate = determineImportOnUpdatePaths(templateLocation,
-                entityResourcesToImportOnUpdate);
+    public void setEntityResourcesToImportOnUpdate(Set<String> entityResourcesToImportOnUpdate) {
+            // applicationContext not available to create resources immediately
+            // simply capturing and resolving full paths to resources for setup()
+            entityResourcePathsToImportOnUpdate = determineImportOnUpdatePaths(templateLocation, entityResourcesToImportOnUpdate);
     }
 
     /**
      * Determine resources based on defined template location and context resource values
      * in servicesContext.xml. If the values are relative, prepend template location path.
-     * This is determined by checking that the value starts with "classpath:".
+     * This is determined by checking that the value starts with "\[a-zA-Z]+:".
      *
-     * @param templateLoc       tenant template location defined in portal.properties
-     * @param updateResources   importOnUpdate values defined in servicesContext.xml
-     * @return                  resources as absolute paths.
+     * @param templateLoc           tenant template location defined in portal.properties
+     * @param relResourcePathSet    importOnUpdate values defined in servicesContext.xml
+     * @return                      resource paths as absolute paths.
      */
-    /*package*/ static Set<Resource> determineImportOnUpdatePaths(String templateLoc, Set<ClassPathResource> updateResources) {
-        final String templateLocPath = templateLoc.split("\\*")[0];
-        final Set<Resource> fullpathSet = new HashSet<>();
-        for (ClassPathResource resource : updateResources) {
-                if (resource.getPath().startsWith("classpath:")) {
-                    fullpathSet.add(resource);
-                } else {
-                    File newPath = new File(templateLocPath, resource.getPath());
-                    fullpathSet.add(new ClassPathResource(newPath.getPath()));
-                }
+    /*package*/ static Set<String> determineImportOnUpdatePaths(String templateLoc, Set<String> relResourcePathSet) {
+        final String templateLocPath = templateLoc.split("\\*")[0];  // up to wildcard pattern
+        final Set<String> fullResourcePathSet = new HashSet<>();
+        for (String resourcePath : relResourcePathSet) {
+            final String fullPath = resourcePath.matches("^[a-zA-Z]+:.*") ? resourcePath :
+                    (new File(templateLocPath, resourcePath)).toString();  // let File class handle path separator
+            log.debug("Calculated full path: {} -> {}", resourcePath, fullPath);
+            fullResourcePathSet.add(fullPath);
         }
-        return fullpathSet;
+        return fullResourcePathSet;
+    }
+
+    /**
+     * Given the list of resource strings, acquire the set of resource objects from
+     * a {@code org.springframework.core.io.ResourceLoader}.
+     *
+     * @param resourceLoader    a resource loader, usually an application context
+     * @param resourcePaths     set of resource paths as strings
+     * @return                  set of resources derived from paths via resource loader
+     */
+    /*package*/ static Set<Resource> buildResourcesFromPaths(ResourceLoader resourceLoader, Set<String> resourcePaths) {
+        final Set<Resource> resourceSet = new HashSet<>();
+        for (String resourcePath : resourcePaths) {
+            Resource resource = resourceLoader.getResource(resourcePath);
+            log.debug("Resource {} exists?: {}", resource, resource.exists());
+            resourceSet.add(resource);
+        }
+        return resourceSet;
     }
 
     public void setEntitiesToRemoveOnDelete(List<DeleteTuple> entitiesToRemoveOnDelete) {
@@ -174,6 +192,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
     @PostConstruct
     public void setup() throws Exception {
         entityResourcesToImportOnCreate = new HashSet<Resource>(Arrays.asList(applicationContext.getResources(templateLocation)));
+        this.entityResourcesToImportOnUpdate = buildResourcesFromPaths(applicationContext, entityResourcePathsToImportOnUpdate);
     }
 
     @Override

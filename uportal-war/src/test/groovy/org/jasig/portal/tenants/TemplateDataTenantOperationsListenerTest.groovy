@@ -10,24 +10,20 @@ class TemplateDataTenantOperationsListenerTest {
     static final String simplePath="classpath:/org/jasig/portal/tenants/sampledata";
     static final String simplePath2="classpath:/org/jasig/portal/tenants/sampledata/";
     static final String wildcardPath="classpath:/org/jasig/portal/tenants/sampledata/**/*.xml";
+    static final String adminFullPath="classpath:/org/jasig/portal/tenants/data/group_membership/Administrators.group-membership.xml";
+    static final String membersRelPath="pags-group/Members.pags-group.xml";
+    static final String membersFullPath="classpath:/org/jasig/portal/tenants/sampledata/pags-group/Members.pags-group.xml";
 
     @Test
     void testDetermineImportOnUpdatePaths() {
-        final Set<Resource> configResources = new HashSet<Resource>();
-        final ClassPathResource fullpathResource =
-                new ClassPathResource("classpath:/org/jasig/portal/tenants/data/group_membership/Administrators.group-membership.xml");
-        final ClassPathResource relpathResource = new ClassPathResource("pags-group/Members.pags-group.xml");
-        configResources.add(fullpathResource);
-        configResources.add(relpathResource);
-        final Set<Resource> fullpathResources = new HashSet<Resource>();
-        fullpathResources.add(new ClassPathResource("classpath:/org/jasig/portal/tenants/data/group_membership/Administrators.group-membership.xml"));
-        fullpathResources.add(new ClassPathResource("classpath:/org/jasig/portal/tenants/sampledata/pags-group/Members.pags-group.xml"));
+        final Set<String> configResources = new HashSet<String>();
+        configResources.add(adminFullPath);
+        configResources.add(membersRelPath);
+        final Set<String> fullpathResources = new HashSet<String>();
+        fullpathResources.add(adminFullPath);
+        fullpathResources.add(membersFullPath);
 
-        println(fullpathResource.getFilename());
-        println(fullpathResource.getPath());
-        println(relpathResource.getPath());
-
-        Set<Resource> resources = TemplateDataTenantOperationsListener.determineImportOnUpdatePaths(simplePath, configResources);
+        Set<String> resources = TemplateDataTenantOperationsListener.determineImportOnUpdatePaths(simplePath, configResources);
         assertEquals("Simple path replacement incorrect", fullpathResources, resources);
 
         resources = TemplateDataTenantOperationsListener.determineImportOnUpdatePaths(simplePath2, configResources);
