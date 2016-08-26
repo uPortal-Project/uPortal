@@ -347,7 +347,7 @@
              |   - ${tenant.attributesMap['adminContactUsername']}
              +-->
             <property name="entityResourcesToImportOnUpdate">
-                <set>
+                <set value-type="java.lang.String">
                     <!-- Updates the user in the tenant administrators group -->
                     <value>classpath:/org/jasig/portal/tenants/data/group_membership/Administrators.group-membership.xml</value>
                     <!-- Updates the org attribute value that links users with the tenancy -->
