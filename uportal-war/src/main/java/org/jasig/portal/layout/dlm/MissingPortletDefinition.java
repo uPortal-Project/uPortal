@@ -18,6 +18,12 @@
  */
 package org.jasig.portal.layout.dlm;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jasig.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -26,12 +32,6 @@ import org.jasig.portal.portlet.om.IPortletDescriptorKey;
 import org.jasig.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * {@link IPortletDefinition} implementation representing a missing portlet, meaning a portlet that could not be found,

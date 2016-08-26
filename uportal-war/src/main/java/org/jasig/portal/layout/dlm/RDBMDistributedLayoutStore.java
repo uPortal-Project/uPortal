@@ -18,8 +18,23 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import com.google.common.cache.Cache;
-import net.sf.ehcache.Ehcache;
+import java.io.StringWriter;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Namespace;
 import org.dom4j.io.DOMReader;
@@ -70,22 +85,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.StringWriter;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.regex.Pattern;
+import com.google.common.cache.Cache;
+
+import net.sf.ehcache.Ehcache;
 
 /**
  * This class extends RDBMUserLayoutStore and implements instantiating and
