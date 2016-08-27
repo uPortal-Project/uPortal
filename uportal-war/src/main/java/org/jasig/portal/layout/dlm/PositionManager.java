@@ -129,7 +129,7 @@ public class PositionManager {
        the compViewParent and returned.
      */
     static void applyPositions(Element compViewParent, Element positionSet,
-            IntegrationResult result, PLFIntegrator.NodeInfoTracker tracker)
+            IntegrationResult result, NodeInfoTracker tracker)
             throws PortalException {
 
         if ( positionSet == null ||
@@ -543,7 +543,7 @@ public class PositionManager {
        children in the compViewParent.
      */
     static void applyOrdering(List<NodeInfo> order, Element compViewParent,
-            Element positionSet, PLFIntegrator.NodeInfoTracker tracker) {
+            Element positionSet, NodeInfoTracker tracker) {
 
         // first pull out all visible channel or visible folder children and
         // put their id's in a list of available children and record their

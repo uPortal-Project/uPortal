@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.layout.dlm;
 
-import java.util.List;
+package org.jasig.portal.layout.dlm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.PortalException;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -272,42 +270,5 @@ public class PLFIntegrator {
         }
         return copy;
     }
-
-     /*
-      * Nested Types
-      */
-
-     /**
-      * Helps {@link PLFIntegrator} track the number of {@link NodeInfo} objects
-      * created for a single layout.  There is some evidence in the community
-      * that there is a bug within the <code>mergePLFintoILF</code> process that
-      * can occur with certain data.  When triggered, it pulls the process into
-      * an infinite(?) loop, causing it to instantiate {@link NodeInfo} objects
-      * until the JVM runs out of memory.  This class tracks the number these
-      * objects created and fails noisily when the specific threshold is
-      * crossed.
-      */
-     /* package-private */ static final class NodeInfoTracker {
-         /**
-          * The maximum number of {@link NodeInfo} objects that may be created
-          * in processing a single layout.
-          */
-         private static final int MAX_NUMBER = 1000;
-
-         private int count;
-
-         public void track(NodeInfo ni, List<NodeInfo> order, Element compViewParent, Element positionSet) {
-             ++count;
-             if (count > MAX_NUMBER) {
-                 final String msg = "Maximum number of NodeInfo objects for this layout exceeded";
-                 LOG.error(msg);
-                 LOG.error("count="+count);
-                 LOG.error("order="+order);
-                 LOG.error("compViewParent="+XmlUtilitiesImpl.toString(compViewParent));
-                 LOG.error("positionSet="+XmlUtilitiesImpl.toString(positionSet));
-                 throw new RuntimeException(msg);
-             }
-         }
-     }
 
 }
