@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  */
 @Service("portletTypeRegistry")
 public class PortletTypeRegistryImpl implements IPortletTypeRegistry {

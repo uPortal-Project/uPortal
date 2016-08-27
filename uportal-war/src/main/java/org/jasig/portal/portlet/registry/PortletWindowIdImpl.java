@@ -24,7 +24,6 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletWindowIdImpl implements IPortletWindowId {
     private static final long serialVersionUID = 2L;

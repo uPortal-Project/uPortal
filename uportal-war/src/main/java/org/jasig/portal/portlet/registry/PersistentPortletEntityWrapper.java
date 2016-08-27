@@ -34,7 +34,6 @@ import org.jasig.portal.portlet.om.IPortletPreference;
  * Wrapper for portlet entities that are persistent. Overrides the entity ID to be a consistent value 
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PersistentPortletEntityWrapper implements IPortletEntity {
     private final IPortletEntity persistentEntity;

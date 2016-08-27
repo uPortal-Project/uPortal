@@ -25,7 +25,6 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
  * Standard IPortletEntityId
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletEntityIdImpl implements IPortletEntityId {
     private static final long serialVersionUID = 2L;

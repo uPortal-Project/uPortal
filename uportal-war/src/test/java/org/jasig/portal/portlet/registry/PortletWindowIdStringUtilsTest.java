@@ -113,26 +113,6 @@ public class PortletWindowIdStringUtilsTest {
     }
 
     @Test
-    public void isDelegateLayoutNodeMethodShouldReturnFalse() {
-        // given
-        final String layoutNodeIdString = "88_n149_52";
-        // when
-        final boolean result = PortletWindowIdStringUtils.isDelegateLayoutNode(layoutNodeIdString);
-        // then
-        assertFalse(result);
-    }
-
-    @Test
-    public void isDelegateLayoutNodeMethodShouldReturnTrue() {
-        // given
-        final String layoutNodeIdString = "dlg-88-n149-52";
-        // when
-        final boolean result = PortletWindowIdStringUtils.isDelegateLayoutNode(layoutNodeIdString);
-        // then
-        assertTrue(result);
-    }
-
-    @Test
     public void parsePortletEntityIdMethodShouldReturnResultEqualToInputWhenPortletWindowIdHasNoWindowInstanceId() {
         // given
         final String portletWindowIdString = "90_n155_18";

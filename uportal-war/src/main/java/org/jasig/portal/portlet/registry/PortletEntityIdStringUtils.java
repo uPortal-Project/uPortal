@@ -49,15 +49,14 @@ import java.util.regex.Pattern;
  * @see PortletWindowRegistryImpl#STATELESS_PORTLET_WINDOW_ID
  * 
  * @author Gary Roybal
- * @version $Revision$
  */
 public class PortletEntityIdStringUtils {
 
-    static final char ID_PART_SEPARATOR = '_';
-    static final Pattern ID_PART_SEPARATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPARATOR)));
+    private static final char ID_PART_SEPARATOR = '_';
+    private static final Pattern ID_PART_SEPARATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPARATOR)));
 
-    static final char DELEGATE_LAYOUT_NODE_ID_SEPARATOR = '-';
-    static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg" + DELEGATE_LAYOUT_NODE_ID_SEPARATOR;
+    private static final char DELEGATE_LAYOUT_NODE_ID_SEPARATOR = '-';
+    private static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg" + DELEGATE_LAYOUT_NODE_ID_SEPARATOR;
 
     public static String format(final String portletDefinitionId, final String layoutNodeId, final int userId) {
         return portletDefinitionId + ID_PART_SEPARATOR + layoutNodeId + ID_PART_SEPARATOR + userId;
@@ -73,10 +72,6 @@ public class PortletEntityIdStringUtils {
 
     public static boolean isDelegateLayoutNode(final String layoutNodeId) {
         return layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX);
-    }
-
-    public static int getNumberOfParts(final String portletEntityIdString) {
-        return parseParts(portletEntityIdString).length;
     }
 
     public static boolean hasCorrectNumberOfParts(final String portletEntityIdString) {

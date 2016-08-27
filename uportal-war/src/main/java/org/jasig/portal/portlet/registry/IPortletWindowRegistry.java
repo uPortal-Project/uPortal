@@ -37,7 +37,6 @@ import org.jasig.portal.utils.Tuple;
  * Methods require a {@link HttpServletRequest} object due to the nature of IPortletWindows and how they are tracked.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletWindowRegistry {
     /**

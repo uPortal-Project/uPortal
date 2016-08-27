@@ -81,18 +81,17 @@ import com.google.common.base.Function;
  * The portlet adaptor channel will be responsible for listenting to unsubscribe events and cleaning up entity objects
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
 
-    static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
-    static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
-    static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
-    static final String PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE";
-    
+    private static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
+    private static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
+    private static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
+    private static final String PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE";
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private IUserInstanceManager userInstanceManager;
     private IPortletEntityDao portletEntityDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;

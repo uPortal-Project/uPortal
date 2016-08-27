@@ -21,7 +21,6 @@ package org.jasig.portal.portlet.registry;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;

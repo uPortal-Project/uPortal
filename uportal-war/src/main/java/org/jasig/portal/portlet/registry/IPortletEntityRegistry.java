@@ -32,7 +32,6 @@ import org.jasig.portal.user.IUserInstance;
  * Provides methods for creating and accessing {@link IPortletEntity} and related objects.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletEntityRegistry {
     /**

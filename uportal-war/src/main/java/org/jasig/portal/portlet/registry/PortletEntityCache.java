@@ -36,7 +36,6 @@ import com.google.common.base.Function;
  * different sets of keys
  * 
  * @author Eric Dalquist
- * @version $Revision$
  * @param <T>
  */
 class PortletEntityCache<T extends IPortletEntityDescriptor> implements Serializable {

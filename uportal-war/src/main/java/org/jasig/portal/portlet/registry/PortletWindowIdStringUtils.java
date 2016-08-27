@@ -40,12 +40,11 @@ import org.apache.commons.lang3.ArrayUtils;
  * @see PortletWindowRegistryImpl#STATELESS_PORTLET_WINDOW_ID
  * 
  * @author Gary Roybal
- * @version $Revision$
  */
 public class PortletWindowIdStringUtils {
 
-    static final char ID_PART_SEPARATOR = '.';
-    static final Pattern ID_PART_SEPARATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPARATOR)));
+    private static final char ID_PART_SEPARATOR = '.';
+    private static final Pattern ID_PART_SEPARATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPARATOR)));
 
     public static String format(final String portletEntityId, final String portletWindowInstanceId) {
         return (portletWindowInstanceId == null) ? portletEntityId : portletEntityId + ID_PART_SEPARATOR + portletWindowInstanceId;
@@ -56,10 +55,6 @@ public class PortletWindowIdStringUtils {
         final String portletWindowInstanceIdString = parsePortletWindowInstanceId(portletWindowIdString);
         final String converted = PortletEntityIdStringUtils.convertToDelegateLayoutNodeId(portletEntityIdString);
         return (portletWindowInstanceIdString == null) ? converted : converted + ID_PART_SEPARATOR + portletWindowInstanceIdString;
-    }
-
-    public static boolean isDelegateLayoutNode(final String layoutNodeId) {
-        return PortletEntityIdStringUtils.isDelegateLayoutNode(layoutNodeId);
     }
 
     public static String parsePortletEntityId(final String portletWindowIdString) {
