@@ -128,18 +128,17 @@ public class PositionManager {
        the final ordering is specified then it is applied to the children of
        the compViewParent and returned.
      */
-    static void applyPositions( Element compViewParent,
-                                Element positionSet,
-                                IntegrationResult result )
-        throws PortalException
-    {
+    static void applyPositions(Element compViewParent, Element positionSet,
+            IntegrationResult result, NodeInfoTracker tracker)
+            throws PortalException {
+
         if ( positionSet == null ||
              positionSet.getFirstChild() == null )
             return;
 
         List<NodeInfo> order = new ArrayList<NodeInfo>();
 
-        applyOrdering        ( order, compViewParent, positionSet );
+        applyOrdering        ( order, compViewParent, positionSet, tracker);
         applyNoReparenting   ( order, compViewParent, positionSet );
         applyNoHopping       ( order, compViewParent, positionSet );
         applyLowerPrecedence ( order, compViewParent, positionSet );
@@ -543,9 +542,8 @@ public class PositionManager {
        nodes still exist in the composite view and then by any remaining
        children in the compViewParent.
      */
-    static void applyOrdering( List<NodeInfo> order,
-                               Element compViewParent,
-                               Element positionSet ) {
+    static void applyOrdering(List<NodeInfo> order, Element compViewParent,
+            Element positionSet, NodeInfoTracker tracker) {
 
         // first pull out all visible channel or visible folder children and
         // put their id's in a list of available children and record their
@@ -564,8 +562,9 @@ public class PositionManager {
             if ( child.getAttribute( "hidden" ).equals( "false" ) &&
                  ( ! child.getAttribute( "chanID" ).equals( "" ) ||
                    child.getAttribute( "type" ).equals( "regular" ) ) ) {
-                final NodeInfo nodeInfo = new NodeInfo( child,
-                                             indexInCVP++ );
+                final NodeInfo nodeInfo = new NodeInfo(child, indexInCVP++);
+
+                tracker.track(nodeInfo, order, compViewParent, positionSet);
 
                 final NodeInfo prevNode = available.put( nodeInfo.getId(), nodeInfo );
                 if (prevNode != null) {
@@ -603,6 +602,7 @@ public class PositionManager {
                 NodeInfo ni = available.remove(childId);
                 if (ni == null) {
                     ni = new NodeInfo( child );
+                    tracker.track(ni, order, compViewParent, positionSet);
                 }
 
                 ni.setPositionDirective(directive);

@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.layout.dlm;
 
 import org.apache.commons.logging.Log;
@@ -59,14 +60,13 @@ public class PLFIntegrator {
                 );
         }
 
-        applyChildChanges( plfRoot, ilfRoot, result );
+        NodeInfoTracker tracker = new NodeInfoTracker();
+        applyChildChanges( plfRoot, ilfRoot, result, tracker);
     }
 
-    private static void applyChildChanges( Element plfParent,
-                                           Element ilfParent,
-                                           IntegrationResult result )
-        throws PortalException
-    {
+    private static void applyChildChanges( Element plfParent, Element ilfParent,
+            IntegrationResult result, NodeInfoTracker tracker) throws PortalException {
+
         Element positions = null;
         Element node = (Element) plfParent.getFirstChild();
 
@@ -75,11 +75,11 @@ public class PLFIntegrator {
             Element nextNode = (Element) node.getNextSibling();
 
             if ( node.getNodeName().equals( "folder" ) )
-                mergeFolder( node, plfParent, ilfParent, result );
+                mergeFolder( node, plfParent, ilfParent, result, tracker);
             else if ( node.getNodeName().equals( Constants.ELM_POSITION_SET ) )
                 positions = node;
             else if ( node.getNodeName().equals( "channel" ) )
-                mergeChannel( node, plfParent, ilfParent, result );
+                mergeChannel(node, plfParent, ilfParent, result, tracker);
             node = nextNode;
         }
 
@@ -88,9 +88,7 @@ public class PLFIntegrator {
             IntegrationResult posResult = new IntegrationResult();
             if (LOG.isInfoEnabled())
                 LOG.info( "applying positions" );
-            PositionManager.applyPositions( ilfParent,
-                                            positions,
-                                            posResult );
+            PositionManager.applyPositions(ilfParent, positions, posResult, tracker);
             if(!posResult.isChangedILF()) {
                 if (LOG.isInfoEnabled())
                     LOG.info("removing positionSet");
@@ -104,11 +102,9 @@ public class PLFIntegrator {
         }
     }
 
-    private static void mergeChannel( Element plfChild,
-                                      Element plfParent,
-                                      Element ilfParent,
-                                      IntegrationResult result )
-    {
+    private static void mergeChannel( Element plfChild, Element plfParent,
+            Element ilfParent, IntegrationResult result, NodeInfoTracker tracker) {
+
         String id = plfChild.getAttribute( Constants.ATT_ID );
 
         if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
@@ -135,7 +131,7 @@ public class PLFIntegrator {
             IntegrationResult childChanges = new IntegrationResult();
 
             attributeChanged = EditManager.applyEditSet( plfChild, original );
-            applyChildChanges( plfChild, original, childChanges );
+            applyChildChanges( plfChild, original, childChanges, tracker);
 
             if ( attributeChanged == false &&
                  !childChanges.isChangedILF() )
@@ -172,12 +168,10 @@ public class PLFIntegrator {
         }
     }
 
-    private static void mergeFolder( Element plfChild,
-                                     Element plfParent,
-                                     Element ilfParent,
-                                     IntegrationResult result )
-    throws PortalException
-    {
+    private static void mergeFolder( Element plfChild, Element plfParent,
+            Element ilfParent, IntegrationResult result,
+            NodeInfoTracker tracker) throws PortalException {
+
         String id = plfChild.getAttribute( Constants.ATT_ID );
 
         if ( id.startsWith( Constants.FRAGMENT_ID_USER_PREFIX ) )
@@ -204,7 +198,7 @@ public class PLFIntegrator {
             IntegrationResult childChanges = new IntegrationResult();
 
             attributeChanged = EditManager.applyEditSet( plfChild, original );
-            applyChildChanges( plfChild, original, childChanges );
+            applyChildChanges(plfChild, original, childChanges, tracker);
 
             if ( attributeChanged == false &&
                  !childChanges.isChangedILF() )
@@ -240,7 +234,7 @@ public class PLFIntegrator {
             result.setChangedILF(true);
 
             IntegrationResult childChanges = new IntegrationResult();
-            applyChildChanges( plfChild, ilfChild, childChanges );
+            applyChildChanges(plfChild, ilfChild, childChanges, tracker);
 
             if ( childChanges.isChangedPLF() )
                 result.setChangedPLF(true);
