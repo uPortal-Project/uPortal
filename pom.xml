@@ -1261,6 +1261,7 @@
                         <exclude>LICENSE</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
+                        <exclude>**/bootstrap/**</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
                         <exclude>**/jquerymobile-*.css</exclude>
                         <exclude>**/jstree/**</exclude>
@@ -1293,6 +1294,7 @@
                     <mapping>
                         <crn>XML_STYLE</crn>
                         <cpd>XML_STYLE</cpd>
+                        <less>JAVADOC_STYLE</less>
                         <ssl>XML_STYLE</ssl>
                         <sdf>XML_STYLE</sdf>
                         <tld>XML_STYLE</tld>
