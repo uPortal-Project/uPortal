@@ -186,6 +186,7 @@
     <bean id="xalanMessageHelper" class="org.jasig.portal.security.xslt.XalanMessageHelper"/>
     <bean id="xalanAuthorizationHelper" class="org.jasig.portal.security.xslt.XalanAuthorizationHelper" />
     <bean id="xalanLayoutElementTitleHelper" class="org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"/>
+    <bean id="xalanRestJsonHelper" class="org.jasig.portal.security.xslt.XalanRestJsonHelper"/>
     <bean id="xalanGroupMembershipHelper" class="org.jasig.portal.security.xslt.XalanGroupMembershipHelper"/>
     
     
