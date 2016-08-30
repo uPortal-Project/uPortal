@@ -71,3 +71,4 @@ cleanShared=true
 
 # Prompt the user before running ant tasks that could modify the database
 prodPrompt=false
+#env=local
