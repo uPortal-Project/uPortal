@@ -30,7 +30,6 @@ import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.NamedPersonImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -102,4 +101,5 @@ public class PeopleRESTController {
         
         return mv;
     }
+
 }

@@ -16,14 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.http.HttpHeaders;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,12 +42,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @since 5.0
+ */
 @Controller
-@RequestMapping("/v4-3/people/")
-public class PeopleRESTControllerV43 {
+@RequestMapping("/v5-0/people")
+public final class PeopleRESTControllerV50 {
 
-    private IPersonManager personManager;
     private ObjectMapper jsonMapper;
+    private IPersonManager personManager;
+    private PersonLookupHelperImpl lookupHelper;
 
     @Autowired
     public void setJsonMapper(ObjectMapper jsonMapper) {
@@ -55,14 +63,12 @@ public class PeopleRESTControllerV43 {
         this.personManager = personManager;
     }
 
-    private PersonLookupHelperImpl lookupHelper;
-
     @Autowired(required = true)
     public void setPersonLookupHelper(PersonLookupHelperImpl lookupHelper) {
         this.lookupHelper = lookupHelper;
     }
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public void searchPeople(@RequestParam Map<String,Object> query,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -80,12 +86,12 @@ public class PeopleRESTControllerV43 {
         }
 
         //Unwrap attributes
-        List<Object> results = new ArrayList<Object>();
+        List<Object> results = new ArrayList<>();
         for(IPersonAttributes p : people) {
             results.add(p.getAttributes());
         }
 
-        response.setHeader("Content-Type", "application/json");
+        response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         jsonMapper.writeValue(response.getOutputStream(), results);
     }
 
