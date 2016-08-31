@@ -21,16 +21,20 @@ package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.IPersonTester;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A tester for examining <code>IPerson</code> attributes.  
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public abstract class BaseAttributeTester implements IPersonTester {
+
     protected final String attributeName;
     protected final String testValue;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * @since 4.3

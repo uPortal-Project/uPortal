@@ -20,8 +20,6 @@ package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for testers that test the value(s) of an
@@ -29,12 +27,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Dan Ellentuck
  */
-
 public abstract class AbstractIntegerTester extends BaseAttributeTester {
 
     private final int testInteger;
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * @since 4.3
@@ -50,7 +45,7 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
      */
     @Deprecated
     public AbstractIntegerTester(String attribute, String test) {
-        super(attribute, test); 
+        super(attribute, test);
         testInteger = Integer.parseInt(test);
     }
 
@@ -58,7 +53,7 @@ public abstract class AbstractIntegerTester extends BaseAttributeTester {
         return testInteger;
     }
 
-    public boolean test(IPerson person) {
+    public final boolean test(IPerson person) {
 
         boolean result = false;  // default
         final Object[] atts = person.getAttributeValues(getAttributeName());

@@ -27,10 +27,8 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * Question: how to handle non-default locales?
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public class StringEqualsIgnoreCaseTester extends StringTester {
+public class StringEqualsIgnoreCaseTester extends AbstractStringTester {
 
     /**
      * @since 4.3

@@ -19,17 +19,17 @@
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.groups.pags.testers.StringTester;
+import org.jasig.portal.groups.pags.testers.AbstractStringTester;
 
 /**
  * Tests whether or not the user has <em>some</em>
  * value for a particular attribute.
  * This tester ignores the test-value field.
  * If the attribute has any value, then it returns true.
+ *
  * @author Nick Blair, nblair@wisc.edu
- * @version $Revision$
  */
-public class ValueExistsTester extends StringTester {
+public class ValueExistsTester extends AbstractStringTester {
 
     /**
      * @since 4.3

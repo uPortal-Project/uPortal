@@ -19,19 +19,26 @@
 
 package org.jasig.portal.groups.pags.testers;
 
-import org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
+import org.jasig.portal.security.IPerson;
 
 /**
- * A tester for examining if an <code>IPerson</code> attribute has exactly nth values.
+ * Base class for testers that determine membership based on the number of
+ * values a user has for an attribute.
  *
- * @author GIP RECIA - Julien Gribonvald
+ * @author drewwills
  * @since 5.0
  */
-public final class NbValuesEQTester extends AbstractNbValuesTester {
+public abstract class AbstractNbValuesTester extends BaseAttributeTester {
 
-    public NbValuesEQTester(IPersonAttributesGroupTestDefinition definition) {
+    private final int testInteger;
+
+    /**
+     * @since 4.3
+     */
+    public AbstractNbValuesTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
+        this.testInteger = Integer.parseInt(definition.getTestValue());
     }
 
     /**
@@ -39,13 +46,29 @@ public final class NbValuesEQTester extends AbstractNbValuesTester {
      * the single-argument constructor.
      */
     @Deprecated
-    public NbValuesEQTester(String attribute, String test) {
+    public AbstractNbValuesTester(String attribute, String test) {
         super(attribute, test);
+        testInteger = Integer.parseInt(test);
+    }
+
+    public int getTestInteger() {
+        return testInteger;
     }
 
     @Override
-    protected boolean test(int numValues) {
-        return numValues == getTestInteger();
+    public final boolean test(IPerson person) {
+        boolean result = false;
+        final Object[] atts = person.getAttributeValues(getAttributeName());
+        if (atts != null) {
+            result = test(atts.length);
+        }
+        return result;
     }
+
+    /**
+     * Subclasses provide a concrete implementation of this method to perform
+     * their testing.
+     */
+    protected abstract boolean test(int numValues);
 
 }

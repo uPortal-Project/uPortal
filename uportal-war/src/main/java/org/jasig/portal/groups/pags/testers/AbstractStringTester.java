@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
@@ -26,15 +27,13 @@ import org.jasig.portal.security.IPerson;
  * a test value.
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public abstract class StringTester extends BaseAttributeTester {
+public abstract class AbstractStringTester extends BaseAttributeTester {
 
     /**
      * @since 4.3
      */
-    public StringTester(IPersonAttributesGroupTestDefinition definition) {
+    public AbstractStringTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
 
@@ -43,11 +42,11 @@ public abstract class StringTester extends BaseAttributeTester {
      * the single-argument constructor.
      */
     @Deprecated
-    public StringTester(String attribute, String test) {
+    public AbstractStringTester(String attribute, String test) {
         super(attribute, test);
     }
 
-    public boolean test(IPerson person) {
+    public final boolean test(IPerson person) {
         boolean result = false;
         Object[] atts = person.getAttributeValues(getAttributeName());
         if ( atts != null )
@@ -55,8 +54,8 @@ public abstract class StringTester extends BaseAttributeTester {
             for (int i=0; i<atts.length && result == false; i++)
             { 
                 String att = (String)atts[i];
-                result = test(att); 
-                
+                result = test(att);
+
                 // Assume that we should perform OR matching on multi-valued 
                 // attributes.  If the current attribute matches, return true
                 // for the person.
@@ -67,6 +66,11 @@ public abstract class StringTester extends BaseAttributeTester {
         }
         return result;
     }
-    public boolean test(String att) { return false; }
+
+    /**
+     * Subclasses provide a concrete implementation of this method to perform
+     * their testing.
+     */
+    public abstract boolean test(String att);
 
 }
