@@ -49,18 +49,12 @@ import org.jasig.portal.security.IPerson;
  *     It's used to have one access rule on an app at once in a same layout.
  * </p>
  * @author Julien Gribonvald
- * @version $Revision$
+ * @since 5.0
  */
-
-public class InjectAttributeRegexTester extends StringTester {
+public final class InjectAttributeRegexTester extends BaseAttributeTester {
 
     private final static Pattern p = Pattern.compile("@(.+)@");
 
-    protected Pattern pattern;
-
-    /**
-     * @since 4.3
-     */
     public InjectAttributeRegexTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
@@ -76,25 +70,40 @@ public class InjectAttributeRegexTester extends StringTester {
 
     @Override
     public boolean test(IPerson person) {
-    final Matcher matcher = p.matcher(this.testValue);
-    String finalPattern = this.testValue;
-    if (matcher.find()) {
-        for (int i=1; i <= matcher.groupCount(); i++) {
-            // Assuming the attribute to replace has only one value
-            String att = (String) person.getAttribute(matcher.group(i));
-            if ( att != null ) {
-                finalPattern = finalPattern.replaceAll("@" + matcher.group(i) + "@" , att);
+
+        boolean rslt = false;  // default
+
+        /*
+         * First replace all instances of @{attrName}@ with
+         * the user's first value for the named attribute
+         */
+        final Matcher matcher = p.matcher(this.testValue);
+        String secondPatternString = this.testValue;
+        if (matcher.find()) {
+            for (int i=1; i <= matcher.groupCount(); i++) {
+                // Using the first value only
+                final String firstValue = (String) person.getAttribute(matcher.group(i));
+                if (firstValue != null) {  // Should we return false if it is?
+                    secondPatternString = secondPatternString.replaceAll("@" + matcher.group(i) + "@", firstValue);
+                }
             }
         }
-    }
-    this.pattern = Pattern.compile(finalPattern);
 
-    return super.test(person);
-    }
+        /*
+         * Now use the calculated pattern to test against this.attributeName
+         */
+        final Pattern secondPattern = Pattern.compile(secondPatternString);
+        final Object[] values = person.getAttributeValues(getAttributeName());
+        if (values != null && values.length != 0) {
+            for (Object secondValue : values) {
+                if (secondValue instanceof String && secondPattern.matcher((String) secondValue).matches()) {
+                    rslt = true;
+                    break;
+                }
+            }
+        }
 
-    @Override
-    public boolean test(String att) {
-        return pattern.matcher(att).matches();
+        return rslt;
     }
 
 }

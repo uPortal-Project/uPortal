@@ -27,7 +27,6 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  *
  * @author Dan Ellentuck
  */
-
 public class IntegerGETester extends AbstractIntegerTester {
 
     /**

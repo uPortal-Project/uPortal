@@ -56,7 +56,7 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * </code>
  * @author James Wennmacher, jwennmacher@unicon.net
  */
-public class InvertedRegexTester extends StringTester {
+public class InvertedRegexTester extends AbstractStringTester {
     protected Pattern pattern;
 
     /**

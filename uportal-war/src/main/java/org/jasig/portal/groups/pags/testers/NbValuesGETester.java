@@ -21,41 +21,31 @@ package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
 
 /**
  * A tester for examining if an <code>IPerson</code> attribute has more or exactly nth values.
  *
  * @author GIP RECIA - Julien Gribonvald
- * @version $Revision$
+ * @since 5.0
  */
-public class NbValuesGETester extends AbstractIntegerTester {
+public final class NbValuesGETester extends AbstractNbValuesTester {
 
-	/**
-	 * @since 4.3
-	 */
-	public NbValuesGETester(IPersonAttributesGroupTestDefinition definition) {
-		super(definition);
-	}
+    public NbValuesGETester(IPersonAttributesGroupTestDefinition definition) {
+        super(definition);
+    }
 
-	/**
-	 * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
-	 * the single-argument constructor.
-	 */
-	@Deprecated
-	public NbValuesGETester(String attribute, String test) {
-		super(attribute, test);
-	}
+    /**
+     * @deprecated use {@link EntityPersonAttributesGroupStore}, which leverages
+     * the single-argument constructor.
+     */
+    @Deprecated
+    public NbValuesGETester(String attribute, String test) {
+        super(attribute, test);
+    }
 
-	@Override
-	public boolean test(IPerson person) {
-		boolean result = false;
-		Object[] atts = person.getAttributeValues(getAttributeName());
-		if (atts != null) {
-			result = atts.length >= getTestInteger();
-		}
-		return result;
-	}
-	public boolean test(int attributeValue) {return false;}
+    @Override
+    protected boolean test(int numValues) {
+        return numValues >= getTestInteger();
+    }
 
 }
