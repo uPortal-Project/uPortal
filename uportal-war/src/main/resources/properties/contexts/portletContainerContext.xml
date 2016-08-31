@@ -104,8 +104,19 @@
     <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
-    
+
+    <!--
+     | Uncomment the 'casTicketUserInfoService' bean to support Proxy CAS authentication in portlets.
+     |
+     | Be aware, however, that this feature may cause large amounts of traffic
+     | between your CAS serever and portal server(s), especially if you have a
+     | lot of portlets with support for Proxy CAS.  This phenomenon occurs
+     | because CAS proxy tickets are short-lived;  the portal must request a new
+     | one for every render of a portlet that asks for one.
+     +-->
+    <!--
     <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
+    -->
 
     <!--
      | To enable providing the user's password to portlets that need it, uncomment this bean.
