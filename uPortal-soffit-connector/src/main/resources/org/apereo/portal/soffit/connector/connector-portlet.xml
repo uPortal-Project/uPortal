@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--
+     | This context file is for defining a portlet, within your portal, using
+     | the SoffitConnectorController.  Specify the following init-param:
+     |
+     |   - contextConfigLocation=classpath:/org/apereo/portal/soffit/connector/connector-portlet.xml
+     +-->
+
+    <context:annotation-config />
+    <context:component-scan base-package="org.apereo.portal.soffit.connector" />
+
+    <!-- Allows the SoffitConnectorController to benefit from uPortal's PlaceholderConfigurer -->
+    <bean parent="primaryPropertyPlaceholderConfigurer" />
+
+    <!-- This is a bit of a mess:  these Java classes are a part of uPortal (not Soffit),
+         but are referenced in this file.  When this tech is moved into the uPortal project,
+         this mismatch will go away. -->
+    <bean class="org.jasig.portal.soffit.AuthorizationHeaderProvider" />
+    <bean class="org.jasig.portal.soffit.DefinitionHeaderProvider" />
+
+</beans>
