@@ -28,4 +28,19 @@ subprojects {
         mavenLocal()
         mavenCentral()
     }
+
+    configurations {
+        /*
+         * Defines a 'provided' scope similar to the one in Maven.  Dependencies
+         * defined using provided will not become transitive dependencies.
+         */
+        provided
+
+        /*
+         * Makes provided dependencies available on the compile classpath in a way
+         * that works both from the command line and in Buildship.
+         */
+        compile.extendsFrom provided
+    }
+
 }
