@@ -1,0 +1,5 @@
+rootProject.name = 'uPortal'
+
+include 'uPortal-soffit'
+include 'uPortal-soffit-connector'
+include 'uPortal-soffit-renderer'

@@ -1,0 +1,30 @@
+description = "Apereo uPortal $version"
+
+// Build Scans provide detailed information about many aspects of your
+// build right in your browser.  (https://scans.gradle.com/plugin)
+apply plugin: 'com.gradle.build-scan'
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.gradle:build-scan-plugin:1.0'
+    }
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
