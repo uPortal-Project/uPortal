@@ -19,6 +19,11 @@
 
 package org.apereo.portal.soffit.service;
 
+import java.util.Date;
+import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -29,10 +34,6 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.annotation.PostConstruct;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * Base class for services that produce JASON Web Tokens.

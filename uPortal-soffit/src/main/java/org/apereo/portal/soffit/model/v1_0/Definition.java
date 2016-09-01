@@ -19,11 +19,11 @@
 
 package org.apereo.portal.soffit.model.v1_0;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Provides information about the publication record of the soffit within the

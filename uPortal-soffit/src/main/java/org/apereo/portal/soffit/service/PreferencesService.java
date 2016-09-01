@@ -19,15 +19,15 @@
 
 package org.apereo.portal.soffit.service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import org.apereo.portal.soffit.model.v1_0.Preferences;
-import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import org.apereo.portal.soffit.model.v1_0.Preferences;
+import org.springframework.stereotype.Service;
 
 /**
  * Responsible for issuing and parsing the collection of preferences.

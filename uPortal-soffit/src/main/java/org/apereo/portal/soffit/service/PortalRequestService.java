@@ -19,14 +19,14 @@
 
 package org.apereo.portal.soffit.service;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.apereo.portal.soffit.model.v1_0.PortalRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Responsible for issuing and parsing the {@link PortalRequest} provided by the

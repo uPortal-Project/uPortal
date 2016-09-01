@@ -19,11 +19,11 @@
 
 package org.apereo.portal.soffit.model.v1_0;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Collection of preferences for this Soffit and their values.  Preferences are

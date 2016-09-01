@@ -83,6 +83,20 @@ public enum Headers {
      */
     public static final String BEARER_TOKEN_PREFIX = "Bearer ";
 
+    /**
+     * The default value for the <code>Cache-Control</code> header is "no-store,"
+     * which indicates the response should never be cached.  Currently, this
+     * header value will be sent if the Soffit does not specify a value for
+     * <strong>both</strong> scope or max-age.
+     */
+    public static final String CACHE_CONTROL_NOSTORE = "no-store";
+
+    /**
+     * Indicates the response may be cached with validation caching based on
+     * Last-Modified or ETag.  These features are not currently implemented.
+     */
+    public static final String CACHE_CONTROL_NOCACHE = "no-cache";
+
     /*
      * Implementation
      */

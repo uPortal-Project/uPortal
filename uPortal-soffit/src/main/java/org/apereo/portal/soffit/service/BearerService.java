@@ -19,12 +19,12 @@
 
 package org.apereo.portal.soffit.service;
 
+import java.util.*;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 /**
  * Responsible for issuing and parsing Bearer tokens.
