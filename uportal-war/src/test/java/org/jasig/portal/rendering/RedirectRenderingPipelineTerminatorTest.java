@@ -18,6 +18,14 @@
  */
 package org.jasig.portal.rendering;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.jasig.portal.portlet.om.IPortletEntity;
+import org.jasig.portal.portlet.om.IPortletWindow;
+import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.jasig.portal.url.IPortalRequestInfo;
+import org.jasig.portal.url.IPortalRequestUtils;
+import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,7 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
@@ -39,6 +49,9 @@ public class RedirectRenderingPipelineTerminatorTest {
     @Mock private HttpServletRequest mockRequest;
 
     @Mock private HttpServletResponse mockResponse;
+
+    @Mock private RequestRenderingPipelineUtils mockUtils;
+    @Mock private IPortletDefinition def;
 
     @Before
     public void beforeTests() {
@@ -61,6 +74,23 @@ public class RedirectRenderingPipelineTerminatorTest {
 
         verify(mockResponse).sendRedirect("/web");
     }
+
+    @Test
+    public void redirectsToExclusivePathWithFname()
+        throws ServletException, IOException {
+
+    final RedirectRenderingPipelineTerminator terminator = new RedirectRenderingPipelineTerminator();
+    terminator.setUtils(mockUtils);
+    when(mockUtils.getPortletDefinitionFromServletRequest(mockRequest)).thenReturn(def);
+    when(def.getFName()).thenReturn("fname-sample");
+
+    terminator.setRedirectTo("/web/exclusive/");
+    terminator.setAppender(RedirectRenderingPipelineTerminator.APPENDER_FNAME);
+
+    terminator.renderState(mockRequest, mockResponse);
+
+    verify(mockResponse).sendRedirect("/web/exclusive/fname-sample");
+}
 
     /**
      * Test that RedirectRenderingPipelineTerminator throws IllegalStateException if
@@ -88,5 +118,14 @@ public class RedirectRenderingPipelineTerminatorTest {
         final RedirectRenderingPipelineTerminator badlyConfiguredTerminator = new RedirectRenderingPipelineTerminator();
         badlyConfiguredTerminator.setRedirectTo(null);
 
+    }
+
+    @Test
+    public void hasFriendlyToString() {
+
+        final RedirectRenderingPipelineTerminator terminator = new RedirectRenderingPipelineTerminator();
+        terminator.setRedirectTo("/angular");
+
+        assertEquals("RedirectRenderingPipelineTerminator which redirects to /angular .", terminator.toString());
     }
 }

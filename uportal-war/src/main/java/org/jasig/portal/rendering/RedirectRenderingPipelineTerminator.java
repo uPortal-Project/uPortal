@@ -18,8 +18,11 @@
  */
 package org.jasig.portal.rendering;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.Assert;
 
@@ -38,11 +41,20 @@ public class RedirectRenderingPipelineTerminator
     implements IPortalRenderingPipeline {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    public static String APPENDER_FNAME = "fname";
+
+    private RequestRenderingPipelineUtils utils;
+
+    @Autowired
+    public void setUtils(RequestRenderingPipelineUtils u) {
+      this.utils = u;
+    }
 
     /**
      * Path to which terminator will redirect.
      */
     private String redirectTo;
+    private String appender;
 
     @Override
     public void renderState(final HttpServletRequest request, final HttpServletResponse response)
@@ -53,10 +65,23 @@ public class RedirectRenderingPipelineTerminator
                     "with path to which to redirect.");
         }
 
-        logger.trace("Redirecting to {} .", this.redirectTo);
-
-        response.sendRedirect(this.redirectTo);
-        
+        if(StringUtils.isNotBlank(appender)) {
+          String thingToAppend = "";
+          if(APPENDER_FNAME.equalsIgnoreCase(appender)) {
+            try {
+              final IPortletDefinition portletDefinition = utils.getPortletDefinitionFromServletRequest(request);
+              thingToAppend = portletDefinition.getFName();
+            }
+            catch(Exception e){
+              logger.error("Appender was null but couldn't figure out fname.",e);
+            }
+          }
+          logger.trace("Redirecting to {} .", this.redirectTo + thingToAppend);
+          response.sendRedirect(this.redirectTo + thingToAppend);
+        } else {
+          logger.trace("Redirecting to {} .", this.redirectTo);
+          response.sendRedirect(this.redirectTo);
+        }
     }
 
     /**
@@ -71,5 +96,19 @@ public class RedirectRenderingPipelineTerminator
         Assert.notNull(targetPath);
 
         this.redirectTo = targetPath;
+    }
+
+    /**
+     * Setter for the appender which is used to add something to the end of the URL
+     * @since 4.3
+     * @param a appender to be set. Valid values: "fname"
+     */
+    public void setAppender(final String a) {
+      this.appender = a;
+    }
+
+    @Override
+    public String toString() {
+        return "RedirectRenderingPipelineTerminator which redirects to " + this.redirectTo + " .";
     }
 }
