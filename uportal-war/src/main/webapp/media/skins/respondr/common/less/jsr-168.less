@@ -1,0 +1,216 @@
+///@import "../bootstrap/variables.less";
+
+.portlet-font{
+font-family: @font-family-base;
+font-size: @font-size-base;
+color: @text-color;
+line-height:@line-height-base;
+}
+
+.portlet-font-dim{
+color: lighten(@text-color, 10%);
+font-family: @font-family-base;
+font-size: @font-size-base;
+line-height:@line-height-base;
+}
+
+/* extend seems more sensible than defining each mixen and css rule here */
+
+.portlet-msg-status{
+//&:extend(.progress-bar);	This would never get used as people should use the bootstrap api, in order to get the js for free for this to work it would need to be wrapped in a div class of progress
+}
+
+.portlet-msg-info{
+&:extend(.alert,.alert-info);
+}
+
+.portlet-msg-error{
+&:extend(.alert,.alert-danger);
+
+}
+
+.portlet-msg-alert{
+&:extend(.alert,.alert-warning);
+	
+}
+
+.portlet-msg-success{
+&:extend(.alert,.alert-success);	
+}
+
+/*table and section sections*/
+
+.portlet-section-header,
+.portlet-table-header{
+&:extend(h3);
+	
+}
+
+.portlet-section-body,
+.portlet-table-body{
+//	color: @text-color;	
+}
+
+.portlet-section-alternate,
+.portlet-table-alternate{
+background:@table-bg-accent;
+}
+
+/* this is not currently done - ideally, the area selected is just highlighted */
+.portlet-section-selected,
+.portlet-table-selected{
+background:@table-bg-active;
+}
+
+.portlet-section-subheader,
+.portlet-table-subheader{
+&:extend(h4);	
+}
+
+.portlet-section-footer,
+.portlet-table-footer{
+&:extend(h5);
+}
+
+/*used for informative text within a table - presumable in the cell, as opposed to dynamic text generated onClick() */
+.portlet-section-text,
+.portlet-table-text{
+	color:@brand-info;
+}
+
+
+/*forms */
+
+.portlet-form-label{	
+&:extend(h3);	
+}
+
+.portlet-form-input-field{
+&:extend(.form-control);
+}
+
+.portlet-form-button{
+&:extend(.btn);
+.button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);	
+}
+
+.portlet-icon-label{
+&:extend(label);	
+}
+
+.portlet-form-field-label{
+&:extend(label);	
+}
+
+.portlet-form-field{
+&:extend(.checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"], .radio input[type="radio"], .radio-inline input[type="radio"]);	
+}
+
+/* portlet menus */
+
+
+.portlet-menu{
+&:extend(.nav);
+&:extend(.nav-pills);
+&:extend(.nav-stacked);
+}
+ 
+li.portlet-menu-item{
+&:extend(.nav-stacked > li + li);
+&:extend(.nav-stacked > li);
+&:extend(.nav > li);
+	&.active,
+	.portlet-menu-item-selected{
+			&:hover,
+			&:focus{
+				background:@nav-pills-active-link-hover-bg;
+				color:@nav-pills-active-link-hover-color !important;
+				border-radius:@nav-pills-border-radius;
+					> a
+						{
+							&:hover,
+							&:focus{
+								background:inherit;
+								border-radius:@nav-pills-border-radius;
+							}
+						}
+			}
+			> a{
+				background:@nav-pills-active-link-hover-bg;
+				color:@nav-pills-active-link-hover-color;
+			}
+	}
+	a{
+		border-radius:@nav-pills-border-radius;
+		display: block;
+		padding: @nav-link-padding;
+		position: relative;	
+		text-decoration:none;
+		color:@link-color;
+		&:hover,
+		&:focus{
+			background:@navbar-default-bg;
+			color:@navbar-default-color;
+		}
+	}
+	.dropdown-menu,
+	.portlet-menu-cascade,
+	.portlet-menu-cascade-item-selected{ /*maybe not right selector */
+		top: 0px;
+		position:relative;
+		margin:0px;
+		padding:0px;
+		box-shadow:none;
+		list-style:none;
+		border:none;
+		width:100%;
+		background:@dropdown-bg;
+		color:@dropdown-header-color;
+			li,
+			.portlet-menu-cascade-item{
+				a{
+					&.disabled{
+						color:@dropdown-link-disabled-color;
+					}
+					&:hover,
+					&.portlet-menu-item-hover,
+					&.portlet-menu-cascade-item-hover{
+					//	background:@navbar-default-link-color;
+						color:@navbar-default-link-hover-color;
+					}
+				}
+				&:active,
+				&.portlet-menu-cascade-item-selected{
+					background:@nav-pills-active-link-hover-bg;
+					color:@nav-pills-active-link-hover-color;
+					> a{
+						background:@nav-pills-active-link-hover-bg;
+						color:@nav-pills-active-link-hover-color;
+					}
+				
+				}
+				.portlet-menu-item-hover-selected,
+				.portlet-menu-cascade-item-hover-selected{
+					background:@nav-pills-active-link-hover-bg !important;
+					color:@nav-pills-active-link-hover-color;
+					&:hover,
+					&:focus{
+						background:@nav-pills-active-link-hover-bg !important;
+						color:@nav-pills-active-link-hover-color;
+					}
+				}	
+			}
+			.portlet-menu-separator,
+			.portlet-menu-cascade-separator{
+				&:extend(.divider);
+				}
+	}
+}
+ 
+.portlet-menu-description{
+color:@brand-info;
+}
+ 
+.portlet-menu-caption{
+&:extend(h3);
+}
