@@ -1,4 +1,38 @@
 ///@import "../bootstrap/variables.less";
+/*variables */
+
+/*font vars */
+
+@dim-font-by-this-percentage: 10%;
+
+/* dropdown's which occur within portlet menu variables. */
+@dropdown-inside-of-menu-top:0px;
+@dropdown-inside-of-menu-position:relative;
+@dropdown-inside-of-menu-margin:0px;
+@dropdown-inside-of-menu-padding:0px;
+@dropdown-inside-of-menu-shadow:none;
+@dropdown-inside-of-menu-list-style:none;
+@dropdown-inside-of-menu-border:none;
+@dropdown-inside-of-menu-width:100%;
+
+/*dropdown which occurs stand alone */
+
+@stand-along-dropdown-float:left;
+@stand-along-dropdown-list-style: outside none none;
+@stand-along-dropdown-margin: 2px 0 0;
+@stand-along-dropdown-min-width:160px;
+@stand-along-dropdown-padding:5px 0;
+@stand-along-dropdown-position: absolute;
+@stand-along-dropdown-text-align:left;
+@stand-along-dropdown-top:100%;
+@stand-along-dropdown-box-shadow:0 6px 12px rgba(0, 0, 0, 0.176);
+@stand-along-dropdown-border:1px solid @dropdown-border;
+@stand-along-dropdown-background-clip:padding-box;
+@stand-along-dropdown-left:0px;
+
+/* end defined vars */
+
+
 
 .portlet-font{
 font-family: @font-family-base;
@@ -8,7 +42,7 @@ line-height:@line-height-base;
 }
 
 .portlet-font-dim{
-color: lighten(@text-color, 10%);
+color: lighten(@text-color, @dim-font-by-this-percentage);
 font-family: @font-family-base;
 font-size: @font-size-base;
 line-height:@line-height-base;
@@ -17,7 +51,7 @@ line-height:@line-height-base;
 /* extend seems more sensible than defining each mixen and css rule here */
 
 .portlet-msg-status{
-//&:extend(.progress-bar);	This would never get used as people should use the bootstrap api, in order to get the js for free for this to work it would need to be wrapped in a div class of progress
+	//bootstrap api should be utilised as this is for progress bars, but one html class would be insufficient.
 }
 
 .portlet-msg-info{
@@ -48,7 +82,7 @@ line-height:@line-height-base;
 
 .portlet-section-body,
 .portlet-table-body{
-//	color: @text-color;	
+//	body should be inherited
 }
 
 .portlet-section-alternate,
@@ -157,17 +191,19 @@ background:@table-bg-active;
 				color:@navbar-default-color;
 			}
 		}
+		
+
 		.dropdown-menu,
 		.portlet-menu-cascade,
 		.portlet-menu-cascade-item-selected{ /*maybe not right selector */
-			top: 0px;
-			position:relative;
-			margin:0px;
-			padding:0px;
-			box-shadow:none;
-			list-style:none;
-			border:none;
-			width:100%;
+			top: @dropdown-inside-of-menu-top;
+			position: @dropdown-inside-of-menu-position;
+			margin: @dropdown-inside-of-menu-margin;
+			padding:@dropdown-inside-of-menu-padding;
+			box-shadow:@dropdown-inside-of-menu-shadow;
+			list-style: @dropdown-inside-of-menu-list-style;
+			border:@dropdown-inside-of-menu-border;
+			width: @dropdown-inside-of-menu-width;
 			background:@dropdown-bg;
 			color:@dropdown-header-color;
 				li,
@@ -219,25 +255,22 @@ background:@table-bg-active;
 	&:extend(h3);
 	}
 }
-
-	
 		.dropdown-menu{
-		    background-clip: padding-box;
+		    background-clip: @stand-along-dropdown-background-clip;
 		    background:@dropdown-bg;
-		    border: 1px solid @dropdown-border;
+		    border: @stand-along-dropdown-border;
 		    border-radius: @nav-pills-border-radius;
-		    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
-		   /*  display: none;*/
-		    float: left;
+		    box-shadow: @stand-along-dropdown-box-shadow;
+		    float:  @stand-along-dropdown-float;
 		    font-size: @font-size-base;
-		    left: 0;
-		    list-style: outside none none;
-		    margin: 2px 0 0;
-		    min-width: 160px;
-		    padding: 5px 0;
-		    position: absolute;
-		    text-align: left;
-		    top: 100%;
+		    left: @stand-along-dropdown-left;
+		    list-style:  @stand-along-dropdown-list-style;
+		    margin: @stand-along-dropdown-margin;
+		    min-width: @stand-along-dropdown-min-width;
+		    padding: @stand-along-dropdown-padding;
+		    position: @stand-along-dropdown-position;
+		    text-align: @stand-along-dropdown-text-align;
+		    top:  @stand-along-dropdown-top;
 		    z-index: @zindex-dropdown;
 			color:@dropdown-header-color;
 				li{
