@@ -1108,10 +1108,37 @@
         </container-runtime-option>
     </portlet>
 
+    <portlet>
+        <portlet-name>Soffit Connector</portlet-name>
+        <display-name xml:lang="en">Soffit Connector</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>classpath:/org/apereo/portal/soffit/connector/connector-portlet.xml</value>
+        </init-param>
+        <expiration-cache>0</expiration-cache><!-- Never cache;  we'll cache internally -->
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>VIEW</portlet-mode>
+            <portlet-mode>EDIT</portlet-mode>
+            <portlet-mode>HELP</portlet-mode>
+        </supports>
+        <supported-locale>en</supported-locale>
+        <portlet-info>
+            <title>Soffit Connector</title>
+        </portlet-info>
+        <portlet-preferences>
+            <preference>
+                <!-- This preference identifies the remote service -->
+                <name>org.apereo.portlet.soffit.connector.SoffitConnectorController.serviceUrl</name>
+            </preference>
+        </portlet-preferences>
+    </portlet>
+
     <custom-portlet-mode>
         <description>Allows the portlet to render a preferences edit UI during publishing</description>
         <portlet-mode>config</portlet-mode>
-    </custom-portlet-mode>    
+    </custom-portlet-mode>
 
     <user-attribute>
         <description>The P3P username attribute</description>

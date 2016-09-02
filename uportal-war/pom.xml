@@ -33,7 +33,7 @@
 
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
-    
+
     <dependencies>
         <!-- ***** Portal JDBC Driver ***** -->
         <dependency>
@@ -42,13 +42,31 @@
             <version>${project.version}</version>
             <type>pom</type>
         </dependency>
-        
+
+        <!-- ===== uPortal Dependencies ======================================= -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-platform-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-soffit-connector</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
             <groupId>org.antlr</groupId>
@@ -552,13 +570,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-platform-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
         <!-- ===== Runtime Dependencies ======================================= -->
         
         <dependency>

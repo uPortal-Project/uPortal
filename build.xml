@@ -728,6 +728,20 @@
     <!--                                                                                    -->
 
     <!-- Internal use -->
+    <target name="gradle-install" description="Build and install (in maven local) the uPortal modules that have been ported to a Gradle-based build">
+        <!--
+         | TEMPORARY MEASURE!
+         |
+         | uPortal is moving from Ant/Maven to Gradle.  We are porting sources bit by bit.
+         | Once we can remove Maven, we can remove this target too.
+         +-->
+        <exec executable="./gradlew">
+            <arg value="clean"/>
+            <arg value="install"/>
+        </exec>
+    </target>
+
+    <!-- Internal use -->
     <target name="db-ddl" depends="prodPrompt" description="Create a SQL script of commands to drop and create the uPortal database without executing them.">
         <fail unless="ddlFile">
             You must specify a 'ddlFile' parameter (-DddlFile={uPortal.ddl})
@@ -1575,6 +1589,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <element name="war-sub-tasks" optional="false" implicit="true" />
 
         <sequential>
+            <antcall target="gradle-install" />
             <uportal-db-macro>
                 <fileset id="uportal-parent.pom.fsid" file="${basedir}/pom.xml" />
             </uportal-db-macro>
