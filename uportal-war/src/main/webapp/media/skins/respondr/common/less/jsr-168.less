@@ -92,6 +92,9 @@ background:@table-bg-active;
 .portlet-form-button{
 &:extend(.btn);
 .button-variant(@btn-primary-color; @btn-primary-bg; @btn-primary-border);	
+	&:hover{
+		text-decoration:none;
+	}
 }
 
 .portlet-icon-label{
@@ -113,104 +116,163 @@ background:@table-bg-active;
 &:extend(.nav);
 &:extend(.nav-pills);
 &:extend(.nav-stacked);
-}
+
  
-li.portlet-menu-item{
-&:extend(.nav-stacked > li + li);
-&:extend(.nav-stacked > li);
-&:extend(.nav > li);
-	&.active,
-	.portlet-menu-item-selected{
+	li.portlet-menu-item{
+	&:extend(.nav-stacked > li + li);
+	&:extend(.nav-stacked > li);
+	&:extend(.nav > li);
+		&.active,
+		.portlet-menu-item-selected{
+				&:hover,
+				&:focus{
+					background-color:@nav-pills-active-link-hover-bg;
+					color:@nav-pills-active-link-hover-color;
+					border-radius:@nav-pills-border-radius;
+						> a
+							{
+								&:hover,
+								&:focus{
+									background:inherit;
+									color:#fff;
+									border-radius:@nav-pills-border-radius;
+								}
+							}
+				}
+				> a{
+					background-color:@nav-pills-active-link-hover-bg;
+					color:@nav-pills-active-link-hover-color;
+				}
+		}
+		a{
+			border-radius:@nav-pills-border-radius;
+			display: block;
+			padding: @nav-link-padding;
+			position: relative;	
+			text-decoration:none;
+			color:@link-color;
 			&:hover,
 			&:focus{
-				background:@nav-pills-active-link-hover-bg;
-				color:@nav-pills-active-link-hover-color !important;
-				border-radius:@nav-pills-border-radius;
-					> a
-						{
-							&:hover,
-							&:focus{
-								background:inherit;
-								border-radius:@nav-pills-border-radius;
-							}
-						}
+				background-color:@navbar-default-bg;
+				color:@navbar-default-color;
 			}
-			> a{
-				background:@nav-pills-active-link-hover-bg;
-				color:@nav-pills-active-link-hover-color;
-			}
-	}
-	a{
-		border-radius:@nav-pills-border-radius;
-		display: block;
-		padding: @nav-link-padding;
-		position: relative;	
-		text-decoration:none;
-		color:@link-color;
-		&:hover,
-		&:focus{
-			background:@navbar-default-bg;
-			color:@navbar-default-color;
 		}
-	}
-	.dropdown-menu,
-	.portlet-menu-cascade,
-	.portlet-menu-cascade-item-selected{ /*maybe not right selector */
-		top: 0px;
-		position:relative;
-		margin:0px;
-		padding:0px;
-		box-shadow:none;
-		list-style:none;
-		border:none;
-		width:100%;
-		background:@dropdown-bg;
-		color:@dropdown-header-color;
-			li,
-			.portlet-menu-cascade-item{
-				a{
-					&.disabled{
-						color:@dropdown-link-disabled-color;
+		.dropdown-menu,
+		.portlet-menu-cascade,
+		.portlet-menu-cascade-item-selected{ /*maybe not right selector */
+			top: 0px;
+			position:relative;
+			margin:0px;
+			padding:0px;
+			box-shadow:none;
+			list-style:none;
+			border:none;
+			width:100%;
+			background:@dropdown-bg;
+			color:@dropdown-header-color;
+				li,
+				.portlet-menu-cascade-item{
+					a{
+						&.disabled{
+							color:@dropdown-link-disabled-color;
+						}
+						&:hover,
+						&.portlet-menu-item-hover,
+						&.portlet-menu-cascade-item-hover{
+						//	background:@navbar-default-link-color;
+							color:@navbar-default-link-hover-color;
+						}
 					}
-					&:hover,
-					&.portlet-menu-item-hover,
-					&.portlet-menu-cascade-item-hover{
-					//	background:@navbar-default-link-color;
-						color:@navbar-default-link-hover-color;
-					}
-				}
-				&:active,
-				&.portlet-menu-cascade-item-selected{
-					background:@nav-pills-active-link-hover-bg;
-					color:@nav-pills-active-link-hover-color;
-					> a{
-						background:@nav-pills-active-link-hover-bg;
+					&:active,
+					&.portlet-menu-cascade-item-selected{
+						background-color:@nav-pills-active-link-hover-bg;
 						color:@nav-pills-active-link-hover-color;
+						> a{
+							background-color:@nav-pills-active-link-hover-bg;
+							color:@nav-pills-active-link-hover-color;
+						}
+					
 					}
-				
-				}
-				.portlet-menu-item-hover-selected,
-				.portlet-menu-cascade-item-hover-selected{
-					background:@nav-pills-active-link-hover-bg !important;
-					color:@nav-pills-active-link-hover-color;
-					&:hover,
-					&:focus{
+					.portlet-menu-item-hover-selected,
+					.portlet-menu-cascade-item-hover-selected{
 						background:@nav-pills-active-link-hover-bg !important;
 						color:@nav-pills-active-link-hover-color;
-					}
-				}	
-			}
-			.portlet-menu-separator,
-			.portlet-menu-cascade-separator{
-				&:extend(.divider);
+						&:hover,
+						&:focus{
+							background-color:@nav-pills-active-link-hover-bg !important;
+							color:@nav-pills-active-link-hover-color;
+						}
+					}	
 				}
+				.portlet-menu-separator,
+				.portlet-menu-cascade-separator{
+					&:extend(.divider);
+					}
+		}
+	}
+	 
+	.portlet-menu-description{
+	color:@brand-info;
+	}
+	 
+	.portlet-menu-caption{
+	&:extend(h3);
 	}
 }
- 
-.portlet-menu-description{
-color:@brand-info;
-}
- 
-.portlet-menu-caption{
-&:extend(h3);
-}
+
+	
+		.dropdown-menu{
+		    background-clip: padding-box;
+		    background:@dropdown-bg;
+		    border: 1px solid @dropdown-border;
+		    border-radius: @nav-pills-border-radius;
+		    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.176);
+		   /*  display: none;*/
+		    float: left;
+		    font-size: @font-size-base;
+		    left: 0;
+		    list-style: outside none none;
+		    margin: 2px 0 0;
+		    min-width: 160px;
+		    padding: 5px 0;
+		    position: absolute;
+		    text-align: left;
+		    top: 100%;
+		    z-index: @zindex-dropdown;
+			color:@dropdown-header-color;
+				li{
+					a{
+						color:@dropdown-link-color;
+						&.disabled{
+							color:@dropdown-link-disabled-color;
+						}
+						&:hover,
+						&.portlet-menu-item-hover,
+						&.portlet-menu-cascade-item-hover{
+							background:@dropdown-link-hover-bg;
+							color:@dropdown-link-hover-color;
+						}
+					}
+					&:active{
+						background-color:@nav-pills-active-link-hover-bg;
+						color:@nav-pills-active-link-hover-color;
+						> a{
+							background-color:@nav-pills-active-link-hover-bg;
+							color:@nav-pills-active-link-hover-color;
+						}
+					
+					}
+					.portlet-menu-item-hover-selected{
+						background:@nav-pills-active-link-hover-bg !important;
+						color:@nav-pills-active-link-hover-color;
+						&:hover,
+						&:focus{
+							background-color:@nav-pills-active-link-hover-bg !important;
+							color:@nav-pills-active-link-hover-color;
+						}
+					}	
+				}
+				.portlet-menu-separator{
+					&:extend(.divider);
+					}
+		}	
