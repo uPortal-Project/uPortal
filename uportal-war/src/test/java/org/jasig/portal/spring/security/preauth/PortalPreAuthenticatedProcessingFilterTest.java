@@ -19,76 +19,48 @@
 package org.jasig.portal.spring.security.preauth;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.hibernate.PropertyAccessException;
 import org.jasig.portal.layout.profile.ProfileSelectionEvent;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.IdentitySwapperManager;
 import org.jasig.portal.security.mvc.LoginController;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class PortalPreAuthenticatedProcessingFilterTest {
-    @InjectMocks PortalPreAuthenticatedProcessingFilter filter;
+public class PortalPreAuthenticatedProcessingFilterTest extends PortalPreAuthenticatedProcessingFilterTestBase {
 
-    @Mock FilterChain filterChain;
-    @Mock HttpServletRequest request;
-    @Mock HttpServletResponse response;
-    @Mock HttpSession session;
-    @Mock IPersonManager personManager;
-    @Mock IPerson person;
-    @Mock ISecurityContext context;
-    @Mock Authentication auth;
-    @Mock SecurityContext initialContext;
-    @Mock AuthenticationManager authenticationManager;
-    @Mock ApplicationEventPublisher eventPublisher;
-    @Mock IdentitySwapperManager identitySwapperManager;
-    
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        filter.setAuthenticationService(new org.jasig.portal.services.Authentication());
-        filter.setApplicationEventPublisher(eventPublisher);
-        filter.setIdentitySwapperManager(identitySwapperManager);
-        filter.afterPropertiesSet();
-       
-        when(request.getSession(false)).thenReturn(session);
-        when(request.getSession(true)).thenReturn(session);
-        when(personManager.getPerson(request)).thenReturn(person);
-        when(person.getName()).thenReturn("testuser");
-        when(person.isGuest()).thenReturn(false);
-        when(person.getSecurityContext()).thenReturn(context);
+    public void additionalSetup() {
     }
-    
+
     @Test
-    public void testLogin() throws IOException, ServletException {
+    public void testLoginWithClearingOfContext() throws IOException, ServletException {
         SecurityContextHolder.createEmptyContext();
         SecurityContextHolder.getContext().setAuthentication(auth);
         when(request.getServletPath()).thenReturn("/Login");
+        filter.setClearSecurityContextPriorToPortalAuthentication(true);
         filter.doFilter(request, response, filterChain);
-        
         assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    @Test
+    public void testLoginWithNoClearingOfContext() throws IOException, ServletException {
+        SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        when(request.getServletPath()).thenReturn("/Login");
+        filter.setClearSecurityContextPriorToPortalAuthentication(false);
+        filter.doFilter(request, response, filterChain);
+        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+        assertEquals(auth, SecurityContextHolder.getContext().getAuthentication());
     }
 
     @Test
@@ -111,7 +83,7 @@ public class PortalPreAuthenticatedProcessingFilterTest {
     public void testAuth() throws IOException, ServletException {
         PortalPersonUserDetails details = (PortalPersonUserDetails) filter.getPreAuthenticatedPrincipal(request);
         
-        assertEquals("testuser", details.getUsername());
+        assertEquals(this.username, details.getUsername());
     }
 
     @Test
