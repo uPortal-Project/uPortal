@@ -18,16 +18,16 @@
  */
 package org.jasig.portal.security.mvc;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +37,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.IdentitySwapperManager;
+import org.jasig.portal.url.UrlAuthCustomizerRegistry;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class LogoutController implements InitializingBean {
     private IPortalAuthEventFactory portalEventFactory;
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
+    private UrlAuthCustomizerRegistry urlCustomizer;
     
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -75,6 +77,11 @@ public class LogoutController implements InitializingBean {
     @Autowired
     public void setPortalEventFactory(IPortalAuthEventFactory portalEventFactory) {
         this.portalEventFactory = portalEventFactory;
+    }
+
+    @Autowired
+    public void setUrlCustomizer(UrlAuthCustomizerRegistry urlCustomizer) {
+        this.urlCustomizer = urlCustomizer;
     }
 
     @Override
@@ -208,7 +215,7 @@ public class LogoutController implements InitializingBean {
                     }
                     redirect = this.redirectMap.get("root");
                     if (redirect != null && !redirect.equals("")) {
-                        return redirect;
+                        return urlCustomizer.customizeUrl(request, redirect);
                     }
                 }
                 final Enumeration subCtxNames = securityContext.getSubContextNames();
@@ -227,7 +234,7 @@ public class LogoutController implements InitializingBean {
                             log.debug("LogoutController::getRedirectionUrl()"
                                     + " Looking for redirect string for subCtxName = " + subCtxName);
                         }
-                        redirect = this.redirectMap.get(subCtxName);
+                        redirect = urlCustomizer.customizeUrl(request, this.redirectMap.get(subCtxName));
                         if (redirect != null && !redirect.equals("")) {
                             if (log.isDebugEnabled()) {
                                 log.debug("LogoutController::getRedirectionUrl()" + " subCtxName redirect = " + redirect);
@@ -243,7 +250,7 @@ public class LogoutController implements InitializingBean {
             log.error("LogoutController::getRedirectionUrl() Error:", e);
         }
         if (redirect == null) {
-            redirect = defaultRedirect;
+            redirect = urlCustomizer.customizeUrl(request, defaultRedirect);
         }
         if (log.isDebugEnabled()) {
             log.debug("LogoutController::getRedirectionUrl()" + " redirectionURL = " + redirect);

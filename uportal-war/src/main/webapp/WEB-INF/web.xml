@@ -94,15 +94,19 @@
         </init-param>
         <init-param>
           <param-name>serverName</param-name>
-          <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}</param-value>
+          <param-value>${environment.build.uportal.server} ${environment.build.uportal.otherServers}</param-value>
         </init-param>
         <init-param>
             <param-name>proxyCallbackUrl</param-name>
-            <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}${environment.build.uportal.context}/CasProxyServlet</param-value>
+            <param-value>${environment.build.uportal.protocol}://${environment.build.real.uportal.server}${environment.build.real.uportal.context}/CasProxyServlet</param-value>
         </init-param>
         <init-param>
             <param-name>proxyReceptorUrl</param-name>
             <param-value>/CasProxyServlet</param-value>
+        </init-param>
+        <init-param>
+          <param-name>encodeServiceUrl</param-name>
+          <param-value>false</param-value>
         </init-param>
         <!--
          | For CAS PGT replication for CAS ClearPass in a clustered uPortal environment.

@@ -178,7 +178,6 @@
                                         <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
-                                    <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                     <entry key="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
                                     <entry key="UP_VERSION" value="${org.jasig.portal.version}"/>
                                 </map>
@@ -189,6 +188,7 @@
                                     <entry key="CONTEXT_PATH" value="request.contextPath" />
                                     <entry key="HOST_NAME" value="request.nativeRequest.serverName" />
                                     <entry key="AUTHENTICATED" value="!person.guest" />
+                                    <entry key="EXTERNAL_LOGIN_URL" value="@casRefUrlEncoder.getCasLoginUrl(request.nativeRequest)" />
                                     <entry key="userName" value="person.fullName" />
                                     <entry key="USER_ID" value="person.userName" />
                                     <entry key="SERVER_NAME" value="@portalInfoProvider.serverName" />

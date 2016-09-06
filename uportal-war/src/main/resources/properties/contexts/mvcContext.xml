@@ -47,6 +47,20 @@
         <property name="maxUploadSize" value="100000"/>
     </bean>
 
+    <!-- A Helper bean to update Cas login/logout url when the service can be accessed on different serverName -->
+    <bean id="authUrlCustomizer" class="org.jasig.portal.url.UrlAuthCustomizerRegistry">
+        <property name="registry">
+            <list>
+                <bean class="org.jasig.portal.url.UrlMultiServerNameCustomizer">
+                    <property name="allServerNames"><bean class="org.jasig.portal.utils.StringToSetUtils" factory-method="delimitedSpaceListToSet">
+                        <constructor-arg type="java.lang.String" value="${portal.allServerNames}"/>
+                    </bean></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+
     <!-- The urlCanonicalizingFilter can (will) attempt to deep-link users, 
          through authentication, to the content they are requesting, provided 
          that...
@@ -57,7 +71,7 @@
                  bean) configured
     -->
     <bean id="casRefUrlEncoder" class="org.jasig.portal.url.CasLoginRefUrlEncoder"
-        p:casLoginUrl="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
+        p:casLoginUrl="${org.jasig.portal.channels.CLogin.CasLoginUrl}" p:urlCustomizer-ref="authUrlCustomizer"/>
 
     <!--
      | Message source for this context, loaded from localized "messages_xx" files

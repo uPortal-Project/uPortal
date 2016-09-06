@@ -18,13 +18,16 @@
  */
 package org.jasig.portal.url;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import java.io.UnsupportedEncodingException;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @Author James Wennmacher, jwennmacher@unicon.net
@@ -37,32 +40,41 @@ public class CasLoginRefUrlEncoderTest {
     @Before
     public void setUp() throws UnsupportedEncodingException {
         encoder = new CasLoginRefUrlEncoder();
-        encoder.setCasLoginUrl("https://cas:80/cas/login?service=myhost:8080/uPortal/Login");
+        encoder.setCasLoginUrl("https://cas:80/cas/login?service=_CURRENT_SERVER_NAME_/uPortal/Login");
+        UrlMultiServerNameCustomizer urlCustomizer = new UrlMultiServerNameCustomizer();
+        urlCustomizer.setAllServerNames(Sets.newHashSet("myhost:8080", "theirhost:8443"));
+        List<IAuthUrlCustomizer> customizers = new ArrayList<>();
+        customizers.add(urlCustomizer);
+        UrlAuthCustomizerRegistry registry = new UrlAuthCustomizerRegistry();
+        registry.setRegistry(customizers);
+        encoder.setUrlCustomizer(registry);
         request = new MockHttpServletRequest("GET", "http://myhost:8080/uPortal/p/fname");
         request.setCharacterEncoding("UTF-8");
+        request.setServerName("myhost");
+        request.setServerPort(8080);
+        request.addHeader("Host", "myhost:8080");
     }
 
     @Test
     public void testSimpleDestination() throws Exception {
-        assertEquals("https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname",
+        assertEquals(
+                "https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname",
                 encoder.encodeLoginAndRefUrl(request));
     }
 
     @Test
     public void testWithParam() throws Exception {
-        request = new MockHttpServletRequest("GET", "http://myhost:8080/uPortal/p/fname");
         request.setQueryString("pP_announcementId=1834");
-        request.setCharacterEncoding("UTF-8");
-        assertEquals("https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname%253FpP_announcementId%253D1834",
+        assertEquals(
+                "https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname%253FpP_announcementId%253D1834",
                 encoder.encodeLoginAndRefUrl(request));
     }
 
     @Test
     public void testWithTwoParams() throws Exception {
-        request = new MockHttpServletRequest("GET", "http://myhost:8080/uPortal/p/fname");
         request.setQueryString("pP_action=displayFullAnnouncement&pP_announcementId=1834");
-        request.setCharacterEncoding("UTF-8");
-        assertEquals("https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname%253FpP_action%253DdisplayFullAnnouncement%2526pP_announcementId%253D1834",
+        assertEquals(
+                "https://cas:80/cas/login?service=myhost:8080/uPortal/Login%3FrefUrl%3Dhttp%3A%2F%2Fmyhost%3A8080%2FuPortal%2Fp%2Ffname%253FpP_action%253DdisplayFullAnnouncement%2526pP_announcementId%253D1834",
                 encoder.encodeLoginAndRefUrl(request));
     }
 }

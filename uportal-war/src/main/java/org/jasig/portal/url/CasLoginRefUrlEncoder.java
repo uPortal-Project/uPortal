@@ -18,32 +18,41 @@
  */
 package org.jasig.portal.url;
 
-import org.jasig.portal.security.mvc.LoginController;
-import org.springframework.beans.factory.annotation.Required;
-
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+
+import org.jasig.portal.security.mvc.LoginController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Encode the originally requested URL for use as a RefUrl parameter for the CAS login use case. This handles the
  * additional encoding needed to encode the originally-requested URL since the originally requested URL will be decoded
  * twice (decoded once when the browser sends it to CAS, then again when the browser sends it back to uPortal after
  * coming from CAS).
- * 
+ *
  * @author James Wennmacher, jwennmacher@unicon.net
  */
 public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
 
     private String casLoginUrl;
 
+    private UrlAuthCustomizerRegistry urlCustomizer;
+
     @Required
     public void setCasLoginUrl(String casLoginUrl) {
         this.casLoginUrl = casLoginUrl;
     }
 
-    public String getCasLoginUrl() {
-        return casLoginUrl;
+    @Autowired
+    public void setUrlCustomizer(UrlAuthCustomizerRegistry urlCustomizer) {
+        this.urlCustomizer = urlCustomizer;
+    }
+
+    public String getCasLoginUrl(final HttpServletRequest request) {
+        return urlCustomizer.customizeUrl(request, casLoginUrl);
     }
 
     @Override
@@ -63,7 +72,7 @@ public class CasLoginRefUrlEncoder implements LoginRefUrlEncoder {
             loginRedirect.append(URLEncoder.encode(firstEncoding, requestEncoding));
         }
 
-        return loginRedirect.toString();
+        return urlCustomizer.customizeUrl(request, loginRedirect.toString());
     }
 
 }
