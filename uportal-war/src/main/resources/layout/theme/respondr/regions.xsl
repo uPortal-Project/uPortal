@@ -106,7 +106,7 @@
      | This template renders portlets in the top-right greeting area.
     -->
     <xsl:template name="region.pre-header">
-        <xsl:if test="//region[@name='page-top']/channel">
+        <xsl:if test="//region[@name='pre-header']/channel">
             <div id="region-pre-header" class="portal-user">
                 <xsl:for-each select="//region[@name='pre-header']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />
