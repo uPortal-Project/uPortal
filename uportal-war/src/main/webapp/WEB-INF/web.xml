@@ -94,7 +94,7 @@
         </init-param>
         <init-param>
           <param-name>serverName</param-name>
-          <param-value>${environment.build.uportal.protocol}://${environment.build.uportal.server}</param-value>
+          <param-value>${environment.build.uportal.server} ${environment.build.uportal.otherServers}</param-value>
         </init-param>
         <init-param>
             <param-name>proxyCallbackUrl</param-name>
