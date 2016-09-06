@@ -4,5 +4,9 @@ sudo: false
 before_install:
   - unset GEM_PATH
 
+# Use the Maven install instead of the Gradle approach, for now
+install:
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
 after_success:
   - mvn clean test cobertura:cobertura coveralls:cobertura
