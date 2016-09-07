@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.api.portlet.DelegationRequest;
+import org.apereo.portal.api.portlet.DelegationRequest;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.web.PortalWebUtils;

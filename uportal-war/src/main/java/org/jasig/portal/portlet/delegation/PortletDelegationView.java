@@ -31,10 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.pluto.tags.Constants;
-import org.jasig.portal.api.portlet.DelegationRequest;
-import org.jasig.portal.api.portlet.DelegationResponse;
-import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
-import org.jasig.portal.api.portlet.PortletDelegationLocator;
+import org.apereo.portal.api.portlet.DelegationRequest;
+import org.apereo.portal.api.portlet.DelegationResponse;
+import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
+import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 import org.slf4j.Logger;

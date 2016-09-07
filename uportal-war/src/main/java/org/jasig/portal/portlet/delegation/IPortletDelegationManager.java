@@ -20,7 +20,7 @@ package org.jasig.portal.portlet.delegation;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.api.portlet.DelegationRequest;
+import org.apereo.portal.api.portlet.DelegationRequest;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 

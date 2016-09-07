@@ -23,8 +23,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.api.groups.ApiGroupsService;
-import org.jasig.portal.api.groups.Entity;
+import org.apereo.portal.api.groups.ApiGroupsService;
+import org.apereo.portal.api.groups.Entity;
 import org.jasig.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

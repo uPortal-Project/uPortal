@@ -39,10 +39,10 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.ValidationMessage;
 
-import org.jasig.portal.api.portlet.DelegateState;
-import org.jasig.portal.api.portlet.DelegationRequest;
-import org.jasig.portal.api.portlet.PortletDelegationDispatcher;
-import org.jasig.portal.api.portlet.PortletDelegationLocator;
+import org.apereo.portal.api.portlet.DelegateState;
+import org.apereo.portal.api.portlet.DelegationRequest;
+import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
+import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.portlet.PortletUtils;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
