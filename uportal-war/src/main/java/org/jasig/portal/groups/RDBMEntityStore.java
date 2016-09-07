@@ -18,12 +18,11 @@
  */
 package org.jasig.portal.groups;
 
-import org.jasig.portal.EntityTypes;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Reference implementation for IEntityStore.
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class RDBMEntityStore implements IEntityStore {
 private static IEntityStore singleton;
@@ -43,7 +42,7 @@ public RDBMEntityStore()
  */
 public IEntity newInstance(String key, Class type) throws GroupsException
 {
-    if ( EntityTypes.getEntityTypeID(type) == null )
+    if ( EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }
     return new EntityImpl(key, type);
 }

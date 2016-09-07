@@ -21,8 +21,9 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.EntityTypes;
+import org.apereo.portal.utils.AbstractBeanLocator;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -30,7 +31,6 @@ import org.springframework.context.ApplicationContext;
  * EntityTypes implementation.</p>
  *
  * @author Dan Ellentuck
- * @version $Revision$
  * @deprecated
  */
 @Deprecated
@@ -46,14 +46,14 @@ public class EntityTypesLocator extends AbstractBeanLocator<EntityTypes> {
             LOG.info("Looking up bean '" + BEAN_NAME + "' in ApplicationContext due to context not yet being initialized");
             final ApplicationContext applicationContext = PortalApplicationContextLocator.getApplicationContext();
             applicationContext.getBean(EntityTypesLocator.class.getName());
-            
+
             locator = locatorInstance;
             if (locator == null) {
                 LOG.warn("Instance of '" + BEAN_NAME + "' still null after portal application context has been initialized");
                 return applicationContext.getBean(BEAN_NAME, EntityTypes.class);
             }
         }
-        
+
         return locator.getInstance();
     }
 

@@ -24,9 +24,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -159,7 +160,7 @@ public boolean isGroup()
  */
 protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
 {
-    return ( org.jasig.portal.EntityTypes.getEntityTypeID(anEntityType) != null );
+    return (EntityTypesLocator.getEntityTypes().getEntityIDFromType(anEntityType) != null);
 }
 
     /**

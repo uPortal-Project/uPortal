@@ -27,7 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -36,7 +36,6 @@ import org.xml.sax.SAXException;
 /**
  * Produces an empty Document implementation
  * @author Bernie Durfee, bdurfee@interactivebusiness.com
- * @version $Revision$
  */
 public final class DocumentFactory {
 

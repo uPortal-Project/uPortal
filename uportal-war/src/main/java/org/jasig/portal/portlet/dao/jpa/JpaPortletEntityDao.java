@@ -33,8 +33,8 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.hibernate.dialect.PostgreSQL81Dialect;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
@@ -51,7 +51,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 @Qualifier("persistence")

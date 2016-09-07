@@ -54,7 +54,7 @@ import org.apache.pluto.container.om.portlet.EventDefinition;
 import org.apache.pluto.container.om.portlet.EventDefinitionReference;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.container.EventImpl;

@@ -22,7 +22,8 @@ import java.util.Iterator;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.groups.CompositeServiceIdentifier;
 import org.jasig.portal.groups.GroupServiceConfiguration;
@@ -36,7 +37,6 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

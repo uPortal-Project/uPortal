@@ -19,6 +19,7 @@
 package org.jasig.portal;
 
 import junit.framework.TestCase;
+import org.apereo.portal.PortalException;
 
 /**
  * Testcase for PortalException. The PortalException implementation of

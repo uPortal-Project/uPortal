@@ -31,7 +31,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.portlet.IPortletSpELService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

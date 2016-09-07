@@ -47,7 +47,7 @@ import org.hibernate.mapping.Table;
 import org.hibernate.mapping.UniqueKey;
 import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.jasig.portal.hibernate.HibernateConfigurationAware;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ResourceLoaderAware;

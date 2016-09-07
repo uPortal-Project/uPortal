@@ -21,7 +21,7 @@ package org.jasig.portal.groups.pags.dao;
 import java.util.Set;
 
 import org.dom4j.Element;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * Describes the definition of a group.  PAGS group definitions are used (at

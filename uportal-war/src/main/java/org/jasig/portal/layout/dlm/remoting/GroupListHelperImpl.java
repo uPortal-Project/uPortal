@@ -28,8 +28,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.EntityTypes;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IGroupConstants;
@@ -42,6 +42,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 public class GroupListHelperImpl implements IGroupListHelper {
 
@@ -335,7 +336,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
         
         // get the EntityEnum type for the entity id number
         @SuppressWarnings("unchecked")
-        Class type = EntityTypes.getEntityType(typeId);
+        Class type = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(typeId);
         String entityType = "person";
         if (IEntityGroup.class.isAssignableFrom(type)) {
             entityType = "group";

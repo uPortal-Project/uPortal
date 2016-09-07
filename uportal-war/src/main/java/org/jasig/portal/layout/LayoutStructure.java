@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 
 /**
  * LayoutStructure represents a channel or folder in a layout.

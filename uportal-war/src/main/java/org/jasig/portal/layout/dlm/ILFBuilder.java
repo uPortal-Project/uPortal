@@ -34,7 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;

@@ -32,7 +32,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.springframework.stereotype.Repository;

@@ -17,7 +17,9 @@
  * under the License.
  */
 package org.jasig.portal.groups;
- 
+
+import org.apereo.portal.PortalException;
+
 /**
  * A GroupsException describes a problem in the groups structure or in
  * the groups store.  An example of a structural problem is an attempt 
@@ -27,10 +29,11 @@ package org.jasig.portal.groups;
  * javax.naming.NamingException.
  *
  * @author Dan Ellentuck
- * @version $Revision$ $Date$ 
  */
-public class GroupsException extends org.jasig.portal.PortalException {
-    
+public class GroupsException extends PortalException {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * Instantiate a GroupsException with the given cause.
      * @param cause Throwable that caused the problem

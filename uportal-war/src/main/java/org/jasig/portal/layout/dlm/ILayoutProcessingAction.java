@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 /**
  * Represents a layout processing action that should be applied to a user's

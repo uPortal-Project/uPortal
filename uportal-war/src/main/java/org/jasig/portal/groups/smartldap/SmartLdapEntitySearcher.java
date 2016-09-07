@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups.smartldap;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroupStore;
 import org.jasig.portal.groups.IEntitySearcher;

@@ -42,7 +42,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.layout.IUserLayout;

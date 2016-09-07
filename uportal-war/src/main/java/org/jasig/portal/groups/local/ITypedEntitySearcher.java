@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups.local;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IGroupConstants;
 
@@ -27,9 +27,7 @@ import org.jasig.portal.groups.IGroupConstants;
  * by EntitySearcherImpl
  *
  * @author Alex Vigdor
- * @version $Revision$
  */
-
 
 public interface ITypedEntitySearcher extends IGroupConstants{
     public EntityIdentifier[] searchForEntities(String query, int method) throws GroupsException;

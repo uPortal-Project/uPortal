@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntitySearcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
  * Uses implementations of ITypedEntitySearcher to do the dirty work.
  *
  * @author Alex Vigdor
- * @version $Revision$
  */
 @Service("referenceEntitySearcher")
 public class ReferenceEntitySearcherImpl implements IEntitySearcher {
@@ -48,14 +47,14 @@ public class ReferenceEntitySearcherImpl implements IEntitySearcher {
     @Override
     public EntityIdentifier[] searchForEntities(String query, int method, Class type) throws GroupsException {
         final List<EntityIdentifier> entityIdentifiers = new LinkedList<EntityIdentifier>();
-        
+
         for (final ITypedEntitySearcher typedEntitySearcher : this.typedEntitySearchers) {
             if (typedEntitySearcher.getType().equals(type)) {
                 final EntityIdentifier[] results = typedEntitySearcher.searchForEntities(query, method);
                 Collections.addAll(entityIdentifiers, results);
             }
         }
-        
+
         return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
     }
 

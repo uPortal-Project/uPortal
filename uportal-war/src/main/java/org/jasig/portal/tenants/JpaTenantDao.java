@@ -29,7 +29,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;

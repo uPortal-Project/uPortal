@@ -44,7 +44,7 @@ import org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl_;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;

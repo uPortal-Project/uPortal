@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.concurrency;
 
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 
 /**
   * Defines an api for a caching service that caches and retrieves

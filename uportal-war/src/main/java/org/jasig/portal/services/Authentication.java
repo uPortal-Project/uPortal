@@ -38,8 +38,8 @@ import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.ThreadNamingRequestFilter;
 import org.jasig.portal.security.provider.ChainingSecurityContext;
-import org.jasig.portal.utils.MovingAverage;
-import org.jasig.portal.utils.MovingAverageSample;
+import org.apereo.portal.utils.MovingAverage;
+import org.apereo.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -56,7 +56,6 @@ import org.springframework.stereotype.Service;
  * represent the principal and credential for each security context. This version
  * differs in the way the principal and credentials are set (all contexts are set
  * up front after evaluating the tokens). See setContextParameters() also.
- * @version $Revision$
  * Changes put in to allow credentials and principals to be defined and held by each
  * context.
  */

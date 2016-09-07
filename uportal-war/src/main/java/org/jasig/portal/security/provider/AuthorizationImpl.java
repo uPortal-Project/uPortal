@@ -33,10 +33,10 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityTypes;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -61,6 +61,7 @@ import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PermissionHelper;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.spring.locator.PortletCategoryRegistryLocator;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheFactory;
@@ -758,7 +759,7 @@ throws AuthorizationException
     String principalString = permission.getPrincipal();
     int idx = principalString.indexOf(PRINCIPAL_SEPARATOR);
     Integer typeId = new Integer(principalString.substring(0, idx));
-    Class type = EntityTypes.getEntityType(typeId);
+    Class type = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(typeId);
     String key = principalString.substring(idx + 1);
     return newPrincipal(key, type);
 }
@@ -770,7 +771,7 @@ throws AuthorizationException
 private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
 {
     String key = group.getKey();
-    Class type = EntityTypes.GROUP_ENTITY_TYPE;
+    Class type = ICompositeGroupService.GROUP_ENTITY_TYPE;
     return newPrincipal(key, type);
 }
 
@@ -802,7 +803,7 @@ public String getPrincipalString(IAuthorizationPrincipal principal)
     return getPrincipalString(principal.getType(), principal.getKey());
 }
 private String getPrincipalString(Class pType, String pKey) {
-    Integer type = EntityTypes.getEntityTypeID(pType);
+    Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(pType);
     return type + PRINCIPAL_SEPARATOR + pKey;
 }
 

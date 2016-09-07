@@ -40,7 +40,7 @@ import javax.annotation.PostConstruct;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.portlets.search.DisplayNameComparator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -59,7 +59,6 @@ import org.springframework.webflow.context.ExternalContext;
  * Implements logic and helper methods for the person-lookup web flow.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PersonLookupHelperImpl implements IPersonLookupHelper {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -43,7 +43,7 @@ import org.jasig.portal.events.aggr.IPortalEventAggregator;
 import org.jasig.portal.events.aggr.QuarterDetail;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
@@ -53,7 +53,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 public class JpaEventAggregationManagementDao extends BaseAggrEventsJpaDao implements IEventAggregationManagementDao {

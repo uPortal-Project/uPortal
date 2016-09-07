@@ -29,8 +29,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;

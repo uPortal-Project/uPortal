@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.collections.map.ReferenceMap;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.utils.cache.CacheFactory;
@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
  * service. 
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service("entityCachingService")
 public class CacheFactoryEntityCachingService extends AbstractEntityCachingService {

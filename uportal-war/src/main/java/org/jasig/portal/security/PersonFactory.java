@@ -23,7 +23,7 @@ import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  * Creates a person.
@@ -52,7 +52,7 @@ public class PersonFactory {
     
     private static final SingletonDoubleCheckedCreator<Integer> GUEST_USER_ID_LOADER = new SingletonDoubleCheckedCreator<Integer>() {
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
+         * @see org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
          */
         @Override
         protected Integer createSingleton(Object... args) {

@@ -26,8 +26,8 @@ import java.util.Set;
 
 import javax.naming.Name;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +82,7 @@ public class EntityGroupImpl extends GroupMemberImpl implements IEntityGroup {
  * EntityGroupImpl
  */
 public EntityGroupImpl(String groupKey, Class<? extends IBasicEntity> entityType) throws GroupsException {
-    super(new CompositeEntityIdentifier(groupKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
+    super(new CompositeEntityIdentifier(groupKey, ICompositeGroupService.GROUP_ENTITY_TYPE));
     if (isKnownEntityType(entityType)) {
         leafEntityType = entityType;
     } else {
@@ -285,7 +285,7 @@ public String getGroupID() {
  * Returns the entity type of this groups's members.
  *
  * @return Class
- * @see org.jasig.portal.EntityTypes
+ * @see org.apereo.portal.EntityTypes
  */
 @Override
 public Class<? extends IBasicEntity> getLeafType() {
@@ -382,7 +382,7 @@ public Name getServiceName()
 @Override
 public Class<?> getType()
 {
-    return org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE;
+    return ICompositeGroupService.GROUP_ENTITY_TYPE;
 }
 /**
  * Answers if there are any added memberships not yet committed to the database.

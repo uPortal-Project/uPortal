@@ -100,13 +100,13 @@
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
-            <util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
                 <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
-                <prop key="persistenceUnitName">#{T(org.jasig.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
+                <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
@@ -153,7 +153,7 @@
         <qualifier value="PortalDb"/>
         <property name="jdbcOperations" ref="jdbcOperations" />
         <property name="persistenceUnit">
-            <util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
     </bean>
 

@@ -25,8 +25,9 @@ import java.util.NoSuchElementException;
 
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
-import javax.naming.NameParser;
 import javax.naming.NamingException;
+
+import org.apereo.portal.EntityIdentifier;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -39,9 +40,11 @@ import com.google.common.cache.LoadingCache;
  *
  * @author Dan Ellentuck
  */
-public class CompositeEntityIdentifier extends org.jasig.portal.EntityIdentifier 
-implements IGroupConstants
-{
+public class CompositeEntityIdentifier extends EntityIdentifier 
+implements IGroupConstants {
+
+    private static final long serialVersionUID = 1L;
+
     // static vars:
     protected static final String separator;
     private static final LoadingCache<String, Name> NAME_PARSE_CACHE = CacheBuilder.newBuilder().maximumSize(1000).build(new CacheLoader<String, Name>() {

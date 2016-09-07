@@ -18,6 +18,8 @@
  */
 package org.jasig.portal;
 
+import org.apereo.portal.PortalException;
+
 /**
  * This exception would inform uPortal that a particular
  * resource required to complete channel operation is

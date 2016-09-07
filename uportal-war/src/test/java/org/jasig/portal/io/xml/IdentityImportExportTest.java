@@ -29,7 +29,7 @@ import org.jasig.portal.io.xml.subscribedfragment.ExternalSubscribedFragments;
 import org.jasig.portal.io.xml.user.UserType;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.TimeZoneTestUtils;
-import org.jasig.portal.utils.ICounterStore;
+import org.apereo.portal.ICounterStore;
 import org.jasig.portal.utils.Tuple;
 import org.junit.After;
 import org.junit.AfterClass;

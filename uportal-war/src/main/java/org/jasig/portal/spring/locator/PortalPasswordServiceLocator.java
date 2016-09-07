@@ -21,7 +21,8 @@ package org.jasig.portal.spring.locator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPortalPasswordService;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.utils.AbstractBeanLocator;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
 @Deprecated
@@ -53,7 +54,7 @@ public class PortalPasswordServiceLocator extends AbstractBeanLocator<IPortalPas
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#getLocator()
+     * @see org.apereo.portal.utils.AbstractBeanLocator#getLocator()
      */
     @Override
     protected AbstractBeanLocator<IPortalPasswordService> getLocator() {
@@ -61,7 +62,7 @@ public class PortalPasswordServiceLocator extends AbstractBeanLocator<IPortalPas
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#setLocator(org.jasig.portal.spring.locator.AbstractBeanLocator)
+     * @see org.apereo.portal.utils.AbstractBeanLocator#setLocator(org.apereo.portal.utils.AbstractBeanLocator)
      */
     @Override
     protected void setLocator(AbstractBeanLocator<IPortalPasswordService> locator) {

@@ -28,11 +28,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 import org.jasig.portal.hibernate.HibernateConfigurationAware;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

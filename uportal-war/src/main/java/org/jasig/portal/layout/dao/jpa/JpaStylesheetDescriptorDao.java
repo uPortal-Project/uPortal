@@ -28,8 +28,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.springframework.stereotype.Repository;

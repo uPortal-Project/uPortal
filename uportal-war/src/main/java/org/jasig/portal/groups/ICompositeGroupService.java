@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import javax.naming.Name;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * Defines an api for discovering entry points into a composite groups system
@@ -36,6 +36,9 @@ import org.jasig.portal.EntityIdentifier;
  * @author Dan Ellentuck
  */
 public interface ICompositeGroupService extends IComponentGroupService {
+
+    public static final Class<IEntityGroup> GROUP_ENTITY_TYPE = org.jasig.portal.groups.IEntityGroup.class;
+    public static final Class<IEntity> LEAF_ENTITY_TYPE = org.jasig.portal.groups.IEntity.class;
 
   /**
    * Returns the groups that contain the <code>IGroupMember</code>.

@@ -20,7 +20,7 @@ package org.jasig.portal.layout.dlm;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;

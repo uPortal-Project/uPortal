@@ -28,7 +28,7 @@ import org.danann.cernunnos.SimpleReagent;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
-import org.jasig.portal.utils.ICounterStore;
+import org.apereo.portal.ICounterStore;
 
 /**
  * @author Eric Dalquist

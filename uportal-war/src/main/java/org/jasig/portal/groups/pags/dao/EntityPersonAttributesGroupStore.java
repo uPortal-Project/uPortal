@@ -29,8 +29,8 @@ import java.util.Set;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.EntityTypes;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.EntityTestingGroupImpl;
 import org.jasig.portal.groups.GroupsException;
@@ -48,6 +48,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -347,7 +348,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
          * NOTE:  It seems like something should be done to prevent emitting
          * nonsense entities;  it's not clear what that would be.
          */
-        if (EntityTypes.getEntityTypeID(type) == null) {
+        if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid entity type: "+type.getName());
         }
         return new EntityImpl(key, type);

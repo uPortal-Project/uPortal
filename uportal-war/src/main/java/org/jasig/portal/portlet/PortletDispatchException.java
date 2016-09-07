@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.portlet;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.portlet.om.IPortletWindow;
 
 /**

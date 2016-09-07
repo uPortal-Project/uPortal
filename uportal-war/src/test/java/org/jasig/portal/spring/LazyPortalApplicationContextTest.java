@@ -18,11 +18,11 @@
  */
 package org.jasig.portal.spring;
 
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.junit.Test;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class LazyPortalApplicationContextTest {
     

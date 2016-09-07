@@ -24,15 +24,14 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityNameFinder;
 import org.jasig.portal.groups.IEntityNameFinderFactory;
 import org.jasig.portal.properties.PropertiesManager;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class EntityNameFinderService
 {
@@ -76,7 +75,7 @@ private Map getNameFinders()
  */
 private synchronized void initialize()
 {
-    Iterator types = EntityTypes.singleton().getAllEntityTypes();
+    Iterator types = EntityTypesLocator.getEntityTypes().getAllEntityTypes();
     String factoryName = null;
 
     while ( types.hasNext() )

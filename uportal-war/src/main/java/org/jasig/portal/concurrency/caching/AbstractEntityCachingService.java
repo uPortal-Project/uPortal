@@ -18,8 +18,8 @@
  */
 package org.jasig.portal.concurrency.caching;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 import org.jasig.portal.concurrency.IEntityCachingService;
@@ -28,10 +28,9 @@ import org.jasig.portal.concurrency.IEntityCachingService;
  * Provides common {@link IEntityCachingService} logic
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class AbstractEntityCachingService implements IEntityCachingService {
-    
+
     /**
      * Retrieves the {@link IEntityCache} to store the specified entityType in.
      * 
@@ -43,7 +42,7 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
     protected abstract IEntityCache getCache(Class<? extends IBasicEntity> entityType) throws CachingException; 
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.IEntityCachingService#add(org.jasig.portal.IBasicEntity)
+     * @see org.jasig.portal.concurrency.IEntityCachingService#add(org.apereo.portal.IBasicEntity)
      */
     public void add(IBasicEntity entity) throws CachingException {
         final EntityIdentifier entityIdentifier = entity.getEntityIdentifier();
@@ -70,7 +69,7 @@ public abstract class AbstractEntityCachingService implements IEntityCachingServ
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.IEntityCachingService#update(org.jasig.portal.IBasicEntity)
+     * @see org.jasig.portal.concurrency.IEntityCachingService#update(org.apereo.portal.IBasicEntity)
      */
     public void update(IBasicEntity entity) throws CachingException {
         this.add(entity);

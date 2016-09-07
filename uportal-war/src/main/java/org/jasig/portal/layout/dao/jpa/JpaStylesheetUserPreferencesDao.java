@@ -28,7 +28,7 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;

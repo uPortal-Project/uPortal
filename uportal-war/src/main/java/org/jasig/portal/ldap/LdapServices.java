@@ -23,13 +23,14 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.jdbc.RDBMServices;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 /**
  * Provides LDAP access in a way similar to a relational DBMS. This class
- * was modified for the 2.4 release to function more like {@link org.jasig.portal.RDBMServices}.
+ * was modified for the 2.4 release to function more like {@link RDBMServices}.
  * The class should be used via the static {@link #getDefaultLdapServer()} and
  * {@link #getLdapServer(String name)} methods.
  * <br>
@@ -38,7 +39,6 @@ import org.springframework.context.ApplicationContext;
  * named 'defaultLdapServer' to use as the default LDAP server.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  * @deprecated The prefered way to access configured ldap servers is using dependency injection and accessing the LdapContext instances in the spring context.
  */
 public final class LdapServices {  

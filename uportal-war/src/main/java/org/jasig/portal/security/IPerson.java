@@ -23,7 +23,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

@@ -19,7 +19,6 @@
 package org.jasig.portal.api.permissions;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;

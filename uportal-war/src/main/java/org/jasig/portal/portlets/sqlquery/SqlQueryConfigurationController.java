@@ -30,7 +30,7 @@ import javax.portlet.ReadOnlyException;
 import javax.portlet.ValidatorException;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

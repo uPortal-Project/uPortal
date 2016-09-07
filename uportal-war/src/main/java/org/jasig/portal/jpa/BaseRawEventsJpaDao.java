@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apereo.portal.jpa.BaseJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;

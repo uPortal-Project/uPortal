@@ -27,8 +27,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.springframework.stereotype.Repository;
@@ -41,7 +41,6 @@ import com.google.common.base.Function;
  * code.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @revision $Revision$
  */
 @Repository
 public class JpaPortletTypeDao extends BasePortalJpaDao implements IPortletTypeDao {

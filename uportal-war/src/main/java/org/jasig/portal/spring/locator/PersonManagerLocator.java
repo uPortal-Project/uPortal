@@ -21,12 +21,12 @@ package org.jasig.portal.spring.locator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.utils.AbstractBeanLocator;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  * @deprecated code that needs an IPersonManager should use direct dependency injection where possible
  */
 @Deprecated
@@ -58,7 +58,7 @@ public class PersonManagerLocator extends AbstractBeanLocator<IPersonManager> {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#getLocator()
+     * @see org.apereo.portal.utils.AbstractBeanLocator#getLocator()
      */
     @Override
     protected AbstractBeanLocator<IPersonManager> getLocator() {
@@ -66,7 +66,7 @@ public class PersonManagerLocator extends AbstractBeanLocator<IPersonManager> {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#setLocator(org.jasig.portal.spring.locator.AbstractBeanLocator)
+     * @see org.apereo.portal.utils.AbstractBeanLocator#setLocator(org.apereo.portal.utils.AbstractBeanLocator)
      */
     @Override
     protected void setLocator(AbstractBeanLocator<IPersonManager> locator) {

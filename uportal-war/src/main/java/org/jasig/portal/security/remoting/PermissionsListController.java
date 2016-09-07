@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityTypes;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
@@ -40,6 +39,7 @@ import org.jasig.portal.permission.target.IPermissionTargetProvider;
 import org.jasig.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -177,10 +177,9 @@ public class PermissionsListController extends AbstractPermissionsController {
         String[] parts = principalString.split(PRINCIPAL_SEPARATOR, 2);        
         String key = parts[1];
         int typeId = Integer.parseInt(parts[0]);
-        
+
         // get the EntityEnum type for the entity id number
-        @SuppressWarnings("unchecked")
-        Class type = EntityTypes.getEntityType(typeId);
+        Class type = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(typeId);
         String entityType = "person";
         if (IEntityGroup.class.isAssignableFrom(type)) {
             entityType = "group";

@@ -30,10 +30,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * RDBMS-based store for <code>IEntityLocks</code>.
@@ -332,7 +332,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
             throws  SQLException, LockingException
     {
         Integer entityTypeID = new Integer(rs.getInt(1));
-        Class entityType = EntityTypes.getEntityType(entityTypeID);
+        Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String key = rs.getString(2);
         int lockType = rs.getInt(3);
         Timestamp ts = rs.getTimestamp(4);
@@ -362,7 +362,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private void primAdd(IEntityLock lock, Connection conn)
             throws SQLException, LockingException
     {
-        Integer typeID = EntityTypes.getEntityTypeID(lock.getEntityType());
+        Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(lock.getEntityType());
         String key = lock.getEntityKey();
         int lockType = lock.getLockType();
         Timestamp ts = new Timestamp(lock.getExpirationTime().getTime());
@@ -409,7 +409,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
      */
     private void primDelete(IEntityLock lock, Connection conn) throws LockingException, SQLException
     {
-        Integer typeID = EntityTypes.getEntityTypeID(lock.getEntityType());
+        Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(lock.getEntityType());
         String key = lock.getEntityKey();
         int lockType = lock.getLockType();
         Timestamp ts = new Timestamp(lock.getExpirationTime().getTime());
@@ -466,7 +466,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         buff.append(printTimestamp(ts));
         if ( entityType != null )
         {
-            Integer typeID = EntityTypes.getEntityTypeID(entityType);
+            Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(entityType);
             buff.append(" AND " + ENTITY_TYPE_COLUMN + EQ + typeID);
         }
         if ( entityKey != null )
@@ -551,7 +551,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
     private void primUpdate(IEntityLock lock, Date newExpiration, Integer newType, Connection conn)
             throws SQLException, LockingException
     {
-        Integer typeID = EntityTypes.getEntityTypeID(lock.getEntityType());
+        Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(lock.getEntityType());
         String key = lock.getEntityKey();
         int oldLockType = lock.getLockType();
         int newLockType = ( newType == null ) ? oldLockType : newType.intValue();
@@ -616,7 +616,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
 
         if ( entityType != null )
         {
-            Integer typeID = EntityTypes.getEntityTypeID(entityType);
+            Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(entityType);
             sqlQuery.append(" AND " + ENTITY_TYPE_COLUMN + EQ + typeID);
         }
 
@@ -665,7 +665,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
 
         if ( entityType != null )
         {
-            Integer typeID = EntityTypes.getEntityTypeID(entityType);
+            Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(entityType);
             sqlQuery.append(" AND " + ENTITY_TYPE_COLUMN + EQ + typeID);
         }
 

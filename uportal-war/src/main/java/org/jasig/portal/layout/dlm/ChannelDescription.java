@@ -18,10 +18,8 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.PortalException;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.layout.node.UserLayoutNodeDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

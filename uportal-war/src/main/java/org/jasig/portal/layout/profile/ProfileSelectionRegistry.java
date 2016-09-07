@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.layout.profile;
 
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.profile.dao.IProfileSelectionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;

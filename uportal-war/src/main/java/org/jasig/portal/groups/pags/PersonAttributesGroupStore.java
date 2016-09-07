@@ -31,8 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.EntityTestingGroupImpl;
 import org.jasig.portal.groups.GroupsException;
@@ -46,6 +45,7 @@ import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -342,7 +342,7 @@ public class PersonAttributesGroupStore implements IEntityGroupStore, IEntitySto
    }
 
    public IEntity newInstance(String key, Class type) throws GroupsException {
-      if (EntityTypes.getEntityTypeID(type) == null) {
+      if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
          throw new GroupsException("Invalid entity type: "+type.getName());
       }
       return new EntityImpl(key, type);

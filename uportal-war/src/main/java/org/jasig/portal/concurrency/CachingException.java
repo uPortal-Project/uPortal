@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.concurrency;
 
+import org.apereo.portal.PortalException;
+
 /**
  * A <code>CachingException</code> describes a problem that has arisen during
  * an attempt to add, update, remove or reference a cache entry.  If the problem
@@ -27,7 +29,7 @@ package org.jasig.portal.concurrency;
  * @author Dan Ellentuck
  * @version $Revision$ $Date$
  */
-public class CachingException extends org.jasig.portal.PortalException {
+public class CachingException extends PortalException {
     
     
     /**

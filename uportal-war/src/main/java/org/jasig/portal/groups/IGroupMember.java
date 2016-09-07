@@ -20,8 +20,8 @@ package org.jasig.portal.groups;
 
 import java.util.Set;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 
 /**
  * An <code>IGroupMember</code> defines common behavior for both the leaf

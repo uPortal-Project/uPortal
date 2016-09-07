@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 /**
  * <p>An exception representing a Portal security problem.</p>

@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.IEntity;

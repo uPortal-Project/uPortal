@@ -293,7 +293,7 @@
      | - 1 x Entity type
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.EntityTypes.CLASS_BY_ID"
+    <cache name="org.apereo.portal.EntityTypes.CLASS_BY_ID"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -303,7 +303,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.EntityTypes.ID_BY_CLASS"
+    <cache name="org.apereo.portal.EntityTypes.ID_BY_CLASS"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -313,7 +313,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.EntityTypes.ALL"
+    <cache name="org.apereo.portal.EntityTypes.ALL"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory

@@ -36,7 +36,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal
 import org.jasig.portal.security.IAuthorizationService
 import org.jasig.portal.security.IPermission
 import org.jasig.portal.security.IUpdatingPermissionManager
-import org.jasig.portal.spring.locator.AbstractBeanLocator
+import org.apereo.portal.utils.AbstractBeanLocator
 import org.jasig.portal.spring.locator.AuthorizationServiceLocator
 import org.jasig.portal.xml.PortletDescriptor;
 import spock.lang.Specification

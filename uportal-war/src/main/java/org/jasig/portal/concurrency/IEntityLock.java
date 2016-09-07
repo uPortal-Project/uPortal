@@ -19,6 +19,9 @@
 package org.jasig.portal.concurrency;
 
 import java.util.Date;
+
+import org.apereo.portal.EntityTypes;
+
 /**
   * Defines a lock associated with an owner and a portal entity that
   * guarantees some degree of exclusive access to the entity, depending on
@@ -56,7 +59,7 @@ public void convert(int newType, int newDuration) throws LockingException;
  */
 public String getEntityKey();
 /**
- * @see org.jasig.portal.EntityTypes for known types.
+ * @see EntityTypes for known types.
  * @return java.lang.Class
  */
 public Class getEntityType();

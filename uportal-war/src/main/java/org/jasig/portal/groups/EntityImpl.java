@@ -18,13 +18,13 @@
  */
 package org.jasig.portal.groups;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Reference implementation for <code>IEntity</code>.
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class EntityImpl extends GroupMemberImpl implements IEntity {
     protected EntityIdentifier entityIdentifier;
@@ -41,9 +41,9 @@ public EntityImpl(String newEntityKey, Class newEntityType) throws GroupsExcepti
 public EntityImpl(EntityIdentifier ei) throws GroupsException
 {
     super(ei);
-    Integer id = org.jasig.portal.EntityTypes.getEntityTypeID(ei.getType());
+    Integer id = EntityTypesLocator.getEntityTypes().getEntityIDFromType(ei.getType());
     String key = id + "." + ei.getKey();
-    entityIdentifier = new EntityIdentifier(key, org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE);
+    entityIdentifier = new EntityIdentifier(key, ICompositeGroupService.LEAF_ENTITY_TYPE);
 }
 
 /**

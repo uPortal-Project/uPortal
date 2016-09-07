@@ -26,8 +26,8 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.local.ITypedEntitySearcher;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -40,7 +40,6 @@ import org.springframework.stereotype.Service;
  * Searches the portal DB for people.  Used by EntitySearcherImpl
  *
  * @author Alex Vigdor
- * @version $Revision$
  */
 @Service
 public class PersonDirectorySearcher implements ITypedEntitySearcher {

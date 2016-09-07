@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apereo.portal.utils.threading.DoubleCheckedCreator;
 
 /**
  * Implementation of DoubleCheckedCreator that stores what it creates in a backing Map. Subclasses need to implement
@@ -35,15 +36,14 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * The default constructor uses a {@link ReferenceMap} with hard references to the keys 
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleCheckedCreator<T> {
     private final Map<K, T> objectCache;
-    
+
     public MapCachingDoubleCheckedCreator() {
         this.objectCache = new HashMap<K, T>();
     }
-    
+
     /**
      * @param cache The Map to store created instances in
      */
@@ -97,7 +97,7 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     protected abstract T createInternal(K key, Object... args);
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
+     * @see org.apereo.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
      */
     @Override
     protected final T create(Object... args) {
@@ -108,7 +108,7 @@ public abstract class MapCachingDoubleCheckedCreator<K, T> extends DoubleChecked
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])
+     * @see org.apereo.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])
      */
     @Override
     protected final T retrieve(Object... args) {

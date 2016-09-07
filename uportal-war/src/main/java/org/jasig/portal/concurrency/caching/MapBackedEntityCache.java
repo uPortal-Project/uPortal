@@ -21,8 +21,8 @@ package org.jasig.portal.concurrency.caching;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCache;
 
@@ -42,7 +42,7 @@ public class MapBackedEntityCache implements IEntityCache {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.IEntityCache#add(org.jasig.portal.IBasicEntity)
+     * @see org.jasig.portal.concurrency.IEntityCache#add(org.apereo.portal.IBasicEntity)
      */
     public void add(IBasicEntity entity) throws CachingException {
         final EntityIdentifier entityIdentifier = entity.getEntityIdentifier();
@@ -85,7 +85,7 @@ public class MapBackedEntityCache implements IEntityCache {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.concurrency.IEntityCache#update(org.jasig.portal.IBasicEntity)
+     * @see org.jasig.portal.concurrency.IEntityCache#update(org.apereo.portal.IBasicEntity)
      */
     public void update(IBasicEntity entity) throws CachingException {
         this.add(entity);
@@ -101,7 +101,6 @@ public class MapBackedEntityCache implements IEntityCache {
     /* (non-Javadoc)
      * @see org.jasig.portal.concurrency.IEntityCache#cleanupCache()
      */
-    @SuppressWarnings("deprecation")
     @Deprecated
     public void cleanupCache() throws CachingException {
         //NOOP

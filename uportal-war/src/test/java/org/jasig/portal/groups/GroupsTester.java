@@ -29,11 +29,13 @@ import java.util.Random;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityTypes;
+import org.apereo.portal.jdbc.RDBMServices;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Tests the groups framework (a start).
@@ -122,7 +124,7 @@ protected void addTestEntityType()
 {
     try
     {
-        org.jasig.portal.EntityTypes.singleton().
+        EntityTypesLocator.getEntityTypes().
             addEntityTypeIfNecessary(TEST_ENTITY_CLASS, "Test Entity Type");
     }
     catch (Exception ex) { print("GroupsTester.addTestEntityType(): " + ex.getMessage());}
@@ -133,7 +135,7 @@ protected void deleteTestEntityType()
 {
     try
     {
-        org.jasig.portal.EntityTypes.singleton().deleteEntityType(TEST_ENTITY_CLASS);
+        EntityTypesLocator.getEntityTypes().deleteEntityType(TEST_ENTITY_CLASS);
     }
     catch (Exception ex) { print("EntityCacheTester.deleteTestEntityType(): " + ex.getMessage());}
  }
@@ -142,14 +144,14 @@ protected void deleteTestEntityType()
 protected void deleteTestGroups()
 {
     String sql = " FROM UP_GROUP WHERE ENTITY_TYPE_ID = " +
-                      EntityTypes.getEntityTypeID(TEST_ENTITY_CLASS);
+            EntityTypesLocator.getEntityTypes().getEntityIDFromType(TEST_ENTITY_CLASS);
     String selectSql = "SELECT GROUP_ID" + sql;
     String deleteSql = "DELETE" + sql;
     String deleteMemberSql = "DELETE FROM UP_GROUP_MEMBERSHIP WHERE GROUP_ID = ";
     Connection conn = null;
     try
     {
-        conn = org.jasig.portal.RDBMServices.getConnection();
+        conn = RDBMServices.getConnection();
         Statement selectStmnt = conn.createStatement();
         ResultSet rs = selectStmnt.executeQuery( selectSql );
         while ( rs.next() )
@@ -166,7 +168,7 @@ protected void deleteTestGroups()
 
     }
     catch (Exception ex) { print("GroupsTester.deleteTestGroups(): " + ex.getMessage());}
-    finally { org.jasig.portal.RDBMServices.releaseConnection(conn); }
+    finally { RDBMServices.releaseConnection(conn); }
  }
 /**
  * @return org.jasig.portal.groups.IEntityGroup

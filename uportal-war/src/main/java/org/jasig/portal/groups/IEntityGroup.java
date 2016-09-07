@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.groups;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.naming.Name;

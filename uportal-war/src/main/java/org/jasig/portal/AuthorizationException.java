@@ -18,6 +18,8 @@
  */
 package org.jasig.portal;
 
+import org.apereo.portal.PortalException;
+
 /**
  * This exception informs uPortal that an authorization violation has occured 
  * within a channel.

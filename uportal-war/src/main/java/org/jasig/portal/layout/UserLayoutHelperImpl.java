@@ -23,14 +23,13 @@ package org.jasig.portal.layout;
 
 import java.util.Hashtable;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.security.provider.RestrictedPerson;

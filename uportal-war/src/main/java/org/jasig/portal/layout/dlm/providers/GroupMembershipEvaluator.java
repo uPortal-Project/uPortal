@@ -26,7 +26,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
@@ -35,9 +35,6 @@ import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * Answers isApplicable() in the affirmative if the user represented by the

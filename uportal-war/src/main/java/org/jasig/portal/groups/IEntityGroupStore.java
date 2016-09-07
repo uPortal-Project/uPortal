@@ -20,7 +20,7 @@ package org.jasig.portal.groups;
 
 import java.util.Iterator;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * Interface for finding and maintaining <code>IEntityGroups</code>.

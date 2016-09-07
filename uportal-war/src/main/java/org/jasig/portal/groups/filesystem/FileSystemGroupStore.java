@@ -38,12 +38,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityGroupStore;
@@ -51,6 +51,7 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.services.GroupService;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
  * This class is an <code>IEntityGroupStore</code> that uses the native file
@@ -500,7 +501,7 @@ protected Collection getEntitiesFromFile(File idFile) throws GroupsException
 
     Collection ids = null;
     Class type = getEntityType(idFile);
-    if ( EntityTypes.getEntityTypeID(type) == null )
+    if ( EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid entity type: " + type); }
     try
         { ids = getEntityIdsFromFile(idFile); }
@@ -735,7 +736,7 @@ public IEntityGroup newInstance(Class entityType) throws GroupsException
 
 public IEntity newInstance(String key, Class type) throws GroupsException
 {
-    if ( org.jasig.portal.EntityTypes.getEntityTypeID(type) == null )
+    if ( EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }
     return new EntityImpl(key, type);
 }
@@ -847,7 +848,7 @@ throws GroupsException
             for ( int filesIdx=0; filesIdx<files.length; filesIdx++ )
             {
                 String key = getKeyFromFile(files[filesIdx]);
-                EntityIdentifier ei = new EntityIdentifier(key, EntityTypes.GROUP_ENTITY_TYPE);
+                EntityIdentifier ei = new EntityIdentifier(key, ICompositeGroupService.GROUP_ENTITY_TYPE);
                 ids.add(ei);
             }
         }

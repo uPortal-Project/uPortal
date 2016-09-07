@@ -40,7 +40,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.security.IPerson;
 
@@ -49,7 +49,6 @@ import org.jasig.portal.security.IPerson;
  * {@link IUserFragmentSubscription}. 
  * 
  * @author Mary Hunt
- * @version $Revision$ $Date$
  */
 
 @Entity
@@ -67,13 +66,13 @@ import org.jasig.portal.security.IPerson;
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 class UserFragmentSubscriptionImpl implements IUserFragmentSubscription {
-	
+
    //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
    @Id
    @GeneratedValue(generator = "UP_USER_FRAGMENT_SUBSCRIPTION_GEN")
    @Column(name = "USER_FRAGMENT_SUBSCRIPTION_ID")
    private final long userFragmentInfoId;
-   
+
    @Version
    @Column(name = "ENTITY_VERSION")
    private final long entityVersion;

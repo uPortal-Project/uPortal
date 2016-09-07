@@ -22,11 +22,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public final class SystemPerson implements IPerson {
     private static final long serialVersionUID = 1L;
@@ -43,7 +42,7 @@ public final class SystemPerson implements IPerson {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IBasicEntity#getEntityIdentifier()
+     * @see org.apereo.portal.IBasicEntity#getEntityIdentifier()
      */
     @Override
     public EntityIdentifier getEntityIdentifier() {

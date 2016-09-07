@@ -19,7 +19,7 @@
 package org.jasig.portal.security;
 
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.services.AuthorizationService;
 
 /**

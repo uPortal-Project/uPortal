@@ -26,7 +26,7 @@ package org.jasig.portal.user;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 /**
  * Determines which {@link IUserInstance} object to use for a given request.

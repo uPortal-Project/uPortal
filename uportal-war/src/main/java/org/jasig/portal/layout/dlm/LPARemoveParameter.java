@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.layout.dlm;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

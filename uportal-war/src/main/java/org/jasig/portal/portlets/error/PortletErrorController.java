@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * to render due to an {@link Exception}.
  * 
  * @author Nicholas Blair
- * @version $Id$
  */
 @Controller
 public class PortletErrorController {

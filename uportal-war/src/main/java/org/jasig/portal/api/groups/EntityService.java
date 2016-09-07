@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.api.Principal;
 import org.jasig.portal.api.PrincipalImpl;
 import org.jasig.portal.groups.IEntityGroup;
@@ -34,7 +34,7 @@ import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 public final class EntityService {
     private static final Log log = LogFactory.getLog(EntityService.class);

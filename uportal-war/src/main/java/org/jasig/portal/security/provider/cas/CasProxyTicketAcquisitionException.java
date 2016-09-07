@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.security.provider.cas;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 import java.security.Principal;
 

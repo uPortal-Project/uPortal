@@ -36,7 +36,7 @@ import org.apache.tools.ant.util.FileUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.tools.shell.Groovysh;
 import org.codehaus.groovy.tools.shell.IO;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -44,7 +44,6 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PortalShell {
     static final Logger LOGGER = LoggerFactory.getLogger(PortalShell.class);

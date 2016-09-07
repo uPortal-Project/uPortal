@@ -24,7 +24,7 @@ import java.net.URLDecoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;

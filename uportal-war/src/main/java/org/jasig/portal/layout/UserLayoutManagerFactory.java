@@ -19,7 +19,7 @@
 package org.jasig.portal.layout;
 
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.immutable.ImmutableTransientUserLayoutManagerWrapper;
 import org.jasig.portal.security.IPerson;
 import org.springframework.beans.BeansException;

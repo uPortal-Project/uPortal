@@ -29,7 +29,7 @@ import javax.persistence.criteria.Root;
 import org.jasig.portal.events.aggr.TimeDimension;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.LocalTime;
 import org.springframework.stereotype.Repository;
 
@@ -37,7 +37,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Repository
 public class JpaTimeDimensionDao extends BaseAggrEventsJpaDao implements TimeDimensionDao {

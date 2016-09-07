@@ -20,15 +20,14 @@ package org.jasig.portal.jmx;
 
 import java.util.Date;
 
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.jasig.portal.services.Authentication;
-import org.jasig.portal.utils.MovingAverageSample;
+import org.apereo.portal.utils.MovingAverageSample;
 
 /**
  * uPortal metrics to make available via JMX.
  *
  * @author George Lindholm <a href="mailto:George.Lindholm@ubc.ca">George.Lindholm@ubc.ca</a>
- * @version $Revision$ $Date$
  * @since uPortal 2.5
  */
 public class FrameworkMBeanImpl implements FrameworkMBean {

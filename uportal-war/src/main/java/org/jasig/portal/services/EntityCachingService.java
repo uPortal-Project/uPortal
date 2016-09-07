@@ -18,12 +18,12 @@
  */
 package org.jasig.portal.services;
 
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityCachingService;
 import org.jasig.portal.spring.locator.EntityCachingServiceLocator;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
   * This class presents a facade for the IEntityCachingService implementation
@@ -90,7 +90,7 @@ public class EntityCachingService implements IEntityCachingService {
 
     /**
      * Adds the entity to the cache.
-     * @param ent org.jasig.portal.IBasicEntity
+     * @param ent org.apereo.portal.IBasicEntity
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public void add(IBasicEntity ent) throws CachingException {
@@ -142,7 +142,7 @@ public class EntityCachingService implements IEntityCachingService {
     /**
      * Removes the <code>IBasicEntity</code> from the cache and notifies peer
      * caches.
-     * @param ent org.jasig.portal.IBasicEntity
+     * @param ent org.apereo.portal.IBasicEntity
      * @exception org.jasig.portal.concurrency.CachingException
      */
     public void remove(IBasicEntity ent) throws CachingException {

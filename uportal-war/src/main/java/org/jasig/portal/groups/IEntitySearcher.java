@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * Defines an api for searching for entities

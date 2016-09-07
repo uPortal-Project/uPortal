@@ -18,43 +18,42 @@
  */
 package org.jasig.portal.concurrency;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
-  * Defines an api for acquiring lock objects, <code>IEntityLocks</code>, that
-  * can be used to control concurrent access to portal entities.  A lock is
-  * associated with a particular entity and has an <code>owner</code>, a
-  * <code>lockType</code> and a service-controlled <code>expirationTime</code>.
-  * Currently supported lock types are READ_LOCK and WRITE_LOCK.
-  * <p>
-  * If I want to lock an entity for update, I ask the service for a write lock:
-  * <p>
-  * <code>int lockType = IEntityLockService.WRITE_LOCK;<br>
-  *       EntityIdentifier eid = myEntity.getEntityIdentifier();<br>
-  *       IEntityLock lock = svc.newLock(eid, lockType, lockOwner);</code>
-  * <p>
-  * If there is no conflicting lock on the entity, the service responds with
-  * the requested lock.  If I acquire the lock, I know that no other client will
-  * get be able to get a conflicting lock.  From then on, I communicate with the
-  * service via the lock:
-  * <p>
-  * <code>
-  *   lock.convert(int newType);<br>
-  *   lock.isValid();<br>
-  *   lock.release();<br>
-  *   lock.renew();<br>
-  * </code>
-  * <p>
-  * A READ lock guarantees repeatable reads; other clients can get READ locks
-  * but not WRITE locks.  A WRITE lock guarantees exclusive access; no other
-  * clients can get either READ or WRITE locks on the entity.
-  * <p>
-  * NB: since the locking service is not part of a transactional or object
-  * persistence framework, it has no way to enforce its own use.
-  *
-  * @author Dan Ellentuck
-  * @version $Revision$
-*/
+ * Defines an api for acquiring lock objects, <code>IEntityLocks</code>, that
+ * can be used to control concurrent access to portal entities.  A lock is
+ * associated with a particular entity and has an <code>owner</code>, a
+ * <code>lockType</code> and a service-controlled <code>expirationTime</code>.
+ * Currently supported lock types are READ_LOCK and WRITE_LOCK.
+ * <p>
+ * If I want to lock an entity for update, I ask the service for a write lock:
+ * <p>
+ * <code>int lockType = IEntityLockService.WRITE_LOCK;<br>
+ *       EntityIdentifier eid = myEntity.getEntityIdentifier();<br>
+ *       IEntityLock lock = svc.newLock(eid, lockType, lockOwner);</code>
+ * <p>
+ * If there is no conflicting lock on the entity, the service responds with
+ * the requested lock.  If I acquire the lock, I know that no other client will
+ * get be able to get a conflicting lock.  From then on, I communicate with the
+ * service via the lock:
+ * <p>
+ * <code>
+ *   lock.convert(int newType);<br>
+ *   lock.isValid();<br>
+ *   lock.release();<br>
+ *   lock.renew();<br>
+ * </code>
+ * <p>
+ * A READ lock guarantees repeatable reads; other clients can get READ locks
+ * but not WRITE locks.  A WRITE lock guarantees exclusive access; no other
+ * clients can get either READ or WRITE locks on the entity.
+ * <p>
+ * NB: since the locking service is not part of a transactional or object
+ * persistence framework, it has no way to enforce its own use.
+ *
+ * @author Dan Ellentuck
+ */
 public interface IEntityLockService {
 
     // The different types of locks:

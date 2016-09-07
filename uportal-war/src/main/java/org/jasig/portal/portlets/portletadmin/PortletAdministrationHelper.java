@@ -56,7 +56,7 @@ import org.apache.pluto.container.om.portlet.DisplayName;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Supports;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.DelegateState;
 import org.jasig.portal.api.portlet.DelegationActionResponse;
 import org.jasig.portal.api.portlet.PortletDelegationDispatcher;

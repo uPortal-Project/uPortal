@@ -20,21 +20,20 @@ package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.LockingException;
 import org.jasig.portal.properties.PropertiesManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 /**
  * @author Dan Ellentuck
- * @version $Revision$
  */
-public class ReferenceEntityLockService implements IEntityLockService
-{
+public class ReferenceEntityLockService implements IEntityLockService {
     private static final Log log = LogFactory.getLog(ReferenceEntityLockService.class);
-    
+
     // Singleton instance:
     private static IEntityLockService singleton = null;
 
@@ -329,7 +328,7 @@ throws LockingException
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entityID org.jasig.portal.EntityIdentifier
+ * @param entityID org.apereo.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
  * @exception LockingException
@@ -342,7 +341,7 @@ throws LockingException
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
  * @return org.jasig.portal.groups.IEntityLock
- * @param entityID org.jasig.portal.EntityIdentifier
+ * @param entityID org.apereo.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
  * @param durationSecs int

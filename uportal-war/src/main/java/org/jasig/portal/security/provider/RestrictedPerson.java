@@ -21,7 +21,7 @@ package org.jasig.portal.security.provider;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 

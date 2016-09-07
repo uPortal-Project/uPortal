@@ -24,7 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 /**
  * Describes the entry point into the uPortal rendering pipeline.

@@ -20,6 +20,7 @@ package org.jasig.portal.concurrency.locking;
 
 import java.util.Date;
 
+import org.apereo.portal.EntityTypes;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.LockingException;
@@ -130,7 +131,7 @@ public String getEntityKey() {
     return entityKey;
 }
 /**
- * @see org.jasig.portal.EntityTypes for known types.
+ * @see EntityTypes for known types.
  * @return java.lang.Class
  */
 public Class getEntityType() {

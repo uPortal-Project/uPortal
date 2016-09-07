@@ -19,9 +19,8 @@
 package org.jasig.portal.utils;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

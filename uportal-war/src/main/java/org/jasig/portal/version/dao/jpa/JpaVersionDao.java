@@ -27,8 +27,8 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.exception.SQLGrammarException;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;
 import org.springframework.dao.support.DataAccessUtils;

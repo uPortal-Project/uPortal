@@ -29,7 +29,7 @@ import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;

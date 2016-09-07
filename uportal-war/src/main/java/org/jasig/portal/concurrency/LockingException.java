@@ -18,6 +18,8 @@
  */
 package org.jasig.portal.concurrency;
 
+import org.apereo.portal.PortalException;
+
 /**
  * A <code>LockingException</code> describes a problem that has arisen during
  * an attempt to create or alter an <code>IEntityLock</code>.  If the problem
@@ -27,7 +29,7 @@ package org.jasig.portal.concurrency;
  * @author Dan Ellentuck
  * @version $Revision$
  */
-public class LockingException extends org.jasig.portal.PortalException {
+public class LockingException extends PortalException {
     
     /**
      * Instantiate a LockingException with the given cause.

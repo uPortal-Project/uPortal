@@ -44,7 +44,7 @@ import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.UserPreferencesManager;
 import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;

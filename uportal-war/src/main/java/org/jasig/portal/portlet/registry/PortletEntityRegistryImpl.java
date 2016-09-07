@@ -35,9 +35,9 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;

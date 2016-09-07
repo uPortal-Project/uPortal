@@ -34,7 +34,7 @@ import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.danann.cernunnos.Task;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.danann.cernunnos.runtime.ScriptRunner;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.ComponentGroupServiceDescriptor;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityTestingGroupImpl;

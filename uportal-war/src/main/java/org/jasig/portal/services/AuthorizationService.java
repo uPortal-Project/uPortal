@@ -29,11 +29,10 @@ import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IAuthorizationServiceFactory;
-import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionManager;
 import org.jasig.portal.security.IUpdatingPermissionManager;
 import org.jasig.portal.security.PortalSecurityException;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

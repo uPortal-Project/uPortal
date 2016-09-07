@@ -21,7 +21,8 @@ package org.jasig.portal.spring.locator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.spring.PortalApplicationContextLocator;
+import org.apereo.portal.utils.AbstractBeanLocator;
+import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class PortletDefinitionRegistryLocator extends AbstractBeanLocator<IPortl
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#getLocator()
+     * @see org.apereo.portal.utils.AbstractBeanLocator#getLocator()
      */
     @Override
     protected AbstractBeanLocator<IPortletDefinitionRegistry> getLocator() {
@@ -64,7 +65,7 @@ public class PortletDefinitionRegistryLocator extends AbstractBeanLocator<IPortl
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.locator.AbstractBeanLocator#setLocator(org.jasig.portal.spring.locator.AbstractBeanLocator)
+     * @see org.apereo.portal.utils.AbstractBeanLocator#setLocator(org.apereo.portal.utils.AbstractBeanLocator)
      */
     @Override
     protected void setLocator(AbstractBeanLocator<IPortletDefinitionRegistry> locator) {

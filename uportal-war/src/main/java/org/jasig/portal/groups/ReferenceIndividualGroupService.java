@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.LockingException;
@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
 public class ReferenceIndividualGroupService extends ReferenceCompositeGroupService
 implements IIndividualGroupService, ILockableGroupService
 {
-    
+
     private static final Logger log = LoggerFactory.getLogger(ReferenceIndividualGroupService.class);
-    
+
     // Describes the attributes of this service.  See compositeGroupServices.xml.
     protected ComponentGroupServiceDescriptor serviceDescriptor;
 
@@ -274,7 +274,7 @@ public ILockableEntityGroup findGroupWithLock(
 
     throwExceptionIfNotInternallyManaged();
 
-    Class groupType = org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE;
+    Class groupType = ICompositeGroupService.GROUP_ENTITY_TYPE;
     try {
         IEntityLock lock =
             (secs == 0)
@@ -422,7 +422,7 @@ public IEntityStore getEntityFactory()
  */
 protected IEntityGroup getGroupFromCache(String key) throws CachingException
 {
-    return (IEntityGroup) EntityCachingService.instance().get(org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE, key);
+    return (IEntityGroup) EntityCachingService.instance().get(ICompositeGroupService.GROUP_ENTITY_TYPE, key);
 }
 
     /**
@@ -434,7 +434,7 @@ protected IEntityGroup getGroupFromCache(String key) throws CachingException
     public IGroupMember getGroupMember(String key, Class type) throws GroupsException
     {
       IGroupMember gm = null;
-      if ( type == org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE )
+      if ( type == ICompositeGroupService.GROUP_ENTITY_TYPE )
         gm = findGroup(key);
       else
         gm = getEntity(key, type);

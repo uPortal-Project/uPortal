@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.security.IAuthorizationPrincipal;

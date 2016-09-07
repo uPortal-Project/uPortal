@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 
 /**
  * @author Dan Ellentuck, de3@columbia.edu

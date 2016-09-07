@@ -18,29 +18,29 @@
  */
 package org.jasig.portal.concurrency;
 
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.EntityTypes;
+import org.apereo.portal.IBasicEntity;
 
 /**
   * Defines the api for a cache that caches <code>IBasicEntities</code>
   * of a single type.
   *
   * @author Dan Ellentuck
-  * @version $Revision$
   */
 public interface IEntityCache {
-    
+
     /**
      * @param entity - the entity to be cached.
      */
     public void add(IBasicEntity entity) throws CachingException;
-    
+
     /**
      * Purge stale entries from the cache.
      * @deprecated This is the responsibility of the cache or cache manager code
      */
     @Deprecated
     public void cleanupCache() throws CachingException;
-    
+
     /**
      * Remove all entries from the cache.
      */
@@ -53,7 +53,7 @@ public interface IEntityCache {
     public IBasicEntity get(String key);
     
     /**
-     * @see org.jasig.portal.EntityTypes for known types.
+     * @see EntityTypes for known types.
      * @return java.lang.Class
      */
     public Class<? extends IBasicEntity> getEntityType();

@@ -51,6 +51,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 
+import org.apereo.portal.ICounterStore;
 import org.hibernate.id.IdentifierGeneratorHelper;
 import org.hibernate.id.IntegralDataTypeHolder;
 import org.hibernate.id.enhanced.AccessCallback;
@@ -59,7 +60,7 @@ import org.hibernate.id.enhanced.OptimizerFactory;
 import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

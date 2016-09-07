@@ -24,9 +24,11 @@ import javax.naming.Name;
  * A composite key that identifies a component group service.
  *
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
+
+    private static final long serialVersionUID = 1L;
+
 /**
  * CompositeServiceIdentifier.
  * @param serviceKey java.lang.String
@@ -34,7 +36,7 @@ public class CompositeServiceIdentifier extends CompositeEntityIdentifier {
  */
 public CompositeServiceIdentifier(String serviceKey) throws GroupsException 
 {
-    super(serviceKey, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE);
+    super(serviceKey, ICompositeGroupService.GROUP_ENTITY_TYPE);
 }
 /**
  * CompositeServiceIdentifier.

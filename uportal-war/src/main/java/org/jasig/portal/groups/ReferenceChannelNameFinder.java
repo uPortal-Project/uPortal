@@ -19,9 +19,7 @@
 package  org.jasig.portal.groups;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
@@ -32,9 +30,7 @@ import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
  */
 public class ReferenceChannelNameFinder
         implements IEntityNameFinder {
-    
-    private static final Log log = LogFactory.getLog(ReferenceChannelNameFinder.class);
-    
+
     private static IEntityNameFinder _instance = null;
     private final Class<? extends IBasicEntity> type = IPortletDefinition.class;
 

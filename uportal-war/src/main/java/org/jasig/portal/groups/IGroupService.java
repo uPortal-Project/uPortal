@@ -20,7 +20,7 @@ package org.jasig.portal.groups;
 
 import java.util.Iterator;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 
 /**
  * Defines an api for discovering an entry point into the groups system,

@@ -28,7 +28,9 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.jpa.BasePortalJpaDao.PortalTransactional;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;

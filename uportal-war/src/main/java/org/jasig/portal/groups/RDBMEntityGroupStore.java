@@ -30,11 +30,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
-import org.jasig.portal.RDBMServices;
+import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.jdbc.RDBMServices;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.utils.SqlTransaction;
 
 /**
@@ -271,7 +271,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     public java.util.Iterator findParentGroups(IEntity ent) throws GroupsException
     {
         String memberKey = ent.getKey();
-        Integer type = EntityTypes.getEntityTypeID(ent.getLeafType());
+        Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(ent.getLeafType());
         return findParentGroupsForEntity(memberKey, type.intValue());
     }
 
@@ -284,7 +284,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
     {
         String memberKey = group.getLocalKey();
         String serviceName = group.getServiceName().toString();
-        Integer type = EntityTypes.getEntityTypeID(group.getLeafType());
+        Integer type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(group.getLeafType());
         return findParentGroupsForGroup(serviceName, memberKey, type.intValue());
     }
 
@@ -979,7 +979,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         String key = rs.getString(1);
         String creatorID = rs.getString(2);
         Integer entityTypeID = new Integer(rs.getInt(3));
-        Class entityType = EntityTypes.getEntityType(entityTypeID);
+        Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String groupName = rs.getString(4);
         String description = rs.getString(5);
 
@@ -1003,7 +1003,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         String key = rs.getString(1);
         String creatorID = rs.getString(2);
         Integer entityTypeID = new Integer(rs.getInt(3));
-        Class entityType = EntityTypes.getEntityType(entityTypeID);
+        Class entityType = EntityTypesLocator.getEntityTypes().getEntityTypeFromID(entityTypeID);
         String groupName = rs.getString(4);
         String description = rs.getString(5);
 
@@ -1018,7 +1018,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      */
     public IEntity newEntity(Class type, String key) throws GroupsException
     {
-        if ( EntityTypes.getEntityTypeID(type) == null )
+        if ( EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }
         return GroupService.getEntity(key, type);
     }
@@ -1027,7 +1027,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
      */
     public IEntityGroup newInstance(Class type) throws GroupsException
     {
-        if ( EntityTypes.getEntityTypeID(type) == null )
+        if ( EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }
         try
         { return new EntityGroupImpl(getNextKey(), type); }
@@ -1097,7 +1097,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     conn.prepareStatement(getInsertGroupSql());
             try
             {
-                Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
+                Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(group.getLeafType());
                 ps.setString(1, group.getLocalKey());
                 ps.setString(2, group.getCreatorID());
                 ps.setInt   (3, typeID.intValue());
@@ -1240,7 +1240,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
 
             try
             {
-                Integer typeID = EntityTypes.getEntityTypeID(group.getLeafType());
+                Integer typeID = EntityTypesLocator.getEntityTypes().getEntityIDFromType(group.getLeafType());
 
                 ps.setString(1, group.getCreatorID());
                 ps.setInt(2, typeID.intValue());
@@ -1424,7 +1424,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
         ArrayList ar = new ArrayList();
         Connection conn = null;
         PreparedStatement ps = null;
-        int type = EntityTypes.getEntityTypeID(leaftype).intValue();
+        int type = EntityTypesLocator.getEntityTypes().getEntityIDFromType(leaftype).intValue();
         //System.out.println("Checking out groups of leaftype "+leaftype.getName()+" or "+type);
 
         try {
@@ -1458,7 +1458,7 @@ public class RDBMEntityGroupStore implements IEntityGroupStore, IGroupConstants 
                     //System.out.println(ps.toString());
                     while (rs.next()){
                         //System.out.println("result");
-                        ar.add(new EntityIdentifier(rs.getString(1), org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE));
+                        ar.add(new EntityIdentifier(rs.getString(1), ICompositeGroupService.GROUP_ENTITY_TYPE));
                     }
                 } finally {
                     close(rs);

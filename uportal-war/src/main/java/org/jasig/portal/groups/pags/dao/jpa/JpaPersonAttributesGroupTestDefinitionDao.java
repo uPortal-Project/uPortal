@@ -22,7 +22,7 @@ package org.jasig.portal.groups.pags.dao.jpa;
 import javax.persistence.EntityManager;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;

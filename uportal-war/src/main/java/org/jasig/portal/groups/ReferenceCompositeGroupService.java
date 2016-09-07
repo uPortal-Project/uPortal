@@ -29,7 +29,7 @@ import java.util.Set;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.CachingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
@@ -160,7 +160,7 @@ throws GroupsException
 public IGroupMember getGroupMember(String key, Class type) throws GroupsException
 {
     IGroupMember gm = null;
-    if ( type == org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE )
+    if ( type == ICompositeGroupService.GROUP_ENTITY_TYPE )
         gm = findGroup(key);
     else
         gm = getEntity(key, type);
@@ -230,7 +230,7 @@ protected void initializeComponentServices() throws GroupsException
 protected CompositeEntityIdentifier newCompositeEntityIdentifier(String key)
 throws GroupsException
 {
-    return new CompositeEntityIdentifier(key, org.jasig.portal.EntityTypes.GROUP_ENTITY_TYPE);
+    return new CompositeEntityIdentifier(key, ICompositeGroupService.GROUP_ENTITY_TYPE);
 }
 /**
  * Returns a new <code>IEntityGroup</code> from the named service.
@@ -379,6 +379,6 @@ protected void cacheUpdate(IGroupMember gm) throws GroupsException
  */
 protected IEntity getEntityFromCache(String key) throws CachingException
 {
-    return (IEntity) EntityCachingService.instance().get(org.jasig.portal.EntityTypes.LEAF_ENTITY_TYPE, key);
+    return (IEntity) EntityCachingService.instance().get(ICompositeGroupService.LEAF_ENTITY_TYPE, key);
 }
 }

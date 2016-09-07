@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.PortletPreferencesJsonDao;

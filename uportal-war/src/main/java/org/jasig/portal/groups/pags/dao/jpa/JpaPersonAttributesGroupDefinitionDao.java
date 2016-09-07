@@ -35,7 +35,7 @@ import com.google.common.base.Function;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -21,7 +21,7 @@
  */
 package org.jasig.portal.fragment.subscribe;
 
-import org.jasig.portal.IBasicEntity;
+import org.apereo.portal.IBasicEntity;
 
 /**
  * IUserFragmentSubscription represents a fragment subscription for an 

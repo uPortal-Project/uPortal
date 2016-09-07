@@ -20,7 +20,7 @@ package org.jasig.portal.layout.immutable;
 
 import javax.xml.stream.XMLEventReader;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.TransientUserLayoutManagerWrapper;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;

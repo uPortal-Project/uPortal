@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.rendering;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 
 /**
  * @author Eric Dalquist

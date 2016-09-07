@@ -19,7 +19,7 @@
 package org.jasig.portal.jgroups.protocols;
 
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.jpa.IVersionedDatabaseUpdateHelper;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;

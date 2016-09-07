@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.i18n.ILocaleStore;
 import org.jasig.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.Constants;

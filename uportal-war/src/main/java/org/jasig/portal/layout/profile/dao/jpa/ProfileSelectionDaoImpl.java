@@ -19,11 +19,10 @@
 package org.jasig.portal.layout.profile.dao.jpa;
 
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.layout.profile.IProfileSelection;
 import org.jasig.portal.layout.profile.dao.IProfileSelectionDao;
-import org.springframework.stereotype.Repository;
 
 /**
  * JPA implementation of IProfilePreferenceDao.

@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.utils.DocumentFactory;
-import org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
@@ -52,7 +52,7 @@ public class LegacyConfigurationLoader implements ConfigurationLoader {
     private final SingletonDoubleCheckedCreator<Boolean> loadedFlag = new SingletonDoubleCheckedCreator<Boolean>() {
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
+         * @see org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
          */
         @Override
         protected Boolean createSingleton(Object... args) {

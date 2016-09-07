@@ -43,13 +43,13 @@
             class="org.jasig.portal.spring.locator.PersonManagerLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.PortalDbLocator" 
-            class="org.jasig.portal.spring.locator.PortalDbLocator" lazy-init="false">
+    <bean id="org.apereo.portal.jdbc.PortalDbLocator"
+            class="org.apereo.portal.jdbc.PortalDbLocator" lazy-init="false">
         <constructor-arg index="0" ref="PortalDb" />
     </bean>
 
-    <bean id="org.jasig.portal.spring.locator.PortalDbMetadataLocator" 
-            class="org.jasig.portal.spring.locator.PortalDbMetadataLocator">
+    <bean id="org.apereo.portal.jdbc.PortalDbMetadataLocator"
+            class="org.apereo.portal.jdbc.PortalDbMetadataLocator">
         <constructor-arg index="0" ref="PortalDB.metadata" />
     </bean>
 

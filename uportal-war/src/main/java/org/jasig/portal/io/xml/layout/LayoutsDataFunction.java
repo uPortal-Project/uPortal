@@ -29,7 +29,7 @@ import javax.sql.DataSource;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.SimpleStringPortalData;
-import org.jasig.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.springframework.beans.factory.InitializingBean;

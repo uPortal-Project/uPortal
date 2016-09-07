@@ -20,7 +20,7 @@ package org.jasig.portal.groups.ldap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.ResourceMissingException;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
@@ -32,6 +32,7 @@ import org.jasig.portal.groups.IEntitySearcher;
 import org.jasig.portal.groups.IEntityStore;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.utils.ResourceLoader;
 import org.jasig.portal.utils.SmartCache;
 import org.springframework.ldap.core.LdapEncoder;
@@ -615,7 +616,7 @@ public class LDAPGroupStore implements IEntityGroupStore, IEntityStore, IEntityS
   }
 
   public IEntity newInstance(String key, Class type) throws GroupsException {
-    if ( org.jasig.portal.EntityTypes.getEntityTypeID(type) == null )
+    if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null )
         { throw new GroupsException("Invalid group type: " + type); }
     return new EntityImpl(key, type);
   }

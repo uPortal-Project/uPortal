@@ -34,8 +34,8 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
-import org.jasig.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.OpenEntityManager;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
@@ -49,7 +49,6 @@ import com.google.common.base.Function;
  * JPA implementation of {@link IPortletCookieDao}.
  * 
  * @author Nicholas Blair
- * @version $Id$
  */
 @Repository("portletCookieDao")
 @Qualifier("persistence")

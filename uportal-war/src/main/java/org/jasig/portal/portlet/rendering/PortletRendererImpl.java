@@ -34,7 +34,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.PortletDispatchException;

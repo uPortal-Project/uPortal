@@ -27,11 +27,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
-import org.jasig.portal.EntityTypes;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.groups.EntityGroupImpl;
 import org.jasig.portal.groups.EntityImpl;
 import org.jasig.portal.groups.GroupsException;
+import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntity;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IEntityGroupStore;
@@ -41,6 +41,7 @@ import org.jasig.portal.groups.IGroupConstants;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
+import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 import edu.internet2.middleware.grouperClient.api.GcAddMember;
 import edu.internet2.middleware.grouperClient.api.GcFindGroups;
@@ -472,7 +473,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
 
 				for (WsSubject wsSubject : results.getWsSubjects()) {
 					entityIdentifiers.add(new EntityIdentifier(wsSubject
-							.getName(), EntityTypes.LEAF_ENTITY_TYPE));
+							.getName(), ICompositeGroupService.LEAF_ENTITY_TYPE));
 				}
 			}
 			return entityIdentifiers.toArray(new EntityIdentifier[entityIdentifiers.size()]);
@@ -491,7 +492,7 @@ public class GrouperEntityGroupStore implements IEntityGroupStore,
      */
     @SuppressWarnings("unchecked")
     public IEntity newInstance(String key, Class type) throws GroupsException {
-        if (org.jasig.portal.EntityTypes.getEntityTypeID(type) == null) {
+        if (EntityTypesLocator.getEntityTypes().getEntityIDFromType(type) == null) {
             throw new GroupsException("Invalid group type: " + type);
         }
         return new EntityImpl(key, type);

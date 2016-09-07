@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
 import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.permission.IPermissionActivity;
@@ -42,7 +42,6 @@ import org.springframework.stereotype.Service;
  * permission editing Spring Webflows.
  * 
  * @author Jen Bourey, jbourey@unicon.net
- * @version $Revision$
  * @since 3.3
  */
 @Service

@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.w3c.dom.Document;

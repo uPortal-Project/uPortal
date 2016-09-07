@@ -18,7 +18,8 @@
  */
 package org.jasig.portal.jpa;
 
-import org.jasig.portal.jpa.BasePortalJpaDao.PortalTransactional;
+import org.apereo.portal.jpa.BasePortalJpaDao;
+import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;

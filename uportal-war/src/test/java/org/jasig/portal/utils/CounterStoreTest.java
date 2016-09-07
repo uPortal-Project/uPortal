@@ -20,6 +20,7 @@ package org.jasig.portal.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import org.apereo.portal.ICounterStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,0 +1,13 @@
+description = "Apereo uPortal RDBM"
+
+dependencies {
+    compile project(':uPortal-utils')
+
+    compile "com.google.guava:guava:${guavaVersion}"
+    compile "org.hibernate:hibernate-core:${hibernateVersion}"
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-jdbc:${springVersion}"
+    compile "org.springframework:spring-orm:${springVersion}"
+    compile "org.springframework:spring-tx:${springVersion}"
+}

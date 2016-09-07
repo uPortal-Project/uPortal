@@ -98,7 +98,7 @@
      |  Support Beans
      +-->
     <bean id="counterStore" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.ICounterStore" />
+        <constructor-arg value="org.apereo.portal.ICounterStore" />
     </bean>
     <bean id="cachingResourceLoader" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.cache.resource.CachingResourceLoader" />

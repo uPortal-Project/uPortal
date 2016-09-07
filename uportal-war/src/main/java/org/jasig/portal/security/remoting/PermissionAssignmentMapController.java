@@ -42,7 +42,6 @@ import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.provider.AuthorizationImpl;
 import org.jasig.portal.security.provider.PermissionImpl;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;

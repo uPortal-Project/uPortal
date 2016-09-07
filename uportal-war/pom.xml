@@ -46,13 +46,17 @@
         <!-- ===== uPortal Dependencies ======================================= -->
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-platform-api</artifactId>
+            <artifactId>uPortal-core</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-search-api</artifactId>
+            <artifactId>uPortal-rdbm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-utils</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -65,6 +69,19 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Pre-Gradle -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-platform-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-search-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- ===== Compile Dependencies ======================================= -->

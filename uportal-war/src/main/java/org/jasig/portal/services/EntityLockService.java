@@ -20,7 +20,7 @@ package org.jasig.portal.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.concurrency.IEntityLock;
 import org.jasig.portal.concurrency.IEntityLockService;
 import org.jasig.portal.concurrency.IEntityLockServiceFactory;

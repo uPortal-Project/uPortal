@@ -23,10 +23,9 @@ import java.util.Set;
 
 import javax.xml.xpath.XPathExpression;
 
-import org.jasig.portal.PortalException;
+import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.om.IStylesheetUserPreferences;
-import org.w3c.dom.Document;
 
 /**
  * An interface representing the user layout.

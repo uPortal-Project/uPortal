@@ -19,9 +19,8 @@
 package org.jasig.portal.security.provider;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import org.jasig.portal.EntityIdentifier;
+import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPermissionSet;
