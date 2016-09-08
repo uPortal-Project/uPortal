@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.dao.usertype;
+package org.apereo.portal.dao.usertype;
 
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
- * UserType for mapping strings that can be both null or empty
+ * Uses Jackson to convert objects to/from JSON
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class NullSafeStringType extends AbstractSingleColumnUserType<String, String, NullSafeStringColumnMapper> {
+public class StatisticsJacksonType extends AbstractSingleColumnUserType<Object, String, StatisticsJacksonColumnMapper> {
     private static final long serialVersionUID = 1L;
 }

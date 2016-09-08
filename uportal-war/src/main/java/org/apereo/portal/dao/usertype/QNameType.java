@@ -16,17 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.dao.usertype;
+package org.apereo.portal.dao.usertype;
+
+import javax.xml.namespace.QName;
 
 import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
- * Uses Jackson to convert objects to/from JSON
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class JacksonType extends AbstractSingleColumnUserType<Object, String, JacksonColumnMapper> {
+public class QNameType extends AbstractSingleColumnUserType<QName, String, QNameColumnMapper> {
     private static final long serialVersionUID = 1L;
-
 }

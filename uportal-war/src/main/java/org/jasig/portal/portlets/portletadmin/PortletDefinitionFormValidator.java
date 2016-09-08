@@ -21,7 +21,7 @@ package org.jasig.portal.portlets.portletadmin;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.dao.usertype.FunctionalNameType;
+import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;

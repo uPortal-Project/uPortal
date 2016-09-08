@@ -48,7 +48,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.dao.usertype.FunctionalNameType;
+import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
 import org.jasig.portal.layout.om.IStylesheetData;

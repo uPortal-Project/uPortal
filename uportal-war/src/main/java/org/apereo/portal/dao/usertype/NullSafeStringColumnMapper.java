@@ -16,26 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.dao.usertype;
+package org.apereo.portal.dao.usertype;
 
-import javax.xml.namespace.QName;
-
+import org.hibernate.HibernateException;
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class QNameColumnMapper extends AbstractStringColumnMapper<QName> {
+public class NullSafeStringColumnMapper extends AbstractStringColumnMapper<String> {
     private static final long serialVersionUID = 1L;
+    
+    public static final char NOT_NULL_PREFIX = '_';
 
     @Override
-    public QName fromNonNullValue(String s) {
-        return QName.valueOf(s);
+    public String fromNonNullValue(String s) {
+        if (s.charAt(0) != NOT_NULL_PREFIX) {
+            throw new HibernateException("Persistent storage of " + this.getClass().getName() + " corrupted, database contained string [" + s + "] which should be prefixed by: " + NOT_NULL_PREFIX);
+        }
+
+        return s.substring(1);
     }
 
     @Override
-    public String toNonNullValue(QName value) {
-        return value.toString();
+    public String toNonNullValue(String value) {
+        return NOT_NULL_PREFIX + value;
     }
 }

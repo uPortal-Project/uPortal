@@ -16,31 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.dao.usertype;
+package org.apereo.portal.dao.usertype;
 
-import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
+ * UserType for mapping strings that can be both null or empty
+ * 
  * @author Eric Dalquist
+ * @version $Revision$
  */
-public class FunctionalNameColumnMapper extends AbstractStringColumnMapper<String> {
+public class NullSafeStringType extends AbstractSingleColumnUserType<String, String, NullSafeStringColumnMapper> {
     private static final long serialVersionUID = 1L;
-
-    @Override
-    public String fromNonNullValue(String s) {
-        if (!FunctionalNameType.isValid(s)) {
-            throw new IllegalArgumentException("Value from database '" + s + "' does not validate against pattern: " + FunctionalNameType.VALID_FNAME_PATTERN.pattern());
-        }
-
-        return s;
-    }
-
-    @Override
-    public String toNonNullValue(String value) {
-        if (!FunctionalNameType.isValid(value)) {
-            throw new IllegalArgumentException("Value being stored '" + value + "' does not validate against pattern: " + FunctionalNameType.VALID_FNAME_PATTERN.pattern());
-        }
-        
-        return value;
-    }
 }

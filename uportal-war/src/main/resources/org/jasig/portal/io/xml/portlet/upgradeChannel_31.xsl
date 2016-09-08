@@ -21,7 +21,7 @@
 -->
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:fname="http://xml.apache.org/xalan/java/org.jasig.portal.dao.usertype.FunctionalNameType"
+    xmlns:fname="http://xml.apache.org/xalan/java/org.apereo.portal.dao.usertype.FunctionalNameType"
     extension-element-prefixes="fname"
     exclude-result-prefixes="fname"
     version="1.0">

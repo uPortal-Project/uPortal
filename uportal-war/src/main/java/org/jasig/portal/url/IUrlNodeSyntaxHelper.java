@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.dao.usertype.FunctionalNameType;
+import org.apereo.portal.dao.usertype.FunctionalNameType;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 
 /**

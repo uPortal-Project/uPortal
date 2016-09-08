@@ -16,27 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.dao.usertype;
+package org.apereo.portal.dao.usertype;
 
-import javax.portlet.WindowState;
-
-import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
-import org.jasig.portal.portlet.PortletUtils;
+import org.jadira.usertype.spi.shared.AbstractSingleColumnUserType;
 
 /**
+ * Uses Jackson to convert objects to/from JSON
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class WindowStateColumnMapper extends AbstractStringColumnMapper<WindowState> {
+public class JacksonType extends AbstractSingleColumnUserType<Object, String, JacksonColumnMapper> {
     private static final long serialVersionUID = 1L;
 
-    @Override
-    public WindowState fromNonNullValue(String s) {
-        return PortletUtils.getWindowState(s);
-    }
-
-    @Override
-    public String toNonNullValue(WindowState value) {
-        return value.toString();
-    }
 }
