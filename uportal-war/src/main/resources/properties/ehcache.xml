@@ -98,7 +98,7 @@
      | Caches username -> LrsActor resolution
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.events.tincan.LrsActorCache"
+    <cache name="org.apereo.portal.events.tincan.LrsActorCache"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -106,7 +106,7 @@
      | Caches layout node id -> tab name resolutions done by the tab renderer aggregator
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"
+    <cache name="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -1419,7 +1419,7 @@
      | Caches academic terms configured for aggregation intervals
      | - 1 x configured academic term
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1429,7 +1429,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1444,7 +1444,7 @@
      | Caches quarters configured for aggregation intervals
      | - 1 x quarter
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="4" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1454,7 +1454,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1469,7 +1469,7 @@
      | Caches aggregated group configuration
      | - 1 x aggregator config
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1479,7 +1479,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1489,7 +1489,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.includedGroups"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1499,7 +1499,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl.excludedGroups"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1514,7 +1514,7 @@
      | Caches aggregated interval configuration
      | - 1 x aggregator config
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1524,7 +1524,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.includedIntervals"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1534,7 +1534,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.excludedIntervals"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1544,7 +1544,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1559,7 +1559,7 @@
      | Caches date dimensions used for aggregations
      | - 1 x date in event range (plus 1 year to either side)
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1569,7 +1569,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="3660" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1579,7 +1579,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="3660" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1594,7 +1594,7 @@
      | Caches time dimensions used for aggregations
      | - 1 x minute in day
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1604,7 +1604,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1440" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1614,7 +1614,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1440" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1625,8 +1625,8 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <!-- NOT CACHED: org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl-NaturalId"
+    <!-- NOT CACHED: org.apereo.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl -->
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1642,7 +1642,7 @@
      | is only ever added to and entries are immutable
      | - 1 x portal group
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1652,7 +1652,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1662,7 +1662,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1678,7 +1678,7 @@
      | is only ever added to and entries are immutable
      | - 1 x portal portlet
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1688,7 +1688,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1698,7 +1698,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="1000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1714,7 +1714,7 @@
      | is only ever added to and entries are immutable
      | - 1 x portal tab
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1724,7 +1724,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="500" timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1734,7 +1734,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="500" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1749,7 +1749,7 @@
      | Caches unique string tracking data
      | - 1 x aggregation that counts unique strings
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.UniqueStrings"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStrings"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1759,7 +1759,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.UniqueStrings.uniqueStringSegments"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStrings.uniqueStringSegments"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1769,7 +1769,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.UniqueStringsSegment"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStringsSegment"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1779,7 +1779,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.UniqueStringsSegment.uniqueStrings"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.UniqueStringsSegment.uniqueStrings"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1795,13 +1795,13 @@
      | Caches login aggregations, primarily used during event aggregation
      | - 1 x group x interval
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.login.LoginAggregationImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.login.LoginAggregationImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
@@ -1809,13 +1809,13 @@
      | Caches concurrent user aggregations, primarily used during event aggregation
      | - 1 x group x interval
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="5000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
@@ -1823,13 +1823,13 @@
      | Caches tab render aggregations, primarily used during event aggregation
      | - 1 x tab x group x interval
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="10000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
@@ -1837,13 +1837,13 @@
      | Caches portlet execution aggregations, primarily used during event aggregation
      | - 1 x portlet x request type x group x interval
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
@@ -1851,16 +1851,16 @@
      | Caches event session data, primarily used during aggregation
      | - 1 x concurrent user event
      +-->
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl-NaturalId"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl-NaturalId"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.groupMappings"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl.groupMappings"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
-    <cache name="AggrEvents.org.jasig.portal.events.aggr.session.EventSessionImpl.Query"
+    <cache name="AggrEvents.org.apereo.portal.events.aggr.session.EventSessionImpl.Query"
         eternal="false" overflowToDisk="false" diskPersistent="false"
         maxElementsInMemory="100000" timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 

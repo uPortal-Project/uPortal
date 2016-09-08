@@ -50,7 +50,7 @@
         <constructor-arg value="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
     </bean>
     <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao" />
+        <constructor-arg value="org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao" />
     </bean>
 
     <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />

@@ -21,10 +21,10 @@
 -->
 <event-aggregation version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns="https://source.jasig.org/schemas/uportal/io/event-aggregation" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/user" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns5="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns7="https://source.jasig.org/schemas/uportal" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <aggregated-group-config>
-        <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
+        <aggregator-type>org.apereo.portal.events.aggr.IPortalEventAggregator</aggregator-type>
     </aggregated-group-config>
     <aggregated-interval-config>
-        <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
+        <aggregator-type>org.apereo.portal.events.aggr.IPortalEventAggregator</aggregator-type>
         <exclude>MINUTE</exclude>
     </aggregated-interval-config>
     <quarter-details>

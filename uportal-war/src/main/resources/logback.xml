@@ -110,12 +110,12 @@
   </logger>
 
   <!--  Portal Event aggregation -->
-  <logger name="org.jasig.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
+  <logger name="org.apereo.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="EVENT"/>
   </logger>
   
   <!--  Portal Tin Can Events -->
-  <logger name="org.jasig.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
     <appender-ref ref="TINCAN"/>
   </logger>
  

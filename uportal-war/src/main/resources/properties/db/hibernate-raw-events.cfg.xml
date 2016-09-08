@@ -42,6 +42,6 @@
         
         <mapping resource="properties/db/global.hbm.xml"/>
         
-        <mapping class="org.jasig.portal.events.handlers.db.PersistentPortalEvent"/>
+        <mapping class="org.apereo.portal.events.handlers.db.PersistentPortalEvent"/>
     </session-factory>
 </hibernate-configuration>

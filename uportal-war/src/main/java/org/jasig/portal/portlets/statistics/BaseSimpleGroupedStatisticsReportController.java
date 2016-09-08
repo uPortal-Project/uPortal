@@ -25,11 +25,11 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.jasig.portal.events.aggr.BaseAggregation;
-import org.jasig.portal.events.aggr.BaseAggregationDateTimeComparator;
-import org.jasig.portal.events.aggr.BaseAggregationKey;
-import org.jasig.portal.events.aggr.BaseGroupedAggregationDiscriminator;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.apereo.portal.events.aggr.BaseAggregation;
+import org.apereo.portal.events.aggr.BaseAggregationDateTimeComparator;
+import org.apereo.portal.events.aggr.BaseAggregationKey;
+import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminator;
+import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 
 /**
  * Extension of {@link BaseStatisticsReportController} for reports that only need to differentiate columns

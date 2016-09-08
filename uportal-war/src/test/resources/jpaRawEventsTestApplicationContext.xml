@@ -30,7 +30,7 @@
 
     <!-- JPA Test Context for DAOs that use the RawEventsDb PersistenceContext -->
 
-    <bean class="org.jasig.portal.events.handlers.db.JpaPortalEventStore">
+    <bean class="org.apereo.portal.events.handlers.db.JpaPortalEventStore">
         <property name="aggregationFlushPeriod" value="5" />
     </bean>
     

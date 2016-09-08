@@ -36,7 +36,7 @@ import org.apache.pluto.container.PortletContainerException;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.events.IPortletExecutionEventFactory;
+import org.apereo.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.PortletDispatchException;
 import org.jasig.portal.portlet.container.cache.CacheControlImpl;
 import org.jasig.portal.portlet.container.cache.CacheState;

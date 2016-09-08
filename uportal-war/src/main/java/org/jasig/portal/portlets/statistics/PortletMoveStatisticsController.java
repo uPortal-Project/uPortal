@@ -21,7 +21,7 @@ package org.jasig.portal.portlets.statistics;
 import java.util.Collections;
 import java.util.List;
 
-import org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregation;
+import org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.ModelAndView;

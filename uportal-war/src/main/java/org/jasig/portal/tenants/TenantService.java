@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.events.IPortalTenantEventFactory;
+import org.apereo.portal.events.IPortalTenantEventFactory;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;

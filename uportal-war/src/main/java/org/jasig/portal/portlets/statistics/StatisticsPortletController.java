@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.AggregationIntervalHelper;
+import org.apereo.portal.events.aggr.AggregationInterval;
+import org.apereo.portal.events.aggr.AggregationIntervalHelper;
 import org.joda.time.DateMidnight;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;

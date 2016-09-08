@@ -29,12 +29,12 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.events.aggr.AggregationInterval;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
-import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregation;
-import org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregationDao;
-import org.jasig.portal.events.aggr.portlets.AggregatedPortletMapping;
+import org.apereo.portal.events.aggr.AggregationInterval;
+import org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
+import org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregation;
+import org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregationDao;
+import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;

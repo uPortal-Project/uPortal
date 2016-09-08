@@ -43,7 +43,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
 import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.events.IPortletExecutionEventFactory;
+import org.apereo.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.container.cache.CacheState;
 import org.jasig.portal.portlet.container.cache.CachedPortletData;
 import org.jasig.portal.portlet.container.cache.CachedPortletResourceData;

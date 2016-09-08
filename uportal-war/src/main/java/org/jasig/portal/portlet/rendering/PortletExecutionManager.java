@@ -41,7 +41,7 @@ import com.google.common.base.Function;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.events.IPortletExecutionEventFactory;
+import org.apereo.portal.events.IPortletExecutionEventFactory;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;

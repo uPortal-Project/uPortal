@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.events.LogoutEvent;
+import org.apereo.portal.events.LogoutEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

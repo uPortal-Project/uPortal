@@ -21,7 +21,7 @@ package org.jasig.portal.portlets.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
+import org.apereo.portal.events.aggr.AggregationInterval;
 import org.joda.time.DateMidnight;
 
 public abstract class BaseReportForm {

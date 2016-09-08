@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.events.PortalEvent;
-import org.jasig.portal.events.PortletHungCompleteEvent;
-import org.jasig.portal.events.PortletHungEvent;
+import org.apereo.portal.events.PortalEvent;
+import org.apereo.portal.events.PortletHungCompleteEvent;
+import org.apereo.portal.events.PortletHungEvent;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

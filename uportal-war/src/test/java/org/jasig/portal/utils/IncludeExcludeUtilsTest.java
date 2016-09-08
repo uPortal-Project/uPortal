@@ -24,7 +24,7 @@ import static junit.framework.Assert.assertTrue;
 import java.util.Collections;
 import java.util.Set;
 
-import org.jasig.portal.events.aggr.AggregationInterval;
+import org.apereo.portal.events.aggr.AggregationInterval;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableSet;

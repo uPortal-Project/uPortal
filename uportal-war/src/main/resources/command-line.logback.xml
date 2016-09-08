@@ -62,7 +62,7 @@
   <logger name="org.apereo.portal.concurrency.locking" additivity="false" level="DEBUG">
     <appender-ref ref="CONSOLE"/>
   </logger>
-  <logger name="org.jasig.portal.events" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.events" additivity="false" level="DEBUG">
     <appender-ref ref="CONSOLE"/>
   </logger>
    -->

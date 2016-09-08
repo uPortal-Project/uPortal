@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.events.IPortalLayoutEventFactory;
+import org.apereo.portal.events.IPortalLayoutEventFactory;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;

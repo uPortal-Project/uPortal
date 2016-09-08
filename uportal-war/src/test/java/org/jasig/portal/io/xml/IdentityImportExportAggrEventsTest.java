@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.io.xml;
 
-import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;
+import org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.jasig.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
 import org.jasig.portal.spring.MockitoFactoryBean;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
