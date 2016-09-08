@@ -32,10 +32,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.character.stream.CharacterEventBufferReader;
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.CharacterEventSource;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventBufferReader;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.CharacterEventSource;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.stream.ChunkingEventReader;

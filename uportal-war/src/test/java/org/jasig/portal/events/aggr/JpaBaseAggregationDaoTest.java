@@ -39,8 +39,8 @@ import javax.naming.CompositeName;
 
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.commons.lang.mutable.MutableObject;
-import org.jasig.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;
 import org.jasig.portal.events.aggr.dao.TimeDimensionDao;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupLookupDao;

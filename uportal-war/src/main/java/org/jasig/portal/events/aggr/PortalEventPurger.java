@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.events.aggr;
 
-import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
 
 /**
  * Handles purging of raw portal events

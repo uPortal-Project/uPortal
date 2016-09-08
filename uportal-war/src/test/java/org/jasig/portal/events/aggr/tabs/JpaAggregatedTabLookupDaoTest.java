@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;

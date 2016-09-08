@@ -21,17 +21,17 @@ package org.jasig.portal.services;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.concurrency.IEntityLock;
-import org.jasig.portal.concurrency.IEntityLockService;
-import org.jasig.portal.concurrency.IEntityLockServiceFactory;
-import org.jasig.portal.concurrency.LockingException;
+import org.apereo.portal.concurrency.IEntityLock;
+import org.apereo.portal.concurrency.IEntityLockService;
+import org.apereo.portal.concurrency.IEntityLockServiceFactory;
+import org.apereo.portal.concurrency.LockingException;
 import org.jasig.portal.properties.PropertiesManager;
 
 /**
   * This is a bootstrap class and facade for the IEntityLockService implementation.
   * It presents a simple api for acquiring lock objects, <code>IEntityLocks</code>,
   * that can be used to control concurrent access to portal entities in a
-  * multi-server environment.  (See org.jasig.portal.concurrency.IEntityLockService
+  * multi-server environment.  (See org.apereo.portal.concurrency.IEntityLockService
   * for a fuller description.)
   * <p>
   * Currently supported lock types are IEntityLockService.READ_LOCK and
@@ -95,11 +95,11 @@ private void initialize() throws LockingException
 {
     String eMsg = null;
     String factoryName =
-        PropertiesManager.getProperty("org.jasig.portal.concurrency.IEntityLockServiceFactory", null);
+        PropertiesManager.getProperty("org.apereo.portal.concurrency.IEntityLockServiceFactory", null);
 
     if ( factoryName == null ) {
-        log.warn("Property org.jasig.portal.concurrency.IEntityLockServiceFactory not configured in PropertiesManager.  Defaulting to  org.jasig.portal.concurrency.locking.ReferenceEntityLockServiceFactory");
-        factoryName =  "org.jasig.portal.concurrency.locking.ReferenceEntityLockServiceFactory";
+        log.warn("Property org.apereo.portal.concurrency.IEntityLockServiceFactory not configured in PropertiesManager.  Defaulting to  org.apereo.portal.concurrency.locking.ReferenceEntityLockServiceFactory");
+        factoryName =  "org.apereo.portal.concurrency.locking.ReferenceEntityLockServiceFactory";
     }
 
     try
@@ -123,7 +123,7 @@ private void initialize() throws LockingException
     }
 /**
  * Returns a read lock for the entity type, entity key and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityType Class
  * @param entityKey String
  * @param owner String
@@ -136,7 +136,7 @@ throws LockingException
 }
 /**
  * Returns a read lock for the entity type, entity key and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityType Class
  * @param entityKey String
  * @param owner String
@@ -150,7 +150,7 @@ throws LockingException
 }
 /**
  * Returns a read lock for the <code>IBasicEntity</code> and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
  * @exception LockingException
@@ -162,7 +162,7 @@ throws LockingException
 }
 /**
  * Returns a read lock for the <code>IBasicEntity</code>, owner and duration.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int
@@ -175,7 +175,7 @@ throws LockingException
 }
 /**
  * Returns a write lock for the entity type, entity key and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityType Class
  * @param entityKey String
  * @param owner String
@@ -188,7 +188,7 @@ throws LockingException
 }
 /**
  * Returns a write lock for the entity type, entity key and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityType Class
  * @param entityKey String
  * @param owner String
@@ -202,7 +202,7 @@ throws LockingException
 }
 /**
  * Returns a write lock for the <code>IBasicEntity</code> and owner.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
  * @exception LockingException
@@ -214,7 +214,7 @@ throws LockingException
 }
 /**
  * Returns a write lock for the <code>IBasicEntity</code>, owner and duration.
- * @return org.jasig.portal.concurrency.locking.IEntityLock
+ * @return org.apereo.portal.concurrency.locking.IEntityLock
  * @param entityID EntityIdentifier
  * @param owner String
  * @param durationSecs int

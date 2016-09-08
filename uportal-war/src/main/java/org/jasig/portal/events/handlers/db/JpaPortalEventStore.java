@@ -32,7 +32,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.joda.time.DateTime;

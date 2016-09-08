@@ -30,7 +30,7 @@ import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.concurrency.CachingException;
+import org.apereo.portal.concurrency.CachingException;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 

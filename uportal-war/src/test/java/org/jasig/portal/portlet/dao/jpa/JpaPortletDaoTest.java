@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;

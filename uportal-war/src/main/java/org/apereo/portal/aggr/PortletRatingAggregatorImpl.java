@@ -18,12 +18,12 @@
  */
 package org.apereo.portal.aggr;
 
-import org.jasig.portal.concurrency.FunctionWithoutResult;
-import org.jasig.portal.concurrency.locking.ClusterMutex;
-import org.jasig.portal.concurrency.locking.IClusterLockService;
-import org.jasig.portal.concurrency.locking.LockOptions;
-import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
-import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.locking.ClusterMutex;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.LockOptions;
+import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
+import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

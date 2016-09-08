@@ -123,9 +123,6 @@ public class PortletRendererImpl implements IPortletRenderer {
      * PLT 22.1 If the content of a portlet is cached and the portlet is target of request 
      * with an action-type semantic (e.g. an action or event call), the portlet container should discard the cache and
      * invoke the corresponding request handling methods of the portlet like processAction,or processEvent.
-     * 
-     *  (non-Javadoc)
-     * @see org.jasig.portal.channels.portlet.IPortletRenderer#doAction(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public long doAction(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

@@ -61,7 +61,7 @@ import org.apereo.portal.api.portlet.DelegateState;
 import org.apereo.portal.api.portlet.DelegationActionResponse;
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.channel.IPortletPublishingService;
+import org.apereo.portal.channel.IPortletPublishingService;
 import org.jasig.portal.groups.IEntityGroup;
 import org.jasig.portal.groups.IGroupMember;
 import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;

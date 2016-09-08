@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.groups;
 
-import org.jasig.portal.concurrency.IEntityLock;
+import org.apereo.portal.concurrency.IEntityLock;
 
  /**
  * Defines an <code>IEntityGroup</code> that can be locked for update.   
@@ -28,11 +28,11 @@ import org.jasig.portal.concurrency.IEntityLock;
 
 public interface ILockableEntityGroup extends IEntityGroup {
 /**
- * @return org.jasig.portal.concurrency.IEntityLock
+ * @return org.apereo.portal.concurrency.IEntityLock
  */
 public IEntityLock getLock();
 /**
- * @param lock org.jasig.portal.concurrency.IEntityLock
+ * @param lock org.apereo.portal.concurrency.IEntityLock
  */
 public void setLock(IEntityLock lock);
 

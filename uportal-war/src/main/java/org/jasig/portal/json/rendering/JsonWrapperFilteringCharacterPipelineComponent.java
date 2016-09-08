@@ -23,8 +23,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.rendering.CharacterPipelineComponentWrapper;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;

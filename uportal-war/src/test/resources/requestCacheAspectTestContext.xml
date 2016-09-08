@@ -32,8 +32,8 @@
                         
     <aop:aspectj-autoproxy/>
     
-    <bean id="requestCacheAspect" class="org.jasig.portal.concurrency.caching.RequestCacheAspect" />
-    <bean id="cacheTestInterface" class="org.jasig.portal.concurrency.caching.CacheTestImpl" />
+    <bean id="requestCacheAspect" class="org.apereo.portal.concurrency.caching.RequestCacheAspect" />
+    <bean id="cacheTestInterface" class="org.apereo.portal.concurrency.caching.CacheTestImpl" />
     <bean id="portalRequestUtils" class="org.jasig.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.url.IPortalRequestUtils" />
     </bean>

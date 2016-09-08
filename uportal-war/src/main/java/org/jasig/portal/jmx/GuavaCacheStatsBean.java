@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.jmx;
 
-import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
+import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheStats;

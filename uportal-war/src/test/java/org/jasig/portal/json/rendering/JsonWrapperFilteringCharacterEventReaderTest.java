@@ -27,11 +27,11 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
-import org.jasig.portal.character.stream.CharacterEventBufferReader;
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.CharacterEventTypes;
+import org.apereo.portal.character.stream.CharacterEventBufferReader;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
+import org.apereo.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.events.CharacterEventTypes;
 import org.junit.Test;
 
 /**

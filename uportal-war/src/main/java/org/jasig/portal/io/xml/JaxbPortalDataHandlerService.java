@@ -83,7 +83,7 @@ import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tools.ant.DirectoryScanner;
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.utils.AntPatternFileFilter;
 import org.jasig.portal.utils.ConcurrentDirectoryScanner;
 import org.jasig.portal.utils.PeriodicFlushingBufferedWriter;

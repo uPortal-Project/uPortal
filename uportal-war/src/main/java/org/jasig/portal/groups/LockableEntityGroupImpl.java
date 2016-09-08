@@ -20,7 +20,7 @@ package org.jasig.portal.groups;
 
 import java.util.Collections;
 
-import org.jasig.portal.concurrency.IEntityLock;
+import org.apereo.portal.concurrency.IEntityLock;
 
     /**
  * Extends <code>EntityGroupImpl</code> to make it lockable for writing.
@@ -51,7 +51,7 @@ public void delete() throws GroupsException
 }
 
 /**
- * @return org.jasig.portal.concurrency.IEntityLock
+ * @return org.apereo.portal.concurrency.IEntityLock
  */
 @Override
 public IEntityLock getLock() {
@@ -93,7 +93,7 @@ private void primUpdateMembers(boolean renewLock) throws GroupsException
 }
 
 /**
- * @param newLock org.jasig.portal.concurrency.IEntityLock
+ * @param newLock org.apereo.portal.concurrency.IEntityLock
  */
 @Override
 public void setLock(IEntityLock newLock)

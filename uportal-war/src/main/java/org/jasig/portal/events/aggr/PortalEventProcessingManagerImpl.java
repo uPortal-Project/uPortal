@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.concurrency.FunctionWithoutResult;
-import org.jasig.portal.concurrency.locking.ClusterMutex;
-import org.jasig.portal.concurrency.locking.IClusterLockService;
-import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
-import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.concurrency.locking.LockOptions;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.locking.ClusterMutex;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
+import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.apereo.portal.concurrency.locking.LockOptions;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.jasig.portal.jpa.BaseRawEventsJpaDao;
 import org.jasig.portal.version.dao.VersionDao;

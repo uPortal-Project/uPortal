@@ -34,7 +34,7 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.spring.MockitoFactoryBean;
 import org.junit.After;
 import org.slf4j.Logger;

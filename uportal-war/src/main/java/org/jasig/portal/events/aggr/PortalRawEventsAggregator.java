@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
 
 /**
  * Handles aggregation of portal raw events as well as cleanup of the generated aggregations

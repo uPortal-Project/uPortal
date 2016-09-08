@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.json.rendering;
 
-import org.jasig.portal.character.stream.events.CharacterEventTypes;
+import org.apereo.portal.character.stream.events.CharacterEventTypes;
 
 public final class JsonLayoutPlaceholderEventImpl implements JsonLayoutPlaceholderEvent {
     private static final long serialVersionUID = 1L;

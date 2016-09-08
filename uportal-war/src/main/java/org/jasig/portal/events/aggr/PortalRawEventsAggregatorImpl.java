@@ -43,7 +43,7 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.DateDimensionDao;

@@ -36,8 +36,8 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.xml.namespace.QName;
 
-import org.jasig.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.security.SystemPerson;

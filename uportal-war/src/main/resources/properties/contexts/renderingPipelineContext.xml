@@ -227,15 +227,15 @@
             <map>
                 <entry>
                     <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletContentPlaceholderEventSource" />
                 </entry>
                 <entry>
                     <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
-                    <bean class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletHeaderPlaceholderEventSource" />
                 </entry>
                 <entry>
-                    <key><util:constant static-field="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource.CHUNK_POINT" /></key>
-                    <bean class="org.jasig.portal.character.stream.events.ChunkPointPlaceholderEventSource" />
+                    <key><util:constant static-field="org.apereo.portal.character.stream.events.ChunkPointPlaceholderEventSource.CHUNK_POINT" /></key>
+                    <bean class="org.apereo.portal.character.stream.events.ChunkPointPlaceholderEventSource" />
                 </entry>
                 <entry>
                     <key><util:constant static-field="org.jasig.portal.rendering.PortletAnalyticsDataPlaceholderEventSource.PORTLET_ANALYTICS_SCRIPT" /></key>
@@ -250,16 +250,16 @@
         <property name="chunkingPatterns">
             <map>
                 <entry key="\{up-portlet-title\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource" />
                 </entry>
                 <entry key="\{up-portlet-help\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletHelpPlaceholderEventSource" />
                 </entry>
                 <entry key="\{up-portlet-new-item-count\(([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletNewItemCountPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletNewItemCountPlaceholderEventSource" />
                 </entry>
                 <entry key="\{up-portlet-link\(([^,]+),([^\)]+)\)\}">
-                    <bean class="org.jasig.portal.character.stream.PortletLinkPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.character.stream.PortletLinkPlaceholderEventSource" />
                 </entry>
             </map>
         </property>

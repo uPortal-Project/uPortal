@@ -32,12 +32,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.concurrency.FunctionWithoutResult;
-import org.jasig.portal.concurrency.locking.ClusterMutex;
-import org.jasig.portal.concurrency.locking.IClusterLockService;
-import org.jasig.portal.concurrency.locking.IClusterLockService.LockStatus;
-import org.jasig.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.concurrency.locking.LockOptions;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.locking.ClusterMutex;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
+import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
+import org.apereo.portal.concurrency.locking.LockOptions;
 import org.jasig.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;

@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.events.handlers.db;
 
-import org.jasig.portal.concurrency.FunctionWithoutResult;
+import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.jasig.portal.events.PortalEvent;
 import org.joda.time.DateTime;
 

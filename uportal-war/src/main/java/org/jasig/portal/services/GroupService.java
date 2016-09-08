@@ -24,7 +24,7 @@ import javax.naming.Name;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
-import org.jasig.portal.concurrency.CachingException;
+import org.apereo.portal.concurrency.CachingException;
 import org.jasig.portal.groups.CompositeServiceIdentifier;
 import org.jasig.portal.groups.GroupServiceConfiguration;
 import org.jasig.portal.groups.GroupsException;

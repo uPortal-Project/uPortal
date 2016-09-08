@@ -30,7 +30,7 @@ import org.apache.pluto.container.driver.PortalDriverContainerServices;
 import org.apache.pluto.container.driver.PortletRegistryService;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.concurrency.caching.RequestCache;
+import org.apereo.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;

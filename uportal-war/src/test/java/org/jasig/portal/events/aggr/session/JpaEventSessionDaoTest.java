@@ -19,7 +19,7 @@
 package org.jasig.portal.events.aggr.session;
 
 import com.google.common.collect.ImmutableSet;
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.events.TestEventFactory;
 import org.jasig.portal.events.aggr.groups.AggregatedGroupMapping;

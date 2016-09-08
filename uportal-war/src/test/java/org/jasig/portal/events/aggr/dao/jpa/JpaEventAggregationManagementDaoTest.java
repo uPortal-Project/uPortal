@@ -31,7 +31,7 @@ import java.util.List;
 
 import javax.naming.CompositeName;
 
-import org.jasig.portal.concurrency.CallableWithoutResult;
+import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.events.aggr.AcademicTermDetail;
 import org.jasig.portal.events.aggr.AggregatedGroupConfig;
 import org.jasig.portal.events.aggr.AggregatedIntervalConfig;

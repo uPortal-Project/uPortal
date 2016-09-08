@@ -31,9 +31,9 @@ import java.util.List;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.character.stream.CharacterEventBufferReader;
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventBufferReader;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.rendering.CharacterPipelineComponent;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;

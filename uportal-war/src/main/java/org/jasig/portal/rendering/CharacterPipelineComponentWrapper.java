@@ -18,8 +18,8 @@
  */
 package org.jasig.portal.rendering;
 
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 
 /**
  * Wraps another {@link CharacterPipelineComponent}

@@ -23,9 +23,9 @@ import java.util.Collection;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.character.stream.BasePlaceholderEventSource;
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.PageAnalyticsDataPlaceholderEvent;
+import org.apereo.portal.character.stream.BasePlaceholderEventSource;
+import org.apereo.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.events.PageAnalyticsDataPlaceholderEvent;
 
 /**
  * Replaces <page-analytics-data> elements in the XML stream with {@link PageAnalyticsDataPlaceholderEvent}

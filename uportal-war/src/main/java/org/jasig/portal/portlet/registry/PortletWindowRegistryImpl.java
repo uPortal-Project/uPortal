@@ -38,7 +38,7 @@ import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.concurrency.caching.RequestCache;
+import org.apereo.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;

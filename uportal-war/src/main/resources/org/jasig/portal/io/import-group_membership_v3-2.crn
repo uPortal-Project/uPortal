@@ -46,6 +46,11 @@
         <with>
             <attribute key="CREATOR">${valueOf(creator)}</attribute>
             <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
+            <!--
+             | uPortal 5 still needs to support org.jasig.portal.channel.IChannelDefinition;
+             | TODO it should also detect and correct other inappropriate values
+             | (org.jasig.portal.portlet.om.IPortletDefinition).
+             +-->
             <attribute key="ENTITY_TYPE_NAME">${groovy("org.jasig.portal.channel.IChannelDefinition".equals(ENTITY_TYPE) ? "org.jasig.portal.portlet.om.IPortletDefinition" : ENTITY_TYPE)}</attribute>
             <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
             <subtasks>

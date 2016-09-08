@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import javax.persistence.EntityManager;
 
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.jasig.portal.events.aggr.dao.IEventAggregationManagementDao;

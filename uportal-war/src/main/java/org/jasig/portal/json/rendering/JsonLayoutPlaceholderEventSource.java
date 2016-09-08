@@ -24,8 +24,8 @@ import java.util.regex.MatchResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.character.stream.BasePlaceholderEventSource;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.BasePlaceholderEventSource;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 
 
 public class JsonLayoutPlaceholderEventSource extends BasePlaceholderEventSource {

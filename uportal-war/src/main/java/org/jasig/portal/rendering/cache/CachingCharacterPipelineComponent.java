@@ -20,9 +20,9 @@ package org.jasig.portal.rendering.cache;
 
 import java.util.ListIterator;
 
-import org.jasig.portal.character.stream.CharacterEventBufferReader;
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventBufferReader;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.rendering.CharacterPipelineComponent;
 
 /**

@@ -33,8 +33,8 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.concurrency.caching.RequestCache;
+import org.apereo.portal.concurrency.CachingException;
+import org.apereo.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.groups.GroupsException;
 import org.jasig.portal.groups.ICompositeGroupService;
 import org.jasig.portal.groups.IEntityGroup;

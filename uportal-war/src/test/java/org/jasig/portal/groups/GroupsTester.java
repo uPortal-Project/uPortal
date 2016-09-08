@@ -266,7 +266,7 @@ private String getRandomString(java.util.Random r, int length) {
  */
 public static void main(java.lang.String[] args) throws Exception
 {
-    String[] mainArgs = {"org.jasig.portal.concurrency.caching.EntityCacheTester"};
+    String[] mainArgs = {"org.apereo.portal.concurrency.caching.EntityCacheTester"};
     print("START TESTING CACHE");
     printBlankLine();
     TestRunner.main(mainArgs);

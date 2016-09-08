@@ -20,8 +20,8 @@ package org.jasig.portal.services;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.concurrency.CachingException;
-import org.jasig.portal.concurrency.IEntityCachingService;
+import org.apereo.portal.concurrency.CachingException;
+import org.apereo.portal.concurrency.IEntityCachingService;
 import org.jasig.portal.spring.locator.EntityCachingServiceLocator;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
@@ -91,7 +91,7 @@ public class EntityCachingService implements IEntityCachingService {
     /**
      * Adds the entity to the cache.
      * @param ent org.apereo.portal.IBasicEntity
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public void add(IBasicEntity ent) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().add(ent);
@@ -102,7 +102,7 @@ public class EntityCachingService implements IEntityCachingService {
      * @param type Class
      * @param key String
      * @return IBasicEntity entity
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public IBasicEntity get(Class<? extends IBasicEntity> type, String key) throws CachingException {
         return EntityCachingServiceLocator.getEntityCachingService().get(type, key);
@@ -112,7 +112,7 @@ public class EntityCachingService implements IEntityCachingService {
      * Returns the cached entity referred to by entityID.
      * @param entityID entity identifier
      * @return IBasicEntity entity
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public IBasicEntity get(EntityIdentifier entityID) throws CachingException {
         return EntityCachingServiceLocator.getEntityCachingService().get(entityID.getType(), entityID.getKey());
@@ -123,7 +123,7 @@ public class EntityCachingService implements IEntityCachingService {
      * peer caches.
      * @param type Class
      * @param key String
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public void remove(Class<? extends IBasicEntity> type, String key) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().remove(type, key);
@@ -133,7 +133,7 @@ public class EntityCachingService implements IEntityCachingService {
      * Removes the entity referred to by entityID from the cache and notifies peer
      * caches.
      * @param entityID
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public void remove(EntityIdentifier entityID) throws CachingException {
         this.remove(entityID.getType(), entityID.getKey());
@@ -143,7 +143,7 @@ public class EntityCachingService implements IEntityCachingService {
      * Removes the <code>IBasicEntity</code> from the cache and notifies peer
      * caches.
      * @param ent org.apereo.portal.IBasicEntity
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public void remove(IBasicEntity ent) throws CachingException {
         this.remove(ent.getEntityIdentifier());
@@ -151,8 +151,8 @@ public class EntityCachingService implements IEntityCachingService {
 
     /**
      * Updates the entity in the cache and notifies peer caches.
-     * @param ent org.jasig.portal.concurrency.IBasicEntity
-     * @exception org.jasig.portal.concurrency.CachingException
+     * @param ent org.apereo.portal.concurrency.IBasicEntity
+     * @exception org.apereo.portal.concurrency.CachingException
      */
     public void update(IBasicEntity ent) throws CachingException {
         EntityCachingServiceLocator.getEntityCachingService().update(ent);

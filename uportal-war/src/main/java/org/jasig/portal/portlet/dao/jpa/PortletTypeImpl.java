@@ -164,7 +164,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	}
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.channel.IPortletType#setCpdUri(java.lang.String)
+     * @see org.apereo.portal.channel.IPortletType#setCpdUri(java.lang.String)
      */
     @Override
     public void setCpdUri(String cpdUri) {

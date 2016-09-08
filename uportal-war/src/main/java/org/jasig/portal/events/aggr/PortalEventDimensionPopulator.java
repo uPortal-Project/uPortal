@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.events.aggr;
 
-import org.jasig.portal.concurrency.locking.IClusterLockService;
+import org.apereo.portal.concurrency.locking.IClusterLockService;
 
 /**
  * Handles creation and maintenance of the date and time dimensions used when aggregating portal events

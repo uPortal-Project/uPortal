@@ -27,10 +27,10 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.FilteringCharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.FilteringCharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.events.PortalEvent;
 import org.jasig.portal.events.PortletRenderExecutionEvent;
 import org.jasig.portal.events.RequestScopedEventsTracker;

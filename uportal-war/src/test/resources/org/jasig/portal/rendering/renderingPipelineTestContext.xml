@@ -27,10 +27,10 @@
                            
     <alias name="staxSerializingComponent" alias="renderingPipeline"/>
     
-    <bean id="portletContentPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletContentPlaceholderEventSource" />
-    <bean id="portletHeaderPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletHeaderPlaceholderEventSource" />
-    <bean id="portletTitlePlaceholderEventSource" class="org.jasig.portal.character.stream.PortletTitlePlaceholderEventSource" />
-    <bean id="portletHelpPlaceholderEventSource" class="org.jasig.portal.character.stream.PortletHelpPlaceholderEventSource" />
+    <bean id="portletContentPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletContentPlaceholderEventSource" />
+    <bean id="portletHeaderPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+    <bean id="portletTitlePlaceholderEventSource" class="org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource" />
+    <bean id="portletHelpPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHelpPlaceholderEventSource" />
     
     <!-- StAX to String serialization -->
     <bean id="staxSerializingComponent" class="org.jasig.portal.rendering.StAXSerializingComponent">

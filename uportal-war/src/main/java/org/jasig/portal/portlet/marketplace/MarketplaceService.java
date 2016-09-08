@@ -25,7 +25,7 @@ import net.sf.ehcache.Element;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.concurrency.caching.RequestCache;
+import org.apereo.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.events.LoginEvent;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;

@@ -94,7 +94,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
     /*
      * (non-Javadoc)
-     * @see org.jasig.portal.channel.IChannelParameter#getName()
+     * @see org.apereo.portal.channel.IChannelParameter#getName()
      */
 	@Override
     public String getName() {
@@ -103,7 +103,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelParameter#getValue()
+	 * @see org.apereo.portal.channel.IChannelParameter#getValue()
 	 */
 	@Override
     public String getValue() {
@@ -112,7 +112,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelParameter#getDescription()
+	 * @see org.apereo.portal.channel.IChannelParameter#getDescription()
 	 */
 	@Override
     public String getDescription() {
@@ -124,7 +124,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelParameter#setValue(java.lang.String)
+	 * @see org.apereo.portal.channel.IChannelParameter#setValue(java.lang.String)
 	 */
 	@Override
     public void setValue(String value) {
@@ -133,7 +133,7 @@ public class PortletDefinitionParameterImpl implements IPortletDefinitionParamet
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.channel.IChannelParameter#setDescription(java.lang.String)
+	 * @see org.apereo.portal.channel.IChannelParameter#setDescription(java.lang.String)
 	 */
 	@Override
     public void setDescription(String descr) {

@@ -25,12 +25,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.character.stream.CharacterEventBufferReader;
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.CharacterEventTypes;
-import org.jasig.portal.character.stream.events.PortletContentPlaceholderEvent;
-import org.jasig.portal.character.stream.events.PortletHeaderPlaceholderEvent;
+import org.apereo.portal.character.stream.CharacterEventBufferReader;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.events.CharacterEventTypes;
+import org.apereo.portal.character.stream.events.PortletContentPlaceholderEvent;
+import org.apereo.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;

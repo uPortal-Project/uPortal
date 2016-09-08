@@ -36,9 +36,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.character.stream.CharacterEventSource;
-import org.jasig.portal.character.stream.events.CharacterDataEventImpl;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventSource;
+import org.apereo.portal.character.stream.events.CharacterDataEventImpl;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 
 /**
  * Used with code that serializes StAX events into a string. Watches for specific XML tags in a StAX

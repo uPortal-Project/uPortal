@@ -18,10 +18,10 @@
  */
 package org.jasig.portal.json.rendering;
 
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.FilteringCharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.character.stream.events.CharacterEventTypes;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.FilteringCharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.events.CharacterEventTypes;
 
 /**
  * Removes content not wrapped by {@link CharacterEventTypes#JSON_LAYOUT} marker events

@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * Controller to work with the local login form.
- * The form presented by org.jasig.portal.channels.CLogin is typically used to generate the post to this servlet.
+ * The form presented by the login portlet is typically used to generate the post to this servlet.
  * Actual login processing occurs in PortalPreAuthenticatedProcessingFilter.
+ *
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu)
  */
 @Controller
@@ -144,7 +144,7 @@ public class LoginController {
         if (person == null || !person.getSecurityContext().isAuthenticated()) {
             if (request.getMethod().equals("POST"))
                 request.getSession(false).setAttribute(AUTH_ATTEMPTED_KEY, "true");
-            // Preserve the attempted username so it can be redisplayed to the user by CLogin
+            // Preserve the attempted username so it can be redisplayed to the user
             String attemptedUserName = request.getParameter("userName");
             if (attemptedUserName != null)
                 request.getSession(false).setAttribute(ATTEMPTED_USERNAME_KEY, request.getParameter("userName"));

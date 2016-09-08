@@ -23,9 +23,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.character.stream.CharacterEventReader;
-import org.jasig.portal.character.stream.FilteringCharacterEventReader;
-import org.jasig.portal.character.stream.events.CharacterEvent;
+import org.apereo.portal.character.stream.CharacterEventReader;
+import org.apereo.portal.character.stream.FilteringCharacterEventReader;
+import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
