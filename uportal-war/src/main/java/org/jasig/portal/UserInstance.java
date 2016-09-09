@@ -20,7 +20,7 @@ package  org.jasig.portal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 

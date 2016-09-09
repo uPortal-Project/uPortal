@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n;
+package org.apereo.portal.i18n;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.i18n.dao.IMessageDao;
+import org.apereo.portal.i18n.dao.IMessageDao;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;

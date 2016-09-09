@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n;
+package org.apereo.portal.i18n;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class LocaleManager implements Serializable {
      */
     public static final boolean DEFAULT_LOCALE_AWARE = false;
     
-    private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.jasig.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
+    private static boolean localeAware = PropertiesManager.getPropertyAsBoolean("org.apereo.portal.i18n.LocaleManager.locale_aware", DEFAULT_LOCALE_AWARE);
     private static Locale jvmLocale;
     private static Locale[] portalLocales;
     
@@ -120,7 +120,7 @@ public class LocaleManager implements Serializable {
      * list, e.g. en_US,ja_JP,sv_SE 
      */
     private Locale[] loadPortalLocales() {
-        String portalLocalesString = PropertiesManager.getProperty("org.jasig.portal.i18n.LocaleManager.portal_locales");
+        String portalLocalesString = PropertiesManager.getProperty("org.apereo.portal.i18n.LocaleManager.portal_locales");
         return parseLocales(portalLocalesString);
     }    
 

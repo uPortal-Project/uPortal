@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n;
+package org.apereo.portal.i18n;
 
 import java.text.MessageFormat;
 import java.util.Locale;
 
-import org.jasig.portal.i18n.dao.IMessageDao;
+import org.apereo.portal.i18n.dao.IMessageDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.AbstractMessageSource;

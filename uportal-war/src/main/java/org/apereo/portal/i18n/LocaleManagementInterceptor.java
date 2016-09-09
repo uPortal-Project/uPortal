@@ -16,34 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n;
+package org.apereo.portal.i18n;
 
 import java.util.Locale;
 
-import org.jasig.portal.security.IPerson;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.support.RequestContextUtils;
 
 /**
- * Interface defining how the portal reads and 
- * writes locale preferences.
- * @author Ken Weiner, kweiner@unicon.net
+ * This interceptor sets response locale to the value determined by localeResolver. This allows to
+ * use <code>response.getLocale()</code> in order to determine the portal locale whenever request
+ * object is available.
+ * 
+ * @author Arvids Grabovskis
  * @version $Revision$
  */
-public interface ILocaleStore {
-
-    /**
-     * Retrieves the locale preferences for a particular user.
-     * @param person the user
-     * @return the user's locale preferences
-     * @throws Exception
-     */
-    public Locale[] getUserLocales(IPerson person);
-
-    /**
-     * Persists the locale preferences for a particular user.
-     * @param person the user
-     * @param locales the user's new locale preferences
-     * @throws Exception
-     */
-    public void updateUserLocales(IPerson person, Locale[] locales);
+public class LocaleManagementInterceptor extends HandlerInterceptorAdapter {
     
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        Locale locale = RequestContextUtils.getLocale(request);
+        response.setLocale(locale);
+        return true;
+    }
 }

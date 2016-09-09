@@ -20,7 +20,7 @@ package org.jasig.portal.security.xslt;
 
 import java.util.Locale;
 
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

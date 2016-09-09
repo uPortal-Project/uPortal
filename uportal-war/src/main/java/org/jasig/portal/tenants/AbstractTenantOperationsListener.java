@@ -24,8 +24,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.i18n.ILocaleStore;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.ILocaleStore;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;

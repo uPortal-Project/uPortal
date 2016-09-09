@@ -30,8 +30,8 @@ import java.util.TreeSet;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.i18n.ILocaleStore;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.ILocaleStore;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelBean;
 import org.jasig.portal.layout.dlm.remoting.registry.ChannelCategoryBean;
 import org.jasig.portal.layout.dlm.remoting.registry.v43.PortletCategoryBean;

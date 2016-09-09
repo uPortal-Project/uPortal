@@ -36,7 +36,7 @@
                 </bean>
                 <bean class="org.jasig.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
-                <bean class="org.jasig.portal.i18n.LocaleManagementInterceptor" />
+                <bean class="org.apereo.portal.i18n.LocaleManagementInterceptor" />
                 <ref bean="portletExecutionManager"/>
             </list>
         </property>

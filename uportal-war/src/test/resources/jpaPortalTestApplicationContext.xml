@@ -30,7 +30,7 @@
 
     <!-- JPA Test Context for DAOs that use the PortalDb PersistenceContext -->
     <bean id="portletCookieDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletCookieDaoImpl" />
-    <bean id="multilingualMessageDao" class="org.jasig.portal.i18n.dao.jpa.JpaMessageDao" />
+    <bean id="multilingualMessageDao" class="org.apereo.portal.i18n.dao.jpa.JpaMessageDao" />
     <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
     <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao" />
     <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao" />

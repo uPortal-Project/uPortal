@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n.dao.jpa;
+package org.apereo.portal.i18n.dao.jpa;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,8 +31,8 @@ import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.i18n.Message;
-import org.jasig.portal.i18n.dao.IMessageDao;
+import org.apereo.portal.i18n.Message;
+import org.apereo.portal.i18n.dao.IMessageDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;

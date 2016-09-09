@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.hibernate;
+package org.apereo.portal.hibernate;
 
-import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
+import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
 
 /**
  * Should be implemented by classes that are interested in knowing about the configuration

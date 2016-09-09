@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n;
+package org.apereo.portal.i18n;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

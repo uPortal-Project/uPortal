@@ -47,7 +47,7 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.jdbc.RDBMServices;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.layout.LayoutStructure;
 import org.jasig.portal.layout.StructureParameter;

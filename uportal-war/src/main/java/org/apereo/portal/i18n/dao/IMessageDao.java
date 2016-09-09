@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n.dao;
+package org.apereo.portal.i18n.dao;
 
 import java.util.Locale;
 import java.util.Set;
 
-import org.jasig.portal.i18n.Message;
+import org.apereo.portal.i18n.Message;
 
 /**
  * Interface for creating/retrieving/updating/deleting {@link Message}s.

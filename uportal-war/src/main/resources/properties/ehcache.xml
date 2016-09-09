@@ -648,7 +648,7 @@
      | Caches message
      | - 1 per each translated message (max = messages * supported locales)
      +-->
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl"
+    <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -658,7 +658,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.i18n.dao.jpa.MessageImpl.Query"
+    <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory

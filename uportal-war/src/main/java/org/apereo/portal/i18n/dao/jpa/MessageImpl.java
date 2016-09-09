@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.i18n.dao.jpa;
+package org.apereo.portal.i18n.dao.jpa;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -34,7 +34,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
-import org.jasig.portal.i18n.Message;
+import org.apereo.portal.i18n.Message;
 import org.springframework.util.Assert;
 
 @Entity

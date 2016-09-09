@@ -34,7 +34,7 @@ import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;

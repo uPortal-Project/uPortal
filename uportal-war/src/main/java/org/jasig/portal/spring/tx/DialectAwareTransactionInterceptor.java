@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.jasig.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
-import org.jasig.portal.hibernate.HibernateConfigurationAware;
+import org.apereo.portal.hibernate.DelegatingHibernateIntegrator.HibernateConfiguration;
+import org.apereo.portal.hibernate.HibernateConfigurationAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;

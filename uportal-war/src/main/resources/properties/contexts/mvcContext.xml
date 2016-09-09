@@ -64,7 +64,7 @@
      +-->
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="parentMessageSource">
-          <bean class="org.jasig.portal.i18n.DatabaseMessageSource" />
+          <bean class="org.apereo.portal.i18n.DatabaseMessageSource" />
         </property>
         <property name="alwaysUseMessageFormat" value="true" /> <!-- See http://blog.pfa-labs.com/2010/07/infamous-dissapearing-single-quote-in.html -->
         <property name="cacheSeconds" value="60" />
@@ -126,5 +126,5 @@
         <property name="order" value="2"/>
     </bean>
     
-    <bean id="localeResolver" class="org.jasig.portal.i18n.LocaleManagerLocaleResolver" />
+    <bean id="localeResolver" class="org.apereo.portal.i18n.LocaleManagerLocaleResolver" />
 </beans>

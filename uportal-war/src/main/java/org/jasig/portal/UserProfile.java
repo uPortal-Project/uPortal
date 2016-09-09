@@ -21,7 +21,7 @@ package org.jasig.portal;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 
 /**
  * A user profile associates a user layout with a structure and theme stylesheet.
@@ -204,7 +204,7 @@ public class UserProfile implements Serializable, IUserProfile {
 
     // uPortal i18n
     /* (non-Javadoc)
-     * @see org.jasig.portal.IUserProfile#setLocaleManager(org.jasig.portal.i18n.LocaleManager)
+     * @see org.jasig.portal.IUserProfile#setLocaleManager(org.apereo.portal.i18n.LocaleManager)
      */
     @Override
     public void setLocaleManager(LocaleManager lm) {

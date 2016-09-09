@@ -21,7 +21,7 @@ package org.jasig.portal.security.xslt;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Service;

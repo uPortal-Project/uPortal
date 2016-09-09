@@ -76,7 +76,7 @@
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     
-    <bean class="org.jasig.portal.hibernate.HibernateConfigurationAwareInjector" />
+    <bean class="org.apereo.portal.hibernate.HibernateConfigurationAwareInjector" />
     
     <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
 

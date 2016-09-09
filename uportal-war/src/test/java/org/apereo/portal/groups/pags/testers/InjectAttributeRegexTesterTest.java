@@ -34,7 +34,6 @@ import org.junit.Test;
  * Tests the PAGS testers.
  *
  * @author: Julien Gribonvald
- * @version $Revision$
  */
 public class InjectAttributeRegexTesterTest {
     private static Class IPERSON_CLASS;

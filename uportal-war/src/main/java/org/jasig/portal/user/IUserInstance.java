@@ -19,7 +19,7 @@
 package org.jasig.portal.user;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 import org.jasig.portal.security.IPerson;
 
 /**

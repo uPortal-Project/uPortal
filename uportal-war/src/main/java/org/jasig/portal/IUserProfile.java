@@ -18,7 +18,7 @@
  */
 package org.jasig.portal;
 
-import org.jasig.portal.i18n.LocaleManager;
+import org.apereo.portal.i18n.LocaleManager;
 
 /**
  * @author Eric Dalquist

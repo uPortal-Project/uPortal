@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.hibernate;
+package org.apereo.portal.hibernate;
 
 import java.util.HashMap;
 import java.util.HashSet;
