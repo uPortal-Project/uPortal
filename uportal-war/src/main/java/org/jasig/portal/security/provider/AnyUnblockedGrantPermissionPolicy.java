@@ -26,9 +26,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;

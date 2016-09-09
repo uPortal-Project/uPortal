@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPermission;

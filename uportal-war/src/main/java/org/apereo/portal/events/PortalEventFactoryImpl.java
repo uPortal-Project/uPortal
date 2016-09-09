@@ -37,7 +37,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.IPortalInfoProvider;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;

@@ -59,7 +59,7 @@ private IEntityLockStore getLockStore() {
     return lockStore;
 }
 /**
- * @return org.jasig.portal.groups.IEntityLockService
+ * @return org.apereo.portal.groups.IEntityLockService
  */
 private IEntityLockService getService()  throws LockingException{
     return ReferenceEntityLockService.singleton();
@@ -107,7 +107,7 @@ protected void setUp()
 {
     try {
         if ( GROUP_CLASS == null )
-            { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
+            { GROUP_CLASS = Class.forName("org.apereo.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
             { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
 

@@ -324,7 +324,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
 
     /**
      * Extract values from ResultSet and create a new lock.
-     * @return org.jasig.portal.groups.IEntityLock
+     * @return org.apereo.portal.groups.IEntityLock
      * @param rs java.sql.ResultSet
      */
     private IEntityLock instanceFromResultSet(java.sql.ResultSet rs)
@@ -702,7 +702,7 @@ public class RDBMEntityLockStore implements IEntityLockStore {
         return QUOTE + o + QUOTE;
     }
     /**
-     * @param lock org.jasig.portal.groups.IEntityLock
+     * @param lock org.apereo.portal.groups.IEntityLock
      * @param newExpiration java.util.Date
      */
     public void update(IEntityLock lock, java.util.Date newExpiration)

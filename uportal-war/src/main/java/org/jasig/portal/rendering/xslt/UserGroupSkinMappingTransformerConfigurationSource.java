@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.user.IUserInstance;

@@ -26,7 +26,7 @@
     <test-group>
       <test>
         <attribute-name>tenantOrg</attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
+        <tester-class>org.apereo.portal.groups.pags.testers.StringEqualsIgnoreCaseTester</tester-class>
         <test-value>${tenant.attributesMap['tenantOrg']}</test-value>
       </test>
     </test-group>

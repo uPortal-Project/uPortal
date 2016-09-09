@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
-import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
+import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;

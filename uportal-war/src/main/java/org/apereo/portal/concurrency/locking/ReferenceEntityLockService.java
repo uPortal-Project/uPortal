@@ -252,7 +252,7 @@ private boolean isValidLockType(int lockType)
  * @param entityKey
  * @param lockType
  * @param owner
- * @return org.jasig.portal.groups.IEntityLock
+ * @return org.apereo.portal.groups.IEntityLock
  * @exception LockingException
  */
 public IEntityLock newLock(Class entityType, String entityKey, int lockType, String owner)
@@ -268,7 +268,7 @@ throws LockingException
  * @param lockType
  * @param owner
  * @param durationSecs
- * @return org.jasig.portal.groups.IEntityLock
+ * @return org.apereo.portal.groups.IEntityLock
  * @exception LockingException
  * 
  * Retrieves potentially conflicting locks and checks them before adding
@@ -327,7 +327,7 @@ throws LockingException
 }
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
- * @return org.jasig.portal.groups.IEntityLock
+ * @return org.apereo.portal.groups.IEntityLock
  * @param entityID org.apereo.portal.EntityIdentifier
  * @param lockType int
  * @param owner String
@@ -340,7 +340,7 @@ throws LockingException
 }
 /**
  * Returns a lock for the entity, lock type and owner if no conflicting locks exist.
- * @return org.jasig.portal.groups.IEntityLock
+ * @return org.apereo.portal.groups.IEntityLock
  * @param entityID org.apereo.portal.EntityIdentifier
  * @param lockType int
  * @param owner String

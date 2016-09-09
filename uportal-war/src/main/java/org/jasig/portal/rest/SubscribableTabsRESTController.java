@@ -28,8 +28,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.fragment.subscribe.IUserFragmentSubscription;
-import org.jasig.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
+import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
+import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.Evaluator;
 import org.jasig.portal.layout.dlm.FragmentDefinition;

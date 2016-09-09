@@ -35,10 +35,10 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.caching.RequestCache;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.ICompositeGroupService;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.ICompositeGroupService;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
@@ -624,7 +624,7 @@ protected IPermissionPolicy getDefaultPermissionPolicy() {
 }
 
 /**
- * @return org.jasig.portal.groups.IGroupMember
+ * @return org.apereo.portal.groups.IGroupMember
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
@@ -634,7 +634,7 @@ throws GroupsException
 }
 
 /**
- * @return org.jasig.portal.groups.IGroupMember
+ * @return org.apereo.portal.groups.IGroupMember
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
@@ -879,7 +879,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type) {
 /**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
  * @return org.jasig.portal.security.IAuthorizationPrincipal
- * @param groupMember org.jasig.portal.groups.IGroupMember
+ * @param groupMember org.apereo.portal.groups.IGroupMember
  */
 public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
 throws GroupsException

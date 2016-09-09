@@ -35,9 +35,9 @@
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
     <groovy>
         <script>
-            import org.jasig.portal.groups.IEntityGroup
-            import org.jasig.portal.groups.IGroupConstants
-            import org.jasig.portal.groups.IGroupMember
+            import org.apereo.portal.groups.IEntityGroup
+            import org.apereo.portal.groups.IGroupConstants
+            import org.apereo.portal.groups.IGroupMember
             import org.jasig.portal.io.GetMemberIsGroupPhrase
             import org.jasig.portal.io.GetMemberKeyPhrase
             import org.jasig.portal.io.GetMemberServicePhrase

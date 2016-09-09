@@ -24,9 +24,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityNameFinder;
-import org.jasig.portal.groups.IEntityNameFinderFactory;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IEntityNameFinder;
+import org.apereo.portal.groups.IEntityNameFinderFactory;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
@@ -50,7 +50,7 @@ private EntityNameFinderService ()
     initialize();
 }
 /**
- * @return org.jasig.portal.groups.IEntityNameFinder
+ * @return org.apereo.portal.groups.IEntityNameFinder
  */
 public IEntityNameFinder getNameFinder(Class type) throws GroupsException
 {

@@ -21,7 +21,7 @@ package org.jasig.portal.layout.dlm.remoting;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;

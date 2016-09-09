@@ -25,8 +25,8 @@ import java.util.Set;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.SimpleStringPortalData;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Function;

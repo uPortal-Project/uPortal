@@ -21,8 +21,8 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 
@@ -159,7 +159,7 @@ public interface IAuthorizationService
     throws AuthorizationException;
 
 /**
- * @return org.jasig.portal.groups.IGroupMember
+ * @return org.apereo.portal.groups.IGroupMember
  * @param principal org.jasig.portal.security.IAuthorizationPrincipal
  */
     public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
@@ -227,7 +227,7 @@ public interface IAuthorizationService
 /**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
  * @return org.jasig.portal.security.IAuthorizationPrincipal
- * @param groupMember org.jasig.portal.groups.IGroupMember
+ * @param groupMember org.apereo.portal.groups.IGroupMember
  */
     public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
     throws GroupsException;

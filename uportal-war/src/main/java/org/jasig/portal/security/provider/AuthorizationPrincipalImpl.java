@@ -19,7 +19,7 @@
 package org.jasig.portal.security.provider;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IEntityGroup;
 import org.jasig.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;

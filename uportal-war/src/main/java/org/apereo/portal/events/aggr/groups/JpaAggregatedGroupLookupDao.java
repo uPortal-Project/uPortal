@@ -28,9 +28,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
-import org.jasig.portal.groups.CompositeEntityIdentifier;
-import org.jasig.portal.groups.ICompositeGroupService;
-import org.jasig.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.CompositeEntityIdentifier;
+import org.apereo.portal.groups.ICompositeGroupService;
+import org.apereo.portal.groups.IEntityGroup;
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.jpa.cache.EntityManagerCache;

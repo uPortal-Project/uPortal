@@ -58,7 +58,7 @@ public void deleteExpired(Date expiration) throws LockingException;
  * A null param means any value, so <code>find(myType,myKey,null,null,null)</code>
  * will return all <code>IEntityLocks</code> for myType and myKey.
  *
- * @return org.jasig.portal.groups.IEntityLock[]
+ * @return org.apereo.portal.groups.IEntityLock[]
  * @param entityType Class
  * @param entityKey String
  * @param lockType Integer - so we can accept a null value.

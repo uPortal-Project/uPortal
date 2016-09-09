@@ -359,7 +359,7 @@
      | - 1 x group across all group stores
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.groups.IEntityGroup"
+    <cache name="org.apereo.portal.groups.IEntityGroup"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -375,7 +375,7 @@
      | - 1 x group member (channels, users, groups)
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.groups.IEntity"
+    <cache name="org.apereo.portal.groups.IEntity"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -394,7 +394,7 @@
      | - 1 x group member (channels, users, groups)
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.groups.GroupMemberImpl.parentGroups"
+    <cache name="org.apereo.portal.groups.GroupMemberImpl.parentGroups"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -414,7 +414,7 @@
      | - 1 x group (both of users and channels)
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.groups.EntityGroupImpl.children"
+    <cache name="org.apereo.portal.groups.EntityGroupImpl.children"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -623,7 +623,7 @@
      | Caches UserFragmentSubscriptions
      | - 1 per fragment subscription per user
      +-->
-    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
+    <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -633,7 +633,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
+    <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1920,7 +1920,7 @@
      |
      | - 1 x PAGS groups in the portal
      +-->
-    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1938,7 +1938,7 @@
      |
      | - 1 x PAGS groups in the portal
      +-->
-    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1954,7 +1954,7 @@
      |
      | - 1 x PAGS groups in the portal x concurrent users since TTL
      +-->
-    <cache name="org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
+    <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1965,7 +1965,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1976,7 +1976,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1987,7 +1987,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.members"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.members"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -1998,7 +1998,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.testGroups"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.testGroups"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -2009,7 +2009,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -2020,7 +2020,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -2031,7 +2031,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl.tests"
+    <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl.tests"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
         <cacheEventListenerFactory
@@ -2047,7 +2047,7 @@
      | of the check for recursion. Leveraging TTL to handle any strings that become orphaned due to exceptions, etc.
      | - 1 x thread x ad hoc test
      -->
-    <cache name="org.jasig.portal.groups.pags.testers.AdHocGroupTester"
+    <cache name="org.apereo.portal.groups.pags.testers.AdHocGroupTester"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 

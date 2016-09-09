@@ -23,18 +23,18 @@ import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
 import org.apereo.portal.EntityIdentifier;
+import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 import org.apereo.portal.concurrency.CachingException;
-import org.jasig.portal.groups.CompositeServiceIdentifier;
-import org.jasig.portal.groups.GroupServiceConfiguration;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.ICompositeGroupService;
-import org.jasig.portal.groups.ICompositeGroupServiceFactory;
-import org.jasig.portal.groups.IEntity;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.groups.IGroupMember;
-import org.jasig.portal.groups.ILockableEntityGroup;
+import org.apereo.portal.groups.CompositeServiceIdentifier;
+import org.apereo.portal.groups.GroupServiceConfiguration;
+import org.apereo.portal.groups.ICompositeGroupService;
+import org.apereo.portal.groups.ICompositeGroupServiceFactory;
+import org.apereo.portal.groups.IEntity;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
@@ -84,7 +84,7 @@ public final class GroupService implements IGroupConstants {
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
      * @param key String - the group key.
-     * @return org.jasig.portal.groups.IEntityGroup
+     * @return org.apereo.portal.groups.IEntityGroup
      */
     public static IEntityGroup findGroup(String key) throws GroupsException
     {
@@ -97,7 +97,7 @@ public final class GroupService implements IGroupConstants {
      * group is not found.
      * @param key String - the group key.
      * @param lockOwner String - the owner of the lock, typically the user.
-     * @return org.jasig.portal.groups.ILockableEntityGroup
+     * @return org.apereo.portal.groups.ILockableEntityGroup
      */
     public static ILockableEntityGroup findLockableGroup(String key, String lockOwner)
     throws GroupsException
@@ -124,7 +124,7 @@ public final class GroupService implements IGroupConstants {
 
     /**
     * Returns the <code>ICompositeGroupService</code> implementation in use.
-    * @return org.jasig.portal.groups.ICompositeGroupService
+    * @return org.apereo.portal.groups.ICompositeGroupService
     */
     public static ICompositeGroupService getCompositeGroupService() throws GroupsException
     {
@@ -161,7 +161,7 @@ public final class GroupService implements IGroupConstants {
     * not guarantee that the entity actually exists.
     * @param key String - the group key.
     * @param type Class - the Class of the underlying IGroupMember.
-    * @return org.jasig.portal.groups.IEntity
+    * @return org.apereo.portal.groups.IEntity
     */
     public static IEntity getEntity(String key, Class<?> type)
     throws GroupsException
@@ -179,7 +179,7 @@ public final class GroupService implements IGroupConstants {
      *                Class - the Class of the underlying IGroupMember.
      * @param service
      *                String - the name of the component service.
-     * @return org.jasig.portal.groups.IEntity
+     * @return org.apereo.portal.groups.IEntity
      */
     private static IEntity getEntity(String key, Class<?> type, String service)
             throws GroupsException {
@@ -251,7 +251,7 @@ private GroupServiceConfiguration getServiceConfiguration() throws GroupsExcepti
      * Returns a pre-existing <code>IEntityGroup</code> or null if the
      * <code>IGroupMember</code> does not exist.
      * @param key String - the group key.
-     * @return org.jasig.portal.groups.IEntityGroup
+     * @return org.apereo.portal.groups.IEntityGroup
      */
     private IEntityGroup ifindGroup(String key) throws GroupsException
     {
@@ -263,7 +263,7 @@ private GroupServiceConfiguration getServiceConfiguration() throws GroupsExcepti
      * group is not found.
      * @param key String - the group key.
      * @param lockOwner String - typically the user.
-     * @return org.jasig.portal.groups.ILockableEntityGroup
+     * @return org.apereo.portal.groups.ILockableEntityGroup
      */
     private ILockableEntityGroup ifindLockableGroup(String key, String lockOwner)
     throws GroupsException
@@ -316,7 +316,7 @@ private IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
      * Returns an <code>IEntity</code> representing a pre-existing portal entity.
      * @param key String - the group key.
      * @param type Class - the Class of the underlying IGroupMember.
-     * @return org.jasig.portal.groups.IEntity
+     * @return org.apereo.portal.groups.IEntity
      */
     private IEntity igetEntity(String key, Class<?> type, String service) throws GroupsException
     {
@@ -346,7 +346,7 @@ private IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
-     * @return org.jasig.portal.groups.IEntityGroup
+     * @return org.apereo.portal.groups.IEntityGroup
      */
     private IEntityGroup inewGroup(Class<?> type) throws GroupsException
     {
@@ -355,7 +355,7 @@ private IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
-     * @return org.jasig.portal.groups.IEntityGroup
+     * @return org.apereo.portal.groups.IEntityGroup
      */
     private IEntityGroup inewGroup(Class<?> type, String serviceName) throws GroupsException
     {
@@ -366,7 +366,7 @@ private IEntityGroup igetDistinguishedGroup(String name) throws GroupsException
     }
 
 /**
- * @exception org.jasig.portal.groups.GroupsException
+ * @exception GroupsException
  */
 private void initializeCompositeService() throws GroupsException
 {
@@ -401,7 +401,7 @@ private void initializeCompositeService() throws GroupsException
     /**
      * Returns a new <code>IEntityGroup</code> for the given Class with an unused
      * key.
-     * @return org.jasig.portal.groups.IEntityGroup
+     * @return org.apereo.portal.groups.IEntityGroup
      */
     public static IEntityGroup newGroup(Class<?> type) throws GroupsException {
         LOGGER.trace("Invoking newGroup for type='{}'", type);

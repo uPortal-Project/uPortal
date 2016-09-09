@@ -29,11 +29,10 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.EntityTypes;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IEntityNameFinder;
-import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IEntityNameFinder;
+import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -300,7 +299,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntity(org.jasig.portal.groups.IGroupMember)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntity(org.apereo.portal.groups.IGroupMember)
 	 */
 	public JsonEntityBean getEntity(IGroupMember member) {
 
@@ -393,7 +392,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityType(org.jasig.portal.groups.IGroupMember)
+	 * @see org.jasig.portal.layout.dlm.remoting.IGroupListHelper#getEntityType(org.apereo.portal.groups.IGroupMember)
 	 */
 	public EntityEnum getEntityType(IGroupMember entity) {
 		

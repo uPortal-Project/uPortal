@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.dom4j.Element;
 import org.jasig.portal.io.xml.crn.AbstractDom4jExporter;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

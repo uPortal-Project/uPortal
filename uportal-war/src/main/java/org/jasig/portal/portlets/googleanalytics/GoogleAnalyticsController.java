@@ -27,8 +27,8 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.PortletPreferencesJsonDao;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;

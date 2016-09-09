@@ -37,7 +37,7 @@
                 <attribute key="PRINCIPAL_TYPE">${groovy(SET_KEY_PARTS.get('PRINCIPAL_TYPE'))}</attribute>
                 <attribute key="Attributes.NODE">${newDoc(permission-set)}</attribute>
                 <subtasks>
-                    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_set_v3-1.crn)}"/>
+                    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_set_v5-0.crn)}"/>
 
                     <append-node>
                         <owner>${OWNER}</owner>
@@ -48,7 +48,7 @@
 
                     <!-- principal -->
                     <choose>
-                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.groups.IEntityGroup'))}">
+                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.apereo.portal.groups.IEntityGroup'))}">
                             <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
                                 <!-- Check for group name == null (indicates an orphaned record) -->
                                 <choose>

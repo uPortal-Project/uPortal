@@ -44,7 +44,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.IGroupConstants;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;

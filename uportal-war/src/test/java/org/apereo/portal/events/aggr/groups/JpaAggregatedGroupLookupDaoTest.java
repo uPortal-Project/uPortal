@@ -26,8 +26,8 @@ import static org.mockito.Mockito.when;
 import javax.naming.CompositeName;
 
 import org.apereo.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.groups.ICompositeGroupService;
-import org.jasig.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.ICompositeGroupService;
+import org.apereo.portal.groups.IEntityGroup;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;

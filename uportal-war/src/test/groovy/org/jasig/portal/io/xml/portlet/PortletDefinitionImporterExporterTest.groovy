@@ -18,12 +18,12 @@
  */
 package org.jasig.portal.io.xml.portlet
 
-import org.jasig.portal.groups.GroupServiceConfiguration
-import org.jasig.portal.groups.GroupsException
-import org.jasig.portal.groups.ICompositeGroupService
-import org.jasig.portal.groups.ICompositeGroupServiceFactory
-import org.jasig.portal.groups.IEntity
-import org.jasig.portal.groups.IEntityGroup
+import org.apereo.portal.groups.GroupServiceConfiguration
+import org.apereo.portal.groups.GroupsException
+import org.apereo.portal.groups.ICompositeGroupService
+import org.apereo.portal.groups.ICompositeGroupServiceFactory
+import org.apereo.portal.groups.IEntity
+import org.apereo.portal.groups.IEntityGroup
 import org.jasig.portal.io.xml.portlettype.ExternalPermissionDefinition
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao

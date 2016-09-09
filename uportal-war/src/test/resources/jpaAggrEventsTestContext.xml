@@ -50,7 +50,7 @@
         <constructor-arg value="org.apereo.portal.events.aggr.HibernateCacheEvictor" />
     </bean>
     <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
-        <constructor-arg value="org.jasig.portal.groups.ICompositeGroupService" />
+        <constructor-arg value="org.apereo.portal.groups.ICompositeGroupService" />
     </bean>
     <bean id="portletDefinitionDao" class="org.jasig.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.jasig.portal.portlet.dao.IPortletDefinitionDao" />

@@ -26,7 +26,7 @@
     <test-group>
       <test>
         <attribute-name>agentDevice</attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.PropertyInvertedRegexTester</tester-class>
+        <tester-class>org.apereo.portal.groups.pags.testers.PropertyInvertedRegexTester</tester-class>
         <test-value>org.jasig.portal.http.header.userAgent.mobile.regex.pattern</test-value>
       </test>
     </test-group>

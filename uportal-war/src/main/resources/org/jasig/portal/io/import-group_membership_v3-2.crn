@@ -109,13 +109,13 @@
                         <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
                              so caches get cleared and replicated to other nodes. -->
                         <with>
-                            <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.jasig.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
+                            <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
                             <subtasks>
                                 <groovy>
                                     <script>
-                                        import org.jasig.portal.groups.IEntityGroup
-                                        import org.jasig.portal.groups.IGroupConstants
-                                        import org.jasig.portal.groups.IGroupMember
+                                        import org.apereo.portal.groups.IEntityGroup
+                                        import org.apereo.portal.groups.IGroupConstants
+                                        import org.apereo.portal.groups.IGroupMember
                                         import org.jasig.portal.io.GetMemberIsGroupPhrase
                                         import org.jasig.portal.io.GetMemberKeyPhrase
                                         import org.jasig.portal.io.GetMemberServicePhrase

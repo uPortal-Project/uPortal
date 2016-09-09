@@ -31,8 +31,7 @@ import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
   * hides such details as the physical structure of the cache and whether
   * it is running in a multi- or single-JVM environment.
   * <p>
-  * An <code>IBasicEntity</code> can answer its type and key.  (See
-  * org.jasig.portal.groups.EntityTypes).
+  * An <code>IBasicEntity</code> can answer its type and key.  
   * <p>
   * Caching consists of asking the service to add, retrieve, update and
   * remove elements from the cache, e.g.,

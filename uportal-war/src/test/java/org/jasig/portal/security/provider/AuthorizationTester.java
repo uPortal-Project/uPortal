@@ -28,9 +28,8 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.GroupServiceConfiguration;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.GroupServiceConfiguration;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.target.IPermissionTarget;
@@ -324,7 +323,7 @@ protected void setUp()
     try
     {
         if ( GROUP_CLASS == null )
-            { GROUP_CLASS = Class.forName("org.jasig.portal.groups.IEntityGroup"); }
+            { GROUP_CLASS = Class.forName("org.apereo.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
             { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
             

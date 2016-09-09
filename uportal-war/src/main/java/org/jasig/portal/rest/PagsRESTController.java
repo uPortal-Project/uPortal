@@ -25,12 +25,12 @@ import java.net.URLDecoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
-import org.jasig.portal.groups.pags.dao.PagsService;
-import org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
+import org.apereo.portal.groups.pags.dao.PagsService;
+import org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.RuntimeAuthorizationException;

@@ -37,11 +37,11 @@ import java.util.Set;
 import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.channel.IPortletPublishingService;
-import org.jasig.portal.groups.IEntity;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IEntityNameFinder;
-import org.jasig.portal.groups.IGroupConstants;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IEntity;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IEntityNameFinder;
+import org.apereo.portal.groups.IGroupConstants;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
 import org.jasig.portal.io.xml.IPortalData;
 import org.jasig.portal.io.xml.IPortalDataType;
@@ -398,7 +398,7 @@ public class PortletDefinitionImporterExporter
 
     /*
      * (non-Javadoc)
-     * @see org.apereo.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinition, org.jasig.portal.security.IPerson, org.apereo.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.jasig.portal.groups.IGroupMember[])
+     * @see org.apereo.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinition, org.jasig.portal.security.IPerson, org.apereo.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.apereo.portal.groups.IGroupMember[])
      */
     @Override
     public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {

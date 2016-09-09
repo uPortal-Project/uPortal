@@ -21,11 +21,11 @@ package org.jasig.portal.io.xml.pags;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
-import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinitionDao;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinitionDao;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
+import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 
 /**
  * Helper class called from crn to handle the object creation and updates during PAGS import

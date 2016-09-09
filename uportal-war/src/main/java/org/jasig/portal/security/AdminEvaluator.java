@@ -20,9 +20,9 @@ package org.jasig.portal.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.GroupsException;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 

@@ -20,8 +20,8 @@ package org.apereo.portal.api.groups;
 
 import org.apereo.portal.api.Principal;
 import org.apereo.portal.api.PrincipalImpl;
-import org.jasig.portal.groups.IEntityGroup;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IEntityGroup;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 

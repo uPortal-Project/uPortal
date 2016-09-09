@@ -59,9 +59,9 @@
         <mapping class="org.jasig.portal.layout.dlm.providers.EvaluatorGroup" />
         <mapping class="org.jasig.portal.layout.dlm.providers.Paren" />
         <mapping class="org.jasig.portal.layout.profile.dao.jpa.ProfileSelection" />
-        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl" />
-        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl" />
-        <mapping class="org.jasig.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl" />
+        <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl" />
+        <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl" />
+        <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
         <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
@@ -74,7 +74,7 @@
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl" />
         <mapping class="org.jasig.portal.tenants.JpaTenant"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
-        <mapping class="org.jasig.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
+        <mapping class="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
         <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         <mapping class="org.jasig.portal.i18n.dao.jpa.MessageImpl"/>

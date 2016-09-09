@@ -23,9 +23,9 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.groups.GroupsException;
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.groups.GroupsException;
-import org.jasig.portal.groups.IGroupMember;
+import org.apereo.portal.groups.IGroupMember;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IAuthorizationServiceFactory;
@@ -100,9 +100,9 @@ public class AuthorizationService
   }
   
  /**
-   * @return org.jasig.portal.groups.IGroupMember
+   * @return org.apereo.portal.groups.IGroupMember
    * @param principal IAuthorizationPrincipal
-   * @exception org.jasig.portal.groups.GroupsException
+   * @exception GroupsException
    */
   public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
          throws GroupsException
@@ -144,7 +144,7 @@ public class AuthorizationService
   /**
    * @param groupMember
    * @return org.jasig.portal.security.IAuthorizationPrincipal
-   * @exception org.jasig.portal.groups.GroupsException
+   * @exception GroupsException
    */
    public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
           throws GroupsException
