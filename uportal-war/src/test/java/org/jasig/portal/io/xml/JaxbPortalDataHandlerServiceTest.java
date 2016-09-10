@@ -138,20 +138,20 @@ public class JaxbPortalDataHandlerServiceTest {
 
     protected List<IPortalDataType> getPortalDataTypes() {
         return ImmutableList.<IPortalDataType>of(
-            new org.jasig.portal.io.xml.entitytype.EntityTypePortalDataType(),
+            new org.apereo.portal.io.xml.entitytype.EntityTypePortalDataType(),
             new org.jasig.portal.io.xml.ssd.StylesheetDescriptorPortalDataType(),
             new org.jasig.portal.io.xml.user.UserPortalDataType(),
-            new org.jasig.portal.io.xml.group.GroupPortalDataType(),
-            new org.jasig.portal.io.xml.group.GroupMembershipPortalDataType(),
-            new org.jasig.portal.io.xml.group.MembershipPortalDataType(),
+            new org.apereo.portal.io.xml.group.GroupPortalDataType(),
+            new org.apereo.portal.io.xml.group.GroupMembershipPortalDataType(),
+            new org.apereo.portal.io.xml.group.MembershipPortalDataType(),
             new org.jasig.portal.io.xml.portlettype.PortletTypePortalDataType(),
-            new org.jasig.portal.io.xml.portlet.PortletPortalDataType(),
-            new org.jasig.portal.io.xml.permission.PermissionPortalDataType(),
-            new org.jasig.portal.io.xml.permission.PermissionSetPortalDataType(),
-            new org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType(),
-            new org.jasig.portal.io.xml.layout.ProfilePortalDataType(),
-            new org.jasig.portal.io.xml.layout.LayoutPortalDataType(),
-            new org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType()
+            new org.apereo.portal.io.xml.portlet.PortletPortalDataType(),
+            new org.apereo.portal.io.xml.permission.PermissionPortalDataType(),
+            new org.apereo.portal.io.xml.permission.PermissionSetPortalDataType(),
+            new org.apereo.portal.io.xml.permission.PermissionOwnerPortalDataType(),
+            new org.apereo.portal.io.xml.layout.ProfilePortalDataType(),
+            new org.apereo.portal.io.xml.layout.LayoutPortalDataType(),
+            new org.apereo.portal.io.xml.dlm.FragmentDefinitionPortalDataType()
         );
     }
     

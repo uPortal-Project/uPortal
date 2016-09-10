@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.io.xml;
 
-import org.jasig.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
+import org.apereo.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ import com.google.common.base.Function;
  * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/aggrImportExportTestContext.xml")
+@ContextConfiguration(locations = "classpath:/org/apereo/portal/io/xml/aggrImportExportTestContext.xml")
 public class AggrIdentityImportExportTest extends BaseAggrEventsJpaDaoTest {
     @javax.annotation.Resource(name="eventAggregationConfigurationImporterExporter")
     private IDataImporter<ExternalEventAggregationConfiguration> eventAggregationConfigurationImporter;
@@ -43,7 +43,7 @@ public class AggrIdentityImportExportTest extends BaseAggrEventsJpaDaoTest {
 
     @Test
     public void testEventAggregationConfiguration40ImportExport() throws Exception {
-        final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/jasig/portal/io/xml/eventaggr/test_4-0.event-aggregation.xml");
+        final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/apereo/portal/io/xml/eventaggr/test_4-0.event-aggregation.xml");
         
         IdentityImportExportTestUtilities.testIdentityImportExport(this.transactionOperations,
                 this.eventAggregationConfigurationImporter, this.eventAggregationConfigurationExporter,

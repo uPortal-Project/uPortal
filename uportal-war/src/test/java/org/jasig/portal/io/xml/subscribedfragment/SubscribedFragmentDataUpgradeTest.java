@@ -24,7 +24,6 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class SubscribedFragmentDataUpgradeTest extends BaseXsltDataUpgraderTest {
     @Test

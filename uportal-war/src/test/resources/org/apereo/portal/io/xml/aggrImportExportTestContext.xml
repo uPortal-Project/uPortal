@@ -27,8 +27,9 @@
                         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
                         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
     <!-- 
-     | Event Aggregation Config Beans
+     |  Event Aggregation Configuration Beans
      +-->
     <bean id="eventAggregationConfigurationPortalDataType" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationPortalDataType" />
     <bean id="eventAggregationConfigurationImporterExporter" class="org.apereo.portal.io.xml.eventaggr.EventAggregationConfigurationImporterExporter">
@@ -36,26 +37,11 @@
         <property name="schema" value="classpath:/xsd/io/event-aggregation/event-aggregation-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/event-aggregation https://source.jasig.org/schemas/uportal/io/event-aggregation/event-aggregation-4.0.xsd" />
     </bean>
-
-
     
     
     <!-- 
      |  Support Beans
      +-->
-    <bean id="cachingResourceLoader" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.resource.CachingResourceLoader" />
-    </bean>
-    <bean id="templatesBuilder" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
-    </bean>
-    <bean id="aggregatedGroupLookupDao" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao" />
-    </bean>
-
-    <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />
-    <bean id="xpathOperations" class="org.jasig.portal.xml.xpath.XPathPoolImpl" />
-    
     <import resource="classpath:/jpaAggrEventsTestContext.xml"/>
 </beans>
 

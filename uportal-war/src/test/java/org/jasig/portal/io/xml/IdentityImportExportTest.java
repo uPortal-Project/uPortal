@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.io.xml.permission.ExternalPermissionOwner;
+import org.apereo.portal.io.xml.permission.ExternalPermissionOwner;
 import org.jasig.portal.io.xml.ssd.ExternalStylesheetDescriptor;
 import org.jasig.portal.io.xml.subscribedfragment.ExternalSubscribedFragments;
 import org.jasig.portal.io.xml.user.UserType;
@@ -52,7 +52,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportTestContext.xml")

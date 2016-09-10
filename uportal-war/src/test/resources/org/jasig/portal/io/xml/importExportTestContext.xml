@@ -61,9 +61,9 @@
     <!-- 
      |  Permission Owner Beans
      +-->
-    <bean class="org.jasig.portal.io.xml.permission.PermissionOwnerPortalDataType" />
-    <bean id="permissionOwnerImporterExporter" class="org.jasig.portal.io.xml.permission.PermissionOwnerImporterExporter">
-        <property name="contextPath" value="org.jasig.portal.io.xml.permission" />
+    <bean class="org.apereo.portal.io.xml.permission.PermissionOwnerPortalDataType" />
+    <bean id="permissionOwnerImporterExporter" class="org.apereo.portal.io.xml.permission.PermissionOwnerImporterExporter">
+        <property name="contextPath" value="org.apereo.portal.io.xml.permission" />
         <property name="schema" value="classpath:/xsd/io/permission-owner/permission-owner-4.0.xsd" />
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/permission-owner https://source.jasig.org/schemas/uportal/io/permission-owner/permission-owner-4.0.xsd" />
     </bean>
@@ -72,11 +72,11 @@
     <!-- 
      |  Fragment Definition Beans
      +-->
-    <bean id="fragmentDefinitionPortalDataType" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionPortalDataType" />
-    <bean id="fragmentDefinitionImporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionImporter">
+    <bean id="fragmentDefinitionPortalDataType" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionPortalDataType" />
+    <bean id="fragmentDefinitionImporter" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionImporter">
     </bean>
-    <bean id="fragmentDefinitionDataFunction" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionDataFunction"/>
-    <bean id="fragmentDefinitionExporter" class="org.jasig.portal.io.xml.dlm.FragmentDefinitionExporter">
+    <bean id="fragmentDefinitionDataFunction" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionDataFunction"/>
+    <bean id="fragmentDefinitionExporter" class="org.apereo.portal.io.xml.dlm.FragmentDefinitionExporter">
         <property name="portalDataType" ref="fragmentDefinitionPortalDataType"/>
         <property name="portalDataRetriever" ref="fragmentDefinitionDataFunction" />
     </bean>

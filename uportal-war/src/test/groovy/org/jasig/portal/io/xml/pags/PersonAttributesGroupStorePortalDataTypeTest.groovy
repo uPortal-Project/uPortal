@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.io.xml.pags;
+package org.apereo.portal.io.xml.pags;
 
 import java.util.Collections;
 import java.util.Set;

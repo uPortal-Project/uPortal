@@ -19,7 +19,6 @@
 package org.jasig.portal.tenants;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,8 +40,8 @@ import org.jasig.portal.io.xml.IPortalDataHandlerService;
 import org.jasig.portal.io.xml.IPortalDataType;
 import org.jasig.portal.io.xml.PortalDataKey;
 import org.jasig.portal.io.xml.SpELDataTemplatingStrategy;
-import org.jasig.portal.io.xml.group.GroupMembershipPortalDataType;
-import org.jasig.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType;
+import org.apereo.portal.io.xml.group.GroupMembershipPortalDataType;
+import org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType;
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;

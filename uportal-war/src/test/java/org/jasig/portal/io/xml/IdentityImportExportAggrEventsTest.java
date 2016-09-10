@@ -19,7 +19,7 @@
 package org.jasig.portal.io.xml;
 
 import org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao;
-import org.jasig.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
+import org.apereo.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
 import org.jasig.portal.spring.MockitoFactoryBean;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.jasig.portal.test.TimeZoneTestUtils;
@@ -37,7 +37,6 @@ import com.google.common.base.Function;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/org/jasig/portal/io/xml/importExportAggrEventTestContext.xml")
@@ -72,7 +71,7 @@ public class IdentityImportExportAggrEventsTest extends BaseAggrEventsJpaDaoTest
   
     @Test
     public void testEventAggregationConfigurationImportExport() throws Exception {
-        final ClassPathResource dataResource = new ClassPathResource("/org/jasig/portal/io/xml/event-aggregation/default.event-aggregation.xml");
+        final ClassPathResource dataResource = new ClassPathResource("/org/apereo/portal/io/xml/event-aggregation/default.event-aggregation.xml");
         
         IdentityImportExportTestUtilities.<ExternalEventAggregationConfiguration>testIdentityImportExport(
                 this.transactionOperations,
