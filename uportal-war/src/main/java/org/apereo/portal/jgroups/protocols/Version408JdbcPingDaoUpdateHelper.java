@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jgroups.protocols;
+package org.apereo.portal.jgroups.protocols;
 
 import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.apereo.portal.jpa.BasePortalJpaDao;

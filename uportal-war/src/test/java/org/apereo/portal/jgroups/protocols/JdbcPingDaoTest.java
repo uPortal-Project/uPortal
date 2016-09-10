@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jgroups.protocols;
+package org.apereo.portal.jgroups.protocols;
 
 import static junit.framework.Assert.assertEquals;
 

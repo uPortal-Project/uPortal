@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jgroups.auth;
+package org.apereo.portal.jgroups.auth;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.sql.DataSource;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.jasig.portal.jgroups.protocols.PingDao;
+import org.apereo.portal.jgroups.protocols.PingDao;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.utils.RandomTokenGenerator;
 import org.slf4j.Logger;
@@ -107,7 +107,7 @@ public class JdbcAuthDao implements AuthDao, InitializingBean {
         this.namedParameterJdbcOperations = new NamedParameterJdbcTemplate(this.jdbcOperations);
     }
 
-    @Value("${org.jasig.portal.jgroups.auth.token_length:1000}")
+    @Value("${org.apereo.portal.jgroups.auth.token_length:1000}")
     public void setAuthTokenLength(int authTokenLength) {
         this.authTokenLength = authTokenLength;
     }
