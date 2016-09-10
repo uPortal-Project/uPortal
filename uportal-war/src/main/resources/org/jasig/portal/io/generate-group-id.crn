@@ -35,6 +35,6 @@
         <return value="2" />
     </when>
     <otherwise>
-        <return value="${org.jasig.portal.io.SequenceGeneratorPhrase(UP_GROUP)}" />
+        <return value="${org.apereo.portal.io.SequenceGeneratorPhrase(UP_GROUP)}" />
     </otherwise>
 </choose>

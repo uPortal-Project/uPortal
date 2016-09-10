@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.io;
+package org.apereo.portal.io;
 
 
 import org.danann.cernunnos.AttributePhrase;
@@ -34,7 +34,6 @@ import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore;
 
 /**
  * Cernunnos <code>Task</code> that inspects a finished XML entity document and 

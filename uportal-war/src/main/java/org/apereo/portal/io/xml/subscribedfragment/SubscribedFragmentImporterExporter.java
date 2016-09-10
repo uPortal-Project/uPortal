@@ -70,7 +70,7 @@ public class SubscribedFragmentImporterExporter extends
         this.userIdentityStore = userIdentityStore;
     }
 
-    @Value("${org.jasig.portal.io.layout.errorOnMissingUser:true}")
+    @Value("${org.apereo.portal.io.layout.errorOnMissingUser:true}")
     public void setErrorOnMissingUser(boolean errorOnMissingUser) {
         this.errorOnMissingUser = errorOnMissingUser;
     }

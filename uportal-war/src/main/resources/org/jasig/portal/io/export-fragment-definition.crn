@@ -38,7 +38,7 @@
             <choose>
                 <when test="${jexl(fragment == null)}">
                     <echo-ln>WARNING:  Fragment Definition '${NAME}' does not exist;  no file will be generated.</echo-ln>
-                    <log logger-name="org.jasig.portal.io.export-fragment-definition" level="warn">Fragment Definition '${NAME}' does not exist;  no file will be generated.</log>
+                    <log logger-name="org.apereo.portal.io.export-fragment-definition" level="warn">Fragment Definition '${NAME}' does not exist;  no file will be generated.</log>
                 </when>
                 <otherwise>
                     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn)}"/>

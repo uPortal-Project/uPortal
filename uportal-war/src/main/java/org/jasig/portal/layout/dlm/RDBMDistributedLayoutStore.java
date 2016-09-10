@@ -179,12 +179,12 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         this.fragmentNodeInfoCache = fragmentNodeInfoCache;
     }
 
-    @Value("${org.jasig.portal.io.layout.errorOnMissingPortlet:true}")
+    @Value("${org.apereo.portal.io.layout.errorOnMissingPortlet:true}")
     public void setErrorOnMissingPortlet(boolean errorOnMissingPortlet) {
         this.errorOnMissingPortlet = errorOnMissingPortlet;
     }
 
-    @Value("${org.jasig.portal.io.layout.errorOnMissingUser:true}")
+    @Value("${org.apereo.portal.io.layout.errorOnMissingUser:true}")
     public void setErrorOnMissingUser(boolean errorOnMissingUser) {
         this.errorOnMissingUser = errorOnMissingUser;
     }
@@ -691,7 +691,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         catch (final AuthorizationException t) {
             if (this.errorOnMissingUser) {
-                throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.", t);
+                throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.apereo.portal.io.layout.errorOnMissingUser to false.", t);
             }
             
             //Create the missing user
@@ -699,7 +699,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
         }
         
         if (ownerId == -1) {
-            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.jasig.portal.io.layout.errorOnMissingUser to false.");
+            throw new RuntimeException("Unrecognized user " + person.getUserName() + "; you must import users before their layouts or set org.apereo.portal.io.layout.errorOnMissingUser to false.");
         }
         person.setID(ownerId);
 

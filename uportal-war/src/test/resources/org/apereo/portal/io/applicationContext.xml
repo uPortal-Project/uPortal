@@ -46,6 +46,6 @@
 	    </constructor-arg>
     </bean>
     
-    <bean id="mockEntityTypesSingleton" class="org.jasig.portal.io.ImportTest$MockEntityTypesSingleton"/>
+    <bean id="mockEntityTypesSingleton" class="org.apereo.portal.io.ImportTest$MockEntityTypesSingleton"/>
 
 </beans>

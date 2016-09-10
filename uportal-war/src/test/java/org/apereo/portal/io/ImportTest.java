@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.io;
+package org.apereo.portal.io;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class ImportTest extends TestCase {
     public void setUp() throws Exception {
         
         // We're going to use this app context in many ways...
-        ctx = new ClassPathXmlApplicationContext("org/jasig/portal/io/applicationContext.xml");
+        ctx = new ClassPathXmlApplicationContext("org/apereo/portal/io/applicationContext.xml");
         
         // The tasks...
         this.importTasks = (Map<String,Task>) ctx.getBean("importTasks");        
@@ -54,7 +54,7 @@ public class ImportTest extends TestCase {
         
         final MockEntityTypesSingleton mock = (MockEntityTypesSingleton) ctx.getBean("mockEntityTypesSingleton");
         
-        Resource[] entityTypes = ctx.getResources("classpath:/org/jasig/portal/io/resources/**/*.entity-type");
+        Resource[] entityTypes = ctx.getResources("classpath:/org/apereo/portal/io/resources/**/*.entity-type");
         for (Resource et : entityTypes) {
 
             // Parse the Element and retrieve the associated Task...

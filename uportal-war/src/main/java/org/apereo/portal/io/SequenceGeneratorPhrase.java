@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.io;
+package org.apereo.portal.io;
 
 import org.danann.cernunnos.EntityConfig;
 import org.danann.cernunnos.Formula;

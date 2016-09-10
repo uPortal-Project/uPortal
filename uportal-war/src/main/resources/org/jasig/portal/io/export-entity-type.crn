@@ -36,7 +36,7 @@
         <choose>
             <when test="${jexl(TYPE_ID == null)}">
                 <echo-ln>WARNING:  Entity type '${NAME}' does not exist;  no entity type file will be generated.</echo-ln>
-                <log logger-name="org.jasig.portal.io.export-entity-type" level="warn">Entity type '${NAME}' does not exist;  no entity type file will be generated.</log>
+                <log logger-name="org.apereo.portal.io.export-entity-type" level="warn">Entity type '${NAME}' does not exist;  no entity type file will be generated.</log>
             </when>
             <otherwise>
                 <sql-query>

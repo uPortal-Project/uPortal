@@ -53,7 +53,7 @@
                                 <!-- Check for group name == null (indicates an orphaned record) -->
                                 <choose>
                                     <when test="${jexl(GROUP.getName() == null)}">
-                                        <log logger-name="org.jasig.portal.io.export-permissions" level="warn">Permission principal references a deleted group;  removing orphaned reference.</log>
+                                        <log logger-name="org.apereo.portal.io.export-permissions" level="warn">Permission principal references a deleted group;  removing orphaned reference.</log>
                                         <append-node node="${attributeNode(cancel=true)}"/>
                                     </when>
                                     <otherwise>
@@ -78,7 +78,7 @@
                                         </append-node>
                                     </when>
                                     <otherwise>
-                                        <log logger-name="org.jasig.portal.io.export-permission_sets" level="warn">user, ${USER_NAME}: Not on included user list, skipping permission export</log>
+                                        <log logger-name="org.apereo.portal.io.export-permission_sets" level="warn">user, ${USER_NAME}: Not on included user list, skipping permission export</log>
                                         <append-node node="${attributeNode(cancel=true)}"/>
                                     </otherwise>
                                 </choose>
@@ -123,7 +123,7 @@
                                         <!-- Check for group name == null (indicates an orphaned record) -->
                                         <choose>
                                             <when test="${jexl(GROUP.getName() == null)}">
-                                                <log logger-name="org.jasig.portal.io.export-permissions" level="warn">Permission target references a deleted group;  removing orphaned reference.</log>
+                                                <log logger-name="org.apereo.portal.io.export-permissions" level="warn">Permission target references a deleted group;  removing orphaned reference.</log>
                                                 <append-node node="${attributeNode(cancel=true)}"/>
                                             </when>
                                             <otherwise>

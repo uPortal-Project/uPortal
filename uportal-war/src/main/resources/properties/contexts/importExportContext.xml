@@ -123,13 +123,13 @@
      | Thread pool used for bulk import/export operations
      +-->
     <bean id="importExportThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.io.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.io.threadPool.maxThreads}" />
-        <property name="queueCapacity" value="${org.jasig.portal.io.threadPool.queueSize}" />
+        <property name="corePoolSize" value="${org.apereo.portal.io.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.io.threadPool.maxThreads}" />
+        <property name="queueCapacity" value="${org.apereo.portal.io.threadPool.queueSize}" />
         <property name="threadGroupName" value="uP-ImportExportTG" />
         <property name="threadNamePrefix" value="uP-ImportExport-" />
-        <property name="threadPriority" value="${org.jasig.portal.io.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.io.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.io.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.io.threadPool.keepAliveSeconds}" />
         <property name="rejectedExecutionHandler">
             <bean class="java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy"/>
         </property>
@@ -572,10 +572,10 @@
                 <entry key="SqlAttributes.TRANSACTION_MANAGER" value-ref="transactionManager" />
                 <entry key="stylesheetDescriptorDao" value-ref="stylesheetDescriptorDao" />
                 <entry key="stylesheetUserPreferencesDao" value-ref="stylesheetUserPreferencesDao" />
-                <entry key="user_profile_structure_force"           value="${org.jasig.portal.io.forceDefaultStructure}" />
-                <entry key="user_profile_structure_name_default"    value="${org.jasig.portal.io.defaultStructureName}" />
-                <entry key="user_profile_theme_force"               value="${org.jasig.portal.io.forceDefaultTheme}" />
-                <entry key="user_profile_theme_name_default"        value="${org.jasig.portal.io.defaultThemeName}" />
+                <entry key="user_profile_structure_force"           value="${org.apereo.portal.io.forceDefaultStructure}" />
+                <entry key="user_profile_structure_name_default"    value="${org.apereo.portal.io.defaultStructureName}" />
+                <entry key="user_profile_theme_force"               value="${org.apereo.portal.io.forceDefaultTheme}" />
+                <entry key="user_profile_theme_name_default"        value="${org.apereo.portal.io.defaultThemeName}" />
             </util:map>
         </property>
     </bean>
@@ -643,7 +643,7 @@
     <!-- 
      | Nested Tasks
      +-->
-    <bean id="isUserIncluded" class="org.jasig.portal.io.PropertiesFilesIsIncludedUser">
+    <bean id="isUserIncluded" class="org.apereo.portal.io.PropertiesFilesIsIncludedUser">
         <property name="userNamesMap">
             <util:properties local-override="true" location="classpath:/properties/export_included_users.properties">
                 <!-- Properties listed here are in addition to the properties in the flat file -->

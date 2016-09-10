@@ -38,9 +38,9 @@
             import org.apereo.portal.groups.IEntityGroup
             import org.apereo.portal.groups.IGroupConstants
             import org.apereo.portal.groups.IGroupMember
-            import org.jasig.portal.io.GetMemberIsGroupPhrase
-            import org.jasig.portal.io.GetMemberKeyPhrase
-            import org.jasig.portal.io.GetMemberServicePhrase
+            import org.apereo.portal.io.GetMemberIsGroupPhrase
+            import org.apereo.portal.io.GetMemberKeyPhrase
+            import org.apereo.portal.io.GetMemberServicePhrase
             import org.jasig.portal.services.GroupService
             import org.slf4j.LoggerFactory
 

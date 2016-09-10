@@ -92,7 +92,7 @@ public class PortletDefinitionImporterExporter
     private IPerson systemUser = PersonFactory.createSystemPerson();
     private String systemUsername = SystemPerson.INSTANCE.getUserName();
 
-    @Value("${org.jasig.portal.io.errorOnChannel}")
+    @Value("${org.apereo.portal.io.errorOnChannel}")
 	public void setErrorOnChannel(boolean errorOnChannel) {
 		this.errorOnChannel = errorOnChannel;
 	}

@@ -54,7 +54,7 @@
                         <!-- Check for group name == null (indicates an orphaned record) -->
                         <choose>
                             <when test="${jexl(GROUP.getName() == null)}">
-                                <log logger-name="org.jasig.portal.io.export-group_membership" level="warn">Membership child references a deleted group;  removing orphaned reference.</log>
+                                <log logger-name="org.apereo.portal.io.export-group_membership" level="warn">Membership child references a deleted group;  removing orphaned reference.</log>
                             </when>
                             <otherwise>
                                 <!-- All is well... -->
@@ -74,7 +74,7 @@
                                 </append-node>
                             </when>
                             <otherwise>
-                                <log logger-name="org.jasig.portal.io.export-group_membership" level="warn">user, ${USER_NAME}: Not on included user list, skipping membership export</log>
+                                <log logger-name="org.apereo.portal.io.export-group_membership" level="warn">user, ${USER_NAME}: Not on included user list, skipping membership export</log>
                                 <append-node node="${attributeNode(cancel=true)}"/>
                             </otherwise>
                         </choose>
