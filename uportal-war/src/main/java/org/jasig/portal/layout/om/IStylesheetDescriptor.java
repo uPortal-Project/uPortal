@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.xml.transform.Transformer;
 
-import org.jasig.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalData;
 import org.jasig.portal.url.IUrlNodeSyntaxHelper;
 import org.jasig.portal.url.IUrlNodeSyntaxHelperRegistry;
 

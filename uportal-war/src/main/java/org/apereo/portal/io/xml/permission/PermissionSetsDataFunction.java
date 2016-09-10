@@ -23,9 +23,9 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.SimpleStringPortalData;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.jasig.portal.security.IPermission;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.jdbc.core.JdbcOperations;

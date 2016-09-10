@@ -35,7 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dom4j.Element;
-import org.jasig.portal.io.xml.XmlTestException;
+import org.apereo.portal.io.xml.XmlTestException;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.junit.Test;

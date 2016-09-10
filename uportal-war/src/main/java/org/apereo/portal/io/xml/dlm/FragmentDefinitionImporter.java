@@ -34,8 +34,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.xpath.XPathConstants;
 
-import org.jasig.portal.io.xml.IDataImporter;
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.IDataImporter;
+import org.apereo.portal.io.xml.PortalDataKey;
 import org.jasig.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.layout.dlm.IFragmentDefinitionDao;
 import org.jasig.portal.utils.Tuple;
@@ -77,7 +77,7 @@ public class FragmentDefinitionImporter implements IDataImporter<Tuple<String, D
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporter#getImportDataKeys()
+	 * @see org.apereo.portal.io.xml.IDataImporter#getImportDataKeys()
 	 */
 	@Override
 	public Set<PortalDataKey> getImportDataKeys() {
@@ -85,7 +85,7 @@ public class FragmentDefinitionImporter implements IDataImporter<Tuple<String, D
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporter#importData(java.lang.Object)
+	 * @see org.apereo.portal.io.xml.IDataImporter#importData(java.lang.Object)
 	 */
 	@Override
 	@Transactional
@@ -108,7 +108,7 @@ public class FragmentDefinitionImporter implements IDataImporter<Tuple<String, D
 		this.fragmentDefinitionDao.updateFragmentDefinition(fragmentDefinition);
 	}
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporter#getUnmarshaller()
+	 * @see org.apereo.portal.io.xml.IDataImporter#getUnmarshaller()
 	 */
 	@Override
 	public Unmarshaller getUnmarshaller() {

@@ -27,8 +27,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.io.xml.AbstractPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.PortalDataKey;
 import org.jasig.portal.xml.StaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

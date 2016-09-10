@@ -26,8 +26,8 @@ import java.util.Set;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 
-import org.jasig.portal.io.xml.AbstractPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.PortalDataKey;
 
 import com.google.common.collect.ImmutableSet;
 

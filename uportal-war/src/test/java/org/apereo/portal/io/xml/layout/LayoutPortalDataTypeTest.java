@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.PortalDataKey;
 import org.junit.Test;
 
 /**

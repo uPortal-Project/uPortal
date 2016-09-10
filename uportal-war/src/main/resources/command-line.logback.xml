@@ -68,7 +68,7 @@
    -->
    
   <!-- Debugging database issues during import/export/delete
-  <logger name="org.jasig.portal.io.xml.JaxbPortalDataHandlerService" additivity="false" level="TRACE">
+  <logger name="org.apereo.portal.io.xml.JaxbPortalDataHandlerService" additivity="false" level="TRACE">
     <appender-ref ref="CONSOLE"/>
   </logger>
   <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">

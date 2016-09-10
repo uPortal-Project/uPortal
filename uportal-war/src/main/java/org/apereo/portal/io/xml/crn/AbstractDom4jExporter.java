@@ -28,9 +28,9 @@ import javax.xml.transform.TransformerException;
 
 import org.dom4j.Element;
 import org.dom4j.io.DocumentSource;
-import org.jasig.portal.io.xml.IDataExporter;
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.IDataExporter;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
@@ -72,7 +72,7 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataExporter#getPortalDataType()
+     * @see org.apereo.portal.io.xml.IDataExporter#getPortalDataType()
      */
     @Override
     public IPortalDataType getPortalDataType() {
@@ -80,7 +80,7 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataExporter#getPortalData()
+     * @see org.apereo.portal.io.xml.IDataExporter#getPortalData()
      */
     @Override
     public Iterable<? extends IPortalData> getPortalData() {
@@ -88,7 +88,7 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataExporter#exportData(java.lang.String)
+     * @see org.apereo.portal.io.xml.IDataExporter#exportData(java.lang.String)
      */
     @Override
     public Tuple<String, Element> exportData(String id) {
@@ -103,7 +103,7 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     protected abstract Element exportDataElement(String id);
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataExporter#getFileName(java.lang.Object)
+     * @see org.apereo.portal.io.xml.IDataExporter#getFileName(java.lang.Object)
      */
     @Override
     public String getFileName(Tuple<String, Element> data) {
@@ -111,7 +111,7 @@ public abstract class AbstractDom4jExporter implements IDataExporter<Tuple<Strin
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataExporter#getMarshaller()
+     * @see org.apereo.portal.io.xml.IDataExporter#getMarshaller()
      */
     @Override
     public Marshaller getMarshaller() {

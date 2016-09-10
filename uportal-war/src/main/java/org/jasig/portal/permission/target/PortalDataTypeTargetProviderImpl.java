@@ -26,8 +26,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.jasig.portal.io.xml.IPortalDataHandlerService;
-import org.jasig.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.IPortalDataHandlerService;
+import org.apereo.portal.io.xml.IPortalDataType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PortalDataTypeTargetProviderImpl implements IPermissionTargetProvider {

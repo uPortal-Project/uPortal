@@ -26,8 +26,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.jasig.portal.io.xml.AbstractPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.AbstractPortalDataType;
+import org.apereo.portal.io.xml.PortalDataKey;
 
 /**
  * @author Nicholas Blair
@@ -55,7 +55,7 @@ public class EventAggregationConfigurationPortalDataType extends AbstractPortalD
     }
     
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IPortalDataType#getTitle()
+	 * @see org.apereo.portal.io.xml.IPortalDataType#getTitle()
 	 */
 	@Override
 	public String getTitleCode() {
@@ -63,7 +63,7 @@ public class EventAggregationConfigurationPortalDataType extends AbstractPortalD
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IPortalDataType#getDescription()
+	 * @see org.apereo.portal.io.xml.IPortalDataType#getDescription()
 	 */
 	@Override
 	public String getDescriptionCode() {

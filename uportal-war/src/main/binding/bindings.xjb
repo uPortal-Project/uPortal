@@ -26,7 +26,7 @@
     <!-- Import/Export Schemas  -->
     <jaxb:bindings schemaLocation="../resources/xsd/io/common-io-types-4.0.xsd">
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml" />
+            <jaxb:package name="org.apereo.portal.io.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
     <jaxb:bindings schemaLocation="../resources/xsd/io/portlet-definition/portlet-definition-4.3.xsd">
@@ -42,7 +42,7 @@
             <jaxb:class name="ExternalPortletType"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml.portlettype" />
+            <jaxb:package name="org.apereo.portal.io.xml.portlettype" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
     <jaxb:bindings schemaLocation="../resources/xsd/io/stylesheet-descriptor/stylesheet-descriptor-4.0.xsd">
@@ -50,7 +50,7 @@
             <jaxb:class name="ExternalStylesheetDescriptor"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml.ssd" />
+            <jaxb:package name="org.apereo.portal.io.xml.ssd" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
     <jaxb:bindings schemaLocation="../resources/xsd/io/user/user-4.0.xsd">
@@ -61,7 +61,7 @@
             <jaxb:class name="ExternalTemplateUser"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml.user" />
+            <jaxb:package name="org.apereo.portal.io.xml.user" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
     <jaxb:bindings schemaLocation="../resources/xsd/io/permission-owner/permission-owner-4.0.xsd">
@@ -85,7 +85,7 @@
             <jaxb:class name="ExternalSubscribedFragments"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.io.xml.subscribedfragment" />
+            <jaxb:package name="org.apereo.portal.io.xml.subscribedfragment" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
     

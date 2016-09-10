@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalData;
 
 /**
  * A portlet definition is equivalent to a published ChannelDefinition.

@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.portlet.om;
 
-import org.jasig.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalData;
 
 /**
  * A channel type references a particular java class that implements the

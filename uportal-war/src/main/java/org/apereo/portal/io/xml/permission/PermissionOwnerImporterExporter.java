@@ -22,11 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
-import org.jasig.portal.io.xml.SimpleStringPortalData;
+import org.apereo.portal.io.xml.AbstractJaxbDataHandler;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.jasig.portal.permission.IPermissionActivity;
 import org.jasig.portal.permission.IPermissionOwner;
 import org.jasig.portal.permission.dao.IPermissionOwnerDao;
@@ -60,7 +60,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporter#getImportDataKeys()
+	 * @see org.apereo.portal.io.xml.IDataImporter#getImportDataKeys()
 	 */
 	@Override
 	public Set<PortalDataKey> getImportDataKeys() {
@@ -68,7 +68,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataExporter#getPortalDataType()
+	 * @see org.apereo.portal.io.xml.IDataExporter#getPortalDataType()
 	 */
 	@Override
 	public IPortalDataType getPortalDataType() {
@@ -76,7 +76,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataExporter#getPortalData()
+	 * @see org.apereo.portal.io.xml.IDataExporter#getPortalData()
 	 */
 	@Override
 	public Iterable<? extends IPortalData> getPortalData() {
@@ -97,7 +97,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.io.xml.IDataImporter#importData(java.lang.Object)
+     * @see org.apereo.portal.io.xml.IDataImporter#importData(java.lang.Object)
      */
     @Override
     @Transactional
@@ -124,7 +124,7 @@ public class PermissionOwnerImporterExporter extends
     }
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataExporter#exportData(java.lang.String)
+	 * @see org.apereo.portal.io.xml.IDataExporter#exportData(java.lang.String)
 	 */
 	@Override
 	public ExternalPermissionOwner exportData(String fname) {
@@ -133,7 +133,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataExporter#getFileName(java.lang.Object)
+	 * @see org.apereo.portal.io.xml.IDataExporter#getFileName(java.lang.Object)
 	 */
 	@Override
 	public String getFileName(ExternalPermissionOwner data) {
@@ -141,7 +141,7 @@ public class PermissionOwnerImporterExporter extends
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataDeleter#deleteData(java.lang.String)
+	 * @see org.apereo.portal.io.xml.IDataDeleter#deleteData(java.lang.String)
 	 */
 	@Override
 	public ExternalPermissionOwner deleteData(String id) {

@@ -45,7 +45,7 @@ import junit.framework.Assert;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.easymock.EasyMock;
-import org.jasig.portal.io.xml.XmlTestException;
+import org.apereo.portal.io.xml.XmlTestException;
 import org.jasig.portal.rendering.PipelineEventReader;
 import org.jasig.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.rendering.StAXPipelineComponent;

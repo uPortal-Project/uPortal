@@ -26,9 +26,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.SimpleStringPortalData;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.dlm.ConfigurationLoader;
 import org.jasig.portal.layout.dlm.FragmentDefinition;

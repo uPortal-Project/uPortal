@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.SimpleStringPortalData;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinitionDao;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.springframework.beans.factory.annotation.Autowired;

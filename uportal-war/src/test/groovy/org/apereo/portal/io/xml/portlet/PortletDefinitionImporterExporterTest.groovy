@@ -24,7 +24,7 @@ import org.apereo.portal.groups.ICompositeGroupService
 import org.apereo.portal.groups.ICompositeGroupServiceFactory
 import org.apereo.portal.groups.IEntity
 import org.apereo.portal.groups.IEntityGroup
-import org.jasig.portal.io.xml.portlettype.ExternalPermissionDefinition
+import org.apereo.portal.io.xml.portlettype.ExternalPermissionDefinition
 import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao
 import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl

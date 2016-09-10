@@ -39,10 +39,10 @@ import org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl;
 import org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.io.xml.AbstractJaxbDataHandler;
-import org.jasig.portal.io.xml.IPortalData;
-import org.jasig.portal.io.xml.IPortalDataType;
-import org.jasig.portal.io.xml.PortalDataKey;
+import org.apereo.portal.io.xml.AbstractJaxbDataHandler;
+import org.apereo.portal.io.xml.IPortalData;
+import org.apereo.portal.io.xml.IPortalDataType;
+import org.apereo.portal.io.xml.PortalDataKey;
 import org.jasig.portal.utils.EnumNameComparator;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.joda.time.DateMidnight;
@@ -249,7 +249,7 @@ public class EventAggregationConfigurationImporterExporter extends
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporterExporter#exportData(java.lang.String)
+	 * @see org.apereo.portal.io.xml.IDataImporterExporter#exportData(java.lang.String)
 	 */
 	@Override
 	public ExternalEventAggregationConfiguration exportData(String id) {
@@ -343,7 +343,7 @@ public class EventAggregationConfigurationImporterExporter extends
 
     /*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
+	 * @see org.apereo.portal.io.xml.IDataImporterExporter#deleteData(java.lang.String)
 	 */
 	@Transactional("aggrEventsTransactionManager")
 	@Override

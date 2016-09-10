@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.layout;
 
-import org.jasig.portal.io.xml.BaseXsltDataUpgraderTest;
+import org.apereo.portal.io.xml.BaseXsltDataUpgraderTest;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
