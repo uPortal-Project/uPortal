@@ -16,11 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.json;
+package org.apereo.portal.json;
 
 import java.io.IOException;
 
-import javax.portlet.WindowState;
+import javax.portlet.PortletMode;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.PortletUtils;
@@ -32,32 +32,32 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
-public class WindowStateModule extends SimpleModule {
+public class PortletModeModule extends SimpleModule {
     private static final long serialVersionUID = 1L;
 
-    public WindowStateModule() {
-        super("WindowStateModule");
+    public PortletModeModule() {
+        super("PortletModeModule");
         
-        this.addSerializer(WindowState.class, ToStringSerializer.instance);
-        this.addDeserializer(WindowState.class, new WindowStateDeserializer());
+        this.addSerializer(PortletMode.class, ToStringSerializer.instance);
+        this.addDeserializer(PortletMode.class, new PortletModeDeserializer());
     }
     
-    private static class WindowStateDeserializer extends StdDeserializer<WindowState> {
+    private static class PortletModeDeserializer extends StdDeserializer<PortletMode> {
         private static final long serialVersionUID = 1L;
 
-        public WindowStateDeserializer() {
-            super(WindowState.class);
+        public PortletModeDeserializer() {
+            super(PortletMode.class);
         }
 
         @Override
-        public WindowState deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException,
+        public PortletMode deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException,
                 JsonProcessingException {
             
             final String text = StringUtils.trimToNull(jp.getText());
             if (text == null) {
                 return null;
             }
-            return PortletUtils.getWindowState(text);
+            return PortletUtils.getPortletMode(text);
         }
     }
 }

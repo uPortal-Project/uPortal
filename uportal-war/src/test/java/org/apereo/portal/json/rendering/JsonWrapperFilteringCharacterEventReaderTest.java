@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.json.rendering;
+package org.apereo.portal.json.rendering;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

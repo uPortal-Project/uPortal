@@ -53,7 +53,7 @@ public enum CharacterEventTypes {
      */
     PORTLET_HEADER,
     /**
-     * @see org.jasig.portal.json.rendering.JsonLayoutPlaceholderEvent
+     * @see org.apereo.portal.json.rendering.JsonLayoutPlaceholderEvent
      */
     JSON_LAYOUT,
     /**

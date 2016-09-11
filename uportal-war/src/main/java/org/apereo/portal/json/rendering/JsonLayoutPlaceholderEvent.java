@@ -16,29 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.json.rendering;
+package org.apereo.portal.json.rendering;
 
-import java.util.Collection;
-import java.util.regex.MatchResult;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.stream.events.StartElement;
-
-import org.apereo.portal.character.stream.BasePlaceholderEventSource;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 
+public interface JsonLayoutPlaceholderEvent extends CharacterEvent {
 
-public class JsonLayoutPlaceholderEventSource extends BasePlaceholderEventSource {
-    
-    @Override
-    protected void generateCharacterEvents(HttpServletRequest servletRequest, StartElement event,
-            Collection<CharacterEvent> eventBuffer) {
-        eventBuffer.add(JsonLayoutPlaceholderEventImpl.INSTANCE);
-    }
-
-    @Override
-    public void generateCharacterEvents(HttpServletRequest servletRequest, MatchResult matchResult,
-            Collection<CharacterEvent> eventBuffer) {
-        eventBuffer.add(JsonLayoutPlaceholderEventImpl.INSTANCE);
-    }
 }

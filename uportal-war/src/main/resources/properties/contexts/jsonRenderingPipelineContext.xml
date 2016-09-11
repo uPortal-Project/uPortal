@@ -172,7 +172,7 @@
         <property name="chunkingElements">
             <map>
                 <entry key="json">
-                    <bean class="org.jasig.portal.json.rendering.JsonLayoutPlaceholderEventSource" />
+                    <bean class="org.apereo.portal.json.rendering.JsonLayoutPlaceholderEventSource" />
                 </entry>
             </map>
         </property>
@@ -183,7 +183,7 @@
         </property>
     </bean>
     
-    <bean id="jsonWrapperFilteringCharacterPipelineComponent" class="org.jasig.portal.json.rendering.JsonWrapperFilteringCharacterPipelineComponent">
+    <bean id="jsonWrapperFilteringCharacterPipelineComponent" class="org.apereo.portal.json.rendering.JsonWrapperFilteringCharacterPipelineComponent">
         <property name="wrappedComponent" ref="jsonStaxSerializingComponent" />
     </bean>
     
@@ -204,7 +204,7 @@
     <!--<bean id="jsonPortletRenderingIncorporationComponent" class="org.jasig.portal.rendering.PortletRenderingIncorporationComponent">-->
         <!--<property name="wrappedComponent" ref="jsonPortletRenderingInitiationCharacterComponent" />-->
     <!--</bean>-->
-    <bean id="jsonPortalRenderingPipeline" class="org.jasig.portal.json.rendering.JsonLayoutRenderingPipeline">
+    <bean id="jsonPortalRenderingPipeline" class="org.apereo.portal.json.rendering.JsonLayoutRenderingPipeline">
         <qualifier value="json"/>
         <property name="pipeline" ref="jsonThemeCachingComponent" />
     </bean>
