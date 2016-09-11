@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
-import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;

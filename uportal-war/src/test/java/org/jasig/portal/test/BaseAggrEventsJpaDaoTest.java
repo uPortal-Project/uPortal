@@ -21,7 +21,7 @@ package org.jasig.portal.test;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 
 /**
  * Base class for AggrEventsDb unit tests that want TX and entity manager support.

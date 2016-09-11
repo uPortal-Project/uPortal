@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -28,9 +28,7 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
-import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
-import org.apereo.portal.jpa.OpenEntityManager;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;

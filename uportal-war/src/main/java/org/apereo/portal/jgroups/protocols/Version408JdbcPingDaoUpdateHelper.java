@@ -18,9 +18,9 @@
  */
 package org.apereo.portal.jgroups.protocols;
 
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.apereo.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.jpa.IVersionedDatabaseUpdateHelper;
+import org.apereo.portal.jpa.IVersionedDatabaseUpdateHelper;
 import org.jasig.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;

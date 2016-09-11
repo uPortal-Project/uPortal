@@ -96,7 +96,7 @@
     
     <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
-    <bean id="PortalDbEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="PortalDbEntityManagerFactory" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <property name="dataSource" ref="PortalDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">

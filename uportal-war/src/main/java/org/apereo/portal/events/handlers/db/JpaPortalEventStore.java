@@ -34,7 +34,7 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.apereo.portal.events.PortalEvent;
-import org.jasig.portal.jpa.BaseRawEventsJpaDao;
+import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

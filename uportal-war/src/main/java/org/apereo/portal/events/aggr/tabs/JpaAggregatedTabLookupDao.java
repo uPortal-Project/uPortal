@@ -32,10 +32,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
-import org.jasig.portal.jpa.cache.EntityManagerCache;
+import org.apereo.portal.jpa.cache.EntityManagerCache;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;

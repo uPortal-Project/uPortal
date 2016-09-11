@@ -16,31 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
-import org.jasig.portal.utils.JdbcUtils;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
+import org.jasig.portal.tools.dbloader.ISchemaExport;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Component;
 
 /**
- * Update the aggregate stats db from 4.0.3
+ * Update the aggregate stats db from 4.0.4
  * 
  * @author Eric Dalquist
  */
 @Component
-public class Version403AggrEventsDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
-    private final Version version = VersionUtils.parseVersion("4.0.3");
-    private JdbcOperations jdbcOperations;
+public class Version404AggrEventsDatabaseUpdateHelper implements IVersionedDatabaseUpdateHelper {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
     
+    private final Version version = VersionUtils.parseVersion("4.0.4");
+    private ISchemaExport schemaExport;
+
     @Autowired
     @Qualifier(BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
-    public void setJdbcOperations(JdbcOperations jdbcOperations) {
-        this.jdbcOperations = jdbcOperations;
+    public void setSchemaExport(ISchemaExport schemaExport) {
+        this.schemaExport = schemaExport;
     }
 
     @Override
@@ -56,10 +59,15 @@ public class Version403AggrEventsDatabaseUpdateHelper implements IVersionedDatab
     @AggrEventsTransactional
     @Override
     public void preUpdate() {
-        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_LOGIN_EVENT_AGGREGATE__UIDS");
-        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_LOGIN_EVENT_AGGREGATE");
-        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_EVENT_AGGR_CONF_INTRVL_EXC");
-        JdbcUtils.dropTableIfExists(this.jdbcOperations, "UP_EVENT_AGGR_CONF_INTRVL_INC");
+        //Drop the aggregate events database tables
+        logger.info("Dropping aggregate event tables for upgrade from " + getVersion());
+        this.schemaExport.drop(true, null, true);
+        
+        //Create the aggregate events database tables
+        logger.info("Creating aggregate event tables for upgrade from " + getVersion());
+        this.schemaExport.create(true, null, true);
+        
+        logger.warn("IMPORTANT: You must import your event aggregation configuration again!\n\tex: ant data-import -Dfile=/path/to/uportal/uportal-war/src/main/data/default_entities/event-aggregation/default.event-aggregation.xml");
     }
 
     @Override

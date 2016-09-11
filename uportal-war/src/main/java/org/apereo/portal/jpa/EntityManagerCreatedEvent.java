@@ -16,31 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa.cache;
+package org.apereo.portal.jpa;
 
-import java.io.Serializable;
+import javax.persistence.EntityManager;
 
 /**
- * Used to cache data associated with a specific EntityManager. The EntityManager specified by the Persistent Unit Name
- * must be active in the current Thread.
+ * Event fired immediately after the {@link EntityManager} is created 
  * 
  * @author Eric Dalquist
+ * @version $Revision$
  */
-public interface EntityManagerCache {
+public class EntityManagerCreatedEvent extends AbstractEntityManagerEvent {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Cache a value associated with the persistent unit.
-     * 
-     * @param persistenceUnitName The name of the JPA persistent unit to associate the cached data with 
-     * @param key The cache key
-     * @param value The cache value
-     */
-    void put(String persistenceUnitName, Serializable key, Object value);
+    public EntityManagerCreatedEvent(Object source, long entityManagerId, String persistenceUnitName,
+            EntityManager entityManager) {
+        super(source, entityManagerId, persistenceUnitName, entityManager);
+    }
 
-    /**
-     * @param persistenceUnitName The name of the JPA persistent unit to associate the cached data with
-     * @param key The cache key
-     * @return The cached value
-     */
-    <T> T get(String persistenceUnitName, Serializable key);
+    @Override
+    public String toString() {
+        return "EntityManagerCreatedEvent [entityManagerId=" + getEntityManagerId() + "]";
+    }
 }

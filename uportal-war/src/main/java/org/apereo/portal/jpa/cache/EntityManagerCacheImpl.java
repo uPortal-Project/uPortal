@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa.cache;
+package org.apereo.portal.jpa.cache;
 
 import java.io.Serializable;
 import java.util.Deque;
@@ -31,9 +31,9 @@ import javax.persistence.EntityManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.jpa.AbstractEntityManagerEvent;
-import org.jasig.portal.jpa.EntityManagerClosingEvent;
-import org.jasig.portal.jpa.EntityManagerCreatedEvent;
+import org.apereo.portal.jpa.AbstractEntityManagerEvent;
+import org.apereo.portal.jpa.EntityManagerClosingEvent;
+import org.apereo.portal.jpa.EntityManagerCreatedEvent;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.SimpleCacheEntryTag;
 import org.jasig.portal.utils.cache.TaggedCacheEntryPurger;
@@ -76,7 +76,7 @@ public class EntityManagerCacheImpl implements ApplicationListener<AbstractEntit
     private TaggedCacheEntryPurger taggedCacheEntryPurger;
     
     @Autowired
-    @Qualifier("org.jasig.portal.jpa.cache.EntityManagerCache")
+    @Qualifier("org.apereo.portal.jpa.cache.EntityManagerCache")
     public void setContentCache(Ehcache contentCache) {
         this.contentCache = contentCache;
     }

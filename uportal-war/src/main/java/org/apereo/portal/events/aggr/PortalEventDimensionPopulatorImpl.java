@@ -25,7 +25,7 @@ import org.apereo.portal.events.aggr.dao.DateDimensionDao;
 import org.apereo.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.apereo.portal.events.aggr.dao.TimeDimensionDao;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.LocalTime;

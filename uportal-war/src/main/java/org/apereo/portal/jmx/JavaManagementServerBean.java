@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jmx;
+package org.apereo.portal.jmx;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;

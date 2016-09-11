@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-import org.apereo.portal.jpa.OpenEntityManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

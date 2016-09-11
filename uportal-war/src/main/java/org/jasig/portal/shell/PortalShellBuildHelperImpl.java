@@ -31,7 +31,7 @@ import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
 import org.apereo.portal.io.xml.PortalDataHandlerServiceUtils;
-import org.jasig.portal.jpa.VersionedDataUpdater;
+import org.apereo.portal.jpa.VersionedDataUpdater;
 import org.jasig.portal.tools.DbTest;
 import org.jasig.portal.tools.dbloader.DbLoaderConfigBuilder;
 import org.jasig.portal.tools.dbloader.IDbLoader;

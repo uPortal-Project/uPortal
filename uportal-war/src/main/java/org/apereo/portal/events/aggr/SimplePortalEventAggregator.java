@@ -22,7 +22,7 @@ import javax.persistence.FlushModeType;
 
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.aggr.session.EventSession;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 
 /**
  * Defines a class that aggregates events.

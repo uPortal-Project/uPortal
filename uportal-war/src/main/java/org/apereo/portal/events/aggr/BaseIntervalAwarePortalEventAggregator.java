@@ -28,7 +28,7 @@ import java.util.Set;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.session.EventSession;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -21,7 +21,7 @@ package org.apereo.portal.events.aggr;
 import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.apereo.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.apereo.portal.events.aggr.session.EventSessionDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.ReadablePeriod;

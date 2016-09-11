@@ -43,7 +43,7 @@ import org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl;
 import org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl_;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;

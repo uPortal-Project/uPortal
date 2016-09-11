@@ -42,7 +42,7 @@ import org.apereo.portal.events.aggr.IEventAggregatorStatus.ProcessingType;
 import org.apereo.portal.events.aggr.IPortalEventAggregator;
 import org.apereo.portal.events.aggr.QuarterDetail;
 import org.apereo.portal.events.aggr.dao.IEventAggregationManagementDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;

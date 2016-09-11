@@ -51,7 +51,7 @@
         <property name="poolPreparedStatements" value="false" />
     </bean>
     
-    <bean id="factoryBean" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
+    <bean id="factoryBean" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="${persistenceUnitName}" />
         <property name="jpaProperties">
@@ -78,7 +78,7 @@
     
     <bean class="org.apereo.portal.hibernate.HibernateConfigurationAwareInjector" />
     
-    <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
+    <bean class="org.apereo.portal.jpa.OpenEntityManagerAspect" />
 
     <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
@@ -107,7 +107,7 @@
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
     
-    <bean class="org.jasig.portal.jpa.cache.EntityManagerCacheImpl">
+    <bean class="org.apereo.portal.jpa.cache.EntityManagerCacheImpl">
         <property name="contentCache">
             <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
                 <constructor-arg value="net.sf.ehcache.Ehcache" />

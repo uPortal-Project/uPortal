@@ -29,16 +29,16 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-    <bean id="RawEventsDbEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="RawEventsDbEntityManagerFactory" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <qualifier value="RawEventsDb"/>
         <property name="dataSource" ref="RawEventsDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
-            <util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
         <property name="jpaProperties">
             <props>
-                <prop key="persistenceUnitName">#{T(org.jasig.portal.jpa.BaseRawEventsJpaDao).PERSISTENCE_UNIT_NAME}</prop>
+                <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BaseRawEventsJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
@@ -56,19 +56,19 @@
     </bean>
 
 
-    <bean id="AggrEventsDbEntityManagerFactory" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
+    <bean id="AggrEventsDbEntityManagerFactory" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="cacheManager">
         <qualifier value="AggrEventsDb"/>
         <property name="dataSource" ref="AggrEventsDb" />
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName">
-            <util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
                 <prop key="hibernate.cache.region_prefix">AggrEvents</prop>
                 <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
-                <prop key="persistenceUnitName">#{T(org.jasig.portal.jpa.BaseAggrEventsJpaDao).PERSISTENCE_UNIT_NAME}</prop>
+                <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BaseAggrEventsJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>
     </bean>
@@ -92,7 +92,7 @@
     	<qualifier value="RawEventsDb"/>
         <property name="jdbcOperations" ref="rawEventsJdbcOperations" />
         <property name="persistenceUnit">
-            <util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
     </bean>
     
@@ -100,7 +100,7 @@
     	<qualifier value="AggrEventsDb"/>
         <property name="jdbcOperations" ref="aggrEventsJdbcOperations" />
         <property name="persistenceUnit">
-            <util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
+            <util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/>
         </property>
     </bean>
 </beans>

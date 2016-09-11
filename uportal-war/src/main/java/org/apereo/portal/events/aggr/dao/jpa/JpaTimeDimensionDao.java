@@ -28,7 +28,7 @@ import javax.persistence.criteria.Root;
 
 import org.apereo.portal.events.aggr.TimeDimension;
 import org.apereo.portal.events.aggr.dao.TimeDimensionDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.LocalTime;
 import org.springframework.stereotype.Repository;

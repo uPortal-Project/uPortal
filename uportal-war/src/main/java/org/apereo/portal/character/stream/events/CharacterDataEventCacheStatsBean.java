@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.character.stream.events;
 
-import org.jasig.portal.jmx.GuavaCacheStatsBean;
+import org.apereo.portal.jmx.GuavaCacheStatsBean;
 
 import com.google.common.cache.Cache;
 

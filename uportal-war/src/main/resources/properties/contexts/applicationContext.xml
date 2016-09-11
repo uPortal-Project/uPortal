@@ -103,10 +103,10 @@
     		<key><util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     	<entry value="4.1.0">
-    		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     	<entry value="4.1.0">
-    		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     </util:map>
     

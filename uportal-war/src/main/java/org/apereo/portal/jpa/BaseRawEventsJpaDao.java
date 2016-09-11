@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apereo.portal.jpa.BaseJpaDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Propagation;

@@ -16,26 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.jpa;
+package org.apereo.portal.jpa;
 
-import javax.persistence.EntityManager;
+import org.jasig.portal.version.dao.VersionDao;
 
 /**
- * Event fired immediately before the {@link EntityManager} is closed
+ * Runs steps needed to init/upgrade/update the database based on the version information
+ * retrieved from {@link VersionDao}
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-public class EntityManagerClosingEvent extends AbstractEntityManagerEvent {
-    private static final long serialVersionUID = 1L;
+public interface VersionedDataUpdater {
 
-    public EntityManagerClosingEvent(Object source, long entityManagerId, String persistenceUnitName,
-            EntityManager entityManager) {
-        super(source, entityManagerId, persistenceUnitName, entityManager);
-    }
+    /**
+     * Run post-initialize steps for the versioned product 
+     */
+    void postInitDatabase(String product);
 
-    @Override
-    public String toString() {
-        return "EntityManagerClosingEvent [entityManagerId=" + getEntityManagerId() + "]";
-    }
+    /**
+     * Run the pre-update steps for the versioned product
+     */
+    void preUpdateDatabase(String product);
+
+    /**
+     * Run the post-update steps for the versioned product
+     */
+    void postUpdateDatabase(String product);
+
 }

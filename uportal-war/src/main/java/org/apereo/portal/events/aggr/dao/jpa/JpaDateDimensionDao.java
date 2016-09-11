@@ -32,7 +32,7 @@ import javax.persistence.criteria.Subquery;
 
 import org.apereo.portal.events.aggr.DateDimension;
 import org.apereo.portal.events.aggr.dao.DateDimensionDao;
-import org.jasig.portal.jpa.BaseAggrEventsJpaDao;
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.joda.time.DateMidnight;
 import org.joda.time.LocalDate;
