@@ -29,7 +29,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.io.IOUtils;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

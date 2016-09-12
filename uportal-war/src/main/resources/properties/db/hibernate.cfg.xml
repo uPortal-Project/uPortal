@@ -62,8 +62,8 @@
         <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl" />
         <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl" />
         <mapping class="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl" />
-        <mapping class="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl" />
-        <mapping class="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl" />
+        <mapping class="org.apereo.portal.permission.dao.jpa.PermissionActivityImpl" />
+        <mapping class="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl" />
         <mapping class="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"/>
@@ -75,8 +75,8 @@
         <mapping class="org.jasig.portal.tenants.JpaTenant"/>
         <mapping class="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
         <mapping class="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
-        <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
-        <mapping class="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
+        <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>
+        <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         <mapping class="org.apereo.portal.i18n.dao.jpa.MessageImpl"/>
         <mapping class="org.apereo.portal.concurrency.locking.ClusterMutex"/>
         <mapping class="org.jasig.portal.version.dao.jpa.VersionImpl"/>

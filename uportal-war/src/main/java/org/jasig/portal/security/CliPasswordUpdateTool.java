@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

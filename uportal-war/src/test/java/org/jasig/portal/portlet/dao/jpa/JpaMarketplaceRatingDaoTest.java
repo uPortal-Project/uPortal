@@ -28,8 +28,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
@@ -75,7 +75,7 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
 		 * We want to make sure that this finishes before moving on
 		 * This assumes that localAccountDao is correct and we 
 		 * won't retest that code here, but rather in
-		 * @link org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImplTest
+		 * @link org.apereo.portal.persondir.dao.jpa.JpaLocalAccountDaoImplTest
 		 */
         this.execute(new Callable<Object>() {
             @Override

@@ -19,8 +19,8 @@
 package org.jasig.portal.portlets.account.selfedit;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.security.IPortalPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;

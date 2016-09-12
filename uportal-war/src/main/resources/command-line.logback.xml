@@ -106,7 +106,7 @@
 
   <!-- Hide some warning messages associated with PAGS and Person Directory for group import -->
   <logger name="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl" additivity="false" level="ERROR"/>
-  <logger name="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR"/>
   <logger name="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao" additivity="false" level="ERROR"/>
   <logger name="org.apereo.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester" additivity="false" level="ERROR"/>
   <logger name="org.hibernate.engine.jdbc.internal.JdbcResourceRegistryImpl" additivity="false" level="ERROR"/>

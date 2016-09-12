@@ -18,9 +18,9 @@
  */
 package org.jasig.portal.security;
 
-import org.jasig.portal.permission.IPermissionActivity;
-import org.jasig.portal.permission.IPermissionOwner;
-import org.jasig.portal.permission.target.IPermissionTarget;
+import org.apereo.portal.permission.IPermissionActivity;
+import org.apereo.portal.permission.IPermissionOwner;
+import org.apereo.portal.permission.target.IPermissionTarget;
 
 /**
  * Defines a pluggable strategy for evaluating the permissions associated

@@ -20,8 +20,8 @@ package org.jasig.portal.security.provider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.security.IPortalPasswordService;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;

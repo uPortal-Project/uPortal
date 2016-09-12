@@ -36,7 +36,7 @@
     <!--
      | Provides user name for the current portal user if the thread is handling a request
      +-->
-    <bean id="currentUserProvider" class="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" />
+    <bean id="currentUserProvider" class="org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider" />
     
     <!--
      | Provides the default username attribute to use to the rest of the DAOs
@@ -184,7 +184,7 @@
                 <property name="personAttributeDaos">
                     <list>
                         <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
-                        <bean class="org.jasig.portal.persondir.ImpersonationStatusPersonAttributeDao" />
+                        <bean class="org.apereo.portal.persondir.ImpersonationStatusPersonAttributeDao" />
                         <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
                             <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                             <property name="personAttributeDaos">
@@ -214,7 +214,7 @@
      | Looks in the local person-directory data. This is only used for portal-local users such as fragment owners
      | All attributes are searchable via this configuration, results are cached by the underlying DAO
      +-->
-    <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
+    <bean id="uPortalAccountUserSource" class="org.apereo.portal.persondir.LocalAccountPersonAttributeDao">
         <property name="localAccountDao" ref="localAccountDao"/>
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="queryAttributeMapping">

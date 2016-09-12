@@ -176,11 +176,11 @@
     | The permissionTargetProvider key names must be synchronized between src/main/data/default_entities/permission_owner/*.xml
     | files, here, and authorizationService.
     +-->
-    <bean id="permissionTargetProviderRegistry" class="org.jasig.portal.permission.target.PermissionTargetProviderRegistryImpl">
+    <bean id="permissionTargetProviderRegistry" class="org.apereo.portal.permission.target.PermissionTargetProviderRegistryImpl">
         <property name="providers">
             <map>
                 <entry key="allEntitiesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
                         <constructor-arg>
                             <util:set>
                                 <value>group</value>
@@ -192,7 +192,7 @@
                     </bean>
                 </entry>
                 <entry key="allGroupsTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
                         <constructor-arg>
                             <util:set>
                                 <value>group</value>
@@ -202,7 +202,7 @@
                     </bean>
                 </entry>
                 <entry key="peopleAndGroupsTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
                         <constructor-arg>
                             <util:set>
                                 <value>group</value>
@@ -212,7 +212,7 @@
                     </bean>
                 </entry>
                 <entry key="channelsAndCategoriesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.EntityTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.EntityTargetProviderImpl">
                         <constructor-arg>
                             <util:set>
                                 <value>category</value>
@@ -222,17 +222,17 @@
                     </bean>
                 </entry>
                 <entry key="portletTypeTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.PortletTypeTargetProviderImpl"/>
+                    <bean class="org.apereo.portal.permission.target.PortletTypeTargetProviderImpl"/>
                 </entry>
                 <entry key="errorChannelTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.SimpleStringTargetProviderImpl">
                         <property name="targets">
                             <util:list>
-                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
+                                <bean class="org.apereo.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="DETAILS"/>
                                     <constructor-arg value="Stack Trace"/>
                                     <constructor-arg>
-                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                        <value type="org.apereo.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
                                     </constructor-arg>
                                 </bean>
                             </util:list>
@@ -240,14 +240,14 @@
                     </bean>
                 </entry>
                 <entry key="portalSystemTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.SimpleStringTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.SimpleStringTargetProviderImpl">
                         <property name="targets">
                             <util:list>
-                                <bean class="org.jasig.portal.permission.target.PermissionTargetImpl">
+                                <bean class="org.apereo.portal.permission.target.PermissionTargetImpl">
                                     <constructor-arg value="ALL"/>
                                     <constructor-arg value="All permissions"/>
                                     <constructor-arg>
-                                        <value type="org.jasig.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
+                                        <value type="org.apereo.portal.permission.target.IPermissionTarget.TargetType">OTHER</value>
                                     </constructor-arg>
                                 </bean>
                             </util:list>
@@ -255,12 +255,12 @@
                     </bean>
                 </entry>
                 <entry key="userAttributesTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.UserAttributesTargetProviderImpl">
+                    <bean class="org.apereo.portal.permission.target.UserAttributesTargetProviderImpl">
                         <property name="personAttributeDao" ref="personAttributeDao" />
                     </bean>
                 </entry>
                 <entry key="portalDataTypeTargetProvider">
-                    <bean class="org.jasig.portal.permission.target.PortalDataTypeTargetProviderImpl" />
+                    <bean class="org.apereo.portal.permission.target.PortalDataTypeTargetProviderImpl" />
                 </entry>
             </map>
         </property>

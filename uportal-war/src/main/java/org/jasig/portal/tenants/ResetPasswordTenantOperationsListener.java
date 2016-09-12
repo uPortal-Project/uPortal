@@ -21,13 +21,12 @@ package org.jasig.portal.tenants;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.persondir.ILocalAccountDao;
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlets.account.IPasswordResetNotification;
 import org.jasig.portal.portlets.account.UserAccountHelper;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;

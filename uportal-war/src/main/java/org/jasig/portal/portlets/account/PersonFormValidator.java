@@ -19,7 +19,7 @@
 package org.jasig.portal.portlets.account;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.persondir.ILocalAccountDao;
+import org.apereo.portal.persondir.ILocalAccountDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;

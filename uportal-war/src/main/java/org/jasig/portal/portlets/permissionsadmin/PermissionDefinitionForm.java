@@ -22,9 +22,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.portal.permission.IPermissionActivity;
-import org.jasig.portal.permission.IPermissionOwner;
-import org.jasig.portal.permission.target.IPermissionTarget;
+import org.apereo.portal.permission.IPermissionActivity;
+import org.apereo.portal.permission.IPermissionOwner;
+import org.apereo.portal.permission.target.IPermissionTarget;
 
 /**
  * PermissionDefinitionForm represents important editing information for 

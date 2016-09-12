@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.Set;
 
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
-import org.jasig.portal.permission.IPermissionActivity;
-import org.jasig.portal.permission.IPermissionOwner;
+import org.apereo.portal.permission.IPermissionActivity;
+import org.apereo.portal.permission.IPermissionOwner;
 import org.jasig.portal.security.IPerson;
 
 /**

@@ -22,7 +22,7 @@ package org.jasig.portal.portlets.account;
 import java.net.URL;
 import java.util.Locale;
 
-import org.jasig.portal.persondir.ILocalAccountPerson;
+import org.apereo.portal.persondir.ILocalAccountPerson;
 
 
 /**

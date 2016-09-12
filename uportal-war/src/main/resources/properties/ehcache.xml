@@ -971,7 +971,7 @@
      | - 1 x permission owner type
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl"
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -981,7 +981,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId"
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -991,7 +991,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1001,7 +1001,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1011,7 +1011,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.permission.dao.jpa.PermissionActivityImpl"
+    <cache name="org.apereo.portal.permission.dao.jpa.PermissionActivityImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1027,7 +1027,7 @@
      | - 1 x local user
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl"
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1037,7 +1037,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1047,7 +1047,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1057,7 +1057,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
         eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1067,7 +1067,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
