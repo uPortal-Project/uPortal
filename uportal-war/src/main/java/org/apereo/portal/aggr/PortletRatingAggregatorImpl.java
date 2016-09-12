@@ -24,7 +24,7 @@ import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.apereo.portal.concurrency.locking.LockOptions;
 import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
+import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;

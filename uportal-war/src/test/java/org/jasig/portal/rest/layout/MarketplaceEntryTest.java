@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.rest.layout;
 
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;

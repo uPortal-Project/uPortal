@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
-import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
-import org.jasig.portal.portlet.marketplace.IMarketplaceService;
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
+import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
+import org.apereo.portal.portlet.marketplace.IMarketplaceService;
+import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.rest.layout.MarketplaceEntry;

@@ -509,7 +509,7 @@
      | - 1 x subscribed portlet x user
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -1082,7 +1082,7 @@
      | Caches PortalCookieImpl objects
      | - 1 per "customer" per "year" (by default, or until they clear their cookies)
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1092,7 +1092,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1102,7 +1102,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.Query"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1112,7 +1112,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1122,7 +1122,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletCookieImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletCookieImpl"
         eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1138,7 +1138,7 @@
      | - 1 x published portlet
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1148,7 +1148,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1158,7 +1158,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1168,7 +1168,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1178,7 +1178,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1188,7 +1188,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
         <cacheEventListenerFactory
@@ -1204,7 +1204,7 @@
      | - 1 x subscribed portlet x user
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1214,7 +1214,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.Query"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.Query"
         eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1224,7 +1224,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1241,7 +1241,7 @@
      | - 1 x published portlet
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1251,7 +1251,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1261,7 +1261,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1271,7 +1271,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1287,7 +1287,7 @@
      | - 1 x channel type
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1297,7 +1297,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1307,7 +1307,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.portlet.dao.jpa.PortletTypeImpl.Query"
+    <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1346,7 +1346,7 @@
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
     </cache>
 
-    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl"
+    <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1357,7 +1357,7 @@
                 replicateRemovals=true "/>
     </cache>
 
-    <cache name="org.jasig.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
+    <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -1369,19 +1369,19 @@
     </cache>
 
     <!-- Caches MarketplacePortletDefinition instances;  not replicated -->
-    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- Caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
         not serializable, so don't overflow to disk.  -->
-    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceUserPortletDefinitionCache"
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- Caches a few odds and ends related to limiting which categories are
          displayed in a single publication of the Marketplace;  not replicated -->
-    <cache name="org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
+    <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
            eternal="false" maxElementsInMemory="20" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
 

@@ -23,7 +23,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="org.jasig.portal.portlet.dao.jpa">
+<hibernate-mapping package="org.apereo.portal.portlet.dao.jpa">
     <typedef name="nullSafeString" class="org.apereo.portal.dao.usertype.NullSafeStringType" />
     <typedef name="fname" class="org.apereo.portal.dao.usertype.FunctionalNameType" />
     <typedef name="windowState" class="org.apereo.portal.dao.usertype.WindowStateType" />

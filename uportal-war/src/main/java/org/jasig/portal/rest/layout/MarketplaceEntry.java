@@ -27,9 +27,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.jasig.portal.portlet.marketplace.PortletReleaseNotes;
-import org.jasig.portal.portlet.marketplace.ScreenShot;
+import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.apereo.portal.portlet.marketplace.PortletReleaseNotes;
+import org.apereo.portal.portlet.marketplace.ScreenShot;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.PortletCategory;
 

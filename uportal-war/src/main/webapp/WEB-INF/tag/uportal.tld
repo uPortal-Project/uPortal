@@ -27,7 +27,7 @@
     <uri>http://www.uportal.org/jsp/jstl/uportal/1.0</uri>
     <tag>
         <name>param</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParamTag</tag-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.ParamTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -42,8 +42,8 @@
     </tag>
     <tag>
         <name>render-delegate</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
-        <tei-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
+        <tei-class>org.apereo.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>fname</name>
@@ -68,7 +68,7 @@
     </tag>
     <tag>
         <name>parent-url</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>windowState</name>

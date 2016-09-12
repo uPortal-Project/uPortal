@@ -19,7 +19,7 @@
 package org.apereo.portal.events.aggr.portlets;
 
 import org.apereo.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;

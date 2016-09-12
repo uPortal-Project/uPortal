@@ -44,8 +44,8 @@ import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.portlet.dao.IPortletEntityDao;
-import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.apereo.portal.portlet.dao.IPortletEntityDao;
+import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
@@ -104,7 +104,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         this.stylesheetDescriptorDao = stylesheetDescriptorDao;
     }
     @Autowired
-    public void setEntityIdParseCache(@Qualifier("org.jasig.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache") Ehcache entityIdParseCache) {
+    public void setEntityIdParseCache(@Qualifier("org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.idParseCache") Ehcache entityIdParseCache) {
         this.entityIdParseCache = entityIdParseCache;
     }
     @Autowired

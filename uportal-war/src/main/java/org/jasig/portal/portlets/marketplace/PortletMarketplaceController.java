@@ -51,11 +51,11 @@ import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
-import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
-import org.jasig.portal.portlet.marketplace.IMarketplaceService;
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
+import org.apereo.portal.portlet.marketplace.IMarketplaceService;
+import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
@@ -120,7 +120,7 @@ public class PortletMarketplaceController {
      * in a single publication of the Marketplace.
      */
     @Autowired
-    @Qualifier(value = "org.jasig.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
+    @Qualifier(value = "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
     private Cache marketplaceCategoryCache;
 
     private IMarketplaceService marketplaceService;

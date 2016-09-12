@@ -30,7 +30,7 @@ import org.apereo.portal.api.portlet.DelegationRequest;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
-import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
+import org.apereo.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.om.IPortletWindowId;

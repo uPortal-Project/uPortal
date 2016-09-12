@@ -29,7 +29,7 @@ import java.util.Map;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portal.portlet.marketplace.MarketplacePortletDefinition;
+import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 
 /**

@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * UI using 'exclusive' window state URLs.
  * 
  * @see flows/edit-portlet/configMode.jsp
- * @see org.jasig.portal.portlet.delegation.*
+ * @see org.apereo.portal.portlet.delegation.*
  * @see https://issues.jasig.org/browse/UP-2563
  * @see PortletWindowIdStringUtils
  * @see PortletWindowRegistryImpl#STATELESS_PORTLET_WINDOW_ID

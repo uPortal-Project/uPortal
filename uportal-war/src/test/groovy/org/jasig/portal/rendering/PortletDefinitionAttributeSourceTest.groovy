@@ -18,9 +18,9 @@
  */
 package org.jasig.portal.rendering
 
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao
-import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl
-import org.jasig.portal.portlet.dao.jpa.PortletTypeImpl
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao
+import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
+import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
 
 import javax.xml.stream.XMLEventFactory
 

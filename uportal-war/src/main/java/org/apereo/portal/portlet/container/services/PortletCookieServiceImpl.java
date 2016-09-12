@@ -38,7 +38,7 @@ import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.apereo.portal.concurrency.locking.LockOptions;
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.apereo.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;

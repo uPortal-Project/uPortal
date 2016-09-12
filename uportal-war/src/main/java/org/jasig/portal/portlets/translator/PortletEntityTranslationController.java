@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.portlet.ResourceRequest;
 
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

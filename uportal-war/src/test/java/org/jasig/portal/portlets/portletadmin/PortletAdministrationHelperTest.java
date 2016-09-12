@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.portlets.portletadmin;
 
-import org.jasig.portal.portlet.dao.jpa.PortletTypeImpl;
+import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl;
 import org.jasig.portal.portlet.om.IPortletType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.junit.Test;

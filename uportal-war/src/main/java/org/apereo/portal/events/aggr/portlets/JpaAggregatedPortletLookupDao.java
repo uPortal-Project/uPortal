@@ -29,7 +29,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.jpa.cache.EntityManagerCache;
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;

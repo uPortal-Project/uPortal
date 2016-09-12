@@ -49,7 +49,7 @@ import org.apache.pluto.driver.container.DriverPortletConfigImpl;
 import org.apache.pluto.driver.container.DriverPortletContextImpl;
 import org.apereo.portal.api.PlatformApiBroker;
 import org.apereo.portal.api.PlatformApiBrokerImpl;
-import org.jasig.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
+import org.apereo.portal.portlet.dao.jpa.ThreadContextClassLoaderAspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

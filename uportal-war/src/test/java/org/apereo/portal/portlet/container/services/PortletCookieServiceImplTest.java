@@ -18,16 +18,14 @@
  */
 package org.apereo.portal.portlet.container.services;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
-import org.jasig.portal.portlet.dao.IPortletCookieDao;
+import org.apereo.portal.portlet.dao.IPortletCookieDao;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.portlet.om.IPortletCookie;
 import org.jasig.portal.portlet.om.IPortletWindowId;

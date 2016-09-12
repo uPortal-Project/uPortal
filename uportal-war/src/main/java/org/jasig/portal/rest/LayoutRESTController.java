@@ -31,7 +31,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
-import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.rest.layout.LayoutPortlet;

@@ -103,7 +103,7 @@
         </aop:aspect>
     </aop:config>
     
-    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
+    <bean id="sqlNextExceptionLoggerAspect" class="org.apereo.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
     

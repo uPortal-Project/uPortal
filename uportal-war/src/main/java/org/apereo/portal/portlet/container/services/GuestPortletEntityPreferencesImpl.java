@@ -31,7 +31,7 @@ import org.apache.pluto.container.PortletRequestContext;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Preference;
 import org.apache.pluto.container.om.portlet.Preferences;
-import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
+import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;

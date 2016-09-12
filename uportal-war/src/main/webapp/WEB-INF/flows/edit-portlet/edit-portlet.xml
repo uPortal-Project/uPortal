@@ -208,7 +208,7 @@
 
     <view-state id="configModeResourceRequest" view="portletDelegationView">
         <on-entry>
-            <set name="viewScope[T(org.jasig.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
+            <set name="viewScope[T(org.apereo.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
                 value="portletAdministrationHelper.getDelegateWindowId(externalContext, portlet.getFname())"/>
         </on-entry>
     </view-state>
