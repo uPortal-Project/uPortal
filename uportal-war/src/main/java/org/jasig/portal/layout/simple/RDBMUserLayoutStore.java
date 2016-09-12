@@ -44,7 +44,7 @@ import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.jasig.portal.layout.IUserLayoutStore;
 import org.jasig.portal.layout.LayoutStructure;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.jdbc.DatabaseMetaDataImpl;
 import org.apereo.portal.jdbc.IDatabaseMetadata;

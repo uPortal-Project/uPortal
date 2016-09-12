@@ -40,7 +40,7 @@ import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.PortletUtils;

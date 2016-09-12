@@ -25,7 +25,7 @@
     *not* defining a traditional type=regular tab in the layout and instead is defining a special fragment,
     here for use of the Favorites portlet. -->
     <dlm:fragment name="_news_favorite_collection-lo" ownerID="news_favorite_collection-lo" precedence="80">
-        <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
+        <dlm:audience evaluatorFactory="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
             <paren mode="OR">
                 <attribute mode="deepMemberOf" name="Everyone"/>
             </paren>

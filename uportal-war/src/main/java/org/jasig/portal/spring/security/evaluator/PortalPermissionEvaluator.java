@@ -21,8 +21,8 @@ package org.jasig.portal.spring.security.evaluator;
 
 import java.io.Serializable;
 
-import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
-import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
+import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;

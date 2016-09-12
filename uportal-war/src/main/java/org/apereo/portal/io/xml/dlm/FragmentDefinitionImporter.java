@@ -36,8 +36,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apereo.portal.io.xml.IDataImporter;
 import org.apereo.portal.io.xml.PortalDataKey;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.IFragmentDefinitionDao;
+import org.apereo.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.IFragmentDefinitionDao;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilities;
 import org.jasig.portal.xml.xpath.XPathOperations;

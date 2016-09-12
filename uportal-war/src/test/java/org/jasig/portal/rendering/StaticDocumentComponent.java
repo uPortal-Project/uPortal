@@ -33,7 +33,7 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.IOUtils;
-import org.jasig.portal.layout.dlm.DistributedLayoutManager;
+import org.apereo.portal.layout.dlm.DistributedLayoutManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;

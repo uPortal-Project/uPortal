@@ -41,7 +41,7 @@ import javax.xml.stream.events.StartElement;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService;
 import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.spring.spel.IPortalSpELService;

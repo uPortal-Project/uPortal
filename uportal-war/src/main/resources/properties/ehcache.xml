@@ -205,7 +205,7 @@
      | - 1 x fragment layout
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViews"
+    <cache name="org.apereo.portal.layout.dlm.FragmentActivator.userViews"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -222,7 +222,7 @@
      | - 1 x fragment layout that fails to load
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.layout.dlm.FragmentActivator.userViewErrors"
+    <cache name="org.apereo.portal.layout.dlm.FragmentActivator.userViewErrors"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="30" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -231,7 +231,7 @@
      | - 1 x fragment layout node
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache"
+    <cache name="org.apereo.portal.layout.dlm.RDBMDistributedLayoutStore.fragmentNodeInfoCache"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -240,7 +240,7 @@
      | - 1 x user
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.layout.dlm.LAYOUT_CACHE"
+    <cache name="org.apereo.portal.layout.dlm.LAYOUT_CACHE"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.jasig.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
@@ -257,7 +257,7 @@
      | - 1 x layout x dlm reference node
      | - not replicated - only used by a command line tool
      +-->
-    <cache name="org.jasig.portal.layout.dlm.NODEREF_CACHE"
+    <cache name="org.apereo.portal.layout.dlm.NODEREF_CACHE"
         eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="180" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -673,7 +673,7 @@
      | Caches StylesheetDescriptor
      | - 1 per stylesheet used in the rendering pipeline
      +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -683,7 +683,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -693,7 +693,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -703,7 +703,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -713,7 +713,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -723,7 +723,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -739,7 +739,7 @@
      | - 1 per customization per user
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -749,7 +749,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -759,7 +759,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -769,7 +769,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -779,7 +779,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -789,7 +789,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -799,7 +799,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -809,7 +809,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -819,7 +819,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -829,7 +829,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -839,7 +839,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
+    <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -855,7 +855,7 @@
      | - 1 x per DLM layout fragment
      | - replicated by invalidation
      +-->
-    <cache name="org.jasig.portal.layout.dlm.Evaluator"
+    <cache name="org.apereo.portal.layout.dlm.Evaluator"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -865,7 +865,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.evaluators"
+    <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.evaluators"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -875,7 +875,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.FragmentDefinition.Query"
+    <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -885,7 +885,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.Paren.evaluators"
+    <cache name="org.apereo.portal.layout.dlm.providers.Paren.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -895,7 +895,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
+    <cache name="org.apereo.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -905,7 +905,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
+    <cache name="org.apereo.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -915,7 +915,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.AttributeEvaluator"
+    <cache name="org.apereo.portal.layout.dlm.providers.AttributeEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -925,7 +925,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluator"
+    <cache name="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -935,7 +935,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
+    <cache name="org.apereo.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -945,7 +945,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.ProfileEvaluator"
+    <cache name="org.apereo.portal.layout.dlm.providers.ProfileEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
@@ -955,7 +955,7 @@
                 replicateUpdates=true, replicateUpdatesViaCopy=false,
                 replicateRemovals=true "/>
     </cache>
-    <cache name="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluator"
+    <cache name="org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory

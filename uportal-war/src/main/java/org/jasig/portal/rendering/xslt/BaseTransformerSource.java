@@ -27,7 +27,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;

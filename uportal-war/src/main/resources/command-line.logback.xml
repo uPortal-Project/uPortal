@@ -54,10 +54,14 @@
   <logger name="org.hibernate.dialect" additivity="false" level="INFO">
     <appender-ref ref="CONSOLE"/>
   </logger>
+  <logger name="org.apereo.portal" additivity="false" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <!-- TODO:  Remove! -->
   <logger name="org.jasig.portal" additivity="false" level="INFO">
     <appender-ref ref="CONSOLE"/>
   </logger>
-  
+
   <!-- Debugging event aggregation
   <logger name="org.apereo.portal.concurrency.locking" additivity="false" level="DEBUG">
     <appender-ref ref="CONSOLE"/>

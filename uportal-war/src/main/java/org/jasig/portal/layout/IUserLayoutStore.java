@@ -29,9 +29,9 @@ import java.util.Map;
 
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
-import org.jasig.portal.layout.dlm.DistributedUserLayout;
-import org.jasig.portal.layout.dlm.FragmentChannelInfo;
-import org.jasig.portal.layout.dlm.FragmentNodeInfo;
+import org.apereo.portal.layout.dlm.DistributedUserLayout;
+import org.apereo.portal.layout.dlm.FragmentChannelInfo;
+import org.apereo.portal.layout.dlm.FragmentNodeInfo;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.utils.Tuple;
 import org.w3c.dom.Document;

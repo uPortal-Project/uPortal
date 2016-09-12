@@ -30,10 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
-import org.jasig.portal.layout.dlm.ConfigurationLoader;
-import org.jasig.portal.layout.dlm.Evaluator;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory;
+import org.apereo.portal.layout.dlm.ConfigurationLoader;
+import org.apereo.portal.layout.dlm.Evaluator;
+import org.apereo.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;

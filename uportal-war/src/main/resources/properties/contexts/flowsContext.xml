@@ -42,7 +42,7 @@
     
     <!--  Beans for the group-selector flow -->
     <bean name="groupListHelper"
-        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
+        class="org.apereo.portal.layout.dlm.remoting.GroupListHelperImpl"/>
     
     
     <!-- Beans for the attribute-swapper flow -->       

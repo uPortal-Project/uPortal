@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * This controller logic is derived from {@link org.jasig.portal.layout.dlm.remoting.ChannelListController}
+ * This controller logic is derived from {@link org.apereo.portal.layout.dlm.remoting.ChannelListController}
  * 
  * @since 4.1
  * @author Shawn Connolly, sconnolly@unicon.net

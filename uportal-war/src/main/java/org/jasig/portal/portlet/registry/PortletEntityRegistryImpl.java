@@ -39,7 +39,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.jasig.portal.IUserPreferencesManager;
 import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;

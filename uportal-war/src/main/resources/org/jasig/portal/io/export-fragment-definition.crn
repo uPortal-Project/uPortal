@@ -42,7 +42,7 @@
                 </when>
                 <otherwise>
                     <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn)}"/>
-                    <append-node node="${groovy(org.jasig.portal.layout.dlm.FragmentDefinition.NAMESPACE)}"/>
+                    <append-node node="${groovy(org.apereo.portal.layout.dlm.FragmentDefinition.NAMESPACE)}"/>
                     <groovy>
                         <script>fragment.toElement(Attributes.NODE)</script>
                     </groovy>

@@ -32,13 +32,13 @@
     <bean id="portletCookieDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletCookieDaoImpl" />
     <bean id="multilingualMessageDao" class="org.apereo.portal.i18n.dao.jpa.JpaMessageDao" />
     <bean id="localAccountDao" class="org.jasig.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
-    <bean id="fragmentDefinitionDao" class="org.jasig.portal.layout.dlm.FragmentDefinitionDao" />
+    <bean id="fragmentDefinitionDao" class="org.apereo.portal.layout.dlm.FragmentDefinitionDao" />
     <bean id="permissionOwnerDao" class="org.jasig.portal.permission.dao.jpa.JpaPermissionOwnerDao" />
     <bean id="portletTypeDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletTypeDao" />
     <bean id="portletDefinitionDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletDefinitionDao" />
     <bean id="portletEntityDao" class="org.jasig.portal.portlet.dao.jpa.JpaPortletEntityDao" />
-    <bean id="stylesheetDescriptorDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
-    <bean id="stylesheetUserPreferencesDao" class="org.jasig.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
+    <bean id="stylesheetDescriptorDao" class="org.apereo.portal.layout.dao.jpa.JpaStylesheetDescriptorDao" />
+    <bean id="stylesheetUserPreferencesDao" class="org.apereo.portal.layout.dao.jpa.JpaStylesheetUserPreferencesDao" />
     <bean id="userFragmentSubscriptionDao" class="org.apereo.portal.fragment.subscribe.dao.jpa.JpaUserFragmentSubscriptionDaoImpl" />
     <bean id="versionDao" class="org.jasig.portal.version.dao.jpa.JpaVersionDao" />
     <bean id="marketplaceRatingDAO" class="org.jasig.portal.portlet.dao.jpa.JpaMarketplaceRatingDao"/>

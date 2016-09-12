@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 
 /**
  * GroupForm represents a uPortal group instance during group editing.  

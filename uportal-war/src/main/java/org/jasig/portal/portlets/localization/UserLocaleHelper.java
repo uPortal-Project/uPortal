@@ -30,7 +30,7 @@ import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
-import org.jasig.portal.layout.dlm.Constants;
+import org.apereo.portal.layout.dlm.Constants;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;

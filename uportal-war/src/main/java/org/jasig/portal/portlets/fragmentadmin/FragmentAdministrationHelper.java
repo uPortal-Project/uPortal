@@ -27,8 +27,8 @@ import java.util.TreeMap;
 
 import javax.portlet.PortletRequest;
 
-import org.jasig.portal.layout.dlm.ConfigurationLoader;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.ConfigurationLoader;
+import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.jasig.portal.security.IdentitySwapperManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

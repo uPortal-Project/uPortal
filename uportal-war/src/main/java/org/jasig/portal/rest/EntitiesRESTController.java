@@ -25,8 +25,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.layout.dlm.remoting.IGroupListHelper;
-import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
+import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;

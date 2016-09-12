@@ -48,7 +48,7 @@ import org.apereo.portal.groups.IGroupConstants;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dlm.DistributedUserLayout;
+import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutChannelDescription;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;

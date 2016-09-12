@@ -18,7 +18,6 @@
  */
 package org.jasig.portal.layout;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,8 +28,8 @@ import javax.servlet.http.HttpSession;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
-import org.jasig.portal.layout.dao.IStylesheetUserPreferencesDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
 import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
 import org.jasig.portal.layout.om.IStylesheetData;
@@ -51,8 +50,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.WebUtils;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 

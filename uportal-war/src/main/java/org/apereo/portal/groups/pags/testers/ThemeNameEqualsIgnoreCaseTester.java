@@ -27,7 +27,7 @@ import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.layout.profile.IProfileMapper;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dao.IStylesheetDescriptorDao;
+import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.jasig.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;

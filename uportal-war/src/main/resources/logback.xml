@@ -165,7 +165,7 @@
   -->
 
   <!-- Uncomment to see fragment activation errors
-  <logger name="org.jasig.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->

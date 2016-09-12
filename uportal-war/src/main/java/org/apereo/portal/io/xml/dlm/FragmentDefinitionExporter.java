@@ -20,9 +20,9 @@ package org.apereo.portal.io.xml.dlm;
 
 import org.dom4j.Element;
 import org.apereo.portal.io.xml.crn.AbstractDom4jExporter;
-import org.jasig.portal.layout.dlm.Constants;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.IFragmentDefinitionDao;
+import org.apereo.portal.layout.dlm.Constants;
+import org.apereo.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.IFragmentDefinitionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

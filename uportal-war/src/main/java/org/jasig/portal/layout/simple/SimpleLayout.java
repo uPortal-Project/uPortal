@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
 import org.jasig.portal.layout.IUserLayout;
 import org.jasig.portal.layout.INodeIdResolver;
-import org.jasig.portal.layout.dlm.DistributedUserLayout;
+import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
 import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.layout.node.UserLayoutNodeDescription;

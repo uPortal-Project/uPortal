@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jasig.portal.layout.dlm.remoting.JsonEntityBean;
+import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 
 public class Assignment implements Comparable<Assignment>, Serializable {
     

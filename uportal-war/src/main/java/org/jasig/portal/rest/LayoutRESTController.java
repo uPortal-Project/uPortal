@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.dlm.DistributedUserLayout;
+import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;

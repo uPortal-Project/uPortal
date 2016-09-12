@@ -39,7 +39,7 @@
      | the parent object to be used for a new group.  This object is only 
      | required when creating new groups.
      +-->
-    <input name="parent" required="false" type="org.jasig.portal.layout.dlm.remoting.JsonEntityBean"/>
+    <input name="parent" required="false" type="org.apereo.portal.layout.dlm.remoting.JsonEntityBean"/>
     
     <on-start>
         <set name="flowScope.completed" value="group.key != null"/>

@@ -20,7 +20,7 @@ package org.jasig.portal.layout.node;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.layout.dlm.Constants;
+import org.apereo.portal.layout.dlm.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

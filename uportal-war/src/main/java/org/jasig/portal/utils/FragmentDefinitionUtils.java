@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.jasig.portal.layout.dlm.ConfigurationLoader;
-import org.jasig.portal.layout.dlm.FragmentActivator;
-import org.jasig.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.layout.dlm.UserView;
+import org.apereo.portal.layout.dlm.ConfigurationLoader;
+import org.apereo.portal.layout.dlm.FragmentActivator;
+import org.apereo.portal.layout.dlm.FragmentDefinition;
+import org.apereo.portal.layout.dlm.UserView;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
