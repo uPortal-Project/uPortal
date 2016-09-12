@@ -21,7 +21,7 @@ package org.apereo.portal.io;
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.base.Function;

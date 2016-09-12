@@ -41,7 +41,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.persondir.ILocalAccountDao;
 import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;

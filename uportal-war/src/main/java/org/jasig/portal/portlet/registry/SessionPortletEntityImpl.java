@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntity;

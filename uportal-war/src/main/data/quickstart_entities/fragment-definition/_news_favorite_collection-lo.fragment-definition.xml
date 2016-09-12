@@ -19,7 +19,7 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" 
+<fragment-definition xmlns:dlm="http://org.apereo.portal.layout.dlm.config"
     script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
     <!-- The underscore prefix on the fragment name is intended to draw attention to the fact that this is
     *not* defining a traditional type=regular tab in the layout and instead is defining a special fragment,

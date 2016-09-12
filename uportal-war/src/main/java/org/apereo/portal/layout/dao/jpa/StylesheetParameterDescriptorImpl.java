@@ -30,7 +30,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
 
 /**
  * @author Eric Dalquist

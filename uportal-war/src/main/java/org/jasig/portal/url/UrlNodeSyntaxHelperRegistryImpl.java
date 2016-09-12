@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;

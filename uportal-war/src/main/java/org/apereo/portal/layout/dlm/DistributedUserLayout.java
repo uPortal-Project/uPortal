@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.w3c.dom.Document;
 
 /**

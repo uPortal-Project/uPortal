@@ -61,7 +61,7 @@
         class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
     
     <!-- bean for reset-user-layout flow -->
-    <bean id="userLayoutHelper" class="org.jasig.portal.layout.UserLayoutHelperImpl">
+    <bean id="userLayoutHelper" class="org.apereo.portal.layout.UserLayoutHelperImpl">
         <property name="dataSource" ref="PortalDb"/>
     </bean>   
     

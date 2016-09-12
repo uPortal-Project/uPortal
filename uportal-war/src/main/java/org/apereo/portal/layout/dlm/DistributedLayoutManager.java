@@ -45,16 +45,16 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.events.IPortalLayoutEventFactory;
-import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.IUserLayoutStore;
-import org.jasig.portal.layout.PortletSubscribeIdResolver;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
-import org.jasig.portal.layout.node.UserLayoutFolderDescription;
-import org.jasig.portal.layout.simple.SimpleLayout;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.PortletSubscribeIdResolver;
+import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
+import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
+import org.apereo.portal.layout.node.UserLayoutFolderDescription;
+import org.apereo.portal.layout.simple.SimpleLayout;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -1310,7 +1310,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.IUserLayoutManager#getUserLayout()
+     * @see org.apereo.portal.layout.IUserLayoutManager#getUserLayout()
      */
     public IUserLayout getUserLayout() throws PortalException
     {
@@ -1322,7 +1322,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     /* Returns the ID attribute of the root folder of the layout. This folder 
      * is defined to be the single child of the top most "layout" Element.
      * 
-     * @see org.jasig.portal.layout.IUserLayoutManager#getRootFolderId()
+     * @see org.apereo.portal.layout.IUserLayoutManager#getRootFolderId()
      * @see org.apereo.portal.layout.dlm.RootLocator
      */
     public String getRootFolderId()
@@ -1349,7 +1349,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
     /*
      * (non-Javadoc)
      * 
-     * @see org.jasig.portal.layout.IUserLayoutManager#getDepth(java.lang.String)
+     * @see org.apereo.portal.layout.IUserLayoutManager#getDepth(java.lang.String)
      */
     public int getDepth(String nodeId) throws PortalException
     {
@@ -1362,7 +1362,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
      * the type of node indicated. Currently, the only two types supported are
      * IUserLayoutNodeDescription.FOLDER and LayoutNodeType.PORTLET.
      * 
-     * @see org.jasig.portal.layout.IUserLayoutManager#createNodeDescription(int)
+     * @see org.apereo.portal.layout.IUserLayoutManager#createNodeDescription(int)
      */
     @Override
     public IUserLayoutNodeDescription createNodeDescription(LayoutNodeType nodeType) throws PortalException

@@ -20,7 +20,7 @@ package org.jasig.portal.rendering.xslt;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 
 public class ThemeStylesheetDescriptorTransformerConfigurationSource extends
         StylesheetDescriptorTransformerConfigurationSource {

@@ -49,19 +49,19 @@ import org.jasig.portal.UserPreferencesManager;
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.apereo.portal.groups.IEntity;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.Constants;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.dlm.UserPrefsHandler;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.layout.node.UserLayoutFolderDescription;
+import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
+import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.node.UserLayoutChannelDescription;
+import org.apereo.portal.layout.node.UserLayoutFolderDescription;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
@@ -92,7 +92,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
+import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
 
 /**
  * Provides targets for AJAX preference setting calls.
@@ -196,7 +196,7 @@ public class UpdatePreferencesServlet {
             // attempt first to treat it as a pulled fragment subscription
             String elementId = request.getParameter("elementID");
             if (elementId != null && elementId.startsWith(Constants.FRAGMENT_ID_USER_PREFIX) &&
-                    ulm.getNode( elementId ) instanceof org.jasig.portal.layout.node.UserLayoutFolderDescription) {
+                    ulm.getNode( elementId ) instanceof org.apereo.portal.layout.node.UserLayoutFolderDescription) {
 
                 removeSubscription(per, elementId, ulm);
 

@@ -38,10 +38,10 @@
         <property name="chunkingElements">
             <map>
                 <entry value-ref="portletContentPlaceholderEventSource">
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL" /></key>
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL" /></key>
                 </entry>
                 <entry value-ref="portletHeaderPlaceholderEventSource">
-                    <key><util:constant static-field="org.jasig.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
                 </entry>
             </map>
         </property>

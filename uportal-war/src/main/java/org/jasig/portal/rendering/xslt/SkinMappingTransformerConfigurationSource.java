@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Included;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;

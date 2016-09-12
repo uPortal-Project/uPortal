@@ -20,9 +20,9 @@ package org.jasig.portal.portlets.favorites;
 
 
 import org.jasig.portal.UserPreferencesManager;
-import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.jasig.portal.user.IUserInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

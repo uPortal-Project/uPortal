@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.dlm;
 
 
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 
 /**
  * A class that embodies the logic for determining if a node can be moved to

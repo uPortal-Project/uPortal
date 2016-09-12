@@ -40,7 +40,7 @@
         <property name="configurationFile" value="classpath:/properties/dlm.xml" />
     </bean> -->
     
-    <bean id="userLayoutManagerFactory" class="org.jasig.portal.layout.UserLayoutManagerFactory"/>
+    <bean id="userLayoutManagerFactory" class="org.apereo.portal.layout.UserLayoutManagerFactory"/>
     
     <bean id="userLayoutStore" class="org.apereo.portal.layout.dlm.RDBMDistributedLayoutStore">
     </bean>

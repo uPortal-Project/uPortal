@@ -31,7 +31,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;

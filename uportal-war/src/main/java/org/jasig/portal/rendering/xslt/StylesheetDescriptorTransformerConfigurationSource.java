@@ -24,10 +24,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;

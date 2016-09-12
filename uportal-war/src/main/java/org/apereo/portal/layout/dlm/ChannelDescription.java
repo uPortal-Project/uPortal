@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.dlm;
 
 import org.apereo.portal.PortalException;
-import org.jasig.portal.layout.node.UserLayoutChannelDescription;
+import org.apereo.portal.layout.node.UserLayoutChannelDescription;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

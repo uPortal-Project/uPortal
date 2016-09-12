@@ -38,7 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
+import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;
 
 /**
  * @author Eric Dalquist
@@ -99,7 +99,7 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.ILayoutAttributeDescriptor#getTargetElementNames()
+     * @see org.apereo.portal.layout.om.ILayoutAttributeDescriptor#getTargetElementNames()
      */
     @Override
     public Set<String> getTargetElementNames() {
@@ -107,7 +107,7 @@ public class LayoutAttributeDescriptorImpl extends AbstractStylesheetDataImpl im
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.ILayoutAttributeDescriptor#setTargetElementNames(java.util.Set)
+     * @see org.apereo.portal.layout.om.ILayoutAttributeDescriptor#setTargetElementNames(java.util.Set)
      */
     @Override
     public void setTargetElementNames(Set<String> targetElementNames) {

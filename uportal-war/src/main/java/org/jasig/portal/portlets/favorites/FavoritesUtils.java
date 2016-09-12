@@ -19,9 +19,9 @@
 package org.jasig.portal.portlets.favorites;
 
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.layout.IUserLayout;
-import org.jasig.portal.layout.node.IUserLayoutFolderDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.IUserLayout;
+import org.apereo.portal.layout.node.IUserLayoutFolderDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,9 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
-import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITES_TYPE;
-import static org.jasig.portal.layout.node.IUserLayoutFolderDescription.FAVORITE_COLLECTION_TYPE;
+import static org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType.FOLDER;
+import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORITES_TYPE;
+import static org.apereo.portal.layout.node.IUserLayoutFolderDescription.FAVORITE_COLLECTION_TYPE;
 
 /**
  * Utility class supporting Favorites portlet.

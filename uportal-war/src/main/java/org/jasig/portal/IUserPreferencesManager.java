@@ -18,7 +18,7 @@
  */
 package org.jasig.portal;
 
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 
 /**

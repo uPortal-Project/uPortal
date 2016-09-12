@@ -33,7 +33,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.TaskRequest;
 import org.danann.cernunnos.TaskResponse;
 import org.dom4j.Element;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 
 /**
  * Cernunnos <code>Task</code> that inspects a finished XML entity document and 

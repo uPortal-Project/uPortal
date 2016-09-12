@@ -52,8 +52,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.jasig.portal.utils.Populator;
 
 import com.google.common.collect.ImmutableMap;
@@ -251,7 +251,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#setLayoutAttribute(java.lang.String, java.lang.String, java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetUserPreferences#setLayoutAttribute(java.lang.String, java.lang.String, java.lang.String)
      */
     @Override
     public String setLayoutAttribute(String nodeId, String name, String value) {
@@ -265,7 +265,7 @@ class StylesheetUserPreferencesImpl implements IStylesheetUserPreferences {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetUserPreferences#removeLayoutAttribute(java.lang.String, java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetUserPreferences#removeLayoutAttribute(java.lang.String, java.lang.String)
      */
     @Override
     public String removeLayoutAttribute(String nodeId, String name) {

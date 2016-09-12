@@ -25,8 +25,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.jasig.portal.utils.MapPopulator;
 import org.jasig.portal.utils.PropertiesPopulator;
 import org.jasig.portal.utils.cache.CacheKey;

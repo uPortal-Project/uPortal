@@ -20,7 +20,7 @@ package org.jasig.portal;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.jasig.portal.security.IPerson;
 
 /**

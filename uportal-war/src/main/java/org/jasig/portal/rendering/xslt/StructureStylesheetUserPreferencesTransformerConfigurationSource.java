@@ -20,9 +20,9 @@ package org.jasig.portal.rendering.xslt;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 
 /**
  * Returns structure {@link IStylesheetUserPreferences}

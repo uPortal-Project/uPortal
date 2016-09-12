@@ -20,7 +20,7 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
 /**
  * A registry of all available {@link IUrlNodeSyntaxHelper} impls

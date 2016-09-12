@@ -20,7 +20,7 @@ package org.jasig.portal.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

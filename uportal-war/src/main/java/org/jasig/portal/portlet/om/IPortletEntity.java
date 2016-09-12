@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.portlet.WindowState;
 
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
 
 

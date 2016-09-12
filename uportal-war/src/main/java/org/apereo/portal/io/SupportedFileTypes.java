@@ -29,7 +29,7 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.XPath;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 
 public enum SupportedFileTypes {
 

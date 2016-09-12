@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.events.StartElement;
 
 import org.apache.pluto.container.PortletWindow;
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
 import org.jasig.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.om.IPortletWindow;

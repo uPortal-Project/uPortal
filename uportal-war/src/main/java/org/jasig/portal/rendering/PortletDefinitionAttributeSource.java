@@ -30,7 +30,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDescriptorKey;

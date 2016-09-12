@@ -26,9 +26,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
+import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;

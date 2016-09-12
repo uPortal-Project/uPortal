@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.lang.Validate;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.layout.om.IStylesheetData;
+import org.apereo.portal.layout.om.IStylesheetData;
 
 /**
  * @author Eric Dalquist
@@ -60,7 +60,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#getName()
+     * @see org.apereo.portal.layout.om.IStylesheetData#getName()
      */
     @Override
     public String getName() {
@@ -68,7 +68,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#setDefaultValue(java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetData#setDefaultValue(java.lang.String)
      */
     @Override
     public void setDefaultValue(String defaultValue) {
@@ -76,7 +76,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#getDefaultValue()
+     * @see org.apereo.portal.layout.om.IStylesheetData#getDefaultValue()
      */
     @Override
     public String getDefaultValue() {
@@ -84,7 +84,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#setScope(org.jasig.portal.layout.om.IStylesheetData.Scope)
+     * @see org.apereo.portal.layout.om.IStylesheetData#setScope(org.apereo.portal.layout.om.IStylesheetData.Scope)
      */
     @Override
     public void setScope(Scope scope) {
@@ -93,7 +93,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#getScope()
+     * @see org.apereo.portal.layout.om.IStylesheetData#getScope()
      */
     @Override
     public Scope getScope() {
@@ -101,7 +101,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#setDescription(java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetData#setDescription(java.lang.String)
      */
     @Override
     public void setDescription(String description) {
@@ -109,7 +109,7 @@ abstract class AbstractStylesheetDataImpl implements IStylesheetData {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetData#getDescription()
+     * @see org.apereo.portal.layout.om.IStylesheetData#getDescription()
      */
     @Override
     public String getDescription() {

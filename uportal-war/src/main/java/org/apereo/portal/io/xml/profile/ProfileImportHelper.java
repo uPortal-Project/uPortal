@@ -20,8 +20,8 @@ package org.apereo.portal.io.xml.profile;
 
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 
 
 /**

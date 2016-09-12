@@ -35,7 +35,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.layout.profile.ProfileSelectionEvent;
+import org.apereo.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
 import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;

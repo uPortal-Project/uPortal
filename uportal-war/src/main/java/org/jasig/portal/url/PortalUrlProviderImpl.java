@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.apereo.portal.api.portlet.DelegationRequest;
-import org.jasig.portal.layout.IUserLayoutManager;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
+import org.apereo.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
+import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.portlet.delegation.IPortletDelegationManager;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;

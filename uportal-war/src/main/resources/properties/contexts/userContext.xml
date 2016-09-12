@@ -54,7 +54,7 @@
         <entry key="respondr" value="respondr" />
     </util:map>
 
-    <bean id="profileMapper" class="org.jasig.portal.layout.profile.ChainingProfileMapperImpl">
+    <bean id="profileMapper" class="org.apereo.portal.layout.profile.ChainingProfileMapperImpl">
         <property name="defaultProfileName" value="default" />
         <property name="subMappers">
             <util:list>
@@ -77,7 +77,7 @@
                 | Add "guest-[server name]-" prefix to the subfname found
                 +-->
                 <!--
-                <bean class="org.jasig.portal.layout.profile.ServerNameGuestChainingProfileMapper">
+                <bean class="org.apereo.portal.layout.profile.ServerNameGuestChainingProfileMapper">
                 	<property name="authorizedServerNames">
                 		<util:map>
                 			< Only server names listed here are authorized ! (the value replace the server name) />
@@ -99,19 +99,19 @@
     <!-- Example of how to use serverProfileMapper.  This puts users on profile=default
     for any server that matches the regex (everything not *.wisconsin.edu* for example -->
     <!-- 
-    <bean id="serverProfileMapper" class="org.jasig.portal.layout.profile.ServerProfileMapperImpl"
+    <bean id="serverProfileMapper" class="org.apereo.portal.layout.profile.ServerProfileMapperImpl"
         p:serverRegex="^((?!.\\.wisconsin\\.edu).)*$"
         p:profile="default" />
     -->
 
-    <bean id="sessionAttributeProfileMapper" class="org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl"
+    <bean id="sessionAttributeProfileMapper" class="org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl"
         p:mappings-ref="profileKeyMappings"/>
 
-    <bean id="userAgentProfileMapper" class="org.jasig.portal.layout.profile.UserAgentProfileMapper">
+    <bean id="userAgentProfileMapper" class="org.apereo.portal.layout.profile.UserAgentProfileMapper">
         <property name="mappings">
             <list>
                 <!-- mobile device -->
-                <bean class="org.jasig.portal.layout.profile.UserAgentProfileMapper.Mapping">
+                <bean class="org.apereo.portal.layout.profile.UserAgentProfileMapper.Mapping">
                     <property name="pattern" value="${mobile.user.agent.regex}"/>
                     <property name="profileName" value="mobileDefault" />
                 </bean>

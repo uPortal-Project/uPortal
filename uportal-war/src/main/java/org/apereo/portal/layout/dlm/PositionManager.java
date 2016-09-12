@@ -35,7 +35,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.jasig.portal.xml.XmlUtilitiesImpl;

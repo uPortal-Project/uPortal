@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 
 /**
  * Describes the {@link IStylesheetDescriptor} for import and export.

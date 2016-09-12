@@ -20,7 +20,7 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.utils.AbstractBeanLocator;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.context.ApplicationContext;

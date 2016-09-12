@@ -116,7 +116,7 @@ public class SitemapPortletController {
      */
     private boolean useTabGroups;
     
-    @Value("${org.jasig.portal.layout.useTabGroups}")
+    @Value("${org.apereo.portal.layout.useTabGroups}")
     public void setUseTabGroups(boolean useTabGroups) {
         this.useTabGroups = useTabGroups;
     }

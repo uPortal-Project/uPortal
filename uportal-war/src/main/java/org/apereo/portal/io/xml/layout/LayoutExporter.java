@@ -23,7 +23,7 @@ import org.jasig.portal.IUserIdentityStore;
 import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.apereo.portal.io.xml.crn.AbstractDom4jExporter;
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.Tuple;

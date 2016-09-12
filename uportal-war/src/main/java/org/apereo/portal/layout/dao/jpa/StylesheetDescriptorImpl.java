@@ -49,12 +49,12 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
-import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
-import org.jasig.portal.layout.om.IOutputPropertyDescriptor;
-import org.jasig.portal.layout.om.IStylesheetData;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.layout.om.IStylesheetParameterDescriptor;
-import org.jasig.portal.layout.om.IStylesheetUserPreferences;
+import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;
+import org.apereo.portal.layout.om.IOutputPropertyDescriptor;
+import org.apereo.portal.layout.om.IStylesheetData;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
+import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 
 /**
  * JPA implementation of stylesheet descriptor data
@@ -164,7 +164,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getId()
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#getId()
      */
     @Override
     public long getId() {
@@ -172,7 +172,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getName()
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#getName()
      */
     @Override
     public String getName() {
@@ -180,7 +180,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setDescription(java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#setDescription(java.lang.String)
      */
     @Override
     public void setDescription(String description) {
@@ -188,7 +188,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getDescription()
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#getDescription()
      */
     @Override
     public String getDescription() {
@@ -196,7 +196,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#setStylesheetResource(java.lang.String)
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#setStylesheetResource(java.lang.String)
      */
     @Override
     public void setStylesheetResource(String stylesheetResource) {
@@ -205,7 +205,7 @@ public class StylesheetDescriptorImpl implements IStylesheetDescriptor {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.layout.om.IStylesheetDescriptor#getStylesheetResource()
+     * @see org.apereo.portal.layout.om.IStylesheetDescriptor#getStylesheetResource()
      */
     @Override
     public String getStylesheetResource() {

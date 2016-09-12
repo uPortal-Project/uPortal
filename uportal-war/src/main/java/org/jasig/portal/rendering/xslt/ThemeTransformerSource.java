@@ -19,8 +19,8 @@
 package org.jasig.portal.rendering.xslt;
 
 import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

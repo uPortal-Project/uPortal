@@ -38,12 +38,12 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.layout.IStylesheetUserPreferencesService;
-import org.jasig.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.layout.IUserLayoutManager;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService;
+import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
+import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
-import org.jasig.portal.layout.om.ILayoutAttributeDescriptor;
-import org.jasig.portal.layout.om.IStylesheetDescriptor;
+import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;
+import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.After;

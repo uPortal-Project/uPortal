@@ -20,7 +20,7 @@
 
 -->
 <fragment-definition script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
-  <dlm:fragment xmlns:dlm="http://org.jasig.portal.layout.dlm.config" name="${tenant.fname}" ownerID="${tenant.fname}-lo" precedence="80">
+  <dlm:fragment xmlns:dlm="http://org.apereo.portal.layout.dlm.config" name="${tenant.fname}" ownerID="${tenant.fname}-lo" precedence="80">
     <dlm:audience evaluatorFactory="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
       <paren mode="AND">
         <attribute mode="deepMemberOf" name="${tenant.name}"/>

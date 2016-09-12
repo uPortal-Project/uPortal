@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.layout.dlm;
 
-import org.jasig.portal.layout.IUserLayoutStore;
+import org.apereo.portal.layout.IUserLayoutStore;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 
 /**

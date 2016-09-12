@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.PropertyAccessException;
-import org.jasig.portal.layout.profile.ProfileSelectionEvent;
+import org.apereo.portal.layout.profile.ProfileSelectionEvent;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
