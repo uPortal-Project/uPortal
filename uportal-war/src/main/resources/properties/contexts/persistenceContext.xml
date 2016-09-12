@@ -54,7 +54,7 @@
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.UserInfoService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortalAdministrationService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletPreferencesService.*(..))"/>
-            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+            <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apereo.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.PortletEnvironmentService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletRegistryService.*(..))"/>
             <aop:around method="doThreadContextClassLoaderUpdate" pointcut="execution(* org.apache.pluto.container.driver.PortletContextService.*(..))"/>
@@ -65,7 +65,7 @@
         </aop:aspect>
         
         <aop:aspect ref="threadContextClassLoaderApplyingAspect">
-            <aop:around method="applyAspect" pointcut="execution(* org.jasig.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
+            <aop:around method="applyAspect" pointcut="execution(* org.apereo.portal.portlet.container.services.PortletPreferencesFactory.*(..))"/>
         </aop:aspect>
         
         <aop:aspect ref="sqlNextExceptionLoggerAspect">

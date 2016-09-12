@@ -20,10 +20,10 @@ package org.jasig.portal.portlet.rendering;
 
 import java.io.Serializable;
 
-import org.jasig.portal.portlet.container.cache.CacheState;
-import org.jasig.portal.portlet.container.cache.CachedPortletResultHolder;
-import org.jasig.portal.portlet.container.cache.PrivatePortletCacheKey;
-import org.jasig.portal.portlet.container.cache.PublicPortletCacheKey;
+import org.apereo.portal.portlet.container.cache.CacheState;
+import org.apereo.portal.portlet.container.cache.CachedPortletResultHolder;
+import org.apereo.portal.portlet.container.cache.PrivatePortletCacheKey;
+import org.apereo.portal.portlet.container.cache.PublicPortletCacheKey;
 
 public class TestingCacheState<D extends CachedPortletResultHolder<T>, T extends Serializable> extends CacheState<D, T> {
 

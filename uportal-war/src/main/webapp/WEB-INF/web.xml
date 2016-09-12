@@ -448,7 +448,7 @@
     <session-config>
       <cookie-config>
         <http-only>true</http-only>
-        <!-- Should match the value of org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
+        <!-- Should match the value of org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
         <secure>${environment.build.uportal.secureSessionCookie}</secure>
       </cookie-config>
       <tracking-mode>COOKIE</tracking-mode>

@@ -64,7 +64,7 @@
     <util:set id="nonNamespacedPortletProperties">
     </util:set>
     
-    <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
+    <bean id="portletContainer" class="org.apereo.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
         <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
         <constructor-arg>
             <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
@@ -74,7 +74,7 @@
         </constructor-arg>
     </bean>
     
-    <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
+    <bean id="portalContext" class="org.apereo.portal.portlet.container.PortalContextImpl">
         <property name="windowStates">
             <set value-type="javax.portlet.WindowState">
                 <value>MINIMIZED</value>
@@ -101,7 +101,7 @@
         <property name="portalVersion" value="${org.jasig.portal.version}" />
     </bean>
     
-    <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
+    <bean id="personDirectoryUserInfoService" class="org.apereo.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
 
@@ -115,7 +115,7 @@
      | one for every render of a portlet that asks for one.
      +-->
     <!--
-    <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
+    <bean id="casTicketUserInfoService" class="org.apereo.portal.portlet.container.services.CasTicketUserInfoService" />
     -->
 
     <!--
@@ -128,14 +128,14 @@
      | IMPORTANT:  If using CAS Clearpass, set decryptPassword=false.  Otherwise set it to true.
      -->
     <!--bean id="cachedPasswordUserInfoService"
-        class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">
+        class="org.apereo.portal.portlet.container.services.CachedPasswordUserInfoService">
         <property name="decryptPassword" value="false"/>
     </bean-->
     
     <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
     	<property name="administrativeRequestListeners">
     		<list>
-    			<bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
+    			<bean class="org.apereo.portal.portlet.container.services.AdministrativeRequestListenerController">
                     <property name="listeners">
                         <map>
                             <entry key="sessionActionListener">
@@ -160,7 +160,7 @@
     
     <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
     <!--  
-    <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">
+    <bean id="requestAttributeService" class="org.apereo.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     -->

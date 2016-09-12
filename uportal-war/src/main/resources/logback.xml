@@ -126,7 +126,7 @@
   <logger name="org.jasig.cas.client" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
   </logger>
-  <logger name="org.jasig.portal.portlet.container.services" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.container.services" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
@@ -174,7 +174,7 @@
   <logger name="org.jasig.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
-  <logger name="org.jasig.portal.portlet.container.cache" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.container.cache" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->

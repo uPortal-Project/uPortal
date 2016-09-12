@@ -55,7 +55,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
+import org.apereo.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.portlet.om.IPortletWindow;

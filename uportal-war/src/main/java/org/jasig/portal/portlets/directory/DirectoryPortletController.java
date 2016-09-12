@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
+import org.apereo.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.portlets.search.DirectoryAttributeType;
 import org.jasig.portal.search.PortletUrl;

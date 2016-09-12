@@ -65,7 +65,7 @@
         <task:scheduled ref="portletPermissionsCachePrimer" method="primeCache" fixed-delay="299993"/> <!-- just under 5 minute period;  should be shorter than the TTL for the cache named 'org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT' -->
 
         <!-- clustered tasks -->
-        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
+        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
         <task:scheduled ref="portletRatingAggregator" method="aggregatePortletRatings" fixed-delay="${org.apereo.portal.aggr.PortletRatingAggregatorImpl.AggregatePortletRatingsPeriod}" />
         <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}"/>
         <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>

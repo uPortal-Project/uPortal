@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.container.services.IPortletCookieService;
+import org.apereo.portal.portlet.container.services.IPortletCookieService;
 import org.jasig.portal.portlet.om.IPortalCookie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
