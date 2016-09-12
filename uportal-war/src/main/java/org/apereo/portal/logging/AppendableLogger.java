@@ -16,14 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.logging;
+package org.apereo.portal.logging;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 
 /**

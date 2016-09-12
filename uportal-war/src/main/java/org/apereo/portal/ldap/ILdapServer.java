@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.ldap;
+package org.apereo.portal.ldap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;

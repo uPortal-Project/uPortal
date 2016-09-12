@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.jasig.portal.logging.AppendableLogger;
-import org.jasig.portal.logging.LogLevel;
+import org.apereo.portal.logging.AppendableLogger;
+import org.apereo.portal.logging.LogLevel;
 import org.jasig.portal.utils.TableFormatter;
 import org.jasig.portal.utils.TableFormatter.TableEntry;
 import org.slf4j.Logger;

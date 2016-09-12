@@ -41,7 +41,7 @@
      |  - SimpleLdapSecurityContext
      +-->
     <!--
-    <bean id="defaultLdapServer" class="org.jasig.portal.ldap.ContextSourceLdapServerImpl">
+    <bean id="defaultLdapServer" class="org.apereo.portal.ldap.ContextSourceLdapServerImpl">
         <property name="contextSource">
             <bean id="legacyLdapContext" class="org.springframework.ldap.core.support.LdapContextSource">    
                 <property name="url" value="${ldap.url}"/>

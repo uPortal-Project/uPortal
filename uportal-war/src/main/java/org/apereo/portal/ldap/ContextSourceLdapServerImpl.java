@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.ldap;
+package org.apereo.portal.ldap;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -24,7 +24,6 @@ import javax.naming.directory.DirContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.ldap.core.ContextSource;
-import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
  * An ILdapServer impl that wraps a Spring-LDAP ContextSource for getting contections to provide
@@ -62,35 +61,35 @@ public class ContextSourceLdapServerImpl implements ILdapServer {
 
     
     /**
-     * @see org.jasig.portal.ldap.ILdapServer#getBaseDN()
+     * @see org.apereo.portal.ldap.ILdapServer#getBaseDN()
      */
     public String getBaseDN() {
         return this.baseDN;
     }
     
     /**
-     * @see org.jasig.portal.ldap.ILdapServer#setBaseDN()
+     * @see org.apereo.portal.ldap.ILdapServer#setBaseDN()
      */
     public void setBaseDN(String baseDN) {
     	this.baseDN = baseDN;
     }
 
     /**
-     * @see org.jasig.portal.ldap.ILdapServer#getConnection()
+     * @see org.apereo.portal.ldap.ILdapServer#getConnection()
      */
     public DirContext getConnection() throws NamingException {
         return this.contextSource.getReadOnlyContext();
     }
 
     /**
-     * @see org.jasig.portal.ldap.ILdapServer#getUidAttribute()
+     * @see org.apereo.portal.ldap.ILdapServer#getUidAttribute()
      */
     public String getUidAttribute() {
         return this.uidAttribute;
     }
 
     /**
-     * @see org.jasig.portal.ldap.ILdapServer#releaseConnection(javax.naming.directory.DirContext)
+     * @see org.apereo.portal.ldap.ILdapServer#releaseConnection(javax.naming.directory.DirContext)
      */
     public void releaseConnection(DirContext conn) {
         try {

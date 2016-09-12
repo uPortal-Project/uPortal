@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.logging;
+package org.apereo.portal.logging;
 
 import org.slf4j.Logger;
 

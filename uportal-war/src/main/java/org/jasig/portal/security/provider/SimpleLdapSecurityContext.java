@@ -29,8 +29,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.jasig.portal.ldap.LdapServices;
-import org.jasig.portal.ldap.ILdapServer;
+import org.apereo.portal.ldap.LdapServices;
+import org.apereo.portal.ldap.ILdapServer;
 import org.jasig.portal.security.IConfigurableSecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * the String {@link #LDAP_PROPERTIES_CONNECTION_NAME} "connection".
  * This property allows a specific, named, LDAP connection to be used by
  * the context. If no "connection" property is specified the default
- * LDAP connection returned by {@link org.jasig.portal.ldap.LdapServices} is
+ * LDAP connection returned by {@link org.apereo.portal.ldap.LdapServices} is
  * used.
  * </p>
  *
