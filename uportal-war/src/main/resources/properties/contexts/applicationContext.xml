@@ -85,7 +85,6 @@
               <value>file:${PORTAL_HOME}/overrides.properties</value>
               <value>file:${CATALINA_HOME}/portal/uPortal_overrides.properties</value>
               <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
-              <value>classpath:/properties/dynamic-skin-portlet.properties</value>
             </list>
         </property>
     </bean>
