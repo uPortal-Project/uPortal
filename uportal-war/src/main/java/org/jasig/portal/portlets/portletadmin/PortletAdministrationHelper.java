@@ -66,7 +66,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.apereo.portal.portlet.om.IPortletDefinition;

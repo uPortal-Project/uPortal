@@ -123,7 +123,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * @param maxEventIterations The maximum number of iterations to spend dispatching events. Defaults to 100
      */
     @Override
-    @Value("${org.jasig.portal.portlet.maxEventIterations:100}")
+    @Value("${org.apereo.portal.portlet.maxEventIterations:100}")
     public void setMaxEventIterations(int maxEventIterations) {
         this.maxEventIterations = maxEventIterations;
     }
@@ -134,7 +134,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     @Override
-    @Value("${org.jasig.portal.portlet.ignoreTimeout}")
+    @Value("${org.apereo.portal.portlet.ignoreTimeout}")
     public void setIgnoreTimeouts(boolean ignoreTimeouts) {
         this.ignoreTimeouts = ignoreTimeouts;
     }
@@ -145,7 +145,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     @Override
-    @Value("${org.jasig.portal.portlet.extendedTimeoutExecutions:5}")
+    @Value("${org.apereo.portal.portlet.extendedTimeoutExecutions:5}")
     public void setExtendedTimeoutExecutions(int extendedTimeoutExecutions) {
         this.extendedTimeoutExecutions = extendedTimeoutExecutions;
     }
@@ -156,7 +156,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     @Override
-    @Value("${org.jasig.portal.portlet.extendedTimeoutMultiplier:20}")
+    @Value("${org.apereo.portal.portlet.extendedTimeoutMultiplier:20}")
     public void setExtendedTimeoutMultiplier(long extendedTimeoutMultiplier) {
         this.extendedTimeoutMultiplier = extendedTimeoutMultiplier;
     }

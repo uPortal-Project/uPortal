@@ -28,7 +28,7 @@ import javax.portlet.WindowState;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 
 /**
  * Simple wrapper tag for setting up the basis of URLs for portlet delegation

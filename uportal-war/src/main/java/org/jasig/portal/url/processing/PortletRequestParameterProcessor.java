@@ -43,7 +43,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Uses the {@link IPortletUrlSyntaxProvider} to parse the portlet parameters from the request into {@link PortletUrl}s.
- * The WindowState, PortletMode and parameter Map is set directly on the {@link IPortletWindow}. The {@link org.jasig.portal.portlet.url.RequestType}
+ * The WindowState, PortletMode and parameter Map is set directly on the {@link IPortletWindow}. The {@link org.apereo.portal.portlet.url.RequestType}
  * is tracked in the {@link IPortletRequestParameterManager}.
  * 
  * @author Eric Dalquist

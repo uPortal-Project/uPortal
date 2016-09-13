@@ -31,7 +31,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;

@@ -80,13 +80,13 @@ public class HungWorkerAnalyzer implements ApplicationListener<PortalEvent>, Ini
     /**
      * @deprecated use {@link #setPercentPermittedErrantByFname(double)}
      */
-    @Value("${org.jasig.portal.portlet.numberPermittedErrantByFname:}")
+    @Value("${org.apereo.portal.portlet.numberPermittedErrantByFname:}")
     @Deprecated
     public void setNumberPermittedErrantByFname(Integer numberPermittedErrantByFname) {
         this.numberPermittedErrantByFname = numberPermittedErrantByFname;
     }
     
-    @Value("${org.jasig.portal.portlet.percentPermittedErrantByFname:.1}")
+    @Value("${org.apereo.portal.portlet.percentPermittedErrantByFname:.1}")
     @Override
     public void setPercentPermittedErrantByFname(double percentPermittedErrantByFname) {
         this.percentPermittedErrantByFname = percentPermittedErrantByFname;

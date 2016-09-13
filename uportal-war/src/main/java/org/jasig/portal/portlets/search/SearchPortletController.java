@@ -54,7 +54,7 @@ import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.container.properties.ThemeNameRequestPropertiesManager;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletEntity;

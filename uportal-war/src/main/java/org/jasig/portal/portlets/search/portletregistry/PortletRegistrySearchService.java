@@ -23,7 +23,7 @@ import java.util.List;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;

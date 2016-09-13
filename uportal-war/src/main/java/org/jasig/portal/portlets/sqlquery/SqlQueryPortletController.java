@@ -32,7 +32,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.portlet.IPortletSpELService;
+import org.apereo.portal.portlet.IPortletSpELService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

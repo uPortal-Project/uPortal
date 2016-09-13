@@ -38,7 +38,7 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
-import org.jasig.portal.portlet.url.PortletURLProviderImpl;
+import org.apereo.portal.portlet.url.PortletURLProviderImpl;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;

@@ -19,12 +19,10 @@
 package org.jasig.portal.portlets.flow;
 
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletMode;
 import javax.portlet.PortletModeException;
-import javax.portlet.WindowState;
 import javax.portlet.WindowStateException;
 
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 import org.springframework.webflow.context.ExternalContext;
 
 /**

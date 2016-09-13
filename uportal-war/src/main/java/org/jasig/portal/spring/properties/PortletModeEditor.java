@@ -20,7 +20,7 @@ package org.jasig.portal.spring.properties;
 
 import java.beans.PropertyEditorSupport;
 
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist

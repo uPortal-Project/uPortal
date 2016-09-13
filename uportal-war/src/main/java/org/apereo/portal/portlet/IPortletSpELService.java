@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet;
+package org.apereo.portal.portlet;
 
 import javax.portlet.PortletRequest;
 
@@ -66,7 +66,7 @@ public interface IPortletSpELService {
      * Returns a SpEL Expression using the standard Parsing Context (uses ${ }).  Allows you to supply your own
      * {@link org.springframework.expression.spel.support.StandardEvaluationContext} to evaluate the expression
      * against any objects you want.  Refer to SpEL API or review the code in
-     * {@link org.jasig.portal.portlet.PortletSpELServiceImpl}.
+     * {@link org.apereo.portal.portlet.PortletSpELServiceImpl}.
      * @param expressionString string to be evaluated
      * @return SpEL Expression
      * @throws ParseException Error in expression string format

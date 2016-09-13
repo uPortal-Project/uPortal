@@ -47,7 +47,7 @@ import org.apache.pluto.container.driver.AdministrativeRequestListener;
  *             The PortletRequest attribute to get the key for the {@link AdministrativeRequestListener} from.
  *         </td>
  *         <td valign="top">No</td>
- *         <td valign="top">org.jasig.portal.portlet.common.AdministrativeRequestListenerControler.LISTENER_KEY</td>
+ *         <td valign="top">org.apereo.portal.portlet.common.AdministrativeRequestListenerControler.LISTENER_KEY</td>
  *     </tr>
  *     <tr>
  *         <td align="right" valign="top">listeners</td>

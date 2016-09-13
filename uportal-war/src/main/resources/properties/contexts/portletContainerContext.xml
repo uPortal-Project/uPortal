@@ -27,13 +27,13 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
    
     <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.portlet.worker.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.portlet.worker.threadPool.maxThreads}" />
+        <property name="corePoolSize" value="${org.apereo.portal.portlet.worker.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.portlet.worker.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uP-PortletExecTG" />
         <property name="threadNamePrefix" value="uP-PortletExec-" />
-        <property name="threadPriority" value="${org.jasig.portal.portlet.worker.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.portlet.worker.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.portlet.worker.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
@@ -139,7 +139,7 @@
                     <property name="listeners">
                         <map>
                             <entry key="sessionActionListener">
-                            	<bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            	<bean class="org.apereo.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
                             </entry>
                         </map>
                     </property>
@@ -158,7 +158,7 @@
     <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
     <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
     
-    <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
+    <!--  <bean id="portletSessionExpirationManager" class="org.apereo.portal.portlet.session.PortletSessionExpirationManager" /> -->
     <!--  
     <bean id="requestAttributeService" class="org.apereo.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />

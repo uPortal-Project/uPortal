@@ -23,7 +23,7 @@ import java.io.IOException;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet;
+package org.apereo.portal.portlet;
 
 import org.apereo.portal.PortalException;
 import org.apereo.portal.portlet.om.IPortletWindow;

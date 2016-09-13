@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.session;
+package org.apereo.portal.portlet.session;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

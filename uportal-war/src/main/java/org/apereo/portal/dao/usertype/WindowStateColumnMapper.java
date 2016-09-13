@@ -21,7 +21,7 @@ package org.apereo.portal.dao.usertype;
 import javax.portlet.WindowState;
 
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
-import org.jasig.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.PortletUtils;
 
 /**
  * @author Eric Dalquist
