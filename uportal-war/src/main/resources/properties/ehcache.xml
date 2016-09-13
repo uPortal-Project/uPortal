@@ -2062,7 +2062,7 @@
      | - 1 x expression used in the portal
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.portlets.sqlquery.SqlQueryPortletController.queryResults"
+    <cache name="org.apereo.portal.portlets.sqlquery.SqlQueryPortletController.queryResults"
            eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
            timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
