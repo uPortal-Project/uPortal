@@ -26,9 +26,9 @@ import javax.servlet.http.Cookie;
 
 import org.easymock.EasyMock;
 import org.apereo.portal.portlet.dao.IPortletCookieDao;
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;

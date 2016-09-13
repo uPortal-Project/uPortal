@@ -16,23 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
-
-import java.io.Serializable;
+package org.apereo.portal.portlet.om;
 
 /**
+ * Describes the IDs at the core of a portlet window
+ * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IObjectId extends Serializable {
+public interface IPortletWindowDescriptor {
+    
     /**
-     * Returns the unique string ID of a object
-     * <p>
-     * Depending on the implementation of <code>toString()</code> is dangerous,
-     * because the original implementation in <code>Object</code> is not
-     * qualified.
-     * </p>
-     * @return the unique string ID of a object
+     * @return ID of the portlet window
      */
-    public String getStringId();
+    public IPortletWindowId getPortletWindowId();
+    
+    /**
+     * @return ID of the parent entity
+     */
+    public IPortletEntityId getPortletEntityId();
 }

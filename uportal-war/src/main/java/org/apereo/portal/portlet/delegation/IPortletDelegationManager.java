@@ -21,7 +21,7 @@ package org.apereo.portal.portlet.delegation;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.api.portlet.DelegationRequest;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 
 /**

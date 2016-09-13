@@ -20,7 +20,7 @@ package org.jasig.portal.mock.portlet.om;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * @author Eric Dalquist

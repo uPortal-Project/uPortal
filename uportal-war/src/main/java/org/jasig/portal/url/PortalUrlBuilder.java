@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 
 import com.google.common.base.Preconditions;
@@ -122,7 +122,7 @@ class PortalUrlBuilder extends AbstractUrlBuilder implements IPortalActionUrlBui
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalUrlBuilder#getPortletUrlBuilder(org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.jasig.portal.url.IPortalUrlBuilder#getPortletUrlBuilder(org.apereo.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public IPortletUrlBuilder getPortletUrlBuilder(IPortletWindowId portletWindowId) {

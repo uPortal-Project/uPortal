@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.events.aggr.portlets;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 /**
  * A mapped portlet name

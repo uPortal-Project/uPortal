@@ -37,7 +37,7 @@ import javax.portlet.ValidatorException;
 
 import org.apache.commons.collections.EnumerationUtils;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.url.ParameterMap;
 import org.junit.Before;
 import org.junit.Test;

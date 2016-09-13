@@ -20,7 +20,7 @@ package org.jasig.portal.portlets.portletadmin.xmlsupport;
 
 import java.util.Map;
 
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 
 

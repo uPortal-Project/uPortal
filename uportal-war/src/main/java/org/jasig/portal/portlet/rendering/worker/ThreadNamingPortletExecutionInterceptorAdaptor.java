@@ -21,10 +21,10 @@ package org.jasig.portal.portlet.rendering.worker;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext.ExecutionType;
 import org.jasig.portal.security.IPerson;

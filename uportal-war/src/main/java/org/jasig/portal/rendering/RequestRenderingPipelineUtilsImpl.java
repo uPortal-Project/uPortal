@@ -20,10 +20,10 @@ package org.jasig.portal.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;

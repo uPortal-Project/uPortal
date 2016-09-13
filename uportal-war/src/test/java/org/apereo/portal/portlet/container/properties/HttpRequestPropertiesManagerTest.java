@@ -25,7 +25,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.EasyMock;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.MultivaluedMapPopulator;
 import org.springframework.mock.web.MockHttpServletRequest;

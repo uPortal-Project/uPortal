@@ -23,7 +23,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.dao.usertype.FunctionalNameType;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Provides information to the URL generation code about layout nodes for navigation.

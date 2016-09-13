@@ -31,9 +31,9 @@ import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.portlet.delegation.IPortletDelegationManager;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -140,7 +140,7 @@ public class PortalUrlProviderImpl implements IPortalUrlProvider {
 	}
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalUrlProvider#getPortalUrlBuilderByPortletWindow(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId, org.jasig.portal.url.UrlType)
+     * @see org.jasig.portal.url.IPortalUrlProvider#getPortalUrlBuilderByPortletWindow(javax.servlet.http.HttpServletRequest, org.apereo.portal.portlet.om.IPortletWindowId, org.jasig.portal.url.UrlType)
      */
     @Override
     public IPortalUrlBuilder getPortalUrlBuilderByPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId, UrlType urlType) {

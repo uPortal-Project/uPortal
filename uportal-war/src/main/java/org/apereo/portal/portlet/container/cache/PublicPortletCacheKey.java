@@ -28,9 +28,9 @@ import java.util.Set;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;
 import org.jasig.portal.url.ParameterMap;

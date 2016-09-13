@@ -25,10 +25,10 @@ import javax.xml.stream.events.StartElement;
 
 import org.apache.pluto.container.PortletWindow;
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.Tuple;
 
 /**
@@ -83,7 +83,7 @@ public interface IPortletWindowRegistry {
     
     /**
      * Combines {@link IPortletDefinitionRegistry#getPortletDefinitionByFname(String)},
-     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, String, int)}, and
      * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)}
      *
      * Returns null if {@link IPortletDefinitionRegistry#getPortletDefinitionByFname(String)} returns null
@@ -93,7 +93,7 @@ public interface IPortletWindowRegistry {
     /**
      * Combines {@link IUserLayoutManager#getNode(String)},
      * {@link IPortletDefinitionRegistry#getPortletDefinition(String)},
-     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, String, int)}, and
      * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)}
      * 
      * If the specified layout node does not exist or is not a portlet null is returned.
@@ -101,7 +101,7 @@ public interface IPortletWindowRegistry {
     public IPortletWindow getOrCreateDefaultPortletWindowByLayoutNodeId(HttpServletRequest request, String layoutNodeId);
     
     /**
-     * Combines {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, String, int)}, and
+     * Combines {@link IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, String, int)}, and
      * {@link #getOrCreateDefaultPortletWindow(HttpServletRequest, IPortletEntityId)} 
      */
     public IPortletWindow getOrCreateDefaultPortletWindow(HttpServletRequest request, IPortletDefinitionId portletDefinitionId);

@@ -24,11 +24,11 @@ import java.util.Map;
 import javax.portlet.WindowState;
 
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
  * Wrapper for portlet entities that are persistent. Overrides the entity ID to be a consistent value 

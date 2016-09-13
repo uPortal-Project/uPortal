@@ -51,14 +51,14 @@ import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
-import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.om.PortletCategory;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.security.*;
@@ -398,7 +398,7 @@ public class PortletDefinitionImporterExporter
 
     /*
      * (non-Javadoc)
-     * @see org.apereo.portal.channel.IChannelPublishingService#saveChannelDefinition(org.jasig.portal.portlet.om.IPortletDefinition, org.jasig.portal.security.IPerson, org.apereo.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.apereo.portal.groups.IGroupMember[])
+     * @see org.apereo.portal.channel.IChannelPublishingService#saveChannelDefinition(org.apereo.portal.portlet.om.IPortletDefinition, org.jasig.portal.security.IPerson, org.apereo.portal.channel.ChannelLifecycleState, java.util.Date, java.util.Date, org.jasig.portal.ChannelCategory[], org.apereo.portal.groups.IGroupMember[])
      */
     @Override
     public IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, List<IGroupMember> groupMembers) {

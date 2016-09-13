@@ -20,9 +20,9 @@ package org.jasig.portal.portlet.registry;
 
 import java.io.Serializable;
 
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntityDescriptor;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * Session persistent data stored for portlet entities

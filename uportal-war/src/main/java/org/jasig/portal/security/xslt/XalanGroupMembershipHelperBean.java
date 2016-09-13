@@ -24,7 +24,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;

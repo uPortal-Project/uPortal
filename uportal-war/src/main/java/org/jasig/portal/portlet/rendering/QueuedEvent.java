@@ -20,7 +20,7 @@ package org.jasig.portal.portlet.rendering;
 
 import javax.portlet.Event;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Tracks an event and the window id that generated it

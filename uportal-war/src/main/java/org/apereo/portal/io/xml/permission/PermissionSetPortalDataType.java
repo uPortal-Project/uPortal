@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apereo.portal.io.xml.permission;
 
 import java.util.Arrays;
@@ -26,22 +27,29 @@ import javax.xml.namespace.QName;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 
-
 /**
  * Describes a permission in the portal
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class PermissionSetPortalDataType extends AbstractPortalDataType {
+
     public static final QName LEGACY_PERMISSION_SET_QNAME = new QName("permission-set");
-    
+
+    @Deprecated
     public static final PortalDataKey IMPORT_31_DATA_KEY = new PortalDataKey(
             LEGACY_PERMISSION_SET_QNAME, 
             "classpath://org/jasig/portal/io/import-permission_set_v3-1.crn",
             null);
 
-    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(IMPORT_31_DATA_KEY);
+    public static final PortalDataKey IMPORT_50_DATA_KEY = new PortalDataKey(
+            LEGACY_PERMISSION_SET_QNAME,
+            "classpath://org/apereo/portal/io/import-permission_set_v5-0.crn",
+            null);
+
+    private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(
+            new PortalDataKey[] {IMPORT_31_DATA_KEY, IMPORT_50_DATA_KEY}
+    );
     
     public PermissionSetPortalDataType() {
         super(LEGACY_PERMISSION_SET_QNAME);

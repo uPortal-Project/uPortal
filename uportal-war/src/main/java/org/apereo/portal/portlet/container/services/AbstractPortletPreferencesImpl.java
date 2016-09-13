@@ -30,7 +30,7 @@ import javax.portlet.ReadOnlyException;
 import javax.portlet.ValidatorException;
 
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletPreference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;

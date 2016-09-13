@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;

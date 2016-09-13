@@ -28,7 +28,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.LazyPrintWriter;
 import org.jasig.portal.portlet.rendering.LazyServletOutputStream;
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;

@@ -27,7 +27,7 @@ import org.apache.pluto.container.PortletResponseContext;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.driver.PortletServlet;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.springframework.util.Assert;
 
 /**

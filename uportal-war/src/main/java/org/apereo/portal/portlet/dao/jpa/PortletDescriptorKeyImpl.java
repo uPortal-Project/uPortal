@@ -23,7 +23,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
 
 @Embeddable
 class PortletDescriptorKeyImpl implements IPortletDescriptorKey, Serializable {

@@ -46,16 +46,16 @@ import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.portlet.dao.IPortletEntityDao;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
@@ -125,7 +125,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(org.jasig.portal.portlet.om.IPortletEntityId)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(org.apereo.portal.portlet.om.IPortletEntityId)
      */
     @Override
     public IPortletEntity getPortletEntity(HttpServletRequest request, IPortletEntityId portletEntityId) {
@@ -201,7 +201,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
     @Override
     public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
@@ -283,7 +283,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
+     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.apereo.portal.portlet.om.IPortletEntity)
      */
     @Override
     public void storePortletEntity(HttpServletRequest request, final IPortletEntity portletEntity) {

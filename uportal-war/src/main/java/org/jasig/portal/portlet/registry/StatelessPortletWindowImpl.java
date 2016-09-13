@@ -27,10 +27,10 @@ import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Implementation of the {@link IPortletWindow} interface that tracks the current
@@ -70,7 +70,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#getPortletWindowId()
+     * @see org.apereo.portal.portlet.om.IPortletWindow#getPortletWindowId()
      */
     @Override
     public IPortletWindowId getPortletWindowId() {
@@ -104,7 +104,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#setPortletMode(javax.portlet.PortletMode)
+     * @see org.apereo.portal.portlet.om.IPortletWindow#setPortletMode(javax.portlet.PortletMode)
      */
     @Override
     public void setPortletMode(PortletMode mode){
@@ -112,7 +112,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#setWindowState(javax.portlet.WindowState)
+     * @see org.apereo.portal.portlet.om.IPortletWindow#setWindowState(javax.portlet.WindowState)
      */
     @Override
     public void setWindowState(WindowState state) {
@@ -120,7 +120,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#getRequestParameers()
+     * @see org.apereo.portal.portlet.om.IPortletWindow#getRequestParameers()
      */
     @Override
     public Map<String, String[]> getRenderParameters() {
@@ -128,7 +128,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
+     * @see org.apereo.portal.portlet.om.IPortletWindow#setRequestParameters(java.util.Map)
      */
     @Override
     public void setRenderParameters(Map<String, String[]> renderParameters) {
@@ -146,7 +146,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#getExpirationCache()
+     * @see org.apereo.portal.portlet.om.IPortletWindow#getExpirationCache()
      */
     @Override
     public Integer getExpirationCache() {
@@ -154,7 +154,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#setExpirationCache(java.lang.Integer)
+     * @see org.apereo.portal.portlet.om.IPortletWindow#setExpirationCache(java.lang.Integer)
      */
     @Override
     public void setExpirationCache(Integer expirationCache) {
@@ -163,7 +163,7 @@ class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     
     /*
      * (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindow#getDelegationParent()
+     * @see org.apereo.portal.portlet.om.IPortletWindow#getDelegationParent()
      */
     @Override
     public IPortletWindowId getDelegationParentId() {

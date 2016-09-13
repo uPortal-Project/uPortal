@@ -28,10 +28,10 @@ import org.apache.commons.lang.Validate;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.PortletWindowID;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Implementation of the {@link IPortletWindow} that is backed by a

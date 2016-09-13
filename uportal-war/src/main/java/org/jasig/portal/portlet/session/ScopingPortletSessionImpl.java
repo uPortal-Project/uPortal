@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.PortletWindow;
 import org.apache.pluto.container.impl.PortletSessionImpl;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * Custom portlet session impl, uses the entityId instead of the windowId for the session namespace

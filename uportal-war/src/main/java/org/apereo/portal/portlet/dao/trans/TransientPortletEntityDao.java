@@ -30,10 +30,10 @@ import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.TransientUserLayoutManagerWrapper;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.portlet.dao.IPortletEntityDao;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
@@ -95,7 +95,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#createPortletEntity(org.jasig.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
+     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#createPortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
     @Override
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
@@ -111,7 +111,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#deletePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
+     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#deletePortletEntity(org.apereo.portal.portlet.om.IPortletEntity)
      */
     @Override
     public void deletePortletEntity(IPortletEntity portletEntity) {
@@ -120,7 +120,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#getPortletEntities(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#getPortletEntities(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId) {
@@ -138,7 +138,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#getPortletEntity(org.jasig.portal.portlet.om.IPortletEntityId)
+     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#getPortletEntity(org.apereo.portal.portlet.om.IPortletEntityId)
      */
     @Override
     public IPortletEntity getPortletEntity(IPortletEntityId portletEntityId) {
@@ -167,7 +167,7 @@ public class TransientPortletEntityDao implements IPortletEntityDao {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#updatePortletEntity(org.jasig.portal.portlet.om.IPortletEntity)
+     * @see org.apereo.portal.portlet.dao.IPortletEntityDao#updatePortletEntity(org.apereo.portal.portlet.om.IPortletEntity)
      */
     @Override
     public void updatePortletEntity(IPortletEntity portletEntity) {

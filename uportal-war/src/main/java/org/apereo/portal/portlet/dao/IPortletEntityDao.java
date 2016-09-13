@@ -20,9 +20,9 @@ package org.apereo.portal.portlet.dao;
 
 import java.util.Set;
 
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletEntity} objects.
@@ -35,14 +35,14 @@ public interface IPortletEntityDao {
      * Creates, initializes and persists a new {@link IPortletEntity} based on the specified {@link IPortletDefinitionId},
      * layout node id and user id. 
      * 
-     * @param portletDefinitionId The id of the {@link org.jasig.portal.portlet.om.IPortletDefinition} that is the parent of the new entity
+     * @param portletDefinitionId The id of the {@link org.apereo.portal.portlet.om.IPortletDefinition} that is the parent of the new entity
      * @param layoutNodeId The layout node id in the user's layout.
      * @param userId The id of the user the entity is for.
      * @return A newly created, initialized and persisted entity.
      * @throws IllegalArgumentException if portletDefinitionId or layoutNodeId are null.
      * @throws org.springframework.dao.DataIntegrityViolationException If an entity already exists for the layout
      *         node id and userId pair
-     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.jasig.portal.portlet.om.IPortletDefinition}
+     * @throws org.springframework.dao.DataRetrievalFailureException If no {@link org.apereo.portal.portlet.om.IPortletDefinition}
      *         exists for the specified {@link IPortletDefinitionId} 
      */
     public IPortletEntity createPortletEntity(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId);

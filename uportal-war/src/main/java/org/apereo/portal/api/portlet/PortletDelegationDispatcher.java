@@ -28,7 +28,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 

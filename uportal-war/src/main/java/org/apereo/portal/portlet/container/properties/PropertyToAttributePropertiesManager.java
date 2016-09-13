@@ -30,8 +30,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;

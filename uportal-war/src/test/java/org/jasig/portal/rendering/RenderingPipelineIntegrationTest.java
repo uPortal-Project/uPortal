@@ -35,8 +35,8 @@ import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.xslt.IXalanMessageHelper;
@@ -49,12 +49,8 @@ import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +61,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Eric Dalquist

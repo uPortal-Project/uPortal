@@ -23,8 +23,8 @@ import java.util.Vector;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**
  * @author Bernie Durfee, bdurfee@interactivebusiness.com

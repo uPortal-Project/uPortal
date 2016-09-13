@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
-import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**
  * {@link IPortletDefinition} implementation representing a missing portlet, meaning a portlet that could not be found,

@@ -16,18 +16,49 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
 
-import java.io.Serializable;
+import java.util.Set;
 
-import org.apache.pluto.container.PortletWindowID;
+import org.joda.time.DateTime;
 
 /**
- * uPortal extensions to the Pluto {@link PortletWindowID} interface.
+ * Interface describing the parent cookie used to relate all
+ * Portlet Cookies to one HTTP Cookie.
  * 
- * @author Eric Dalquist
- * @version $Revision$
+ * @author Nicholas Blair
  */
-public interface IPortletWindowId extends PortletWindowID, Serializable {
+public interface IPortalCookie {
+
+	/**
+	 * 
+	 * @return the unique value for this cookie
+	 */
+	String getValue();
+	
+	/**
+	 * 
+	 * @return the timestamp when this cookie was created
+	 */
+	DateTime getCreated();
+	
+	/**
+	 * 
+	 * @return the timestamp when this cookie is due to expire
+	 */
+	DateTime getExpires();
+	
+	/**
+	 * Update the expiration timestamp.
+	 *  
+	 * @param expires
+	 */
+	void setExpires(DateTime expires);
+	
+	/**
+	 * 
+	 * @return the set of {@link IPortletCookie}s linked to this instance
+	 */
+	Set<IPortletCookie> getPortletCookies();
 
 }

@@ -20,9 +20,9 @@ package org.apereo.portal.portlet.dao;
 
 import java.util.List;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletType;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects.

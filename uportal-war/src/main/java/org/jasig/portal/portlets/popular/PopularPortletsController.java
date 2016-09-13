@@ -37,7 +37,7 @@ import org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregationDao;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;

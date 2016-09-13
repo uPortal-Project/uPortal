@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.rendering;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pluto.container.EventCoordinationService;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Service that manages handling and queueing portlet events

@@ -23,7 +23,7 @@ import java.util.regex.MatchResult;
 
 import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.character.stream.events.PortletLinkPlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Jen Bourey, jennifer.bourey@gmail.com

@@ -24,11 +24,11 @@ import java.util.Map;
 import javax.portlet.WindowState;
 
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
  * @author Eric Dalquist
@@ -53,7 +53,7 @@ class TransientPortletEntity implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#getChannelSubscribeId()
+     * @see org.apereo.portal.portlet.om.IPortletEntity#getChannelSubscribeId()
      */
     @Override
     public String getLayoutNodeId() {
@@ -66,7 +66,7 @@ class TransientPortletEntity implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletEntityId()
+     * @see org.apereo.portal.portlet.om.IPortletEntity#getPortletEntityId()
      */
     @Override
     public IPortletEntityId getPortletEntityId() {
@@ -89,7 +89,7 @@ class TransientPortletEntity implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletEntity#getUserId()
+     * @see org.apereo.portal.portlet.om.IPortletEntity#getUserId()
      */
     @Override
     public int getUserId() {

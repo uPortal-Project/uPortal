@@ -30,8 +30,8 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.xml.stream.InjectingXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

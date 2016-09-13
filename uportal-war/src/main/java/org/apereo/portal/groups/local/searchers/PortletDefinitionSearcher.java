@@ -27,7 +27,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.local.ITypedEntitySearcher;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

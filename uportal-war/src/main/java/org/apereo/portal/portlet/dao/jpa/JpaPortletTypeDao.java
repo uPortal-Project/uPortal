@@ -30,7 +30,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.portlet.dao.IPortletTypeDao;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;

@@ -16,16 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
 
+public interface IPortletDescriptorKey {
 
-
-/**
- * Identifier type for portlet entities.
- * 
- * @author Eric Dalquist
- * @version $Revision$
- */
-public interface IPortletEntityId extends IObjectId {
+    public String getWebAppName();
     
+    public boolean isFrameworkPortlet();
+    
+    public String getPortletName();
+
+    public void setWebAppName(String webAppName);
+    
+    public void setFrameworkPortlet(boolean isFrameworkPortlet);
+    
+    public void setPortletName(String portletName);
+
 }

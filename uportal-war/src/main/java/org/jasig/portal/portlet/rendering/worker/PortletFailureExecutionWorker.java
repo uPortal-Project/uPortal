@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portlet.rendering.PortletRenderResult;
 import org.jasig.portal.portlet.rendering.RenderPortletOutputHandler;

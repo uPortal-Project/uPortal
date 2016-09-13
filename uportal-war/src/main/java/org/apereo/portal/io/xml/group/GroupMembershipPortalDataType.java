@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apereo.portal.io.xml.group;
 
 import java.util.Arrays;
@@ -31,12 +32,10 @@ import org.apereo.portal.io.xml.PortalDataKey;
 
 import com.google.common.collect.ImmutableSet;
 
-
 /**
  * Describes a group with members in the portal
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     public static final QName LEGACY_GROUP_QNAME = new QName("group");
@@ -50,16 +49,38 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-0.crn",
             null);
-    
+
+    @Deprecated
     public static final PortalDataKey IMPORT_32_DATA_KEY = new PortalDataKey(
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-2.crn",
             null);
-    
-    
+
+    public static final PortalDataKey IMPORT_50_DATA_KEY = new PortalDataKey(
+            LEGACY_GROUP_QNAME,
+            "classpath://org/apereo/portal/io/import-group_membership_v5-0.crn",
+            null);
+
     /**
      * Pseudo type used to enforce the importing of all groups before any members
      */
+    public static final PortalDataKey IMPORT_GROUP_50_DATA_KEY = new PortalDataKey(
+            LEGACY_GROUP_QNAME,
+            "classpath://org/apereo/portal/io/import-group_membership_v5-0.crn",
+            "GROUP");
+
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     */
+    public static final PortalDataKey IMPORT_MEMBERS_50_DATA_KEY = new PortalDataKey(
+            LEGACY_GROUP_QNAME,
+            "classpath://org/apereo/portal/io/import-group_membership_v5-0.crn",
+            "MEMBERS");
+
+    /**
+     * Pseudo type used to enforce the importing of all groups before any members
+     */
+    @Deprecated
     public static final PortalDataKey IMPORT_GROUP_32_DATA_KEY = new PortalDataKey(
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-2.crn",
@@ -68,6 +89,7 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     /**
      * Pseudo type used to enforce the importing of all groups before any members
      */
+    @Deprecated
     public static final PortalDataKey IMPORT_MEMBERS_32_DATA_KEY = new PortalDataKey(
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-2.crn",
@@ -76,6 +98,7 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     /**
      * Pseudo type used to enforce the importing of all groups before any members
      */
+    @Deprecated
     public static final PortalDataKey IMPORT_GROUP_30_DATA_KEY = new PortalDataKey(
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-0.crn",
@@ -84,18 +107,21 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
     /**
      * Pseudo type used to enforce the importing of all groups before any members
      */
+    @Deprecated
     public static final PortalDataKey IMPORT_MEMBERS_30_DATA_KEY = new PortalDataKey(
             LEGACY_GROUP_QNAME, 
             "classpath://org/jasig/portal/io/import-group_membership_v3-0.crn",
             "MEMBERS");
 
     private static final List<PortalDataKey> PORTAL_DATA_KEYS = Arrays.asList(
-            IMPORT_30_DATA_KEY, IMPORT_32_DATA_KEY, 
-            IMPORT_GROUP_30_DATA_KEY, IMPORT_GROUP_32_DATA_KEY,
-            IMPORT_MEMBERS_30_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY);
+            IMPORT_30_DATA_KEY, IMPORT_32_DATA_KEY, IMPORT_50_DATA_KEY,
+            IMPORT_GROUP_30_DATA_KEY, IMPORT_GROUP_32_DATA_KEY, IMPORT_GROUP_50_DATA_KEY,
+            IMPORT_MEMBERS_30_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY, IMPORT_MEMBERS_50_DATA_KEY);
+
     private static final Set<PortalDataKey> GROUP_MEMBERS_30_KEYS = ImmutableSet.of(IMPORT_GROUP_30_DATA_KEY, IMPORT_MEMBERS_30_DATA_KEY);
     private static final Set<PortalDataKey> GROUP_MEMBERS_32_KEYS = ImmutableSet.of(IMPORT_GROUP_32_DATA_KEY, IMPORT_MEMBERS_32_DATA_KEY);
-    
+    private static final Set<PortalDataKey> GROUP_MEMBERS_50_KEYS = ImmutableSet.of(IMPORT_GROUP_50_DATA_KEY, IMPORT_MEMBERS_50_DATA_KEY);
+
     public GroupMembershipPortalDataType() {
         super(LEGACY_GROUP_QNAME);
     }
@@ -131,7 +157,11 @@ public class GroupMembershipPortalDataType extends AbstractPortalDataType {
             //Split the import into two phases
             return GROUP_MEMBERS_32_KEYS;
         }
-        
+        if (IMPORT_50_DATA_KEY.equals(portalDataKey)) {
+            //Split the import into two phases
+            return GROUP_MEMBERS_50_KEYS;
+        }
+
         return Collections.singleton(portalDataKey);
     }
 }

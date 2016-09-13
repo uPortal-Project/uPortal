@@ -27,9 +27,9 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;

@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 /**
  * Describes the {@link IPortletDefinition} for import and export.

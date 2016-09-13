@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.permission.target.IPermissionTarget.TargetType;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IPermission;

@@ -16,33 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
+
+
 
 /**
- * Describes the IDs at the core of a portlet entity
+ * Identifier type for portlet entities.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletEntityDescriptor {
-    /**
-     * @return ID of the entity
-     */
-    public IPortletEntityId getPortletEntityId();
-
-    /**
-     * @return ID of the parent definition
-     */
-    public IPortletDefinitionId getPortletDefinitionId();
-
-    /**
-     * @return Layout node ID the entity exists for
-     */
-    public String getLayoutNodeId();
-
-    /**
-     * @return User the entity exists for
-     */
-    public int getUserId();
-
+public interface IPortletEntityId extends IObjectId {
+    
 }

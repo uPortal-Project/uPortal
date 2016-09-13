@@ -43,8 +43,8 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
 
 /**

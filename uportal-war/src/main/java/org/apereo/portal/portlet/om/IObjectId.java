@@ -16,19 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
 
-
+import java.io.Serializable;
 
 /**
- * Identifier type for portlet definitions.
- * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletDefinitionId extends IObjectId {
+public interface IObjectId extends Serializable {
     /**
-     * @return the numeric version of the id
+     * Returns the unique string ID of a object
+     * <p>
+     * Depending on the implementation of <code>toString()</code> is dangerous,
+     * because the original implementation in <code>Object</code> is not
+     * qualified.
+     * </p>
+     * @return the unique string ID of a object
      */
-    long getLongId();
+    public String getStringId();
 }

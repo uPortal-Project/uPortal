@@ -38,7 +38,7 @@ import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

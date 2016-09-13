@@ -21,7 +21,7 @@ package org.apereo.portal.portlet.dao;
 
 import java.util.Set;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
 
 public interface IMarketplaceRatingDao {

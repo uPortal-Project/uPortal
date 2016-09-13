@@ -32,11 +32,11 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apache.pluto.container.om.portlet.Preference;
 import org.apache.pluto.container.om.portlet.Preferences;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 

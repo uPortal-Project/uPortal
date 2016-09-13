@@ -40,7 +40,7 @@ import org.apache.pluto.container.om.portlet.EventDefinition;
 import org.apache.pluto.container.om.portlet.EventDefinitionReference;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 
 /**
  * @author Eric Dalquist

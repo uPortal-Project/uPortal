@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.rendering.worker;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Interceptor used to add behavior before or after portlet execution. {@link #postExecution(HttpServletRequest, HttpServletResponse, IPortletWindowId, Exception)}

@@ -22,7 +22,7 @@ import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Create workers used to execute portlet actions. The workers take care of submitting to

@@ -34,7 +34,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;

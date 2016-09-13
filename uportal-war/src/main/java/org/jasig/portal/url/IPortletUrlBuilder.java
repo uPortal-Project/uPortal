@@ -25,7 +25,7 @@ import javax.portlet.PortletURL;
 import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Builds a URL for a specific portlet.

@@ -30,7 +30,7 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 
 /**
  * Gets serialized into JSON representing a portlet for the 4.3 version of the

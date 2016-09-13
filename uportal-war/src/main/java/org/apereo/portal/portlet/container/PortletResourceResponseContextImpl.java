@@ -33,7 +33,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletResourceResponseContext;
 import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.jasig.portal.url.IPortalUrlProvider;
 

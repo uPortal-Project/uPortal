@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.portlet.Event;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 
 /**

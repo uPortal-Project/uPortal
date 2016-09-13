@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.portlet.dao.jpa;
 
-import org.jasig.portal.portlet.om.AbstractObjectId;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.AbstractObjectId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 
 /**

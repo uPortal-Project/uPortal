@@ -34,8 +34,8 @@ import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.layout.node.UserLayoutChannelDescription;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 import org.w3c.dom.Document;
 

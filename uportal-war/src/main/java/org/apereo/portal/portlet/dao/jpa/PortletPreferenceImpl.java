@@ -49,7 +49,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.apereo.portal.dao.usertype.NullSafeStringColumnMapper;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
  * @author Eric Dalquist

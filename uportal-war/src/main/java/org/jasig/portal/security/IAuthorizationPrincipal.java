@@ -21,7 +21,7 @@ package org.jasig.portal.security;
 import java.util.Vector;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**
  * An <code>IAuthorizationPrincipal</code> represents a portal entity to which

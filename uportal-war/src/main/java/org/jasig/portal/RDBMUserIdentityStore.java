@@ -45,7 +45,7 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.portlet.dao.IPortletEntityDao;
-import org.jasig.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntity;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;

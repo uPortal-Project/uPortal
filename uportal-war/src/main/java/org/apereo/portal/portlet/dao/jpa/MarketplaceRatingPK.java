@@ -31,7 +31,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 @SecondaryTables({
 		@SecondaryTable(name="UP_PORTLET_DEF"),

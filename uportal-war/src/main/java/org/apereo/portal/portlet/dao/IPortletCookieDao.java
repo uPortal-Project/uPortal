@@ -20,8 +20,8 @@ package org.apereo.portal.portlet.dao;
 
 import javax.servlet.http.Cookie;
 
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 
 /**
  * Interface for creating/updating/deleting {@link IPortalCookie} and related {@link IPortletCookie}s.

@@ -21,8 +21,8 @@ package org.apereo.portal.channel;
 import java.util.List;
 
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.PortletCategory;
 import org.jasig.portal.security.IPerson;
 
 /**

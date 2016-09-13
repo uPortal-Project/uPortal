@@ -22,8 +22,8 @@ import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletPreference;
 import org.jasig.portal.rendering.RequestRenderingPipelineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

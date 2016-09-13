@@ -30,8 +30,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.marketplace.PortletReleaseNotes;
 import org.apereo.portal.portlet.marketplace.ScreenShot;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.PortletCategory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jasig.portal.security.IPerson;

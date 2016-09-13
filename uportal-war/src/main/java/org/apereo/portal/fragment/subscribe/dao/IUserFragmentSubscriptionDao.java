@@ -21,7 +21,7 @@ package org.apereo.portal.fragment.subscribe.dao;
 import java.util.List;
 
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**

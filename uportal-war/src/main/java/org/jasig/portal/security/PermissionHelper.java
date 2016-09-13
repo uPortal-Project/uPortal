@@ -19,7 +19,7 @@
 package org.jasig.portal.security;
 
 import org.apache.commons.lang3.Validate;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 /**
  * Stateless static utility convenience methods for working with uPortal permissions.

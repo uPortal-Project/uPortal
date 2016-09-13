@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.rendering.worker;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Used by {@link PortletExecutionWorker} to submit to the thread pool

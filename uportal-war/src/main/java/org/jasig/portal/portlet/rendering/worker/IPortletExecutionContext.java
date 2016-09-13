@@ -20,8 +20,8 @@ package org.jasig.portal.portlet.rendering.worker;
 
 import java.util.Map;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Data about a portlet execution.

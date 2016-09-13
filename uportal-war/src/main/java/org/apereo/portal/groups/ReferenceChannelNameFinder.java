@@ -20,7 +20,7 @@ package org.apereo.portal.groups;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
 

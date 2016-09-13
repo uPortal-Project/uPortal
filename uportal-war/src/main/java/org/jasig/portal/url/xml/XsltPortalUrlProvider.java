@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.groups;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**

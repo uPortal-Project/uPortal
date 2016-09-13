@@ -21,7 +21,7 @@ package org.jasig.portal.mock.portlet.om;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.pluto.container.PortletWindowID;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist

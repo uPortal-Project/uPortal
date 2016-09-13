@@ -25,10 +25,10 @@ import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
@@ -110,7 +110,7 @@ public class PortletWorkerFactoryImpl implements IPortletWorkerFactory {
 
     
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory#createRenderHeaderWorker(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.jasig.portal.portlet.om.IPortletWindowId)
+	 * @see org.jasig.portal.portlet.rendering.worker.IPortletWorkerFactory#createRenderHeaderWorker(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apereo.portal.portlet.om.IPortletWindowId)
 	 */
 	@Override
 	public IPortletRenderExecutionWorker createRenderHeaderWorker(

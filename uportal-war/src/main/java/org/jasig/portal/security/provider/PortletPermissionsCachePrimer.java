@@ -39,7 +39,7 @@ import org.apereo.portal.permission.dao.IPermissionOwnerDao;
 import org.apereo.portal.permission.target.IPermissionTarget;
 import org.apereo.portal.permission.target.IPermissionTargetProvider;
 import org.apereo.portal.permission.target.IPermissionTargetProviderRegistry;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;

@@ -19,9 +19,9 @@
 package org.jasig.portal.rest.layout;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonParser;

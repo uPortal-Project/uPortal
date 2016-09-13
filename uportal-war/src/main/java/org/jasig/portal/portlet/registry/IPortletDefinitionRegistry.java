@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.dao.DataRetrievalFailureException;
 

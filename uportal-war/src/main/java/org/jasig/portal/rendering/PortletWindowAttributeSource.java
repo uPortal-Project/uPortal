@@ -33,8 +33,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;

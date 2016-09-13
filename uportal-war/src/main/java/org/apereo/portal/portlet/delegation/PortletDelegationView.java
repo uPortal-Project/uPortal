@@ -35,7 +35,7 @@ import org.apereo.portal.api.portlet.DelegationRequest;
 import org.apereo.portal.api.portlet.DelegationResponse;
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.rendering.PortletOutputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

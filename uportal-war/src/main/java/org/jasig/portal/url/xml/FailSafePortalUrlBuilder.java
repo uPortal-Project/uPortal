@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortletUrlBuilder;
 import org.jasig.portal.url.ParameterMap;
@@ -105,7 +105,7 @@ class FailSafePortalUrlBuilder implements IPortalUrlBuilder {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.url.IPortalUrlBuilder#getPortletUrlBuilder(org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.jasig.portal.url.IPortalUrlBuilder#getPortletUrlBuilder(org.apereo.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public IPortletUrlBuilder getPortletUrlBuilder(IPortletWindowId portletWindowId) {

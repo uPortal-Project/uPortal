@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.portlet.marketplace;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.junit.Before;
 import org.junit.Test;

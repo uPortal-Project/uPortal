@@ -31,7 +31,7 @@ import org.dom4j.Element;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;

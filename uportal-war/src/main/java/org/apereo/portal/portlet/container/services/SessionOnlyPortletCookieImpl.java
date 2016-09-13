@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
 
 /**
@@ -173,7 +173,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletCookie#toCookie()
+	 * @see org.apereo.portal.portlet.om.IPortletCookie#toCookie()
 	 */
 	@Override
 	public Cookie toCookie() {
@@ -189,7 +189,7 @@ class SessionOnlyPortletCookieImpl implements IPortletCookie, Serializable {
 		return cookie;
 	}
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletCookie#updateFromCookie(javax.servlet.http.Cookie)
+	 * @see org.apereo.portal.portlet.om.IPortletCookie#updateFromCookie(javax.servlet.http.Cookie)
 	 */
 	@Override
 	public void updateFromCookie(Cookie cookie) {

@@ -24,7 +24,7 @@ import java.util.regex.MatchResult;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Generates a {@link PortletTitlePlaceholderEvent} for a regular expression match

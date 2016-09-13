@@ -20,7 +20,7 @@ package org.jasig.portal.rendering;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 public interface RequestRenderingPipelineUtils {
   /**

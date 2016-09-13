@@ -26,7 +26,7 @@ import javax.xml.stream.events.StartElement;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.apereo.portal.character.stream.events.PortletContentPlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Generates a {@link PortletContentPlaceholderEvent} for a {@link StartElement} event. 

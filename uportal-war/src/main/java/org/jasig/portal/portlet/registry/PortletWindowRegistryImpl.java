@@ -44,12 +44,12 @@ import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -225,7 +225,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, org.apereo.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public IPortletWindow getPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId) {
@@ -298,7 +298,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.jasig.portal.portlet.om.IPortletEntityId)
+     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.apereo.portal.portlet.om.IPortletEntityId)
      */
     @Override
     public IPortletWindowId getDefaultPortletWindowId(HttpServletRequest request, IPortletEntityId portletEntityId) {

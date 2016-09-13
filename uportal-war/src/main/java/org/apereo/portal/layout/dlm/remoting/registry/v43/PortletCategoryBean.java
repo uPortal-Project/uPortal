@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.jasig.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.PortletCategory;
 
 /**
  * Gets serialized into JSON representing a category for the 4.3 version of the

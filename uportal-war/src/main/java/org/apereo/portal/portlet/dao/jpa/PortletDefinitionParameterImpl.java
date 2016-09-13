@@ -31,7 +31,7 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 
 /**
  * JPA implementation of the IPortletParameter interface.

@@ -28,7 +28,7 @@ import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletRenderResponseContext;
 import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalUrlProvider;
 

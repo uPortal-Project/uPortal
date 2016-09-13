@@ -37,8 +37,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.portlet.dao.IPortletCookieDao;
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -184,7 +184,7 @@ public class JpaPortletCookieDaoImpl extends BasePortalJpaDao implements IPortle
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.apereo.portal.portlet.dao.IPortletCookieDao#updatePortletCookie(org.jasig.portal.portlet.om.IPortalCookie, javax.servlet.http.Cookie)
+	 * @see org.apereo.portal.portlet.dao.IPortletCookieDao#updatePortletCookie(org.apereo.portal.portlet.om.IPortalCookie, javax.servlet.http.Cookie)
 	 */
 	@Override
 	@PortalTransactional

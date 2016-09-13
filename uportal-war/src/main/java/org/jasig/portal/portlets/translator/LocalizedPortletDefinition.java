@@ -20,7 +20,7 @@ package org.jasig.portal.portlets.translator;
 
 import java.io.Serializable;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 /**
  * This domain class is used in order to represent the localization of portlet definition. This

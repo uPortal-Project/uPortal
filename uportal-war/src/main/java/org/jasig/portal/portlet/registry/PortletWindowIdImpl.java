@@ -19,8 +19,8 @@
 package org.jasig.portal.portlet.registry;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist

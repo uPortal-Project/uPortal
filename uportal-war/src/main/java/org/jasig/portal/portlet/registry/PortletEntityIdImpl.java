@@ -18,8 +18,8 @@
  */
 package org.jasig.portal.portlet.registry;
 
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
  * Standard IPortletEntityId
@@ -55,7 +55,7 @@ class PortletEntityIdImpl implements IPortletEntityId {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IObjectId#getStringId()
+     * @see org.apereo.portal.portlet.om.IObjectId#getStringId()
      */
     @Override
     public String getStringId() {

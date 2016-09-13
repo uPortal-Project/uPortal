@@ -29,7 +29,7 @@ import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
-import org.jasig.portal.portlet.om.IPortletDefinition
+import org.apereo.portal.portlet.om.IPortletDefinition
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry
 import org.jasig.portal.portlet.registry.IPortletTypeRegistry
 import org.jasig.portal.security.IAuthorizationPrincipal

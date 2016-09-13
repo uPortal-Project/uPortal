@@ -42,13 +42,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.pluto.container.om.portlet.ContainerRuntimeOption;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.events.IPortletExecutionEventFactory;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionContext;
 import org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor;
@@ -310,7 +310,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#doPortletAction(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public void doPortletAction(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -450,7 +450,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
      * Only actually starts rendering the head if the portlet has the 'javax.portlet.renderHeaders' container-runtime-option
      * present and set to "true."
      * 
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeaderRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletHeaderRender(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public void startPortletHeaderRender(IPortletWindowId portletWindowId,
@@ -481,7 +481,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 	}
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#startPortletRender(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public void startPortletRender(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -491,7 +491,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#serveResource(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#serveResource(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public void doPortletServeResource(IPortletWindowId portletWindowId,
@@ -526,7 +526,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
 	
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletHeaderRenderRequested(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletHeaderRenderRequested(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public boolean isPortletRenderHeaderRequested(
@@ -539,7 +539,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#isPortletRenderRequested(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public boolean isPortletRenderRequested(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -550,7 +550,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
     
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletHeadOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletHeadOutput(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
     @Override
     public String getPortletHeadOutput(IPortletWindowId portletWindowId,
@@ -572,7 +572,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletOutput(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public String getPortletOutput(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {
@@ -597,7 +597,7 @@ public class PortletExecutionManager extends HandlerInterceptorAdapter
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletExecutionManager#getPortletTitle(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public String getPortletTitle(IPortletWindowId portletWindowId, HttpServletRequest request, HttpServletResponse response) {

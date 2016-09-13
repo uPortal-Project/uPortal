@@ -64,14 +64,14 @@ import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.annotations.Type;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.om.IPortletDescriptorKey;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.om.PortletLifecycleState;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
+import org.apereo.portal.portlet.om.IPortletDescriptorKey;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.springframework.util.StringUtils;
 
 /**
@@ -337,7 +337,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
+	 * @see org.apereo.portal.portlet.om.IPortletEntity#getPortletPreferences()
 	 */
 	@Override
 	public List<IPortletPreference> getPortletPreferences() {
@@ -345,7 +345,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+	 * @see org.apereo.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
 	 */
 	@Override
 	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {

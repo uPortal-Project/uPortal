@@ -21,8 +21,8 @@ package org.jasig.portal.portlet.registry;
 import java.util.Set;
 
 import org.apereo.portal.groups.GroupsException;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.PortletCategory;
 
 public interface IPortletCategoryRegistry {
 

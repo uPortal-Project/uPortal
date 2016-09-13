@@ -16,23 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
+
+
 
 /**
- * Describes the IDs at the core of a portlet window
+ * Identifier type for portlet definitions.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IPortletWindowDescriptor {
-    
+public interface IPortletDefinitionId extends IObjectId {
     /**
-     * @return ID of the portlet window
+     * @return the numeric version of the id
      */
-    public IPortletWindowId getPortletWindowId();
-    
-    /**
-     * @return ID of the parent entity
-     */
-    public IPortletEntityId getPortletEntityId();
+    long getLongId();
 }

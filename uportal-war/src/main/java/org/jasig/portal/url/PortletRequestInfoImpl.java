@@ -26,7 +26,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.ResourceURL;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 import com.google.common.base.Preconditions;
 

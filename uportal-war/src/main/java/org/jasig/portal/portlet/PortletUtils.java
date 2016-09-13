@@ -27,7 +27,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.search.PortletUrl;

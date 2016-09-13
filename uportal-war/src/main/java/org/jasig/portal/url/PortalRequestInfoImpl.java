@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;

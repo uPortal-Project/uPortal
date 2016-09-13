@@ -32,9 +32,9 @@ import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.concurrency.caching.RequestCache;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -93,7 +93,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
@@ -140,7 +140,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
 
 	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.jasig.portal.portlet.om.IPortletDefinition)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.apereo.portal.portlet.om.IPortletDefinition)
      */
     @Override
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
@@ -149,7 +149,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) {
@@ -171,7 +171,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) {

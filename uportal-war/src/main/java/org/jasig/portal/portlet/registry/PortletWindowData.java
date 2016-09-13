@@ -31,9 +31,9 @@ import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindowDescriptor;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindowDescriptor;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Serializable persistent portlet window data. This class MUST be thread safe.
@@ -77,14 +77,14 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getRenderParameters()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getRenderParameters()
      */
     public Map<String, String[]> getRenderParameters() {
         return this.renderParameters;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#setRenderParameters(java.util.Map)
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#setRenderParameters(java.util.Map)
      */
     public void setRenderParameters(Map<String, String[]> renderParameters) {
         Validate.notNull(renderParameters, "renderParameters can not be null");
@@ -92,14 +92,14 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getPublicRenderParameters()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getPublicRenderParameters()
      */
     public Map<String, String[]> getPublicRenderParameters() {
         return this.publicRenderParameters;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#setPublicRenderParameters(java.util.Map)
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#setPublicRenderParameters(java.util.Map)
      */
     public void setPublicRenderParameters(Map<String, String[]> publicRenderParameters) {
         Validate.notNull(publicRenderParameters, "publicRenderParameters can not be null");
@@ -107,14 +107,14 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getPortletMode()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getPortletMode()
      */
     public PortletMode getPortletMode() {
         return this.portletMode;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#setPortletMode(javax.portlet.PortletMode)
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#setPortletMode(javax.portlet.PortletMode)
      */
     public void setPortletMode(PortletMode portletMode) {
         Validate.notNull(portletMode, "PortletMode can not be null");
@@ -122,14 +122,14 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getWindowState()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getWindowState()
      */
     public WindowState getWindowState() {
         return this.windowState;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#setWindowState(javax.portlet.WindowState)
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#setWindowState(javax.portlet.WindowState)
      */
     public void setWindowState(WindowState windowState) {
         Validate.notNull(windowState, "WindowState can not be null");
@@ -137,21 +137,21 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getExpirationCache()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getExpirationCache()
      */
     public Integer getExpirationCache() {
         return this.expirationCache;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#setExpirationCache(java.lang.Integer)
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#setExpirationCache(java.lang.Integer)
      */
     public void setExpirationCache(Integer expirationCache) {
         this.expirationCache = expirationCache;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getPortletEntityId()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getPortletEntityId()
      */
     @Override
     public IPortletEntityId getPortletEntityId() {
@@ -159,7 +159,7 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getPortletWindowId()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getPortletWindowId()
      */
     @Override
     public IPortletWindowId getPortletWindowId() {
@@ -167,7 +167,7 @@ class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletWindowData#getDelegationParentId()
+     * @see org.apereo.portal.portlet.om.IPortletWindowData#getDelegationParentId()
      */
     public IPortletWindowId getDelegationParentId() {
         return this.delegationParentId;

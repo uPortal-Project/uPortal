@@ -33,7 +33,7 @@ import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.NullWriter;
 import org.apache.commons.io.output.ProxyWriter;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.utils.DelegatingServletOutputStream;
 
 /**

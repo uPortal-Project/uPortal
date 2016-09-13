@@ -29,9 +29,9 @@ import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesSco
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.TransientUserLayoutManagerWrapper;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortletRequestInfo;

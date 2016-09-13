@@ -20,7 +20,7 @@ package org.jasig.portal.url;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 
 /**
  * Simple handling for resource URL generation

@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Information from the request that targets a particular portlet

@@ -52,7 +52,7 @@ import org.apereo.portal.character.stream.events.PortletContentPlaceholderEventI
 import org.apereo.portal.character.stream.events.PortletHeaderPlaceholderEventImpl;
 import org.apereo.portal.character.stream.events.PortletHelpPlaceholderEventImpl;
 import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEventImpl;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.utils.cache.CacheKey;

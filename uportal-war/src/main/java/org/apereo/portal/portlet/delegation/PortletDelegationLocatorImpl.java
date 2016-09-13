@@ -23,12 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portlet.registry.IPortletEntityRegistry;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
@@ -101,7 +101,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.api.portlet.PortletDelegationLocator#createRequestDispatcher(org.jasig.portal.portlet.om.IPortletDefinitionId)
+     * @see org.apereo.portal.api.portlet.PortletDelegationLocator#createRequestDispatcher(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public PortletDelegationDispatcher createRequestDispatcher(PortletRequest portletRequest, IPortletDefinitionId delegatePortletDefinitionId) {
@@ -122,7 +122,7 @@ public class PortletDelegationLocatorImpl implements PortletDelegationLocator {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.api.portlet.PortletDelegationLocator#getRequestDispatcher(org.jasig.portal.portlet.om.IPortletWindowId)
+     * @see org.apereo.portal.api.portlet.PortletDelegationLocator#getRequestDispatcher(org.apereo.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public PortletDelegationDispatcher getRequestDispatcher(PortletRequest portletRequest, IPortletWindowId portletWindowId) {

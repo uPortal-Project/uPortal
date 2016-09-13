@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.aggr;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 
 public interface PortletRatingAggregator {
     /**

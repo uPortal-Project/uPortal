@@ -44,7 +44,7 @@ import org.apereo.portal.api.portlet.DelegationRequest;
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.jasig.portal.portlet.PortletUtils;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist

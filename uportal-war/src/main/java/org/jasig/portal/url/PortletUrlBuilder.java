@@ -24,7 +24,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapConstraint;

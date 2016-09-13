@@ -20,8 +20,8 @@ package org.apereo.portal.api.portlet;
 
 import javax.portlet.PortletRequest;
 
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Creates {@link PortletDelegationDispatcher} instances that can be used to execute another portlet as a child. 

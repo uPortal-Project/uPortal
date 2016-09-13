@@ -16,20 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.om;
+package org.apereo.portal.portlet.om;
 
-public interface IPortletDescriptorKey {
+/**
+ * Describes the IDs at the core of a portlet entity
+ * 
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+public interface IPortletEntityDescriptor {
+    /**
+     * @return ID of the entity
+     */
+    public IPortletEntityId getPortletEntityId();
 
-    public String getWebAppName();
-    
-    public boolean isFrameworkPortlet();
-    
-    public String getPortletName();
+    /**
+     * @return ID of the parent definition
+     */
+    public IPortletDefinitionId getPortletDefinitionId();
 
-    public void setWebAppName(String webAppName);
-    
-    public void setFrameworkPortlet(boolean isFrameworkPortlet);
-    
-    public void setPortletName(String portletName);
+    /**
+     * @return Layout node ID the entity exists for
+     */
+    public String getLayoutNodeId();
+
+    /**
+     * @return User the entity exists for
+     */
+    public int getUserId();
 
 }

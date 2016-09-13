@@ -48,10 +48,10 @@ import org.apereo.portal.portlet.container.cache.HeaderSettingCacheControl;
 import org.apereo.portal.portlet.container.cache.IPortletCacheControlService;
 import org.apereo.portal.portlet.container.cache.PortletCachingHeaderUtils;
 import org.apereo.portal.portlet.container.services.AdministrativeRequestListenerController;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener;
 import org.jasig.portal.security.IAuthorizationPrincipal;
@@ -165,7 +165,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      * invoke the corresponding request handling methods of the portlet like processAction,or processEvent.
      * 
      * (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doEvent(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.portlet.Event)
+     * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doEvent(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.portlet.Event)
      */
     @Override
     public long doEvent(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest,
@@ -677,7 +677,7 @@ public class PortletRendererImpl implements IPortletRenderer {
     
     /*
      * (non-Javadoc)
-     * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doReset(org.jasig.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.jasig.portal.portlet.rendering.IPortletRenderer#doReset(org.apereo.portal.portlet.om.IPortletWindowId, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public void doReset(IPortletWindowId portletWindowId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

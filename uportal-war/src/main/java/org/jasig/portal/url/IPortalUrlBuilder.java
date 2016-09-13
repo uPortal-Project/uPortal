@@ -20,7 +20,7 @@ package org.jasig.portal.url;
 
 import java.util.Map;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * Builds a portal URL

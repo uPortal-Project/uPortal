@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.portlet.dao.jpa;
 
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

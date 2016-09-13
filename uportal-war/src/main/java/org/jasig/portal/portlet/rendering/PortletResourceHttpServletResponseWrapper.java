@@ -23,7 +23,7 @@ import java.util.Locale;
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.utils.web.PortletMimeHttpServletResponseWrapper;
 
 /**

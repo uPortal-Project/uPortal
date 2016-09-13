@@ -23,11 +23,11 @@ import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.concurrency.caching.RequestCache;
 import org.apereo.portal.events.LoginEvent;
-import org.jasig.portal.portlet.om.PortletCategory;
+import org.apereo.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.rest.layout.MarketplaceEntry;

@@ -20,7 +20,7 @@ package org.apereo.portal.portlet.container.properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.utils.Populator;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

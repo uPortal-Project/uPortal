@@ -21,7 +21,7 @@ package org.jasig.portal.portlet.registry;
 import java.util.List;
 
 import org.apereo.portal.portlet.dao.IPortletTypeDao;
-import org.jasig.portal.portlet.om.IPortletType;
+import org.apereo.portal.portlet.om.IPortletType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

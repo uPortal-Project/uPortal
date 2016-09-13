@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
 import javax.servlet.http.Cookie;
 
 import org.apereo.portal.portlet.dao.IPortletCookieDao;
-import org.jasig.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortalCookie;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;

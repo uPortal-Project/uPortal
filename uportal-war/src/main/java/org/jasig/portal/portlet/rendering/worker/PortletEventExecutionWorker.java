@@ -25,7 +25,7 @@ import javax.portlet.Event;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.rendering.IPortletRenderer;
 
 class PortletEventExecutionWorker extends PortletExecutionWorker<Long> implements IPortletEventExecutionWorker {

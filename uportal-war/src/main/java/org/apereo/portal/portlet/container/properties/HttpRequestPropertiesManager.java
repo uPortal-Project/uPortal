@@ -22,7 +22,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;

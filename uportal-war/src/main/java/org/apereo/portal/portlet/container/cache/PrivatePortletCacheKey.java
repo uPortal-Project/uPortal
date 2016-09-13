@@ -22,8 +22,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.jasig.portal.utils.cache.CacheEntryTag;
 import org.jasig.portal.utils.cache.SessionIdTaggedCacheEntryPurger;
 import org.jasig.portal.utils.cache.SimpleCacheEntryTag;

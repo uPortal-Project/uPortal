@@ -36,7 +36,7 @@ import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IPerson;

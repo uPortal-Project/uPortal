@@ -28,12 +28,12 @@ import javax.portlet.WindowState;
 
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.portlet.om.IPortletEntityDescriptor;
-import org.jasig.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.portlet.om.IPortletPreference;
+import org.apereo.portal.portlet.om.IPortletDefinition;
+import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apereo.portal.portlet.om.IPortletEntity;
+import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
+import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.portlet.om.IPortletPreference;
 
 /**
  * Portlet entity data that is not persisted. Used when the entity doesn't have any customizations.
@@ -104,7 +104,7 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletEntity#getPortletPreferences()
+	 * @see org.apereo.portal.portlet.om.IPortletEntity#getPortletPreferences()
 	 */
 	@Override
 	public List<IPortletPreference> getPortletPreferences() {
@@ -112,7 +112,7 @@ class SessionPortletEntityImpl implements IPortletEntity, IPortletEntityDescript
 	}
 
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
+	 * @see org.apereo.portal.portlet.om.IPortletEntity#setPortletPreferences(java.util.List)
 	 */
 	@Override
 	public boolean setPortletPreferences(List<IPortletPreference> portletPreferences) {

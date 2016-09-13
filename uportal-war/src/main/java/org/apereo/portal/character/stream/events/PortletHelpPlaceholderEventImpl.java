@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.character.stream.events;
 
-import org.jasig.portal.portlet.om.IPortletWindowId;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist

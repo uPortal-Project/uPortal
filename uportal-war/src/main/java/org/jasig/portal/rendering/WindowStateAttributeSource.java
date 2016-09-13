@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.rendering;
 
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;

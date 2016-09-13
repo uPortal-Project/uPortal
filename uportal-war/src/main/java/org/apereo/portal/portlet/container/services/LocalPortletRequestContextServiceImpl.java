@@ -41,7 +41,7 @@ import org.apereo.portal.portlet.container.PortletRequestContextImpl;
 import org.apereo.portal.portlet.container.PortletResourceRequestContextImpl;
 import org.apereo.portal.portlet.container.PortletResourceResponseContextImpl;
 import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
-import org.jasig.portal.portlet.om.IPortletWindow;
+import org.apereo.portal.portlet.om.IPortletWindow;
 import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.url.IPortalActionUrlBuilder;
 import org.jasig.portal.url.IPortalRequestInfo;

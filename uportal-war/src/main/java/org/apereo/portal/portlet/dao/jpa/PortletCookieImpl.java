@@ -39,8 +39,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
-import org.jasig.portal.portlet.om.IPortalCookie;
-import org.jasig.portal.portlet.om.IPortletCookie;
+import org.apereo.portal.portlet.om.IPortalCookie;
+import org.apereo.portal.portlet.om.IPortletCookie;
 import org.joda.time.DateTime;
 
 /**
@@ -138,7 +138,7 @@ class PortletCookieImpl implements IPortletCookie {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletCookie#updateFromCookie(javax.servlet.http.Cookie)
+	 * @see org.apereo.portal.portlet.om.IPortletCookie#updateFromCookie(javax.servlet.http.Cookie)
 	 */
 	@Override
     public void updateFromCookie(Cookie cookie) {
@@ -220,7 +220,7 @@ class PortletCookieImpl implements IPortletCookie {
 		this.domain = domain;
 	}
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.om.IPortletCookie#setExpires(java.util.Date)
+     * @see org.apereo.portal.portlet.om.IPortletCookie#setExpires(java.util.Date)
      */
 	@Override
     public void setExpires(DateTime expires) {
@@ -256,7 +256,7 @@ class PortletCookieImpl implements IPortletCookie {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.om.IPortletCookie#toCookie()
+	 * @see org.apereo.portal.portlet.om.IPortletCookie#toCookie()
 	 */
 	@Override
 	public Cookie toCookie() {
