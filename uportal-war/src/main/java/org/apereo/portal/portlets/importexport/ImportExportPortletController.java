@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.portlets.importexport;
+package org.apereo.portal.portlets.importexport;
 
 import java.util.ArrayList;
 import java.util.HashMap;

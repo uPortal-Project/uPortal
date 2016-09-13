@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.iframe;
+package org.apereo.portal.portlets.iframe;
 
 import java.util.Collections;
 import java.util.HashMap;

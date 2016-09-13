@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.groupadmin;
+package org.apereo.portal.portlets.groupadmin;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.binding.message.MessageBuilder;

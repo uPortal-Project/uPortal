@@ -29,7 +29,7 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.search.IPortalSearchService;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;

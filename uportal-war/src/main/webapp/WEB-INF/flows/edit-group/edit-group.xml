@@ -30,7 +30,7 @@
      | represents either a new or existing group.  This object
      | may not be null.
      +-->
-    <input name="group" required="true" type="org.jasig.portal.portlets.groupadmin.GroupForm"/>
+    <input name="group" required="true" type="org.apereo.portal.portlets.groupadmin.GroupForm"/>
     
     <!-- 
      | Parent input input 
@@ -109,7 +109,7 @@
     <subflow-state id="createChildGroup" subflow="edit-group">
         
         <on-entry>
-            <set name="flashScope.child" value="new org.jasig.portal.portlets.groupadmin.GroupForm()"/>
+            <set name="flashScope.child" value="new org.apereo.portal.portlets.groupadmin.GroupForm()"/>
             <set name="child.type" value="group.type"/>
             <set name="child.creatorId" value="person.userName"/>
         </on-entry>

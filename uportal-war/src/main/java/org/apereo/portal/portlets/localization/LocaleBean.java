@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.localization;
+package org.apereo.portal.portlets.localization;
 
 import java.io.Serializable;
 import java.util.Locale;

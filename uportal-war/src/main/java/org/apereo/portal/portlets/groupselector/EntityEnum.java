@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.groupselector;
+package org.apereo.portal.portlets.groupselector;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.security.IPerson;

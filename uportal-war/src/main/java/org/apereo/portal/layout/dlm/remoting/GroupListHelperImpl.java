@@ -33,7 +33,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
@@ -408,7 +408,7 @@ public class GroupListHelperImpl implements IGroupListHelper {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.portlets.groupselector.GroupsSelectorHelper#getEntityBeans(java.util.List)
+	 * @see org.apereo.portal.portlets.groupselector.GroupsSelectorHelper#getEntityBeans(java.util.List)
 	 */
 	public List<JsonEntityBean> getEntityBeans(List<String> params) {
 	    // if no parameters have been supplied, just return an empty list

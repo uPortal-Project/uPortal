@@ -91,7 +91,7 @@ import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.StringListAttribute;
 import org.apereo.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
-import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;

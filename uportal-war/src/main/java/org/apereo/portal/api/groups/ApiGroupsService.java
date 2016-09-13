@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlets.groupselector.EntityEnum;
+import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.springframework.stereotype.Service;

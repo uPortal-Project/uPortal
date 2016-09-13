@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.image;
+package org.apereo.portal.portlets.image;
 
 import java.util.HashMap;
 import java.util.Map;

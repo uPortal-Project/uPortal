@@ -22,8 +22,8 @@ import java.util.List;
 
 import javax.portlet.RenderRequest;
 
-import org.jasig.portal.portlets.localization.LocaleBean;
-import org.jasig.portal.portlets.localization.UserLocaleHelper;
+import org.apereo.portal.portlets.localization.LocaleBean;
+import org.apereo.portal.portlets.localization.UserLocaleHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
