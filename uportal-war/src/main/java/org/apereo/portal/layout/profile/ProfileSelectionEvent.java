@@ -22,7 +22,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.context.ApplicationEvent;
 
 import javax.servlet.http.HttpServletRequest;

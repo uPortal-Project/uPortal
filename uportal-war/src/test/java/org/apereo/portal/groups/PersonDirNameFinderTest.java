@@ -25,7 +25,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.ComplexStubPersonAttributeDao;
 

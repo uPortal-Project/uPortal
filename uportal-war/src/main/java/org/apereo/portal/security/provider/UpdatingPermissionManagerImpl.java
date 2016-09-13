@@ -19,9 +19,9 @@
 package org.apereo.portal.security.provider;
 
 import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IUpdatingPermissionManager;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IUpdatingPermissionManager;
 
 /**
  * @author Dan Ellentuck (de3@columbia.edu)

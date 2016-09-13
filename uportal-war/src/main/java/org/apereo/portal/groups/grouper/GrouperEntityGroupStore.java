@@ -39,7 +39,7 @@ import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 import edu.internet2.middleware.grouperClient.api.GcAddMember;

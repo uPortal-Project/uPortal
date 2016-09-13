@@ -42,7 +42,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.NaturalId;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * UserFragmentSubscriptionImpl is the default JPA-based implementation of 

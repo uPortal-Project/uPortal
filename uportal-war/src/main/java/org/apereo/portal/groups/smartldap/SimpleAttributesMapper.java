@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.EntityTestingGroupImpl;
 import org.apereo.portal.groups.IEntityGroup;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.ldap.core.AttributesMapper;
 
 public final class SimpleAttributesMapper implements AttributesMapper {

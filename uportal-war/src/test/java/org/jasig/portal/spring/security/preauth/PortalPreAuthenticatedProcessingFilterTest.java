@@ -32,10 +32,10 @@ import javax.servlet.http.HttpSession;
 
 import org.hibernate.PropertyAccessException;
 import org.apereo.portal.layout.profile.ProfileSelectionEvent;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.IdentitySwapperManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.security.mvc.LoginController;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.junit.Before;

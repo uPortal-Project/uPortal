@@ -21,7 +21,7 @@ package org.jasig.portal.spring.security;
 import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

@@ -42,9 +42,9 @@ import javax.portlet.PortletRequest;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.portlets.search.DisplayNameComparator;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -193,7 +193,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#searchForPeople(org.jasig.portal.security.IPerson, java.util.Map)
+     * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#searchForPeople(org.apereo.portal.security.IPerson, java.util.Map)
      */
     public List<IPersonAttributes> searchForPeople(final IPerson searcher, final Map<String, Object> query) {
 
@@ -353,7 +353,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#findPerson(org.jasig.portal.security.IPerson, java.lang.String)
+     * @see org.apereo.portal.portlets.lookup.IPersonLookupHelper#findPerson(org.apereo.portal.security.IPerson, java.lang.String)
      */
     public IPersonAttributes findPerson(final IPerson searcher, final String username) {
 

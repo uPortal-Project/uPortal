@@ -39,7 +39,7 @@ import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.apereo.portal.concurrency.FunctionWithoutResult;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
-import org.jasig.portal.security.SystemPerson;
+import org.apereo.portal.security.SystemPerson;
 import org.jasig.portal.test.BaseRawEventsJpaDaoTest;
 import org.joda.time.DateTime;
 import org.junit.Test;

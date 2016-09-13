@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.PortalSecurityException;
 
 /**
  * <p>This is an implementation of a SecurityContext that checks a user's

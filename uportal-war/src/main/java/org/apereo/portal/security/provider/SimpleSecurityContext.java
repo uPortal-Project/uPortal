@@ -22,9 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.security.IPortalPasswordService;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IPortalPasswordService;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
 import org.jasig.portal.spring.locator.PortalPasswordServiceLocator;
 

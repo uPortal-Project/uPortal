@@ -51,6 +51,7 @@ import org.apereo.portal.groups.IEntityGroupStore;
 import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupMember;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
@@ -70,7 +71,7 @@ import org.jasig.portal.spring.locator.EntityTypesLocator;
  *                 &nbsp;--&nbsp;channel definition file<br>
  *        ...<br>
  *     </blockquote>
- * &nbsp;--&nbsp;org.jasig.portal.security.IPerson<br>
+ * &nbsp;--&nbsp;org.apereo.portal.security.IPerson<br>
  *     <blockquote>&nbsp;--&nbsp;person directory<br>
  *         <blockquote>&nbsp;--&nbsp;person file <br>
  *                     &nbsp;--&nbsp;person file <br>
@@ -87,7 +88,7 @@ import org.jasig.portal.spring.locator.EntityTypesLocator;
  * service element.  This directory has sub-directories, each named for the
  * underlying entity type that groups in that sub-directory contain.  If a
  * service only contains groups of IPersons, the groups root would have 1
- * sub-directory named org.jasig.portal.security.IPerson.
+ * sub-directory named org.apereo.portal.security.IPerson.
  * <p>
  * A directory named for a type may contain both sub-directories and files.
  * The sub-directories represent groups that can contain other groups.  The
@@ -697,7 +698,7 @@ protected void initialize(GroupServiceConfiguration cfg)
     goodSeparator = File.separatorChar;
     badSeparator = ( goodSeparator == FORWARD_SLASH ) ? BACK_SLASH : FORWARD_SLASH;
 
-    defaultEntityType = org.jasig.portal.security.IPerson.class;
+    defaultEntityType = IPerson.class;
     GroupServiceConfiguration config = cfg;
     if ( config == null )
     {

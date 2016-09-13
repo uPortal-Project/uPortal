@@ -34,7 +34,7 @@ import org.apereo.portal.portlets.search.IPortalSearchService;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
-import org.jasig.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IAuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;

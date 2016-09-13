@@ -47,7 +47,7 @@
             def log = LoggerFactory.getLogger(this.getClass());
 
             def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS,
-            org.jasig.portal.security.IPerson.class)
+            org.apereo.portal.security.IPerson.class)
             entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME,
             IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class)
             switch (entityIdArr.size()) {

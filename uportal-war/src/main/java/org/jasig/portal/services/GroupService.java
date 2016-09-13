@@ -36,7 +36,7 @@ import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +110,7 @@ public final class GroupService implements IGroupConstants {
      * Receives notice that the UserInstance has been unbound from
      * the HttpSession.  In response, we remove the corresponding group member
      * from the cache.
-     * @param person org.jasig.portal.security.IPerson
+     * @param person org.apereo.portal.security.IPerson
      */
     public static void finishedSession(IPerson person) 
     {
@@ -278,7 +278,7 @@ private GroupServiceConfiguration getServiceConfiguration() throws GroupsExcepti
      * then getting its EntityIdentifier because we need the EntityIdentifier 
      * for the group member, which is cached, not the EntityIdentifier for the 
      * IPerson, which is not.
-     * @param person org.jasig.portal.security.IPerson
+     * @param person org.apereo.portal.security.IPerson
      */
     private void ifinishedSession(IPerson person) throws GroupsException
     {

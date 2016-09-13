@@ -33,19 +33,20 @@
  | classname is dynamic; e.g. Script1, Script 13, etc., so it is a pain to have the right value in logback.xml.
  +-->
 <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
-    <choose>
-        <when test="${groovy(ENTITY_TYPE.equals('org.jasig.portal.portlet.om.IPortletDefinition'))}">
-            <!--
-             | All sources were repackaged 'org.jasig.portal' to 'org.apereo.portal' for uPortal 5.
-             +-->
-            <delete-node node="${singleNode(entity-type)}"/>
-            <append-node sibling="${singleNode(name)}">
-                <entity-type>org.apereo.portal.portlet.om.IPortletDefinition</entity-type>
-            </append-node>
-            <crn location="classpath:/org/apereo/portal/io/import-group_membership_v5-0.crn"/>
-        </when>
-        <otherwise>
-            <crn location="classpath:/org/apereo/portal/io/import-group_membership_v5-0.crn"/>
-        </otherwise>
-    </choose>
+    <!--
+     | All sources were repackaged 'org.jasig.portal...' to 'org.apereo.portal...' for uPortal 5.
+     +-->
+    <if test="${groovy(ENTITY_TYPE.equals('org.jasig.portal.portlet.om.IPortletDefinition'))}">
+        <delete-node node="${singleNode(entity-type)}"/>
+        <append-node sibling="${singleNode(name)}">
+            <entity-type>org.apereo.portal.portlet.om.IPortletDefinition</entity-type>
+        </append-node>
+    </if>
+    <if test="${groovy(ENTITY_TYPE.equals('org.jasig.portal.security.IPerson'))}">
+        <delete-node node="${singleNode(entity-type)}"/>
+        <append-node sibling="${singleNode(name)}">
+            <entity-type>org.apereo.portal.security.IPerson</entity-type>
+        </append-node>
+    </if>
+    <crn location="classpath:/org/apereo/portal/io/import-group_membership_v5-0.crn"/>
 </with-attribute>

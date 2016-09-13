@@ -25,7 +25,7 @@ import java.util.Set;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * IPermissionAdministrationHelper is designed to offer access to common

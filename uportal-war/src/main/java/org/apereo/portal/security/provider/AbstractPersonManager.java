@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPersonManager;
 
 /**
  * @author Eric Dalquist

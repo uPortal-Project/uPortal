@@ -67,7 +67,7 @@
                                 </choose>
                             </with-attribute>
                         </when>
-                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.jasig.portal.security.IPerson'))}">
+                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.apereo.portal.security.IPerson'))}">
                             <with-attribute key="USER_NAME" value="${PRINCIPAL_KEY}">
                                 <choose>
                                     <when test="${groovy(isUserIncluded.apply(USER_NAME))}">

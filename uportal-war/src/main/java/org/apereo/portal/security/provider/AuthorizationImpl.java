@@ -49,16 +49,16 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IPermissionPolicy;
-import org.jasig.portal.security.IPermissionSet;
-import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.PermissionHelper;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionManager;
+import org.apereo.portal.security.IPermissionPolicy;
+import org.apereo.portal.security.IPermissionSet;
+import org.apereo.portal.security.IPermissionStore;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IUpdatingPermissionManager;
+import org.apereo.portal.security.PermissionHelper;
 import org.jasig.portal.services.EntityCachingService;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
@@ -132,7 +132,7 @@ public class AuthorizationImpl implements IAuthorizationService {
     public void setPermissionStore(IPermissionStore permissionStore) {
         this.permissionStore = permissionStore;
     }
-    @Value("${org.jasig.portal.security.IAuthorizationService.cachePermissions}")
+    @Value("${org.apereo.portal.security.IAuthorizationService.cachePermissions}")
     public void setCachePermissions(boolean cachePermissions) {
         this.cachePermissions = cachePermissions;
     }
@@ -552,7 +552,7 @@ throws AuthorizationException
  * for a <code>Principal</code>.  Note that this includes <code>IPermissions</code> inherited
  * from groups the <code>Principal</code> belongs to.
  *
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
@@ -617,7 +617,7 @@ throws AuthorizationException
 }
 
 /**
- * @return org.jasig.portal.security.IPermissionPolicy
+ * @return org.apereo.portal.security.IPermissionPolicy
  */
 protected IPermissionPolicy getDefaultPermissionPolicy() {
     return this.defaultPermissionPolicy;
@@ -625,7 +625,7 @@ protected IPermissionPolicy getDefaultPermissionPolicy() {
 
 /**
  * @return org.apereo.portal.groups.IGroupMember
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.apereo.portal.security.IAuthorizationPrincipal
  */
 public IGroupMember getGroupMember(IAuthorizationPrincipal principal)
 throws GroupsException
@@ -635,7 +635,7 @@ throws GroupsException
 
 /**
  * @return org.apereo.portal.groups.IGroupMember
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.apereo.portal.security.IAuthorizationPrincipal
  */
 private IGroupMember getGroupMemberForPrincipal(IAuthorizationPrincipal principal)
 throws GroupsException
@@ -655,7 +655,7 @@ throws GroupsException
  * Hook into the Groups system by converting the <code>IAuthorizationPrincipal</code> to
  * an <code>IGroupMember</code>.  Returns ALL the groups the <code>IGroupMember</code>
  * (recursively) belongs to.
- * @param principal - org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
  * @return java.util.Iterator over Collection of IEntityGroups
  */
 private Iterator getGroupsForPrincipal(IAuthorizationPrincipal principal)
@@ -668,7 +668,7 @@ throws GroupsException
 /**
  * Hook into the Groups system, find all containing groups, and convert the
  * them to <code>IAuthorizationPrincipals</code>.
- * @param principal - org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal - org.apereo.portal.security.IAuthorizationPrincipal
  * @return java.util.Iterator over Collection of IEntityGroups
  */
 private Iterator getInheritedPrincipals(IAuthorizationPrincipal principal)
@@ -696,7 +696,7 @@ throws AuthorizationException
  * and target.  Null parameters will be ignored, that is, all <code>IPermissions</code>
  * matching the non-null parameters are retrieved.
  *
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param owner java.lang.String
  * @param activity java.lang.String
  * @param target java.lang.String
@@ -716,7 +716,7 @@ throws AuthorizationException
  * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
  * for a <code>Principal</code>.
  *
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
@@ -740,7 +740,7 @@ throws AuthorizationException
     }
 
 /**
- * @return org.jasig.portal.security.IPermissionStore
+ * @return org.apereo.portal.security.IPermissionStore
  */
 private IPermissionStore getPermissionStore()
 {
@@ -766,7 +766,7 @@ throws AuthorizationException
 
 /**
  * @param group
- * @return user org.jasig.portal.security.IAuthorizationPrincipal
+ * @return user org.apereo.portal.security.IAuthorizationPrincipal
  */
 private IAuthorizationPrincipal getPrincipalForGroup(IEntityGroup group)
 {
@@ -796,7 +796,7 @@ throws AuthorizationException
 /**
  * Returns the String used by an <code>IPermission</code> to represent an
  * <code>IAuthorizationPrincipal</code>.
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.apereo.portal.security.IAuthorizationPrincipal
  */
 public String getPrincipalString(IAuthorizationPrincipal principal)
 {
@@ -814,7 +814,7 @@ private String getPrincipalString(Class pType, String pKey) {
  * <code>getPermissions(principal,null, null, null)</code> should retrieve all <code>IPermissions</code>
  * for a <code>Principal</code>.  Ignore any cached <code>IPermissions</code>.
  *
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param principal IAuthorizationPrincipal
  * @param owner java.lang.String
  * @param activity java.lang.String
@@ -837,7 +837,7 @@ throws AuthorizationException
  * Factory method for an <code>IPermission</code>.
  * @param owner String
  * @param principal IAuthorizationPrincipal
- * @return org.jasig.portal.security.IPermission
+ * @return org.apereo.portal.security.IPermission
  */
 public IPermission newPermission(String owner, IAuthorizationPrincipal principal)
 {
@@ -852,7 +852,7 @@ public IPermission newPermission(String owner, IAuthorizationPrincipal principal
 
 /**
  * Factory method for IPermissionManager.
- * @return org.jasig.portal.security.IPermissionManager
+ * @return org.apereo.portal.security.IPermissionManager
  * @param owner java.lang.String
  */
 public IPermissionManager newPermissionManager(String owner)
@@ -865,7 +865,7 @@ public IPermissionManager newPermissionManager(String owner)
  * Factory method for IAuthorizationPrincipal. First check the principal
  * cache, and if not present, create the principal and cache it.
  *
- * @return org.jasig.portal.security.IAuthorizationPrincipal
+ * @return org.apereo.portal.security.IAuthorizationPrincipal
  * @param key java.lang.String
  * @param type java.lang.Class
  */
@@ -878,7 +878,7 @@ public IAuthorizationPrincipal newPrincipal(String key, Class type) {
 
 /**
  * Converts an <code>IGroupMember</code> into an <code>IAuthorizationPrincipal</code>.
- * @return org.jasig.portal.security.IAuthorizationPrincipal
+ * @return org.apereo.portal.security.IAuthorizationPrincipal
  * @param groupMember org.apereo.portal.groups.IGroupMember
  */
 public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
@@ -899,7 +899,7 @@ private IAuthorizationPrincipal primNewPrincipal(String key, Class type) {
 
 /**
  * Factory method for IUpdatingPermissionManager.
- * @return org.jasig.portal.security.IUpdatingPermissionManager
+ * @return org.apereo.portal.security.IUpdatingPermissionManager
  * @param owner java.lang.String
  */
 public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
@@ -912,7 +912,7 @@ public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
  * service, and if the permissions have not been cached, retrieve and
  * cache them.
  * @return IPermission[]
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.apereo.portal.security.IAuthorizationPrincipal
  */
 private IPermission[] primGetPermissionsForPrincipal(IAuthorizationPrincipal principal)
 throws AuthorizationException
@@ -941,7 +941,7 @@ throws AuthorizationException
 
 /**
  * @return IPermission[]
- * @param principal org.jasig.portal.security.IAuthorizationPrincipal
+ * @param principal org.apereo.portal.security.IAuthorizationPrincipal
  * @param owner String
  * @param activity String
  * @param target String

@@ -33,7 +33,7 @@ import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.io.xml.SimpleStringPortalData;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.BrokenSecurityContext;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.SafeFilenameUtils;

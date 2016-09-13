@@ -30,6 +30,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.local.ITypedEntitySearcher;
+import org.apereo.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.IUsernameAttributeProvider;
@@ -45,7 +46,7 @@ import org.springframework.stereotype.Service;
 public class PersonDirectorySearcher implements ITypedEntitySearcher {
     private static final Log log = LogFactory.getLog(PersonDirectorySearcher.class);
 
-    private final Class<? extends IBasicEntity> personEntityType = org.jasig.portal.security.IPerson.class;
+    private final Class<? extends IBasicEntity> personEntityType = IPerson.class;
     private IPersonAttributeDao personAttributeDao;
     private IUsernameAttributeProvider usernameAttributeProvider;
 

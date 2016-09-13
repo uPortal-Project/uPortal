@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.permission.target.IPermissionTarget.TargetType;
-import org.jasig.portal.security.IPermission;
+import org.apereo.portal.security.IPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

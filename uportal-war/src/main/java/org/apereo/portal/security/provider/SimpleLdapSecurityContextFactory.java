@@ -25,8 +25,8 @@ package  org.apereo.portal.security.provider;
  * @author Russell Tokuyama (University of Hawaii)
  * @version $Revision$
  */
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.ISecurityContextFactory;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.ISecurityContextFactory;
 
 
 

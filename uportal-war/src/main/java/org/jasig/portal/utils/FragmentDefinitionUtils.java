@@ -30,7 +30,7 @@ import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.FragmentActivator;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.UserView;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

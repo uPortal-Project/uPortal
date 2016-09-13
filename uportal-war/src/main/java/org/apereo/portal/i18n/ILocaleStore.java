@@ -20,7 +20,7 @@ package org.apereo.portal.i18n;
 
 import java.util.Locale;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Interface defining how the portal reads and 

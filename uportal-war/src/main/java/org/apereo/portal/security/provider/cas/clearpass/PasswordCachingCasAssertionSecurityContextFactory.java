@@ -23,8 +23,8 @@ import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.ISecurityContextFactory;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.ISecurityContextFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

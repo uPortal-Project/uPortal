@@ -32,7 +32,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
 public class GetMemberServicePhrase implements Phrase {

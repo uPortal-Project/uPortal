@@ -20,7 +20,7 @@
 package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Abstract class tests a possibly multi-valued attribute against

@@ -28,9 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apereo.portal.events.IPortalEventFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.IdentitySwapperManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.IdentitySwapperManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

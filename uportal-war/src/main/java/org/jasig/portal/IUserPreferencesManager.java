@@ -19,7 +19,7 @@
 package org.jasig.portal;
 
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Interface to user preferences management class.

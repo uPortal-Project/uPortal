@@ -18,11 +18,11 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.IParentAwareSecurityContext;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.IStringEncryptionService;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IParentAwareSecurityContext;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.IStringEncryptionService;
+import org.apereo.portal.security.PortalSecurityException;
 import org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

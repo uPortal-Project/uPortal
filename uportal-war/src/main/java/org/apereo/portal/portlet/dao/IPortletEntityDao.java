@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletEntity} objects.
@@ -91,7 +92,7 @@ public interface IPortletEntityDao {
     public Set<IPortletEntity> getPortletEntities(IPortletDefinitionId portletDefinitionId);
     
     /**
-     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link org.jasig.portal.security.IPerson#getID()}.
+     * Get all {@link IPortletEntity}s that exist for the specified user id. (From {@link IPerson#getID()}.
      * 
      * @param userId The id of the user to get the entities for.
      * @return A set of all entities base on the specified user id, will be empty if no entities exist for the id, will never be null.

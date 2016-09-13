@@ -21,9 +21,9 @@ package org.apereo.portal.security.provider;
 import java.util.Arrays;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionSet;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionSet;
 
 /**
  * @author Dan Ellentuck, de3@columbia.edu

@@ -19,7 +19,7 @@
 package org.apereo.portal.events;
 
 import org.apereo.portal.dao.usertype.FunctionalNameType;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * @author Chris Waymire <cwaymire@unicon.net>

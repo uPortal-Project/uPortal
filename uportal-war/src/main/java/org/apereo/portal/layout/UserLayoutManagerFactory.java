@@ -21,7 +21,7 @@ package org.apereo.portal.layout;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.immutable.ImmutableTransientUserLayoutManagerWrapper;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

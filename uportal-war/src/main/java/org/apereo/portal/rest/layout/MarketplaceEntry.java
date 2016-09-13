@@ -34,7 +34,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.PortletCategory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * User-specific representation of a Marketplace portlet definition suitable for JSON serialization

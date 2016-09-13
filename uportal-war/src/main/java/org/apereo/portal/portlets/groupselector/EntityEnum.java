@@ -19,7 +19,7 @@
 package org.apereo.portal.portlets.groupselector;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * EntityEnum represents an enumeration of known uPortal entity types.  This 

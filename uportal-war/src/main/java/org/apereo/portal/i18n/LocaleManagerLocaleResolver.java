@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;

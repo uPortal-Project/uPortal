@@ -22,11 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.ISecurityContext;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.ISecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractPermissionsController {

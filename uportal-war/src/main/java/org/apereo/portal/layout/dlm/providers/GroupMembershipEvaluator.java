@@ -22,6 +22,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import org.apereo.portal.security.IPerson;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.hibernate.annotations.Cache;
@@ -33,7 +34,6 @@ import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
-import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 
 /**
@@ -97,7 +97,7 @@ public class GroupMembershipEvaluator extends Evaluator {
         try
         {
             groups = GroupService.searchForGroups(groupName,
-                IGroupConstants.IS, org.jasig.portal.security.IPerson.class);
+                IGroupConstants.IS, IPerson.class);
         } catch (GroupsException e1)
         {
             throw new RuntimeException("An exception occurred searching for " +

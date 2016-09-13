@@ -21,11 +21,11 @@ package org.apereo.portal.portlets.swapper;
 import java.util.Collections;
 import java.util.Enumeration;
 
-import org.jasig.portal.security.IAdditionalDescriptor;
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.IPrincipal;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IAdditionalDescriptor;
+import org.apereo.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IPrincipal;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 
 
 /**
@@ -44,84 +44,84 @@ public class IdentitySwapperSecurityContext implements ISecurityContext {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#addSubContext(java.lang.String, org.jasig.portal.security.ISecurityContext)
+     * @see org.apereo.portal.security.ISecurityContext#addSubContext(java.lang.String, org.apereo.portal.security.ISecurityContext)
      */
     public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException {
         throw new UnsupportedOperationException("This context does not support chaining.");
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#authenticate()
+     * @see org.apereo.portal.security.ISecurityContext#authenticate()
      */
     public void authenticate() throws PortalSecurityException {
         //Do Nothing
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getAdditionalDescriptor()
+     * @see org.apereo.portal.security.ISecurityContext#getAdditionalDescriptor()
      */
     public IAdditionalDescriptor getAdditionalDescriptor() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getAuthType()
+     * @see org.apereo.portal.security.ISecurityContext#getAuthType()
      */
     public int getAuthType() {
         return 0;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getOpaqueCredentials()
+     * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentials()
      */
     public IOpaqueCredentials getOpaqueCredentials() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
+     * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
      */
     public IOpaqueCredentials getOpaqueCredentialsInstance() {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getPrincipal()
+     * @see org.apereo.portal.security.ISecurityContext#getPrincipal()
      */
     public IPrincipal getPrincipal() {
         return this.principal;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getPrincipalInstance()
+     * @see org.apereo.portal.security.ISecurityContext#getPrincipalInstance()
      */
     public IPrincipal getPrincipalInstance() {
         return this.principal;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getSubContext(java.lang.String)
+     * @see org.apereo.portal.security.ISecurityContext#getSubContext(java.lang.String)
      */
     public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
         return null;
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getSubContextNames()
+     * @see org.apereo.portal.security.ISecurityContext#getSubContextNames()
      */
     public Enumeration getSubContextNames() {
         return Collections.enumeration(Collections.emptySet());
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#getSubContexts()
+     * @see org.apereo.portal.security.ISecurityContext#getSubContexts()
      */
     public Enumeration getSubContexts() {
         return Collections.enumeration(Collections.emptySet());
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.ISecurityContext#isAuthenticated()
+     * @see org.apereo.portal.security.ISecurityContext#isAuthenticated()
      */
     public boolean isAuthenticated() {
         //Always says the user is authenticated

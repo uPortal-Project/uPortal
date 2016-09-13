@@ -20,7 +20,7 @@ package org.apereo.portal.security.provider;
 
 import java.io.Serializable;
 
-import org.jasig.portal.security.*;
+import org.apereo.portal.security.IAdditionalDescriptor;
 
 import javax.security.auth.*;
 

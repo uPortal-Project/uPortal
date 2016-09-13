@@ -35,7 +35,7 @@ import org.apereo.portal.groups.pags.testers.StringEqualsIgnoreCaseTester;
 import org.apereo.portal.groups.pags.testers.StringEqualsTester;
 import org.apereo.portal.groups.pags.testers.ValueExistsTester;
 import org.apereo.portal.groups.pags.testers.ValueMissingTester;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 
 /**
@@ -108,7 +108,7 @@ protected void setUp()
 {
     try {
         if ( IPERSON_CLASS == null )
-            { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
+            { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
 
         randomStrings = new String[100];
         for (int idx=0; idx<100; idx++)

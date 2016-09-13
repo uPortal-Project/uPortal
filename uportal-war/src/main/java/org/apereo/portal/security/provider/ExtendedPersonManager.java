@@ -23,9 +23,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
+import org.apereo.portal.security.PortalSecurityException;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;

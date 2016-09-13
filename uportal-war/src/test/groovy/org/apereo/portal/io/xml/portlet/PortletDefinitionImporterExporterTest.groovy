@@ -32,10 +32,10 @@ import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
 import org.apereo.portal.portlet.om.IPortletDefinition
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry
-import org.jasig.portal.security.IAuthorizationPrincipal
-import org.jasig.portal.security.IAuthorizationService
-import org.jasig.portal.security.IPermission
-import org.jasig.portal.security.IUpdatingPermissionManager
+import org.apereo.portal.security.IAuthorizationPrincipal
+import org.apereo.portal.security.IAuthorizationService
+import org.apereo.portal.security.IPermission
+import org.apereo.portal.security.IUpdatingPermissionManager
 import org.apereo.portal.utils.AbstractBeanLocator
 import org.jasig.portal.spring.locator.AuthorizationServiceLocator
 import org.jasig.portal.xml.PortletDescriptor;

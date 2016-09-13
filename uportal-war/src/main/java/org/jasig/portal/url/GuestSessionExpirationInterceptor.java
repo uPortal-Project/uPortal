@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 

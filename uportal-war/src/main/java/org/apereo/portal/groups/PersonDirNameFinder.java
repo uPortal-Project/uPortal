@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.ReferenceMap;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 
@@ -66,7 +66,7 @@ public class PersonDirNameFinder
     }
 
     public Class<IPerson> getType () {
-        return  org.jasig.portal.security.IPerson.class;
+        return  IPerson.class;
     }
 
     /**

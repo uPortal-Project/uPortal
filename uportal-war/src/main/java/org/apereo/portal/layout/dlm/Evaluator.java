@@ -34,7 +34,7 @@ import javax.persistence.Version;
 import org.dom4j.Element;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * @version $Revision$ $Date$

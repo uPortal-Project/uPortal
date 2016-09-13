@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.ISecurityContext;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.ISecurityContext;
 
 /**
  * An IPerson object that wraps another IPerson

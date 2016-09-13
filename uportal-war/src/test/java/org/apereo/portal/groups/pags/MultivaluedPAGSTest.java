@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apereo.portal.groups.pags.testers.*;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Before;
 import org.junit.Test;

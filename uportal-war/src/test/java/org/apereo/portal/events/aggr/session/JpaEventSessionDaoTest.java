@@ -25,7 +25,7 @@ import org.apereo.portal.events.TestEventFactory;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.groups.IEntityGroup;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateTime;
 import org.junit.Test;

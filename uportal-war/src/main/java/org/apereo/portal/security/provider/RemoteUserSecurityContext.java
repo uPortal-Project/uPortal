@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

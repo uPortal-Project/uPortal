@@ -31,8 +31,8 @@ import javax.naming.directory.SearchResult;
 
 import org.apereo.portal.ldap.LdapServices;
 import org.apereo.portal.ldap.ILdapServer;
-import org.jasig.portal.security.IConfigurableSecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IConfigurableSecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * to the LDAP directory as the user so that it can authenticate the
  * user.</p>
  * <p>
- * By implementing the {@link org.jasig.portal.security.IConfigurableSecurityContext}
+ * By implementing the {@link IConfigurableSecurityContext}
  * interface this context may have properties set on it. The one property
  * the <code>SimpleLdapSecurityContext</code> looks for is defined by
  * the String {@link #LDAP_PROPERTIES_CONNECTION_NAME} "connection".
@@ -82,7 +82,7 @@ public class SimpleLdapSecurityContext extends ChainingSecurityContext implement
     /**
      * Sets the properties to use for this security context.
      *
-     * @see org.jasig.portal.security.IConfigurableSecurityContext#setProperties(java.util.Properties)
+     * @see IConfigurableSecurityContext#setProperties(java.util.Properties)
      */
     public void setProperties(Properties props) {
         ctxProperties = props;

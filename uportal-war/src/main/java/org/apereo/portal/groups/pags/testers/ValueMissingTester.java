@@ -19,7 +19,7 @@
 package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Tests whether the attribute is null or none of the

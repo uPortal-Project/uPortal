@@ -21,6 +21,6 @@
 
 
 <entity-type script="classpath://org/jasig/portal/io/import-entity-type_v2-6.crn">
-  <name>org.jasig.portal.security.IPerson</name>
+  <name>org.apereo.portal.security.IPerson</name>
   <desc-name>Person</desc-name>
 </entity-type>

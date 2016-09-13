@@ -19,7 +19,7 @@
 package org.apereo.portal.groups;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Defines constants for Groups related classes

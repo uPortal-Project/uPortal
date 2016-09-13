@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apereo.portal.events.PortalEvent;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.spring.context.ApplicationEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

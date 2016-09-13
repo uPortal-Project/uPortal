@@ -46,8 +46,8 @@ import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.portlet.dao.IPortletEntityDao;
 import org.apereo.portal.portlet.om.IPortletEntity;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.PersonFactory;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
@@ -175,7 +175,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
                                 "FROM UP_GROUP_MEMBERSHIP M, UP_GROUP G, UP_ENTITY_TYPE E " +
                                 "WHERE M.GROUP_ID = G.GROUP_ID " +
                                 "  AND G.ENTITY_TYPE_ID = E.ENTITY_TYPE_ID " +
-                                "  AND  E.ENTITY_TYPE_NAME = 'org.jasig.portal.security.IPerson'" +
+                                "  AND  E.ENTITY_TYPE_NAME = 'org.apereo.portal.security.IPerson'" +
                                 "  AND  M.MEMBER_KEY =? AND  M.MEMBER_IS_GROUP = 'F'", Integer.class, userName);
 
 
@@ -605,7 +605,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
         }
 
         // Copy template user's groups memberships
-        IGroupMember template = GroupService.getEntity(templateUser.getUserName(), org.jasig.portal.security.IPerson.class);
+        IGroupMember template = GroupService.getEntity(templateUser.getUserName(), IPerson.class);
         for (IEntityGroup eg : template.getParentGroups()) {
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
             if (leg != null) {
@@ -724,7 +724,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     protected int addNewUser(final int newUID, final IPerson person, final TemplateUser templateUser) throws Exception {
         // Copy template user's groups memberships
         IGroupMember me = GroupService.getGroupMember(person.getEntityIdentifier());
-        IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.jasig.portal.security.IPerson"));
+        IGroupMember template = GroupService.getEntity(templateUser.getUserName(), Class.forName("org.apereo.portal.security.IPerson"));
         for (IEntityGroup eg : template.getParentGroups()) {
             ILockableEntityGroup leg = getSafeLockableGroup(eg, me);
             if (leg != null) {

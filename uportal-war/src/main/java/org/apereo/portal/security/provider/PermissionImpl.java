@@ -21,7 +21,7 @@ package org.apereo.portal.security.provider;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.jasig.portal.security.IPermission;
+import org.apereo.portal.security.IPermission;
 
 
 /**

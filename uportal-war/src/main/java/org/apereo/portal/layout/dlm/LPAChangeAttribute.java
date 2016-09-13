@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.dlm;
 
 import org.apereo.portal.PortalException;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

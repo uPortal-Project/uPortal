@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.apereo.portal.groups.pags.IPersonTester;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
 import org.junit.Before;
@@ -80,7 +80,7 @@ public class InjectAttributeRegexTesterTest {
     @Before
     public void setUp() throws ClassNotFoundException {
         if ( IPERSON_CLASS == null )
-        { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
+        { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
 
         randomStrings = new String[100];
         for (int idx=0; idx<100; idx++) {

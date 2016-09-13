@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.layout.profile;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IdentitySwapperManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IdentitySwapperManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

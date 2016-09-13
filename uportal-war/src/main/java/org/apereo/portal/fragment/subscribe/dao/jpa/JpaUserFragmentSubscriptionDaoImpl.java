@@ -31,7 +31,7 @@ import org.apache.commons.lang.Validate;
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.apereo.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 

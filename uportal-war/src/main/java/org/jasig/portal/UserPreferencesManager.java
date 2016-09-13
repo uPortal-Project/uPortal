@@ -21,7 +21,7 @@ package org.jasig.portal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * UserPreferencesManager is responsible for keeping: user id, user layout, user preferences

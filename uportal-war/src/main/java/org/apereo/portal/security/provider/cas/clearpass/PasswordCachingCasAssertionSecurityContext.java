@@ -21,7 +21,7 @@ package org.apereo.portal.security.provider.cas.clearpass;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.util.XmlUtils;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IOpaqueCredentials;
 import org.apereo.portal.security.provider.NotSoOpaqueCredentials;
 import org.apereo.portal.security.provider.cas.CasAssertionSecurityContext;
 import org.springframework.util.Assert;

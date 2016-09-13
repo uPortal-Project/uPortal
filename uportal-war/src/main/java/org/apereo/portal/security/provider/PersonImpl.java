@@ -30,9 +30,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PersonFactory;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PersonFactory;
 
 /**
  * This is a reference IPerson implementation.
@@ -152,7 +152,7 @@ public class PersonImpl implements IPerson {
      * Sets the specified attributes. Uses {@link #setAttribute(String, Object)}
      * to set each.
      *
-     * @see org.jasig.portal.security.IPerson#setAttributes(java.util.Map)
+     * @see IPerson#setAttributes(java.util.Map)
      */
     @Override
     public void setAttributes(final Map<String, List<Object>> attrs) {
@@ -192,7 +192,7 @@ public class PersonImpl implements IPerson {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#getUserName()
+     * @see org.apereo.portal.security.IPerson#getUserName()
      */
     @Override
     public String getUserName() {
@@ -200,7 +200,7 @@ public class PersonImpl implements IPerson {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPerson#setUserName(java.lang.String)
+     * @see org.apereo.portal.security.IPerson#setUserName(java.lang.String)
      */
     @Override
     public void setUserName(String userName) {
@@ -233,7 +233,7 @@ public class PersonImpl implements IPerson {
      * This person is a "guest" if both of the following are true:
      * <ol>
      *   <li>This person's user name matches the value of the property
-     *       <code>org.jasig.portal.security.PersonImpl.guest_user_name</code>
+     *       <code>org.apereo.portal.security.PersonImpl.guest_user_name</code>
      *       in <code>portal.properties</code>.</li>
      *   <li>This person does not have a live instance ISecurityContext that 
      *       states he/she has been successfully authenticated.  (It can be 

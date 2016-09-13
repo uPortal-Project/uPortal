@@ -30,7 +30,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.EntityNameFinderService;
 import org.jasig.portal.services.GroupService;

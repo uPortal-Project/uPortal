@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * A tester for matching the possibly multiple values of an attribute

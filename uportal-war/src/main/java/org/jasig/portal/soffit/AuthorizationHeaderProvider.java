@@ -39,7 +39,7 @@ import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.apereo.portal.soffit.service.BearerService;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;

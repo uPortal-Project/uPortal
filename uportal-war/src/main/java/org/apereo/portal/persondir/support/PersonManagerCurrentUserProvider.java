@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.support.ICurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;

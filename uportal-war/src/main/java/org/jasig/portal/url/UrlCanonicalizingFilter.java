@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

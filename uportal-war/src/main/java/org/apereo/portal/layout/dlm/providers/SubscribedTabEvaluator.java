@@ -34,7 +34,7 @@ import org.apereo.portal.fragment.subscribe.dao.IUserFragmentSubscriptionDao;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator;
 
 /**

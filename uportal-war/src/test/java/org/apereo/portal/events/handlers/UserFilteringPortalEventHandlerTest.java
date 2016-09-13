@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import java.util.regex.Pattern;
 
 import org.apereo.portal.events.PortalEvent;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableList;

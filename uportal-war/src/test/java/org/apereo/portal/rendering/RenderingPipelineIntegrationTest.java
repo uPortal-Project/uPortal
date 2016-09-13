@@ -34,14 +34,12 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.OutputKeys;
 
-import org.apereo.portal.rendering.PipelineComponent;
-import org.apereo.portal.rendering.PipelineEventReader;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.security.xslt.IXalanMessageHelper;
+import org.apereo.portal.security.xslt.IXalanMessageHelper;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;

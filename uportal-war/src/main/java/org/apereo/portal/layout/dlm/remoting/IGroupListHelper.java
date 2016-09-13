@@ -23,8 +23,8 @@ import java.util.Set;
 
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Helper methods for retrieving portal entities.

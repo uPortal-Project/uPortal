@@ -34,13 +34,13 @@ import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
 import org.apereo.portal.permission.target.IPermissionTarget;
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IAuthorizationServiceFactory;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionPolicy;
-import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IAuthorizationServiceFactory;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionPolicy;
+import org.apereo.portal.security.IPermissionStore;
+import org.apereo.portal.security.PortalSecurityException;
 import org.jasig.portal.services.AuthorizationService;
 import org.jasig.portal.services.GroupService;
 
@@ -175,7 +175,7 @@ public AuthorizationTester(String name) {
 }
 
 /**
- * @return org.jasig.portal.security.IPermissionPolicy
+ * @return org.apereo.portal.security.IPermissionPolicy
  */
 private IPermissionPolicy getNegativePermissionPolicy() throws AuthorizationException
 {
@@ -184,7 +184,7 @@ private IPermissionPolicy getNegativePermissionPolicy() throws AuthorizationExce
     return negativePermissionPolicy;
 }
 /**
- * @return org.jasig.portal.security.IPermissionStore
+ * @return org.apereo.portal.security.IPermissionStore
  */
 private IPermissionStore getPermissionStore() throws AuthorizationException
 {
@@ -193,7 +193,7 @@ private IPermissionStore getPermissionStore() throws AuthorizationException
     return permissionStore;
 }
 /**
- * @return org.jasig.portal.security.IPermissionPolicy
+ * @return org.apereo.portal.security.IPermissionPolicy
  */
 private IPermissionPolicy getPositivePermissionPolicy() throws AuthorizationException
 {
@@ -202,7 +202,7 @@ private IPermissionPolicy getPositivePermissionPolicy() throws AuthorizationExce
     return positivePermissionPolicy;
 }
 /**
- * @return org.jasig.portal.security.AuthorizationService
+ * @return org.apereo.portal.security.AuthorizationService
  */
 private IAuthorizationService getService() throws AuthorizationException
 {
@@ -264,10 +264,10 @@ private void initializePermissionStore() throws AuthorizationException
 {
     String eMsg = null;
     String factoryName =
-      PropertiesManager.getProperty("org.jasig.portal.security.IPermissionStore.implementation");
+      PropertiesManager.getProperty("org.apereo.portal.security.IPermissionStore.implementation");
     if ( factoryName == null )
     {
-        eMsg = "AuthorizationTester.initializePermissionStore(): No entry for org.jasig.portal.security.IPermissionStore.implementation portal.properties.";
+        eMsg = "AuthorizationTester.initializePermissionStore(): No entry for org.apereo.portal.security.IPermissionStore.implementation portal.properties.";
         print(eMsg);
         throw new AuthorizationException(eMsg);
     }
@@ -325,7 +325,7 @@ protected void setUp()
         if ( GROUP_CLASS == null )
             { GROUP_CLASS = Class.forName("org.apereo.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
-            { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
+            { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
             
         GROUP_SEPARATOR = GroupServiceConfiguration.getConfiguration().getNodeSeparator();
         EVERYONE_GROUP_KEY = "local" + GROUP_SEPARATOR + "0";
@@ -608,7 +608,7 @@ public void testPermissionStore() throws Exception
 /**
  * Tests concurrent access to permissions via "singleton" principal objects.  
  * Only run this test when the property 
- * org.jasig.portal.security.IAuthorizationService.cachePermissions=true, since
+ * org.apereo.portal.security.IAuthorizationService.cachePermissions=true, since
  * performance of the db calls will distort the time needed to complete the
  * various parts of the test. 
  */

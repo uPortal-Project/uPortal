@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

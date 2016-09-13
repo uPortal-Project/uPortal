@@ -32,7 +32,7 @@ import junit.textui.TestRunner;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
@@ -303,7 +303,7 @@ protected void setUp()
         if ( GROUP_CLASS == null )
             { GROUP_CLASS = Class.forName("org.apereo.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
-            { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
+            { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
         if ( TEST_ENTITY_CLASS == null )
             { TEST_ENTITY_CLASS = TestEntity.class; }
 

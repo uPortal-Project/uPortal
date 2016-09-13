@@ -24,7 +24,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.springframework.beans.factory.annotation.Autowired;

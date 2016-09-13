@@ -26,8 +26,8 @@ package org.apereo.portal.security.provider;
  * @version $Revision$ $Date$
  */
 
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.ISecurityContextFactory;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.ISecurityContextFactory;
 
 public class JAASSecurityContextFactory implements ISecurityContextFactory {
   public ISecurityContext getSecurityContext() {

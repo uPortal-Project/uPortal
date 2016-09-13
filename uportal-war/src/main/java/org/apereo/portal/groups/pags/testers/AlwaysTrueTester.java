@@ -21,7 +21,7 @@ package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * @author Eric Dalquist
@@ -41,7 +41,7 @@ public class AlwaysTrueTester implements IPersonTester {
     public AlwaysTrueTester(String attribute, String test) {}
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.groups.pags.IPersonTester#test(org.jasig.portal.security.IPerson)
+     * @see org.apereo.portal.groups.pags.IPersonTester#test(org.apereo.portal.security.IPerson)
      */
     public boolean test(IPerson person) {
         return true;

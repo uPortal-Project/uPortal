@@ -21,7 +21,7 @@ package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * {@link IPersonTester} implementation that evaluates whether the user is a

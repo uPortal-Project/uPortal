@@ -21,7 +21,7 @@ package org.jasig.portal.spring.security.preauth;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 

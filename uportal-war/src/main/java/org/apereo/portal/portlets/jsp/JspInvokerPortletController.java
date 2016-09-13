@@ -30,8 +30,8 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.slf4j.Logger;

@@ -24,9 +24,9 @@ import java.io.Serializable;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,7 +51,7 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
         this.groupListHelper = groupListHelper;
     }
 
-    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name}")
+    @Value("${org.apereo.portal.security.PersonFactory.guest_user_name}")
     private String anonymousUsername;
 
     private AuthorizationService authorizationService;

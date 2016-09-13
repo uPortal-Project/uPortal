@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.IUserLayoutStore;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

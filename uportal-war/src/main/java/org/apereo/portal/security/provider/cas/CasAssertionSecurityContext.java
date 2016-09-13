@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.jasig.cas.client.util.AssertionHolder;
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.PortalSecurityException;
 import org.apereo.portal.security.provider.ChainingSecurityContext;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.services.persondir.support.IAdditionalDescriptors;

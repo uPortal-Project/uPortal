@@ -20,7 +20,7 @@
 package org.apereo.portal.groups.pags.testers;
 
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Base class for testers that determine membership based on the number of

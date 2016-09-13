@@ -29,10 +29,10 @@ import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionStore;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionStore;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,7 +88,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     }
     
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canEditPermission(org.jasig.portal.security.IPerson, java.lang.String)
+     * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canEditPermission(org.apereo.portal.security.IPerson, java.lang.String)
      */
     public boolean canEditPermission(IPerson currentUser, String target) {
         
@@ -98,7 +98,7 @@ public class PermissionAdministrationHelper implements IPermissionAdministration
     }
     
     /* (non-Javadoc)
-     * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canViewPermission(org.jasig.portal.security.IPerson, java.lang.String)
+     * @see org.apereo.portal.portlets.permissionsadmin.IPermissionAdministrationHelper#canViewPermission(org.apereo.portal.security.IPerson, java.lang.String)
      */
     public boolean canViewPermission(IPerson currentUser, String target) {
         

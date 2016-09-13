@@ -20,12 +20,12 @@ package org.apereo.portal.security.provider;
 
 import java.util.Enumeration;
 
-import org.jasig.portal.security.IAdditionalDescriptor;
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPrincipal;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IAdditionalDescriptor;
+import org.apereo.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPrincipal;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 
 import junit.framework.TestCase;
 
@@ -159,84 +159,84 @@ public class RestrictedPersonTest extends TestCase {
         implements ISecurityContext {
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getAuthType()
+         * @see org.apereo.portal.security.ISecurityContext#getAuthType()
          */
         public int getAuthType() {
             return 0;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getPrincipalInstance()
+         * @see org.apereo.portal.security.ISecurityContext#getPrincipalInstance()
          */
         public IPrincipal getPrincipalInstance() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
+         * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentialsInstance()
          */
         public IOpaqueCredentials getOpaqueCredentialsInstance() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#authenticate()
+         * @see org.apereo.portal.security.ISecurityContext#authenticate()
          */
         public void authenticate() throws PortalSecurityException {
             // do nothing -- dummy implementation
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getPrincipal()
+         * @see org.apereo.portal.security.ISecurityContext#getPrincipal()
          */
         public IPrincipal getPrincipal() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getOpaqueCredentials()
+         * @see org.apereo.portal.security.ISecurityContext#getOpaqueCredentials()
          */
         public IOpaqueCredentials getOpaqueCredentials() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getAdditionalDescriptor()
+         * @see org.apereo.portal.security.ISecurityContext#getAdditionalDescriptor()
          */
         public IAdditionalDescriptor getAdditionalDescriptor() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#isAuthenticated()
+         * @see org.apereo.portal.security.ISecurityContext#isAuthenticated()
          */
         public boolean isAuthenticated() {
             return false;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getSubContext(java.lang.String)
+         * @see org.apereo.portal.security.ISecurityContext#getSubContext(java.lang.String)
          */
         public ISecurityContext getSubContext(String ctx) throws PortalSecurityException {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getSubContexts()
+         * @see org.apereo.portal.security.ISecurityContext#getSubContexts()
          */
         public Enumeration getSubContexts() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#getSubContextNames()
+         * @see org.apereo.portal.security.ISecurityContext#getSubContextNames()
          */
         public Enumeration getSubContextNames() {
             return null;
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.security.ISecurityContext#addSubContext(java.lang.String, org.jasig.portal.security.ISecurityContext)
+         * @see org.apereo.portal.security.ISecurityContext#addSubContext(java.lang.String, org.apereo.portal.security.ISecurityContext)
          */
         public void addSubContext(String name, ISecurityContext ctx) throws PortalSecurityException {
             // do nothing -- dummy implementation

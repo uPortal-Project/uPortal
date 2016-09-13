@@ -25,8 +25,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.ISecurityContext;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.ISecurityContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

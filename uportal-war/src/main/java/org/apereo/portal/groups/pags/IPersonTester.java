@@ -19,7 +19,7 @@
 
 package org.apereo.portal.groups.pags;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
  /**
  * A very basic interface for examining <code>IPersons</code>.

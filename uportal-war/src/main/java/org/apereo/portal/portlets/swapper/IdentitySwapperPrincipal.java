@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.portlets.swapper;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPrincipal;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPrincipal;
 
 /**
  * Implements an immutable IPrincipal for use with the identity swapper
@@ -37,28 +37,28 @@ public class IdentitySwapperPrincipal implements IPrincipal {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPrincipal#getFullName()
+     * @see org.apereo.portal.security.IPrincipal#getFullName()
      */
     public String getFullName() {
         return this.person.getFullName();
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPrincipal#getGlobalUID()
+     * @see org.apereo.portal.security.IPrincipal#getGlobalUID()
      */
     public String getGlobalUID() {
         return this.person.getName();
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPrincipal#getUID()
+     * @see org.apereo.portal.security.IPrincipal#getUID()
      */
     public String getUID() {
         return this.person.getName();
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.security.IPrincipal#setUID(java.lang.String)
+     * @see org.apereo.portal.security.IPrincipal#setUID(java.lang.String)
      */
     public void setUID(String UID) {
         throw new UnsupportedOperationException("UID is fixed for a swapped user.");

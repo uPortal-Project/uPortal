@@ -21,7 +21,7 @@
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
   <name>Portal Developers</name>
-  <entity-type>org.jasig.portal.security.IPerson</entity-type>
+  <entity-type>org.apereo.portal.security.IPerson</entity-type>
   <creator>system</creator>
   <description>All IT developers</description>
   <children />

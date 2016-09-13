@@ -23,7 +23,7 @@ import java.util.List;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  */

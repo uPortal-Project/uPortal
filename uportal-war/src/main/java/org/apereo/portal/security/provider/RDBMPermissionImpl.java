@@ -33,8 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.jdbc.RDBMServices;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionStore;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionStore;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -121,7 +121,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
 
     /**
      * Add the IPermissions to the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void add(IPermission[] perms) throws AuthorizationException
@@ -141,7 +141,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Add the IPermission to the store.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void add(IPermission perm) throws AuthorizationException
@@ -177,7 +177,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Delete the IPermissions from the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void delete(IPermission[] perms) throws AuthorizationException
@@ -197,7 +197,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Delete a single IPermission from the store.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void delete(IPermission perm) throws AuthorizationException
@@ -225,7 +225,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Answer if this entity exists in the database.
      * @return boolean
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception java.sql.SQLException
      */
     public boolean existsInDatabase(IPermission perm) throws AuthorizationException, SQLException
@@ -374,7 +374,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Returns the principal key portion of the IPermission principal.
      * @return String
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException
      */
     private String getPrincipalKey(IPermission perm) throws AuthorizationException
@@ -393,7 +393,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Returns the principal type portion of the IPermission principal.
      * @return int
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception AuthorizationException
      */
     private int getPrincipalType(IPermission perm) throws AuthorizationException
@@ -449,7 +449,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
         return updatePermissionSql;
     }
     /**
-     * @return org.jasig.portal.security.IPermission
+     * @return org.apereo.portal.security.IPermission
      * @param rs java.sql.ResultSet
      */
     private IPermission instanceFromResultSet(ResultSet rs) throws  SQLException
@@ -481,7 +481,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Add the IPermissions to the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
     private void primAdd(IPermission[] perms) throws Exception
@@ -536,7 +536,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Set the params on the PreparedStatement and execute the insert.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for inserting a Permission row.
      * @exception Exception
      */
@@ -575,7 +575,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Delete the IPermissions from the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
     private void primDelete(IPermission[] perms) throws Exception
@@ -616,7 +616,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Set the params on the PreparedStatement and execute the delete.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for deleting a Permission row.
      * @return int - the return code from the PreparedStatement
      * @exception Exception
@@ -636,7 +636,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Update the IPermissions in the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception Exception
      */
     private void primUpdate(IPermission[] perms) throws Exception
@@ -677,7 +677,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Set the params on the PreparedStatement and execute the update.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @param ps java.sql.PreparedStatement - the PreparedStatement for updating a Permission row.
      * @return int - the return code from the PreparedStatement
      * @exception Exception
@@ -849,7 +849,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Update the IPermissions in the store.
-     * @param perms org.jasig.portal.security.IPermission[]
+     * @param perms org.apereo.portal.security.IPermission[]
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void update(IPermission[] perms) throws AuthorizationException
@@ -869,7 +869,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     }
     /**
      * Update a single IPermission in the store.
-     * @param perm org.jasig.portal.security.IPermission
+     * @param perm org.apereo.portal.security.IPermission
      * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
      */
     public void update(IPermission perm) throws AuthorizationException

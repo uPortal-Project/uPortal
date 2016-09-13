@@ -109,7 +109,7 @@ protected void setUp()
         if ( GROUP_CLASS == null )
             { GROUP_CLASS = Class.forName("org.apereo.portal.groups.IEntityGroup"); }
         if ( IPERSON_CLASS == null )
-            { IPERSON_CLASS = Class.forName("org.jasig.portal.security.IPerson"); }
+            { IPERSON_CLASS = Class.forName("org.apereo.portal.security.IPerson"); }
 
 
     try

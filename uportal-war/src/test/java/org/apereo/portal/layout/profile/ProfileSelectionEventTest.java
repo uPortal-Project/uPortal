@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.layout.profile;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Before;
 import org.junit.Test;

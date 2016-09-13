@@ -25,10 +25,10 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PersonFactory;
+import org.apereo.portal.security.PortalSecurityException;
 
 /**
  * When retrieving a new person, the value of the <code>REMOTEUSER</code> environment variable

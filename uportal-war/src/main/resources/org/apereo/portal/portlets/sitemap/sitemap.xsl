@@ -23,8 +23,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
-    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
-    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.apereo.portal.security.xslt.XalanMessageHelper"
+    xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/layout/portal-url ../../https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="xsi url upMsg upElemTitle"
     version="1.0">

@@ -32,7 +32,7 @@ import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 

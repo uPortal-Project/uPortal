@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.portlettype;
 
-import org.jasig.portal.security.IPermission;
+import org.apereo.portal.security.IPermission;
 
 /**
  * Set of supported permissions that can be used in the <permissions></permissions>

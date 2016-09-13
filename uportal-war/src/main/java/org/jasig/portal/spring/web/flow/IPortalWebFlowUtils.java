@@ -18,8 +18,8 @@
  */
 package org.jasig.portal.spring.web.flow;
 
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPerson;
 import org.springframework.webflow.context.ExternalContext;
 
 /**

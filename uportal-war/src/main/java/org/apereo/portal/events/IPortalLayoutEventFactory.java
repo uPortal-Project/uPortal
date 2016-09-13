@@ -20,7 +20,7 @@ package org.apereo.portal.events;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Publishes events related to layouts

@@ -31,9 +31,9 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper;
-import org.jasig.portal.security.xslt.XalanMessageHelper;
-import org.jasig.portal.security.xslt.XalanMessageHelperBean;
+import org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper;
+import org.apereo.portal.security.xslt.XalanMessageHelper;
+import org.apereo.portal.security.xslt.XalanMessageHelperBean;
 import org.jasig.portal.url.xml.XsltPortalUrlProvider;
 import org.junit.Before;
 import org.junit.Test;

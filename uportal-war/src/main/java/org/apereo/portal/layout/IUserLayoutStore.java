@@ -32,7 +32,7 @@ import org.jasig.portal.UserProfile;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.dlm.FragmentChannelInfo;
 import org.apereo.portal.layout.dlm.FragmentNodeInfo;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.utils.Tuple;
 import org.w3c.dom.Document;
 

@@ -23,12 +23,12 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.security.IAdditionalDescriptor;
-import org.jasig.portal.security.IOpaqueCredentials;
-import org.jasig.portal.security.IParentAwareSecurityContext;
-import org.jasig.portal.security.IPrincipal;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IAdditionalDescriptor;
+import org.apereo.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IParentAwareSecurityContext;
+import org.apereo.portal.security.IPrincipal;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;

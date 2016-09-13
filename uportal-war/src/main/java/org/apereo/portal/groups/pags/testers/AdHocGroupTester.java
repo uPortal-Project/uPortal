@@ -26,7 +26,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;

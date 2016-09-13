@@ -20,8 +20,8 @@ package org.apereo.portal.security.provider;
 
 import java.util.Enumeration;
 
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.PortalSecurityException;
 
 /**
  * <p>A simple extension of ChainingSecurityContext that acts merely as a placeholder

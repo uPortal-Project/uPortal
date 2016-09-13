@@ -50,7 +50,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupDefinition;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition;
 import org.apereo.portal.groups.pags.dao.PagsService;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

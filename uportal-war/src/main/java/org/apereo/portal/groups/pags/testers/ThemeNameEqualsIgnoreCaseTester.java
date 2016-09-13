@@ -29,7 +29,7 @@ import org.apereo.portal.layout.profile.IProfileMapper;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;

@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.security.provider.cas;
 
-import org.jasig.portal.security.ISecurityContextFactory;
-import org.jasig.portal.security.ISecurityContext;
+import org.apereo.portal.security.ISecurityContextFactory;
+import org.apereo.portal.security.ISecurityContext;
 
 /**
  * Factory to construct new instances of {@link org.apereo.portal.security.provider.cas.CasAssertionSecurityContext}.

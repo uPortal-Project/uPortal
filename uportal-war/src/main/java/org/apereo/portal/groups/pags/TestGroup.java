@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 public class TestGroup {
     private List<IPersonTester> tests;

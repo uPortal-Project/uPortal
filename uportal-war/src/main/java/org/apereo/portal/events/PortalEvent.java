@@ -23,7 +23,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.utils.SerializableObject;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEvent;

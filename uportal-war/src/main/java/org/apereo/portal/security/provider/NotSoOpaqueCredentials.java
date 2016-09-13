@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.IOpaqueCredentials;
+import org.apereo.portal.security.IOpaqueCredentials;
 
 /**
  * <p>This is a provider-specific extention to the standard opaque credentials

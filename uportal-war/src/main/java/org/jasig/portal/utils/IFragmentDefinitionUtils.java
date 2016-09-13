@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.UserView;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Document;
 
 /**

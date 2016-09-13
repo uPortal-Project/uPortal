@@ -37,7 +37,7 @@ import org.apereo.portal.layout.om.IStylesheetData.Scope;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.IFragmentDefinitionUtils;

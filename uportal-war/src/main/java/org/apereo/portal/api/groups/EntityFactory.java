@@ -23,7 +23,7 @@ import org.apereo.portal.api.PrincipalImpl;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationPrincipal;
 
 public class EntityFactory {
     private EntityFactory() { }

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.PortalSecurityException;
 
 /**
  * <p>

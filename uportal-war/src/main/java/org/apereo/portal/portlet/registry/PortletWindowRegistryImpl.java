@@ -50,7 +50,7 @@ import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IUrlSyntaxProvider;

@@ -27,7 +27,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.security.IPermission;
+import org.apereo.portal.security.IPermission;
 
 /**
  * <p>Entity bean for JSON output.  Used for categories, groups, and people.</p>

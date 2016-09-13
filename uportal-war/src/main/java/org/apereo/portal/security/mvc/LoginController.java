@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.UrlType;

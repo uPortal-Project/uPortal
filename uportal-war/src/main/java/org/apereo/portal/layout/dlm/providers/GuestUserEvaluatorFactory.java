@@ -32,7 +32,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.w3c.dom.Node;
 
 /**

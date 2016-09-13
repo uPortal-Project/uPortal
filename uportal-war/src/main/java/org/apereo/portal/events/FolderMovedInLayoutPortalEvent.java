@@ -19,7 +19,7 @@
 package org.apereo.portal.events;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 
 public final class FolderMovedInLayoutPortalEvent extends LayoutPortalEvent {

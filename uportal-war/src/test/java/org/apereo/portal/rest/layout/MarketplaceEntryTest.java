@@ -19,7 +19,7 @@
 package org.apereo.portal.rest.layout;
 
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

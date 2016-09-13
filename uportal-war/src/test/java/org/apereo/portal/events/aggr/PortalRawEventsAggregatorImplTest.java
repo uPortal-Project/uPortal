@@ -34,7 +34,7 @@ import org.apereo.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.apereo.portal.events.aggr.session.EventSession;
 import org.apereo.portal.events.aggr.session.EventSessionDao;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;

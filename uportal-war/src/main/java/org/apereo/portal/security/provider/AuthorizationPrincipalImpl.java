@@ -21,10 +21,10 @@ package org.apereo.portal.security.provider;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IPermission;
-import org.jasig.portal.security.IPermissionPolicy;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionPolicy;
 
 /**
  * @author Dan Ellentuck
@@ -123,7 +123,7 @@ public boolean equals(Object obj) {
  * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>, including
  * inherited <code>IPermissions</code>.  
  * 
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
@@ -139,7 +139,7 @@ public IPermission[] getAllPermissions() throws AuthorizationException
  * <code>getPermissions(null, null, null)</code> should retrieve all <code>IPermissions</code> 
  * for an <code>IAuthorizationPrincipal</code>.
  * 
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param owner String
  * @param activity String
  * @param target String
@@ -153,7 +153,7 @@ throws AuthorizationException
     return getAuthorizationService().getAllPermissionsForPrincipal(this, owner, activity, target);
 }
 /**
- * @return org.jasig.portal.security.IAuthorization
+ * @return org.apereo.portal.security.IAuthorization
  */
 IAuthorizationService getAuthorizationService() 
 {
@@ -178,7 +178,7 @@ public String getKey() {
 /**
  * Returns the <code>IPermissions</code> for this <code>IAuthorizationPrincipal</code>.  
  * 
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @exception AuthorizationException indicates authorization information could not 
  * be retrieved.
  */
@@ -193,7 +193,7 @@ public IPermission[] getPermissions() throws AuthorizationException
  * are ignored, so <code>getPermissions(null, null, null)</code> should retrieve all 
  * <code>IPermissions</code> for an <code>IAuthorizationPrincipal</code>.
  * 
- * @return org.jasig.portal.security.IPermission[]
+ * @return org.apereo.portal.security.IPermission[]
  * @param owner String
  * @param activity String
  * @param target String
@@ -279,7 +279,7 @@ public String toString()
  * @param owner String
  * @param activity String
  * @param target String
- * @param policy org.jasig.portal.security.IPermissionPolicy
+ * @param policy org.apereo.portal.security.IPermissionPolicy
  * @exception AuthorizationException indicates authorization information could not
  * be retrieved.
  */

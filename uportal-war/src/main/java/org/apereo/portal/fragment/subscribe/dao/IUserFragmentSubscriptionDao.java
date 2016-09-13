@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.apereo.portal.fragment.subscribe.IUserFragmentSubscription;
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Interface for retrieving information about fragments (pre-formatted tabs) to which a user has subscribed.

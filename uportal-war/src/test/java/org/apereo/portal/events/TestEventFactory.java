@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apereo.portal.events.PortalEvent.PortalEventBuilder;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 
 /**

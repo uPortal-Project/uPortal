@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.dlm;
 
 import org.jasig.portal.IUserProfile;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Base API for layout caching service. The implementation should handle appropriately expiring layouts

@@ -18,7 +18,7 @@
  */
 package org.jasig.portal;
 
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 
 /**
  * Interface for managing creation and removal of User Portal Data

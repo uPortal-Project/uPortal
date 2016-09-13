@@ -26,12 +26,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.GroupsException;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.security.IAuthorizationService;
-import org.jasig.portal.security.IAuthorizationServiceFactory;
-import org.jasig.portal.security.IPermissionManager;
-import org.jasig.portal.security.IUpdatingPermissionManager;
-import org.jasig.portal.security.PortalSecurityException;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IAuthorizationService;
+import org.apereo.portal.security.IAuthorizationServiceFactory;
+import org.apereo.portal.security.IPermissionManager;
+import org.apereo.portal.security.IUpdatingPermissionManager;
+import org.apereo.portal.security.PortalSecurityException;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
@@ -120,7 +120,7 @@ public class AuthorizationService
 
   /**
    * @param owner java.lang.String
-   * @return org.jasig.portal.security.IPermissionManager
+   * @return org.apereo.portal.security.IPermissionManager
    * @exception org.jasig.portal.AuthorizationException
    */
   public IPermissionManager newPermissionManager(String owner)
@@ -132,7 +132,7 @@ public class AuthorizationService
   /**
    * @param key java.lang.String
    * @param type java.lang.Class
-   * @return org.jasig.portal.security.IAuthorizationPrincipal
+   * @return org.apereo.portal.security.IAuthorizationPrincipal
    * @exception org.jasig.portal.AuthorizationException
    */
   public IAuthorizationPrincipal newPrincipal(String key, Class type)
@@ -143,7 +143,7 @@ public class AuthorizationService
   
   /**
    * @param groupMember
-   * @return org.jasig.portal.security.IAuthorizationPrincipal
+   * @return org.apereo.portal.security.IAuthorizationPrincipal
    * @exception GroupsException
    */
    public IAuthorizationPrincipal newPrincipal(IGroupMember groupMember)
@@ -154,7 +154,7 @@ public class AuthorizationService
 
   /**
    * @param owner java.lang.String
-   * @return org.jasig.portal.security.IUpdatingPermissionManager
+   * @return org.apereo.portal.security.IUpdatingPermissionManager
    * @exception org.jasig.portal.AuthorizationException
    */
   public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)

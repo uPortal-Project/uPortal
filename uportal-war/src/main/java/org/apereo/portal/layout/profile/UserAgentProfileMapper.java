@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.security.IPerson;
+import org.apereo.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public class UserAgentProfileMapper implements IProfileMapper {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.layout.profile.IProfileMapper#getProfileFname(org.jasig.portal.security.IPerson, javax.servlet.http.HttpServletRequest)
+     * @see org.apereo.portal.layout.profile.IProfileMapper#getProfileFname(org.apereo.portal.security.IPerson, javax.servlet.http.HttpServletRequest)
      */
     @Override
     public String getProfileFname(IPerson person, HttpServletRequest request) {
