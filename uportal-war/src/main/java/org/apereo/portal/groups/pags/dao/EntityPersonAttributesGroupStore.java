@@ -45,7 +45,7 @@ import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.TestGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.provider.RestrictedPerson;
+import org.apereo.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;

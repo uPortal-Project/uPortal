@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.url;
 
-import org.jasig.portal.security.mvc.LoginController;
+import org.apereo.portal.security.mvc.LoginController;
 import org.springframework.beans.factory.annotation.Required;
 
 import javax.servlet.http.HttpServletRequest;

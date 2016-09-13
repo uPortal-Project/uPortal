@@ -34,9 +34,9 @@ import net.sf.ehcache.Ehcache;
 public interface CacheFactory {
 
     /** The cache to be used to hold principals. */
-    public static final String PRINCIPAL_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
+    public static final String PRINCIPAL_CACHE = "org.apereo.portal.security.provider.AuthorizationImpl.AUTH_PRINCIPAL_CACHE";
     
-    public static final String ENTITY_PARENTS_CACHE = "org.jasig.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE";
+    public static final String ENTITY_PARENTS_CACHE = "org.apereo.portal.security.provider.AuthorizationImpl.ENTITY_PARENTS_CACHE";
 
     /** Generic default cache that can be used for anything */
     public static final String DEFAULT = "org.jasig.portal.utils.cache.DEFAULT_CACHE";

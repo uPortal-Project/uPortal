@@ -120,7 +120,7 @@
   </logger>
  
   <!-- Debug CAS Clearpass
-  <logger name="org.jasig.portal.security.provider.cas" additivity="false" level="TRACE">
+  <logger name="org.apereo.portal.security.provider.cas" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
   </logger>
   <logger name="org.jasig.cas.client" additivity="false" level="TRACE">

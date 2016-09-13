@@ -42,7 +42,7 @@ import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.IStringEncryptionService;
-import org.jasig.portal.security.provider.NotSoOpaqueCredentials;
+import org.apereo.portal.security.provider.NotSoOpaqueCredentials;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;

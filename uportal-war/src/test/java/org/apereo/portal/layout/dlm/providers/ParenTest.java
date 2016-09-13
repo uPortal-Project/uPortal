@@ -24,7 +24,7 @@ import org.dom4j.Element;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 
 public class ParenTest extends TestCase {
 

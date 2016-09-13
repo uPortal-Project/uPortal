@@ -37,7 +37,7 @@ import org.jasig.portal.security.IPrincipal;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.PortalSecurityException;
 import org.jasig.portal.security.ThreadNamingRequestFilter;
-import org.jasig.portal.security.provider.ChainingSecurityContext;
+import org.apereo.portal.security.provider.ChainingSecurityContext;
 import org.apereo.portal.utils.MovingAverage;
 import org.apereo.portal.utils.MovingAverageSample;
 import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
@@ -319,7 +319,7 @@ public class Authentication {
 
     /**
      * Recurse through the {@link ISecurityContext} chain, setting the credentials for each.
-     * TODO This functionality should be moved into the {@link org.jasig.portal.security.provider.ChainingSecurityContext}.
+     * TODO This functionality should be moved into the {@link org.apereo.portal.security.provider.ChainingSecurityContext}.
      *
      * @param principals
      * @param credentials

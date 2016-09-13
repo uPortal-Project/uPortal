@@ -25,7 +25,7 @@ import java.util.Random;
 
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

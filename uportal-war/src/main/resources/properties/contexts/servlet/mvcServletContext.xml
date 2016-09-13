@@ -50,7 +50,7 @@
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
     <context:component-scan base-package="org.apereo.portal.layout.dlm.remoting"/>
-    <context:component-scan base-package="org.jasig.portal.security.remoting"/>
+    <context:component-scan base-package="org.apereo.portal.security.remoting"/>
     <context:component-scan base-package="org.apereo.portal.rest"/>
     <context:property-placeholder location="classpath:/properties/portal.properties"/>
 

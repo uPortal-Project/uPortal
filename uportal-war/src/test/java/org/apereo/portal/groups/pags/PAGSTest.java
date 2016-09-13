@@ -36,7 +36,7 @@ import org.apereo.portal.groups.pags.testers.StringEqualsTester;
 import org.apereo.portal.groups.pags.testers.ValueExistsTester;
 import org.apereo.portal.groups.pags.testers.ValueMissingTester;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 
 /**
  * Tests the PAGS testers.  

@@ -78,7 +78,7 @@
 
     <filter>
         <filter-name>requestParameterFilter</filter-name>
-        <filter-class>org.jasig.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
+        <filter-class>org.apereo.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
         <init-param>
             <param-name>parametersToCheck</param-name>
             <param-value>ticket SAMLArt pgtIou pgtId</param-value>

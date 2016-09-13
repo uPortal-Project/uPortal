@@ -32,7 +32,7 @@ import org.jasig.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.jasig.portal.UserProfile;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.provider.RestrictedPerson;
+import org.apereo.portal.security.provider.RestrictedPerson;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;

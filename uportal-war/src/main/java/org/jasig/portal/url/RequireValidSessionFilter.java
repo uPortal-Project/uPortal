@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.security.mvc.LoginController;
+import org.apereo.portal.security.mvc.LoginController;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**

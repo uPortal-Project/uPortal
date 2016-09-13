@@ -38,7 +38,7 @@ import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

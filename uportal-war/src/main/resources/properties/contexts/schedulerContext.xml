@@ -62,7 +62,7 @@
         <!-- local tasks -->
         <task:scheduled ref="portalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
         <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
-        <task:scheduled ref="portletPermissionsCachePrimer" method="primeCache" fixed-delay="299993"/> <!-- just under 5 minute period;  should be shorter than the TTL for the cache named 'org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT' -->
+        <task:scheduled ref="portletPermissionsCachePrimer" method="primeCache" fixed-delay="299993"/> <!-- just under 5 minute period;  should be shorter than the TTL for the cache named 'org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT' -->
 
         <!-- clustered tasks -->
         <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>

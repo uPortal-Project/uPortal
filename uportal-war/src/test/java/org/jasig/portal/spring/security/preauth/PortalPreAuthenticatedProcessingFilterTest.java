@@ -36,7 +36,7 @@ import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.ISecurityContext;
 import org.jasig.portal.security.IdentitySwapperManager;
-import org.jasig.portal.security.mvc.LoginController;
+import org.apereo.portal.security.mvc.LoginController;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.junit.Before;
 import org.junit.Test;

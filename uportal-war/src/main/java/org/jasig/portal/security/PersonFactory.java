@@ -20,8 +20,8 @@ package org.jasig.portal.security;
 
 import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.security.provider.PersonImpl;
-import org.jasig.portal.security.provider.RestrictedPerson;
+import org.apereo.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 

@@ -44,7 +44,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.PersonFactory;
-import org.jasig.portal.security.provider.RestrictedPerson;
+import org.apereo.portal.security.provider.RestrictedPerson;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;

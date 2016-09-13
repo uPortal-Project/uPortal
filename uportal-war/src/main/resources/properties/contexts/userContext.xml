@@ -30,18 +30,18 @@
     <!--
      | The concrete IPersonManager implementation to be used
      +-->
-   	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+   	<bean id="personManager" class="org.apereo.portal.security.provider.SimplePersonManager" />
     <!--
      | Use this bean for Shibboleth authentication
      +-->
     <!--
-    <bean id="personManager" class="org.jasig.portal.security.provider.RemoteUserPersonManager" />
+    <bean id="personManager" class="org.apereo.portal.security.provider.RemoteUserPersonManager" />
     -->
    	<!--
    	 | Use this bean to extend guest user properties with attributes from the request set by the requestAttributeSourceFilter
    	 +-->
    	<!--
-   	<bean id="personManager" class="org.jasig.portal.security.provider.ExtendedPersonManager" >
+   	<bean id="personManager" class="org.apereo.portal.security.provider.ExtendedPersonManager" >
    		<property name="merger">
             <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
         </property>

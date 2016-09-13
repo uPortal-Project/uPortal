@@ -19,7 +19,7 @@
 package org.apereo.portal.groups.pags.testers;
 
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Assert;
 import org.junit.Test;
 

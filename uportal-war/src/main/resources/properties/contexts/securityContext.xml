@@ -91,7 +91,7 @@
      | This bean is designed to pre-load the AuthZ evaluation cache so that the
      | answers are already known when needed.
      +-->
-    <bean id="portletPermissionsCachePrimer" class="org.jasig.portal.security.provider.PortletPermissionsCachePrimer">
+    <bean id="portletPermissionsCachePrimer" class="org.apereo.portal.security.provider.PortletPermissionsCachePrimer">
         <property name="executor">
             <bean class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
                 <property name="corePoolSize" value="2" />

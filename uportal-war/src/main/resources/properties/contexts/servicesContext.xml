@@ -158,7 +158,7 @@
     </util:set>
 
 
-    <bean id="authorizationService" class="org.jasig.portal.security.provider.AuthorizationImpl">
+    <bean id="authorizationService" class="org.apereo.portal.security.provider.AuthorizationImpl">
         <!-- Set of permissionTargetProviders that are not entities and permission checks on a target
              string value do not need to search through groups or group member target names for a match.
              See bean permissionTargetProviderRegistry. -->

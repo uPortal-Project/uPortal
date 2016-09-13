@@ -51,7 +51,7 @@ import org.apereo.portal.jdbc.IDatabaseMetadata;
 import org.apereo.portal.jdbc.IJoinQueryString;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.Tuple;

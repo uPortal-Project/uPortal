@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.profile;
 
 import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.provider.PersonImpl;
+import org.apereo.portal.security.provider.PersonImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

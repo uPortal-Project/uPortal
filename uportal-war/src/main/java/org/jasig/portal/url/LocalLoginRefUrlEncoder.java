@@ -18,7 +18,7 @@
  */
 package org.jasig.portal.url;
 
-import org.jasig.portal.security.mvc.LoginController;
+import org.apereo.portal.security.mvc.LoginController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;

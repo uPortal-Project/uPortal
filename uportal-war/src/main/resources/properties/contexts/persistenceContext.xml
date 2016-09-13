@@ -27,7 +27,7 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
         
-    <bean id="permissionStore" class="org.jasig.portal.security.provider.RDBMPermissionImpl"/>
+    <bean id="permissionStore" class="org.apereo.portal.security.provider.RDBMPermissionImpl"/>
 
     <!-- ********** JPA Beans ********** -->
     
