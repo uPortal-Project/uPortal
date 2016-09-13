@@ -31,7 +31,7 @@ import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
-import org.jasig.portal.portlets.search.IPortalSearchService;
+import org.apereo.portal.portlets.search.IPortalSearchService;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;

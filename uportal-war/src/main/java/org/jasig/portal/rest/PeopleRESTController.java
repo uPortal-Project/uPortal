@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
+import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;

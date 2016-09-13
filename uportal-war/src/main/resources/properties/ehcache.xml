@@ -284,7 +284,7 @@
      | - 1 x .cpd file
      | - not replicated - pertains to local file system data
      +-->
-    <cache name="org.jasig.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
+    <cache name="org.apereo.portal.portlets.portletadmin.PortletAdministrationHelper.CPD_CACHE"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
 

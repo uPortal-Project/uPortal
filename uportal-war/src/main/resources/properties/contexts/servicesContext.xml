@@ -90,13 +90,13 @@
     <util:list id="searchServices">
         
         <!-- Uncomment and fill in your Google Custom Search ID to use
-        <bean class="org.jasig.portal.portlets.search.google.GoogleCustomSearchService">
+        <bean class="org.apereo.portal.portlets.search.google.GoogleCustomSearchService">
             <property name="customSearchId" value="" />
         </bean>
          -->
          
         <!-- Uncomment and fill in your Google Search Appliance URL and Site to use
-        <bean class="org.jasig.portal.portlets.search.gsa.GsaSearchService">
+        <bean class="org.apereo.portal.portlets.search.gsa.GsaSearchService">
             <property name="baseUrl" value="http://search.example.com"/>
             <property name="site" value="Site"/>
         </bean>
@@ -109,7 +109,7 @@
          -->
         
         <!--
-        <bean class="org.jasig.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
+        <bean class="org.apereo.portal.portlets.search.portletregistry.PortletRegistrySearchService"/>
         --> 
          
         <bean class="org.apereo.portal.portlet.marketplace.MarketplaceSearchService" />

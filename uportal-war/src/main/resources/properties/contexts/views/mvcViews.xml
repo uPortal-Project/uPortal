@@ -40,7 +40,7 @@
     
     <bean name="sitemapView" class="org.springframework.web.servlet.view.xslt.XsltView">
         <property name="sourceKey" value="source" />
-        <property name="url" value="classpath:/org/jasig/portal/portlets/sitemap/sitemap.xsl" />
+        <property name="url" value="classpath:/org/apereo/portal/portlets/sitemap/sitemap.xsl" />
     </bean>
     
     <bean name="portletDelegationView" class="org.apereo.portal.portlet.delegation.PortletDelegationView" />

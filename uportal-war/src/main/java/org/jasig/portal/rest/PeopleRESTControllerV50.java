@@ -22,7 +22,7 @@ package org.jasig.portal.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpHeaders;
-import org.jasig.portal.portlets.lookup.PersonLookupHelperImpl;
+import org.apereo.portal.portlets.lookup.PersonLookupHelperImpl;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.services.persondir.IPersonAttributes;

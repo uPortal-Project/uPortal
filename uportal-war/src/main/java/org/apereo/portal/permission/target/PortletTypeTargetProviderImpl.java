@@ -28,7 +28,7 @@ import org.apache.commons.lang3.Validate;
 import org.apereo.portal.permission.target.IPermissionTarget.TargetType;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
-import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
+import org.apereo.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.IPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 

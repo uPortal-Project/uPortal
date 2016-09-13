@@ -33,12 +33,12 @@
                       
 
     <!-- Beans for the person-lookup flow -->       
-    <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
+    <bean id="personLookupHelper" class="org.apereo.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
-        <property name="maxResults" value="${org.jasig.portal.portlets.lookup.PersonLookup.maxResults}"/>
+        <property name="maxResults" value="${org.apereo.portal.portlets.lookup.PersonLookup.maxResults}"/>
     </bean>
     
-    <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator" />
+    <bean id="personQueryValidator" class="org.apereo.portal.portlets.lookup.PersonQueryValidator" />
     
     <!--  Beans for the group-selector flow -->
     <bean name="groupListHelper"

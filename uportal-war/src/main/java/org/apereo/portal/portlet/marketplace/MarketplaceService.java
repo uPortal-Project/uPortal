@@ -99,7 +99,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     @Qualifier(value = "org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache")
     private Cache marketplaceCategoryCache;
 
-    @Value("${org.jasig.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
+    @Value("${org.apereo.portal.portlets.marketplacePortlet.loadMarketplaceOnLogin:false}")
     public void setLoadMarketplaceOnLogin(final boolean enableMarketplacePreloading) {
         this.enableMarketplacePreloading = enableMarketplacePreloading;
     }
