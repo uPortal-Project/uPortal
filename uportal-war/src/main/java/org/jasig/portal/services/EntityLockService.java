@@ -25,7 +25,7 @@ import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.IEntityLockService;
 import org.apereo.portal.concurrency.IEntityLockServiceFactory;
 import org.apereo.portal.concurrency.LockingException;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 
 /**
   * This is a bootstrap class and facade for the IEntityLockService implementation.

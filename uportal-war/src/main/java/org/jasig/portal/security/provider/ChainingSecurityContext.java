@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IParentAwareSecurityContext;

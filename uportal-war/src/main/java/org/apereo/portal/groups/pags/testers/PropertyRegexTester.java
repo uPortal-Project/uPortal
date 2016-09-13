@@ -20,7 +20,7 @@ package org.apereo.portal.groups.pags.testers;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

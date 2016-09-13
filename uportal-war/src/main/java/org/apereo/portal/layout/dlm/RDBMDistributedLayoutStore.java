@@ -64,7 +64,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.BrokenSecurityContext;
 import org.jasig.portal.security.provider.PersonImpl;

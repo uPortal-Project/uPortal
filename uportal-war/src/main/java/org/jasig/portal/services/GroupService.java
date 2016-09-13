@@ -35,7 +35,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.ILockableEntityGroup;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

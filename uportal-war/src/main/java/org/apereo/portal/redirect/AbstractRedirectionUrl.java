@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.redirect;
+package org.apereo.portal.redirect;
 
 import java.util.ArrayList;
 import java.util.HashMap;

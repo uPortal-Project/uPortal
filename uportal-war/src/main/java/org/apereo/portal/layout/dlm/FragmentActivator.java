@@ -36,7 +36,7 @@ import org.jasig.portal.IUserProfile;
 import org.jasig.portal.UserProfile;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.layout.IUserLayoutStore;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.provider.PersonImpl;
 import org.jasig.portal.utils.Tuple;

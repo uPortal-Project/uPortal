@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.IEntityLockService;
 import org.apereo.portal.concurrency.LockingException;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.services.EntityLockService;
 
 /**

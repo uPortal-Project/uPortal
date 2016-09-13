@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.properties;
+package org.apereo.portal.properties;
 
 /**
  * This is an undeclared (Runtime) exception to be thrown by the 

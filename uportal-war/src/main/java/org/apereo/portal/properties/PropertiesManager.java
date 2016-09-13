@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package  org.jasig.portal.properties;
+package org.apereo.portal.properties;
 
 import java.util.Collections;
 import java.util.HashSet;

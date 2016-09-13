@@ -268,7 +268,7 @@
 
     <util:map id="redirectionServices">
         <entry key="person">
-            <bean class="org.jasig.portal.redirect.PortletRedirectionUrl"
+            <bean class="org.apereo.portal.redirect.PortletRedirectionUrl"
                 p:fname="directory" p:mode="VIEW" p:type="RENDER">
                 <property name="dynamicParameters">
                     <map>
@@ -289,7 +289,7 @@
         </entry>
         <!-- For the Map portlet, which is not included in the quickstart data set -->
         <!-- entry key="location">
-            <bean class="org.jasig.portal.redirect.PortletRedirectionUrl"
+            <bean class="org.apereo.portal.redirect.PortletRedirectionUrl"
                     p:fname="map" p:mode="VIEW" p:type="RENDER">
                 <property name="dynamicParameters">
                     <map>

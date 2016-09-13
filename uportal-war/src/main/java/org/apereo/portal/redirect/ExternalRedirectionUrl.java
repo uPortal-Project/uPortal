@@ -16,13 +16,36 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.redirect;
+package org.apereo.portal.redirect;
 
 /**
- * IRedirectionUrl represents a target URL in the redirection service.
+ * ExternalRedirectionUrl represents a non-portlet URL target for the redirection
+ * service. 
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  */
-public interface IRedirectionUrl {
+public class ExternalRedirectionUrl extends AbstractRedirectionUrl {
+
+    private String url;
+
+    /**
+     * String representation of an absolute URL.  This url cannot be relative
+     * and should not include any parameters in the string.
+     * 
+     * @return
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Sets the string representation of an absolute URL.  This url cannot be relative
+     * and should not include any parameters in the string.
+     * 
+     * @return
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
 }

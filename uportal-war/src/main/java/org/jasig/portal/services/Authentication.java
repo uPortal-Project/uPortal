@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.AuthorizationException;
 import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.events.IPortalAuthEventFactory;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAdditionalDescriptor;
 import org.jasig.portal.security.IOpaqueCredentials;
 import org.jasig.portal.security.IPerson;

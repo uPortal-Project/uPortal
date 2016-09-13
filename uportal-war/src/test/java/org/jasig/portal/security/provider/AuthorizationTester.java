@@ -33,7 +33,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
 import org.apereo.portal.permission.target.IPermissionTarget;
-import org.jasig.portal.properties.PropertiesManager;
+import org.apereo.portal.properties.PropertiesManager;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IAuthorizationServiceFactory;
