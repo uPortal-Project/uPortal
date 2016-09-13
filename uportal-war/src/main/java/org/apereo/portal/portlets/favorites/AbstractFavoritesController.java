@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.favorites;
+package org.apereo.portal.portlets.favorites;
 
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstanceManager;
@@ -65,7 +65,7 @@ public abstract class AbstractFavoritesController {
      *
      * This is for convenience in expressing no-marketplace-fname-available via injected value from
      * properties file.  Defaults to the value of the property
-     * "org.jasig.portal.portlets.favorites.MarketplaceFunctionalName", or null if that property is not set.
+     * "org.apereo.portal.portlets.favorites.MarketplaceFunctionalName", or null if that property is not set.
      *
      * The functional name can technically be the fname of any portlet.  It doesn't have to be
      * The Marketplace Portlet.  Perhaps you've got your own take on Marketplace.
@@ -75,7 +75,7 @@ public abstract class AbstractFavoritesController {
      *
      * @param marketplaceFunctionalName String fname of a marketplace portlet, or null.
      */
-    @Value("${org.jasig.portal.portlets.favorites.MarketplaceFunctionalName:null}")
+    @Value("${org.apereo.portal.portlets.favorites.MarketplaceFunctionalName:null}")
     public void setMarketplaceFName(String marketplaceFunctionalName) {
 
         // interpret null, non-text-having, or literal "null" as

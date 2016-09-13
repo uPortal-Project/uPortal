@@ -29,7 +29,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
            
     <!-- Generic Web-Flow helper beans -->
-    <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
+    <bean id="portletUrlFlowHelper" class="org.apereo.portal.portlets.flow.PortletUrlFlowHelper" />
                       
 
     <!-- Beans for the person-lookup flow -->       

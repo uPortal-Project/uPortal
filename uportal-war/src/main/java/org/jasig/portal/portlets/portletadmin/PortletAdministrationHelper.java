@@ -90,7 +90,7 @@ import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.portlets.Attribute;
 import org.jasig.portal.portlets.BooleanAttribute;
 import org.jasig.portal.portlets.StringListAttribute;
-import org.jasig.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
+import org.apereo.portal.portlets.fragmentadmin.FragmentAdministrationHelper;
 import org.jasig.portal.portlets.groupselector.EntityEnum;
 import org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;

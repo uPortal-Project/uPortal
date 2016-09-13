@@ -60,7 +60,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.portlets.favorites.FavoritesUtils;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;

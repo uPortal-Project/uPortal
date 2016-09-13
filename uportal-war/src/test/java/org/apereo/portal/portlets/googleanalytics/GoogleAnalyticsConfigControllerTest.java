@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.googleanalytics;
+package org.apereo.portal.portlets.googleanalytics;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

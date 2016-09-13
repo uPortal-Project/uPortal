@@ -32,7 +32,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.portlet.rendering.PortletRenderResult;
 import org.apereo.portal.portlet.rendering.RenderPortletOutputHandler;
-import org.jasig.portal.portlets.error.PortletErrorController;
+import org.apereo.portal.portlets.error.PortletErrorController;
 import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
 
 /**

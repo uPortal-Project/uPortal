@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.favorites;
+package org.apereo.portal.portlets.favorites;
 
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.layout.IUserLayout;

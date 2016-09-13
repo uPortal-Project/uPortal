@@ -27,7 +27,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.dynamicskin"/>
+    <context:component-scan base-package="org.apereo.portal.portlets.dynamicskin"/>
 
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors"><bean class="org.jasig.portal.portlets.MinimizedStateHandlerInterceptor"/></property>

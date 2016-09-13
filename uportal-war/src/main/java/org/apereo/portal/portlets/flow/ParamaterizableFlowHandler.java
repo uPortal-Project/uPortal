@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.flow;
+package org.apereo.portal.portlets.flow;
 
 import java.io.IOException;
 

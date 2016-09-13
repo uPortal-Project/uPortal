@@ -19,7 +19,7 @@
 /**
  * 
  */
-package org.jasig.portal.portlets.fragmentadmin;
+package org.apereo.portal.portlets.fragmentadmin;
 
 import java.util.List;
 import java.util.Map;

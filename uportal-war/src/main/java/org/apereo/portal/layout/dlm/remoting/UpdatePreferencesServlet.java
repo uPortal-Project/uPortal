@@ -66,7 +66,7 @@ import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlets.favorites.FavoritesUtils;
+import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPermission;
 import org.jasig.portal.security.IPerson;
