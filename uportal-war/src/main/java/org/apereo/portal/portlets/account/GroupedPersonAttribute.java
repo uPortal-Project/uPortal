@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.account;
+package org.apereo.portal.portlets.account;
 
 import java.util.List;
 import java.util.Set;

@@ -16,27 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.account;
-
-
-import java.net.URL;
-import java.util.Locale;
-
-import org.apereo.portal.persondir.ILocalAccountPerson;
-
+package org.apereo.portal.portlets.activity;
 
 /**
- * Notification interface.  Implementations should notify users that their local
- * uportal user account has had a password reset token assigned to it and pass
- * along the URL that can be used to reset their password.
+ * @author Chris Waymire (chris@waymire.net)
  */
-public interface IPasswordResetNotification {
-    /**
-     * Notify the user of the password reset request.
-     *
-     * @param resetUrl  URL to use to reset the users password
-     * @param account The account associated with the URL
-     * @param locale the locale of the user making the reset request
-     */
-    void sendNotification(URL resetUrl, ILocalAccountPerson account, Locale locale);
+public class PortalGroupActivity implements Comparable<PortalGroupActivity> {
+    private final String groupName;
+    private int total;
+
+    public PortalGroupActivity(String groupName, int total)
+    {
+        this.groupName = groupName;
+        this.total = total;
+    }
+
+    public int getTotal()
+    {
+        return total;
+    }
+
+    public String getGroupName()
+    {
+        return groupName;
+    }
+
+    public void incrementTotal(int count)
+    {
+        total += count;
+    }
+
+    @Override
+    public int compareTo(PortalGroupActivity tuple) {
+        // Natural order for these is count
+        return Integer.valueOf(total).compareTo(tuple.getTotal());
+    }
 }

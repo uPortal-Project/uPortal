@@ -16,41 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.activity;
+package org.apereo.portal.portlets.backgroundpreference;
 
-import org.apache.commons.lang.StringUtils;
+import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
 
 /**
- * @author Chris Waymire (chris@waymire.net)
+ * Strategy for selecting different background image sets based on some criteria such as theme, user agent, etc.
+ *
+ * @author James Wennmacher, jwennmacher@unicon.net
  */
-public class SearchInfo implements Comparable<SearchInfo> {
-    private final String searchTerm;
-    private int count;
 
-    public SearchInfo(String searchTerm,int count)
-    {
-        this.searchTerm = StringUtils.trim(searchTerm);
-        this.count = count;
-    }
+public interface BackgroundSetSelectionStrategy {
 
-    public String getSearchTerm()
-    {
-        return searchTerm;
-    }
+    String[] getImageSet(PortletRequest req);
 
-    public int getCount()
-    {
-        return count;
-    }
+    String[] getImageThumbnailSet(PortletRequest req);
 
-    public void incrementCount(int count)
-    {
-        this.count += count;
-    }
+    String getSelectedImage(PortletRequest req);
 
-    @Override
-    public int compareTo(SearchInfo other)
-    {
-        return Integer.valueOf(count).compareTo(other.getCount());
-    }
+    String getBackgroundContainerSelector(PortletRequest req);
+
+    void setSelectedImage(ActionRequest req, String backgroundImage);
+
 }

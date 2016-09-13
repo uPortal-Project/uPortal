@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.activity;
+package org.apereo.portal.portlets.activity;
 
 import com.google.visualization.datasource.base.TypeMismatchException;
 import org.apereo.portal.events.aggr.AggregationInterval;

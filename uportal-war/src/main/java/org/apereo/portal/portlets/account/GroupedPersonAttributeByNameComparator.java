@@ -16,39 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.activity;
+package org.apereo.portal.portlets.account;
 
-/**
- * @author Chris Waymire (chris@waymire.net)
- */
-public class PortalGroupActivity implements Comparable<PortalGroupActivity> {
-    private final String groupName;
-    private int total;
+import java.util.Comparator;
 
-    public PortalGroupActivity(String groupName, int total)
-    {
-        this.groupName = groupName;
-        this.total = total;
-    }
-
-    public int getTotal()
-    {
-        return total;
-    }
-
-    public String getGroupName()
-    {
-        return groupName;
-    }
-
-    public void incrementTotal(int count)
-    {
-        total += count;
-    }
+public class GroupedPersonAttributeByNameComparator implements Comparator<GroupedPersonAttribute> {
 
     @Override
-    public int compareTo(PortalGroupActivity tuple) {
-        // Natural order for these is count
-        return Integer.valueOf(total).compareTo(tuple.getTotal());
+    public int compare(GroupedPersonAttribute attribute1, GroupedPersonAttribute attribute2) {
+        return attribute1.getDisplayName().compareTo(attribute2.getDisplayName());
     }
+
 }

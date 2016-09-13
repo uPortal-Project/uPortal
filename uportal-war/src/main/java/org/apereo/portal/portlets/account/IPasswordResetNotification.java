@@ -16,15 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.account;
+package org.apereo.portal.portlets.account;
 
-import java.util.Comparator;
 
-public class GroupedPersonAttributeByNameComparator implements Comparator<GroupedPersonAttribute> {
+import java.net.URL;
+import java.util.Locale;
 
-    @Override
-    public int compare(GroupedPersonAttribute attribute1, GroupedPersonAttribute attribute2) {
-        return attribute1.getDisplayName().compareTo(attribute2.getDisplayName());
-    }
+import org.apereo.portal.persondir.ILocalAccountPerson;
 
+
+/**
+ * Notification interface.  Implementations should notify users that their local
+ * uportal user account has had a password reset token assigned to it and pass
+ * along the URL that can be used to reset their password.
+ */
+public interface IPasswordResetNotification {
+    /**
+     * Notify the user of the password reset request.
+     *
+     * @param resetUrl  URL to use to reset the users password
+     * @param account The account associated with the URL
+     * @param locale the locale of the user making the reset request
+     */
+    void sendNotification(URL resetUrl, ILocalAccountPerson account, Locale locale);
 }

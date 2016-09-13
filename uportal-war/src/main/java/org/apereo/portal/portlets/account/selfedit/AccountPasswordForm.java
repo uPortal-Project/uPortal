@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.account.selfedit;
+package org.apereo.portal.portlets.account.selfedit;
 
 import java.io.Serializable;
 

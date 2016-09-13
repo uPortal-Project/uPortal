@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.account;
+package org.apereo.portal.portlets.account;
 
 import java.net.URL;
 import java.util.Arrays;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.directory;
+package org.apereo.portal.portlets.directory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,7 +73,7 @@ public class DirectoryPortletController {
 
     private IPortalRequestUtils portalRequestUtils;
 
-    @Value("${org.jasig.portal.portlets.directory.search.result.type:Directory}")
+    @Value("${org.apereo.portal.portlets.directory.search.result.type:Directory}")
     private String directorySearchResultType = "Directory";
     
     @Autowired(required = true)

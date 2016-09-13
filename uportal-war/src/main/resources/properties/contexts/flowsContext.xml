@@ -53,7 +53,7 @@
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
      
-    <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
+    <bean id="personValidator" class="org.apereo.portal.portlets.account.PersonFormValidator"/>
 
     <bean id="groupValidator" class="org.jasig.portal.portlets.groupadmin.GroupFormValidator"/>
 

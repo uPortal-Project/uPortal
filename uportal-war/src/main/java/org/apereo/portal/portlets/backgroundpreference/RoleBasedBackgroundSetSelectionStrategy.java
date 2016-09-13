@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.backgroundpreference;
+package org.apereo.portal.portlets.backgroundpreference;
 
 import java.util.Arrays;
 

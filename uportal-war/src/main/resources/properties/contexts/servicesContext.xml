@@ -144,7 +144,7 @@
      +-->
     <util:map id="searchAutocompletePriorityMap" value-type="java.lang.Integer">
         <entry key="${org.jasig.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
-        <entry key="${org.jasig.portal.portlets.directory.search.result.type}" value="5"/>
+        <entry key="${org.apereo.portal.portlets.directory.search.result.type}" value="5"/>
         <!--<entry key="${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
         <!--<entry key="${org.jasig.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
     </util:map>
@@ -154,7 +154,7 @@
      | various Search services in the SearchResult.type field.
      +-->
     <util:set id="searchAutocompleteIgnoreResultTypes">
-        <!--<value>${org.jasig.portal.portlets.directory.search.result.type}</value>-->
+        <!--<value>${org.apereo.portal.portlets.directory.search.result.type}</value>-->
     </util:set>
 
 
@@ -389,7 +389,7 @@
              authenticating tenant admins.  MUST BE LAST! -->
         <bean class="org.jasig.portal.tenants.ResetPasswordTenantOperationsListener">
             <property name="passwordResetNotification">
-                <bean class="org.jasig.portal.portlets.account.EmailPasswordResetNotificationImpl">
+                <bean class="org.apereo.portal.portlets.account.EmailPasswordResetNotificationImpl">
                     <property name="subjectMessageKey" value="tenant.new.account"/>
                     <property name="templateDir" value="${org.jasig.portal.tenant.template-dir}"/>
                     <property name="templateName" value="${org.jasig.portal.tenant.template-name}"/>

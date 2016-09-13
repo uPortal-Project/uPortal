@@ -27,7 +27,7 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd  
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <context:component-scan base-package="org.jasig.portal.portlets.backgroundpreference"/>
+    <context:component-scan base-package="org.apereo.portal.portlets.backgroundpreference"/>
     <context:annotation-config/>
 
     <!-- 
