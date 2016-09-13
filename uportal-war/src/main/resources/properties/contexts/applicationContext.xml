@@ -34,10 +34,10 @@
     
     <context:annotation-config/>
     <context:component-scan base-package="org.jasig.portal.portlets" use-default-filters="false">
-        <context:include-filter type="regex" expression=".*\.PortletPreferencesJsonDao" />
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.PortletPreferencesJsonDao" />
         <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.UserAccountHelper" />
         <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.IPasswordResetNotification"/>
-        <context:include-filter type="regex" expression=".*\.portletadmin\.xmlsupport\.XmlChannelPublishingDefinitionDao"/>
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.portletadmin.xmlsupport.IChannelPublishingDefinitionDao"/>
     </context:component-scan>
     <context:component-scan base-package="org.jasig.portal" use-default-filters="false">
         <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
