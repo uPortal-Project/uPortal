@@ -48,7 +48,7 @@ import org.apereo.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPermission;

@@ -53,7 +53,7 @@ import org.apache.pluto.container.impl.ResourceResponseImpl;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.portlet.session.ScopingPortletSessionImpl;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;

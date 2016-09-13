@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
+package org.apereo.portal.portlet.registry;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -130,7 +130,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
 	}
     
 	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
+     * @see org.apereo.portal.portlet.registry.IPortletWindowRegistry#convertPortletWindow(javax.servlet.http.HttpServletRequest, org.apache.pluto.PortletWindow)
      */
     @Override
     public IPortletWindow convertPortletWindow(HttpServletRequest request, PortletWindow plutoPortletWindow) {
@@ -225,7 +225,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, org.apereo.portal.portlet.om.IPortletWindowId)
+     * @see org.apereo.portal.portlet.registry.IPortletWindowRegistry#getPortletWindow(javax.servlet.http.HttpServletRequest, org.apereo.portal.portlet.om.IPortletWindowId)
      */
     @Override
     public IPortletWindow getPortletWindow(HttpServletRequest request, IPortletWindowId portletWindowId) {
@@ -269,7 +269,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getPortletWindowId(java.lang.String)
+     * @see org.apereo.portal.portlet.registry.IPortletWindowRegistry#getPortletWindowId(java.lang.String)
      */
     @Override
     public PortletWindowIdImpl getPortletWindowId(HttpServletRequest request, String portletWindowId) {
@@ -298,7 +298,7 @@ public class PortletWindowRegistryImpl implements IPortletWindowRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.apereo.portal.portlet.om.IPortletEntityId)
+     * @see org.apereo.portal.portlet.registry.IPortletWindowRegistry#getDefaultPortletWindowId(org.apereo.portal.portlet.om.IPortletEntityId)
      */
     @Override
     public IPortletWindowId getDefaultPortletWindowId(HttpServletRequest request, IPortletEntityId portletEntityId) {

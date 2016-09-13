@@ -30,7 +30,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.utils.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

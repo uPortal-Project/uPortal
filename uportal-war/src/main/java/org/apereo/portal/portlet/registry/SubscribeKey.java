@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
+package org.apereo.portal.portlet.registry;
 
 final class SubscribeKey {
     private final int userId;

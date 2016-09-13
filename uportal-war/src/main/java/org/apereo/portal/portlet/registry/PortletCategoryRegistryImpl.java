@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
+package org.apereo.portal.portlet.registry;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +47,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
 	}
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllChildCategories(org.apereo.portal.portlet.om.PortletCategory)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllChildCategories(org.apereo.portal.portlet.om.PortletCategory)
 	 */
 	@Override
     public Set<PortletCategory> getAllChildCategories(PortletCategory parent) {
@@ -63,7 +63,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllParentCategories(org.apereo.portal.portlet.om.PortletCategory)
+     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllParentCategories(org.apereo.portal.portlet.om.PortletCategory)
      */
     @Override
     public Set<PortletCategory> getAllParentCategories(PortletCategory child) {
@@ -77,7 +77,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getAllChildChannels(org.apereo.portal.portlet.om.PortletCategory)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getAllChildChannels(org.apereo.portal.portlet.om.PortletCategory)
 	 */
 	@Override
     public Set<IPortletDefinition> getAllChildPortlets(PortletCategory parent) {
@@ -106,7 +106,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getPortletCategory(java.lang.String)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getPortletCategory(java.lang.String)
 	 */
 	@Override
     public PortletCategory getPortletCategory(String portletCategoryId) {
@@ -122,7 +122,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildCategories(org.apereo.portal.portlet.om.PortletCategory)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getChildCategories(org.apereo.portal.portlet.om.PortletCategory)
 	 */
     @Override
     public Set<PortletCategory> getChildCategories(PortletCategory parent) {
@@ -139,7 +139,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.apereo.portal.portlet.om.PortletCategory)
+     * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getChildChannels(org.apereo.portal.portlet.om.PortletCategory)
      */
     @Override
     public Set<IPortletDefinition> getChildPortlets(PortletCategory parent) {
@@ -173,7 +173,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.PortletCategory)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.PortletCategory)
 	 */
 	@Override
     public Set<PortletCategory> getParentCategories(PortletCategory child) {
@@ -191,7 +191,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.IPortletDefinition)
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getParentCategories(org.apereo.portal.portlet.om.IPortletDefinition)
 	 */
 	@Override
     public Set<PortletCategory> getParentCategories(IPortletDefinition child) {
@@ -209,7 +209,7 @@ public class PortletCategoryRegistryImpl implements IPortletCategoryRegistry {
     }
 
     /* (non-Javadoc)
-	 * @see org.jasig.portal.portlet.registry.IPortletCategoryRegistry#getTopLevelPortletCategory()
+	 * @see org.apereo.portal.portlet.registry.IPortletCategoryRegistry#getTopLevelPortletCategory()
 	 */
 	@Override
     public PortletCategory getTopLevelPortletCategory() {

@@ -33,7 +33,7 @@ import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletPreference;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;

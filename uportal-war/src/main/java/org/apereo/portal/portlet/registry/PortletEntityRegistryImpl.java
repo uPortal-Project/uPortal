@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
+package org.apereo.portal.portlet.registry;
 
 import java.util.Date;
 import java.util.List;
@@ -125,7 +125,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(org.apereo.portal.portlet.om.IPortletEntityId)
+     * @see org.apereo.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(org.apereo.portal.portlet.om.IPortletEntityId)
      */
     @Override
     public IPortletEntity getPortletEntity(HttpServletRequest request, IPortletEntityId portletEntityId) {
@@ -138,7 +138,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String)
+     * @see org.apereo.portal.portlet.registry.IPortletEntityRegistry#getPortletEntity(java.lang.String)
      */
     @Override
     public IPortletEntity getPortletEntity(HttpServletRequest request, String portletEntityIdString) {
@@ -201,7 +201,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
+     * @see org.apereo.portal.portlet.registry.IPortletEntityRegistry#getOrCreatePortletEntity(org.apereo.portal.portlet.om.IPortletDefinitionId, java.lang.String, int)
      */
     @Override
     public IPortletEntity getOrCreatePortletEntity(HttpServletRequest request, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
@@ -283,7 +283,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.apereo.portal.portlet.om.IPortletEntity)
+     * @see org.apereo.portal.portlet.registry.IPortletEntityRegistry#storePortletEntity(org.apereo.portal.portlet.om.IPortletEntity)
      */
     @Override
     public void storePortletEntity(HttpServletRequest request, final IPortletEntity portletEntity) {

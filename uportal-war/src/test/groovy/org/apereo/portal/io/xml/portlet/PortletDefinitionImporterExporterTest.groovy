@@ -30,8 +30,8 @@ import org.apereo.portal.portlet.dao.IPortletDefinitionDao
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
 import org.apereo.portal.portlet.om.IPortletDefinition
-import org.jasig.portal.portlet.registry.IPortletCategoryRegistry
-import org.jasig.portal.portlet.registry.IPortletTypeRegistry
+import org.apereo.portal.portlet.registry.IPortletCategoryRegistry
+import org.apereo.portal.portlet.registry.IPortletTypeRegistry
 import org.jasig.portal.security.IAuthorizationPrincipal
 import org.jasig.portal.security.IAuthorizationService
 import org.jasig.portal.security.IPermission

@@ -32,7 +32,7 @@ import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.registry.IPortletWindowRegistry;
+import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.Before;

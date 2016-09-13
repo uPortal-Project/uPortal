@@ -33,7 +33,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.registry.IPortletTypeRegistry;
+import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Step;
 import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
+package org.apereo.portal.portlet.registry;
 
 import java.util.List;
 
@@ -93,7 +93,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.apereo.portal.portlet.om.IPortletDefinitionId)
+     * @see org.apereo.portal.portlet.registry.IPortletDefinitionRegistry#getPortletDefinition(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId) {
@@ -140,7 +140,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
 
 	/* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.apereo.portal.portlet.om.IPortletDefinition)
+     * @see org.apereo.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.apereo.portal.portlet.om.IPortletDefinition)
      */
     @Override
     public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
@@ -149,7 +149,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
+     * @see org.apereo.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletApplicationDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public PortletApplicationDefinition getParentPortletApplicationDescriptor(IPortletDefinitionId portletDefinitionId) {
@@ -171,7 +171,7 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
+     * @see org.apereo.portal.portlet.registry.IPortletDefinitionRegistry#getParentPortletDescriptor(org.apereo.portal.portlet.om.IPortletDefinitionId)
      */
     @Override
     public PortletDefinition getParentPortletDescriptor(IPortletDefinitionId portletDefinitionId) {

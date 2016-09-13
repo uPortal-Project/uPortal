@@ -16,61 +16,50 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlet.registry;
-
-import java.io.Serializable;
+package org.apereo.portal.portlet.registry;
 
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
-import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 
 /**
- * Session persistent data stored for portlet entities
+ * Standard IPortletEntityId
  * 
  * @author Eric Dalquist
  */
-class PortletEntityData implements Serializable, IPortletEntityDescriptor {
-    private static final long serialVersionUID = 1L;
-    
-    private final IPortletEntityId portletEntityId;
+class PortletEntityIdImpl implements IPortletEntityId {
+    private static final long serialVersionUID = 2L;
+
     private final IPortletDefinitionId portletDefinitionId;
     private final String layoutNodeId;
     private final int userId;
     
-    public PortletEntityData(IPortletEntityId portletEntityId, IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
-        this.portletEntityId = portletEntityId;
+    private final String compositeIdString;
+    
+    public PortletEntityIdImpl(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
         this.portletDefinitionId = portletDefinitionId;
         this.layoutNodeId = layoutNodeId;
         this.userId = userId;
+        this.compositeIdString = PortletEntityIdStringUtils.format(portletDefinitionId.getStringId(), layoutNodeId, userId);
     }
-    
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getPortletEntityId()
-     */
-    @Override
-    public IPortletEntityId getPortletEntityId() {
-        return this.portletEntityId;
-    }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getPortletDefinitionId()
-     */
-    @Override
+
     public IPortletDefinitionId getPortletDefinitionId() {
         return this.portletDefinitionId;
     }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getLayoutNodeId()
-     */
-    @Override
+
     public String getLayoutNodeId() {
         return this.layoutNodeId;
     }
-    /* (non-Javadoc)
-     * @see org.jasig.portal.portlet.registry.IPortletEntityDescriptor#getUserId()
-     */
-    @Override
+
     public int getUserId() {
         return this.userId;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apereo.portal.portlet.om.IObjectId#getStringId()
+     */
+    @Override
+    public String getStringId() {
+        return this.compositeIdString;
     }
 
     @Override
@@ -79,7 +68,6 @@ class PortletEntityData implements Serializable, IPortletEntityDescriptor {
         int result = 1;
         result = prime * result + ((this.layoutNodeId == null) ? 0 : this.layoutNodeId.hashCode());
         result = prime * result + ((this.portletDefinitionId == null) ? 0 : this.portletDefinitionId.hashCode());
-        result = prime * result + ((this.portletEntityId == null) ? 0 : this.portletEntityId.hashCode());
         result = prime * result + this.userId;
         return result;
     }
@@ -92,7 +80,7 @@ class PortletEntityData implements Serializable, IPortletEntityDescriptor {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PortletEntityData other = (PortletEntityData) obj;
+        PortletEntityIdImpl other = (PortletEntityIdImpl) obj;
         if (this.layoutNodeId == null) {
             if (other.layoutNodeId != null)
                 return false;
@@ -105,12 +93,6 @@ class PortletEntityData implements Serializable, IPortletEntityDescriptor {
         }
         else if (!this.portletDefinitionId.equals(other.portletDefinitionId))
             return false;
-        if (this.portletEntityId == null) {
-            if (other.portletEntityId != null)
-                return false;
-        }
-        else if (!this.portletEntityId.equals(other.portletEntityId))
-            return false;
         if (this.userId != other.userId)
             return false;
         return true;
@@ -118,7 +100,6 @@ class PortletEntityData implements Serializable, IPortletEntityDescriptor {
 
     @Override
     public String toString() {
-        return "PortletEntityData [portletEntityId=" + this.portletEntityId + ", portletDefinitionId="
-                + this.portletDefinitionId + ", layoutNodeId=" + this.layoutNodeId + ", userId=" + this.userId + "]";
+        return this.compositeIdString.toString();
     }
 }

@@ -199,11 +199,11 @@
     </bean>
     
     <bean id="portletWindowRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.portlet.registry.IPortletWindowRegistry" />
+        <constructor-arg value="org.apereo.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
     
     <bean id="portletEntityRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.portlet.registry.IPortletEntityRegistry" />
+        <constructor-arg value="org.apereo.portal.portlet.registry.IPortletEntityRegistry" />
     </bean>
     
     <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.MockitoFactoryBean">

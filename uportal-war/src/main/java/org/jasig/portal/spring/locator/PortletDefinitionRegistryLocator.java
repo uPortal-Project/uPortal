@@ -20,7 +20,7 @@ package org.jasig.portal.spring.locator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.utils.AbstractBeanLocator;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
 import org.springframework.beans.factory.annotation.Autowired;

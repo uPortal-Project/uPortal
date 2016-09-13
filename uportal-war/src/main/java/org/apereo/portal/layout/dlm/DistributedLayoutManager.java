@@ -57,7 +57,7 @@ import org.apereo.portal.layout.node.UserLayoutFolderDescription;
 import org.apereo.portal.layout.simple.SimpleLayout;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionParameter;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.AdminEvaluator;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;

@@ -22,7 +22,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.dao.usertype.FunctionalNameType;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Step;

@@ -21,7 +21,7 @@ package org.jasig.portal.security.remoting;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
+import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IAuthorizationService;
 import org.jasig.portal.security.IPerson;

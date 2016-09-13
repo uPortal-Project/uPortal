@@ -38,7 +38,7 @@ import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
-import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
+import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
