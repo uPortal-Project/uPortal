@@ -48,6 +48,7 @@ import org.lesscss.LessException;
 import org.lesscss.LessSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -91,6 +92,8 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         this.uniqueTokenGenerator = uniqueTokenGenerator;
         this.cssFileNamer = namer;
     }
+
+
 
     @Override
     abstract public String getSkinCssPath(DynamicSkinInstanceData data);
@@ -347,6 +350,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
         return skins;
     }
 
+    @Value("${dynamic-skin.less-css-javascript-location:" + LESS_CSS_JAVASCRIPT_URL + "}")
     public void setLessCssJavascriptUrlPath(String lessCssJavascriptUrlPath) {
         this.lessCssJavascriptUrlPath = lessCssJavascriptUrlPath;
     }

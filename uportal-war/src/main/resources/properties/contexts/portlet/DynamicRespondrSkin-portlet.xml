@@ -41,10 +41,8 @@
      | To read/write Dynamic Skin CSS from/to an AWS S3 bucket, follow these step:
      |
      | 1. Set up the AWS S3 bucket properties by doing a.) or b.) below:
-     |    a.) update the dynamic-skin-aws-s3-bucket.properties and add the following to the 
-     |        "primaryPropertyPlaceholderConfigurer" bean "locations" property list:
-     |            <value>classpath:/properties/dynamic-skin-portlet.properties</value>
-     |    b.) copy properties from dynamic-skin-portlet.properties to your property overrides
+     |    a.) update the dynamic-skin* properties in portal.properties
+     |    b.) copy dynamic-skin* properties from portal.properties to your property overrides
      |        file, update the values, and set up property overrides
      |        see:  https://wiki.jasig.org/display/UPM43/Properties+Files+and+Properties+Overrides
      | 2. Replace the "org\.jasig\.portal\.portlets\.dynamicskin\.storage\.filesystem\..*"" component scan exclude filter regex expression with:
