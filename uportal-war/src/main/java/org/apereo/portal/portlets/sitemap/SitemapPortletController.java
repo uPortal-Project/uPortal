@@ -31,8 +31,8 @@ import javax.xml.transform.stax.StAXSource;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.rendering.PipelineEventReader;
-import org.jasig.portal.rendering.StAXPipelineComponent;
+import org.apereo.portal.rendering.PipelineEventReader;
+import org.apereo.portal.rendering.StAXPipelineComponent;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.xml.XsltPortalUrlProvider;
 import org.springframework.beans.factory.annotation.Autowired;

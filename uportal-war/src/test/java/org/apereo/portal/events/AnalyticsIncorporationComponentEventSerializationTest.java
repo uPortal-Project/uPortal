@@ -29,7 +29,7 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
-import org.jasig.portal.rendering.AnalyticsIncorporationComponent;
+import org.apereo.portal.rendering.AnalyticsIncorporationComponent;
 import org.jasig.portal.security.SystemPerson;
 import org.junit.Before;
 import org.junit.Ignore;

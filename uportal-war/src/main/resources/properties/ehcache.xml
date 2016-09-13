@@ -552,7 +552,7 @@
      | - 1 x user x navigational state
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.rendering.STRUCTURE_TRANSFORM"
+    <cache name="org.apereo.portal.rendering.STRUCTURE_TRANSFORM"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -561,7 +561,7 @@
      | - 1 x user x navigational state
      | - not replicated
      +-->
-    <cache name="org.jasig.portal.rendering.THEME_TRANSFORM"
+    <cache name="org.apereo.portal.rendering.THEME_TRANSFORM"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 

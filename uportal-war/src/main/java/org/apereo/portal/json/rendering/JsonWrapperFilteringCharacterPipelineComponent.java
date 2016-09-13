@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.character.stream.CharacterEventReader;
 import org.apereo.portal.character.stream.events.CharacterEvent;
-import org.jasig.portal.rendering.CharacterPipelineComponentWrapper;
-import org.jasig.portal.rendering.PipelineEventReader;
-import org.jasig.portal.rendering.PipelineEventReaderImpl;
+import org.apereo.portal.rendering.CharacterPipelineComponentWrapper;
+import org.apereo.portal.rendering.PipelineEventReader;
+import org.apereo.portal.rendering.PipelineEventReaderImpl;
 import org.jasig.portal.utils.cache.CacheKey;
 
 /**
@@ -39,7 +39,7 @@ import org.jasig.portal.utils.cache.CacheKey;
 public class JsonWrapperFilteringCharacterPipelineComponent extends CharacterPipelineComponentWrapper {
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.apereo.portal.rendering.PipelineComponent#getCacheKey(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public CacheKey getCacheKey(HttpServletRequest request, HttpServletResponse response) {
@@ -47,7 +47,7 @@ public class JsonWrapperFilteringCharacterPipelineComponent extends CharacterPip
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.rendering.PipelineComponent#getEventReader(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     * @see org.apereo.portal.rendering.PipelineComponent#getEventReader(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     @Override
     public PipelineEventReader<CharacterEventReader, CharacterEvent> getEventReader(HttpServletRequest request, HttpServletResponse response) {

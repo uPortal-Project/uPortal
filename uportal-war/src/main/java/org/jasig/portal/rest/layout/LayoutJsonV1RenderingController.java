@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.rendering.IPortalRenderingPipeline;
+import org.apereo.portal.rendering.IPortalRenderingPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

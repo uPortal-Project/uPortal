@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.rendering.xslt.TransformerConfigurationSourceAdapter;
+import org.apereo.portal.rendering.xslt.TransformerConfigurationSourceAdapter;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Resources;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
