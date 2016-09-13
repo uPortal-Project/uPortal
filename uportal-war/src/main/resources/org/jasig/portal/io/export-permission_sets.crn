@@ -37,7 +37,7 @@
                 <attribute key="PRINCIPAL_TYPE">${groovy(SET_KEY_PARTS.get('PRINCIPAL_TYPE'))}</attribute>
                 <attribute key="Attributes.NODE">${newDoc(permission-set)}</attribute>
                 <subtasks>
-                    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-permission_set_v5-0.crn)}"/>
+                    <append-node node="${attributeNode(script=classpath://org/apereo/portal/io/import-permission_set_v5-0.crn)}"/>
 
                     <append-node>
                         <owner>${OWNER}</owner>

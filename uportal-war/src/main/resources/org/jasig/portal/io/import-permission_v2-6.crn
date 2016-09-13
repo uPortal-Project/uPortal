@@ -31,7 +31,7 @@
  |
  +-->
 <with-attribute key="ENTITY_TYPE_NAME" value="${valueOf(principal-type)}">
-    <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
+    <with-attribute key="ENTITY_TYPE_ID" value="${crn(classpath:/org/apereo/portal/io/lookup-entity_type_id.crn)}">
         <sql-transaction>
             <sql-upsert>
                 <update-statement>

@@ -28,10 +28,10 @@
             <append-node sibling="${singleNode(owner)}">
                 <principal-type>org.apereo.portal.groups.IEntityGroup</principal-type>
             </append-node>
-            <crn location="import-permission_set_v5-0.crn"/>
+            <crn location="classpath:/org/apereo/portal/io/import-permission_set_v5-0.crn"/>
         </when>
         <otherwise>
-            <crn location="import-permission_set_v5-0.crn"/>
+            <crn location="classpath:/org/apereo/portal/io/import-permission_set_v5-0.crn"/>
         </otherwise>
     </choose>
 </with-attribute>

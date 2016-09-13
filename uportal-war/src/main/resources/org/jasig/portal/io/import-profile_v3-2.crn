@@ -35,8 +35,8 @@
     <attribute key="THEME_STYLESHEET_NAME">${valueOf(theme/@name)}</attribute>
     <subtasks>
         <with>
-            <attribute key="STRUCTURE_STYLESHEET_ID">${crn(lookup-ss_struct_id.crn)}</attribute>
-            <attribute key="THEME_STYLESHEET_ID">${crn(lookup-ss_theme_id.crn)}</attribute>
+            <attribute key="STRUCTURE_STYLESHEET_ID">${crn(classpath:/org/apereo/portal/io/lookup-ss_struct_id.crn)}</attribute>
+            <attribute key="THEME_STYLESHEET_ID">${crn(classpath:/org/apereo/portal/io/lookup-ss_theme_id.crn)}</attribute>
             <subtasks>
                 <sql-transaction>
                     <!-- 

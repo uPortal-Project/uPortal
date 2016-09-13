@@ -28,7 +28,7 @@
         </sql>
         <parameter value="${GROUP_NAME}"/>
         <subtasks>
-    <append-node node="${attributeNode(script=classpath://org/jasig/portal/io/import-group_membership_v3-2.crn)}"/>
+    <append-node node="${attributeNode(script=classpath://org/apereo/portal/io/import-group_membership_v5-0.crn)}"/>
 
     <append-node>
         <name>${GROUP_NAME}</name>
@@ -80,7 +80,7 @@
                         </choose>
                     </with-attribute>
                 </when>
-                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.jasig.portal.portlet.om.IPortletDefinition'))}">
+                <when test="${jexl(!ENTITY_TYPE_NAME.equals('org.apereo.portal.portlet.om.IPortletDefinition'))}">
                     <!-- Ignore channels, their group membership information is handled by the chanpub files -->
                     <append-node parent="${singleNode(children)}">
                         <literal>${MEMBER_KEY}</literal>
