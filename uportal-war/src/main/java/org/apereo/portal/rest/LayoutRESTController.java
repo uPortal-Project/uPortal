@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.rest;
+package org.apereo.portal.rest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +34,8 @@ import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.rest.layout.LayoutPortlet;
-import org.jasig.portal.rest.layout.TabListOfNodes;
+import org.apereo.portal.rest.layout.LayoutPortlet;
+import org.apereo.portal.rest.layout.TabListOfNodes;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalUrlBuilder;

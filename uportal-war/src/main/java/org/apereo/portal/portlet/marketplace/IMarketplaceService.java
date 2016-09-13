@@ -22,7 +22,7 @@ package org.apereo.portal.portlet.marketplace;
 import com.google.common.collect.ImmutableSet;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
-import org.jasig.portal.rest.layout.MarketplaceEntry;
+import org.apereo.portal.rest.layout.MarketplaceEntry;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 

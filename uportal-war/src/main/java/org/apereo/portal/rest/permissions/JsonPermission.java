@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.rest.permissions;
+package org.apereo.portal.rest.permissions;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.apache.commons.lang.builder.EqualsBuilder;
 
 
 public class JsonPermission implements Comparable<JsonPermission> {

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.rest.layout;
+package org.apereo.portal.rest.layout;
 
 import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.portlet.om.IPortletDefinition;

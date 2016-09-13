@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.rest;
+package org.apereo.portal.rest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
-import org.jasig.portal.rest.layout.LayoutPortlet;
+import org.apereo.portal.rest.layout.LayoutPortlet;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;

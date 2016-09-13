@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.rest.RemoteCookieCheckController;
+import org.apereo.portal.rest.RemoteCookieCheckController;
 
 public class RemoteCookieCheckFilter implements Filter {
     public static final String COOKIE_NAME = "JSESSIONID";

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.rest;
+package org.apereo.portal.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,8 +33,8 @@ import org.apereo.portal.portlet.marketplace.IMarketplaceService;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.IPortletDefinition;
-import org.jasig.portal.rest.layout.MarketplaceEntry;
-import org.jasig.portal.rest.layout.MarketplaceEntryRating;
+import org.apereo.portal.rest.layout.MarketplaceEntry;
+import org.apereo.portal.rest.layout.MarketplaceEntryRating;
 import org.jasig.portal.security.AuthorizationPrincipalHelper;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;

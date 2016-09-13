@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.rest;
+package org.apereo.portal.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

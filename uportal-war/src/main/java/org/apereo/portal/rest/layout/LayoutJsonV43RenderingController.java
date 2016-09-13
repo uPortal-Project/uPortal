@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.rest.layout;
+package org.apereo.portal.rest.layout;
 
 import java.io.IOException;
 
@@ -36,23 +36,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * @author Eric Dalquist
+ * Provides endpoint that returns a JSON representation of the user's layout.  The purpose of this 
+ * data is to support the Javascript-driven rendering of the uPortal UI.
+ * 
+ * @author Gary Roybal
+ * @since uPortal 4.3
  */
 @Controller
-public class LayoutJsonV1RenderingController {
+public class LayoutJsonV43RenderingController {
 
-    public static final String STRUCTURE_STYLESHEET_NAME = "DLMMobileColumns";
-    public static final String THEME_STYLESHEET_NAME = "JsonLayout";
-    public static final String URL = "/v1/dlm/layout.json";
-
+    private static final String STRUCTURE_STYLESHEET_NAME = "DLMTabsColumnsJS";
+    private static final String THEME_STYLESHEET_NAME = "JsonLayoutV4-3";
+    
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private IPortalRenderingPipeline portalRenderingPipeline;
-    private IPortletWindowRegistry portletWindowRegistry;
 
     @Autowired
     private IStylesheetUserPreferencesService stylesheetUserPrefService;
     
+    private IPortalRenderingPipeline portalRenderingPipeline;
+    private IPortletWindowRegistry portletWindowRegistry;
+
     @Autowired
     @Qualifier("json")
     public void setPortalRenderingPipeline(IPortalRenderingPipeline portalRenderingPipeline) {
@@ -64,26 +67,24 @@ public class LayoutJsonV1RenderingController {
         this.portletWindowRegistry = portletWindowRegistry;
     }
 
-    @RequestMapping(value=URL, method = RequestMethod.GET)
-    public void v1RenderRequest(HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping(value="/v4-3/dlm/layout.json", method = RequestMethod.GET)
+    public void renderRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        this.internalRenderRequest(request, response);
+        this.setStructureStylesheetNameForJavascriptDrivenContentRendering(request);
+        this.setThemeStylesheetVersionForJavascriptDrivenContentRendering(request);
+        this.portletWindowRegistry.disablePersistentWindowStates(request);
+        this.portalRenderingPipeline.renderState(request, response);
     }
 
-    private void internalRenderRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        setStructureStylesheetName(request);
-        setThemeStylesheetName(request);
-        portletWindowRegistry.disablePersistentWindowStates(request);
-        portalRenderingPipeline.renderState(request, response);
-    }
-
-    private void setStructureStylesheetName(final HttpServletRequest request) {
+    private void setStructureStylesheetNameForJavascriptDrivenContentRendering(
+            final HttpServletRequest request) {
         stylesheetUserPrefService.setStructureStylesheetOverride(request, STRUCTURE_STYLESHEET_NAME);
     }
 
-    private void setThemeStylesheetName(final HttpServletRequest request) {
+    private void setThemeStylesheetVersionForJavascriptDrivenContentRendering(
+            final HttpServletRequest request) {
         stylesheetUserPrefService.setThemeStyleSheetOverride(request, THEME_STYLESHEET_NAME);
+        
     }
 
 }

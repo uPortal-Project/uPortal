@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.rest;
+package org.apereo.portal.rest;
 
 import org.jasig.portal.utils.web.RemoteCookieCheckFilter;
 import org.springframework.stereotype.Controller;
