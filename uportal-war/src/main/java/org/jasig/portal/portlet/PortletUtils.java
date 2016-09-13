@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.marketplace.MarketplacePortletDefinition;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.search.PortletUrl;
 import org.jasig.portal.search.PortletUrlParameter;
 import org.jasig.portal.search.PortletUrlType;

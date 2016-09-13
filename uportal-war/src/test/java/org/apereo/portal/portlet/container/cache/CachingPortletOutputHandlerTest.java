@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.NullWriter;
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

@@ -78,7 +78,7 @@ import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.portletpublishing.xml.MultiValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Parameter;
 import org.jasig.portal.portletpublishing.xml.ParameterInputType;

@@ -569,7 +569,7 @@
      | Caches resolution of events that are supported by the portlet deployment
      | - 1 x portlet deployment x portlet event
      +-->
-    <cache name="org.jasig.portal.portlet.rendering.SupportedEventCache"
+    <cache name="org.apereo.portal.portlet.rendering.SupportedEventCache"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 

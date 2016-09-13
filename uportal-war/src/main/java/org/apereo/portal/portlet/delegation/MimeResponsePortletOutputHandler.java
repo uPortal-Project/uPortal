@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 
 import javax.portlet.MimeResponse;
 
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 /**
  * Delegates to a {@link MimeResponse}

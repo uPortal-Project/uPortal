@@ -32,7 +32,7 @@ import org.apereo.portal.character.stream.events.CharacterEventTypes;
 import org.apereo.portal.character.stream.events.PortletContentPlaceholderEvent;
 import org.apereo.portal.character.stream.events.PortletHeaderPlaceholderEvent;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.rendering.IPortletExecutionManager;
+import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

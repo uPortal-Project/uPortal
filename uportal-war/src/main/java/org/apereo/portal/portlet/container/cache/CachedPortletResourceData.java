@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import javax.portlet.CacheControl;
 
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

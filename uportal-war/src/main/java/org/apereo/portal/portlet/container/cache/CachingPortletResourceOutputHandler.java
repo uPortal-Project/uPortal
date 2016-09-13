@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
  * Extention of {@link CachingPortletOutputHandler} that adds support for resource requests

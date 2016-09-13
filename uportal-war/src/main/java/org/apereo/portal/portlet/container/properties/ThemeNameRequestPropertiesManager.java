@@ -25,7 +25,7 @@ import org.jasig.portal.IUserProfile;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Populator;

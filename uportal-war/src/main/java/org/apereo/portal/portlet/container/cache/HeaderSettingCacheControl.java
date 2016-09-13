@@ -21,7 +21,7 @@ package org.apereo.portal.portlet.container.cache;
 import javax.portlet.CacheControl;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
  * CacheControl where calls to {@link #setExpirationTime(int)}, {@link #setPublicScope(boolean)}, and

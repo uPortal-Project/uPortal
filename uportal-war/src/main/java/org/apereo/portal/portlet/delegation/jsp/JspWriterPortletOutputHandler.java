@@ -25,7 +25,7 @@ import java.io.PrintWriter;
 import javax.portlet.MimeResponse;
 import javax.servlet.jsp.JspWriter;
 
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 /**
  * Output handler that delegates to a {@link JspWriter}

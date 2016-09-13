@@ -24,7 +24,7 @@ import java.util.TimeZone;
 import javax.portlet.ResourceResponse;
 
 import org.apache.commons.lang.time.FastDateFormat;
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
  * Delegates to a {@link ResourceResponse}

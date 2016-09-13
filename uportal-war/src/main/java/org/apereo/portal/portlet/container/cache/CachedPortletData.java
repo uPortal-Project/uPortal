@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.portlet.CacheControl;
 
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 /**
  * Java bean to represent the data cached for a portlet request via 

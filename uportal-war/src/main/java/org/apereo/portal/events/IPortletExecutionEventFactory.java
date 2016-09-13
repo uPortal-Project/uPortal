@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
+import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.url.IPortalRequestInfo;
 
 /**

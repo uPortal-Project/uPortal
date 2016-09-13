@@ -33,7 +33,7 @@ import javax.portlet.WindowState;
 import javax.xml.namespace.QName;
 
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
-import org.jasig.portal.portlet.rendering.worker.IPortletExecutionWorker;
+import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.jasig.portal.security.SystemPerson;
 import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.jasig.portal.tenants.ITenant;

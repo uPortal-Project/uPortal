@@ -25,7 +25,7 @@ import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.rendering.PortletRenderResult;
+import org.apereo.portal.portlet.rendering.PortletRenderResult;
 
 /**
  * Interface defining mechanism for retrieving {@link CacheControl}s.

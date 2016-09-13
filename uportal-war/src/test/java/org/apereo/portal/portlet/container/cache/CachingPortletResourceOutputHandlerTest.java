@@ -21,7 +21,7 @@ package org.apereo.portal.portlet.container.cache;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

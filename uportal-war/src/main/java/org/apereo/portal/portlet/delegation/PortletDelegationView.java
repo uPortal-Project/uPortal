@@ -36,7 +36,7 @@ import org.apereo.portal.api.portlet.DelegationResponse;
 import org.apereo.portal.api.portlet.PortletDelegationDispatcher;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

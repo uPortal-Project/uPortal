@@ -34,7 +34,7 @@ import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
 import org.jasig.portal.portlet.PortletUtils;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.utils.Tuple;

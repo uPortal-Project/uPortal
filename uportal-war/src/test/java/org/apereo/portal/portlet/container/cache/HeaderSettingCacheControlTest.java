@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 import javax.portlet.CacheControl;
 
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

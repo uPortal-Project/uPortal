@@ -27,7 +27,7 @@ import java.io.Serializable;
 import javax.portlet.CacheControl;
 
 import org.apache.commons.io.output.StringBuilderWriter;
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 import com.google.common.base.Function;
 

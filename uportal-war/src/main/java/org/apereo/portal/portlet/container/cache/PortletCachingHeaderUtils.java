@@ -20,7 +20,7 @@ package org.apereo.portal.portlet.container.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import org.jasig.portal.portlet.rendering.PortletResourceOutputHandler;
+import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 
 /**
  * Utility for writing out portlet response caching related headers

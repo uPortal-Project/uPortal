@@ -29,9 +29,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.rendering.LazyPrintWriter;
-import org.jasig.portal.portlet.rendering.LazyServletOutputStream;
-import org.jasig.portal.portlet.rendering.PortletOutputHandler;
+import org.apereo.portal.portlet.rendering.LazyPrintWriter;
+import org.apereo.portal.portlet.rendering.LazyServletOutputStream;
+import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 
 /**
  * Wrapper for portlet responses that write out content: {@link MimeResponse}. As much as possible

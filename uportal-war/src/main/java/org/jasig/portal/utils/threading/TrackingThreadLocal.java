@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import org.jasig.portal.portlet.rendering.worker.TrackingThreadLocalPortletExecutionInterceptor;
+import org.apereo.portal.portlet.rendering.worker.TrackingThreadLocalPortletExecutionInterceptor;
 
 /**
  * A ThreadLocal subclass that keeps track of all created instances. Using this ThreadLocal

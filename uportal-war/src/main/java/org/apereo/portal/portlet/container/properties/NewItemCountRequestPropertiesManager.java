@@ -21,7 +21,7 @@ package org.apereo.portal.portlet.container.properties;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.portlet.rendering.IPortletRenderer;
+import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.springframework.stereotype.Service;
 
 /**
