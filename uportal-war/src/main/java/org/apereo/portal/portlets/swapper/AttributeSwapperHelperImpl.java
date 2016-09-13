@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.swapper;
+package org.apereo.portal.portlets.swapper;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.portlets.Attribute;
+import org.apereo.portal.portlets.Attribute;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.url.IPortalRequestUtils;
@@ -96,7 +96,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#getSwappableAttributes(org.springframework.webflow.context.ExternalContext)
+     * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#getSwappableAttributes(org.springframework.webflow.context.ExternalContext)
      */
     public Set<String> getSwappableAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
@@ -142,7 +142,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#getOriginalUserAttributes(java.lang.String)
+     * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#getOriginalUserAttributes(java.lang.String)
      */
     public IPersonAttributes getOriginalUserAttributes(String uid) {
         final IPersonAttributeDao delegatePersonAttributeDao = this.overwritingPersonAttributeDao.getDelegatePersonAttributeDao();
@@ -150,7 +150,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#populateSwapRequest(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
+     * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#populateSwapRequest(org.springframework.webflow.context.ExternalContext, org.apereo.portal.portlets.swapper.AttributeSwapRequest)
      */
     public void populateSwapRequest(ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         final Principal currentUser = externalContext.getCurrentUser();
@@ -170,7 +170,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(org.springframework.webflow.context.ExternalContext, org.jasig.portal.portlets.swapper.AttributeSwapRequest)
+     * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#swapAttributes(org.springframework.webflow.context.ExternalContext, org.apereo.portal.portlets.swapper.AttributeSwapRequest)
      */
     public void swapAttributes(ExternalContext externalContext, AttributeSwapRequest attributeSwapRequest) {
         //Collate the swap request into a single overrides map
@@ -241,7 +241,7 @@ public class AttributeSwapperHelperImpl implements IAttributeSwapperHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IAttributeSwapperHelper#resetAttributes(java.lang.String)
+     * @see org.apereo.portal.portlets.swapper.IAttributeSwapperHelper#resetAttributes(java.lang.String)
      */
     public void resetAttributes(ExternalContext externalContext) {
         final Principal currentUser = externalContext.getCurrentUser();

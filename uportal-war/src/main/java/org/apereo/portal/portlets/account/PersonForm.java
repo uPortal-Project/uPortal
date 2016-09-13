@@ -26,8 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
 import org.jasig.portal.portletpublishing.xml.Preference;
-import org.jasig.portal.portlets.StringListAttribute;
-import org.jasig.portal.portlets.StringListAttributeFactory;
+import org.apereo.portal.portlets.StringListAttribute;
+import org.apereo.portal.portlets.StringListAttributeFactory;
 
 public class PersonForm implements Serializable {
 

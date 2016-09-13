@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets;
+package org.apereo.portal.portlets;
 
 import java.io.Serializable;
 
 import org.apache.commons.collections.Factory;
 
-public class StringListAttributeFactory implements Factory, Serializable {
+public class BooleanAttributeFactory implements Factory, Serializable {
     private static final long serialVersionUID = 1L;
 
-    public StringListAttribute create() {
-        return new StringListAttribute();
+    public BooleanAttribute create() {
+        return new BooleanAttribute();
     }
 }

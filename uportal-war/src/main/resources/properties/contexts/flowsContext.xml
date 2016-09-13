@@ -46,10 +46,10 @@
     
     
     <!-- Beans for the attribute-swapper flow -->       
-    <bean id="attributeSwapperHelper" class="org.jasig.portal.portlets.swapper.AttributeSwapperHelperImpl">
+    <bean id="attributeSwapperHelper" class="org.apereo.portal.portlets.swapper.AttributeSwapperHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>   
-    <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
+    <bean id="attributeSwapRequestValidator" class="org.apereo.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
      

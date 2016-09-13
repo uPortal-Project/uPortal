@@ -25,8 +25,8 @@ import java.util.Map;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.jasig.portal.portlets.Attribute;
-import org.jasig.portal.portlets.AttributeFactory;
+import org.apereo.portal.portlets.Attribute;
+import org.apereo.portal.portlets.AttributeFactory;
 
 /**
  * Represents a query for a person using attributes submitted by the user.

@@ -29,7 +29,7 @@ import javax.portlet.RenderRequest;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.portlets.PortletPreferencesJsonDao;
+import org.apereo.portal.portlets.PortletPreferencesJsonDao;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.services.GroupService;
 import org.slf4j.Logger;

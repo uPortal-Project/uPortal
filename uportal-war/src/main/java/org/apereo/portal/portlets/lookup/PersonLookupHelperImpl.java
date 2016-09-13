@@ -119,7 +119,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
+     * @see org.apereo.portal.portlets.swapper.IPersonLookupHelper#getQueryAttributes(org.springframework.webflow.context.ExternalContext)
      */
     public Set<String> getQueryAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();
@@ -150,7 +150,7 @@ public class PersonLookupHelperImpl implements IPersonLookupHelper {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.portlets.swapper.IPersonLookupHelper#getDisplayAttributes(org.springframework.webflow.context.ExternalContext)
+     * @see org.apereo.portal.portlets.swapper.IPersonLookupHelper#getDisplayAttributes(org.springframework.webflow.context.ExternalContext)
      */
     public Set<String> getDisplayAttributes(ExternalContext externalContext) {
         final PortletRequest portletRequest = (PortletRequest)externalContext.getNativeRequest();

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.swapper;
+package org.apereo.portal.portlets.swapper;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -25,8 +25,8 @@ import java.util.Map;
 import org.apache.commons.collections.map.LazyMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.jasig.portal.portlets.Attribute;
-import org.jasig.portal.portlets.AttributeFactory;
+import org.apereo.portal.portlets.Attribute;
+import org.apereo.portal.portlets.AttributeFactory;
 
 /**
  * Request to change the specified attributes

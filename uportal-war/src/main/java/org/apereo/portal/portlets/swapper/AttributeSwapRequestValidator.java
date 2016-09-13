@@ -16,12 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.swapper;
+package org.apereo.portal.portlets.swapper;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.jasig.portal.portlets.Attribute;
+import org.apereo.portal.portlets.Attribute;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.message.MessageResolver;

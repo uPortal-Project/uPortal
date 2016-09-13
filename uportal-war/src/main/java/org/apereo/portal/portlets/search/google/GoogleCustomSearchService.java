@@ -60,7 +60,7 @@ public class GoogleCustomSearchService implements IPortalSearchService {
     
     private String resultSize = "large";
     private String customSearchId;
-    @Value("${org.jasig.portal.portlets.googleWebSearch.search.result.type:googleCustom}")
+    @Value("${org.apereo.portal.portlets.googleWebSearch.search.result.type:googleCustom}")
     private String resultType = "googleCustom";
     
     private RestOperations restOperations;

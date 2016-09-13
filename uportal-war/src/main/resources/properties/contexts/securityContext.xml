@@ -59,7 +59,7 @@
                 <!-- Before using the string encryption service you should first set a password.  The default
                      password works but is not secure.
                 -->
-                <property name="password" value="${org.jasig.portal.portlets.passwordEncryptionKey}"/>
+                <property name="password" value="${org.apereo.portal.portlets.passwordEncryptionKey}"/>
                 
                 <!-- 
                     Example BouncyCastle-powered AES encryption

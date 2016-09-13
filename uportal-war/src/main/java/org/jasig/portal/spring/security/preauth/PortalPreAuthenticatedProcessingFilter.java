@@ -36,8 +36,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.profile.ProfileSelectionEvent;
-import org.jasig.portal.portlets.swapper.IdentitySwapperPrincipal;
-import org.jasig.portal.portlets.swapper.IdentitySwapperSecurityContext;
+import org.apereo.portal.portlets.swapper.IdentitySwapperPrincipal;
+import org.apereo.portal.portlets.swapper.IdentitySwapperSecurityContext;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;
 import org.jasig.portal.security.IdentitySwapperManager;
@@ -63,7 +63,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  */
 public class PortalPreAuthenticatedProcessingFilter
         extends AbstractPreAuthenticatedProcessingFilter {
-    protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
+    protected final Log swapperLog = LogFactory.getLog("org.apereo.portal.portlets.swapper");
 
     private String loginPath = "/Login";
     private String logoutPath = "/Logout";

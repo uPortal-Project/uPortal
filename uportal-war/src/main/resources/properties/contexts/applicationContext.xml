@@ -33,7 +33,7 @@
     <aop:aspectj-autoproxy/>
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets">
+    <context:component-scan base-package="org.apereo.portal.portlets">
         <context:include-filter type="regex" expression=".*\.PortletPreferencesJsonDao" />
         <context:include-filter type="regex" expression=".*\.account\.UserAccountHelper" />
     </context:component-scan>

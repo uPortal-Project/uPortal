@@ -126,8 +126,8 @@
     <util:map id="searchTabs">
         <entry key="googleInstitution.results">
             <list>
-                <value>${org.jasig.portal.portlets.googleWebSearch.search.result.type}</value>
-                <value>${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}</value>
+                <value>${org.apereo.portal.portlets.googleWebSearch.search.result.type}</value>
+                <value>${org.apereo.portal.portlets.googleSearchAppliance.search.result.type}</value>
             </list>
         </entry>
     </util:map>
@@ -143,10 +143,10 @@
      | and a negative value is higher than the default priority (e.g. emphasizes result).
      +-->
     <util:map id="searchAutocompletePriorityMap" value-type="java.lang.Integer">
-        <entry key="${org.jasig.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
+        <entry key="${org.apereo.portal.portlets.portletRegistry.search.result.type}" value="-5"/>
         <entry key="${org.apereo.portal.portlets.directory.search.result.type}" value="5"/>
-        <!--<entry key="${org.jasig.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
-        <!--<entry key="${org.jasig.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
+        <!--<entry key="${org.apereo.portal.portlets.googleSearchAppliance.search.result.type}" value="0"/>-->
+        <!--<entry key="${org.apereo.portal.portlets.googleWebSearch.search.result.type}" value="0"/>-->
     </util:map>
 
     <!--

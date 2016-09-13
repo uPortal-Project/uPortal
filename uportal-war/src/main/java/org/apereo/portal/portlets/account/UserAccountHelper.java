@@ -47,7 +47,7 @@ import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portletpublishing.xml.Preference;
-import org.jasig.portal.portlets.StringListAttribute;
+import org.apereo.portal.portlets.StringListAttribute;
 import org.jasig.portal.security.IAuthorizationPrincipal;
 import org.jasig.portal.security.IPerson;
 import org.jasig.portal.security.IPersonManager;

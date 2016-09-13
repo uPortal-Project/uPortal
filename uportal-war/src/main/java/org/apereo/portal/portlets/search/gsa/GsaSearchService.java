@@ -58,7 +58,7 @@ public class GsaSearchService implements IPortalSearchService {
         this.gsaSite = gsaSite;
     }
 
-    @Value("${org.jasig.portal.portlets.googleSearchAppliance.search.result.type:googleAppliance}")
+    @Value("${org.apereo.portal.portlets.googleSearchAppliance.search.result.type:googleAppliance}")
     private String resultType = "googleAppliance";
     
     public void setResultType(String resultType) {

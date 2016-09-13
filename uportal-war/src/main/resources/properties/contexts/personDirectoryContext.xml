@@ -52,7 +52,7 @@
      | Overrides DAO acts as the root, it handles incorporating attributes from the attribute swapper utility, wraps
      | the caching DAO
      +-->
-    <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
+    <bean id="personAttributeDao" class="org.apereo.portal.portlets.swapper.OverwritingPersonAttributeDao">
         <qualifier value="personAttributeDao"/>
         <property name="delegatePersonAttributeDao" ref="requestAttributeMergingDao" />
         <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />

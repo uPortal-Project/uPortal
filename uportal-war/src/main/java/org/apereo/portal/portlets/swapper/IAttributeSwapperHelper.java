@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.swapper;
+package org.apereo.portal.portlets.swapper;
 
 import java.util.Set;
 

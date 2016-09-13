@@ -51,7 +51,7 @@ public class PortletRegistrySearchService implements IPortalSearchService {
     private IPortalRequestUtils portalRequestUtils;
     private IAuthorizationService authorizationService;
 
-    @Value("${org.jasig.portal.portlets.portletRegistry.search.result.type:Portlet List}")
+    @Value("${org.apereo.portal.portlets.portletRegistry.search.result.type:Portlet List}")
     private String searchResultType = "Portlet List";
 
     @Autowired

@@ -48,12 +48,12 @@ import org.jasig.portal.portletpublishing.xml.Preference;
 import org.jasig.portal.portletpublishing.xml.PreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.SingleValuedPreferenceInputType;
 import org.jasig.portal.portletpublishing.xml.Step;
-import org.jasig.portal.portlets.Attribute;
-import org.jasig.portal.portlets.AttributeFactory;
-import org.jasig.portal.portlets.BooleanAttribute;
-import org.jasig.portal.portlets.BooleanAttributeFactory;
-import org.jasig.portal.portlets.StringListAttribute;
-import org.jasig.portal.portlets.StringListAttributeFactory;
+import org.apereo.portal.portlets.Attribute;
+import org.apereo.portal.portlets.AttributeFactory;
+import org.apereo.portal.portlets.BooleanAttribute;
+import org.apereo.portal.portlets.BooleanAttributeFactory;
+import org.apereo.portal.portlets.StringListAttribute;
+import org.apereo.portal.portlets.StringListAttributeFactory;
 import org.jasig.portal.xml.PortletDescriptor;
 
 public class PortletDefinitionForm implements Serializable {

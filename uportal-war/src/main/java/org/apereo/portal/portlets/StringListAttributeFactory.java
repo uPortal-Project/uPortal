@@ -16,22 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets;
+package org.apereo.portal.portlets;
 
 import java.io.Serializable;
 
 import org.apache.commons.collections.Factory;
 
-/**
- * commons-collections Factory that creates new {@link Attribute}s
- * 
- * @author Eric Dalquist
- * @version $Revision$
- */
-public class AttributeFactory implements Factory, Serializable {
+public class StringListAttributeFactory implements Factory, Serializable {
     private static final long serialVersionUID = 1L;
 
-    public Attribute create() {
-        return new Attribute();
+    public StringListAttribute create() {
+        return new StringListAttribute();
     }
 }
