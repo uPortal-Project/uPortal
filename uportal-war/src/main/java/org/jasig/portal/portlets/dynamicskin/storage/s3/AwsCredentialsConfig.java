@@ -16,16 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+package org.jasig.portal.portlets.dynamicskin.storage.s3;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.services.s3.AmazonS3Client;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Class to encapsulate the AWS credential properties, with the properties read in from a properties file and 

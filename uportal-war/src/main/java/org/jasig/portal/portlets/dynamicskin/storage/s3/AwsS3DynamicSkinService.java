@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage.s3;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,17 +28,6 @@ import java.util.Map.Entry;
 
 import javax.portlet.PortletPreferences;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -46,8 +35,23 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-
 import net.sf.ehcache.Cache;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
+import org.jasig.portal.portlets.dynamicskin.storage.AbstractDynamicSkinService;
+import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
+import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 /**
  * {@link DynamicSkinService} implementation that saves the CSS to an AWS S3 bucket.

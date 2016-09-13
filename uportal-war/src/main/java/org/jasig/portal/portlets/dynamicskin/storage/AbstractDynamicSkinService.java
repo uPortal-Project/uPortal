@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,8 +35,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.portlets.dynamicskin.DynamicRespondrSkinConstants;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
 import org.lesscss.LessCompiler;
 import org.lesscss.LessException;
 import org.lesscss.LessSource;
@@ -46,9 +52,6 @@ import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 
 /**
  * Abstract base class for {@link DynamicSkinService} classes.
@@ -77,7 +80,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
     private DynamicSkinUniqueTokenGenerator uniqueTokenGenerator;
     private DynamicSkinCssFileNamer cssFileNamer;
 
-    AbstractDynamicSkinService(
+    public AbstractDynamicSkinService(
             final DynamicSkinUniqueTokenGenerator uniqueTokenGenerator,
             final DynamicSkinCssFileNamer namer,
             final Cache failureCache) {
@@ -165,7 +168,7 @@ public abstract class AbstractDynamicSkinService implements DynamicSkinService {
      * LESS compilations and completely take down the portal.  The bad file will be blacklisted for a period
      * of time to limit performance impacts.
      * 
-     * @see org.jasig.portal.portlets.dynamicskin.DynamicSkinService#generateSkinCssFile(DynamicSkinInstanceData)
+     * @see DynamicSkinService#generateSkinCssFile(DynamicSkinInstanceData)
      */
     @Override
     public void generateSkinCssFile(DynamicSkinInstanceData data) {

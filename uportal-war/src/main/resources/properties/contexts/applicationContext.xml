@@ -33,19 +33,24 @@
     <aop:aspectj-autoproxy/>
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets">
+    <context:component-scan base-package="org.jasig.portal.portlets" use-default-filters="false">
         <context:include-filter type="regex" expression=".*\.PortletPreferencesJsonDao" />
-        <context:include-filter type="regex" expression=".*\.account\.UserAccountHelper" />
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.UserAccountHelper" />
+        <context:include-filter type="assignable" expression="org.jasig.portal.portlets.account.IPasswordResetNotification"/>
+        <context:include-filter type="regex" expression=".*\.portletadmin\.xmlsupport\.XmlChannelPublishingDefinitionDao"/>
+    </context:component-scan>
+    <context:component-scan base-package="org.jasig.portal" use-default-filters="false">
+        <context:include-filter type="regex" expression=".*\.rendering\.PortletEventCoordinatationService"/>
     </context:component-scan>
     <context:component-scan base-package="org.jasig.portal">
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\..*"/>
+        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\..*"/>
     </context:component-scan>
     
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
@@ -80,6 +85,7 @@
               <value>file:${PORTAL_HOME}/overrides.properties</value>
               <value>file:${CATALINA_HOME}/portal/uPortal_overrides.properties</value>
               <value>file:${PORTAL_HOME}/uPortal_overrides.properties</value>
+              <value>classpath:/properties/dynamic-skin-portlet.properties</value>
             </list>
         </property>
     </bean>

@@ -16,19 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage.s3;
 
 import javax.portlet.PortletPreferences;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 /**
- * {@link DynamicSkinCssFileNamer} class that uses a the value of a specific {@link PortletPreferences} preference as 
+ * {@link DynamicSkinCssFileNamer} class that uses a the value of a specific {@link PortletPreferences} preference as
  * the Dynamic Skin CSS file name.  Since the name does not vary based on the values of the portlet preferences used 
  * for LESS variables, this class must be used in conjunction with a strategy for storing the 'unique' token somewhere
  * other than the filename (such as file metadata).
  */
+@Service
 public class PrefValueDynamicSkinCssFileNamer implements DynamicSkinCssFileNamer {
 
     public static final String SKIN_CSS_FILE_NAME_PREFERENCE_NAME = "dynamicSkinCssFileName";

@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage;
+
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
 
 /**
  * Interface for classes used to uniquely name the Dynamic Skin CSS files.

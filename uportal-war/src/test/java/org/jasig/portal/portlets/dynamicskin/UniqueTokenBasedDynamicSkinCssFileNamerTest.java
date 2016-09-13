@@ -24,6 +24,7 @@ import static org.mockito.BDDMockito.given;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 
+import org.jasig.portal.portlets.dynamicskin.storage.filesystem.UniqueTokenBasedDynamicSkinCssFileNamer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

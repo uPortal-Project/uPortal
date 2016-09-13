@@ -16,15 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage.filesystem;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
+import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 /**
- * {@link DynamicSkinCssFileNamer} class that uses a {@link DynamicSkinUniqueTokenGenerator} to create unique Dynamic 
+ * {@link DynamicSkinCssFileNamer} class that uses a {@link DynamicSkinUniqueTokenGenerator} to create unique Dynamic
  * Skin CSS file names.  A file prefix can be provided, otherwise the skin name will be used as the prefix.
  */
+@Service
 public class UniqueTokenBasedDynamicSkinCssFileNamer implements DynamicSkinCssFileNamer {
 
     private String prefix;
@@ -35,8 +43,10 @@ public class UniqueTokenBasedDynamicSkinCssFileNamer implements DynamicSkinCssFi
         this.uniqueTokenGenerator = generator;
     }
 
+    @Autowired
     public UniqueTokenBasedDynamicSkinCssFileNamer(
-            final String prefix, final DynamicSkinUniqueTokenGenerator generator) {
+            @Value("${dynamic-skin.skin-prefix:skin}") final String prefix,
+            final DynamicSkinUniqueTokenGenerator generator) {
         this(generator);
         Assert.notNull(prefix);
         this.prefix = prefix;

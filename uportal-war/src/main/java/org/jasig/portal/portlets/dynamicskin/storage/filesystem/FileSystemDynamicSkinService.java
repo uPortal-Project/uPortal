@@ -16,15 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.jasig.portal.portlets.dynamicskin.storage.filesystem;
 
 import java.io.File;
 
+import net.sf.ehcache.Cache;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
+import org.jasig.portal.portlets.dynamicskin.storage.AbstractDynamicSkinService;
+import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import net.sf.ehcache.Cache;
 
 /**
  * File system based implementation of services for the Skin Manager.
