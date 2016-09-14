@@ -149,7 +149,7 @@
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
     <!-- ********** Database Utilities ********** -->
-    <bean name="portalDbHibernateExport" class="org.jasig.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="PortalDbEntityManagerFactory,hibernateConfigurationAwareInjector">
+    <bean name="portalDbHibernateExport" class="org.apereo.portal.tools.dbloader.DataSourceSchemaExport" lazy-init="true" depends-on="PortalDbEntityManagerFactory,hibernateConfigurationAwareInjector">
         <qualifier value="PortalDb"/>
         <property name="jdbcOperations" ref="jdbcOperations" />
         <property name="persistenceUnit">

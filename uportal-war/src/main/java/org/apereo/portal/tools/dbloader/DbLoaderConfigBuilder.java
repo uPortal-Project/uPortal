@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tools.dbloader;
+package org.apereo.portal.tools.dbloader;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -69,7 +69,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#getTablesFile()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#getTablesFile()
      */
     @Override
     public String getTablesFile() {
@@ -77,7 +77,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#getDataFile()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#getDataFile()
      */
     @Override
     public String getDataFile() {
@@ -85,7 +85,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#getScriptFile()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#getScriptFile()
      */
     @Override
     public String getScriptFile() {
@@ -93,7 +93,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#isDropTables()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#isDropTables()
      */
     @Override
     public boolean isDropTables() {
@@ -101,7 +101,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#isCreateTables()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#isCreateTables()
      */
     @Override
     public boolean isCreateTables() {
@@ -109,7 +109,7 @@ public class DbLoaderConfigBuilder implements DbLoaderConfig {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.tools.dbloader.DbLoaderConfig#isPopulateTables()
+     * @see org.apereo.portal.tools.dbloader.DbLoaderConfig#isPopulateTables()
      */
     @Override
     public boolean isPopulateTables() {

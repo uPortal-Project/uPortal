@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.events;
 
-import org.jasig.portal.tenants.ITenant;
+import org.apereo.portal.tenants.ITenant;
 
 public abstract class TenantEvent extends PortalEvent {
     private static final long serialVersionUID = 1L;

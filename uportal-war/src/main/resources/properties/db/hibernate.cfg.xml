@@ -72,7 +72,7 @@
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl" />
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl" />
         <mapping class="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl" />
-        <mapping class="org.jasig.portal.tenants.JpaTenant"/>
+        <mapping class="org.apereo.portal.tenants.JpaTenant"/>
         <mapping class="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl" />
         <mapping class="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl" />
         <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"/>

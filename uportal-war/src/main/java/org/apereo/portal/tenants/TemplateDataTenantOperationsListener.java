@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,7 +44,6 @@ import org.apereo.portal.io.xml.group.GroupMembershipPortalDataType;
 import org.apereo.portal.io.xml.pags.PersonAttributesGroupStorePortalDataType;
 import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.apereo.portal.spring.spel.PortalSpELServiceImpl;
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 /**
  * Uses Import/Export to create some basic portal data for a new tenant.  You
  * can add to, adjust, or pare-down tenant template data in
- * src/main/resources/org/jasig/portal/tenants/data.
+ * src/main/resources/org/apereo/portal/tenants/data.
  * 
  * @since 4.1
  * @author awills
@@ -92,7 +91,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
 
     private List<PortalDataKey> dataKeyImportOrder = Collections.emptyList();
 
-    @Value("${org.jasig.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/jasig/portal/tenants/data/**/*.xml}")
+    @Value("${org.apereo.portal.tenants.TemplateDataTenantOperationsListener.templateLocation:classpath:/org/apereo/portal/tenants/data/**/*.xml}")
     private String templateLocation;
 
     // Evaluated by scanning a package (see 'templateLocation' above)
@@ -213,7 +212,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
             return super.onDelete(tenant);
         }
 
-        Result result = Result.SUCCESS;  // detault
+        TenantOperationResponse.Result result = TenantOperationResponse.Result.SUCCESS;  // detault
 
         // We will prepare a list of items that succeeded...
         final StringBuilder successfulEntitiesMessage = new StringBuilder();
@@ -243,7 +242,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
                 failedEntitiesMessage.append("\n  <li><span class=\"label label-info\">")
                         .append(tuple.getType()).append("</span>")
                         .append(" ").append(sysid).append("</li>");
-                result = Result.FAIL;  // We will allow subsequent listeners to follow through
+                result = TenantOperationResponse.Result.FAIL;  // We will allow subsequent listeners to follow through
             }
         }
 
@@ -289,7 +288,7 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         try {
             importQueue = prepareImportQueue(tenant, resources);
         } catch (Exception e) {
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.ABORT);
             error.addMessage(createLocalizedMessage(FAILED_TO_LOAD_TENANT_TEMPLATE, new String[] { tenant.getName() }));
             return error;
         }
@@ -307,13 +306,13 @@ public final class TemplateDataTenantOperationsListener extends AbstractTenantOp
         try {
             importQueue(tenant, importQueue, importReport);
         } catch (Exception e) {
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.ABORT);
             error.addMessage(finalizeImportReport(importReport));
             error.addMessage(createLocalizedMessage(FAILED_TO_IMPORT_TENANT_TEMPLATE_DATA, new String[] { tenant.getName() }));
             return error;
         }
 
-        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
         rslt.addMessage(finalizeImportReport(importReport));
         rslt.addMessage(createLocalizedMessage(TENANT_ENTITIES_IMPORTED, new String[] { tenant.getName() }));
         return rslt;

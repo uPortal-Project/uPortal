@@ -19,7 +19,7 @@
 package org.apereo.portal.jpa;
 
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
-import org.jasig.portal.tools.dbloader.ISchemaExport;
+import org.apereo.portal.tools.dbloader.ISchemaExport;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;
 import org.slf4j.Logger;

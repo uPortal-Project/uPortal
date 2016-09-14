@@ -17,12 +17,11 @@
  * under the License.
  */
 
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 
 /**
  * Useful for extra user input validation in Create and Update tenant operations.

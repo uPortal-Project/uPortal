@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.events.IPortalTenantEventFactory;
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,7 +152,7 @@ public class TenantService {
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onCreate(rslt);
-                if (!Result.IGNORE.equals(res.getResult())) {
+                if (!TenantOperationResponse.Result.IGNORE.equals(res.getResult())) {
                     responses.add(res);
                 }
             } catch (Exception e) {
@@ -161,7 +160,7 @@ public class TenantService {
                         + listener.toString() + "' for tenant:  " + rslt.toString();
                 throw new RuntimeException(msg, e);
             }
-            if (res.getResult().equals(Result.ABORT)) {
+            if (res.getResult().equals(TenantOperationResponse.Result.ABORT)) {
                 log.warn("ITenantOperationsListener {} aborted the creation of tenant:  ",
                                                 listener.toString(), rslt.toString());
                 // TODO:  Can we rollback somehow?
@@ -198,7 +197,7 @@ public class TenantService {
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onUpdate(tenant);
-                if (!Result.IGNORE.equals(res.getResult())) {
+                if (!TenantOperationResponse.Result.IGNORE.equals(res.getResult())) {
                     responses.add(res);
                 }
             } catch (Exception e) {
@@ -206,7 +205,7 @@ public class TenantService {
                         + listener.toString() + "' for tenant:  " + tenant.toString();
                 throw new RuntimeException(msg, e);
             }
-            if (res.getResult().equals(Result.ABORT)) {
+            if (res.getResult().equals(TenantOperationResponse.Result.ABORT)) {
                 log.warn("ITenantOperationsListener {} aborted updating tenant:  ",
                                                 listener.toString(), tenant.toString());
                 // TODO:  Can we rollback somehow?
@@ -237,7 +236,7 @@ public class TenantService {
             TenantOperationResponse res = null;  // default
             try {
                 res = listener.onDelete(tenant);
-                if (!Result.IGNORE.equals(res.getResult())) {
+                if (!TenantOperationResponse.Result.IGNORE.equals(res.getResult())) {
                     responses.add(res);
                 }
             } catch (Exception e) {
@@ -246,7 +245,7 @@ public class TenantService {
                         + tenant.toString();
                 throw new RuntimeException(msg, e);
             }
-            if (res != null && res.getResult().equals(Result.ABORT)) {
+            if (res != null && res.getResult().equals(TenantOperationResponse.Result.ABORT)) {
                 final String msg = "ITenantOperationsListener '" + listener.toString()
                         + "' aborted the operation for tenant:  " + tenant.toString();
                 throw new RuntimeException(msg);

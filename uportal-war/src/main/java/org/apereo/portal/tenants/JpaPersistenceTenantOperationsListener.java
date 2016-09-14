@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +56,11 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
             tenantDao.createOrUpdateTenant(tenant);
         } catch (Exception e) {
             log.error("Failed to create tenant {}", tenant.getName(), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.ABORT);
             error.addMessage(createLocalizedMessage(FAILED_TO_CREATE_TENANT, new String[] { tenant.getName() }));
             return error;
         }
-        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
         rslt.addMessage(createLocalizedMessage(TENANT_CREATED_SUCCESSFULLY, new String[] { tenant.getName() }));
         return rslt;
     }
@@ -72,11 +71,11 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
             tenantDao.createOrUpdateTenant(tenant);
         } catch (Exception e) {
             log.error("Failed to update tenant {}", tenant.getName(), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.ABORT);
             error.addMessage(createLocalizedMessage(FAILED_TO_UPDATE_TENANT, new String[] { tenant.getName() }));
             return error;
         }
-        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
         rslt.addMessage(createLocalizedMessage(TENANT_UPDATED_SUCCESSFULLY, new String[] { tenant.getName() }));
         return rslt;
     }
@@ -87,11 +86,11 @@ public final class JpaPersistenceTenantOperationsListener extends AbstractTenant
             tenantDao.removeTenant(tenant);
         } catch (Exception e) {
             log.error("Failed to remove tenant {}", tenant.getName(), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.ABORT);
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.ABORT);
             error.addMessage(createLocalizedMessage(FAILED_TO_DELETE_TENANT, new String[] { tenant.getName() }));
             return error;
         }
-        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
         rslt.addMessage(createLocalizedMessage(TENANT_DELETED_SUCCESSFULLY, new String[] { tenant.getName() }));
         return rslt;
     }

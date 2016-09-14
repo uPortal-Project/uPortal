@@ -35,11 +35,11 @@ import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.tenants.ITenant;
-import org.jasig.portal.tenants.ITenantManagementAction;
-import org.jasig.portal.tenants.ITenantOperationsListener;
-import org.jasig.portal.tenants.TenantOperationResponse;
-import org.jasig.portal.tenants.TenantService;
+import org.apereo.portal.tenants.ITenant;
+import org.apereo.portal.tenants.ITenantManagementAction;
+import org.apereo.portal.tenants.ITenantOperationsListener;
+import org.apereo.portal.tenants.TenantOperationResponse;
+import org.apereo.portal.tenants.TenantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

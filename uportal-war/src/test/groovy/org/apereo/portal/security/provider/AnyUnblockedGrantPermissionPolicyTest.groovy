@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apereo.portal.security.provider;
 
 import java.util.Date;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -28,7 +28,6 @@ import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -135,7 +134,7 @@ public abstract class AbstractTenantOperationsListener implements ITenantOperati
     }
 
     private TenantOperationResponse getDefaultResponse() {
-        TenantOperationResponse rslt = new TenantOperationResponse(this, Result.IGNORE);
+        TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.IGNORE);
         return rslt;
     }
 

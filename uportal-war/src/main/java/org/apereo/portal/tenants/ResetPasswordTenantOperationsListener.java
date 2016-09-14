@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 import java.util.Collections;
 import java.util.Set;
@@ -29,7 +29,6 @@ import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.portlets.account.IPasswordResetNotification;
 import org.apereo.portal.portlets.account.UserAccountHelper;
-import org.jasig.portal.tenants.TenantOperationResponse.Result;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,11 +144,11 @@ public final class ResetPasswordTenantOperationsListener extends AbstractTenantO
             sendResetPasswordEmail(tenant);
         } catch (Exception e) {
             log.error("Failed to send tenant admin email to address {} for tenant {}", tenant.getAttribute(ADMIN_CONTACT_EMAIL), tenant.getName(), e);
-            final TenantOperationResponse error = new TenantOperationResponse(this, Result.FAIL);  // Just a warning
+            final TenantOperationResponse error = new TenantOperationResponse(this, TenantOperationResponse.Result.FAIL);  // Just a warning
             error.addMessage(createLocalizedMessage(UNABLE_TO_SEND_TENANT_ADMIN_EMAIL, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
             return error;
         }
-        final TenantOperationResponse rslt = new TenantOperationResponse(this, Result.SUCCESS);
+        final TenantOperationResponse rslt = new TenantOperationResponse(this, TenantOperationResponse.Result.SUCCESS);
         rslt.addMessage(createLocalizedMessage(TENANT_ADMIN_EMAIL_SENT, new String[] { tenant.getAttribute(ADMIN_CONTACT_EMAIL) }));
         return rslt;
     }

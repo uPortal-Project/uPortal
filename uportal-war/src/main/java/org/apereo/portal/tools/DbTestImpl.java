@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tools;
+package org.apereo.portal.tools;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -49,7 +49,6 @@ import org.springframework.stereotype.Component;
  * Title: DbTest Description: Displays database metadata information Company:
  * 
  * @author John Fereira
- * @version $Revision$
  */
 @Component("dbTest")
 @Lazy

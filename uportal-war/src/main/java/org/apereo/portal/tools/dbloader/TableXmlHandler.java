@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tools.dbloader;
+package org.apereo.portal.tools.dbloader;
 
 import java.lang.reflect.Field;
 import java.sql.Types;

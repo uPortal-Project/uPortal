@@ -16,20 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.tools.dbloader;
+package org.apereo.portal.tools;
 
-import java.util.Map;
+public interface DbTest {
 
-import org.hibernate.mapping.Table;
-
-/**
- * @author Eric Dalquist
- * @version $Revision$
- */
-public interface ITableDataProvider {
-
-    public Map<String, Table> getTables();
-
-    public Map<String, Map<String, Integer>> getTableColumnTypes();
+    void printDbInfo();
 
 }

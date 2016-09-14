@@ -22,8 +22,8 @@ import org.apereo.portal.io.xml.IDataTemplatingStrategy
 import org.apereo.portal.io.xml.SpELDataTemplatingStrategy;
 import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.apereo.portal.spring.spel.PortalSpELServiceImpl;
-import org.jasig.portal.tenants.ITenant;
-import org.jasig.portal.tenants.TemplateDataTenantOperationsListener;
+import org.apereo.portal.tenants.ITenant;
+import org.apereo.portal.tenants.TemplateDataTenantOperationsListener;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

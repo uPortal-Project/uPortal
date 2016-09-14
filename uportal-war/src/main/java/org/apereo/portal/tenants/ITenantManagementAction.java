@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.tenants;
+package org.apereo.portal.tenants;
 
 /**
  * Represents a behavior of an {@link ITenantOperationsListener} that may be

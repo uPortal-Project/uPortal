@@ -20,7 +20,7 @@ package org.apereo.portal.events;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.tenants.ITenant;
+import org.apereo.portal.tenants.ITenant;
 
 /**
  * Publishes events related to tenants in the portal.
