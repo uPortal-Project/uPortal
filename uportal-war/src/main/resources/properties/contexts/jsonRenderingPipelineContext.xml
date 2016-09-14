@@ -124,7 +124,7 @@
                             <property name="parameters">
                                 <map>
                                     <entry>
-                                        <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
+                                        <key><util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl:}" />
@@ -144,13 +144,13 @@
                             <property name="cacheKeyExcludedParameters">
                                 <set>
                                     <value>CURRENT_REQUEST</value>
-                                    <util:constant static-field="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER" />
-                                    <util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" />
+                                    <util:constant static-field="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper.RESOURCES_ELEMENTS_HELPER" />
+                                    <util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" />
                                 </set>
                             </property>
                         </bean>
                         <bean class="org.apereo.portal.rendering.xslt.LocaleTransformerConfigurationSource" />
-                        <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
+                        <bean class="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>
             </bean>

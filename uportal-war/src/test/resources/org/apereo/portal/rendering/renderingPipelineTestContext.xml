@@ -74,7 +74,7 @@
                             <property name="parameters">
                                 <map>
                                     <entry>
-                                        <key><util:constant static-field="org.jasig.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
+                                        <key><util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
                                         <ref bean="xslPortalUrlProvider"/>
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="Login" />
@@ -85,7 +85,7 @@
                                 </map>
                             </property>
                         </bean>
-                        <bean class="org.jasig.portal.web.skin.ResourcesElementsXsltcHelper" />
+                        <bean class="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper" />
                     </list>
                 </property>
             </bean>
@@ -176,12 +176,12 @@
     
     <bean id="testSpelService" class="org.apereo.portal.spring.spel.PortalSpELServiceImpl" />
     
-    <bean class="org.jasig.portal.url.PortalRequestUtilsImpl" />
+    <bean class="org.apereo.portal.url.PortalRequestUtilsImpl" />
     
     <bean id="org.jasig.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
     <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
 
-    <bean id="xslPortalUrlProvider" class="org.jasig.portal.url.xml.XsltPortalUrlProvider" />
+    <bean id="xslPortalUrlProvider" class="org.apereo.portal.url.xml.XsltPortalUrlProvider" />
     
     <bean id="xalanMessageHelper" class="org.apereo.portal.security.xslt.XalanMessageHelper"/>
     <bean id="xalanAuthorizationHelper" class="org.apereo.portal.security.xslt.XalanAuthorizationHelper" />
@@ -195,7 +195,7 @@
     </bean>
     
     <bean id="portalUrlProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.url.IPortalUrlProvider" />
+        <constructor-arg value="org.apereo.portal.url.IPortalUrlProvider" />
     </bean>
     
     <bean id="portletWindowRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">

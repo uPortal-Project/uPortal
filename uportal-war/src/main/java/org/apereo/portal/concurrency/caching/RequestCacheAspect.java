@@ -37,7 +37,7 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.ConcurrentMapUtils;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.web.PortalWebUtils;

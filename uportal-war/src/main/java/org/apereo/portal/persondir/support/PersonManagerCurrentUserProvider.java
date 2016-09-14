@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.support.ICurrentUserProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 

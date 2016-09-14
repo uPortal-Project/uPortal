@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.portlets.Attribute;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.MultivaluedPersonAttributeUtils;

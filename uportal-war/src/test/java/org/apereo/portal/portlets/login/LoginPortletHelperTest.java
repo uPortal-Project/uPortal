@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.junit.Before;

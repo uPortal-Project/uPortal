@@ -43,11 +43,11 @@ import org.apereo.portal.portlet.container.PortletResourceResponseContextImpl;
 import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IPortalActionUrlBuilder;
-import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.IPortalActionUrlBuilder;
+import org.apereo.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

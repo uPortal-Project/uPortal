@@ -33,10 +33,10 @@ import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.jasig.portal.search.PortletUrl;
 import org.jasig.portal.search.PortletUrlParameter;
 import org.jasig.portal.search.PortletUrlType;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.IPortalUrlBuilder;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

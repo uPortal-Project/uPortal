@@ -198,7 +198,7 @@
     
     <filter>
         <filter-name>ExceptionLoggingFilter</filter-name>
-        <filter-class>org.jasig.portal.web.ExceptionLoggingFilter</filter-class>
+        <filter-class>org.apereo.portal.web.ExceptionLoggingFilter</filter-class>
     </filter>
     
     <filter>

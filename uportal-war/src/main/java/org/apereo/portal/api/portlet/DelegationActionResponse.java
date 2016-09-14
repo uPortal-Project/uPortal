@@ -25,7 +25,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 
-import org.jasig.portal.url.ParameterMap;
+import org.apereo.portal.url.ParameterMap;
 
 /**
  * The resulting state of the delegated action request

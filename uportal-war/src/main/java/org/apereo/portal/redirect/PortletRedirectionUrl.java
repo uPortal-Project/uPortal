@@ -20,7 +20,7 @@ package org.apereo.portal.redirect;
 
 import javax.portlet.PortletMode;
 
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.UrlType;
 
 /**
  * PortletRedirectionUrl represents a redirection service target that is a

@@ -43,7 +43,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

@@ -27,8 +27,8 @@ import org.apache.pluto.container.driver.PortletContextService;
 import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.IPortalActionUrlBuilder;
-import org.jasig.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.IPortalActionUrlBuilder;
+import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
  * @author Eric Dalquist

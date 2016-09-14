@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IdentitySwapperManager;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.AbstractDefaultAttributePersonAttributeDao;
 import org.jasig.services.persondir.support.CaseInsensitiveNamedPersonImpl;

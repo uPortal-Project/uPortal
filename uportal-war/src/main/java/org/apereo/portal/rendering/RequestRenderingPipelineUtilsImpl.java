@@ -25,8 +25,8 @@ import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

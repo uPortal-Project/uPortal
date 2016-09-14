@@ -21,7 +21,7 @@
 -->
 <xsl:stylesheet version="1.0" 
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-    xmlns:resources="http://xml.apache.org/xalan/java/org.jasig.portal.web.skin.ResourcesElementsXsltcHelper"
+    xmlns:resources="http://xml.apache.org/xalan/java/org.apereo.portal.web.skin.ResourcesElementsXsltcHelper"
     exclude-result-prefixes="resources">
 
     <xsl:param name="RESOURCES_ELEMENTS_PROVIDER" />

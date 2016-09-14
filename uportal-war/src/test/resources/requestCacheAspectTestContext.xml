@@ -35,7 +35,7 @@
     <bean id="requestCacheAspect" class="org.apereo.portal.concurrency.caching.RequestCacheAspect" />
     <bean id="cacheTestInterface" class="org.apereo.portal.concurrency.caching.CacheTestImpl" />
     <bean id="portalRequestUtils" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.url.IPortalRequestUtils" />
+        <constructor-arg value="org.apereo.portal.url.IPortalRequestUtils" />
     </bean>
 </beans>
 

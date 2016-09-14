@@ -37,7 +37,7 @@ import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletEntityRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;

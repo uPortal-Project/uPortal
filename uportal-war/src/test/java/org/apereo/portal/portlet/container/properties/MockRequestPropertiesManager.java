@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.ParameterMap;
+import org.apereo.portal.url.ParameterMap;
 import org.jasig.portal.utils.Populator;
 import org.springframework.core.Ordered;
 

@@ -35,11 +35,11 @@ import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.apereo.portal.security.IAuthorizationService;
-import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalUrlBuilder;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 

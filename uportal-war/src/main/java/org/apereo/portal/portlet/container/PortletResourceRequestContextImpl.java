@@ -31,7 +31,7 @@ import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
 import org.apereo.portal.portlet.container.services.RequestAttributeService;
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IPortalRequestInfo;
 
 /**
  * @author Eric Dalquist

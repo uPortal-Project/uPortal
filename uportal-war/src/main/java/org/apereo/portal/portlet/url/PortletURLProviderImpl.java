@@ -30,9 +30,9 @@ import javax.portlet.WindowState;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.pluto.container.PortletURLProvider;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.IPortalUrlBuilder;
+import org.apereo.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.UrlType;
 
 /**
  * Wraps the portal {@link IPortletUrlBuilder} API to work with Pluto's API

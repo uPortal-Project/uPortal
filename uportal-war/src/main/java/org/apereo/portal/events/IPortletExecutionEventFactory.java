@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
-import org.jasig.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IPortalRequestInfo;
 
 /**
  * Publishes events related to portlet execution

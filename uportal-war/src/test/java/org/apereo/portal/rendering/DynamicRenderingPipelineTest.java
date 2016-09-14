@@ -18,9 +18,7 @@
  */
 package org.apereo.portal.rendering;
 
-import org.apereo.portal.rendering.CharacterPipelineComponent;
-import org.apereo.portal.rendering.DynamicRenderingPipeline;
-import org.jasig.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.IUrlSyntaxProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

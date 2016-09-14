@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jasig.portal.url.BaseEncodedStringBuilder;
+import org.apereo.portal.url.BaseEncodedStringBuilder;
 
 
 /**

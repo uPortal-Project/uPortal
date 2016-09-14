@@ -29,12 +29,12 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors">
             <list>
-                <bean class="org.jasig.portal.url.GuestSessionExpirationInterceptor">
+                <bean class="org.apereo.portal.url.GuestSessionExpirationInterceptor">
                     <!-- 
                     <property name="unauthenticatedUserSessionTimeout" value="${org.jasig.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
                      -->
                 </bean>
-                <bean class="org.jasig.portal.url.MaxInactiveInterceptor"/>
+                <bean class="org.apereo.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
                 <bean class="org.apereo.portal.i18n.LocaleManagementInterceptor" />
                 <ref bean="portletExecutionManager"/>

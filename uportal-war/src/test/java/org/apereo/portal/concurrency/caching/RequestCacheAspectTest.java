@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

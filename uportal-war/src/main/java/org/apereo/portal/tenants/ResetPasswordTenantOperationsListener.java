@@ -29,7 +29,7 @@ import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.portlets.account.IPasswordResetNotification;
 import org.apereo.portal.portlets.account.UserAccountHelper;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

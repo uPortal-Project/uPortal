@@ -32,7 +32,7 @@ import org.apereo.portal.portlet.container.properties.IRequestPropertiesManager;
 import org.apereo.portal.portlet.container.services.IPortletCookieService;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.url.ResourceUrlProviderImpl;
+import org.apereo.portal.url.ResourceUrlProviderImpl;
 import org.springframework.util.Assert;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;

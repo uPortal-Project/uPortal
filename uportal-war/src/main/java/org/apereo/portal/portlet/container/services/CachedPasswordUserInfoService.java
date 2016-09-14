@@ -43,7 +43,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IStringEncryptionService;
 import org.apereo.portal.security.provider.NotSoOpaqueCredentials;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;

@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
-import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletRequestInfo;
-import org.jasig.portal.url.IUrlSyntaxProvider;
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IPortalUrlBuilder;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletRequestInfo;
+import org.apereo.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.UrlType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class PortalController {
         this.urlSyntaxProvider = urlSyntaxProvider;
     }
     
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState.EXCLUSIVE=true"})
+    @RequestMapping(headers={"org.apereo.portal.url.UrlType=RENDER", "org.apereo.portal.url.UrlState.EXCLUSIVE=true"})
     public void renderExclusive(HttpServletRequest request, HttpServletResponse response) {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
@@ -83,7 +83,7 @@ public class PortalController {
         this.portletExecutionManager.getPortletOutput(portletWindowId, request, response);
     }
 
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RENDER"})
+    @RequestMapping(headers={"org.apereo.portal.url.UrlType=RENDER"})
     public void renderRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         // Set up some DEBUG logging for performance troubleshooting
@@ -100,7 +100,7 @@ public class PortalController {
 
     }
 
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=ACTION"})
+    @RequestMapping(headers={"org.apereo.portal.url.UrlType=ACTION"})
     public void actionRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();
@@ -142,7 +142,7 @@ public class PortalController {
         sendRedirect(actionRedirectUrl, response);
     }
     
-    @RequestMapping(headers={"org.jasig.portal.url.UrlType=RESOURCE"})
+    @RequestMapping(headers={"org.apereo.portal.url.UrlType=RESOURCE"})
     public void resourceRequest(HttpServletRequest request, HttpServletResponse response) {
     	final IPortalRequestInfo portalRequestInfo = this.urlSyntaxProvider.getPortalRequestInfo(request);
         final IPortletRequestInfo portletRequestInfo = portalRequestInfo.getTargetedPortletRequestInfo();

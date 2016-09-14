@@ -24,8 +24,8 @@ import java.util.Map;
 import javax.xml.transform.Transformer;
 
 import org.apereo.portal.io.xml.IPortalData;
-import org.jasig.portal.url.IUrlNodeSyntaxHelper;
-import org.jasig.portal.url.IUrlNodeSyntaxHelperRegistry;
+import org.apereo.portal.url.IUrlNodeSyntaxHelper;
+import org.apereo.portal.url.IUrlNodeSyntaxHelperRegistry;
 
 /**
  * Describes a XSL Stylesheet used in the rendering pipeline

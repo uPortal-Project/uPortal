@@ -18,9 +18,9 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IUrlSyntaxProvider;
-import org.jasig.portal.url.UrlState;
+import org.apereo.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.UrlState;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

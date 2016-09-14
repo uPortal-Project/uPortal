@@ -47,10 +47,10 @@ import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 import org.apereo.portal.portlet.rendering.PortletResourceOutputHandler;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalActionUrlBuilder;
-import org.jasig.portal.url.IPortalRequestUtils;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.IPortalActionUrlBuilder;
+import org.apereo.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletUrlBuilder;
 
 /**
  * Implementation of delegation dispatcher

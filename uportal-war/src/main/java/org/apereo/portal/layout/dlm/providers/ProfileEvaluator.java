@@ -32,7 +32,7 @@ import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.spring.locator.ApplicationContextLocator;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.context.ApplicationContext;
 
 @Entity

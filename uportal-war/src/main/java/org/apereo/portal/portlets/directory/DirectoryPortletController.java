@@ -50,7 +50,7 @@ import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

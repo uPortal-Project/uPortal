@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.jasig.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

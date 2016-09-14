@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.pluto.container.driver.PortletInvocationEvent;
 import org.apache.pluto.container.driver.PortletInvocationListener;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.web.session.HttpSessionDestroyedEvent;

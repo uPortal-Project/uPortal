@@ -19,9 +19,9 @@
 package org.apereo.portal.rendering.predicates;
 
 import com.google.common.base.Predicate;
-import org.jasig.portal.url.IPortalRequestInfo;
-import org.jasig.portal.url.IUrlSyntaxProvider;
-import org.jasig.portal.url.UrlState;
+import org.apereo.portal.url.IPortalRequestInfo;
+import org.apereo.portal.url.IUrlSyntaxProvider;
+import org.apereo.portal.url.UrlState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -39,10 +39,10 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.portlet.rendering.PortletOutputHandler;
 import org.apereo.portal.portlet.url.PortletURLProviderImpl;
-import org.jasig.portal.url.IPortalUrlBuilder;
-import org.jasig.portal.url.IPortalUrlProvider;
-import org.jasig.portal.url.IPortletUrlBuilder;
-import org.jasig.portal.url.UrlType;
+import org.apereo.portal.url.IPortalUrlBuilder;
+import org.apereo.portal.url.IPortalUrlProvider;
+import org.apereo.portal.url.IPortletUrlBuilder;
+import org.apereo.portal.url.UrlType;
 
 /**
  * @author Eric Dalquist

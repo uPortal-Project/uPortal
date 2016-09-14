@@ -73,7 +73,7 @@
         </property>
     </bean>
 
-    <bean id="pageCachingFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
+    <bean id="pageCachingFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.cache.ConfigurablePageCachingFilter">
                 <constructor-arg ref="cacheManager"/>
@@ -82,7 +82,7 @@
         </property>
     </bean>
 
-    <bean id="CacheExpiresFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
+    <bean id="CacheExpiresFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
                 <property name="cacheMaxAges">

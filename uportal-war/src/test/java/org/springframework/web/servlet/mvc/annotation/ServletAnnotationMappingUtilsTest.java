@@ -40,11 +40,11 @@ import org.springframework.util.ObjectUtils;
 public class ServletAnnotationMappingUtilsTest {
     @Test
     public void checkSpringMultipleHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState!=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlType=RENDER", "org.apereo.portal.url.UrlState!=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlType", "RENDER");
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlType", "RENDER");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = ServletAnnotationMappingUtils.checkHeaders(headers, request);
         assertFalse(matches);
@@ -52,10 +52,10 @@ public class ServletAnnotationMappingUtilsTest {
     
     @Test
     public void checkSpringNoMatchHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlState!=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlState!=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = ServletAnnotationMappingUtils.checkHeaders(headers, request);
         assertFalse(matches);
@@ -63,10 +63,10 @@ public class ServletAnnotationMappingUtilsTest {
     
     @Test
     public void checkSpringMatchHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlState=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlState=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = ServletAnnotationMappingUtils.checkHeaders(headers, request);
         assertTrue(matches);
@@ -98,11 +98,11 @@ public class ServletAnnotationMappingUtilsTest {
 
     @Test
     public void checkFixedMultipleHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlType=RENDER", "org.jasig.portal.url.UrlState!=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlType=RENDER", "org.apereo.portal.url.UrlState!=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlType", "RENDER");
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlType", "RENDER");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = checkHeaders(headers, request);
         assertFalse(matches);
@@ -110,10 +110,10 @@ public class ServletAnnotationMappingUtilsTest {
     
     @Test
     public void checkFixedNoMatchHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlState!=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlState!=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = checkHeaders(headers, request);
         assertFalse(matches);
@@ -121,10 +121,10 @@ public class ServletAnnotationMappingUtilsTest {
     
     @Test
     public void checkFixedMatchHeadersTest() {
-        final String[] headers = {"org.jasig.portal.url.UrlState=EXCLUSIVE"};
+        final String[] headers = {"org.apereo.portal.url.UrlState=EXCLUSIVE"};
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("org.jasig.portal.url.UrlState", "EXCLUSIVE");
+        request.addHeader("org.apereo.portal.url.UrlState", "EXCLUSIVE");
         
         final boolean matches = checkHeaders(headers, request);
         assertTrue(matches);

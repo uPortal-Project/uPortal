@@ -143,7 +143,7 @@
      | - 1 x skin
      | - not replicated - represents local file system data
      +-->
-    <cache name="org.jasig.portal.web.skin.Resources"
+    <cache name="org.apereo.portal.web.skin.Resources"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
@@ -152,7 +152,7 @@
      | - 1 x skin
      | - not replicated - represents local file system data
      +-->
-    <cache name="org.jasig.portal.web.skin.Resources_DocumentFragment"
+    <cache name="org.apereo.portal.web.skin.Resources_DocumentFragment"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
 

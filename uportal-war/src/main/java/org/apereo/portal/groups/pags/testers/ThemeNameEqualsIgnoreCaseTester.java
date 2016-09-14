@@ -31,7 +31,7 @@ import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.spring.locator.ApplicationContextLocator;
-import org.jasig.portal.url.IPortalRequestUtils;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

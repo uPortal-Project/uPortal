@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper;
 import org.apereo.portal.security.xslt.XalanMessageHelper;
 import org.apereo.portal.security.xslt.XalanMessageHelperBean;
-import org.jasig.portal.url.xml.XsltPortalUrlProvider;
+import org.apereo.portal.url.xml.XsltPortalUrlProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
