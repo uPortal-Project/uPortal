@@ -52,7 +52,7 @@
         <property name="abandonedLockAge" value="PT0.100S" />
     </bean>
     
-    <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.IPortalInfoProvider" />
     </bean>
     

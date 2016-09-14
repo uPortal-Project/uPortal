@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.LockingException;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * RDBMS-based store for <code>IEntityLocks</code>.

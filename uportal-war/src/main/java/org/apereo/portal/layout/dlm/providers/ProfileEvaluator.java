@@ -31,7 +31,7 @@ import org.apereo.portal.layout.profile.IProfileMapper;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.spring.locator.ApplicationContextLocator;
+import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.springframework.context.ApplicationContext;
 

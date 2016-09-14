@@ -20,8 +20,8 @@ package org.apereo.portal.io.xml
 
 import org.apereo.portal.io.xml.IDataTemplatingStrategy
 import org.apereo.portal.io.xml.SpELDataTemplatingStrategy;
-import org.jasig.portal.spring.spel.IPortalSpELService;
-import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
+import org.apereo.portal.spring.spel.IPortalSpELService;
+import org.apereo.portal.spring.spel.PortalSpELServiceImpl;
 import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.tenants.TemplateDataTenantOperationsListener;
 

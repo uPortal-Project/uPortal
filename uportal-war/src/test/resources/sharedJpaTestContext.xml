@@ -84,7 +84,7 @@
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
     <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
-            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
+            class="org.apereo.portal.spring.tx.DialectAwareTransactionInterceptor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="transactionManagerBeanName" value="transactionManager" />
     </bean>
@@ -109,13 +109,13 @@
     
     <bean class="org.apereo.portal.jpa.cache.EntityManagerCacheImpl">
         <property name="contentCache">
-            <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+            <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
                 <constructor-arg value="net.sf.ehcache.Ehcache" />
             </bean>
         </property>
     </bean>
     
-    <bean id="taggedCacheEntryPurger" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="taggedCacheEntryPurger" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.cache.TaggedCacheEntryPurger" />
     </bean>
 </beans>

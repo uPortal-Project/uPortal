@@ -25,8 +25,8 @@ import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.security.IPortalPasswordService;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.PortalSecurityException;
-import org.jasig.portal.spring.locator.LocalAccountDaoLocator;
-import org.jasig.portal.spring.locator.PortalPasswordServiceLocator;
+import org.apereo.portal.spring.locator.LocalAccountDaoLocator;
+import org.apereo.portal.spring.locator.PortalPasswordServiceLocator;
 
 /**
  * <p>

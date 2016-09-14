@@ -28,7 +28,7 @@ import javax.naming.Name;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.spring.locator.ApplicationContextLocator;
+import org.apereo.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

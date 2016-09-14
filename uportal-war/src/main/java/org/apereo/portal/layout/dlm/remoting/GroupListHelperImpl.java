@@ -41,7 +41,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 public class GroupListHelperImpl implements IGroupListHelper {
 

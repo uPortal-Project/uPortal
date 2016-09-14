@@ -18,13 +18,11 @@
  */
 package org.apereo.portal.security;
 
-import org.apereo.portal.security.IPerson;
-import org.apereo.portal.security.InitialSecurityContextFactory;
 import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;
-import org.jasig.portal.spring.locator.UserIdentityStoreLocator;
+import org.apereo.portal.spring.locator.UserIdentityStoreLocator;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**

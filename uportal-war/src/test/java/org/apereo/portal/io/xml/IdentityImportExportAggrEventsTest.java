@@ -20,7 +20,7 @@ package org.apereo.portal.io.xml;
 
 import org.apereo.portal.events.aggr.groups.AggregatedGroupLookupDao;
 import org.apereo.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
-import org.jasig.portal.spring.MockitoFactoryBean;
+import org.apereo.portal.spring.MockitoFactoryBean;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
 import org.jasig.portal.test.TimeZoneTestUtils;
 import org.junit.AfterClass;

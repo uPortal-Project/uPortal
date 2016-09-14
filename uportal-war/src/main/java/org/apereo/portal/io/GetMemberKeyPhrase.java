@@ -34,7 +34,7 @@ import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
+import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 public class GetMemberKeyPhrase implements Phrase {
 

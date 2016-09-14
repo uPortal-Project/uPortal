@@ -34,7 +34,7 @@
         <property name="aggregationFlushPeriod" value="5" />
     </bean>
     
-    <bean class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+    <bean class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
     
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

@@ -38,7 +38,7 @@
  +-->
 <util:list id="listenerEventFilters">
     <!-- Can be used to filter events based on event type using an instanceof check -->
-    <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
+    <bean class="org.apereo.portal.spring.context.ClassApplicationEventFilter">
         <property name="supportedEvents">
             <list>
                 <value>org.apereo.portal.events.PortalEvent</value>
@@ -85,7 +85,7 @@
      | ApplicationEventFilters to be configured.
      +-->
      <!-- 
-    <bean class="org.jasig.portal.spring.context.LoggingEventHandler">
+    <bean class="org.apereo.portal.spring.context.LoggingEventHandler">
         <property name="applicationEventFilters" ref="listenerEventFilters" />
     </bean>
     -->

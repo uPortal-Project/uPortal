@@ -46,25 +46,25 @@
     <bean id="portletExecutionAggregationDao" class="org.apereo.portal.events.aggr.portletexec.JpaPortletExecutionAggregationDao"/>
     <bean id="eventSessionDao" class="org.apereo.portal.events.aggr.session.JpaEventSessionDao" />
     
-    <bean id="hibernateCacheEvictor" class="org.jasig.portal.spring.MockitoFactoryBean" >
+    <bean id="hibernateCacheEvictor" class="org.apereo.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.apereo.portal.events.aggr.HibernateCacheEvictor" />
     </bean>
-    <bean id="compositeGroupService" class="org.jasig.portal.spring.MockitoFactoryBean" >
+    <bean id="compositeGroupService" class="org.apereo.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.apereo.portal.groups.ICompositeGroupService" />
     </bean>
-    <bean id="portletDefinitionDao" class="org.jasig.portal.spring.MockitoFactoryBean" >
+    <bean id="portletDefinitionDao" class="org.apereo.portal.spring.MockitoFactoryBean" >
         <constructor-arg value="org.apereo.portal.portlet.dao.IPortletDefinitionDao" />
     </bean>
-    <bean id="portalJdbcOperations" class="org.jasig.portal.spring.MockitoFactoryBean" >
+    <bean id="portalJdbcOperations" class="org.apereo.portal.spring.MockitoFactoryBean" >
         <qualifier value="PortalDb" />
         <constructor-arg value="org.springframework.jdbc.core.JdbcOperations" />
     </bean>
-    <bean id="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver" class="org.jasig.portal.spring.MockitoFactoryBean" >
+    <bean id="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver" class="org.apereo.portal.spring.MockitoFactoryBean" >
         <qualifier value="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator.layoutNodeIdNameResolver"/>
         <constructor-arg value="net.sf.ehcache.Ehcache" />
     </bean>
     
-    <bean class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+    <bean class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="properties">

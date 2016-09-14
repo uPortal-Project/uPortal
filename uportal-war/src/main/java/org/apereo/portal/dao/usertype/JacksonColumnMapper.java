@@ -21,7 +21,7 @@ package org.apereo.portal.dao.usertype;
 import java.io.IOException;
 
 import org.jadira.usertype.spi.shared.AbstractStringColumnMapper;
-import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;

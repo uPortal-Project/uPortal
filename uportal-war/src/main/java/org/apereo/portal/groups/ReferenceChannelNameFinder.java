@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
-import org.jasig.portal.spring.locator.PortletDefinitionRegistryLocator;
+import org.apereo.portal.spring.locator.PortletDefinitionRegistryLocator;
 
 /**
  * Reference implementation of <code>IEntityNameFinder</code> for <code>Channels</code>.

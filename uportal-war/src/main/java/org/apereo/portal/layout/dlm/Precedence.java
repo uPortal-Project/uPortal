@@ -19,7 +19,7 @@
 package org.apereo.portal.layout.dlm;
 
 import org.apereo.portal.layout.IUserLayoutStore;
-import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.apereo.portal.spring.locator.UserLayoutStoreLocator;
 
 /**
  * @since uPortal 2.5

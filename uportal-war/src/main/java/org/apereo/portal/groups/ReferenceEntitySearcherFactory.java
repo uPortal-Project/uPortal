@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.groups;
 
-import org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator;
+import org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator;
 
 
 /**

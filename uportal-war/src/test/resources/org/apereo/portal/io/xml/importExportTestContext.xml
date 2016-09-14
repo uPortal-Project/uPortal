@@ -97,13 +97,13 @@
     <!-- 
      |  Support Beans
      +-->
-    <bean id="counterStore" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="counterStore" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.ICounterStore" />
     </bean>
-    <bean id="cachingResourceLoader" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="cachingResourceLoader" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.cache.resource.CachingResourceLoader" />
     </bean>
-    <bean id="templatesBuilder" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="templatesBuilder" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
     </bean>
 

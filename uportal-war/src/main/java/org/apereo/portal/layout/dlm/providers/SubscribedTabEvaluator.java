@@ -35,7 +35,7 @@ import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
 import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator;
+import org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator;
 
 /**
  * SubscribedTabEvaluator is a DLM evaluator that determines if a given fragment

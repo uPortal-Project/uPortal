@@ -35,7 +35,7 @@
     <bean id="expressionHandler"
         class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
         <property name="permissionEvaluator">
-            <bean class="org.jasig.portal.spring.security.evaluator.PortalPermissionEvaluator"/>
+            <bean class="org.apereo.portal.spring.security.evaluator.PortalPermissionEvaluator"/>
         </property>
     </bean>
 

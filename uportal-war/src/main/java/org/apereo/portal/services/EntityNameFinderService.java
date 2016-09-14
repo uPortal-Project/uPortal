@@ -28,7 +28,7 @@ import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IEntityNameFinderFactory;
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * @author Dan Ellentuck

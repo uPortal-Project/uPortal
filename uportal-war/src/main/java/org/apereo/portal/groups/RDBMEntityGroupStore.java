@@ -33,8 +33,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.CounterStoreLocator;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.CounterStoreLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.utils.SqlTransaction;
 
 /**

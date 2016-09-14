@@ -77,14 +77,14 @@
      | Aspect used to apply the threadContextClassLoaderAspect every PortletPreference impl returned by the
      | targeted object 
      +-->
-    <bean id="threadContextClassLoaderApplyingAspect" class="org.jasig.portal.spring.AspectApplyingAspect">
+    <bean id="threadContextClassLoaderApplyingAspect" class="org.apereo.portal.spring.AspectApplyingAspect">
         <property name="advices" ref="threadContextClassLoaderPortetPreferencesAdvice" />
     </bean>
     
     <!-- 
      | Advice object used to apply the threadContextClassLoaderAspect every method on a PortletPreference impl
      +-->
-    <bean id="threadContextClassLoaderPortetPreferencesAdvice" class="org.jasig.portal.spring.AspectJAroundAdviceFactory">
+    <bean id="threadContextClassLoaderPortetPreferencesAdvice" class="org.apereo.portal.spring.AspectJAroundAdviceFactory">
         <property name="aspect" ref="threadContextClassLoaderAspect" />
         <property name="method" value="doThreadContextClassLoaderUpdate" />
         <property name="args" value="org.aspectj.lang.ProceedingJoinPoint" />
@@ -136,7 +136,7 @@
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
     <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
-            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
+            class="org.apereo.portal.spring.tx.DialectAwareTransactionInterceptor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="transactionManagerBeanName" value="transactionManager" />
     </bean>

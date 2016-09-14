@@ -25,7 +25,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.portlet.ModelAndView;

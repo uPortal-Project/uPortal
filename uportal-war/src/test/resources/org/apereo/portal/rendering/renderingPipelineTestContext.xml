@@ -174,7 +174,7 @@
     
     <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
-    <bean id="testSpelService" class="org.jasig.portal.spring.spel.PortalSpELServiceImpl" />
+    <bean id="testSpelService" class="org.apereo.portal.spring.spel.PortalSpELServiceImpl" />
     
     <bean class="org.jasig.portal.url.PortalRequestUtilsImpl" />
     
@@ -190,35 +190,35 @@
     <bean id="xalanGroupMembershipHelper" class="org.apereo.portal.security.xslt.XalanGroupMembershipHelper"/>
     
     
-    <bean id="userInstanceManager" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="userInstanceManager" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
     </bean>
     
-    <bean id="portalUrlProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="portalUrlProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.portal.url.IPortalUrlProvider" />
     </bean>
     
-    <bean id="portletWindowRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="portletWindowRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.portlet.registry.IPortletWindowRegistry" />
     </bean>
     
-    <bean id="portletEntityRegistry" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="portletEntityRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.portlet.registry.IPortletEntityRegistry" />
     </bean>
     
-    <bean id="resourcesElementsProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="resourcesElementsProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider" />
     </bean>
     
-    <bean id="xalanMessageHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="xalanMessageHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanMessageHelper" />
     </bean>
     
-    <bean id="xalanAuthorizationHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="xalanAuthorizationHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanAuthorizationHelper" />
     </bean>
     
-    <bean id="xalanGroupMembershipHelperBean" class="org.jasig.portal.spring.MockitoFactoryBean">
+    <bean id="xalanGroupMembershipHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
         <constructor-arg value="org.apereo.portal.security.xslt.IXalanGroupMembershipHelper" />
     </bean>
     

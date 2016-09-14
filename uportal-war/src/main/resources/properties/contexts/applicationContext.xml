@@ -89,7 +89,7 @@
     <!-- resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
+    <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
                 <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
@@ -112,16 +112,16 @@
     
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
     
-    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+    <bean id="portalPropertyEditorRegistrar" class="org.apereo.portal.spring.properties.PortalPropertyEditorRegistrar">
         <property name="propertyEditors">
             <map key-type="java.lang.Class">
-                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
-                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
-                <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
-                <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
-                <entry key="org.jasig.portal.version.om.Version"><bean class="org.jasig.portal.spring.properties.VersionEditor"/></entry>
+                <entry key="javax.portlet.PortletMode"><bean class="org.apereo.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.apereo.portal.spring.properties.WindowStateEditor" /></entry>
+                <entry key="org.joda.time.ReadablePeriod"><bean class="org.apereo.portal.spring.properties.ReadablePeriodEditor" /></entry>
+                <entry key="org.joda.time.ReadableDuration"><bean class="org.apereo.portal.spring.properties.ReadableDurationEditor" /></entry>
+                <entry key="org.jasig.portal.version.om.Version"><bean class="org.apereo.portal.spring.properties.VersionEditor"/></entry>
                 <entry key="com.fasterxml.jackson.databind.JsonNode">
-                    <bean class="org.jasig.portal.spring.properties.MappingJackson2JsonTreeEditor">
+                    <bean class="org.apereo.portal.spring.properties.MappingJackson2JsonTreeEditor">
                         <property name="objectMapper" ref="objectMapper" />
                     </bean>
                 </entry>
@@ -141,23 +141,23 @@
         <property name="scopes">
             <map>
                 <entry key="globalSession">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
-                            <bean class="org.jasig.portal.spring.web.context.support.PortalSessionScope">
+                            <bean class="org.apereo.portal.spring.web.context.support.PortalSessionScope">
                                 <property name="portalRequestUtils" ref="portalRequestUtils" />
                             </bean>
                         </constructor-arg>
                     </bean>
                 </entry>
                 <entry key="session">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
                             <bean class="org.springframework.web.context.request.SessionScope" />
                         </constructor-arg>
                     </bean>
                 </entry>
                 <entry key="request">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
                             <bean class="org.springframework.web.context.request.RequestScope" />
                         </constructor-arg>
@@ -167,5 +167,5 @@
         </property>
     </bean>
     
-    <bean id="objectMapper" class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+    <bean id="objectMapper" class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
 </beans>

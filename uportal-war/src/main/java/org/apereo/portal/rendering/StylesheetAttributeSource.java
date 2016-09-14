@@ -24,7 +24,7 @@ import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.apereo.portal.spring.spel.IPortalSpELService;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;

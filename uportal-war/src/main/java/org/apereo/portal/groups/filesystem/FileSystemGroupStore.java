@@ -53,7 +53,7 @@ import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * This class is an <code>IEntityGroupStore</code> that uses the native file

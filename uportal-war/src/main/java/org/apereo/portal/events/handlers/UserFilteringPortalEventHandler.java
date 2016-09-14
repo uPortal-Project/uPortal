@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.spring.context.ApplicationEventFilter;
+import org.apereo.portal.spring.context.ApplicationEventFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;

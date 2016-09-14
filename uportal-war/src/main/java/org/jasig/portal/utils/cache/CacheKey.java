@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.jasig.portal.utils.Populator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

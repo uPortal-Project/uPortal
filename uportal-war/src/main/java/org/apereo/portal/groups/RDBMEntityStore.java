@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.groups;
 
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Reference implementation for IEntityStore.

@@ -52,7 +52,7 @@ import org.apereo.portal.jdbc.IJoinQueryString;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.provider.PersonImpl;
-import org.jasig.portal.spring.locator.CounterStoreLocator;
+import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.DocumentFactory;
 import org.jasig.portal.utils.Tuple;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;

@@ -38,7 +38,7 @@ import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletType;
-import org.jasig.portal.spring.tx.DialectAwareTransactional;
+import org.apereo.portal.spring.tx.DialectAwareTransactional;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 

@@ -18,7 +18,7 @@
  */
  package org.apereo.portal.groups;
 
-import org.jasig.portal.spring.locator.PersonAttributeDaoLocator;
+import org.apereo.portal.spring.locator.PersonAttributeDaoLocator;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
 /**

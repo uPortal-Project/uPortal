@@ -34,7 +34,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Tests the groups framework (a start).

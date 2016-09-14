@@ -23,7 +23,7 @@ import org.apereo.portal.security.IParentAwareSecurityContext;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IStringEncryptionService;
 import org.apereo.portal.security.PortalSecurityException;
-import org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator;
+import org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

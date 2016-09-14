@@ -22,7 +22,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityCachingService;
-import org.jasig.portal.spring.locator.EntityCachingServiceLocator;
+import org.apereo.portal.spring.locator.EntityCachingServiceLocator;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**

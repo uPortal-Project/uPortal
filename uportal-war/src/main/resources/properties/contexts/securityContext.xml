@@ -38,7 +38,7 @@
     <bean id="sessionAuthenticationStrategy" class="org.springframework.security.web.authentication.session.NullAuthenticatedSessionStrategy" />
 
     <bean id="portalPreAuthenticationFilter"
-        class="org.jasig.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
+        class="org.apereo.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter">
         <property name="authenticationManager" ref="authenticationManager" />
     </bean>
   

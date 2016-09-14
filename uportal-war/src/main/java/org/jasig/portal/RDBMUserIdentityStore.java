@@ -49,7 +49,7 @@ import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.spring.locator.CounterStoreLocator;
+import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

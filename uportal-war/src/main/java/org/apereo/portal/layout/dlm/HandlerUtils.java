@@ -21,7 +21,7 @@ package org.apereo.portal.layout.dlm;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.spring.locator.UserLayoutStoreLocator;
+import org.apereo.portal.spring.locator.UserLayoutStoreLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

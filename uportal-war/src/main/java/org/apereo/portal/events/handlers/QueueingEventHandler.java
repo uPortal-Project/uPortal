@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.jasig.portal.spring.context.FilteringApplicationListener;
+import org.apereo.portal.spring.context.FilteringApplicationListener;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationEvent;
 
@@ -66,7 +66,7 @@ public abstract class QueueingEventHandler<E extends ApplicationEvent>
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.spring.context.FilteringApplicationListener#onFilteredApplicationEvent(org.springframework.context.ApplicationEvent)
+     * @see org.apereo.portal.spring.context.FilteringApplicationListener#onFilteredApplicationEvent(org.springframework.context.ApplicationEvent)
      */
     @Override
     protected final void onFilteredApplicationEvent(E event) {

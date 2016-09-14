@@ -37,7 +37,7 @@ import org.apereo.portal.events.RequestScopedEventsTracker;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabLookupDao;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.utils.cache.CacheKey;

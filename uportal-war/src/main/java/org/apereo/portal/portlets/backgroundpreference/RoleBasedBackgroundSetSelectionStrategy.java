@@ -21,8 +21,8 @@ package org.apereo.portal.portlets.backgroundpreference;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.spring.spel.IPortalSpELService;
-import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
+import org.apereo.portal.spring.spel.IPortalSpELService;
+import org.apereo.portal.spring.spel.PortalSpELServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;

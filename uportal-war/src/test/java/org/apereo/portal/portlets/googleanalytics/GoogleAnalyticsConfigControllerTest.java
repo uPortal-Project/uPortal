@@ -21,7 +21,7 @@ package org.apereo.portal.portlets.googleanalytics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 

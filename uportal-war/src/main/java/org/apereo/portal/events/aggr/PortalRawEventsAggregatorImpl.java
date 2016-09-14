@@ -52,7 +52,7 @@ import org.apereo.portal.events.aggr.session.EventSessionDao;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao.RawEventsTransactional;
-import org.jasig.portal.spring.context.ApplicationEventFilter;
+import org.apereo.portal.spring.context.ApplicationEventFilter;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.joda.time.DateTime;
 import org.joda.time.Period;

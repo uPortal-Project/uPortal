@@ -63,7 +63,7 @@ public class PrincipalsRESTController {
      * @return
      * @throws Exception
      */
-    @PreAuthorize("hasPermission('string', 'REST', new org.jasig.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
+    @PreAuthorize("hasPermission('string', 'REST', new org.apereo.portal.spring.security.evaluator.AuthorizableActivity('UP_PERMISSIONS', 'VIEW_PERMISSIONS'))")
     @RequestMapping(value="/permissions/principals.json", method = RequestMethod.GET)
     public ModelAndView getPrincipals(
             @RequestParam(value="q") String query,

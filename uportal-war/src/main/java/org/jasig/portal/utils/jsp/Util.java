@@ -28,7 +28,7 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean;
+import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;

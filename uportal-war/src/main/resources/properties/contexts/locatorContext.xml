@@ -30,17 +30,17 @@
      | They exist to support legacy code that is not managed by spring
      +-->
     
-    <bean id="org.jasig.portal.spring.locator.ApplicationContextLocator"
-            class="org.jasig.portal.spring.locator.ApplicationContextLocator">
+    <bean id="org.apereo.portal.spring.locator.ApplicationContextLocator"
+            class="org.apereo.portal.spring.locator.ApplicationContextLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.UserLayoutStoreLocator"
-            class="org.jasig.portal.spring.locator.UserLayoutStoreLocator">
+    <bean id="org.apereo.portal.spring.locator.UserLayoutStoreLocator"
+            class="org.apereo.portal.spring.locator.UserLayoutStoreLocator">
         <constructor-arg index="0" ref="userLayoutStore" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.PersonManagerLocator" 
-            class="org.jasig.portal.spring.locator.PersonManagerLocator">
+    <bean id="org.apereo.portal.spring.locator.PersonManagerLocator"
+            class="org.apereo.portal.spring.locator.PersonManagerLocator">
     </bean>
     
     <bean id="org.apereo.portal.jdbc.PortalDbLocator"
@@ -53,63 +53,63 @@
         <constructor-arg index="0" ref="PortalDB.metadata" />
     </bean>
 
-    <bean id="org.jasig.portal.spring.locator.PortletCategoryRegistryLocator" 
-            class="org.jasig.portal.spring.locator.PortletCategoryRegistryLocator">
+    <bean id="org.apereo.portal.spring.locator.PortletCategoryRegistryLocator"
+            class="org.apereo.portal.spring.locator.PortletCategoryRegistryLocator">
         <constructor-arg index="0" ref="portletCategoryRegistry" />
     </bean>
 
-    <bean id="org.jasig.portal.spring.locator.EntityCachingServiceLocator" 
-            class="org.jasig.portal.spring.locator.EntityCachingServiceLocator">
+    <bean id="org.apereo.portal.spring.locator.EntityCachingServiceLocator"
+            class="org.apereo.portal.spring.locator.EntityCachingServiceLocator">
         <constructor-arg index="0" ref="entityCachingService" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.PersonAttributeDaoLocator" 
-            class="org.jasig.portal.spring.locator.PersonAttributeDaoLocator">
+    <bean id="org.apereo.portal.spring.locator.PersonAttributeDaoLocator"
+            class="org.apereo.portal.spring.locator.PersonAttributeDaoLocator">
         <constructor-arg index="0" ref="personAttributeDao" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.CounterStoreLocator" 
-            class="org.jasig.portal.spring.locator.CounterStoreLocator">
+    <bean id="org.apereo.portal.spring.locator.CounterStoreLocator"
+            class="org.apereo.portal.spring.locator.CounterStoreLocator">
         <constructor-arg index="0" ref="counterStore" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.CacheFactoryLocator" 
-            class="org.jasig.portal.spring.locator.CacheFactoryLocator">
+    <bean id="org.apereo.portal.spring.locator.CacheFactoryLocator"
+            class="org.apereo.portal.spring.locator.CacheFactoryLocator">
         <constructor-arg index="0" ref="cacheFactory" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator" 
-        class="org.jasig.portal.spring.locator.PasswordEncryptionServiceLocator">
+    <bean id="org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator"
+        class="org.apereo.portal.spring.locator.PasswordEncryptionServiceLocator">
         <constructor-arg index="0" ref="stringEncryptionService" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.UserIdentityStoreLocator" 
-        class="org.jasig.portal.spring.locator.UserIdentityStoreLocator">
+    <bean id="org.apereo.portal.spring.locator.UserIdentityStoreLocator"
+        class="org.apereo.portal.spring.locator.UserIdentityStoreLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator" 
-        class="org.jasig.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
+    <bean id="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator"
+        class="org.apereo.portal.spring.locator.UserFragmentSubscriptionDaoLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.LocalAccountDaoLocator" 
-        class="org.jasig.portal.spring.locator.LocalAccountDaoLocator">
+    <bean id="org.apereo.portal.spring.locator.LocalAccountDaoLocator"
+        class="org.apereo.portal.spring.locator.LocalAccountDaoLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.PortalPasswordServiceLocator" 
-        class="org.jasig.portal.spring.locator.PortalPasswordServiceLocator">
+    <bean id="org.apereo.portal.spring.locator.PortalPasswordServiceLocator"
+        class="org.apereo.portal.spring.locator.PortalPasswordServiceLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator" 
-        class="org.jasig.portal.spring.locator.ReferenceEntitySearcherLocator">
+    <bean id="org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator"
+        class="org.apereo.portal.spring.locator.ReferenceEntitySearcherLocator">
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.AuthorizationServiceLocator"
-        class="org.jasig.portal.spring.locator.AuthorizationServiceLocator">
+    <bean id="org.apereo.portal.spring.locator.AuthorizationServiceLocator"
+        class="org.apereo.portal.spring.locator.AuthorizationServiceLocator">
         <constructor-arg ref="authorizationService" />
     </bean>
     
-    <bean id="org.jasig.portal.spring.locator.EntityTypesLocator"
-        class="org.jasig.portal.spring.locator.EntityTypesLocator">
+    <bean id="org.apereo.portal.spring.locator.EntityTypesLocator"
+        class="org.apereo.portal.spring.locator.EntityTypesLocator">
         <constructor-arg ref="entityTypes" />
     </bean>
     

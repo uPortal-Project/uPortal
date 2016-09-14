@@ -20,7 +20,7 @@ package org.apereo.portal.groups;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 
 /**
  * Reference implementation for <code>IEntity</code>.

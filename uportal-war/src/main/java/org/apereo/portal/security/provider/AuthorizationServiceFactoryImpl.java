@@ -22,7 +22,7 @@ package org.apereo.portal.security.provider;
 import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IAuthorizationServiceFactory;
-import org.jasig.portal.spring.locator.AuthorizationServiceLocator;
+import org.apereo.portal.spring.locator.AuthorizationServiceLocator;
 
 /**
  * <p>The factory class for the uPortal reference 

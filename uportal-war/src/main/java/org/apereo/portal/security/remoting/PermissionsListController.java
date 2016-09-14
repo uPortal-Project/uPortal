@@ -39,7 +39,7 @@ import org.apereo.portal.permission.target.IPermissionTargetProvider;
 import org.apereo.portal.permission.target.IPermissionTargetProviderRegistry;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionStore;
-import org.jasig.portal.spring.locator.EntityTypesLocator;
+import org.apereo.portal.spring.locator.EntityTypesLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
