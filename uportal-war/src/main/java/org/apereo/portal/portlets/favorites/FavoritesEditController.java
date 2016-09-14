@@ -23,7 +23,7 @@ import org.jasig.portal.UserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;
-import org.jasig.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

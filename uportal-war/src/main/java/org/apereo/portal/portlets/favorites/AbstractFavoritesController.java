@@ -19,7 +19,7 @@
 package org.apereo.portal.portlets.favorites;
 
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

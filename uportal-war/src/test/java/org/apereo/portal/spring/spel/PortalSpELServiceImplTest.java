@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

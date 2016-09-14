@@ -44,7 +44,7 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.Tuple;
 import org.jasig.portal.xml.XmlUtilitiesImpl;
 import org.jasig.portal.xml.stream.XMLStreamConstantsUtils;

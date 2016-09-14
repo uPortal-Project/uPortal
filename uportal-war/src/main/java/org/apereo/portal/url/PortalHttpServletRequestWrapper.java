@@ -39,8 +39,8 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.ArrayEnumerator;
 import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
 

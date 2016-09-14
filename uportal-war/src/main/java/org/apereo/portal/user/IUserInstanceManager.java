@@ -16,31 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.user;
-
-import org.jasig.portal.IUserPreferencesManager;
-import org.apereo.portal.i18n.LocaleManager;
-import org.apereo.portal.security.IPerson;
+package org.apereo.portal.user;
 
 /**
- * Provides access to the layout and rendering related services for a portal user.
+ * Copyright 2007 The JA-SIG Collaborative.  All rights reserved.
+ * See license distributed with this file and
+ * available online at http://www.uportal.org/license.html
+ */
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apereo.portal.PortalException;
+
+/**
+ * Determines which {@link IUserInstance} object to use for a given request.
  * 
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface IUserInstance {
+public interface IUserInstanceManager {
     /**
-     * @return The Person this UserInstance is for
+     * Returns the {@link IUserInstance} object that is associated with the given request.
+     * 
+     * @param request Incoming HttpServletRequest
+     * @return IUserInstance object associated with the given request
      */
-    public IPerson getPerson();
-
-    /**
-     * @return The user preferences manager for the user instance
-     */
-    public IUserPreferencesManager getPreferencesManager();
-
-    /**
-     * @return the localeManager for the user instance
-     */
-    public LocaleManager getLocaleManager();
+    public IUserInstance getUserInstance(HttpServletRequest request) throws PortalException;
 }

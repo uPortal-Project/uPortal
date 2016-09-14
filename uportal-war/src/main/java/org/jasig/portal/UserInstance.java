@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstance;
 
 
 /**

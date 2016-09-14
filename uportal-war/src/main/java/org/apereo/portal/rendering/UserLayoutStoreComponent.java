@@ -25,8 +25,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.jasig.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IUserLayoutManager;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.jasig.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

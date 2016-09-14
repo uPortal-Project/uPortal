@@ -191,7 +191,7 @@
     
     
     <bean id="userInstanceManager" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.user.IUserInstanceManager" />
+        <constructor-arg value="org.apereo.portal.user.IUserInstanceManager" />
     </bean>
     
     <bean id="portalUrlProvider" class="org.apereo.portal.spring.MockitoFactoryBean">

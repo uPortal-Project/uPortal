@@ -45,7 +45,7 @@ import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.spring.spel.IPortalSpELService;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

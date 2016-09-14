@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.user;
+package org.apereo.portal.user;
 
 import java.io.Serializable;
 import java.util.Locale;

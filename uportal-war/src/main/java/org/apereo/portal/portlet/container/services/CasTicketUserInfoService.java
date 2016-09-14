@@ -46,8 +46,8 @@ import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.provider.cas.CasProxyTicketAcquisitionException;
 import org.apereo.portal.security.provider.cas.ICasSecurityContext;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.portal.user.IUserInstance;
-import org.jasig.portal.user.IUserInstanceManager;
+import org.apereo.portal.user.IUserInstance;
+import org.apereo.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
