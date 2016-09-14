@@ -33,7 +33,7 @@ import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**
@@ -187,7 +187,7 @@ private ILockableEntityGroup findLockableGroup(String key) throws GroupsExceptio
     return group;
 }
 /**
- * @return org.jasig.portal.services.GroupService
+ * @return org.apereo.portal.services.GroupService
  */
 private Collection getAllGroupMembers(IGroupMember gm) throws GroupsException
 {
@@ -207,7 +207,7 @@ private IEntityStore getEntityStore() throws GroupsException
     return RDBMEntityStore.singleton();
 }
 /**
- * @return org.jasig.portal.services.GroupService
+ * @return org.apereo.portal.services.GroupService
  */
 private Collection getGroupMembers(IGroupMember gm) throws GroupsException
 {

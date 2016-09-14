@@ -49,7 +49,7 @@
                     <!-- principal -->
                     <choose>
                         <when test="${jexl(ENTITY_TYPE_NAME.equals('org.apereo.portal.groups.IEntityGroup'))}">
-                            <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
+                            <with-attribute key="GROUP" value="${groovy(org.apereo.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
                                 <!-- Check for group name == null (indicates an orphaned record) -->
                                 <choose>
                                     <when test="${jexl(GROUP.getName() == null)}">
@@ -117,7 +117,7 @@
                         <parameter value="${ACTIVITY}"/>
                         <subtasks>
                             <!-- target -->
-                            <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(TARGET))}">
+                            <with-attribute key="GROUP" value="${groovy(org.apereo.portal.services.GroupService.findGroup(TARGET))}">
                                 <choose>
                                     <when test="${jexl(GROUP != null)}">
                                         <!-- Check for group name == null (indicates an orphaned record) -->

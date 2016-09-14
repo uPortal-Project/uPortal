@@ -34,7 +34,7 @@ import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 
 /**
  * Answers isApplicable() in the affirmative if the user represented by the

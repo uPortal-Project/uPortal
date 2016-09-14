@@ -31,7 +31,7 @@ import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.PortletPreferencesJsonDao;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

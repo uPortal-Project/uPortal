@@ -21,7 +21,7 @@ package org.jasig.portal.version;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.jasig.portal.shell.PortalShellBuildHelper;
+import org.apereo.portal.shell.PortalShellBuildHelper;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;
 import org.junit.Test;

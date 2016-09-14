@@ -1059,7 +1059,7 @@
                             <tempfile property="executed-portal-shell-script" destdir="${targetdir}" prefix="upshell_" suffix=".groovy" />
                             <copy file="${script}" tofile="${executed-portal-shell-script}" />
 
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.apereo.portal.shell.PortalShell">
                             	<jvmarg value="-XX:MaxPermSize=256m"/>
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <sysproperty key="java.awt.headless" value="true"/>
@@ -1073,7 +1073,7 @@
                         <else>
                             <echo>Interactive Mode</echo>
 
-                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.jasig.portal.shell.PortalShell">
+                            <java fork="true" failonerror="true" dir="${basedir}" classname="org.apereo.portal.shell.PortalShell">
                                 <sysproperty key="logback.configurationFile" value="command-line.logback.xml" />
                                 <sysproperty key="java.awt.headless" value="true"/>
                                 <classpath refid="uportal-war-full.classpath" />

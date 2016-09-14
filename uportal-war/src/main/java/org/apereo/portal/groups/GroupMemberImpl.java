@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.slf4j.Logger;

@@ -39,7 +39,7 @@ import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestUtils;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;

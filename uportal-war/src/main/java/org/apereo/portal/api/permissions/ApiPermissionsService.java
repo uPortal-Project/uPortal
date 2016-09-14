@@ -38,7 +38,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionStore;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

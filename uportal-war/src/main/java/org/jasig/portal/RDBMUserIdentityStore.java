@@ -48,7 +48,7 @@ import org.apereo.portal.portlet.dao.IPortletEntityDao;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.PersonFactory;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.utils.SerializableObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +94,7 @@ public class RDBMUserIdentityStore  implements IUserIdentityStore {
     private ILocalAccountDao localAccountDao;
     private Ehcache userLockCache;
 
-    @Value("${org.jasig.portal.services.Authentication.defaultTemplateUserName}")
+    @Value("${org.apereo.portal.services.Authentication.defaultTemplateUserName}")
     public void setDefaultTemplateUserName(String defaultTemplateUserName) {
         this.defaultTemplateUserName = defaultTemplateUserName;
     }

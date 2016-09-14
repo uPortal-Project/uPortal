@@ -68,7 +68,7 @@ public class PortalPreAuthenticatedProcessingFilterTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        filter.setAuthenticationService(new org.jasig.portal.services.Authentication());
+        filter.setAuthenticationService(new org.apereo.portal.services.Authentication());
         filter.setApplicationEventPublisher(eventPublisher);
         filter.setIdentitySwapperManager(identitySwapperManager);
         filter.afterPropertiesSet();

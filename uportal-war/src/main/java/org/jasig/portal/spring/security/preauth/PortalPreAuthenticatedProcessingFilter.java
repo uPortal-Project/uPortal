@@ -42,7 +42,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.security.mvc.LoginController;
-import org.jasig.portal.services.Authentication;
+import org.apereo.portal.services.Authentication;
 import org.jasig.portal.spring.security.PortalPersonUserDetails;
 import org.jasig.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;

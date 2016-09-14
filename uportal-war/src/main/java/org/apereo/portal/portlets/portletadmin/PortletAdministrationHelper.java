@@ -101,7 +101,7 @@ import org.apereo.portal.security.IPermissionManager;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IUpdatingPermissionManager;
 import org.apereo.portal.security.PermissionHelper;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.url.IPortalUrlBuilder;
 import org.jasig.portal.url.IPortalUrlProvider;
 import org.jasig.portal.url.IPortletUrlBuilder;

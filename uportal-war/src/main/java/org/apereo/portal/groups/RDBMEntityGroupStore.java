@@ -32,7 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.jdbc.RDBMServices;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.CounterStoreLocator;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 import org.jasig.portal.utils.SqlTransaction;

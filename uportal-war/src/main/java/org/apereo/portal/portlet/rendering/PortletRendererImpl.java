@@ -57,7 +57,7 @@ import org.apereo.portal.portlet.session.PortletSessionAdministrativeRequestList
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IUrlSyntaxProvider;
 import org.jasig.portal.url.ParameterMap;

@@ -62,9 +62,9 @@ import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.EntityNameFinderService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.EntityNameFinderService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.utils.SafeFilenameUtils;
 import org.jasig.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -668,7 +668,7 @@ public class PortletDefinitionImporterExporter
     }
 
     private boolean exportPermission(IPortletDefinition def, ExternalPermissionDefinition permDef, List<String> groupList, List<String> userList) {
-        final AuthorizationService authService = org.jasig.portal.services.AuthorizationService.instance();
+        final AuthorizationService authService = org.apereo.portal.services.AuthorizationService.instance();
         final IPermissionManager pm = authService.newPermissionManager(permDef.getSystem());
         final String portletTargetId = PermissionHelper.permissionTargetIdForPortletDefinition(def);
         final IAuthorizationPrincipal[] principals = pm.getAuthorizedPrincipals(permDef.getActivity(), portletTargetId);

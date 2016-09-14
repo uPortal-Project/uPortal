@@ -47,7 +47,7 @@ import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 import org.jasig.portal.spring.spel.IPortalSpELService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

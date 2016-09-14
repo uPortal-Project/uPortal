@@ -41,8 +41,8 @@ import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionPolicy;
 import org.apereo.portal.security.IPermissionStore;
 import org.apereo.portal.security.PortalSecurityException;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.GroupService;
 
 /**
  * Tests the authorization framework.

@@ -115,7 +115,7 @@ public class RDBMDistributedLayoutStore extends RDBMUserLayoutStore {
     private boolean errorOnMissingPortlet = true;
     private boolean errorOnMissingUser = true;
 
-    static final String TEMPLATE_USER_NAME = "org.jasig.portal.services.Authentication.defaultTemplateUserName";
+    static final String TEMPLATE_USER_NAME = "org.apereo.portal.services.Authentication.defaultTemplateUserName";
 
     // Used in Import/Export operations
     private final org.dom4j.DocumentFactory fac = new org.dom4j.DocumentFactory();

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.groups;
 
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

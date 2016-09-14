@@ -27,7 +27,7 @@ import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.PermissionEvaluator;

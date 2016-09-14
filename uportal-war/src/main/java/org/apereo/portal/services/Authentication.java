@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.services;
+package org.apereo.portal.services;
 
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -186,7 +186,7 @@ public class Authentication {
             }
 
             // Populate the person object using the PersonDirectory if applicable
-            if (PropertiesManager.getPropertyAsBoolean("org.jasig.portal.services.Authentication.usePersonDirectory")) {
+            if (PropertiesManager.getPropertyAsBoolean("org.apereo.portal.services.Authentication.usePersonDirectory")) {
                 // Retrieve all of the attributes associated with the person logging in
                 final String username = person.getUserName();
 
@@ -231,11 +231,11 @@ public class Authentication {
             // the portal.properties file.
             // A more likely template would be staff or faculty or undergraduate.
             final boolean autocreate = PropertiesManager
-                    .getPropertyAsBoolean("org.jasig.portal.services.Authentication.autoCreateUsers");
+                    .getPropertyAsBoolean("org.apereo.portal.services.Authentication.autoCreateUsers");
             // If we are going to be auto creating accounts then we must find the default template to use
             if (autocreate && person.getAttribute("uPortalTemplateUserName") == null) {
                 final String defaultTemplateUserName = PropertiesManager
-                        .getProperty("org.jasig.portal.services.Authentication.defaultTemplateUserName");
+                        .getProperty("org.apereo.portal.services.Authentication.defaultTemplateUserName");
                 person.setAttribute("uPortalTemplateUserName", defaultTemplateUserName);
             }
             try {

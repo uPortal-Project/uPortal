@@ -36,7 +36,7 @@ import org.apereo.portal.layout.dlm.FragmentDefinition;
 import org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 import org.jasig.portal.user.IUserInstance;
 import org.jasig.portal.user.IUserInstanceManager;
 import org.springframework.beans.factory.annotation.Autowired;

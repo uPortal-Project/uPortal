@@ -30,9 +30,9 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.LockingException;
-import org.jasig.portal.services.EntityCachingService;
-import org.jasig.portal.services.EntityLockService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.EntityCachingService;
+import org.apereo.portal.services.EntityLockService;
+import org.apereo.portal.services.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

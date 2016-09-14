@@ -52,7 +52,7 @@ import org.apereo.portal.groups.IEntitySearcher;
 import org.apereo.portal.groups.IEntityStore;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.EntityTypesLocator;
 
 /**

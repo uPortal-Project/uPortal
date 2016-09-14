@@ -104,7 +104,7 @@
                         <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
                              so caches get cleared and replicated to other nodes. -->
                         <with>
-                            <attribute key="group">${groovy(org.jasig.portal.services.GroupService.findGroup(org.jasig.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
+                            <attribute key="group">${groovy(org.apereo.portal.services.GroupService.findGroup(org.apereo.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
                             <subtasks>
                                 <groovy>
                                     <script>
@@ -114,7 +114,7 @@
                                         import org.apereo.portal.io.GetMemberIsGroupPhrase
                                         import org.apereo.portal.io.GetMemberKeyPhrase
                                         import org.apereo.portal.io.GetMemberServicePhrase
-                                        import org.jasig.portal.services.GroupService
+                                        import org.apereo.portal.services.GroupService
                                         import org.slf4j.LoggerFactory
 
                                         def log = LoggerFactory.getLogger(this.getClass());
@@ -123,21 +123,23 @@
                                         group.getChildren().each() {group.removeChild(it)}
 
                                         Attributes.NODE.selectNodes('children/*').each {
-                                            String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
-                                            String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
-                                            log.debug("Found service=$groupService, memberId=$memberId")
+                                        String groupService = GetMemberServicePhrase.getPhrase(it.getName(),
+                                        it.getText())
+                                        String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
+                                        log.debug("Found service=$groupService, memberId=$memberId")
 
-                                            if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
-                                                String key = groupService + '.' + memberId
-                                                log.debug("Created key $key")
-                                                IEntityGroup member = GroupService.findGroup(key)
-                                                log.debug("Adding group $member")
-                                                group.addChild(member)
-                                            } else {
-                                                IGroupMember member = GroupService.getGroupMember(memberId, Class.forName(ENTITY_TYPE_NAME))
-                                                log.debug("Adding entity $member")
-                                                group.addChild(member)
-                                            }
+                                        if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                                        String key = groupService + '.' + memberId
+                                        log.debug("Created key $key")
+                                        IEntityGroup member = GroupService.findGroup(key)
+                                        log.debug("Adding group $member")
+                                        group.addChild(member)
+                                        } else {
+                                        IGroupMember member = GroupService.getGroupMember(memberId,
+                                        Class.forName(ENTITY_TYPE_NAME))
+                                        log.debug("Adding entity $member")
+                                        group.addChild(member)
+                                        }
                                         }
                                         group.updateMembers()
 

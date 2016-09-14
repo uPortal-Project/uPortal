@@ -27,7 +27,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.spring.locator.ApplicationContextLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ import org.springframework.context.ApplicationContext;
  * @see     org.apereo.portal.groups.pags.IPersonTester
  * @see     org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore
  * @see     org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestGroupDefinition
- * @see     org.jasig.portal.services.GroupService
+ * @see     org.apereo.portal.services.GroupService
  * @since   4.3
  */
 public final class AdHocGroupTester implements IPersonTester {
@@ -126,8 +126,8 @@ public final class AdHocGroupTester implements IPersonTester {
      *
      * @param groupName     name of group to search from {@code GroupService}
      * @return              {@code IEntityGroup} with given name or null if no group with given name found
-     * @see                 org.jasig.portal.services.GroupService#searchForEntities(String, int, Class)
-     * @see                 org.jasig.portal.services.GroupService#findGroup(String)
+     * @see                 org.apereo.portal.services.GroupService#searchForEntities(String, int, Class)
+     * @see                 org.apereo.portal.services.GroupService#findGroup(String)
      */
     private static IEntityGroup findGroupByName(String groupName) {
         EntityIdentifier[] identifiers = GroupService.searchForGroups(groupName, GroupService.IS, IPerson.class);
@@ -144,7 +144,7 @@ public final class AdHocGroupTester implements IPersonTester {
      *
      * @param person    {@code IPerson} with entity identifier key to look up
      * @return          person as {@code IGroupMember}
-     * @see             org.jasig.portal.services.GroupService#getEntity(String, Class)
+     * @see             org.apereo.portal.services.GroupService#getEntity(String, Class)
      */
     private static IGroupMember findPersonAsGroupMember(IPerson person) {
         String personKey = person.getEntityIdentifier().getKey();

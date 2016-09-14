@@ -41,7 +41,7 @@
             import org.apereo.portal.io.GetMemberIsGroupPhrase
             import org.apereo.portal.io.GetMemberKeyPhrase
             import org.apereo.portal.io.GetMemberServicePhrase
-            import org.jasig.portal.services.GroupService
+            import org.apereo.portal.services.GroupService
             import org.slf4j.LoggerFactory
 
             def log = LoggerFactory.getLogger(this.getClass());

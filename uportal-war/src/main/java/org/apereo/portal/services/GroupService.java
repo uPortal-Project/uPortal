@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.services;
+package org.apereo.portal.services;
 
 import java.util.Iterator;
 import javax.naming.InvalidNameException;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public final class GroupService implements IGroupConstants {
 
-    private static final String GROUP_SERVICE_KEY = "org.jasig.portal.services.GroupService.key_";
+    private static final String GROUP_SERVICE_KEY = "org.apereo.portal.services.GroupService.key_";
     private static final Logger LOGGER = LoggerFactory.getLogger(GroupService.class);
 
     // Singleton instance of the bootstrap class:

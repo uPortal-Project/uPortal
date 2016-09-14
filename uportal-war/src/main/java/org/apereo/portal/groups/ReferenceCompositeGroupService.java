@@ -31,8 +31,8 @@ import javax.naming.Name;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.concurrency.CachingException;
-import org.jasig.portal.services.EntityCachingService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.EntityCachingService;
+import org.apereo.portal.services.GroupService;
 
 /**
  * @author Dan Ellentuck

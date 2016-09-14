@@ -27,7 +27,7 @@ import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.IEntityLockService;
 import org.apereo.portal.concurrency.LockingException;
 import org.apereo.portal.properties.PropertiesManager;
-import org.jasig.portal.services.EntityLockService;
+import org.apereo.portal.services.EntityLockService;
 
 /**
  * Tests the entity lock framework.

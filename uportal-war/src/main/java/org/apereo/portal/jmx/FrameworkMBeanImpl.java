@@ -21,7 +21,7 @@ package org.apereo.portal.jmx;
 import java.util.Date;
 
 import org.apereo.portal.jdbc.RDBMServices;
-import org.jasig.portal.services.Authentication;
+import org.apereo.portal.services.Authentication;
 import org.apereo.portal.utils.MovingAverageSample;
 
 /**

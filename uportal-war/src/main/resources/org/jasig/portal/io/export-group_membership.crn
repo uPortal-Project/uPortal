@@ -50,7 +50,7 @@
         <subtasks>
             <choose>
                 <when test="${jexl(MEMBER_IS_GROUP.equals('T'))}">
-                    <with-attribute key="GROUP" value="${groovy(org.jasig.portal.services.GroupService.findGroup(MEMBER_SERVICE + '.' + MEMBER_KEY))}">
+                    <with-attribute key="GROUP" value="${groovy(org.apereo.portal.services.GroupService.findGroup(MEMBER_SERVICE + '.' + MEMBER_KEY))}">
                         <!-- Check for group name == null (indicates an orphaned record) -->
                         <choose>
                             <when test="${jexl(GROUP.getName() == null)}">

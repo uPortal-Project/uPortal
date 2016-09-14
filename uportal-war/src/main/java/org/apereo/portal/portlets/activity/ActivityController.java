@@ -35,7 +35,7 @@ import org.apereo.portal.events.aggr.login.LoginAggregationKey;
 import org.apereo.portal.events.aggr.login.LoginAggregationKeyImpl;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

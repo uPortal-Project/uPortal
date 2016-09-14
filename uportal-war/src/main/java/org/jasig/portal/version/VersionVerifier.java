@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.jasig.portal.shell.PortalShellBuildHelper;
+import org.apereo.portal.shell.PortalShellBuildHelper;
 import org.jasig.portal.version.dao.VersionDao;
 import org.jasig.portal.version.om.Version;
 import org.jasig.portal.version.om.Version.Field;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.shell;
+package org.apereo.portal.shell;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;

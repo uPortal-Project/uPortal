@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.services;
+package org.apereo.portal.services;
 
 import java.io.IOException;
 import java.util.Properties;

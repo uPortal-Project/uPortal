@@ -22,7 +22,7 @@
     <!-- This is a bit of a mess:  these Java classes are a part of uPortal (not Soffit),
          but are referenced in this file.  When this tech is moved into the uPortal project,
          this mismatch will go away. -->
-    <bean class="org.jasig.portal.soffit.AuthorizationHeaderProvider" />
-    <bean class="org.jasig.portal.soffit.DefinitionHeaderProvider" />
+    <bean class="org.apereo.portal.soffit.AuthorizationHeaderProvider" />
+    <bean class="org.apereo.portal.soffit.DefinitionHeaderProvider" />
 
 </beans>

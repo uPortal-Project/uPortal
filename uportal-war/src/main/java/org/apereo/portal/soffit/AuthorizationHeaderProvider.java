@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.soffit;
+package org.apereo.portal.soffit;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,14 +33,13 @@ import javax.portlet.RenderResponse;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
 import org.apereo.portal.soffit.model.v1_0.Bearer;
 import org.apereo.portal.soffit.service.BearerService;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;

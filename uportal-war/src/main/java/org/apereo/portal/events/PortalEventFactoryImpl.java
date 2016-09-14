@@ -47,7 +47,7 @@ import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.SystemPerson;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.GroupService;
 import org.jasig.portal.tenants.ITenant;
 import org.jasig.portal.url.IPortalRequestInfo;
 import org.jasig.portal.url.IPortalRequestUtils;

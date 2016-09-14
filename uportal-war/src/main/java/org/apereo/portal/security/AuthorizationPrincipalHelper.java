@@ -20,7 +20,7 @@ package org.apereo.portal.security;
 
 import org.apache.commons.lang3.Validate;
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.services.AuthorizationService;
+import org.apereo.portal.services.AuthorizationService;
 
 /**
  * Static convenience methods for working with IAuthorizationPricipal.

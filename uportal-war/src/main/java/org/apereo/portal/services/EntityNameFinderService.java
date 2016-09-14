@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.services;
+package org.apereo.portal.services;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,7 +83,7 @@ private synchronized void initialize()
         Class type = (Class) types.next();
         if ( type != Object.class )
         {
-            String factoryKey = "org.jasig.portal.services.EntityNameFinderService.NameFinderFactory.implementation_"+type.getName();
+            String factoryKey = "org.apereo.portal.services.EntityNameFinderService.NameFinderFactory.implementation_"+type.getName();
             try
             {
                 factoryName = PropertiesManager.getProperty(factoryKey);

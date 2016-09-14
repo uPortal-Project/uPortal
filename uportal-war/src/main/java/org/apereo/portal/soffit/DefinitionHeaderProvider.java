@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.portal.soffit;
+package org.apereo.portal.soffit;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
-import org.apereo.portal.soffit.Headers;
 import org.apereo.portal.soffit.connector.AbstractHeaderProvider;
 import org.apereo.portal.soffit.model.v1_0.Definition;
 import org.apereo.portal.soffit.service.DefinitionService;

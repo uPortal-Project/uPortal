@@ -23,8 +23,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.GroupService;
 
 /**
  * Provides single location for housing knowledge of the various ways to

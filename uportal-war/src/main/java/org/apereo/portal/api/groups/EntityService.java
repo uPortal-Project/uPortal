@@ -31,9 +31,9 @@ import org.apereo.portal.groups.IEntityNameFinder;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
-import org.jasig.portal.services.AuthorizationService;
-import org.jasig.portal.services.EntityNameFinderService;
-import org.jasig.portal.services.GroupService;
+import org.apereo.portal.services.AuthorizationService;
+import org.apereo.portal.services.EntityNameFinderService;
+import org.apereo.portal.services.GroupService;
 import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 public final class EntityService {
