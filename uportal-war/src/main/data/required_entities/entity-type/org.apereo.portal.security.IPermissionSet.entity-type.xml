@@ -20,6 +20,6 @@
 
 -->
 <entity-type script="classpath://org/jasig/portal/io/import-entity-type_v3-2.crn">
-  <name>org.apereo.portal.security.IPermissionSet</name>
+  <name>org.jasig.portal.security.IPermissionSet</name>
   <desc-name>IPermissions for an IAuthorizationPrincipal</desc-name>
 </entity-type>
