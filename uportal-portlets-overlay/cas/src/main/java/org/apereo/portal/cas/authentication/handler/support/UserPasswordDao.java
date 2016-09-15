@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.cas.authentication.handler.support;
+package org.apereo.portal.cas.authentication.handler.support;
 
 /**
  * @author Eric Dalquist

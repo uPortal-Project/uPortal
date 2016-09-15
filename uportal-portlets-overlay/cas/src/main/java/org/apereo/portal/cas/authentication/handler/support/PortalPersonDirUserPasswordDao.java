@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.cas.authentication.handler.support;
+package org.apereo.portal.cas.authentication.handler.support;
 
 import javax.sql.DataSource;
 
@@ -52,7 +52,7 @@ public class PortalPersonDirUserPasswordDao implements UserPasswordDao {
 
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.cas.authentication.handler.support.UserPasswordDao#getPasswordHash(java.lang.String)
+     * @see org.apereo.portal.cas.authentication.handler.support.UserPasswordDao#getPasswordHash(java.lang.String)
      */
     public String getPasswordHash(String userName) {
         try {

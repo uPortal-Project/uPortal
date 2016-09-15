@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.cas.services.web;
+package org.apereo.portal.cas.services.web;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
