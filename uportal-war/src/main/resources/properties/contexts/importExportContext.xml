@@ -584,7 +584,7 @@
      | Cernunnos Export Tasks
      +-->
     <bean id="export-permission_sets" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-permission_sets.crn" />
+        <property name="location" value="classpath:/org/apereo/portal/io/export-permission_sets.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
@@ -595,7 +595,7 @@
     </bean>
      
     <bean id="export-group_membership" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-group_membership.crn" />
+        <property name="location" value="classpath:/org/apereo/portal/io/export-group_membership.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
@@ -606,7 +606,7 @@
     </bean>
 
     <bean id="export-entity-type" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-entity-type.crn" />
+        <property name="location" value="classpath:/org/apereo/portal/io/export-entity-type.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
@@ -616,7 +616,7 @@
     </bean>
 
     <bean id="export-profile" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-profile.crn" />
+        <property name="location" value="classpath:/org/apereo/portal/io/export-profile.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
@@ -628,7 +628,7 @@
     </bean>
 
     <bean id="export-fragment-definition" class="org.danann.cernunnos.runtime.PojoTask">
-        <property name="location" value="classpath://org/jasig/portal/io/export-fragment-definition.crn" />
+        <property name="location" value="classpath:/org/apereo/portal/io/export-fragment-definition.crn" />
         <property name="requestAttributes">
             <util:map>
                 <entry key="SqlAttributes.DATA_SOURCE" value-ref="PortalDb" />
