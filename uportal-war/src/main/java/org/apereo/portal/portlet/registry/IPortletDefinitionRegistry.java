@@ -25,7 +25,7 @@ import org.apache.pluto.container.om.portlet.PortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletType;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 import org.springframework.dao.DataRetrievalFailureException;
 
 /**

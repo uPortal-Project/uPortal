@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
-import org.jasig.portal.utils.MapPopulator;
-import org.jasig.portal.utils.PropertiesPopulator;
-import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
+import org.apereo.portal.utils.MapPopulator;
+import org.apereo.portal.utils.PropertiesPopulator;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey.CacheKeyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanNameAware;

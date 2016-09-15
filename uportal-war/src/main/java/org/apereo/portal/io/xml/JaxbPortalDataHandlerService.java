@@ -84,15 +84,15 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apereo.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.utils.AntPatternFileFilter;
-import org.jasig.portal.utils.ConcurrentDirectoryScanner;
-import org.jasig.portal.utils.PeriodicFlushingBufferedWriter;
-import org.jasig.portal.utils.ResourceUtils;
-import org.jasig.portal.utils.SafeFilenameUtils;
-import org.jasig.portal.xml.StaxUtils;
-import org.jasig.portal.xml.XmlUtilities;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
-import org.jasig.portal.xml.stream.BufferedXMLEventReader;
+import org.apereo.portal.utils.AntPatternFileFilter;
+import org.apereo.portal.utils.ConcurrentDirectoryScanner;
+import org.apereo.portal.utils.PeriodicFlushingBufferedWriter;
+import org.apereo.portal.utils.ResourceUtils;
+import org.apereo.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.xml.StaxUtils;
+import org.apereo.portal.xml.XmlUtilities;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,7 +163,7 @@ public class JaxbPortalDataHandlerService implements IPortalDataHandlerService {
     private Map<String, IDataDeleter<Object>> portalDataDeleters = Collections.emptyMap();
 
 
-    private org.jasig.portal.utils.DirectoryScanner directoryScanner;
+    private org.apereo.portal.utils.DirectoryScanner directoryScanner;
     private ExecutorService importExportThreadPool;
     private XmlUtilities xmlUtilities;
 

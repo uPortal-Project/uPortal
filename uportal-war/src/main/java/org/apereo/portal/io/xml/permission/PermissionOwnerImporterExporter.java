@@ -30,7 +30,7 @@ import org.apereo.portal.io.xml.SimpleStringPortalData;
 import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
 import org.apereo.portal.permission.dao.IPermissionOwnerDao;
-import org.jasig.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

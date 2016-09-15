@@ -35,9 +35,9 @@ import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IPortletRequestInfo;
 import org.apereo.portal.url.ParameterMap;
 import org.apereo.portal.url.UrlType;
-import org.jasig.portal.utils.cache.CacheEntryTag;
-import org.jasig.portal.utils.cache.SimpleCacheEntryTag;
-import org.jasig.portal.utils.cache.TaggedCacheEntry;
+import org.apereo.portal.utils.cache.CacheEntryTag;
+import org.apereo.portal.utils.cache.SimpleCacheEntryTag;
+import org.apereo.portal.utils.cache.TaggedCacheEntry;
 
 /**
  * Key for publicly scoped portlet data

@@ -50,7 +50,7 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
-import org.jasig.portal.xml.ResourceLoaderURIResolver;
+import org.apereo.portal.xml.ResourceLoaderURIResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

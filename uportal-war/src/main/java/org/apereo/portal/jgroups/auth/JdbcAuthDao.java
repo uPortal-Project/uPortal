@@ -30,8 +30,8 @@ import javax.sql.DataSource;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.apereo.portal.jgroups.protocols.PingDao;
-import org.jasig.portal.utils.JdbcUtils;
-import org.jasig.portal.utils.RandomTokenGenerator;
+import org.apereo.portal.utils.JdbcUtils;
+import org.apereo.portal.utils.RandomTokenGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

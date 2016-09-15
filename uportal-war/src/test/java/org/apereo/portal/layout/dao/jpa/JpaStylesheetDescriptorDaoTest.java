@@ -39,7 +39,7 @@ import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.security.IPerson;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
-import org.jasig.portal.utils.MapPopulator;
+import org.apereo.portal.utils.MapPopulator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

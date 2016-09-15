@@ -57,8 +57,8 @@ import org.apereo.portal.portlet.rendering.worker.IPortletFailureExecutionWorker
 import org.apereo.portal.portlet.rendering.worker.IPortletRenderExecutionWorker;
 import org.apereo.portal.portlet.rendering.worker.IPortletWorkerFactory;
 import org.apereo.portal.portlets.error.MaintenanceModeException;
-import org.jasig.portal.utils.ConcurrentMapUtils;
-import org.jasig.portal.utils.web.PortalWebUtils;
+import org.apereo.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.web.PortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

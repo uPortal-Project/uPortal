@@ -42,7 +42,7 @@ import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.IFragmentDefinitionUtils;
+import org.apereo.portal.utils.IFragmentDefinitionUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 

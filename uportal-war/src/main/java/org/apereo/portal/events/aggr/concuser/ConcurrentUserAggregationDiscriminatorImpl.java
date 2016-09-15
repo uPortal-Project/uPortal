@@ -20,7 +20,7 @@ package org.apereo.portal.events.aggr.concuser;
 
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 public final class ConcurrentUserAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
         implements ConcurrentUserAggregationDiscriminator {

@@ -44,7 +44,7 @@ import org.apereo.portal.security.IdentitySwapperManager;
 import org.apereo.portal.security.mvc.LoginController;
 import org.apereo.portal.services.Authentication;
 import org.apereo.portal.spring.security.PortalPersonUserDetails;
-import org.jasig.portal.utils.ResourceLoader;
+import org.apereo.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;

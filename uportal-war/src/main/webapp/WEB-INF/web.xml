@@ -73,7 +73,7 @@
         <listener-class>org.springframework.web.util.HttpSessionMutexListener</listener-class>
     </listener>
     <listener>
-        <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
+        <listener-class>org.apereo.portal.utils.web.RequestAttributeMutexListener</listener-class>
     </listener>
 
     <filter>

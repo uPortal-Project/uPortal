@@ -27,7 +27,7 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.TaskResponse;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Element;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 
 /**
  * Generic import impl that support Cernunnous Tasks.
@@ -43,7 +43,7 @@ public class CernunnosDataImporter extends AbstractDom4jImporter {
     }
 
     /* (non-Javadoc)
-     * @see org.apereo.portal.io.xml.crn.AbstractDom4jImporter#importDataNode(org.jasig.portal.utils.Tuple)
+     * @see org.apereo.portal.io.xml.crn.AbstractDom4jImporter#importDataNode(org.apereo.portal.utils.Tuple)
      */
     @Override
     protected void importDataElement(Tuple<String, Element> data) {

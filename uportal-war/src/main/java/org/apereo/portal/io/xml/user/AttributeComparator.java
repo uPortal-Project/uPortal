@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.user;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Compare AttributeComparator instances

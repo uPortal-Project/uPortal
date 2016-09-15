@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 
 /**
  * Source of additional {@link Attribute}s used by the {@link StAXAttributeIncorporationComponent}

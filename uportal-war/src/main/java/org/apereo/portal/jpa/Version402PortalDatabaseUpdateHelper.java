@@ -19,7 +19,7 @@
 package org.apereo.portal.jpa;
 
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
-import org.jasig.portal.utils.JdbcUtils;
+import org.apereo.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;
 import org.springframework.beans.factory.annotation.Autowired;

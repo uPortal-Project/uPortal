@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

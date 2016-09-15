@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
 
 import junit.framework.AssertionFailedError;
 
-import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.ConcurrentMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

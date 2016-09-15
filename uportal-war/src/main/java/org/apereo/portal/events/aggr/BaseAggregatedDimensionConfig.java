@@ -21,7 +21,7 @@ package org.apereo.portal.events.aggr;
 import java.io.Serializable;
 import java.util.Set;
 
-import org.jasig.portal.utils.IncludeExcludeUtils;
+import org.apereo.portal.utils.IncludeExcludeUtils;
 
 /**
  * Describes common Include/Exclude configuration of aggregation dimensions

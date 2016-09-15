@@ -22,7 +22,7 @@ import org.dom4j.Element;
 import org.jasig.portal.UserProfile;
 import org.apereo.portal.io.xml.crn.AbstractDom4jImporter;
 import org.apereo.portal.layout.IUserLayoutStore;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 

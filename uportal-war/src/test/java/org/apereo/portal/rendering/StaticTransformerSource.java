@@ -26,8 +26,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apereo.portal.rendering.xslt.TransformerSource;
-import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.xml.XmlUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 

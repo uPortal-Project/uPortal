@@ -90,7 +90,7 @@
         <property name="password" value="${AggrEventsJdbcPassword}" />
     </bean>    
     
-    <bean id="delayedValidationQueryResolver" class="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
+    <bean id="delayedValidationQueryResolver" class="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
     	<property name="persistenceUnit">
     		<util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
     	</property>

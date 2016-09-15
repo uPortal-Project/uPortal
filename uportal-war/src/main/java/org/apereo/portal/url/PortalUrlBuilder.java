@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.ConcurrentMapUtils;
 
 import com.google.common.base.Preconditions;
 

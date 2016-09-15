@@ -25,8 +25,8 @@ import org.apache.commons.collections.map.ReferenceMap;
 import org.apereo.portal.IBasicEntity;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.IEntityCache;
-import org.jasig.portal.utils.cache.CacheFactory;
-import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
+import org.apereo.portal.utils.cache.CacheFactory;
+import org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +70,7 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
         }
         
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
+         * @see org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator#getKey(java.lang.Object[])
          */
         @SuppressWarnings("unchecked")
         @Override
@@ -80,7 +80,7 @@ public class CacheFactoryEntityCachingService extends AbstractEntityCachingServi
         }
         
         /* (non-Javadoc)
-         * @see org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
+         * @see org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator#createInternal(java.lang.Object, java.lang.Object[])
          */
         @SuppressWarnings("unchecked")
         @Override

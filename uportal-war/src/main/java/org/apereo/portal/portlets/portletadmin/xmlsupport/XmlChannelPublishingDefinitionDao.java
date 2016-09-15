@@ -36,7 +36,7 @@ import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
 import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.jasig.portal.portletpublishing.xml.Step;
-import org.jasig.portal.utils.threading.MapCachingDoubleCheckedCreator;
+import org.apereo.portal.utils.threading.MapCachingDoubleCheckedCreator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ResourceLoaderAware;

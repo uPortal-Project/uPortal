@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.permission;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Compare ExternalActivity based on fname

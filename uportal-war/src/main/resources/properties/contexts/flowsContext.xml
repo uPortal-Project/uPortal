@@ -58,7 +58,7 @@
     <bean id="groupValidator" class="org.apereo.portal.portlets.groupadmin.GroupFormValidator"/>
 
     <bean id="portalConversionService"
-        class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
+        class="org.apereo.portal.utils.web.flow.PortalConversionService"/>
     
     <!-- bean for reset-user-layout flow -->
     <bean id="userLayoutHelper" class="org.apereo.portal.layout.UserLayoutHelperImpl">
@@ -82,7 +82,7 @@
         conversion-service="portalConversionService" />
 
     <!-- Custom view factory creator that allows us to configure the flow beans in the top level application context -->
-    <bean id="viewFactoryCreator" class="org.jasig.portal.utils.web.flow.RuntimeMvcViewFactoryCreator">
+    <bean id="viewFactoryCreator" class="org.apereo.portal.utils.web.flow.RuntimeMvcViewFactoryCreator">
         <property name="viewResolvers">
             <ref bean="xmlViewResolver" />
         </property>

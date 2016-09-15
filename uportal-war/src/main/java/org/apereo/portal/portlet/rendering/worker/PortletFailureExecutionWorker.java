@@ -33,7 +33,7 @@ import org.apereo.portal.portlet.rendering.IPortletRenderer;
 import org.apereo.portal.portlet.rendering.PortletRenderResult;
 import org.apereo.portal.portlet.rendering.RenderPortletOutputHandler;
 import org.apereo.portal.portlets.error.PortletErrorController;
-import org.jasig.portal.utils.web.PortletHttpServletRequestWrapper;
+import org.apereo.portal.utils.web.PortletHttpServletRequestWrapper;
 
 /**
  * Worker used to execute render requests on the error portlet. Does not use

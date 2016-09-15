@@ -26,8 +26,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.utils.cache.CacheKey.CacheKeyBuilder;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey.CacheKeyBuilder;
 
 /**
  * Merges the results of multiple {@link TransformerConfigurationSource}s

@@ -30,8 +30,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.apereo.portal.rendering.AttributeSource;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 
 /**
  * @author Eric Dalquist

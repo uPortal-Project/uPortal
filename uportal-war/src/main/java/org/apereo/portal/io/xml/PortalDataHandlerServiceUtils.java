@@ -26,8 +26,8 @@ import java.util.TreeMap;
 
 import org.apereo.portal.logging.AppendableLogger;
 import org.apereo.portal.logging.LogLevel;
-import org.jasig.portal.utils.TableFormatter;
-import org.jasig.portal.utils.TableFormatter.TableEntry;
+import org.apereo.portal.utils.TableFormatter;
+import org.apereo.portal.utils.TableFormatter.TableEntry;
 import org.slf4j.Logger;
 
 /**

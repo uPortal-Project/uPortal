@@ -34,7 +34,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apereo.portal.layout.dlm.DistributedLayoutManager;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

@@ -20,7 +20,7 @@ package org.apereo.portal.events.aggr.login;
 
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 final public class LoginAggregationDiscriminatorImpl extends BaseGroupedAggregationDiscriminatorImpl
         implements LoginAggregationDiscriminator {

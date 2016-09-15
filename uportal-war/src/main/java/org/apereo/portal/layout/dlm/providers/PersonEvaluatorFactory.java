@@ -20,7 +20,7 @@ package org.apereo.portal.layout.dlm.providers;
 
 import org.apereo.portal.layout.dlm.Evaluator;
 import org.apereo.portal.layout.dlm.EvaluatorFactory;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

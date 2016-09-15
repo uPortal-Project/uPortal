@@ -29,7 +29,7 @@ import javax.xml.stream.events.StartElement;
 import org.jasig.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
-import org.jasig.portal.xml.StaxUtils;
+import org.apereo.portal.xml.StaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 

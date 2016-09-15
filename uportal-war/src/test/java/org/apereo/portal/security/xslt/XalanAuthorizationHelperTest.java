@@ -35,11 +35,9 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.LogFactory;
-import org.apereo.portal.security.xslt.IXalanAuthorizationHelper;
-import org.apereo.portal.security.xslt.XalanAuthorizationHelper;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jasig.portal.xml.ResourceLoaderURIResolver;
+import org.apereo.portal.xml.ResourceLoaderURIResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

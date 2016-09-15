@@ -101,14 +101,14 @@
         <constructor-arg value="org.apereo.portal.ICounterStore" />
     </bean>
     <bean id="cachingResourceLoader" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.resource.CachingResourceLoader" />
+        <constructor-arg value="org.apereo.portal.utils.cache.resource.CachingResourceLoader" />
     </bean>
     <bean id="templatesBuilder" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.resource.TemplatesBuilder" />
+        <constructor-arg value="org.apereo.portal.utils.cache.resource.TemplatesBuilder" />
     </bean>
 
-    <bean id="xmlUtilities" class="org.jasig.portal.xml.XmlUtilitiesImpl" />
-    <bean id="xpathOperations" class="org.jasig.portal.xml.xpath.XPathPoolImpl" />
+    <bean id="xmlUtilities" class="org.apereo.portal.xml.XmlUtilitiesImpl" />
+    <bean id="xpathOperations" class="org.apereo.portal.xml.xpath.XPathPoolImpl" />
     
     <import resource="classpath:/jpaPortalTestApplicationContext.xml"/>
 </beans>

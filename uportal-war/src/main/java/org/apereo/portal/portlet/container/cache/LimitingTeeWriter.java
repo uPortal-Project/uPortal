@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.apache.commons.io.output.NullWriter;
-import org.jasig.portal.utils.TeeWriter;
+import org.apereo.portal.utils.TeeWriter;
 
 import com.google.common.base.Function;
 

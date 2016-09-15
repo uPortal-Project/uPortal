@@ -20,7 +20,7 @@ package org.apereo.portal.events.aggr.groups;
 
 import java.util.Comparator;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 public class AggregatedGroupMappingNameComparator extends
         ComparableExtractingComparator<AggregatedGroupMapping, String> {

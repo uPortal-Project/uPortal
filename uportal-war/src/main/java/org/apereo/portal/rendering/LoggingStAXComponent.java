@@ -28,10 +28,10 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.utils.cache.CacheKey;
-import org.jasig.portal.xml.XmlUtilities;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
-import org.jasig.portal.xml.stream.FilteringXMLEventReader;
+import org.apereo.portal.utils.cache.CacheKey;
+import org.apereo.portal.xml.XmlUtilities;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.stream.FilteringXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

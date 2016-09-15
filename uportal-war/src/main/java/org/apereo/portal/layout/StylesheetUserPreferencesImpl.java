@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.utils.Populator;
+import org.apereo.portal.utils.Populator;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;

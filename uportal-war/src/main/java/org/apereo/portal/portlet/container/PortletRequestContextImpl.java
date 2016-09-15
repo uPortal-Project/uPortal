@@ -49,8 +49,8 @@ import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IPortletRequestInfo;
 import org.apereo.portal.url.ParameterMap;
 import org.apereo.portal.url.UrlType;
-import org.jasig.portal.utils.MultivaluedMapPopulator;
-import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
+import org.apereo.portal.utils.MultivaluedMapPopulator;
+import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
 import org.springframework.util.Assert;
 
 /**

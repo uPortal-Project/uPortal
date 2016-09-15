@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindowDescriptor;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.threading.NoopLock;
+import org.apereo.portal.utils.threading.NoopLock;
 
 /**
  * Utility for caching portlet windows and window data in memory. Ensures a consistent view for accessing the data by

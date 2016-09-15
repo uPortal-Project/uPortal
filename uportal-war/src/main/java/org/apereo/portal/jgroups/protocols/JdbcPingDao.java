@@ -33,7 +33,7 @@ import javax.persistence.Id;
 import org.apache.commons.codec.binary.Base64;
 import org.hibernate.annotations.Index;
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
-import org.jasig.portal.utils.JdbcUtils;
+import org.apereo.portal.utils.JdbcUtils;
 import org.jgroups.Address;
 import org.jgroups.PhysicalAddress;
 import org.jgroups.util.Streamable;

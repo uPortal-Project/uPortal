@@ -116,7 +116,7 @@
     </bean>
     
     <bean id="taggedCacheEntryPurger" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.TaggedCacheEntryPurger" />
+        <constructor-arg value="org.apereo.portal.utils.cache.TaggedCacheEntryPurger" />
     </bean>
 </beans>
 

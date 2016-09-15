@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.apereo.portal.concurrency.IEntityLock;
 import org.apereo.portal.concurrency.LockingException;
-import org.jasig.portal.utils.SmartCache;
+import org.apereo.portal.utils.SmartCache;
 /**
  * In-memory store for <code>IEntityLocks</code>.
  * @author Dan Ellentuck

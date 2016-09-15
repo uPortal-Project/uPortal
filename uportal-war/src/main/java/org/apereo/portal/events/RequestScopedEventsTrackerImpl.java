@@ -26,7 +26,7 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.portal.utils.web.PortalWebUtils;
+import org.apereo.portal.utils.web.PortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;

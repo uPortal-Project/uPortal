@@ -42,7 +42,7 @@ import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlet.rendering.PortletRenderResult;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;
-import org.jasig.portal.utils.cache.TaggedCacheEntryPurger;
+import org.apereo.portal.utils.cache.TaggedCacheEntryPurger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

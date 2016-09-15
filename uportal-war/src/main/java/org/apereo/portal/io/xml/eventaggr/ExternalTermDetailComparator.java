@@ -20,7 +20,7 @@ package org.apereo.portal.io.xml.eventaggr;
 
 import java.util.Calendar;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 
 /**

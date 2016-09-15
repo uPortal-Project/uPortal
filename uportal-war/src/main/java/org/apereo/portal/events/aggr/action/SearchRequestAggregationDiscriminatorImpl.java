@@ -20,7 +20,7 @@ package org.apereo.portal.events.aggr.action;
 
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * @author Chris Waymire (chris@waymire.net)

@@ -42,7 +42,7 @@ import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.security.AuthorizationPrincipalHelper;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.utils.web.PortalWebUtils;
+import org.apereo.portal.utils.web.PortalWebUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;

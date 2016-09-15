@@ -29,7 +29,7 @@ import org.apereo.portal.portlet.om.IPortletDefinitionId;
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 
 /**
  * Provides methods for creating and accessing {@link IPortletWindow} and related objects.

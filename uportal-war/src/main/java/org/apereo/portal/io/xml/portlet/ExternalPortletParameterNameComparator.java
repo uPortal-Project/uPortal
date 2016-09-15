@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.portlet;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 public final class ExternalPortletParameterNameComparator extends
         ComparableExtractingComparator<ExternalPortletParameter, String> {

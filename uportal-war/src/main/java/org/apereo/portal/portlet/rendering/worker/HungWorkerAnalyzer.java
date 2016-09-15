@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.PortletHungCompleteEvent;
 import org.apereo.portal.events.PortletHungEvent;
-import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.ConcurrentMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

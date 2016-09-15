@@ -33,7 +33,7 @@ import net.sf.ehcache.Element;
 import org.apereo.portal.rendering.PipelineComponentWrapper;
 import org.apereo.portal.rendering.PipelineEventReader;
 import org.apereo.portal.rendering.PipelineEventReaderImpl;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Included;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.slf4j.Logger;

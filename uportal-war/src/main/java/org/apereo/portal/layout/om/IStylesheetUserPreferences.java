@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.xml.transform.Transformer;
 
-import org.jasig.portal.utils.Populator;
+import org.apereo.portal.utils.Populator;
 
 /**
  * Tracks customizations made by the users to the XSL transformer and layout attributes.

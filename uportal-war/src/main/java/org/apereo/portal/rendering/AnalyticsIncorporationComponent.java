@@ -40,7 +40,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;
 import org.apereo.portal.url.IPortalRequestInfo;
 import org.apereo.portal.url.IUrlSyntaxProvider;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 

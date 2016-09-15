@@ -20,7 +20,7 @@ package org.apereo.portal.events.aggr.portlets;
 
 import java.util.Comparator;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 public class AggregatedPortletMappingNameComparator extends
         ComparableExtractingComparator<AggregatedPortletMapping, String> {

@@ -65,8 +65,8 @@ import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
 import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
-import org.jasig.portal.utils.SafeFilenameUtils;
-import org.jasig.portal.xml.PortletDescriptor;
+import org.apereo.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.xml.PortletDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
@@ -590,7 +590,7 @@ public class PortletDefinitionImporterExporter
         }
          
          
-        final org.jasig.portal.xml.PortletDescriptor portletDescriptor = new org.jasig.portal.xml.PortletDescriptor();
+        final org.apereo.portal.xml.PortletDescriptor portletDescriptor = new org.apereo.portal.xml.PortletDescriptor();
         final IPortletDescriptorKey portletDescriptorKey = def.getPortletDescriptorKey();
         if (portletDescriptorKey.isFrameworkPortlet()) {
             portletDescriptor.setIsFramework(true);

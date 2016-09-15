@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.commons.collections.comparators.ComparatorChain;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Sort group mappings

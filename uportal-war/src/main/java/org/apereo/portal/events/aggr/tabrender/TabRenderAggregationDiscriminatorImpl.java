@@ -21,7 +21,7 @@ package org.apereo.portal.events.aggr.tabrender;
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.tabs.AggregatedTabMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Basic impl of {@link org.apereo.portal.events.aggr.tabrender.TabRenderAggregationKey}

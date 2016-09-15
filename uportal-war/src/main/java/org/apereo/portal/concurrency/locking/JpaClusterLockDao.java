@@ -27,7 +27,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.jasig.portal.IPortalInfoProvider;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.cache.EntityManagerCache;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.joda.time.Duration;
 import org.joda.time.ReadableDuration;
 import org.slf4j.Logger;

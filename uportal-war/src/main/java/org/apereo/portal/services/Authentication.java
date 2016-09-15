@@ -40,7 +40,7 @@ import org.apereo.portal.security.ThreadNamingRequestFilter;
 import org.apereo.portal.security.provider.ChainingSecurityContext;
 import org.apereo.portal.utils.MovingAverage;
 import org.apereo.portal.utils.MovingAverageSample;
-import org.jasig.portal.utils.cache.UsernameTaggedCacheEntryPurger;
+import org.apereo.portal.utils.cache.UsernameTaggedCacheEntryPurger;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.springframework.beans.factory.annotation.Autowired;

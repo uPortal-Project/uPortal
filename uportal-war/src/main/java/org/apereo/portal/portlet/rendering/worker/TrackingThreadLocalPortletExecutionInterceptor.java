@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.utils.threading.TrackingThreadLocal;
+import org.apereo.portal.utils.threading.TrackingThreadLocal;
 import org.springframework.stereotype.Service;
 
 /**

@@ -28,7 +28,7 @@ import javax.persistence.PostUpdate;
 import javax.persistence.Transient;
 
 import org.apereo.portal.events.aggr.BaseAggregatedDimensionConfig;
-import org.jasig.portal.utils.IncludeExcludeUtils;
+import org.apereo.portal.utils.IncludeExcludeUtils;
 
 /**
  * Base impl for aggregated dimension configs, if the subclass does not override {@link #isIncluded(Object)}

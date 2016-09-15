@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.io.output.NullOutputStream;
-import org.jasig.portal.utils.TeeOutputStream;
+import org.apereo.portal.utils.TeeOutputStream;
 
 import com.google.common.base.Function;
 

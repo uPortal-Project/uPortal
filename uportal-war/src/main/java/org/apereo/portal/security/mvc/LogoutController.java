@@ -37,7 +37,7 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.security.ISecurityContext;
 import org.apereo.portal.security.IdentitySwapperManager;
-import org.jasig.portal.utils.ResourceLoader;
+import org.apereo.portal.utils.ResourceLoader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

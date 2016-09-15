@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.jasig.resourceserver.aggr.om.Included;
 import org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider;
 import org.springframework.beans.factory.BeanNameAware;

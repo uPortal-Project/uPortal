@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.rendering.xslt;
 
-import org.jasig.portal.utils.cache.resource.TemplatesBuilder;
+import org.apereo.portal.utils.cache.resource.TemplatesBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

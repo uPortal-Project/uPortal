@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.portlet.Event;
 
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.ConcurrentMapUtils;
 
 /**
  * Used to track events generated for a specific portlet window in a thread safe manner. The event

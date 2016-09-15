@@ -26,7 +26,7 @@ import org.apereo.portal.io.xml.crn.AbstractDom4jExporter;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.security.provider.BrokenSecurityContext;
 import org.apereo.portal.security.provider.PersonImpl;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 

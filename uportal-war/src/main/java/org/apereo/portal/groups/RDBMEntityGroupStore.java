@@ -35,7 +35,7 @@ import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.spring.locator.CounterStoreLocator;
 import org.apereo.portal.spring.locator.EntityTypesLocator;
-import org.jasig.portal.utils.SqlTransaction;
+import org.apereo.portal.utils.SqlTransaction;
 
 /**
  * Store for <code>EntityGroupImpl</code>.

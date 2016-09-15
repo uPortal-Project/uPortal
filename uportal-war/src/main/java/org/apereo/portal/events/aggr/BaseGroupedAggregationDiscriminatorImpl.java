@@ -19,7 +19,7 @@
 package org.apereo.portal.events.aggr;
 
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Basic impl of {@link BaseGroupedAggregationDiscriminator}

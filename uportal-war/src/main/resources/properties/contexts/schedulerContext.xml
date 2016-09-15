@@ -27,7 +27,7 @@
 
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
 
-    <bean id="loggingAbortHandler" class="org.jasig.portal.utils.threading.LoggingAbortHandler" />
+    <bean id="loggingAbortHandler" class="org.apereo.portal.utils.threading.LoggingAbortHandler" />
 
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
         <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
@@ -42,7 +42,7 @@
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
 
-    <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
+    <bean id="uPortalTaskScheduler" class="org.apereo.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
         <property name="initialDelay" value="PT120S" />
         <property name="executorService" ref="uPortalTaskExecutor" />
         <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />

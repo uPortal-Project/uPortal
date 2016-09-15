@@ -31,9 +31,9 @@
 
     <bean id="requireValidSessionFilter" class="org.apereo.portal.url.RequireValidSessionFilter" />
     <bean id="urlCanonicalizingFilter" class="org.apereo.portal.url.UrlCanonicalizingFilter" />
-    <bean id="createPortletCookieFilter" class="org.jasig.portal.utils.web.CreatePortletCookieFilter"/>
+    <bean id="createPortletCookieFilter" class="org.apereo.portal.utils.web.CreatePortletCookieFilter"/>
 
-    <bean id="remoteCookieCheckFilter" class="org.jasig.portal.utils.web.RemoteCookieCheckFilter">
+    <bean id="remoteCookieCheckFilter" class="org.apereo.portal.utils.web.RemoteCookieCheckFilter">
         <property name="regexIgnoredUserAgents">
             <set>
                 <value>.*Googlebot.*</value>  <!-- Allow Google to index the guest page.  See https://support.google.com/webmasters/answer/1061943?hl=en -->

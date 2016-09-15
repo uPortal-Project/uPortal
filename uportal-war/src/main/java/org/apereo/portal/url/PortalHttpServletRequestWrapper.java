@@ -41,8 +41,8 @@ import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;
-import org.jasig.portal.utils.ArrayEnumerator;
-import org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper;
+import org.apereo.portal.utils.ArrayEnumerator;
+import org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper;
 
 /**
  * Portal wide request wrapper. Provides portal specific information for request parameters,
@@ -195,7 +195,7 @@ public class PortalHttpServletRequestWrapper extends AbstractHttpServletRequestW
      * is consulted first then the {@link GroupService} is used to determine if a
      * group exists for the specified role and if the user is a member of it.
      *
-     * @see org.jasig.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
+     * @see org.apereo.portal.utils.web.AbstractHttpServletRequestWrapper#isUserInRole(java.lang.String)
      */
     @Override
     public boolean isUserInRole(String role) {

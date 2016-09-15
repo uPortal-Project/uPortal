@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.rest;
 
-import org.jasig.portal.utils.web.RemoteCookieCheckFilter;
+import org.apereo.portal.utils.web.RemoteCookieCheckFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

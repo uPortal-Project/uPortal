@@ -24,10 +24,10 @@ import java.util.Set;
 
 import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletWindowId;
-import org.jasig.portal.utils.cache.CacheEntryTag;
-import org.jasig.portal.utils.cache.SessionIdTaggedCacheEntryPurger;
-import org.jasig.portal.utils.cache.SimpleCacheEntryTag;
-import org.jasig.portal.utils.cache.TaggedCacheEntry;
+import org.apereo.portal.utils.cache.CacheEntryTag;
+import org.apereo.portal.utils.cache.SessionIdTaggedCacheEntryPurger;
+import org.apereo.portal.utils.cache.SimpleCacheEntryTag;
+import org.apereo.portal.utils.cache.TaggedCacheEntry;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;

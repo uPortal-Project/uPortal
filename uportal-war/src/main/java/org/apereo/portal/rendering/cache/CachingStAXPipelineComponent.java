@@ -24,7 +24,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
 
 import org.apereo.portal.rendering.StAXPipelineComponent;
-import org.jasig.portal.xml.stream.XMLEventBufferReader;
+import org.apereo.portal.xml.stream.XMLEventBufferReader;
 
 /**
  * component that can cache StAX pipeline events

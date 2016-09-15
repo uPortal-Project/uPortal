@@ -70,7 +70,7 @@
                                                 <attribute key="themeStylesheetPrefs">${groovy(stylesheetUserPreferencesDao.getStylesheetUserPreferences(themeStylesheetDesc, USER_ID, PROFILE_ID))}</attribute>
                                                 <subtasks>
                                                     <if test="${groovy(structureStylesheetPrefs != null)}">
-                                                        <for-each attribute-name="paramEntry" items="${groovy(structureStylesheetPrefs.populateStylesheetParameters(new org.jasig.portal.utils.MapPopulator()).getMap().entrySet())}">
+                                                        <for-each attribute-name="paramEntry" items="${groovy(structureStylesheetPrefs.populateStylesheetParameters(new org.apereo.portal.utils.MapPopulator()).getMap().entrySet())}">
                                                             <append-node parent="${singleNode(structure)}">
                                                                 <parameter>
                                                                     <name>${groovy(paramEntry.getKey())}</name>

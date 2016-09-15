@@ -34,10 +34,10 @@ import javax.xml.stream.events.StartElement;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
-import org.jasig.portal.utils.ConcurrentMapUtils;
-import org.jasig.portal.utils.ResourceUtils;
-import org.jasig.portal.xml.StaxUtils;
-import org.jasig.portal.xml.stream.BufferedXMLEventReader;
+import org.apereo.portal.utils.ConcurrentMapUtils;
+import org.apereo.portal.utils.ResourceUtils;
+import org.apereo.portal.xml.StaxUtils;
+import org.apereo.portal.xml.stream.BufferedXMLEventReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;

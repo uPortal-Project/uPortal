@@ -34,7 +34,7 @@ import org.apereo.portal.character.stream.events.PortletNewItemCountPlaceholderE
 import org.apereo.portal.character.stream.events.PortletTitlePlaceholderEvent;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.portlet.rendering.IPortletExecutionManager;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

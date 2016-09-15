@@ -28,7 +28,7 @@ import org.apereo.portal.character.stream.events.CharacterEvent;
 import org.apereo.portal.rendering.CharacterPipelineComponentWrapper;
 import org.apereo.portal.rendering.PipelineEventReader;
 import org.apereo.portal.rendering.PipelineEventReaderImpl;
-import org.jasig.portal.utils.cache.CacheKey;
+import org.apereo.portal.utils.cache.CacheKey;
 
 /**
  * Adds JsonWrapperFilteringCharacterEventReader into the character event reader stream

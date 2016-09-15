@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.om.IPortletWindowId;
 import org.apereo.portal.url.IPortalRequestUtils;
-import org.jasig.portal.utils.Populator;
+import org.apereo.portal.utils.Populator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

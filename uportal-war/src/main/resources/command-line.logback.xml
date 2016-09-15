@@ -93,8 +93,8 @@
    -->
 
     <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
-  <logger name="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
-  <logger name="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
   
   <!-- Hide some bad Hibernate log messages -->
   <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>

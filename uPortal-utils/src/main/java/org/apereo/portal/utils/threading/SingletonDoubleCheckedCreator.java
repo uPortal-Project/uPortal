@@ -41,7 +41,7 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
     protected abstract T createSingleton(Object... args);
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
+     * @see org.apereo.portal.utils.threading.DoubleCheckedCreator#create(java.lang.Object[])
      */
     @Override
     protected final T create(Object... args) {
@@ -62,7 +62,7 @@ public abstract class SingletonDoubleCheckedCreator<T> extends DoubleCheckedCrea
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])
+     * @see org.apereo.portal.utils.threading.DoubleCheckedCreator#retrieve(java.lang.Object[])
      */
     @Override
     protected final T retrieve(Object... args) {

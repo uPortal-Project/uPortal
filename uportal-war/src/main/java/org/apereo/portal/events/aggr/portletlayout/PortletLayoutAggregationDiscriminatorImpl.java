@@ -21,7 +21,7 @@ package org.apereo.portal.events.aggr.portletlayout;
 import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Basic impl of {@link PortletLayoutAggregationDiscriminator}

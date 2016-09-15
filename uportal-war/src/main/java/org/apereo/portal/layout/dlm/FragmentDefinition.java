@@ -35,7 +35,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.apereo.portal.layout.dlm.providers.EvaluatorGroup;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

@@ -38,7 +38,7 @@ import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.services.AuthorizationService;
-import org.jasig.portal.utils.DocumentFactory;
+import org.apereo.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

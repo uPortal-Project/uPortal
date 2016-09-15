@@ -36,8 +36,8 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dom4j.Element;
 import org.apereo.portal.io.xml.XmlTestException;
-import org.jasig.portal.utils.Tuple;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.utils.Tuple;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.junit.Test;
 
 public class AbstractDom4jImporterExporterTest {

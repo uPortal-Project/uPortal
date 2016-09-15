@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apereo.portal.portlet.om.IPortletEntityDescriptor;
 import org.apereo.portal.portlet.om.IPortletEntityId;
-import org.jasig.portal.utils.threading.NoopLock;
+import org.apereo.portal.utils.threading.NoopLock;
 
 import com.google.common.base.Function;
 

@@ -21,7 +21,7 @@ package org.apereo.portal.io.xml.permission;
 import java.util.regex.Pattern;
 
 import org.dom4j.Node;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 
 import com.google.common.base.Function;
 

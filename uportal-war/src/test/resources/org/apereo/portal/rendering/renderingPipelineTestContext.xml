@@ -156,9 +156,9 @@
 
 
     <!-- Utility Beans -->
-    <bean class="org.jasig.portal.xml.XmlUtilitiesImpl" />
+    <bean class="org.apereo.portal.xml.XmlUtilitiesImpl" />
     
-    <bean class="org.jasig.portal.utils.cache.resource.TemplatesBuilder">
+    <bean class="org.apereo.portal.utils.cache.resource.TemplatesBuilder">
         <!-- 
         <property name="transformerAttributes">
             <map>
@@ -172,13 +172,13 @@
          -->
     </bean>
     
-    <bean class="org.jasig.portal.utils.cache.resource.CachingResourceLoaderImpl" />
+    <bean class="org.apereo.portal.utils.cache.resource.CachingResourceLoaderImpl" />
     
     <bean id="testSpelService" class="org.apereo.portal.spring.spel.PortalSpELServiceImpl" />
     
     <bean class="org.apereo.portal.url.PortalRequestUtilsImpl" />
     
-    <bean id="org.jasig.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
+    <bean id="org.apereo.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
     <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
 
     <bean id="xslPortalUrlProvider" class="org.apereo.portal.url.xml.XsltPortalUrlProvider" />

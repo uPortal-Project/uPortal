@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.utils.AbstractBeanLocator;
 import org.apereo.portal.utils.PortalApplicationContextLocator;
-import org.jasig.portal.utils.cache.CacheFactory;
+import org.apereo.portal.utils.cache.CacheFactory;
 import org.springframework.context.ApplicationContext;
 
 /**

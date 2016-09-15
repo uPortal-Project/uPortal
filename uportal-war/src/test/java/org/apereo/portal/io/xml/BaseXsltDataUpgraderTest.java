@@ -41,8 +41,8 @@ import javax.xml.validation.Validator;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jasig.portal.xml.XmlUtilities;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.XmlUtilities;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.support.SaxResourceUtils;
 import org.springframework.util.Assert;

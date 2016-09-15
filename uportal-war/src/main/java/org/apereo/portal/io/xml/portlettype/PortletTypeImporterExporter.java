@@ -30,7 +30,7 @@ import org.apereo.portal.io.xml.IPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
-import org.jasig.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

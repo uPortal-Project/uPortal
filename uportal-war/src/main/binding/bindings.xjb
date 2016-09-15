@@ -19,7 +19,7 @@
     <!-- Generic uPortal Schemas -->
     <jaxb:bindings schemaLocation="../resources/xsd/common-types-4.0.xsd">
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.xml" />
+            <jaxb:package name="org.apereo.portal.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
       

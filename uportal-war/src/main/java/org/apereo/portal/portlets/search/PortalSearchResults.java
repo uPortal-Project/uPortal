@@ -32,7 +32,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 
 /**
  * Used to collate search results for the SearchPortletController.

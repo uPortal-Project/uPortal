@@ -45,8 +45,8 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apereo.portal.io.xml.user.ExternalUser;
 import org.apereo.portal.io.xml.user.UserPortalDataType;
-import org.jasig.portal.xml.XmlUtilities;
-import org.jasig.portal.xml.XmlUtilitiesImpl;
+import org.apereo.portal.xml.XmlUtilities;
+import org.apereo.portal.xml.XmlUtilitiesImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

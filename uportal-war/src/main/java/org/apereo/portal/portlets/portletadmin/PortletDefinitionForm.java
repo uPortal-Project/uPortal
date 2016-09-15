@@ -54,7 +54,7 @@ import org.apereo.portal.portlets.BooleanAttribute;
 import org.apereo.portal.portlets.BooleanAttributeFactory;
 import org.apereo.portal.portlets.StringListAttribute;
 import org.apereo.portal.portlets.StringListAttributeFactory;
-import org.jasig.portal.xml.PortletDescriptor;
+import org.apereo.portal.xml.PortletDescriptor;
 
 public class PortletDefinitionForm implements Serializable {
 

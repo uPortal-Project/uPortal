@@ -22,7 +22,7 @@ import org.apereo.portal.events.aggr.BaseGroupedAggregationDiscriminatorImpl;
 import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationKey.ExecutionType;
 import org.apereo.portal.events.aggr.portlets.AggregatedPortletMapping;
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Basic impl of {@link org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationDiscriminator}

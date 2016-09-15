@@ -31,10 +31,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.utils.RandomTokenGenerator;
-import org.jasig.portal.utils.threading.ReadResult;
-import org.jasig.portal.utils.threading.ReadWriteCallback;
-import org.jasig.portal.utils.threading.ReadWriteLockTemplate;
+import org.apereo.portal.utils.RandomTokenGenerator;
+import org.apereo.portal.utils.threading.ReadResult;
+import org.apereo.portal.utils.threading.ReadWriteCallback;
+import org.apereo.portal.utils.threading.ReadWriteLockTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

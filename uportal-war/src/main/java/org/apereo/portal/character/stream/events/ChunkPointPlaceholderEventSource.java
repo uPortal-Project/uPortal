@@ -25,7 +25,7 @@ import javax.xml.stream.events.StartElement;
 
 import org.apereo.portal.character.stream.BasePlaceholderEventSource;
 import org.apereo.portal.rendering.StAXSerializingComponent;
-import org.jasig.portal.xml.stream.ChunkingEventReader;
+import org.apereo.portal.xml.stream.ChunkingEventReader;
 
 /**
  * Returns an empty string event. The chunk-point element and this source are used to break up the character

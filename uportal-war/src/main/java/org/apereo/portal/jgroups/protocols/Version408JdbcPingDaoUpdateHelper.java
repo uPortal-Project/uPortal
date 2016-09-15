@@ -21,7 +21,7 @@ package org.apereo.portal.jgroups.protocols;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.IVersionedDatabaseUpdateHelper;
-import org.jasig.portal.utils.JdbcUtils;
+import org.apereo.portal.utils.JdbcUtils;
 import org.jasig.portal.version.VersionUtils;
 import org.jasig.portal.version.om.Version;
 import org.slf4j.Logger;

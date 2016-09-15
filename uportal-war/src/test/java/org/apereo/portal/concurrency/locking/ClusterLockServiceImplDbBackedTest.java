@@ -32,14 +32,11 @@ import org.jasig.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
-import org.jasig.portal.utils.threading.ThrowingRunnable;
+import org.apereo.portal.utils.threading.ThrowingRunnable;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.google.common.base.Function;
 

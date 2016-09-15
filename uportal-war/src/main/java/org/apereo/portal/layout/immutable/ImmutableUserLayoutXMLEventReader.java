@@ -30,8 +30,8 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.xml.stream.FilteringXMLEventReader;
-import org.jasig.portal.xml.stream.events.StartElementWrapper;
+import org.apereo.portal.xml.stream.FilteringXMLEventReader;
+import org.apereo.portal.xml.stream.events.StartElementWrapper;
 
 /**
  * @author Eric Dalquist

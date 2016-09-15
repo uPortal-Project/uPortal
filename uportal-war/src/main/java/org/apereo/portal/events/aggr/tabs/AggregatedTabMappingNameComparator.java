@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.events.aggr.tabs;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 import java.util.Comparator;
 
 public class AggregatedTabMappingNameComparator extends

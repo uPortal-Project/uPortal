@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.io.xml.subscribedfragment;
 
-import org.jasig.portal.utils.ComparableExtractingComparator;
+import org.apereo.portal.utils.ComparableExtractingComparator;
 
 /**
  * Compares SubscribedFragmentType instances

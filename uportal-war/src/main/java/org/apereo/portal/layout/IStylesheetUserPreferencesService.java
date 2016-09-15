@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.portal.IUserProfile;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
-import org.jasig.portal.utils.Populator;
+import org.apereo.portal.utils.Populator;
 
 /**
  * Provides access to stylesheet user preference data. This is how any runtime code that needs access to theme or structure

@@ -24,7 +24,7 @@ import javax.portlet.CacheControl;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apereo.portal.portlet.om.IPortletWindow;
-import org.jasig.portal.utils.web.PortletMimeHttpServletResponseWrapper;
+import org.apereo.portal.utils.web.PortletMimeHttpServletResponseWrapper;
 
 /**
  * Wrapper for the portal response when a portlet is handling a resource request. As much is

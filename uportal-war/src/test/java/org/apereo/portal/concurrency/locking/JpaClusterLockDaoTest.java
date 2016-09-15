@@ -38,7 +38,7 @@ import org.jasig.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;
-import org.jasig.portal.utils.threading.ThrowingRunnable;
+import org.apereo.portal.utils.threading.ThrowingRunnable;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

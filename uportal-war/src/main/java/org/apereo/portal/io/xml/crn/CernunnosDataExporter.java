@@ -25,8 +25,8 @@ import org.danann.cernunnos.Task;
 import org.danann.cernunnos.TaskResponse;
 import org.danann.cernunnos.runtime.RuntimeRequestResponse;
 import org.dom4j.Element;
-import org.jasig.portal.utils.SafeFilenameUtils;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Required;
 
 import com.google.common.base.Function;

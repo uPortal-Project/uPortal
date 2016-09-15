@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.utils.DocumentFactory;
+import org.apereo.portal.utils.DocumentFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

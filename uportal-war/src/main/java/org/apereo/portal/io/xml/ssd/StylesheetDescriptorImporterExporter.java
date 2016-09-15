@@ -40,7 +40,7 @@ import org.apereo.portal.layout.om.IStylesheetData;
 import org.apereo.portal.layout.om.IStylesheetData.Scope;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetParameterDescriptor;
-import org.jasig.portal.utils.SafeFilenameUtils;
+import org.apereo.portal.utils.SafeFilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 

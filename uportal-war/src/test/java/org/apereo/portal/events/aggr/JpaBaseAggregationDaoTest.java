@@ -48,7 +48,7 @@ import org.apereo.portal.events.aggr.groups.AggregatedGroupMapping;
 import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.groups.IEntityGroup;
 import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
-import org.jasig.portal.utils.Tuple;
+import org.apereo.portal.utils.Tuple;
 import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
