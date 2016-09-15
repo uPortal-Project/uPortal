@@ -1157,15 +1157,15 @@
 
     <event-definition>
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchRequest</qname>
-        <value-type>org.jasig.portal.search.SearchRequest</value-type>
+        <value-type>org.apereo.portal.search.SearchRequest</value-type>
     </event-definition>
     <event-definition>
         <qname xmlns:x="https://source.jasig.org/schemas/uportal/search">x:SearchResults</qname>
-        <value-type>org.jasig.portal.search.SearchResults</value-type>
+        <value-type>org.apereo.portal.search.SearchResults</value-type>
     </event-definition>
 
     <container-runtime-option>
-        <name>org.jasig.portal.globalEvent</name>
+        <name>org.apereo.portal.globalEvent</name>
         <value>{https://source.jasig.org/schemas/uportal/search}SearchRequest</value>
     </container-runtime-option>
 

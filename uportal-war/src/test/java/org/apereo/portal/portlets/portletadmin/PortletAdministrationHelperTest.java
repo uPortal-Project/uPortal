@@ -20,7 +20,7 @@ package org.apereo.portal.portlets.portletadmin;
 
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl;
 import org.apereo.portal.portlet.om.IPortletType;
-import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.apereo.portal.portletpublishing.xml.PortletPublishingDefinition;
 import org.junit.Test;
 
 import java.util.HashMap;

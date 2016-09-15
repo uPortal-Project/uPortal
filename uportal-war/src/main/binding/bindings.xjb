@@ -100,7 +100,7 @@
             <jaxb:property name="preferences"/>
         </jaxb:bindings>
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.portletpublishing.xml" />
+            <jaxb:package name="org.apereo.portal.portletpublishing.xml" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
 

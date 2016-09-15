@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LazyMap;
-import org.jasig.portal.portletpublishing.xml.Preference;
+import org.apereo.portal.portletpublishing.xml.Preference;
 import org.apereo.portal.portlets.StringListAttribute;
 import org.apereo.portal.portlets.StringListAttributeFactory;
 

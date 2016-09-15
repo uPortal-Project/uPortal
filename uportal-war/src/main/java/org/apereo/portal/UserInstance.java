@@ -49,7 +49,7 @@ public class UserInstance implements IUserInstance {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IUserInstance#getPerson()
+     * @see org.apereo.portal.IUserInstance#getPerson()
      */
     @Override
     public IPerson getPerson() {
@@ -57,7 +57,7 @@ public class UserInstance implements IUserInstance {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IUserInstance#getPreferencesManager()
+     * @see org.apereo.portal.IUserInstance#getPreferencesManager()
      */
     @Override
     public IUserPreferencesManager getPreferencesManager() {
@@ -65,7 +65,7 @@ public class UserInstance implements IUserInstance {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.IUserInstance#getLocaleManager()
+     * @see org.apereo.portal.IUserInstance#getLocaleManager()
      */
     @Override
     public LocaleManager getLocaleManager() {

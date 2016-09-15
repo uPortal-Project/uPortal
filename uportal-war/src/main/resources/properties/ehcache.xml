@@ -523,7 +523,7 @@
     <!-- XSLT caches -->
     <!--
      | Note: overflowToDisk MUST be false for XSLT caches as these caches store "javax.xml.transform.Templates" or
-     | "org.jasig.portal.StylesheetSet" instances which are not Serializable
+     | "org.apereo.portal.StylesheetSet" instances which are not Serializable
      +-->
     <cache name="org.apereo.portal.utils.cache.resource.CachingResourceLoader"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
@@ -1058,7 +1058,17 @@
                 replicateRemovals=true "/>
     </cache>
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
-        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        <cacheEventListenerFactory
+            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
+            properties="replicateAsynchronously=true,
+                replicatePuts=false,
+                replicateUpdates=true, replicateUpdatesViaCopy=false,
+                replicateRemovals=true "/>
+    </cache>
+    <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.Query"
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
@@ -1906,7 +1916,7 @@
 
 
     <!-- Caches failures with skin manager less CSS compilations. -->
-    <cache name="org.jasig.portal.skinManager.failureCache"
+    <cache name="org.apereo.portal.skinManager.failureCache"
            eternal="false" overflowToDisk="false" diskPersistent="false"
            maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 

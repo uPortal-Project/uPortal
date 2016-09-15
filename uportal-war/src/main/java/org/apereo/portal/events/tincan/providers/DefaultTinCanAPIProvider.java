@@ -69,13 +69,13 @@ import static java.lang.String.format;
  *         <th>description</th>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.url</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.url</td>
  *         <td>true</td>
  *         <td>&nbsp;</td>
  *         <td>The root of the LRS REST API.</td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.form-encode-activity-data</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.form-encode-activity-data</td>
  *         <td>false unless the LRS is LearningLocker</td>
  *         <td>false</td>
  *         <td>
@@ -90,17 +90,17 @@ import static java.lang.String.format;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.activity-form-param-name</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.activity-form-param-name</td>
  *         <td>false</td>
  *         <td>content</td>
  *         <td>
- *             If the "org.jasig.portal.tincan-api.{ID}.form-encode-activity-data"
+ *             If the "org.apereo.portal.tincan-api.{ID}.form-encode-activity-data"
  *             property is set, this property controls the property name to use
  *             when posting the form data.
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.actor-name</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.actor-name</td>
  *         <td>false</td>
  *         <td>uPortal</td>
  *         <td>
@@ -112,7 +112,7 @@ import static java.lang.String.format;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.actor-email</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.actor-email</td>
  *         <td>false</td>
  *         <td>no-reply@jasig.org</td>
  *         <td>
@@ -121,7 +121,7 @@ import static java.lang.String.format;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.activityId</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.activityId</td>
  *         <td>false</td>
  *         <td>activityId</td>
  *         <td>
@@ -131,7 +131,7 @@ import static java.lang.String.format;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>org.jasig.portal.tincan-api.{ID}.stateId</td>
+ *         <td>org.apereo.portal.tincan-api.{ID}.stateId</td>
  *         <td>false</td>
  *         <td>stateId</td>
  *         <td>
@@ -153,7 +153,7 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
     private static final String STATE_VALUE_STARTED = "started";
     private static final String XAPI_VERSION_HEADER = "X-Experience-API-Version";
     private static final String XAPI_VERSION_VALUE = "1.0.0";
-    private static final String PROPERTY_FORMAT = "org.jasig.portal.tincan-api.%s.%s";
+    private static final String PROPERTY_FORMAT = "org.apereo.portal.tincan-api.%s.%s";
 
     private static final String PARAM_ACTIVITY_ID = "activityId";
     private static final String PARAM_AGENT = "agent";
@@ -212,7 +212,7 @@ public class DefaultTinCanAPIProvider implements ITinCanAPIProvider {
      *
      * @param enabled the xAPI status
      */
-    @Value("${org.jasig.portal.tincan-api.enabled:false}")
+    @Value("${org.apereo.portal.tincan-api.enabled:false}")
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

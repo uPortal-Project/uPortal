@@ -36,7 +36,7 @@ public final class PortletLinkPlaceholderEventImpl extends PortletPlaceholderEve
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.events.CharacterEvent#getEventType()
+     * @see org.apereo.portal.character.stream.events.CharacterEvent#getEventType()
      */
     @Override
     public CharacterEventTypes getEventType() {

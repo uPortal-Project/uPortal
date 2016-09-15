@@ -80,7 +80,7 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
     private Set<String> compiledCssFilepaths = new CopyOnWriteArraySet<String>();
 
     @Autowired
-    @Qualifier(value = "org.jasig.portal.skinManager.failureCache")
+    @Qualifier(value = "org.apereo.portal.skinManager.failureCache")
     private Cache cssSkinFailureCache;
 
     public void setLessCssJavascriptUrlPath(String lessCssJavascriptUrlPath) {

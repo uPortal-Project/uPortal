@@ -32,18 +32,18 @@ import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.portlets.search.IPortalSearchService;
-import org.jasig.portal.search.SearchResult;
+import org.apereo.portal.search.SearchResult;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.IPortletUrlBuilder;
 import org.apereo.portal.url.UrlType;
-import org.jasig.portal.search.PortletUrl;
-import org.jasig.portal.search.PortletUrlType;
-import org.jasig.portal.search.SearchResults;
-import org.jasig.portal.search.SearchRequest;
-import org.jasig.portal.search.PortletUrlParameter;
+import org.apereo.portal.search.PortletUrl;
+import org.apereo.portal.search.PortletUrlType;
+import org.apereo.portal.search.SearchResults;
+import org.apereo.portal.search.SearchRequest;
+import org.apereo.portal.search.PortletUrlParameter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

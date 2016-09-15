@@ -29,7 +29,7 @@
     	<description>Returns a string via a PortletURL</description>
         <name>getStringFromPortletUrl</name>
         <function-class>org.apereo.portal.portlet.PortletUtils</function-class>
-        <function-signature>java.lang.String getStringFromPortletUrl(org.jasig.portal.search.PortletUrl, javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.String getStringFromPortletUrl(org.apereo.portal.search.PortletUrl, javax.servlet.http.HttpServletRequest)</function-signature>
         <example>${pURL:getStringFromPortletUrl(result.first.portletUrl, pageContext.request)}</example>
     </function>
 </taglib>

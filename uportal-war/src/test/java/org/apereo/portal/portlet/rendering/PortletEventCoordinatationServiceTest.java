@@ -62,7 +62,7 @@ public class PortletEventCoordinatationServiceTest {
         final QName searchRequestName = new QName("https://source.jasig.org/schemas/uportal/search", "SearchRequest");
         final QName searchResultsName = new QName("https://source.jasig.org/schemas/uportal/search", "SearchResults");
         
-        //org.jasig.portal.search.SearchQuery
+        //org.apereo.portal.search.SearchQuery
         
         final Event event = mock(Event.class);
         final MockPortletDefinitionId portletDefinitionId = new MockPortletDefinitionId(1);

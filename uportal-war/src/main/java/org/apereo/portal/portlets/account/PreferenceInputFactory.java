@@ -23,15 +23,15 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-import org.jasig.portal.portletpublishing.xml.MultiChoiceDisplay;
-import org.jasig.portal.portletpublishing.xml.MultiChoicePreferenceInput;
-import org.jasig.portal.portletpublishing.xml.MultiTextPreferenceInput;
-import org.jasig.portal.portletpublishing.xml.Option;
-import org.jasig.portal.portletpublishing.xml.Preference;
-import org.jasig.portal.portletpublishing.xml.SingleChoiceDisplay;
-import org.jasig.portal.portletpublishing.xml.SingleChoicePreferenceInput;
-import org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput;
-import org.jasig.portal.portletpublishing.xml.TextDisplay;
+import org.apereo.portal.portletpublishing.xml.MultiChoiceDisplay;
+import org.apereo.portal.portletpublishing.xml.MultiChoicePreferenceInput;
+import org.apereo.portal.portletpublishing.xml.MultiTextPreferenceInput;
+import org.apereo.portal.portletpublishing.xml.Option;
+import org.apereo.portal.portletpublishing.xml.Preference;
+import org.apereo.portal.portletpublishing.xml.SingleChoiceDisplay;
+import org.apereo.portal.portletpublishing.xml.SingleChoicePreferenceInput;
+import org.apereo.portal.portletpublishing.xml.SingleTextPreferenceInput;
+import org.apereo.portal.portletpublishing.xml.TextDisplay;
 
 /**
  * PreferenceInputFactory provides factory methods for creating Preference

@@ -57,7 +57,7 @@
                  bean) configured
     -->
     <bean id="casRefUrlEncoder" class="org.apereo.portal.url.CasLoginRefUrlEncoder"
-        p:casLoginUrl="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
+        p:casLoginUrl="${org.apereo.portal.channels.CLogin.CasLoginUrl}" />
 
     <!--
      | Message source for this context, loaded from localized "messages_xx" files

@@ -39,7 +39,7 @@ import org.apereo.portal.IBasicEntity;
   *
   * @author Dan Ellentuck
   *
-  * @see org.jasig.portal.IBasicEntity
+  * @see org.apereo.portal.IBasicEntity
   * @see org.apereo.portal.concurrency.IEntityCache
   *
 */

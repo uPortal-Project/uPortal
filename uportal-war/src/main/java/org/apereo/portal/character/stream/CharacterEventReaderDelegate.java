@@ -64,7 +64,7 @@ public class CharacterEventReaderDelegate implements CharacterEventReader {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventReader#peek()
+     * @see org.apereo.portal.character.stream.CharacterEventReader#peek()
      */
     @Override
     public CharacterEvent peek() {
@@ -72,7 +72,7 @@ public class CharacterEventReaderDelegate implements CharacterEventReader {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.CharacterEventReader#close()
+     * @see org.apereo.portal.character.stream.CharacterEventReader#close()
      */
     @Override
     public void close() {

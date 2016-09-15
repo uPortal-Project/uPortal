@@ -95,7 +95,7 @@ Class getType();
  * of an  <code>IEntity</code>, it will be the <code>EntityIdentifier</code>
  * that identifies the underlying IPerson, ChannelDefinition, etc.
  *
- * @return org.jasig.portal.EntityIdentifier
+ * @return org.apereo.portal.EntityIdentifier
  */
 EntityIdentifier getUnderlyingEntityIdentifier();
 

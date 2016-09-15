@@ -24,9 +24,9 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 
 import org.apereo.portal.portlets.search.IPortalSearchService;
-import org.jasig.portal.search.SearchRequest;
-import org.jasig.portal.search.SearchResult;
-import org.jasig.portal.search.SearchResults;
+import org.apereo.portal.search.SearchRequest;
+import org.apereo.portal.search.SearchResult;
+import org.apereo.portal.search.SearchResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;

@@ -102,7 +102,7 @@ public class PortletEventCoordinatationService implements IPortletEventCoordinat
     /**
 	 * 
 	 */
-	public static final String GLOBAL_EVENT__CONTAINER_OPTION = "org.jasig.portal.globalEvent";
+	public static final String GLOBAL_EVENT__CONTAINER_OPTION = "org.apereo.portal.globalEvent";
 
 	private static final String PORTLET_EVENT_QUEUE = PortletEventCoordinatationService.class.getName() + ".PORTLET_EVENT_QUEUE";
     

@@ -70,7 +70,7 @@ public class LoggingCharacterComponent extends CharacterPipelineComponentWrapper
         }
 
         /* (non-Javadoc)
-         * @see org.jasig.portal.character.stream.FilteringCharacterEventReader#filterEvent(org.jasig.portal.character.stream.events.CharacterEvent, boolean)
+         * @see org.apereo.portal.character.stream.FilteringCharacterEventReader#filterEvent(org.apereo.portal.character.stream.events.CharacterEvent, boolean)
          */
         @Override
         protected CharacterEvent filterEvent(CharacterEvent event, boolean peek) {

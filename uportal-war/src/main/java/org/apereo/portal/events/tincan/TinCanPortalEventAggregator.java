@@ -61,7 +61,7 @@ public class TinCanPortalEventAggregator extends
         this.tinCanEventScheduler = tinCanEventScheduler;
     }
 
-    @Value("${org.jasig.portal.tincan-api.enabled:false}")
+    @Value("${org.apereo.portal.tincan-api.enabled:false}")
     public void setTinCanAPIEnabled(final boolean enabled) {
         this.tinCanAPIEnabled = enabled;
     }

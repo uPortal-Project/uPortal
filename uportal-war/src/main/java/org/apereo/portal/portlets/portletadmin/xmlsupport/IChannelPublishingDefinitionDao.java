@@ -21,7 +21,7 @@ package org.apereo.portal.portlets.portletadmin.xmlsupport;
 import java.util.Map;
 
 import org.apereo.portal.portlet.om.IPortletType;
-import org.jasig.portal.portletpublishing.xml.PortletPublishingDefinition;
+import org.apereo.portal.portletpublishing.xml.PortletPublishingDefinition;
 
 
 /**

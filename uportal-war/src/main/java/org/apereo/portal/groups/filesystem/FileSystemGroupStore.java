@@ -66,7 +66,7 @@ import org.apereo.portal.spring.locator.EntityTypesLocator;
  * <p><code>
  * <hr width="100%">
  *  --&nbsp;groups root<br>
- * <blockquote>&nbsp;--&nbsp;org.jasig.portal.ChannelDefinition<br>
+ * <blockquote>&nbsp;--&nbsp;org.apereo.portal.ChannelDefinition<br>
  *     <blockquote>&nbsp;--&nbsp;channel definition file<br>
  *                 &nbsp;--&nbsp;channel definition file<br>
  *        ...<br>

@@ -30,7 +30,7 @@ import org.apereo.portal.portlet.om.IPortletWindowId;
  * @author Eric Dalquist
  */
 public interface IPortletCookieService {
-    public static final String DEFAULT_PORTAL_COOKIE_NAME = "org.jasig.portal.PORTLET_COOKIE";
+    public static final String DEFAULT_PORTAL_COOKIE_NAME = "org.apereo.portal.PORTLET_COOKIE";
     public static final String DEFAULT_PORTAL_COOKIE_COMMENT = "uPortal Portlet Master Cookie";
 
     /**

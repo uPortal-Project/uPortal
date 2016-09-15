@@ -36,7 +36,7 @@ public class FilePatternPhrase implements Phrase {
 
     // Static Members.
     public static final String DEFAULT_VALUE = ".*";
-    public static final String USE_DEFAULT_VALUE = "org.jasig.portal.FilePatternPhrase.USE_DEFAULT_VALUE";
+    public static final String USE_DEFAULT_VALUE = "org.apereo.portal.FilePatternPhrase.USE_DEFAULT_VALUE";
 
     // Instance Members.
     private Phrase pattern;

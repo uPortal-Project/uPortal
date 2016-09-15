@@ -46,7 +46,7 @@ import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
-import org.jasig.portal.portletpublishing.xml.Preference;
+import org.apereo.portal.portletpublishing.xml.Preference;
 import org.apereo.portal.portlets.StringListAttribute;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;
@@ -126,7 +126,7 @@ public class UserAccountHelper {
         this.passwordResetNotification = passwordResetNotification;
     }
 
-    @Value("${org.jasig.portal.folder.login-layout:welcome}")
+    @Value("${org.apereo.portal.folder.login-layout:welcome}")
     public void setLoginPortletFolderName(String loginPortletFolderName) {
         this.loginPortletFolderName = loginPortletFolderName;
     }

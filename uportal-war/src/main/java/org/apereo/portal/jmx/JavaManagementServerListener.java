@@ -31,13 +31,13 @@ import org.apache.commons.logging.LogFactory;
  * <br>
  * <br>
  * The ports are configured via &lt;context-param&gt; elements in the web.xml<br>
- * The <code>org.jasig.portal.servlet.JavaManagementServerListener.portOne</code> context-param
- * is <b>required</b>. The <code>org.jasig.portal.servlet.JavaManagementServerListener.portTwo</code>
+ * The <code>org.apereo.portal.servlet.JavaManagementServerListener.portOne</code> context-param
+ * is <b>required</b>. The <code>org.apereo.portal.servlet.JavaManagementServerListener.portTwo</code>
  * context-param is optional, if not specified portTwo is calculated as portOne + 1.
  * <br>
  * <br>
  * If a failure to start or stop the JMX server should cause the listener to throw an exception set
- * the context-param <code>org.jasig.portal.servlet.JavaManagementServerListener.failOnException</code>
+ * the context-param <code>org.apereo.portal.servlet.JavaManagementServerListener.failOnException</code>
  * to true.
  * 
  * @author Eric Dalquist <a href="mailto:eric.dalquist@doit.wisc.edu">eric.dalquist@doit.wisc.edu</a>
@@ -45,10 +45,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JavaManagementServerListener implements ServletContextListener {
     //Init-parameters
-    public static final String JMX_RMI_HOST         = "org.jasig.portal.servlet.JavaManagementServerListener.host";
-    public static final String JMX_RMI_PORT_1       = "org.jasig.portal.servlet.JavaManagementServerListener.portOne";
-    public static final String JMX_RMI_PORT_2       = "org.jasig.portal.servlet.JavaManagementServerListener.portTwo";
-    public static final String FAIL_ON_EXCEPTION    = "org.jasig.portal.servlet.JavaManagementServerListener.failOnException";
+    public static final String JMX_RMI_HOST         = "org.apereo.portal.servlet.JavaManagementServerListener.host";
+    public static final String JMX_RMI_PORT_1       = "org.apereo.portal.servlet.JavaManagementServerListener.portOne";
+    public static final String JMX_RMI_PORT_2       = "org.apereo.portal.servlet.JavaManagementServerListener.portTwo";
+    public static final String FAIL_ON_EXCEPTION    = "org.apereo.portal.servlet.JavaManagementServerListener.failOnException";
     
     private static final String LOGGER_NAME = JavaManagementServerListener.class.getName();
 

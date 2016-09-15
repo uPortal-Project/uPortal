@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public abstract class AbstractHeaderProvider implements IHeaderProvider {
 
-    @Value("${org.jasig.portal.security.PersonFactory.guest_user_name:guest}")
+    @Value("${org.apereo.portal.security.PersonFactory.guest_user_name:guest}")
     private String guestUserName;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());

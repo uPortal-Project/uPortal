@@ -173,13 +173,13 @@
 
     <!-- Spring mail-sending service -->
     <bean id="passwordResetMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="${org.jasig.portal.email.host:localhost}" />
-        <property name="port" value="${org.jasig.portal.email.port:25}" />
-        <property name="protocol" value="${org.jasig.portal.email.protocol:smtp}" />
+        <property name="host" value="${org.apereo.portal.email.host:localhost}" />
+        <property name="port" value="${org.apereo.portal.email.port:25}" />
+        <property name="protocol" value="${org.apereo.portal.email.protocol:smtp}" />
     </bean>
 
     <bean id="portalEmailAddress" class="java.lang.String">
-        <constructor-arg value="${org.jasig.portal.email.fromAddress}"/>
+        <constructor-arg value="${org.apereo.portal.email.fromAddress}"/>
     </bean>
 
 </beans>

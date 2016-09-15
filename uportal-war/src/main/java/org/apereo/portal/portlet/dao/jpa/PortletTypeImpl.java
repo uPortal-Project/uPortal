@@ -118,7 +118,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 	
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.IPortletType#getId()
+	 * @see org.apereo.portal.IPortletType#getId()
 	 */
 	@Override
     public int getId() {
@@ -127,7 +127,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.IPortletType#getName()
+	 * @see org.apereo.portal.IPortletType#getName()
 	 */
 	@Override
     public String getName() {
@@ -136,7 +136,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.IPortletType#getDescription()
+	 * @see org.apereo.portal.IPortletType#getDescription()
 	 */
 	@Override
     public String getDescription() {
@@ -145,7 +145,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.IPortletType#getCpdUri()
+	 * @see org.apereo.portal.IPortletType#getCpdUri()
 	 */
 	@Override
     public String getCpdUri() {
@@ -156,7 +156,7 @@ public class PortletTypeImpl implements Serializable, IPortletType {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.jasig.portal.IPortletType#setDescription(java.lang.String)
+	 * @see org.apereo.portal.IPortletType#setDescription(java.lang.String)
 	 */
 	@Override
     public void setDescription(String descr) {

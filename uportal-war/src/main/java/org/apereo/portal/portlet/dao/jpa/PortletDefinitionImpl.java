@@ -328,7 +328,7 @@ class PortletDefinitionImpl implements IPortletDefinition {
     }
     
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()
+     * @see org.apereo.portal.om.portlet.IPortletDefinition#getPortletDefinitionId()
      */
     @Override
     public IPortletDefinitionId getPortletDefinitionId() {

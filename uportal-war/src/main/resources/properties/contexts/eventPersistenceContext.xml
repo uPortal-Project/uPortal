@@ -67,7 +67,7 @@
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
                 <prop key="hibernate.cache.region_prefix">AggrEvents</prop>
-                <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
+                <prop key="org.apereo.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
                 <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BaseAggrEventsJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>

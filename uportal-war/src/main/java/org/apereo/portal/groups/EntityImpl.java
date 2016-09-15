@@ -47,7 +47,7 @@ public EntityImpl(EntityIdentifier ei) throws GroupsException
 }
 
 /**
- * @return org.jasig.portal.EntityIdentifier
+ * @return org.apereo.portal.EntityIdentifier
  */
 public EntityIdentifier getEntityIdentifier() {
     return entityIdentifier;

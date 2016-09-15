@@ -75,7 +75,7 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.events.CharacterDataEvent#getData()
+     * @see org.apereo.portal.character.stream.events.CharacterDataEvent#getData()
      */
     @Override
     public String getData() {
@@ -83,7 +83,7 @@ public final class CharacterDataEventImpl implements CharacterDataEvent {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.character.stream.events.CharacterEvent#getEventType()
+     * @see org.apereo.portal.character.stream.events.CharacterEvent#getEventType()
      */
     @Override
     public CharacterEventTypes getEventType() {

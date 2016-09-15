@@ -79,13 +79,13 @@
       -->
     <!--
     <task:scheduled-tasks scheduler="uPortalTaskScheduler">
-        <task:scheduled ref="scormCloudTinCanBatchProvider" method="sendBatch" fixed-delay="${org.jasig.portal.tincan-api.batch-scheduler.delayMS:2000}"/>
+        <task:scheduled ref="scormCloudTinCanBatchProvider" method="sendBatch" fixed-delay="${org.apereo.portal.tincan-api.batch-scheduler.delayMS:2000}"/>
     </task:scheduled-tasks>
     -->
 
     <!--
      - Example of a batching provider.  The batching provider will queue up LRS events.  Every
-     - ${org.jasig.portal.tincan-api.batch-scheduler.delayMS} it will check the queue and then
+     - ${org.apereo.portal.tincan-api.batch-scheduler.delayMS} it will check the queue and then
      - post all LRSStatements to the LRS at once.
      -->
     <bean id="scormCloudTinCanBatchProvider" class="org.apereo.portal.events.tincan.providers.BatchTinCanAPIProvider">

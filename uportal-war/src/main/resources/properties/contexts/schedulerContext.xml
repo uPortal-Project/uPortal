@@ -30,13 +30,13 @@
     <bean id="loggingAbortHandler" class="org.apereo.portal.utils.threading.LoggingAbortHandler" />
 
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
+        <property name="corePoolSize" value="${org.apereo.portal.task.exec.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.task.exec.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uP-TaskExecTG" />
         <property name="threadNamePrefix" value="uP-TaskExec-" />
-        <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.task.exec.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.task.exec.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
@@ -45,7 +45,7 @@
     <bean id="uPortalTaskScheduler" class="org.apereo.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
         <property name="initialDelay" value="PT120S" />
         <property name="executorService" ref="uPortalTaskExecutor" />
-        <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
+        <property name="poolSize" value="${org.apereo.portal.task.sched.threadPool.poolSize}" />
         <property name="threadGroupName" value="uP-TaskSchedTG" />
         <property name="threadNamePrefix" value="uP-TaskSched-" />
         <property name="daemon" value="true" />

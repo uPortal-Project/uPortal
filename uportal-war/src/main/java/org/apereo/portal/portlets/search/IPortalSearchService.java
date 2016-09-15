@@ -20,8 +20,8 @@ package org.apereo.portal.portlets.search;
 
 import javax.portlet.PortletRequest;
 
-import org.jasig.portal.search.SearchRequest;
-import org.jasig.portal.search.SearchResults;
+import org.apereo.portal.search.SearchRequest;
+import org.apereo.portal.search.SearchResults;
 
 public interface IPortalSearchService {
     

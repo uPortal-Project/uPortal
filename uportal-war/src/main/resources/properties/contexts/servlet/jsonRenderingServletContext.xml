@@ -31,7 +31,7 @@
             <list>
                 <bean class="org.apereo.portal.url.GuestSessionExpirationInterceptor">
                     <!-- 
-                    <property name="unauthenticatedUserSessionTimeout" value="${org.jasig.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
+                    <property name="unauthenticatedUserSessionTimeout" value="${org.apereo.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
                      -->
                 </bean>
                 <bean class="org.apereo.portal.url.MaxInactiveInterceptor"/>

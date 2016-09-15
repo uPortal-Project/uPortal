@@ -57,7 +57,7 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
     /**
      * @param serverName A specific server name for {@link #getServerName()} to return
      */
-    @Value("${org.jasig.portal.PortalInfoProvider.serverName:}")
+    @Value("${org.apereo.portal.PortalInfoProvider.serverName:}")
     public void setServerName(String serverName) {
         this.serverName = StringUtils.trimToNull(serverName);
     }
@@ -65,7 +65,7 @@ public class PortalInfoProviderImpl implements IPortalInfoProvider, ReadWriteCal
     /**
      * @param networkInterfaceName The name to use to lookup a NetworkInterface via {@link NetworkInterface#getByName(String)}
      */
-    @Value("${org.jasig.portal.PortalInfoProvider.networkInterfaceName:}")
+    @Value("${org.apereo.portal.PortalInfoProvider.networkInterfaceName:}")
     public void setNetworkInterfaceName(String networkInterfaceName) {
         this.networkInterfaceName = StringUtils.trimToNull(networkInterfaceName);
     }

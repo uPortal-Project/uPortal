@@ -32,7 +32,7 @@ public interface IXalanAuthorizationHelper {
      * Checks if the specified user can render the specified channel.
      * 
      * @param userName Looks up the user with the matching {@link IPerson#USERNAME}
-     * @param channelFName Looks up the {@link org.jasig.portal.ChannelDefinition} with the matching fname
+     * @param channelFName Looks up the {@link org.apereo.portal.ChannelDefinition} with the matching fname
      * @return true if the user has permission to render the channel, false for any other case.
      */
     boolean canRender(final String userName, final String channelFName);

@@ -33,7 +33,7 @@
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.apereo.portal..*.*(..))"/>
 
         <aop:pointcut id="allExecutions" expression="execution(* *.*(..))"/>
         
@@ -105,7 +105,7 @@
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SpringBeanEhCacheRegionFactory</prop>
-                <prop key="org.jasig.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
+                <prop key="org.apereo.portal.cache.CacheManagerName">uPortal.cacheManager</prop>
                 <prop key="persistenceUnitName">#{T(org.apereo.portal.jpa.BasePortalJpaDao).PERSISTENCE_UNIT_NAME}</prop>
             </props>
         </property>

@@ -166,7 +166,7 @@ class PortletEntityImpl implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#getPortletEntityId()
+     * @see org.apereo.portal.om.portlet.IPortletEntity#getPortletEntityId()
      */
     @Override
     public IPortletEntityId getPortletEntityId() {
@@ -179,7 +179,7 @@ class PortletEntityImpl implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#getChannelSubscribeId()
+     * @see org.apereo.portal.om.portlet.IPortletEntity#getChannelSubscribeId()
      */
     @Override
     public String getLayoutNodeId() {
@@ -187,7 +187,7 @@ class PortletEntityImpl implements IPortletEntity {
     }
 
     /* (non-Javadoc)
-     * @see org.jasig.portal.om.portlet.IPortletEntity#getUserId()
+     * @see org.apereo.portal.om.portlet.IPortletEntity#getUserId()
      */
     @Override
     public int getUserId() {

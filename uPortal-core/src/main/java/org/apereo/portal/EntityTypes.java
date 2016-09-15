@@ -41,15 +41,15 @@ import com.googlecode.ehcache.annotations.key.ListCacheKeyGenerator;
 
 /**
  * This class provides access to the entity types used by <code>IBasicEntities</code>
- * and the classes in <code>org.jasig.portal.groups</code> and
- * <code>org.jasig.portal.concurrency</code>.
+ * and the classes in <code>org.apereo.portal.groups</code> and
+ * <code>org.apereo.portal.concurrency</code>.
  * <p>
  * Each type is associated with an <code>Integer</code> used to represent the
  * type in the portal data store.  This class translates between the
  * <code>Integer</code> and <code>Class</code> values.
  *
  * @author Dan Ellentuck
- * @see org.jasig.portal.IBasicEntity
+ * @see org.apereo.portal.IBasicEntity
  */
 @Repository("entityTypes")
 public class EntityTypes {

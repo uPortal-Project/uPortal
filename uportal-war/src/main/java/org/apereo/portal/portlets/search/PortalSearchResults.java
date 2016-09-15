@@ -31,7 +31,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import org.jasig.portal.search.SearchResult;
+import org.apereo.portal.search.SearchResult;
 import org.apereo.portal.utils.Tuple;
 
 /**
