@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 
 /**
  * Interface for creating, finding and maintaining <code>IPermissions</code>.
@@ -31,28 +31,28 @@ import org.jasig.portal.AuthorizationException;
 /**
  * Add the IPermissions to the store.
  * @param perms org.apereo.portal.security.IPermission[]
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void add(IPermission[] perms) throws AuthorizationException;
 
 /**
  * Add the IPermission to the store.
  * @param perm org.apereo.portal.security.IPermission
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void add(IPermission perm) throws AuthorizationException;
     
 /**
  * Remove the IPermissions from the store.
  * @param perms org.apereo.portal.security.IPermission[]
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void delete(IPermission[] perms) throws AuthorizationException;
     
 /**
  * Remove the IPermission from the store.
  * @param perm org.apereo.portal.security.IPermission
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void delete(IPermission perm) throws AuthorizationException;
     
@@ -64,14 +64,14 @@ import org.jasig.portal.AuthorizationException;
 /**
  * Update the IPermissions in the store.
  * @param perms org.apereo.portal.security.IPermission[]
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void update(IPermission[] perms) throws AuthorizationException;
     
 /**
  * Update the IPermission in the store.
  * @param perm org.apereo.portal.security.IPermission
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public void update(IPermission perm) throws AuthorizationException;
     
@@ -82,7 +82,7 @@ import org.jasig.portal.AuthorizationException;
  * @param activity String - the Permission activity 
  * @param target String - the Permission target
  * @param type String - the Permission type    
- * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+ * @exception AuthorizationException - wraps an Exception specific to the store.
  */
     public IPermission[] select(String owner, String principal, String activity, String target, String type) 
     throws AuthorizationException;

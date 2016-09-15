@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security.provider;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.security.IAuthorizationPrincipal;
@@ -60,7 +60,7 @@ public AuthorizationPrincipalImpl(String newKey, Class newType, IAuthorizationSe
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
 @Override
-public boolean canManage(String channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canManage(String channelPublishId) throws AuthorizationException {
     return getAuthorizationService().canPrincipalManage(this, channelPublishId);
 }
 /**
@@ -83,7 +83,7 @@ public boolean canConfigure(String channelPublishId) throws AuthorizationExcepti
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
 @Override
-public boolean canRender(String channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canRender(String channelPublishId) throws AuthorizationException {
     return getAuthorizationService().canPrincipalRender(this, channelPublishId);
 }
 /**
@@ -93,7 +93,7 @@ public boolean canRender(String channelPublishId) throws org.jasig.portal.Author
  * @exception AuthorizationException thrown when authorization information could not be retrieved.
  */
 @Override
-public boolean canSubscribe(String channelPublishId) throws org.jasig.portal.AuthorizationException {
+public boolean canSubscribe(String channelPublishId) throws AuthorizationException {
     return getAuthorizationService().canPrincipalSubscribe(this, channelPublishId);
 }
 @Override
@@ -165,7 +165,7 @@ IAuthorizationService getAuthorizationService()
  * @exception AuthorizationException indicates authorization information could not be retrieved.
  */
 @Override
-public java.util.Vector getAuthorizedChannels() throws org.jasig.portal.AuthorizationException {
+public java.util.Vector getAuthorizedChannels() throws AuthorizationException {
     return getAuthorizationService().getAuthorizedChannels(this);
 }
 /**
@@ -248,7 +248,7 @@ public int hashCode() {
  */
 @Override
 public boolean hasPermission(String owner, String activity, String target) 
-throws org.jasig.portal.AuthorizationException 
+throws AuthorizationException
 {
     return getAuthorizationService().doesPrincipalHavePermission(this, owner, activity, target);
 }

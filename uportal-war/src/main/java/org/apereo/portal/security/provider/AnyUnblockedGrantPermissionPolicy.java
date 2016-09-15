@@ -25,7 +25,7 @@ import java.util.Set;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;

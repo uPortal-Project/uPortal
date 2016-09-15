@@ -29,9 +29,9 @@ import java.util.TreeSet;
 import javax.annotation.Resource;
 
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
-import org.jasig.portal.version.VersionUtils;
-import org.jasig.portal.version.dao.VersionDao;
-import org.jasig.portal.version.om.Version;
+import org.apereo.portal.version.VersionUtils;
+import org.apereo.portal.version.dao.VersionDao;
+import org.apereo.portal.version.om.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

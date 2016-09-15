@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.user.IUserInstance;

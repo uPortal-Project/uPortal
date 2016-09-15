@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.security.*;
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.channel.IPortletPublishingService;
 import org.apereo.portal.groups.IEntity;
 import org.apereo.portal.groups.IEntityGroup;

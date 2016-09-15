@@ -30,7 +30,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.AbstractJaxbDataHandler;
 import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataType;

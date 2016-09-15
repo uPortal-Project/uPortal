@@ -40,7 +40,7 @@ import javax.portlet.WindowState;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.jasig.portal.mock.portlet.om.MockPortletWindowId;

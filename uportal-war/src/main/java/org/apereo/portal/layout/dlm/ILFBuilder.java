@@ -33,7 +33,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPerson;

@@ -31,7 +31,7 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.ConfigurationLoader;
 import org.apereo.portal.layout.dlm.Evaluator;

@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.apereo.portal.layout.om.IOutputPropertyDescriptor;

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.rendering.xslt;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.url.IPortalRequestUtils;

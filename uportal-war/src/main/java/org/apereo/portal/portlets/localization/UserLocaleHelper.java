@@ -25,8 +25,8 @@ import java.util.Locale;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;

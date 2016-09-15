@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.XMLEvent;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;

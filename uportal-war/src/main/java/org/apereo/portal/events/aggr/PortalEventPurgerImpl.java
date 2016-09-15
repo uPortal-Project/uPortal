@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.events.aggr;
 
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.apereo.portal.events.aggr.dao.IEventAggregationManagementDao;
 import org.apereo.portal.events.handlers.db.IPortalEventDao;

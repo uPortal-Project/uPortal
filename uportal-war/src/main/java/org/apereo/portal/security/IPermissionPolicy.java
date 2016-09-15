@@ -18,6 +18,7 @@
  */
 package org.apereo.portal.security;
 
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.permission.IPermissionActivity;
 import org.apereo.portal.permission.IPermissionOwner;
 import org.apereo.portal.permission.target.IPermissionTarget;
@@ -44,7 +45,7 @@ public interface IPermissionPolicy {
      * @param target The object upon which the behavior will be invoked
      * @return TRUE if the principal has permission to perform the specified
      * activity on the specified target
-     * @exception org.jasig.portal.AuthorizationException
+     * @exception AuthorizationException
      */
     public boolean doesPrincipalHavePermission(
             IAuthorizationService service,
@@ -52,6 +53,6 @@ public interface IPermissionPolicy {
             IPermissionOwner owner,
             IPermissionActivity activity,
             IPermissionTarget target)
-        throws org.jasig.portal.AuthorizationException;
+        throws AuthorizationException;
 
 }

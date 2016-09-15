@@ -42,7 +42,7 @@ import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.portlet.PortletUtils;

@@ -23,8 +23,8 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
-import org.jasig.portal.AuthorizationException;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IAuthorizationService;
@@ -121,7 +121,7 @@ public class AuthorizationService
   /**
    * @param owner java.lang.String
    * @return org.apereo.portal.security.IPermissionManager
-   * @exception org.jasig.portal.AuthorizationException
+   * @exception AuthorizationException
    */
   public IPermissionManager newPermissionManager(String owner)
          throws AuthorizationException
@@ -133,7 +133,7 @@ public class AuthorizationService
    * @param key java.lang.String
    * @param type java.lang.Class
    * @return org.apereo.portal.security.IAuthorizationPrincipal
-   * @exception org.jasig.portal.AuthorizationException
+   * @exception AuthorizationException
    */
   public IAuthorizationPrincipal newPrincipal(String key, Class type)
          throws AuthorizationException
@@ -155,7 +155,7 @@ public class AuthorizationService
   /**
    * @param owner java.lang.String
    * @return org.apereo.portal.security.IUpdatingPermissionManager
-   * @exception org.jasig.portal.AuthorizationException
+   * @exception AuthorizationException
    */
   public IUpdatingPermissionManager newUpdatingPermissionManager(String owner)
          throws AuthorizationException

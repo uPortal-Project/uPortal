@@ -27,8 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;

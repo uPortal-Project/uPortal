@@ -30,10 +30,10 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.UserProfile;
+import org.apereo.portal.AuthorizationException;
+import org.apereo.portal.IUserIdentityStore;
+import org.apereo.portal.IUserProfile;
+import org.apereo.portal.UserProfile;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.properties.PropertiesManager;

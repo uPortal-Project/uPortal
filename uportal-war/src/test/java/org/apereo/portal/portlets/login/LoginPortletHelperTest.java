@@ -29,8 +29,8 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;

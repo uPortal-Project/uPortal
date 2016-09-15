@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import junit.framework.Assert;
 
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;

@@ -32,7 +32,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.concurrency.CachingException;
 import org.apereo.portal.concurrency.caching.RequestCache;
 import org.apereo.portal.groups.GroupsException;

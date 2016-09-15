@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.Charsets;
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.IPortalData;
 import org.apereo.portal.io.xml.IPortalDataHandlerService;
 import org.apereo.portal.io.xml.PortalDataHandlerServiceUtils;

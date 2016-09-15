@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.jpa;
 
-import org.jasig.portal.version.dao.VersionDao;
+import org.apereo.portal.version.dao.VersionDao;
 
 /**
  * Runs steps needed to init/upgrade/update the database based on the version information

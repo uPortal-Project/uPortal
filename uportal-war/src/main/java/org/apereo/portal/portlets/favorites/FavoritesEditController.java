@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.portlets.favorites;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.UserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription;

@@ -26,8 +26,8 @@ import java.util.concurrent.ConcurrentMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.dao.IStylesheetDescriptorDao;
 import org.apereo.portal.layout.dao.IStylesheetUserPreferencesDao;
 import org.apereo.portal.layout.om.ILayoutAttributeDescriptor;

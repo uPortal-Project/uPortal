@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.AuthorizationException;
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.AuthorizationException;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.events.IPortalAuthEventFactory;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.IAdditionalDescriptor;

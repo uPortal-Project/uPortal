@@ -27,10 +27,10 @@ import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserIdentityStore;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
-import org.jasig.portal.UserProfile;
+import org.apereo.portal.UserProfile;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.RestrictedPerson;
 import org.jasig.services.persondir.IPersonAttributes;

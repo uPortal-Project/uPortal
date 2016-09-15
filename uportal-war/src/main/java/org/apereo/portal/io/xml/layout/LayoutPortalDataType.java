@@ -26,7 +26,7 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.io.xml.AbstractPortalDataType;
 import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.xml.StaxUtils;

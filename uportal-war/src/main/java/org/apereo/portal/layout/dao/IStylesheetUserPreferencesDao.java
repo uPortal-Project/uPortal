@@ -20,7 +20,7 @@ package org.apereo.portal.layout.dao;
 
 import java.util.List;
 
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.security.IPerson;

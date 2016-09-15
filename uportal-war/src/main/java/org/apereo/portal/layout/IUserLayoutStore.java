@@ -27,8 +27,8 @@
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.UserProfile;
+import org.apereo.portal.IUserProfile;
+import org.apereo.portal.UserProfile;
 import org.apereo.portal.layout.dlm.DistributedUserLayout;
 import org.apereo.portal.layout.dlm.FragmentChannelInfo;
 import org.apereo.portal.layout.dlm.FragmentNodeInfo;

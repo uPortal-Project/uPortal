@@ -19,9 +19,9 @@
 package org.apereo.portal.io.xml.layout;
 
 import org.dom4j.Element;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.UserProfile;
+import org.apereo.portal.IUserIdentityStore;
+import org.apereo.portal.IUserProfile;
+import org.apereo.portal.UserProfile;
 import org.apereo.portal.io.xml.crn.AbstractDom4jExporter;
 import org.apereo.portal.layout.IUserLayoutStore;
 import org.apereo.portal.security.provider.BrokenSecurityContext;

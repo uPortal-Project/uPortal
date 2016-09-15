@@ -23,7 +23,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.om.IStylesheetDescriptor;
 import org.apereo.portal.layout.om.IStylesheetUserPreferences;
 import org.apereo.portal.utils.Populator;

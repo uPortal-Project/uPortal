@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security;
 
- import org.jasig.portal.AuthorizationException;
+ import org.apereo.portal.AuthorizationException;
  
 /**
  * <p>A context-specific factory class interface that should be implemented

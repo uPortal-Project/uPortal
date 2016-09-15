@@ -27,7 +27,7 @@ import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.Validate;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;

@@ -79,7 +79,7 @@
         <mapping class="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"/>
         <mapping class="org.apereo.portal.i18n.dao.jpa.MessageImpl"/>
         <mapping class="org.apereo.portal.concurrency.locking.ClusterMutex"/>
-        <mapping class="org.jasig.portal.version.dao.jpa.VersionImpl"/>
+        <mapping class="org.apereo.portal.version.dao.jpa.VersionImpl"/>
         <mapping class="org.apereo.portal.jgroups.protocols.JdbcPingDao$Table"/>
         <mapping class="org.apereo.portal.jgroups.auth.JdbcAuthDao$Table"/>
     </session-factory>

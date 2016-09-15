@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.sf.ehcache.Ehcache;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IUserLayoutManager;
 import org.apereo.portal.layout.node.IUserLayoutChannelDescription;
 import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;

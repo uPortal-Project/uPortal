@@ -98,7 +98,7 @@
         		<prop key="javax.portlet.markup.head.element.support">true</prop>
         	</props>
         </property>
-        <property name="portalVersion" value="${org.jasig.portal.version}" />
+        <property name="portalVersion" value="${org.apereo.portal.version}" />
     </bean>
     
     <bean id="personDirectoryUserInfoService" class="org.apereo.portal.portlet.container.services.PersonDirectoryUserInfoService">

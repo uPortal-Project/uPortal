@@ -41,8 +41,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IUserIdentityStore;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserIdentityStore;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.events.IPortalLayoutEventFactory;
 import org.apereo.portal.layout.IUserLayout;
@@ -1458,7 +1458,7 @@ public class DistributedLayoutManager implements IUserLayoutManager, Initializin
             // set template user override so reload of layout comes from
             // fragment template user
             person.setAttribute( 
-                    org.jasig.portal.Constants.TEMPLATE_USER_NAME_ATT, 
+                    org.apereo.portal.Constants.TEMPLATE_USER_NAME_ATT,
                     FragmentDefinition.getDefaultLayoutOwnerId() );
         }
         IUserIdentityStore userStore = UserIdentityStoreLocator.getUserIdentityStore();

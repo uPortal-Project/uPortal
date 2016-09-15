@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.layout;
 
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.layout.immutable.ImmutableTransientUserLayoutManagerWrapper;
 import org.apereo.portal.security.IPerson;

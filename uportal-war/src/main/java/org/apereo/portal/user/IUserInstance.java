@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.user;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.security.IPerson;
 

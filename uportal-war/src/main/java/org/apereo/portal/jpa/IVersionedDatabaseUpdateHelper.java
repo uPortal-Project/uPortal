@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.jpa;
 
-import org.jasig.portal.version.om.Version;
+import org.apereo.portal.version.om.Version;
 
 public interface IVersionedDatabaseUpdateHelper {
     /**

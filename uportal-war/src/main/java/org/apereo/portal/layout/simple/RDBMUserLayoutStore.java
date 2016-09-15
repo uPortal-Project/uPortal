@@ -37,8 +37,8 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.IUserProfile;
-import org.jasig.portal.UserProfile;
+import org.apereo.portal.IUserProfile;
+import org.apereo.portal.UserProfile;
 import org.apereo.portal.i18n.ILocaleStore;
 import org.apereo.portal.i18n.LocaleManager;
 import org.apereo.portal.jpa.BasePortalJpaDao;

@@ -23,7 +23,7 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.utils.cache.CacheKey;
 import org.apereo.portal.utils.cache.UsernameTaggedCacheEntryPurger;

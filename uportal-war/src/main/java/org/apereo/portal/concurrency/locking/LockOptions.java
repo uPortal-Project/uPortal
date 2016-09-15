@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.concurrency.locking;
 
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 
 /**
  * Options available when getting a lock

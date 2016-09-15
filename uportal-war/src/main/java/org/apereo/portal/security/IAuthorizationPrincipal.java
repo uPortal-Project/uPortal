@@ -20,7 +20,7 @@ package org.apereo.portal.security;
 
 import java.util.Vector;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 
 /**

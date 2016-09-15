@@ -23,7 +23,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.user.IUserInstance;

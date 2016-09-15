@@ -20,8 +20,8 @@ package org.apereo.portal.jpa;
 
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao.AggrEventsTransactional;
 import org.apereo.portal.tools.dbloader.ISchemaExport;
-import org.jasig.portal.version.VersionUtils;
-import org.jasig.portal.version.om.Version;
+import org.apereo.portal.version.VersionUtils;
+import org.apereo.portal.version.om.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

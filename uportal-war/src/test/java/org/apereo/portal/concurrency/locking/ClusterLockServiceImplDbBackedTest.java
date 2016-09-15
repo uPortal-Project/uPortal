@@ -28,7 +28,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.jasig.portal.test.ThreadGroupRunner;

@@ -27,7 +27,7 @@ import java.util.Random;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupServiceConfiguration;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.permission.IPermissionActivity;

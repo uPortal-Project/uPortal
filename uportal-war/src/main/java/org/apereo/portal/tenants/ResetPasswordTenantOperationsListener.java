@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.persondir.ILocalAccountDao;
 import org.apereo.portal.persondir.ILocalAccountPerson;
 import org.apereo.portal.portlets.account.IPasswordResetNotification;

@@ -42,7 +42,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.CollectionType;
 import org.hibernate.type.Type;
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService;
 import org.apereo.portal.events.PortalEvent;
 import org.apereo.portal.events.aggr.dao.DateDimensionDao;

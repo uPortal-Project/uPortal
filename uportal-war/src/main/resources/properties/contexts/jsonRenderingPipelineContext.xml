@@ -54,7 +54,7 @@
                         <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
-                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>
+                                    <entry key="version-UP_FRAMEWORK" value="${org.apereo.portal.version}"/>
                                 </map>
                             </property>
                         </bean>

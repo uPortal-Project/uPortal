@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.ResourceMissingException;
+import org.apereo.portal.ResourceMissingException;
 import org.apereo.portal.properties.PropertiesManager;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -124,7 +124,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
    * @return a URL identifying the requested resource
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    */
   public static URL getResourceAsURL(Class<?> requestingClass, String resource) throws ResourceMissingException {
     final Tuple<Class<?>, String> cacheKey = new Tuple<Class<?>, String>(requestingClass, resource);
@@ -174,7 +174,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
    * @return the requested resource as a URL string
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    */
   public static String getResourceAsURLString(Class<?> requestingClass, String resource) throws ResourceMissingException {
 	  return getResourceAsURL(requestingClass, resource).toString();
@@ -203,7 +203,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
    * @return the requested resource as a stream
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    */
   public static InputStream getResourceAsStream(Class<?> requestingClass, String resource) throws ResourceMissingException, IOException {
@@ -215,7 +215,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource to load
    * @return the requested resource as a SAX input source
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    */
   public static InputSource getResourceAsSAXInputSource(Class<?> requestingClass, String resource) throws ResourceMissingException, IOException {
@@ -231,7 +231,7 @@ public class ResourceLoader {
    * @param resource a String describing the full or partial URL of the resource whose contents to load
    * @param validate boolean. True if the document builder factory should validate, false otherwise.
    * @return the actual contents of the resource as an XML Document
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    * @throws javax.xml.parsers.ParserConfigurationException
    * @throws org.xml.sax.SAXException
@@ -269,7 +269,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
    * @return the actual contents of the resource as an XML Document
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    * @throws javax.xml.parsers.ParserConfigurationException
    * @throws org.xml.sax.SAXException
@@ -289,7 +289,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
    * @return the actual contents of the resource as a Properties object
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    */
   public static Properties getResourceAsProperties (Class<?> requestingClass, String resource) throws ResourceMissingException, IOException {
@@ -311,7 +311,7 @@ public class ResourceLoader {
    * @param requestingClass the java.lang.Class object of the class that is attempting to load the resource
    * @param resource a String describing the full or partial URL of the resource whose contents to load
    * @return the actual contents of the resource as a String
-   * @throws org.jasig.portal.ResourceMissingException
+   * @throws ResourceMissingException
    * @throws java.io.IOException
    */
   public static String getResourceAsString (Class<?> requestingClass, String resource) throws ResourceMissingException, IOException {

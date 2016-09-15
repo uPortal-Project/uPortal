@@ -24,7 +24,7 @@ import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.jpa.BasePortalJpaDao;
 import org.apereo.portal.jpa.cache.EntityManagerCache;
 import org.apereo.portal.utils.cache.CacheKey;

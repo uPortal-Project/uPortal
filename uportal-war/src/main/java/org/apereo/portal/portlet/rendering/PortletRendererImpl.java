@@ -33,7 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.pluto.container.PortletContainer;
 import org.apache.pluto.container.PortletContainerException;
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.api.portlet.PortletDelegationLocator;
 import org.apereo.portal.events.IPortletExecutionEventFactory;
@@ -733,7 +733,7 @@ public class PortletRendererImpl implements IPortletRenderer {
      *
      * @param httpServletRequest the non-null current HttpServletRequest (for determining requesting user)
      * @param portletWindow a non-null portlet window that might be in config mode
-     * @throws org.jasig.portal.AuthorizationException if the user is not permitted to access config mode yet
+     * @throws AuthorizationException if the user is not permitted to access config mode yet
      * portlet window specifies config mode
      * @throws java.lang.IllegalArgumentException if the request or window are null
      * @since uPortal 4.0.13.1, 4.0.14, 4.1.

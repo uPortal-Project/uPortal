@@ -23,8 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import org.jasig.portal.version.VersionUtils;
-import org.jasig.portal.version.dao.VersionDao;
+import org.apereo.portal.version.VersionUtils;
+import org.apereo.portal.version.dao.VersionDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

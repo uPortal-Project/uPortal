@@ -36,8 +36,8 @@ import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunction
 import org.apereo.portal.concurrency.locking.LockOptions;
 import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 import org.apereo.portal.jpa.BaseRawEventsJpaDao;
-import org.jasig.portal.version.dao.VersionDao;
-import org.jasig.portal.version.om.Version;
+import org.apereo.portal.version.dao.VersionDao;
+import org.apereo.portal.version.om.Version;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

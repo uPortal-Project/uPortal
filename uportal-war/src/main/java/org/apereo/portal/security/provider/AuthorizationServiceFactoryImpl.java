@@ -19,7 +19,7 @@
 package org.apereo.portal.security.provider;
 
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.security.IAuthorizationService;
 import org.apereo.portal.security.IAuthorizationServiceFactory;
 import org.apereo.portal.spring.locator.AuthorizationServiceLocator;

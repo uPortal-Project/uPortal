@@ -20,7 +20,7 @@ package org.apereo.portal.security;
 
 import java.util.Vector;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -212,7 +212,7 @@ public interface IAuthorizationService
 /**
  * @param key java.lang.String
  * @return org.apereo.portal.security.IPermissionManager
- * @exception org.jasig.portal.AuthorizationException
+ * @exception AuthorizationException
  */
     public IPermissionManager newPermissionManager(String key) throws AuthorizationException;
 /**
@@ -234,7 +234,7 @@ public interface IAuthorizationService
 /**
  * @return org.apereo.portal.security.IUpdatingPermissionManager
  * @param key java.lang.String
- * @exception org.jasig.portal.AuthorizationException
+ * @exception AuthorizationException
  */
     public IUpdatingPermissionManager newUpdatingPermissionManager(String key)
     throws AuthorizationException;

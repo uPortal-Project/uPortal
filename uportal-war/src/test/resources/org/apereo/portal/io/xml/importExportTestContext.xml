@@ -49,12 +49,12 @@
         <property name="schemaLocation" value="https://source.jasig.org/schemas/uportal/io/user https://source.jasig.org/schemas/uportal/io/user/user-4.0.xsd" />
     </bean>
     <bean id="localAccountDaoImpl" class="org.apereo.portal.persondir.dao.jpa.JpaLocalAccountDaoImpl" />
-    <bean id="userIdentityStore" class="org.jasig.portal.RDBMUserIdentityStore">
-        <property name="userLockCache" ref="org.jasig.portal.RDBMUserIdentityStore.userLockCache" />
+    <bean id="userIdentityStore" class="org.apereo.portal.RDBMUserIdentityStore">
+        <property name="userLockCache" ref="org.apereo.portal.RDBMUserIdentityStore.userLockCache" />
         <property name="defaultTemplateUserName" value="defaultTemplateUser"></property>
     </bean>
-    <bean id="org.jasig.portal.RDBMUserIdentityStore.userLockCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-        <qualifier value="org.jasig.portal.RDBMUserIdentityStore.userLockCache" />
+    <bean id="org.apereo.portal.RDBMUserIdentityStore.userLockCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+        <qualifier value="org.apereo.portal.RDBMUserIdentityStore.userLockCache" />
     </bean>
     
     

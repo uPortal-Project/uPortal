@@ -23,7 +23,7 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService;
 import org.apereo.portal.layout.IStylesheetUserPreferencesService.PreferencesScope;
 import org.apereo.portal.layout.IUserLayout;

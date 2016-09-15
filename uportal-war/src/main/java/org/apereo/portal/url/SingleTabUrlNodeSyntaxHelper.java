@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserPreferencesManager;
 import org.apereo.portal.PortalException;
 import org.apereo.portal.concurrency.caching.RequestCache;
 import org.apereo.portal.dao.usertype.FunctionalNameType;

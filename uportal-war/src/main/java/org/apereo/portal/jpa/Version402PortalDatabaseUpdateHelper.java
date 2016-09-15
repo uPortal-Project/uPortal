@@ -20,8 +20,8 @@ package org.apereo.portal.jpa;
 
 import org.apereo.portal.jpa.BasePortalJpaDao.PortalTransactional;
 import org.apereo.portal.utils.JdbcUtils;
-import org.jasig.portal.version.VersionUtils;
-import org.jasig.portal.version.om.Version;
+import org.apereo.portal.version.VersionUtils;
+import org.apereo.portal.version.om.Version;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;

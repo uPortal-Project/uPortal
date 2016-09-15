@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.*;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.ResourceMissingException;
+import org.apereo.portal.ResourceMissingException;
 import org.apereo.portal.groups.EntityGroupImpl;
 import org.apereo.portal.groups.GroupsException;
 import org.apereo.portal.groups.IEntityGroup;

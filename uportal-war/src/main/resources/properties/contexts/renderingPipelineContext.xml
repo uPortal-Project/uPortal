@@ -85,7 +85,7 @@
                         <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
                             <property name="parameters">
                                 <map>
-                                    <entry key="version-UP_FRAMEWORK" value="${org.jasig.portal.version}"/>
+                                    <entry key="version-UP_FRAMEWORK" value="${org.apereo.portal.version}"/>
                                 </map>
                             </property>
                         </bean>
@@ -180,7 +180,7 @@
                                     </entry>
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                     <entry key="useTabGroups" value="${org.apereo.portal.layout.useTabGroups}"/>
-                                    <entry key="UP_VERSION" value="${org.jasig.portal.version}"/>
+                                    <entry key="UP_VERSION" value="${org.apereo.portal.version}"/>
                                 </map>
                             </property>
                             <property name="parameterExpressions">

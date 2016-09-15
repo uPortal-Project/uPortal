@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService.LockStatus;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
 import org.joda.time.Duration;

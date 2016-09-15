@@ -18,10 +18,7 @@
  */
 package org.apereo.portal.security;
  
- import org.apereo.portal.security.IAuthorizationPrincipal;
- import org.apereo.portal.security.IPermission;
- import org.apereo.portal.security.IPermissionManager;
- import org.jasig.portal.AuthorizationException;
+ import org.apereo.portal.AuthorizationException;
 
  /**
  * An interface for updating <code>Permissions</code> on behalf of a 

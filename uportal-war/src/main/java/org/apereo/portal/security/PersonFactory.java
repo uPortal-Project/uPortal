@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security;
 
-import org.jasig.portal.IUserIdentityStore;
+import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;

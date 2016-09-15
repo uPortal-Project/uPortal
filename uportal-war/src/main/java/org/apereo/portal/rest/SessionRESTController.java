@@ -50,7 +50,7 @@ public class SessionRESTController {
     
     private String uPortalVersion;
     
-    @Value("${org.jasig.portal.version}")
+    @Value("${org.apereo.portal.version}")
     public void setVersion(String version) {
         this.uPortalVersion = version;
     }

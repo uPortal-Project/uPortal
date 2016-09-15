@@ -43,7 +43,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.Validate;
 import org.apereo.portal.EntityIdentifier;
-import org.jasig.portal.UserPreferencesManager;
+import org.apereo.portal.UserPreferencesManager;
 import org.apereo.portal.groups.IGroupConstants;
 import org.apereo.portal.layout.IUserLayout;
 import org.apereo.portal.layout.IUserLayoutManager;

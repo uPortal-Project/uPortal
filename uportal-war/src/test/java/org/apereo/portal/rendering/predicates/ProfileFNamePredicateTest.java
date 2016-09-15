@@ -18,8 +18,8 @@
  */
 package org.apereo.portal.rendering.predicates;
 
-import org.jasig.portal.IUserPreferencesManager;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserPreferencesManager;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;

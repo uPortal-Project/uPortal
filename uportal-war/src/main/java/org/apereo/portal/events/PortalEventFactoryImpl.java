@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.IPortalInfoProvider;
+import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletEntity;

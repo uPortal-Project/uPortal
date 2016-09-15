@@ -20,7 +20,7 @@ package org.apereo.portal.spring.properties;
 
 import java.beans.PropertyEditorSupport;
 
-import org.jasig.portal.version.VersionUtils;
+import org.apereo.portal.version.VersionUtils;
 
 /**
  * @author Eric Dalquist

@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.security;
 
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 
  /**
  * An interface for retrieving <code>IAuthorizationPrincipals</code> and

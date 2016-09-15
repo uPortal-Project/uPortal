@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jasig.portal.AuthorizationException;
+import org.apereo.portal.AuthorizationException;
 import org.apereo.portal.jdbc.RDBMServices;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPermissionStore;
@@ -122,7 +122,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Add the IPermissions to the store.
      * @param perms org.apereo.portal.security.IPermission[]
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void add(IPermission[] perms) throws AuthorizationException
     {
@@ -142,7 +142,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Add the IPermission to the store.
      * @param perm org.apereo.portal.security.IPermission
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void add(IPermission perm) throws AuthorizationException
 
@@ -178,7 +178,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Delete the IPermissions from the store.
      * @param perms org.apereo.portal.security.IPermission[]
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void delete(IPermission[] perms) throws AuthorizationException
     {
@@ -198,7 +198,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Delete a single IPermission from the store.
      * @param perm org.apereo.portal.security.IPermission
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void delete(IPermission perm) throws AuthorizationException
 
@@ -803,7 +803,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
      * @param owner String - the Permission owner
      * @param principal String - the Permission principal
      * @param activity String - the Permission activity
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public IPermission[] select
     (String owner,
@@ -850,7 +850,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Update the IPermissions in the store.
      * @param perms org.apereo.portal.security.IPermission[]
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void update(IPermission[] perms) throws AuthorizationException
     {
@@ -870,7 +870,7 @@ public class RDBMPermissionImpl implements IPermissionStore {
     /**
      * Update a single IPermission in the store.
      * @param perm org.apereo.portal.security.IPermission
-     * @exception org.jasig.portal.AuthorizationException - wraps an Exception specific to the store.
+     * @exception AuthorizationException - wraps an Exception specific to the store.
      */
     public void update(IPermission perm) throws AuthorizationException
 

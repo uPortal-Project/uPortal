@@ -22,7 +22,7 @@ package org.apereo.portal.groups.pags.testers;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.groups.pags.IPersonTester;
 import org.apereo.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.apereo.portal.layout.profile.IProfileMapper;

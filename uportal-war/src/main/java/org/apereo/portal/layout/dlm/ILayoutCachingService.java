@@ -18,7 +18,7 @@
  */
 package org.apereo.portal.layout.dlm;
 
-import org.jasig.portal.IUserProfile;
+import org.apereo.portal.IUserProfile;
 import org.apereo.portal.security.IPerson;
 
 /**

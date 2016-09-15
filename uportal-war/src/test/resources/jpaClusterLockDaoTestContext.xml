@@ -53,7 +53,7 @@
     </bean>
     
     <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.IPortalInfoProvider" />
+        <constructor-arg value="org.apereo.portal.IPortalInfoProvider" />
     </bean>
     
     
