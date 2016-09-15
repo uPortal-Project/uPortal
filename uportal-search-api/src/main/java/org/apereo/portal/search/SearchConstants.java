@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.search;
+package org.apereo.portal.search;
 
 import javax.xml.namespace.QName;
 

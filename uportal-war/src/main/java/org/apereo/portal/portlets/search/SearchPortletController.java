@@ -64,7 +64,7 @@ import org.apereo.portal.portlet.registry.IPortletWindowRegistry;
 import org.jasig.portal.search.PortletUrl;
 import org.jasig.portal.search.PortletUrlParameter;
 import org.jasig.portal.search.PortletUrlType;
-import org.jasig.portal.search.SearchConstants;
+import org.apereo.portal.search.SearchConstants;
 import org.jasig.portal.search.SearchRequest;
 import org.jasig.portal.search.SearchResult;
 import org.jasig.portal.search.SearchResults;
