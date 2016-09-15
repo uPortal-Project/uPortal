@@ -36,8 +36,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
-import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.apereo.portal.mock.portlet.om.MockPortletDefinitionId;
+import org.apereo.portal.mock.portlet.om.MockPortletWindowId;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletWindow;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;

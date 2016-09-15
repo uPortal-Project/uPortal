@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.aop;
+package org.apereo.portal.aop;
 
 import static org.junit.Assert.assertEquals;
 
@@ -40,7 +40,6 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Eric Dalquist
- * @version $Revision$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:aopTestContext.xml")

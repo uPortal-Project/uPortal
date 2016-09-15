@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apereo.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
 import org.jgroups.Address;
 import org.jgroups.PhysicalAddress;
 import org.jgroups.stack.IpAddress;

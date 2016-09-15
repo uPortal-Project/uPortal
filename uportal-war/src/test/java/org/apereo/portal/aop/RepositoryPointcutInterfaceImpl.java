@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.aop;
+package org.apereo.portal.aop;
 
-import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.stereotype.Repository;
 
-public class CountingMethodInterceptor {
-    private int count = 0;
-    
-    public int getCount() {
-        return count;
-    }
-    
-    public void resetCount() {
-        count = 0;
+/**
+ * @author Eric Dalquist
+ * @version $Revision$
+ */
+@Repository
+public class RepositoryPointcutInterfaceImpl implements RepositoryPointcutInterface {
+
+    @Override
+    public String methodOne(String arg) {
+        return arg + "One";
     }
 
-    public Object countInvocation(ProceedingJoinPoint pjp) throws Throwable {
-        count++;
-        return pjp.proceed();
+    @Override
+    public String methodTwo(String arg) {
+        return arg + "Two";
     }
+
 }

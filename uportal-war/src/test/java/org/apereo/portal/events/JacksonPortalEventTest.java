@@ -32,7 +32,7 @@ import javax.portlet.PortletMode;
 import javax.portlet.WindowState;
 import javax.xml.namespace.QName;
 
-import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.apereo.portal.mock.portlet.om.MockPortletWindowId;
 import org.apereo.portal.portlet.rendering.worker.IPortletExecutionWorker;
 import org.apereo.portal.security.SystemPerson;
 import org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean;

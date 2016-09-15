@@ -19,7 +19,7 @@
 package org.apereo.portal.io.xml;
 
 import org.apereo.portal.io.xml.eventaggr.ExternalEventAggregationConfiguration;
-import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.apereo.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;

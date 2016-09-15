@@ -22,8 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
-import org.jasig.portal.mock.portlet.om.MockPortletEntityId;
-import org.jasig.portal.mock.portlet.om.MockPortletWindowId;
+import org.apereo.portal.mock.portlet.om.MockPortletEntityId;
+import org.apereo.portal.mock.portlet.om.MockPortletWindowId;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletEntity;
 import org.apereo.portal.portlet.om.IPortletWindow;

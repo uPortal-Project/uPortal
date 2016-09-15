@@ -16,26 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.aop;
+package org.apereo.portal.test;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apereo.portal.jpa.BaseRawEventsJpaDao;
 
 /**
+ * Base class for RawEventsDb unit tests that want TX and entity manager support.
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-public class TestAspect {
-    private final AtomicInteger callCount = new AtomicInteger();
-    
-    public int getCallCount() {
-        return callCount.get();
-    }
-    
-    public void resetCallCount() {
-        callCount.set(0);
-    }
+public abstract class BaseRawEventsJpaDaoTest extends BaseJpaDaoTest {
+    private EntityManager entityManager;
 
-    public void executeAspect() {
-        callCount.incrementAndGet();
+    @PersistenceContext(unitName = BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME)
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+    @Override
+    protected final EntityManager getEntityManager() {
+        return this.entityManager;
     }
 }

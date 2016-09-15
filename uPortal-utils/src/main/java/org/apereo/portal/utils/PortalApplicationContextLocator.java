@@ -196,7 +196,7 @@ public class PortalApplicationContextLocator implements ServletContextListener {
         @Override
         protected ConfigurableApplicationContext createSingleton(Object... args) {
         	        	
-            if (Boolean.getBoolean("org.jasig.portal.test")) {
+            if (Boolean.getBoolean("org.apereo.portal.test")) {
                 throw new IllegalStateException(PortalApplicationContextLocator.class.getName() + " MUST NOT be used in unit tests");
             }
             

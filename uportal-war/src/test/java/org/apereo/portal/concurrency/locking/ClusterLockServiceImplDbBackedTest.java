@@ -30,8 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apereo.portal.IPortalInfoProvider;
 import org.apereo.portal.concurrency.locking.IClusterLockService.TryLockFunctionResult;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
-import org.jasig.portal.test.ThreadGroupRunner;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.ThreadGroupRunner;
 import org.apereo.portal.utils.threading.ThrowingRunnable;
 import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;

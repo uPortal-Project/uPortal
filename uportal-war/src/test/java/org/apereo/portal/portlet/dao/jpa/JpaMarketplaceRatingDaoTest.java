@@ -36,7 +36,7 @@ import org.apereo.portal.portlet.dao.IPortletTypeDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.portlet.marketplace.IMarketplaceRating;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

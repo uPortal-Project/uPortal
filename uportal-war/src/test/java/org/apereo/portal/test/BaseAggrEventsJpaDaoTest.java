@@ -16,25 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.aop;
+package org.apereo.portal.test;
 
-import org.springframework.stereotype.Repository;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apereo.portal.jpa.BaseAggrEventsJpaDao;
 
 /**
+ * Base class for AggrEventsDb unit tests that want TX and entity manager support.
+ * 
  * @author Eric Dalquist
- * @version $Revision$
  */
-@Repository
-public class RepositoryPointcutInterfaceImpl implements RepositoryPointcutInterface {
+public abstract class BaseAggrEventsJpaDaoTest extends BaseJpaDaoTest {
 
-    @Override
-    public String methodOne(String arg) {
-        return arg + "One";
+    private EntityManager entityManager;
+
+    @PersistenceContext(unitName = BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME)
+    public final void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
-
     @Override
-    public String methodTwo(String arg) {
-        return arg + "Two";
+    protected final EntityManager getEntityManager() {
+        return this.entityManager;
     }
-
 }

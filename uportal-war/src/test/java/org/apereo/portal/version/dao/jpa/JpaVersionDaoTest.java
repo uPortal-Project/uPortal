@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import org.apereo.portal.concurrency.CallableWithoutResult;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
 import org.apereo.portal.version.dao.VersionDao;
 import org.apereo.portal.version.om.Version;
 import org.junit.Test;

@@ -16,14 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.aop;
+package org.apereo.portal.aop;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public interface RepositoryPointcutInterface {
-    String methodOne(String arg);
+public class TestAspect {
+    private final AtomicInteger callCount = new AtomicInteger();
     
-    String methodTwo(String arg);
+    public int getCallCount() {
+        return callCount.get();
+    }
+    
+    public void resetCallCount() {
+        callCount.set(0);
+    }
+
+    public void executeAspect() {
+        callCount.incrementAndGet();
+    }
 }

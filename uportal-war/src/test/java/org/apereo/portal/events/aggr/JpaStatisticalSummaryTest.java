@@ -29,7 +29,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Min;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.apache.commons.math3.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math3.stat.descriptive.summary.SumOfSquares;
-import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.apereo.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

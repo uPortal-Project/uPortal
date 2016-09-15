@@ -26,7 +26,7 @@ import java.util.Collections;
 
 import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.apereo.portal.jpa.BasePortalJpaDao;
-import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.apereo.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

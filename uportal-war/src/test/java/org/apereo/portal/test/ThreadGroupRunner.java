@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.test;
+package org.apereo.portal.test;
 
 import java.util.LinkedList;
 import java.util.List;

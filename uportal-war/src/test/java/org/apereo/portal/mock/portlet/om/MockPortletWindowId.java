@@ -16,47 +16,48 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.mock.portlet.om;
+package org.apereo.portal.mock.portlet.om;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apereo.portal.portlet.om.IPortletDefinitionId;
+import org.apache.pluto.container.PortletWindowID;
+import org.apereo.portal.portlet.om.IPortletWindowId;
 
 /**
  * @author Eric Dalquist
  * @version $Revision$
  */
-public class MockPortletDefinitionId implements IPortletDefinitionId {
+public class MockPortletWindowId implements IPortletWindowId {
     private static final long serialVersionUID = 1L;
     
-    private Long portletDefinitionId;
+    private String portletWindowId;
     
-    public MockPortletDefinitionId() {
-        this.portletDefinitionId = -1l;
+    public MockPortletWindowId() {
+        this.portletWindowId = null;
     }
     
-    public MockPortletDefinitionId(long portletDefinitionId) {
-        this.portletDefinitionId = portletDefinitionId;
-    }
-    
-    @Override
-    public long getLongId() {
-        return portletDefinitionId;
+    public MockPortletWindowId(String portletWindowId) {
+        this.portletWindowId = portletWindowId;
     }
 
     /* (non-Javadoc)
-     * @see org.apache.pluto.PortletDefinitionID#getStringId()
+     * @see org.apache.pluto.PortletWindowID#getStringId()
      */
     public String getStringId() {
-        return this.portletDefinitionId.toString();
+        return this.portletWindowId;
+    }
+    /**
+     * @return the portletWindowId
+     */
+    public String getPortletWindowId() {
+        return portletWindowId;
     }
 
-    public Long getPortletDefinitionId() {
-        return portletDefinitionId;
-    }
-
-    public void setPortletDefinitionId(Long portletDefinitionId) {
-        this.portletDefinitionId = portletDefinitionId;
+    /**
+     * @param portletWindowId the portletWindowId to set
+     */
+    public void setPortletWindowId(String portletWindowId) {
+        this.portletWindowId = portletWindowId;
     }
 
     /**
@@ -67,12 +68,12 @@ public class MockPortletDefinitionId implements IPortletDefinitionId {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof IPortletDefinitionId)) {
+        if (!(object instanceof PortletWindowID)) {
             return false;
         }
-        IPortletDefinitionId rhs = (IPortletDefinitionId) object;
+        PortletWindowID rhs = (PortletWindowID) object;
         return new EqualsBuilder()
-            .append(this.portletDefinitionId, rhs.getStringId())
+            .append(this.portletWindowId, rhs.getStringId())
             .isEquals();
     }
 
@@ -82,7 +83,7 @@ public class MockPortletDefinitionId implements IPortletDefinitionId {
     @Override
     public int hashCode() {
         return new HashCodeBuilder(-917388291, 674832463)
-            .append(this.portletDefinitionId)
+            .append(this.portletWindowId)
             .toHashCode();
     }
 

@@ -911,7 +911,7 @@
                 <configuration>
                     <argLine>-Xmx512m -XX:MaxPermSize=512m -Duser.timezone=UTC</argLine>
                     <systemPropertyVariables>
-                        <org.jasig.portal.test>true</org.jasig.portal.test>
+                        <org.apereo.portal.test>true</org.apereo.portal.test>
                     </systemPropertyVariables>
                     <includes>
                         <include>**/Test*.java</include>

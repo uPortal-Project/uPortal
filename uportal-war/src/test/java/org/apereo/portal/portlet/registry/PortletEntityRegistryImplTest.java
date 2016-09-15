@@ -44,7 +44,7 @@ import org.apereo.portal.portlet.om.IPortletEntityId;
 import org.apereo.portal.portlet.om.IPortletPreference;
 import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.security.IPerson;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;
 import org.apereo.portal.user.IUserInstanceManager;

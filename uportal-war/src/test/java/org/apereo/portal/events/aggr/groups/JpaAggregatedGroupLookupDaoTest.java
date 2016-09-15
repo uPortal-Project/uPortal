@@ -28,7 +28,7 @@ import javax.naming.CompositeName;
 import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.apereo.portal.groups.ICompositeGroupService;
 import org.apereo.portal.groups.IEntityGroup;
-import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.apereo.portal.test.BaseAggrEventsJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

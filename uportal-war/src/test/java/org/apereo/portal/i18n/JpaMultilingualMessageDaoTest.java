@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apereo.portal.i18n.dao.IMessageDao;
-import org.jasig.portal.test.BasePortalJpaDaoTest;
+import org.apereo.portal.test.BasePortalJpaDaoTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -38,7 +38,7 @@ import org.apache.pluto.container.om.portlet.EventDefinition;
 import org.apache.pluto.container.om.portlet.EventDefinitionReference;
 import org.apache.pluto.container.om.portlet.PortletApplicationDefinition;
 import org.apache.pluto.container.om.portlet.PortletDefinition;
-import org.jasig.portal.mock.portlet.om.MockPortletDefinitionId;
+import org.apereo.portal.mock.portlet.om.MockPortletDefinitionId;
 import org.apereo.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;

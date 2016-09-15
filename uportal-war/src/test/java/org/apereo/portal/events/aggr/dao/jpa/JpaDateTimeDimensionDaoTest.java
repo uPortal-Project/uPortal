@@ -29,7 +29,7 @@ import org.apereo.portal.concurrency.CallableWithoutResult;
 import org.apereo.portal.events.aggr.DateDimension;
 import org.apereo.portal.events.aggr.dao.DateDimensionDao;
 import org.apereo.portal.events.aggr.dao.TimeDimensionDao;
-import org.jasig.portal.test.BaseAggrEventsJpaDaoTest;
+import org.apereo.portal.test.BaseAggrEventsJpaDaoTest;
 import org.joda.time.DateMidnight;
 import org.junit.Test;
 import org.junit.runner.RunWith;
