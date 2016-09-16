@@ -1261,6 +1261,8 @@
                         <exclude>LICENSE</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
+                        <exclude>gradle/*</exclude>
+                        <exclude>gradlew.bat</exclude>
                         <exclude>**/bootstrap/**</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
                         <exclude>**/jquerymobile-*.css</exclude>
