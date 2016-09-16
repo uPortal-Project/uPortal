@@ -67,11 +67,18 @@ public class PersonAttributesGroupImportHelper {
         return personAttributesGroupTestGroupDefinitionDao.createPersonAttributesGroupTestGroupDefinition(groups.iterator().next());
     }
     
-    public void addTest(IPersonAttributesGroupTestGroupDefinition testGroup,
-                             String attributeName,
-                             String testerClass,
-                             String testValue) {
+    public void addTest(IPersonAttributesGroupTestGroupDefinition testGroup, String attributeName, String testerClass, String testValue) {
+
+        /*
+         * For version 5.0, all uPortal sources were repackaged from 'org.jasig.portal'
+         * to 'org.apereo.portal'.  *.pags-group.xml files exported from earlier
+         * versions of uPortal will contain the old tester-class name.  We can detect that
+         * and intervene here.
+         */
+        testerClass = testerClass.replace("org.jasig.portal", "org.apereo.portal");
+
         personAttributesGroupTestDefinitionDao.createPersonAttributesGroupTestDefinition(testGroup, attributeName, testerClass, testValue);
+
     }
     
     public void addGroupMember(String groupName, String member) {

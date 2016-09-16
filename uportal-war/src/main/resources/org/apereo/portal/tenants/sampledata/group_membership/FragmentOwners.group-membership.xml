@@ -21,7 +21,7 @@
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
   <name>${tenant.name} Fragment Owners</name>
-  <entity-type>org.apereo.portal.security.IPerson</entity-type>
+  <entity-type>org.jasig.portal.security.IPerson</entity-type>
   <creator>system</creator>
   <description>This is the group for layout owners at ${tenant.name}.</description>
   <children>

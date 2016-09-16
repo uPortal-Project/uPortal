@@ -201,6 +201,15 @@ public class FragmentDefinition extends EvaluatorGroup {
                                      " element in\n'" + XmlUtilitiesImpl.toString(audience) + 
                                      "'" );
             String className = att.getNodeValue();
+
+            /*
+             * For version 5.0, all uPortal sources were repackaged from 'org.jasig.portal'
+             * to 'org.apereo.portal'.  *.fragment-definition.xml files exported from earlier
+             * versions of uPortal will contain the old evaluatorFactory name.  We can detect
+             * that and intervene here.
+             */
+            className = className.replace("org.jasig.portal", "org.apereo.portal");
+
             EvaluatorFactory factory = loadEvaluatorFactory( className,
                                                              audience );
             addEvaluator( factory, audience );

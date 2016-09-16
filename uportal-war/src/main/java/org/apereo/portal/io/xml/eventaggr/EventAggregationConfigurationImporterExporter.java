@@ -56,7 +56,6 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Eric Dalquist
- * @version $Id$
  */
 public class EventAggregationConfigurationImporterExporter extends
 		AbstractJaxbDataHandler<ExternalEventAggregationConfiguration> {
@@ -232,7 +231,16 @@ public class EventAggregationConfigurationImporterExporter extends
 	    return AggregationInterval.valueOf(externalAggregationInterval.name());
 	}
 
-    protected Class<? extends IPortalEventAggregator> getAggregatorType(final String aggregatorTypeName) {
+    protected Class<? extends IPortalEventAggregator> getAggregatorType(String aggregatorTypeName) {
+
+        /*
+         * For version 5.0, all uPortal sources were repackaged from 'org.jasig.portal'
+         * to 'org.apereo.portal'.  *.event-aggregation.xml files exported from earlier
+         * versions of uPortal will contain the old package name.  We can detect that
+         * and intervene here.
+         */
+        aggregatorTypeName = aggregatorTypeName.replace("org.jasig.portal", "org.apereo.portal");
+
         final Class<?> aggregatorType;
         try {
             aggregatorType = Class.forName(aggregatorTypeName);

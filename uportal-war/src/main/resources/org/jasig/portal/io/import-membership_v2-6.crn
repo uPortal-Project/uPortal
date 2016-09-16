@@ -46,41 +46,37 @@
 
             def log = LoggerFactory.getLogger(this.getClass());
 
-            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS,
-            org.apereo.portal.security.IPerson.class)
-            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME,
-            IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class)
+            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.security.IPerson.class);
+            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class);
             switch (entityIdArr.size()) {
-            case 0:
-            throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME")
-            case 1:
-            break
-            default:
-            throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be
-            1")
+                case 0:
+                    throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME");
+                case 1:
+                    break;
+                default:
+                    throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1");
             }
-            def group = GroupService.findGroup(entityIdArr[0].getKey())
+            def group = GroupService.findGroup(entityIdArr[0].getKey());
 
             Attributes.NODE.selectNodes('child/*').each {
-            String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
-            String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
-            log.debug("Found service=$groupService, memberId=$memberId")
+                String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText());
+                String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText());
+                log.debug("Found service=$groupService, memberId=$memberId");
 
-            if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
-            String key = groupService + '.' + memberId;
-            log.debug("Created key $key")
-            IEntityGroup member = GroupService.findGroup(key);
-            log.debug("Adding group $member")
-            group.addChild(member);
-            } else {
-            IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType())
-            log.debug("Adding entity $member")
-            group.addChild(member);
-            }
+                if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                    String key = groupService + '.' + memberId;
+                    log.debug("Created key $key");
+                    IEntityGroup member = GroupService.findGroup(key);
+                    log.debug("Adding group $member");
+                    group.addChild(member);
+                } else {
+                    IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType());
+                    log.debug("Adding entity $member");
+                    group.addChild(member);
+                }
             }
 
             group.updateMembers();
-
         </script>
     </groovy>
 </with-attribute>
