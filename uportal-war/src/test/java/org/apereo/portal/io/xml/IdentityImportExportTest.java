@@ -207,7 +207,7 @@ public class IdentityImportExportTest extends BasePortalJpaDaoTest {
   
     @Test
     public void testFragmentDefinition31ImportExport() throws Exception {
-        final ClassPathResource dataResource = new ClassPathResource("/org/apereo/portal/io/xml/fragment-definition/academic-tab_3-1.fragment-definition.xml");
+        final ClassPathResource dataResource = new ClassPathResource("/org/apereo/portal/io/xml/fragment-definition/academic-tab_5-0.fragment-definition.xml");
         
         IdentityImportExportTestUtilities.<Tuple<String, Element>>testIdentityImportExport(this.transactionOperations,
                 this.fragmentDefinitionImporter, this.fragmentDefinitionExporter,

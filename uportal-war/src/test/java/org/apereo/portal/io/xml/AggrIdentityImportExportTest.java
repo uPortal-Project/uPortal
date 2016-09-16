@@ -43,7 +43,7 @@ public class AggrIdentityImportExportTest extends BaseAggrEventsJpaDaoTest {
 
     @Test
     public void testEventAggregationConfiguration40ImportExport() throws Exception {
-        final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/apereo/portal/io/xml/eventaggr/test_4-0.event-aggregation.xml");
+        final ClassPathResource stylesheetDescriptorResource = new ClassPathResource("/org/apereo/portal/io/xml/eventaggr/test_5-0.event-aggregation.xml");
         
         IdentityImportExportTestUtilities.testIdentityImportExport(this.transactionOperations,
                 this.eventAggregationConfigurationImporter, this.eventAggregationConfigurationExporter,

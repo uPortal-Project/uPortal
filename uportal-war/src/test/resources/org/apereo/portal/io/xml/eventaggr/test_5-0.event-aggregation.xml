@@ -19,15 +19,6 @@
     under the License.
 
 -->
-<!--
- | NOTE:  This file currently isn't used by anything.  It contains the pre-5.0
- | vales for aggregator-type (i.e. 'org.jasig.portal').  The 5-0 version of this
- | file is used in an 'identity' test -- meaning that you should get exactly the
- | same file if you import then re-export.  That's not what we would want from
- | this file.  The import process should detect and correct the package names.
- | Re-exporting should contain the new package names.  In the future, we could
- | write a test for that using this file.
- +-->
 <event-aggregation
     xmlns="https://source.jasig.org/schemas/uportal/io/event-aggregation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -36,7 +27,7 @@
     version="4.0">
      
     <aggregated-group-config>
-        <aggregator-type>org.jasig.portal.events.aggr.login.LoginPortalEventAggregator</aggregator-type>
+        <aggregator-type>org.apereo.portal.events.aggr.login.LoginPortalEventAggregator</aggregator-type>
         <exclude>
             <groupService>local</groupService>
             <groupName>Guest</groupName>
@@ -44,7 +35,7 @@
     </aggregated-group-config>
     
     <aggregated-interval-config>
-        <aggregator-type>org.jasig.portal.events.aggr.IPortalEventAggregator</aggregator-type>
+        <aggregator-type>org.apereo.portal.events.aggr.IPortalEventAggregator</aggregator-type>
         <exclude>MINUTE</exclude>
     </aggregated-interval-config>
     

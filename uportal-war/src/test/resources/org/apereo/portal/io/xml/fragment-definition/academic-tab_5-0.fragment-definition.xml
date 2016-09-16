@@ -19,18 +19,9 @@
     under the License.
 
 -->
-<!--
- | NOTE:  This file currently isn't used by anything.  It contains the pre-5.0
- | vales for audience (i.e. 'org.jasig.portal').  The 5-0 version of this
- | file is used in an 'identity' test -- meaning that you should get exactly the
- | same file if you import then re-export.  That's not what we would want from
- | this file.  The import process should detect and correct the package names.
- | Re-exporting should contain the new package names.  In the future, we could
- | write a test for that using this file.
- +-->
 <fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="Academics Tab" ownerID="sakai-tab" precedence="95.0">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.PersonEvaluatorFactory">
+    <dlm:audience evaluatorFactory="org.apereo.portal.layout.dlm.providers.PersonEvaluatorFactory">
       <paren mode="OR">
         <attribute name="contentGroup" mode="equals" value="student"/>
         <attribute name="contentGroup" mode="equals" value="faculty"/>
