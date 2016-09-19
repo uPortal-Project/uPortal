@@ -4,5 +4,10 @@ sudo: false
 before_install:
   - unset GEM_PATH
 
+# ./gradlew assemble (default install command) won't cut it
+install:
+  - ./gradlew install
+  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
 after_success:
   - mvn clean test cobertura:cobertura coveralls:cobertura

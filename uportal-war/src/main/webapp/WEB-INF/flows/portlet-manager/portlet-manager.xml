@@ -53,7 +53,7 @@
         <!-- If we're creating a new portlet, create a new form -->
         <transition on="createPortlet" to="edit-portlet">
             <set name="flowScope.portlet"
-                value="new org.jasig.portal.portlets.portletadmin.PortletDefinitionForm()"/>
+                value="new org.apereo.portal.portlets.portletadmin.PortletDefinitionForm()"/>
         </transition>
         <!-- If we're deleting a portlet, confirm the user wants to delete it -->
         <transition on="removePortlet" to="confirmRemove">

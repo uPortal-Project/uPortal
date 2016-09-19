@@ -19,7 +19,7 @@
 
 --%>
 <%@ page isErrorPage="true" %>
-<% org.apache.commons.logging.Log logger = org.apache.commons.logging.LogFactory.getLog("org.jasig.portal.jsp.Error"); %>
+<% org.apache.commons.logging.Log logger = org.apache.commons.logging.LogFactory.getLog("org.apereo.portal.jsp.Error"); %>
 <html>
 <head>
 <title>Portal: An error has occured</title>

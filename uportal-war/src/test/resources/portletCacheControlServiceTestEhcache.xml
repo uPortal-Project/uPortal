@@ -39,7 +39,7 @@
      | Caches output from portlets rendering in the HEADER part of the render request
      | - 1 per portlet cached header rendering see PrivatePortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderHeaderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
@@ -47,7 +47,7 @@
      | Caches output from portlets rendering in the MARKUP part of the render request
      | - 1 per portlet cached rendering see PrivatePortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletRenderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
@@ -55,7 +55,7 @@
      | Caches output from portlets serving resources
      | - 1 per portlet cached resource response see PrivatePortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.privateScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
@@ -63,7 +63,7 @@
      | Caches PUBLIC output from portlets rendering in the HEADER part of the render request
      | - 1 per portlet cached header rendering see PublicPortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderHeaderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
@@ -71,7 +71,7 @@
      | Caches PUBLIC output from portlets rendering in the MARKUP part of the render request
      | - 1 per portlet cached rendering see PublicPortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletRenderOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
         
@@ -79,7 +79,7 @@
      | Caches PUBLIC output from portlets serving resources
      | - 1 per portlet cached header response response see PublicPortletCacheKey for the key definition
      +-->   
-    <cache name="org.jasig.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
+    <cache name="org.apereo.portal.portlet.container.cache.PortletCacheControlServiceImpl.publicScopePortletResourceOutputCache"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false" 
         timeToIdleSeconds="600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 </ehcache>

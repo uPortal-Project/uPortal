@@ -38,10 +38,10 @@
  +-->
 <util:list id="listenerEventFilters">
     <!-- Can be used to filter events based on event type using an instanceof check -->
-    <bean class="org.jasig.portal.spring.context.ClassApplicationEventFilter">
+    <bean class="org.apereo.portal.spring.context.ClassApplicationEventFilter">
         <property name="supportedEvents">
             <list>
-                <value>org.jasig.portal.events.PortalEvent</value>
+                <value>org.apereo.portal.events.PortalEvent</value>
             </list>
         </property>
         <!-- Can configure a list of events to ignore based on event type using an instanceof check. For example
@@ -56,18 +56,18 @@
              report on.
         <property name="ignoredEvents">
             <list>
-                <value>org.jasig.portal.events.PortletEventExecutionEvent</value>
-                <!- - <value>org.jasig.portal.events.PortletActionExecutionEvent</value> retain for Search terms - ->
-                <value>org.jasig.portal.events.PortletRenderExecutionEvent</value>
-                <value>org.jasig.portal.events.PortletRenderHeaderExecutionEvent</value>
-                <value>org.jasig.portal.events.PortletResourceExecutionEvent</value>
-                <value>org.jasig.portal.events.PortalRenderEvent</value>
+                <value>org.apereo.portal.events.PortletEventExecutionEvent</value>
+                <!- - <value>org.apereo.portal.events.PortletActionExecutionEvent</value> retain for Search terms - ->
+                <value>org.apereo.portal.events.PortletRenderExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletRenderHeaderExecutionEvent</value>
+                <value>org.apereo.portal.events.PortletResourceExecutionEvent</value>
+                <value>org.apereo.portal.events.PortalRenderEvent</value>
             </list>
         </property>
         -->
     </bean>
     <!-- Can be used to filter events based on who generated the event
-    <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+    <bean class="org.apereo.portal.events.handlers.UserFilteringPortalEventHandler">
         <property name="ignoredUserNamePatterns">
             <list>
                 <value>user\..*</value>
@@ -85,7 +85,7 @@
      | ApplicationEventFilters to be configured.
      +-->
      <!-- 
-    <bean class="org.jasig.portal.spring.context.LoggingEventHandler">
+    <bean class="org.apereo.portal.spring.context.LoggingEventHandler">
         <property name="applicationEventFilters" ref="listenerEventFilters" />
     </bean>
     -->
@@ -93,7 +93,7 @@
     <!-- 
      | Queues raw events that pass the filter criteria for storing into the database.
      +-->
-    <bean id="portalEventDaoQueuingEventHandler" class="org.jasig.portal.events.handlers.db.PortalEventDaoQueuingEventHandler">
+    <bean id="portalEventDaoQueuingEventHandler" class="org.apereo.portal.events.handlers.db.PortalEventDaoQueuingEventHandler">
         <property name="applicationEventFilters" ref="listenerEventFilters" />
     </bean>
 
@@ -108,7 +108,7 @@
      | during aggregation, such as events from monitoring tools.
      +-->
     <util:list id="aggregatorEventFilters">
-        <bean class="org.jasig.portal.events.handlers.UserFilteringPortalEventHandler">
+        <bean class="org.apereo.portal.events.handlers.UserFilteringPortalEventHandler">
             <!-- Uncomment to ignore specific users 
             <property name="ignoredUserNames">
                 <list>
@@ -135,27 +135,27 @@
      | All beans that implement IPortalEventAggregator are used during aggregation
      +-->
     <!-- Useful for debugging, logs each event as it is processed by the aggregation system 
-    <bean id="loggingPortalEventAggregator" class="org.jasig.portal.events.aggr.LoggingPortalEventAggregator" />
+    <bean id="loggingPortalEventAggregator" class="org.apereo.portal.events.aggr.LoggingPortalEventAggregator" />
      -->
-    <bean id="loginPortalEventAggregator" class="org.jasig.portal.events.aggr.login.LoginPortalEventAggregator"/>
-    <bean id="concurrentUserAggregator" class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
-    <bean id="tabRenderAggregator" class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregator"/>
-    <bean id="portletAddAggregator" class="org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregator"/>
-    <bean id="portletExecutionAggregatorAll" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator"/>
-    <bean id="portletExecutionAggregatorAction" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+    <bean id="loginPortalEventAggregator" class="org.apereo.portal.events.aggr.login.LoginPortalEventAggregator"/>
+    <bean id="concurrentUserAggregator" class="org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregator"/>
+    <bean id="tabRenderAggregator" class="org.apereo.portal.events.aggr.tabrender.TabRenderAggregator"/>
+    <bean id="portletAddAggregator" class="org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregator"/>
+    <bean id="portletExecutionAggregatorAll" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator"/>
+    <bean id="portletExecutionAggregatorAction" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="ACTION" />
     </bean>
-    <bean id="portletExecutionAggregatorEvent" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+    <bean id="portletExecutionAggregatorEvent" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="EVENT" />
     </bean>
-    <bean id="portletExecutionAggregatorRender" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+    <bean id="portletExecutionAggregatorRender" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="RENDER" />
     </bean>
-    <bean id="portletExecutionAggregatorResource" class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregator">
+    <bean id="portletExecutionAggregatorResource" class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregator">
         <property name="executionType" value="RESOURCE" />
     </bean>
-    <bean id="searchRequestAggregator" class="org.jasig.portal.events.aggr.action.SearchRequestAggregator"/>
-    <bean id="tinCanEventAggregator" class="org.jasig.portal.events.tincan.TinCanPortalEventAggregator">
+    <bean id="searchRequestAggregator" class="org.apereo.portal.events.aggr.action.SearchRequestAggregator"/>
+    <bean id="tinCanEventAggregator" class="org.apereo.portal.events.tincan.TinCanPortalEventAggregator">
         <property name="tinCanEventScheduler" ref="tinCanEventScheduler"/>
     </bean>
 </beans>

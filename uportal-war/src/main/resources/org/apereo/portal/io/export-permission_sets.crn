@@ -1,0 +1,156 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<with-attribute key="SET_KEY_PARTS" value="${groovy(new HashMap())}">
+    <groovy>
+        <script>
+            keyParts = SET_KEY.split("\\|");
+            SET_KEY_PARTS.put("OWNER", keyParts[0]);
+            SET_KEY_PARTS.put("ENTITY_TYPE_NAME", keyParts[1]);
+            SET_KEY_PARTS.put("PRINCIPAL_KEY", keyParts[2]);
+            SET_KEY_PARTS.put("ACTIVITY", keyParts[3]);
+            SET_KEY_PARTS.put("PRINCIPAL_TYPE", keyParts[4].toInteger());
+        </script>
+        <subtasks>
+            <with>
+                <attribute key="OWNER">${groovy(SET_KEY_PARTS.get('OWNER'))}</attribute>
+                <attribute key="ENTITY_TYPE_NAME">${groovy(SET_KEY_PARTS.get('ENTITY_TYPE_NAME'))}</attribute>
+                <attribute key="PRINCIPAL_KEY">${groovy(SET_KEY_PARTS.get('PRINCIPAL_KEY'))}</attribute>
+                <attribute key="ACTIVITY">${groovy(SET_KEY_PARTS.get('ACTIVITY'))}</attribute>
+                <attribute key="PRINCIPAL_TYPE">${groovy(SET_KEY_PARTS.get('PRINCIPAL_TYPE'))}</attribute>
+                <attribute key="Attributes.NODE">${newDoc(permission-set)}</attribute>
+                <subtasks>
+                    <append-node node="${attributeNode(script=classpath://org/apereo/portal/io/import-permission_set_v5-0.crn)}"/>
+
+                    <append-node>
+                        <owner>${OWNER}</owner>
+                    </append-node>
+                    <append-node>
+                        <principal-type>${ENTITY_TYPE_NAME}</principal-type>
+                    </append-node>
+
+                    <!-- principal -->
+                    <choose>
+                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.apereo.portal.groups.IEntityGroup'))}">
+                            <with-attribute key="GROUP" value="${groovy(org.apereo.portal.services.GroupService.findGroup(PRINCIPAL_KEY))}">
+                                <!-- Check for group name == null (indicates an orphaned record) -->
+                                <choose>
+                                    <when test="${jexl(GROUP.getName() == null)}">
+                                        <log logger-name="org.apereo.portal.io.export-permissions" level="warn">Permission principal references a deleted group;  removing orphaned reference.</log>
+                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                    </when>
+                                    <otherwise>
+                                        <!-- All is well... -->
+                                        <append-node>
+                                            <principal>
+                                                <group>${jexl(GROUP.getName())}</group>
+                                            </principal>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </with-attribute>
+                        </when>
+                        <when test="${jexl(ENTITY_TYPE_NAME.equals('org.apereo.portal.security.IPerson'))}">
+                            <with-attribute key="USER_NAME" value="${PRINCIPAL_KEY}">
+                                <choose>
+                                    <when test="${groovy(isUserIncluded.apply(USER_NAME))}">
+                                        <append-node>
+                                            <principal>
+                                                <literal>${USER_NAME}</literal>
+                                            </principal>
+                                        </append-node>
+                                    </when>
+                                    <otherwise>
+                                        <log logger-name="org.apereo.portal.io.export-permission_sets" level="warn">user, ${USER_NAME}: Not on included user list, skipping permission export</log>
+                                        <append-node node="${attributeNode(cancel=true)}"/>
+                                    </otherwise>
+                                </choose>
+                            </with-attribute>
+                        </when>
+                        <otherwise>
+                            <append-node>
+                                <principal>
+                                    <literal>${PRINCIPAL_KEY}</literal>
+                                </principal>
+                            </append-node>
+                        </otherwise>
+                    </choose>
+                    <!-- NB:  Needs to be enhanced to work w/ principals other than groups... -->
+
+                    <append-node>
+                        <activity>${ACTIVITY}</activity>
+                    </append-node>
+
+                    <!-- targets -->
+                    <sql-query>
+                        <sql> 
+                            SELECT UPP.TARGET, UPP.PERMISSION_TYPE
+                            FROM UP_PERMISSION UPP
+                            WHERE NOT (UPP.ACTIVITY = 'SUBSCRIBE' AND UPP.TARGET LIKE 'PORTLET_ID.%')
+                                AND NOT (UPP.ACTIVITY = 'BROWSE' AND UPP.TARGET LIKE 'PORTLET_ID.%')
+                                AND UPP.OWNER = ?
+                                AND UPP.PRINCIPAL_TYPE = ? 
+                                AND UPP.PRINCIPAL_KEY = ?
+                                AND UPP.ACTIVITY = ?
+                            ORDER BY UPP.TARGET, UPP.PERMISSION_TYPE
+                        </sql>
+                        <parameter value="${OWNER}"/>
+                        <parameter value="${PRINCIPAL_TYPE}"/>
+                        <parameter value="${PRINCIPAL_KEY}"/>
+                        <parameter value="${ACTIVITY}"/>
+                        <subtasks>
+                            <!-- target -->
+                            <with-attribute key="GROUP" value="${groovy(org.apereo.portal.services.GroupService.findGroup(TARGET))}">
+                                <choose>
+                                    <when test="${jexl(GROUP != null)}">
+                                        <!-- Check for group name == null (indicates an orphaned record) -->
+                                        <choose>
+                                            <when test="${jexl(GROUP.getName() == null)}">
+                                                <log logger-name="org.apereo.portal.io.export-permissions" level="warn">Permission target references a deleted group;  removing orphaned reference.</log>
+                                                <append-node node="${attributeNode(cancel=true)}"/>
+                                            </when>
+                                            <otherwise>
+                                                <!-- All is well... -->
+                                                <append-node>
+                                                    <target permission-type="${PERMISSION_TYPE}">
+                                                        <group>${jexl(GROUP.getName())}</group>
+                                                    </target>
+                                                </append-node>
+                                            </otherwise>
+                                        </choose>
+                                    </when>
+                                    <otherwise>
+                                        <append-node>
+                                            <target permission-type="${PERMISSION_TYPE}">
+                                                <literal>${TARGET}</literal>
+                                            </target>
+                                        </append-node>
+                                    </otherwise>
+                                </choose>
+                            </with-attribute>
+                        </subtasks>
+                    </sql-query>
+
+                    <return value="${Attributes.NODE}"/>
+                </subtasks>
+            </with>
+        </subtasks>
+    </groovy>
+</with-attribute>

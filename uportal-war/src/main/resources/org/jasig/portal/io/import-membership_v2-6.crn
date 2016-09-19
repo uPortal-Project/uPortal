@@ -35,49 +35,48 @@
 <with-attribute key="PARENT_GROUP_NAME" value="${valueOf(parent)}">
     <groovy>
         <script>
-            import org.jasig.portal.groups.IEntityGroup
-            import org.jasig.portal.groups.IGroupConstants
-            import org.jasig.portal.groups.IGroupMember
-            import org.jasig.portal.io.GetMemberIsGroupPhrase
-            import org.jasig.portal.io.GetMemberKeyPhrase
-            import org.jasig.portal.io.GetMemberServicePhrase
-            import org.jasig.portal.services.GroupService
+            import org.apereo.portal.groups.IEntityGroup
+            import org.apereo.portal.groups.IGroupConstants
+            import org.apereo.portal.groups.IGroupMember
+            import org.apereo.portal.io.GetMemberIsGroupPhrase
+            import org.apereo.portal.io.GetMemberKeyPhrase
+            import org.apereo.portal.io.GetMemberServicePhrase
+            import org.apereo.portal.services.GroupService
             import org.slf4j.LoggerFactory
 
             def log = LoggerFactory.getLogger(this.getClass());
 
-            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.jasig.portal.security.IPerson.class)
-            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.jasig.portal.portlet.om.IPortletDefinition.class)
+            def entityIdArr = GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.security.IPerson.class);
+            entityIdArr = entityIdArr.size() > 0 ? entityIdArr : GroupService.searchForGroups(PARENT_GROUP_NAME, IGroupConstants.IS, org.apereo.portal.portlet.om.IPortletDefinition.class);
             switch (entityIdArr.size()) {
                 case 0:
-                    throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME")
+                    throw new RuntimeException("Unable to find group with name $PARENT_GROUP_NAME");
                 case 1:
-                    break
+                    break;
                 default:
-                    throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1")
+                    throw new RuntimeException("Found $entityIdArr.size groups with name $PARENT_GROUP_NAME -- should only be 1");
             }
-            def group = GroupService.findGroup(entityIdArr[0].getKey())
+            def group = GroupService.findGroup(entityIdArr[0].getKey());
 
             Attributes.NODE.selectNodes('child/*').each {
-                String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText())
-                String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
-                log.debug("Found service=$groupService, memberId=$memberId")
+                String groupService = GetMemberServicePhrase.getPhrase(it.getName(), it.getText());
+                String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText());
+                log.debug("Found service=$groupService, memberId=$memberId");
 
                 if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
                     String key = groupService + '.' + memberId;
-                    log.debug("Created key $key")
+                    log.debug("Created key $key");
                     IEntityGroup member = GroupService.findGroup(key);
-                    log.debug("Adding group $member")
+                    log.debug("Adding group $member");
                     group.addChild(member);
                 } else {
-                    IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType())
-                    log.debug("Adding entity $member")
+                    IGroupMember member = GroupService.getGroupMember(memberId, group.getLeafType());
+                    log.debug("Adding entity $member");
                     group.addChild(member);
                 }
             }
 
             group.updateMembers();
-
         </script>
     </groovy>
 </with-attribute>

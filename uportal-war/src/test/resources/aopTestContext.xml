@@ -30,11 +30,11 @@
                         
     <import resource="classpath:commonTestContext.xml"/>
     
-    <bean id="repositoryPointcutInterface" class="org.jasig.portal.aop.RepositoryPointcutInterfaceImpl" />
+    <bean id="repositoryPointcutInterface" class="org.apereo.portal.aop.RepositoryPointcutInterfaceImpl" />
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.apereo.portal..*.*(..))"/>
         
         <aop:pointcut id="allExecutions" expression="execution(* *.*(..))"/>
             
@@ -43,14 +43,14 @@
         </aop:aspect>
         
         <aop:aspect ref="countingMethodInterceptor">
-            <aop:around method="countInvocation" pointcut="execution(* org.jasig.portal.aop.RepositoryPointcutInterface.*(..))"/>
+            <aop:around method="countInvocation" pointcut="execution(* org.apereo.portal.aop.RepositoryPointcutInterface.*(..))"/>
         </aop:aspect>
     </aop:config>
 
     <bean id="countingMethodInterceptorRepositoryAdvice" class="org.springframework.aop.aspectj.AspectJAroundAdvice">
         <constructor-arg>
             <bean class="org.springframework.util.ReflectionUtils" factory-method="findMethod">  
-                <constructor-arg value="org.jasig.portal.aop.CountingMethodInterceptor"/>
+                <constructor-arg value="org.apereo.portal.aop.CountingMethodInterceptor"/>
                 <constructor-arg value="countInvocation"/>
                 <constructor-arg value="org.aspectj.lang.ProceedingJoinPoint"/>
             </bean>  
@@ -63,9 +63,9 @@
         </constructor-arg>
     </bean>
     
-    <bean id="testAspect" class="org.jasig.portal.aop.TestAspect" />
+    <bean id="testAspect" class="org.apereo.portal.aop.TestAspect" />
     
-    <bean id="countingMethodInterceptor" class="org.jasig.portal.aop.CountingMethodInterceptor" />
+    <bean id="countingMethodInterceptor" class="org.apereo.portal.aop.CountingMethodInterceptor" />
     
 </beans>
 

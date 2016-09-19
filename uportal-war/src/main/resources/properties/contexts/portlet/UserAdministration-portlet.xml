@@ -37,7 +37,7 @@
         <property name="portletModeMap">
             <map>
                 <entry key="view">
-                    <bean class="org.jasig.portal.portlets.flow.MultiOutcomeParamaterizableFlowHandler">
+                    <bean class="org.apereo.portal.portlets.flow.MultiOutcomeParamaterizableFlowHandler">
                         <property name="flowId" value="user-manager" />
                         <property name="redirectOnEnds">
                             <util:map>

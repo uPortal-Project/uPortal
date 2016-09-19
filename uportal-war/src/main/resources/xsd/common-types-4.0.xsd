@@ -28,7 +28,7 @@
     
     <xs:simpleType name="fname-type">
         <xs:annotation>
-            <xs:appinfo>org.jasig.portal.dao.usertype.FunctionalNameType.VALID_FNAME_PATTERN</xs:appinfo>
+            <xs:appinfo>org.apereo.portal.dao.usertype.FunctionalNameType.VALID_FNAME_PATTERN</xs:appinfo>
             <xs:documentation>
                 Constrains an XML element with the same constraint defined by the FunctionalNameType.VALID_FNAME_PATTERN
                 regular expression.

@@ -27,19 +27,19 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
    
     <bean id="portletThreadPool" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.portlet.worker.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.portlet.worker.threadPool.maxThreads}" />
+        <property name="corePoolSize" value="${org.apereo.portal.portlet.worker.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.portlet.worker.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uP-PortletExecTG" />
         <property name="threadNamePrefix" value="uP-PortletExec-" />
-        <property name="threadPriority" value="${org.jasig.portal.portlet.worker.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.portlet.worker.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.portlet.worker.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.portlet.worker.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
     
-    <util:list id="portletExecutionInterceptors" value-type="org.jasig.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
+    <util:list id="portletExecutionInterceptors" value-type="org.apereo.portal.portlet.rendering.worker.IPortletExecutionInterceptor">
         <ref bean="hungWorkerAnalyzer"/>
         <ref bean="JpaPortletExecutionInterceptor"/>
         <ref bean="LocaleThreadLocalPortletExecutionInterceptor"/>
@@ -49,7 +49,7 @@
         <ref bean="portletExecutionManager"/>
     </util:list>
     
-    <bean id="JpaPortletExecutionInterceptor" class="org.jasig.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
+    <bean id="JpaPortletExecutionInterceptor" class="org.apereo.portal.portlet.rendering.worker.JpaPortletExecutionInterceptor">
         <property name="entityManagerFactory" ref="PortalDbEntityManagerFactory" />
     </bean>
     
@@ -64,7 +64,7 @@
     <util:set id="nonNamespacedPortletProperties">
     </util:set>
     
-    <bean id="portletContainer" class="org.jasig.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
+    <bean id="portletContainer" class="org.apereo.portal.portlet.container.UportalPortletContainerImpl" destroy-method="destroy" init-method="init">
         <constructor-arg value="#{servletContext.contextPath + '-PlutoPortletContainer'}" />
         <constructor-arg>
             <!-- TODO this setup will never let the portal webapp restart without leaking memory -->
@@ -74,7 +74,7 @@
         </constructor-arg>
     </bean>
     
-    <bean id="portalContext" class="org.jasig.portal.portlet.container.PortalContextImpl">
+    <bean id="portalContext" class="org.apereo.portal.portlet.container.PortalContextImpl">
         <property name="windowStates">
             <set value-type="javax.portlet.WindowState">
                 <value>MINIMIZED</value>
@@ -98,10 +98,10 @@
         		<prop key="javax.portlet.markup.head.element.support">true</prop>
         	</props>
         </property>
-        <property name="portalVersion" value="${org.jasig.portal.version}" />
+        <property name="portalVersion" value="${org.apereo.portal.version}" />
     </bean>
     
-    <bean id="personDirectoryUserInfoService" class="org.jasig.portal.portlet.container.services.PersonDirectoryUserInfoService">
+    <bean id="personDirectoryUserInfoService" class="org.apereo.portal.portlet.container.services.PersonDirectoryUserInfoService">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
 
@@ -115,7 +115,7 @@
      | one for every render of a portlet that asks for one.
      +-->
     <!--
-    <bean id="casTicketUserInfoService" class="org.jasig.portal.portlet.container.services.CasTicketUserInfoService" />
+    <bean id="casTicketUserInfoService" class="org.apereo.portal.portlet.container.services.CasTicketUserInfoService" />
     -->
 
     <!--
@@ -128,18 +128,18 @@
      | IMPORTANT:  If using CAS Clearpass, set decryptPassword=false.  Otherwise set it to true.
      -->
     <!--bean id="cachedPasswordUserInfoService"
-        class="org.jasig.portal.portlet.container.services.CachedPasswordUserInfoService">
+        class="org.apereo.portal.portlet.container.services.CachedPasswordUserInfoService">
         <property name="decryptPassword" value="false"/>
     </bean-->
     
     <bean id="portalAdministrationService" class="org.apache.pluto.driver.container.DefaultPortalAdministrationService">
     	<property name="administrativeRequestListeners">
     		<list>
-    			<bean class="org.jasig.portal.portlet.container.services.AdministrativeRequestListenerController">
+    			<bean class="org.apereo.portal.portlet.container.services.AdministrativeRequestListenerController">
                     <property name="listeners">
                         <map>
                             <entry key="sessionActionListener">
-                            	<bean class="org.jasig.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
+                            	<bean class="org.apereo.portal.portlet.session.PortletSessionAdministrativeRequestListener" />
                             </entry>
                         </map>
                     </property>
@@ -158,9 +158,9 @@
     <bean id="namespaceMapper" class="org.apache.pluto.driver.container.DefaultNamespaceMapper"/>
     <bean id="requestDispatcherService" class="org.apache.pluto.container.impl.RequestDispatcherServiceImpl" />
     
-    <!--  <bean id="portletSessionExpirationManager" class="org.jasig.portal.portlet.session.PortletSessionExpirationManager" /> -->
+    <!--  <bean id="portletSessionExpirationManager" class="org.apereo.portal.portlet.session.PortletSessionExpirationManager" /> -->
     <!--  
-    <bean id="requestAttributeService" class="org.jasig.portal.portlet.container.services.RequestAttributeServiceImpl">
+    <bean id="requestAttributeService" class="org.apereo.portal.portlet.container.services.RequestAttributeServiceImpl">
     	<property name="personAttributeDao" ref="personAttributeDao" />
     </bean>
     -->

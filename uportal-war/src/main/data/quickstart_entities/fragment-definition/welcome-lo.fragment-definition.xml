@@ -19,9 +19,9 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
+<fragment-definition xmlns:dlm="http://org.apereo.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="Welcome" ownerID="welcome-lo" precedence="80">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
+    <dlm:audience evaluatorFactory="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluatorFactory">
     <paren mode="AND">
       <paren mode="NOT">
         <attribute mode="deepMemberOf" name="Guests"/>

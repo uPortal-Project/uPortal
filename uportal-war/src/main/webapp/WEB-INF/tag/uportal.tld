@@ -27,7 +27,7 @@
     <uri>http://www.uportal.org/jsp/jstl/uportal/1.0</uri>
     <tag>
         <name>param</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParamTag</tag-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.ParamTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -42,8 +42,8 @@
     </tag>
     <tag>
         <name>render-delegate</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
-        <tei-class>org.jasig.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.RenderPortletTag</tag-class>
+        <tei-class>org.apereo.portal.portlet.delegation.jsp.RenderPortletTag$TEI</tei-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>fname</name>
@@ -68,7 +68,7 @@
     </tag>
     <tag>
         <name>parent-url</name>
-        <tag-class>org.jasig.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
+        <tag-class>org.apereo.portal.portlet.delegation.jsp.ParentUrlTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>windowState</name>
@@ -83,23 +83,23 @@
     </tag>
     <function>
         <name>contains</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
     </function>
     <function>
         <name>containsKey</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>boolean containsKey(java.util.Map, java.lang.Object)</function-signature>
     </function>
     <function>
         <name>containsValue</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>boolean containsValue(java.util.Map, java.lang.Object)</function-signature>
     </function>
     <function>
         <description> Tests if an object is an instance of a class. </description>
         <name>instanceOf</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>boolean instanceOf(java.lang.Object, java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${up:instanceOf(obj, 'java.lang.Object')}">
@@ -108,7 +108,7 @@
     <function>
         <description>Converts an object to JSON using Jackson</description>
         <name>json</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>java.lang.String json(java.lang.Object)</function-signature>
         <example>
             ${up:json(obj)}
@@ -121,7 +121,7 @@
             it looks for an HTTP status code of 200 on a GET
         </description>
         <name>isValidUrl</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>boolean isValidUrl(java.lang.String)</function-signature>
         <example>
             ${up:isValidUrl("www.example.com/image.png")}
@@ -133,7 +133,7 @@
             variable values may contain illegal characters.
         </description>
         <name>encodePathSegment</name>
-        <function-class>org.jasig.portal.utils.jsp.Util</function-class>
+        <function-class>org.apereo.portal.utils.jsp.Util</function-class>
         <function-signature>java.lang.String encodePathSegment(java.lang.String)</function-signature>
         <example>
             ${up:urlEncode("www.example.com/image.png")}

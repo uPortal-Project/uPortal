@@ -25,9 +25,9 @@
            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
  
     
-    <bean id="requestParameterProcessorInterceptor" class="org.jasig.portal.url.processing.RequestParameterProcessorInterceptor">
+    <bean id="requestParameterProcessorInterceptor" class="org.apereo.portal.url.processing.RequestParameterProcessorInterceptor">
         <property name="dynamicRequestParameterProcessors">
-            <list value-type="org.jasig.portal.url.processing.IRequestParameterProcessor">
+            <list value-type="org.apereo.portal.url.processing.IRequestParameterProcessor">
                 <!-- note: portletRequestParameterProcessor and userLayoutRequestParameterProcessor are @Service beans - must use ref "bean" -->
                 <ref bean="portletRequestParameterProcessor" />
                 <ref bean="userLayoutRequestParameterProcessor" />

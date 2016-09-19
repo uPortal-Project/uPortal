@@ -19,8 +19,8 @@
     under the License.
 
 -->
-<fragment-definition xmlns:dlm="http://org.jasig.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
+<fragment-definition xmlns:dlm="http://org.apereo.portal.layout.dlm.config" script="classpath://org/jasig/portal/io/import-fragment-definition_v3-1.crn">
   <dlm:fragment name="Entertainment" ownerID="ent-lo" precedence="60" description="Games, humor, and entertainment news">
-    <dlm:audience evaluatorFactory="org.jasig.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory"/>
+    <dlm:audience evaluatorFactory="org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluatorFactory"/>
   </dlm:fragment>
 </fragment-definition>

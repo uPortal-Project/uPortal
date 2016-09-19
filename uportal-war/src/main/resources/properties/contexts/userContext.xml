@@ -30,18 +30,18 @@
     <!--
      | The concrete IPersonManager implementation to be used
      +-->
-   	<bean id="personManager" class="org.jasig.portal.security.provider.SimplePersonManager" />
+   	<bean id="personManager" class="org.apereo.portal.security.provider.SimplePersonManager" />
     <!--
      | Use this bean for Shibboleth authentication
      +-->
     <!--
-    <bean id="personManager" class="org.jasig.portal.security.provider.RemoteUserPersonManager" />
+    <bean id="personManager" class="org.apereo.portal.security.provider.RemoteUserPersonManager" />
     -->
    	<!--
    	 | Use this bean to extend guest user properties with attributes from the request set by the requestAttributeSourceFilter
    	 +-->
    	<!--
-   	<bean id="personManager" class="org.jasig.portal.security.provider.ExtendedPersonManager" >
+   	<bean id="personManager" class="org.apereo.portal.security.provider.ExtendedPersonManager" >
    		<property name="merger">
             <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
         </property>
@@ -54,7 +54,7 @@
         <entry key="respondr" value="respondr" />
     </util:map>
 
-    <bean id="profileMapper" class="org.jasig.portal.layout.profile.ChainingProfileMapperImpl">
+    <bean id="profileMapper" class="org.apereo.portal.layout.profile.ChainingProfileMapperImpl">
         <property name="defaultProfileName" value="default" />
         <property name="subMappers">
             <util:list>
@@ -77,7 +77,7 @@
                 | Add "guest-[server name]-" prefix to the subfname found
                 +-->
                 <!--
-                <bean class="org.jasig.portal.layout.profile.ServerNameGuestChainingProfileMapper">
+                <bean class="org.apereo.portal.layout.profile.ServerNameGuestChainingProfileMapper">
                 	<property name="authorizedServerNames">
                 		<util:map>
                 			< Only server names listed here are authorized ! (the value replace the server name) />
@@ -99,19 +99,19 @@
     <!-- Example of how to use serverProfileMapper.  This puts users on profile=default
     for any server that matches the regex (everything not *.wisconsin.edu* for example -->
     <!-- 
-    <bean id="serverProfileMapper" class="org.jasig.portal.layout.profile.ServerProfileMapperImpl"
+    <bean id="serverProfileMapper" class="org.apereo.portal.layout.profile.ServerProfileMapperImpl"
         p:serverRegex="^((?!.\\.wisconsin\\.edu).)*$"
         p:profile="default" />
     -->
 
-    <bean id="sessionAttributeProfileMapper" class="org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl"
+    <bean id="sessionAttributeProfileMapper" class="org.apereo.portal.layout.profile.SessionAttributeProfileMapperImpl"
         p:mappings-ref="profileKeyMappings"/>
 
-    <bean id="userAgentProfileMapper" class="org.jasig.portal.layout.profile.UserAgentProfileMapper">
+    <bean id="userAgentProfileMapper" class="org.apereo.portal.layout.profile.UserAgentProfileMapper">
         <property name="mappings">
             <list>
                 <!-- mobile device -->
-                <bean class="org.jasig.portal.layout.profile.UserAgentProfileMapper.Mapping">
+                <bean class="org.apereo.portal.layout.profile.UserAgentProfileMapper.Mapping">
                     <property name="pattern" value="${mobile.user.agent.regex}"/>
                     <property name="profileName" value="mobileDefault" />
                 </bean>
@@ -144,27 +144,27 @@
     <!-- Form inputs for local account editing.  These fields will be filtered
         according to user permissions. -->
     <util:list id="accountEditAttributes">
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleTextPreference">
             <constructor-arg value="title"/>
             <constructor-arg value="attribute.displayName.title"/>
         </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleTextPreference">
             <constructor-arg value="department"/>
             <constructor-arg value="attribute.displayName.department"/>
         </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleTextPreference">
             <constructor-arg value="organization"/>
             <constructor-arg value="attribute.displayName.organization"/>
         </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleTextPreference">
             <constructor-arg value="mail"/>
             <constructor-arg value="attribute.displayName.mail"/>
         </bean>
-        <bean class="org.jasig.portal.portlets.account.PreferenceInputFactory"
+        <bean class="org.apereo.portal.portlets.account.PreferenceInputFactory"
             factory-method="createSingleTextPreference">
             <constructor-arg value="telephoneNumber"/>
             <constructor-arg value="attribute.displayName.telephoneNumber"/>
@@ -173,13 +173,13 @@
 
     <!-- Spring mail-sending service -->
     <bean id="passwordResetMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="${org.jasig.portal.email.host:localhost}" />
-        <property name="port" value="${org.jasig.portal.email.port:25}" />
-        <property name="protocol" value="${org.jasig.portal.email.protocol:smtp}" />
+        <property name="host" value="${org.apereo.portal.email.host:localhost}" />
+        <property name="port" value="${org.apereo.portal.email.port:25}" />
+        <property name="protocol" value="${org.apereo.portal.email.protocol:smtp}" />
     </bean>
 
     <bean id="portalEmailAddress" class="java.lang.String">
-        <constructor-arg value="${org.jasig.portal.email.fromAddress}"/>
+        <constructor-arg value="${org.apereo.portal.email.fromAddress}"/>
     </bean>
 
 </beans>
