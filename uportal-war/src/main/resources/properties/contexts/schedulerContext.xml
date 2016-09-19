@@ -27,25 +27,25 @@
 
     <task:annotation-driven executor="uPortalTaskExecutor" scheduler="uPortalTaskScheduler"/>
 
-    <bean id="loggingAbortHandler" class="org.jasig.portal.utils.threading.LoggingAbortHandler" />
+    <bean id="loggingAbortHandler" class="org.apereo.portal.utils.threading.LoggingAbortHandler" />
 
     <bean id="uPortalTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.task.exec.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.task.exec.threadPool.maxThreads}" />
+        <property name="corePoolSize" value="${org.apereo.portal.task.exec.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.task.exec.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uP-TaskExecTG" />
         <property name="threadNamePrefix" value="uP-TaskExec-" />
-        <property name="threadPriority" value="${org.jasig.portal.task.exec.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.task.exec.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.task.exec.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.task.exec.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />
     </bean>
 
-    <bean id="uPortalTaskScheduler" class="org.jasig.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
+    <bean id="uPortalTaskScheduler" class="org.apereo.portal.utils.threading.DelegatingThreadPoolTaskScheduler">
         <property name="initialDelay" value="PT120S" />
         <property name="executorService" ref="uPortalTaskExecutor" />
-        <property name="poolSize" value="${org.jasig.portal.task.sched.threadPool.poolSize}" />
+        <property name="poolSize" value="${org.apereo.portal.task.sched.threadPool.poolSize}" />
         <property name="threadGroupName" value="uP-TaskSchedTG" />
         <property name="threadNamePrefix" value="uP-TaskSched-" />
         <property name="daemon" value="true" />
@@ -62,15 +62,15 @@
         <!-- local tasks -->
         <task:scheduled ref="portalEventDaoQueuingEventHandler" method="flush" fixed-delay="997"/> <!-- ~1 second period -->
         <task:scheduled ref="cacheManagerExpiredElementEvictor" method="evictExpiredElements" fixed-delay="61900"/> <!-- ~1 minute period -->
-        <task:scheduled ref="portletPermissionsCachePrimer" method="primeCache" fixed-delay="299993"/> <!-- just under 5 minute period;  should be shorter than the TTL for the cache named 'org.jasig.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT' -->
+        <task:scheduled ref="portletPermissionsCachePrimer" method="primeCache" fixed-delay="299993"/> <!-- just under 5 minute period;  should be shorter than the TTL for the cache named 'org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT' -->
 
         <!-- clustered tasks -->
-        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
-        <task:scheduled ref="portletRatingAggregator" method="aggregatePortletRatings" fixed-delay="${org.jasig.portal.aggr.PortletRatingAggregatorImpl.AggregatePortletRatingsPeriod}" />
-        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}"/>
-        <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
-        <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
-        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents"     fixed-delay="${org.jasig.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
+        <task:scheduled ref="portletCookieService" method="purgeExpiredCookies" fixed-delay="${org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.purgeExpiredCookiesPeriod}"/>
+        <task:scheduled ref="portletRatingAggregator" method="aggregatePortletRatings" fixed-delay="${org.apereo.portal.aggr.PortletRatingAggregatorImpl.AggregatePortletRatingsPeriod}" />
+        <task:scheduled ref="portalEventAggregationManager" method="aggregateRawEvents" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.aggregateRawEventsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="populateDimensions" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.populateDimensionsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="purgeEventSessions" fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.purgeEventSessionsPeriod}"/>
+        <task:scheduled ref="portalEventAggregationManager" method="purgeRawEvents"     fixed-delay="${org.apereo.portal.events.aggr.PortalEventProcessingManagerImpl.purgeRawEventsPeriod}"/>
 
     </task:scheduled-tasks>
 </beans>

@@ -36,7 +36,7 @@
     <!--
      | Provides user name for the current portal user if the thread is handling a request
      +-->
-    <bean id="currentUserProvider" class="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" />
+    <bean id="currentUserProvider" class="org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider" />
     
     <!--
      | Provides the default username attribute to use to the rest of the DAOs
@@ -52,7 +52,7 @@
      | Overrides DAO acts as the root, it handles incorporating attributes from the attribute swapper utility, wraps
      | the caching DAO
      +-->
-    <bean id="personAttributeDao" class="org.jasig.portal.portlets.swapper.OverwritingPersonAttributeDao">
+    <bean id="personAttributeDao" class="org.apereo.portal.portlets.swapper.OverwritingPersonAttributeDao">
         <qualifier value="personAttributeDao"/>
         <property name="delegatePersonAttributeDao" ref="requestAttributeMergingDao" />
         <property name="attributeOverridesMap" ref="sessionAttributesOverridesMap" />
@@ -158,7 +158,7 @@
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.merged" />
             </bean>
@@ -184,7 +184,7 @@
                 <property name="personAttributeDaos">
                     <list>
                         <!-- Provides a single attribute (but only for the current logged in user):  impersonating='true'|'false' -->
-                        <bean class="org.jasig.portal.persondir.ImpersonationStatusPersonAttributeDao" />
+                        <bean class="org.apereo.portal.persondir.ImpersonationStatusPersonAttributeDao" />
                         <bean class="org.jasig.services.persondir.support.CascadingPersonAttributeDao">
                             <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
                             <property name="personAttributeDaos">
@@ -214,7 +214,7 @@
      | Looks in the local person-directory data. This is only used for portal-local users such as fragment owners
      | All attributes are searchable via this configuration, results are cached by the underlying DAO
      +-->
-    <bean id="uPortalAccountUserSource" class="org.jasig.portal.persondir.LocalAccountPersonAttributeDao">
+    <bean id="uPortalAccountUserSource" class="org.apereo.portal.persondir.LocalAccountPersonAttributeDao">
         <property name="localAccountDao" ref="localAccountDao"/>
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="queryAttributeMapping">
@@ -245,7 +245,7 @@
         <property name="usernameAttributeProvider" ref="usernameAttributeProvider" />
         <property name="cacheNullResults" value="true" />
         <property name="userInfoCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
                 <property name="cacheName" value="org.jasig.services.persondir.USER_INFO.up_user" />
             </bean>
@@ -284,7 +284,7 @@
 
     <!-- Where non-local attribute DAOs go -->
     
-    <bean id="userAttributeCacheKeyGenerator" class="org.jasig.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
+    <bean id="userAttributeCacheKeyGenerator" class="org.apereo.portal.utils.cache.PersonDirectoryCacheKeyGenerator">
         <property name="ignoreEmptyAttributes" value="true" />
     </bean>
 </beans>

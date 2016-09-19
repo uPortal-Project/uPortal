@@ -42,7 +42,7 @@
      | uPortal utility for accessing the WebApplicationContext from code that doesn't have a reference to the ServletContext
      +-->
     <listener>
-        <listener-class>org.jasig.portal.spring.PortalApplicationContextLocator</listener-class>
+        <listener-class>org.apereo.portal.utils.PortalApplicationContextLocator</listener-class>
     </listener>
 
     <!-- 
@@ -73,12 +73,12 @@
         <listener-class>org.springframework.web.util.HttpSessionMutexListener</listener-class>
     </listener>
     <listener>
-        <listener-class>org.jasig.portal.utils.web.RequestAttributeMutexListener</listener-class>
+        <listener-class>org.apereo.portal.utils.web.RequestAttributeMutexListener</listener-class>
     </listener>
 
     <filter>
         <filter-name>requestParameterFilter</filter-name>
-        <filter-class>org.jasig.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
+        <filter-class>org.apereo.portal.security.firewall.RequestParameterPolicyEnforcementFilter</filter-class>
         <init-param>
             <param-name>parametersToCheck</param-name>
             <param-value>ticket SAMLArt pgtIou pgtId</param-value>
@@ -198,7 +198,7 @@
     
     <filter>
         <filter-name>ExceptionLoggingFilter</filter-name>
-        <filter-class>org.jasig.portal.web.ExceptionLoggingFilter</filter-class>
+        <filter-class>org.apereo.portal.web.ExceptionLoggingFilter</filter-class>
     </filter>
     
     <filter>
@@ -214,7 +214,7 @@
     <!-- Useful for testing/debugging remote_user based authn 
     <filter>
         <filter-name>RemoteUserSettingFilter</filter-name>
-        <filter-class>org.jasig.portal.spring.security.RemoteUserSettingFilter</filter-class>
+        <filter-class>org.apereo.portal.spring.security.RemoteUserSettingFilter</filter-class>
         <init-param>
             <param-name>remoteUserFile</param-name>
             <param-value>/home/edalquist/tmp/remoteUser</param-value>
@@ -358,7 +358,7 @@
     
     <servlet>
         <servlet-name>RenderingDispatcherServlet</servlet-name>
-        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/renderingServletContext.xml</param-value>
@@ -368,7 +368,7 @@
 
     <servlet>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
-        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/jsonRenderingServletContext.xml</param-value>
@@ -378,7 +378,7 @@
 
     <servlet>
         <servlet-name>RedirectionDispatcherServlet</servlet-name>
-        <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
+        <servlet-class>org.apereo.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:properties/contexts/servlet/redirectionServletContext.xml</param-value>
@@ -448,7 +448,7 @@
     <session-config>
       <cookie-config>
         <http-only>true</http-only>
-        <!-- Should match the value of org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
+        <!-- Should match the value of org.apereo.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
         <secure>${environment.build.uportal.secureSessionCookie}</secure>
       </cookie-config>
       <tracking-mode>COOKIE</tracking-mode>

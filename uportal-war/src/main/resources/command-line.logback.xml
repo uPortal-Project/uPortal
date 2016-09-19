@@ -54,21 +54,25 @@
   <logger name="org.hibernate.dialect" additivity="false" level="INFO">
     <appender-ref ref="CONSOLE"/>
   </logger>
+  <logger name="org.apereo.portal" additivity="false" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+  <!-- TODO:  Remove! -->
   <logger name="org.jasig.portal" additivity="false" level="INFO">
     <appender-ref ref="CONSOLE"/>
   </logger>
-  
+
   <!-- Debugging event aggregation
-  <logger name="org.jasig.portal.concurrency.locking" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.concurrency.locking" additivity="false" level="DEBUG">
     <appender-ref ref="CONSOLE"/>
   </logger>
-  <logger name="org.jasig.portal.events" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.events" additivity="false" level="DEBUG">
     <appender-ref ref="CONSOLE"/>
   </logger>
    -->
    
   <!-- Debugging database issues during import/export/delete
-  <logger name="org.jasig.portal.io.xml.JaxbPortalDataHandlerService" additivity="false" level="TRACE">
+  <logger name="org.apereo.portal.io.xml.JaxbPortalDataHandlerService" additivity="false" level="TRACE">
     <appender-ref ref="CONSOLE"/>
   </logger>
   <logger name="org.springframework.orm.jpa.JpaTransactionManager" additivity="false" level="DEBUG">
@@ -89,8 +93,8 @@
    -->
 
     <!-- Hide Validation Query Resolution Warnings, not all DBs may be working during import/export -->
-  <logger name="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
-  <logger name="org.jasig.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.utils.jdbc.TomcatDataSourceFactory" additivity="false" level="ERROR"/>
   
   <!-- Hide some bad Hibernate log messages -->
   <logger name="org.hibernate.cfg.annotations.reflection.JPAOverriddenAnnotationReader" additivity="false" level="ERROR"/>
@@ -102,8 +106,8 @@
 
   <!-- Hide some warning messages associated with PAGS and Person Directory for group import -->
   <logger name="org.jasig.services.persondir.support.MergingPersonAttributeDaoImpl" additivity="false" level="ERROR"/>
-  <logger name="org.jasig.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.persondir.support.PersonManagerCurrentUserProvider" additivity="false" level="ERROR"/>
   <logger name="org.jasig.services.persondir.support.AdditionalDescriptorsPersonAttributeDao" additivity="false" level="ERROR"/>
-  <logger name="org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester" additivity="false" level="ERROR"/>
+  <logger name="org.apereo.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester" additivity="false" level="ERROR"/>
   <logger name="org.hibernate.engine.jdbc.internal.JdbcResourceRegistryImpl" additivity="false" level="ERROR"/>
 </configuration>

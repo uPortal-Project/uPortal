@@ -38,7 +38,7 @@ public class SpringBeanEhCacheRegionFactory extends AbstractEhcacheRegionFactory
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     
-    public static final String CACHE_MANAGER_NAME = "org.jasig.portal.cache.CacheManagerName";
+    public static final String CACHE_MANAGER_NAME = "org.apereo.portal.cache.CacheManagerName";
     
     public void start(Settings settings, Properties properties) throws CacheException {
         this.settings = settings;

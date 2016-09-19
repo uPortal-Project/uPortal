@@ -326,7 +326,7 @@
         <desc>Entity type ID is an unique identifying sequence number used by the portal - primary key, see UP_SEQUENCE</desc>
       </column>
       <column> <name>ENTITY_TYPE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
-        <desc>Class name of entity (ex. org.jasig.portal.security.IPerson)</desc>
+        <desc>Class name of entity (ex. org.apereo.portal.security.IPerson)</desc>
       </column>
       <column> <name>DESCRIPTIVE_NAME</name>  <type>VARCHAR</type>  <param>255</param>
         <desc>A name for display to end users (ex. Person)</desc>

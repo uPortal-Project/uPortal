@@ -60,7 +60,7 @@
         <property name="username" value="${hibernate.connection.username}" />
         <property name="password" value="${hibernate.connection.password}" />
     </bean>
-    <bean id="PortalDB.metadata" class="org.jasig.portal.rdbm.DatabaseMetaDataImpl">
+    <bean id="PortalDB.metadata" class="org.apereo.portal.jdbc.DatabaseMetaDataImpl">
         <constructor-arg index="0" ref="PortalDb" />
         <constructor-arg index="1" ref="transactionManager"/>
     </bean>
@@ -90,9 +90,9 @@
         <property name="password" value="${AggrEventsJdbcPassword}" />
     </bean>    
     
-    <bean id="delayedValidationQueryResolver" class="org.jasig.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
+    <bean id="delayedValidationQueryResolver" class="org.apereo.portal.utils.jdbc.DelayedValidationQueryResolverImpl">
     	<property name="persistenceUnit">
-    		<util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
+    		<util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/>
     	</property>
     	<property name="validationQueryMap">
             <!-- todo: Change to simply use ${hibernate.connection.validationQuery} instead of a map -->

@@ -1,9 +1,11 @@
+.gradle/
 *.iml
 *.sass-cache
 **/.classpath
 **/.DS_Store
 **/.project
 **/.settings/
+**/build
 **/node_modules/
 /.ant-targets-build.xml
 /.classpath

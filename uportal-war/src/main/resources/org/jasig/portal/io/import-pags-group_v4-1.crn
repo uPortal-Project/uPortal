@@ -31,7 +31,7 @@
 |
 +-->
 <with>
-  <attribute key="personAttributesGroupImportHelper">${groovy(new org.jasig.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}</attribute>
+  <attribute key="personAttributesGroupImportHelper">${groovy(new org.apereo.portal.io.xml.pags.PersonAttributesGroupImportHelper(jpaPersonAttributesGroupDefinitionDao, jpaPersonAttributesGroupTestDefinitionDao, jpaPersonAttributesGroupTestGroupDefinitionDao))}</attribute>
   <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
   <attribute key="GROUP_DESCRIPTION">${valueOf(description)}</attribute><!-- See NOTE on escaped characters below -->
   <subtasks>

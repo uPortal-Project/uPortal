@@ -84,7 +84,7 @@
       <test-group>
         <test>
           <attribute-name></attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.AlwaysTrueTester</tester-class>
           <test-value></test-value>
         </test>
       </test-group>
@@ -99,7 +99,7 @@
       <test-group>
         <test>
           <attribute-name></attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.GuestUserTester</tester-class>
           <test-value>false</test-value>
         </test>
       </test-group>
@@ -114,7 +114,7 @@
       <test-group>
         <test>
           <attribute-name>agentDevice</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>${mobile.user.agent.regex}</test-value>
         </test>
       </test-group>
@@ -129,7 +129,7 @@
       <test-group>
         <test>
           <attribute-name>agentDevice</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.InvertedRegexTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.InvertedRegexTester</tester-class>
           <test-value>${mobile.user.agent.regex}</test-value>
         </test>
       </test-group>
@@ -144,7 +144,7 @@
       <test-group>
         <test>
           <attribute-name></attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.ThemeNameEqualsIgnoreCaseTester</tester-class>
           <test-value>respondr</test-value>
         </test>
       </test-group>
@@ -167,7 +167,7 @@
       <test-group>
         <test>
           <attribute-name>givenName</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>^.{1,5}$</test-value>
         </test>
       </test-group>
@@ -194,14 +194,14 @@
       <test-group>
         <test>
           <attribute-name>givenName</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.RegexTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.RegexTester</tester-class>
           <test-value>^D.*$</test-value>
         </test>
       </test-group>
       <test-group>
         <test>
           <attribute-name>givenName</attribute-name>
-          <tester-class>org.jasig.portal.groups.pags.testers.StringEqualsTester</tester-class>
+          <tester-class>org.apereo.portal.groups.pags.testers.StringEqualsTester</tester-class>
           <test-value>Student</test-value>
         </test>
       </test-group>

@@ -27,7 +27,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.statistics"/>
+    <context:component-scan base-package="org.apereo.portal.portlets.statistics"/>
     
     <bean class="org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors" ref="minimizedStateHandlerInterceptor" />

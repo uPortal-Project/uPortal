@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jasig.portal</groupId>
         <artifactId>uportal-parent</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,7 +33,7 @@
 
     <name>uPortal WAR</name>
     <description>The uPortal web application.</description>
-    
+
     <dependencies>
         <!-- ***** Portal JDBC Driver ***** -->
         <dependency>
@@ -42,13 +42,48 @@
             <version>${project.version}</version>
             <type>pom</type>
         </dependency>
-        
+
+        <!-- ===== uPortal Dependencies ======================================= -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-rdbm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uPortal-soffit-connector</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Pre-Gradle -->
+        <dependency>
+            <groupId>org.jasig.portal</groupId>
+            <artifactId>uportal-platform-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jasig.portal</groupId>
             <artifactId>uportal-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- ===== Compile Dependencies ======================================= -->
         <dependency>
             <groupId>org.antlr</groupId>
@@ -552,13 +587,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-platform-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        
         <!-- ===== Runtime Dependencies ======================================= -->
         
         <dependency>
@@ -883,7 +911,7 @@
                 <configuration>
                     <argLine>-Xmx512m -XX:MaxPermSize=512m -Duser.timezone=UTC</argLine>
                     <systemPropertyVariables>
-                        <org.jasig.portal.test>true</org.jasig.portal.test>
+                        <org.apereo.portal.test>true</org.apereo.portal.test>
                     </systemPropertyVariables>
                     <includes>
                         <include>**/Test*.java</include>

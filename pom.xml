@@ -35,7 +35,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.portal</groupId>
     <artifactId>uportal-parent</artifactId>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>uPortal Parent</name>
@@ -157,7 +157,7 @@
         <commons-dbcp.version>1.4</commons-dbcp.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-httpcomponents.version>4.3.2</commons-httpcomponents.version>
+        <commons-httpcomponents.version>4.4.4</commons-httpcomponents.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
@@ -1261,6 +1261,8 @@
                         <exclude>LICENSE</exclude>
                         <exclude>jquery.css</exclude>
                         <exclude>data/*</exclude>
+                        <exclude>gradle/*</exclude>
+                        <exclude>gradlew.bat</exclude>
                         <exclude>**/bootstrap/**</exclude>
                         <exclude>**/fluid/fluid.*.css</exclude>
                         <exclude>**/jquerymobile-*.css</exclude>

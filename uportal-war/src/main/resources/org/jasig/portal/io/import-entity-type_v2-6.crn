@@ -35,7 +35,7 @@
         <when test="${groovy(NAME.equals('org.jasig.portal.ChannelDefinition'))}">
             <delete-node node="${singleNode(name)}"/>
             <append-node sibling="${singleNode(desc-name)}">
-                <name>org.jasig.portal.channel.IChannelDefinition</name>
+                <name>org.apereo.portal.channel.IChannelDefinition</name>
             </append-node>
             <crn location="import-entity-type_v3-2.crn"/>
         </when>

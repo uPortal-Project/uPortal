@@ -25,7 +25,7 @@
     xmlns:exslt="http://exslt.org/common"
     xmlns:xalan="http://xml.apache.org/xalan"
     xmlns:java="http://xml.apache.org/xalan/java" 
-    xmlns:urlGen="http://xml.apache.org/xalan/java/org.jasig.portal.url.xml.XsltPortalUrlProvider"
+    xmlns:urlGen="http://xml.apache.org/xalan/java/org.apereo.portal.url.xml.XsltPortalUrlProvider"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
