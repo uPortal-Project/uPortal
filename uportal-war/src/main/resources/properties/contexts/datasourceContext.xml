@@ -45,6 +45,7 @@
         <property name="abandonWhenPercentageFull" value="70" />
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="300" />
+        <property name="logAbandoned" value="${tomcat.jdbc.pool.logAbandoned:false}"/>
         
         <property name="jdbcInterceptors" value="ConnectionState(useEquals=true);ResetAbandonedTimer"/>
         
