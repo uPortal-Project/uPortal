@@ -18,6 +18,7 @@
  */
 package org.jasig.portal.groups.pags.dao;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -451,13 +452,18 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
      * Nested Types
      */
 
-    private static final class MembershipCacheKey {
+    private static final class MembershipCacheKey implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
         private final EntityIdentifier groupId;
         private final EntityIdentifier memberId;
+
         public MembershipCacheKey(final EntityIdentifier groupId, final EntityIdentifier memberId) {
             this.groupId = groupId;
             this.memberId = memberId;
         }
+
         @Override
         public int hashCode() {
             final int prime = 31;
@@ -466,6 +472,7 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
             result = prime * result + ((memberId == null) ? 0 : memberId.hashCode());
             return result;
         }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -487,10 +494,12 @@ public class EntityPersonAttributesGroupStore implements IEntityGroupStore, IEnt
                 return false;
             return true;
         }
+
         @Override
         public String toString() {
             return "MembershipCacheKey [groupId=" + groupId + ", memberId=" + memberId + "]";
         }
+
     }
 
 }
