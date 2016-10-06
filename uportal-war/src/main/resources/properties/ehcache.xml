@@ -203,19 +203,10 @@
     <!--
      | Caches fragment layouts
      | - 1 x fragment layout
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.layout.dlm.FragmentActivator.userViews"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches exceptions from loading fragment layout
@@ -238,18 +229,11 @@
     <!--
      | Caches layout DOM
      | - 1 x user
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.layout.dlm.LAYOUT_CACHE"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="900" timeToLiveSeconds="7200" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
     </cache>
 
     <!--
@@ -291,40 +275,16 @@
     <!--
      | Caches EntityType data
      | - 1 x Entity type
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.EntityTypes.CLASS_BY_ID"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.EntityTypes.ID_BY_CLASS"
         eternal="false" maxElementsInMemory="50" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.EntityTypes.ALL"
         eternal="false" maxElementsInMemory="1" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-
-
+        timeToIdleSeconds="0" timeToLiveSeconds="28800" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- ******************** Per-Datasource Person Directory Caches ******************** -->
     <!--
@@ -350,41 +310,23 @@
         <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
 
-
-
     <!-- ******************** uPortal IBasicEntity Caches ******************** -->
 
     <!--
      | Caches IEntityGroup objects
      | - 1 x group across all group stores
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.groups.IEntityGroup"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches IEntity objects
      | - 1 x group member (channels, users, groups)
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.groups.IEntity"
-        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches containing groups for GroupMemberImpl objects.  There is code to
@@ -392,18 +334,10 @@
      | bloated and hard to follow.  TTL is set to 5 min in case invalidation
      | doesn't cover all paths that make changes to relationships.
      | - 1 x group member (channels, users, groups)
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.groups.GroupMemberImpl.parentGroups"
-        eternal="false" maxElementsInMemory="5000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches members for EntityGroupImpl objects.  (This cache is the
@@ -412,36 +346,18 @@
      | follow.  TTL is set to 5 min in case invalidation doesn't cover all paths
      | that make changes to relationships.
      | - 1 x group (both of users and channels)
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.groups.EntityGroupImpl.children"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches IPermissionSet objects
      | - 1 x per permissions owner (channel manager, user, ...)
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.security.IPermissionSet"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-
-
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches output from portlets rendering in the HEADER part of the render request
@@ -573,21 +489,19 @@
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
-
-
-
     <!-- *********************************************************** -->
     <!-- ***************** Portal Hibernate Caches ***************** -->
     <!-- *********************************************************** -->
 
     <!--
-     | Caches last updated timestamp for each hibernate managed table
+     | Caches last updated timestamp for each hibernate-managed table
      | - 1 x hibernate managed table
      | - not replicated - used to track local modifications to tables
      +-->
     <cache name="org.hibernate.cache.spi.UpdateTimestampsCache"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
+
     <!--
      | Caches SQL query level results for entity queries that don't specify an explicit cache region
      | - 1 x managed query result
@@ -600,24 +514,10 @@
     <!-- Only ID Cached -->
     <cache name="org.apereo.portal.concurrency.locking.ClusterMutex-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.version.dao.jpa.VersionImpl-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches UserFragmentSubscriptions
@@ -625,49 +525,21 @@
      +-->
     <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.fragment.subscribe.dao.jpa.UserFragmentSubscriptionImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches message
      | - 1 per each translated message (max = messages * supported locales)
      +-->
     <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        eternal="false" maxElementsInMemory="2000" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.i18n.dao.jpa.MessageImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="60" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches StylesheetDescriptor
@@ -675,418 +547,141 @@
      +-->
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.outputProperties"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.stylesheetParameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetDescriptorImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches StylesheetUserPreferences
      | - 1 per customization per user
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.layoutAttributes"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.outputProperties"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="3600" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetUserPreferencesImpl.parameters"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.OutputPropertyDescriptorImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.StylesheetParameterDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.LayoutNodeAttributesImpl.attributes"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dao.jpa.LayoutAttributeDescriptorImpl.targetElementNames"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches DLM Evaluator object
      | - 1 x per DLM layout fragment
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.layout.dlm.Evaluator"
-        eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.evaluators"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.FragmentDefinition.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.Paren.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.EvaluatorGroup.evaluators"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.AllUsersEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.AttributeEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.GroupMembershipEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.GuestUserEvaluatorFactory"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.ProfileEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.layout.dlm.providers.SubscribedTabEvaluator"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches PermissionOwner objects
      | - 1 x permission owner type
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl-NaturalId"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.Query"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.permission.dao.jpa.PermissionOwnerImpl.activities"
         eternal="false" maxElementsInMemory="100" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.permission.dao.jpa.PermissionActivityImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches local users
      | - 1 x local user
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.Query"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonImpl.attributes"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.Query"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.persondir.dao.jpa.LocalAccountPersonAttributeImpl.values"
         eternal="false" maxElementsInMemory="500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches PortalCookieImpl objects
@@ -1094,129 +689,50 @@
      +-->
     <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl-NaturalId"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.Query"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortalCookieImpl.portletCookies"
         eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletCookieImpl"
         eternal="false" maxElementsInMemory="25000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches PortletDefinitionImpl objects
      | - 1 x published portlet
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.Query"
         eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.localizations"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl.parameters"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl"
         eternal="false" maxElementsInMemory="10000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LFU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LFU" statistics="true" />
 
     <!--
      | Caches PortletEntityImpl objects
      | - 1 x subscribed portlet x user
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
             properties="replicateAsynchronously=true,
@@ -1226,162 +742,67 @@
     </cache>
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.Query"
         eternal="false" maxElementsInMemory="1500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletEntityImpl.windowStates"
         eternal="false" maxElementsInMemory="15000" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches PortletPreferencesImpl objects
      | - 1 x subscribed portlet x user
      | - 1 x published portlet
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferencesImpl.portletPreferences"
         eternal="false" maxElementsInMemory="15500" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl.values"
         eternal="false" maxElementsInMemory="2200" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="900" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches PortletType objects
      | - 1 x channel type
-     | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl-NaturalId"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.PortletTypeImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="1800" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches for tenancies
      +-->
     <cache name="org.apereo.portal.tenants.JpaTenant"
         eternal="false" maxElementsInMemory="25" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.tenants.JpaTenant.attributes"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.tenants.JpaTenant.Query"
         eternal="false" maxElementsInMemory="10" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
-
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
     <cache name="org.apereo.portal.portlet.dao.jpa.MarketplaceRatingImpl.Query"
         eternal="false" maxElementsInMemory="250" overflowToDisk="false" diskPersistent="false"
-        timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
-        <cacheEventListenerFactory
-            class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-            properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+        timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- Caches MarketplacePortletDefinition instances;  not replicated -->
     <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplacePortletDefinitionCache"
            eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
-           timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+           timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!-- Caches MarketplacePortletDefinitions by user.  not replicated.  This cache holds Futures that are
         not serializable, so don't overflow to disk.  -->
@@ -1393,7 +814,7 @@
          displayed in a single publication of the Marketplace;  not replicated -->
     <cache name="org.apereo.portal.portlet.marketplace.MarketplaceService.marketplaceCategoryCache"
            eternal="false" maxElementsInMemory="20" overflowToDisk="false" diskPersistent="false"
-           timeToIdleSeconds="0" timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" statistics="true" />
+           timeToIdleSeconds="0" timeToLiveSeconds="900" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
 
     <!-- ********************************************************** -->
@@ -1410,7 +831,7 @@
         maxElementsInMemory="100" timeToIdleSeconds="300" timeToLiveSeconds="0" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
-     | Caches last updated timestamp for each hibernate managed table
+     | Caches last updated timestamp for each hibernate-managed table
      | - 1 x hibernate managed table
      | - not replicated - used to track local modifications to tables
      +-->
