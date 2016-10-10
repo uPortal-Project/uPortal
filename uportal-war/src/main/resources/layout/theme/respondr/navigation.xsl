@@ -343,8 +343,8 @@
           <xsl:element name="a"> <!-- Navigation item link. -->
             <xsl:attribute name="title"><xsl:value-of select="@description" /></xsl:attribute>
             <xsl:choose>
-              <xsl:when test="@alternativeMaximixedLink and string-length(@alternativeMaximixedLink) > 0">
-                <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximixedLink" /></xsl:attribute>
+              <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
+                <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximizedLink" /></xsl:attribute>
                 <xsl:attribute name="target">_blank</xsl:attribute>
                 <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
               </xsl:when>
