@@ -35,7 +35,9 @@
         <c:set var="searchLabel"><spring:message code="search"/></c:set>
         <form class="form-search" role="form" method="post" action="${searchLaunchUrl}" id="${n}webSearchForm">
           <div class="input-group">
-            <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query" type="search" placeholder="Enter search terms" title="Search Terms"/>
+            <spring:message code="search" var="searchPlaceholder" />
+            <spring:message code="search.terms" var="searchTitle" />
+            <input id="${n}webSearchInput" class="searchInput input-large search-query form-control" value="" name="query" type="search" placeholder="${searchPlaceholder}" title="${searchTitle}"/>
             <span class="input-group-btn">
               <button id="webSearchSubmit" type="submit" name="submit" class="btn btn-default" value="${searchLabel}">
                 <span>${searchLabel}</span>
