@@ -332,6 +332,7 @@ public class PortletCookieServiceImpl implements IPortletCookieService, ServletC
     	cookie.setComment(this.comment);
     	cookie.setMaxAge(this.maxAge);
     	cookie.setSecure(secure);
+        cookie.setHttpOnly(true);
     	if (this.domain != null) {
     		cookie.setDomain(this.domain);
     	}
