@@ -190,12 +190,12 @@
     </cache>
 
     <!--
-     | Caches low-level permission checks in AnyUnblockedGrantPermissionPolicy
-     | 1 x principal x permission
+     | Caches low-level permission checks in AnyUnblockedGrantPermissionPolicy.  Not replicated.
+     | 1 x principal x permission x target (potentially very large)
      | - not replicated - doesn't represent an updatable data store
      +-->
     <cache name="org.apereo.portal.security.provider.AnyUnblockedGrantPermissionPolicy.HAS_UNBLOCKED_GRANT"
-        eternal="false" maxElementsInMemory="100000" overflowToDisk="false" diskPersistent="false"
+        eternal="false" maxElementsInMemory="250000" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory class="org.apereo.portal.utils.cache.SpringCacheEventListenerFactory" properties="beanName=tagTrackingCacheEventListener" listenFor="local" />
     </cache>
@@ -376,7 +376,7 @@
      | - replicated by invalidation
      +-->
     <cache name="org.apereo.portal.groups.IEntity"
-        eternal="false" maxElementsInMemory="1000" overflowToDisk="false" diskPersistent="false"
+        eternal="false" maxElementsInMemory="2500" overflowToDisk="false" diskPersistent="false"
         timeToIdleSeconds="0" timeToLiveSeconds="21600" memoryStoreEvictionPolicy="LRU" statistics="true" >
         <cacheEventListenerFactory
             class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
@@ -1921,6 +1921,21 @@
            maxElementsInMemory="100" timeToIdleSeconds="60" timeToLiveSeconds="60" memoryStoreEvictionPolicy="LRU" statistics="true"/>
 
     <!--
+     | A NOTE about caching for Groups+Permissions
+     | ===========================================
+     | The Apereo-provided settings in this area are based on the following assumptions:
+     |   - 1000 Portlets
+     |   - 500 PAGS groups
+     |   - 250 Non-PAGS groups
+     |   - 5 min TTL for portal objects in this area
+     |   - JGroups replication not required (updates within TTL are sufficient)
+     |   - 500 Users active (per web server) within the TTL
+     |   - 25% Additional cache capacity as a buffer
+     |
+     | If your portal contains more objects than this model, you may need to tune your caches accordingly.
+     +-->
+
+    <!--
      | Stores objects of type IEntityGroup (concrete class EntityGroupImpl), which are
      | the things emitted by this flavor of GaP (or any flavor) and used by the rest
      | of the portal.  Historically, it was a big problem if multiple copies of the same
@@ -1932,14 +1947,7 @@
      +-->
     <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.entityGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Stores objects of type PagsGroup, which are used to test users' attributes for
@@ -1950,107 +1958,75 @@
      +-->
     <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.pagsGroup"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Remembers membership decisions calculated by EntityPersonAttributesGroupStore
      |
-     | - 1 x PAGS groups in the portal x concurrent users since TTL
+     | - Roughly 1 x PAGS groups in the portal x concurrent users since TTL
      +-->
     <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="50000" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="312500" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores objects of type PagsGroup, which are the Hibernate/JPA-managed
+     | representations of PAGS groups.  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.Query"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores a collection of child groups for each PAGS group.  Not replicated.
+     |
+     | - 1 x PAGS groups in the portal
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.members"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="625" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores a collection of the Test Group objects that are children of PAGS groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupDefinitionImpl.testGroups"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores the Test Definition objects that are children of Test Groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores the Test Group objects that are children of PAGS groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="300" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
+    <!--
+     | Stores a collection of the Test objects that are children of Test Groups.  Not replicated.
+     |
+     | - Roughly 1 x PAGS groups in the portal, though perhaps a bit more
+     +-->
     <cache name="org.apereo.portal.groups.pags.dao.jpa.PersonAttributesGroupTestGroupDefinitionImpl.tests"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="350" timeToIdleSeconds="0" timeToLiveSeconds="180" memoryStoreEvictionPolicy="LRU" statistics="true">
-        <cacheEventListenerFactory
-                class="net.sf.ehcache.distribution.jgroups.JGroupsCacheReplicatorFactory"
-                properties="replicateAsynchronously=true,
-                replicatePuts=false,
-                replicateUpdates=true, replicateUpdatesViaCopy=false,
-                replicateRemovals=true "/>
-    </cache>
+           maxElementsInMemory="1000" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
 
     <!--
      | Caches hash strings representing thread calls into the AdHocGroupTester test() method. This is part
