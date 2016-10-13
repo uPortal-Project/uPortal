@@ -189,8 +189,7 @@ protected boolean isKnownEntityType(Class anEntityType) throws GroupsException
  * @return Set
  */
 protected Set<IEntityGroup> primGetAncestorGroups(IGroupMember member, Set<IEntityGroup> rslt) throws GroupsException {
-    for (IEntityGroup group : getParentGroups())
-    {
+    for (IEntityGroup group : member.getParentGroups()) {
         // avoid stack overflow in case of circular group dependencies
         if (!rslt.contains(group)) {
             rslt.add(group);
