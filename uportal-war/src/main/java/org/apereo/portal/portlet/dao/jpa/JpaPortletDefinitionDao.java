@@ -160,12 +160,18 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     @PortalTransactionalReadOnly
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
+
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
-        
-        final long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionIdString);
-        final PortletDefinitionImpl portletDefinition = this.getEntityManager().find(PortletDefinitionImpl.class, internalPortletDefinitionId);
-        
-        return portletDefinition;
+
+        PortletDefinitionImpl rslt = null;  // default
+
+        final Long internalPortletDefinitionId = getNativePortletDefinitionId(portletDefinitionIdString);
+        if (internalPortletDefinitionId != null) {
+            rslt = this.getEntityManager().find(PortletDefinitionImpl.class, internalPortletDefinitionId);
+        }
+
+        return rslt;
+
     }
 
 	@Override
@@ -268,7 +274,15 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     protected long getNativePortletDefinitionId(IPortletDefinitionId portletDefinitionId) {
         return Long.parseLong(portletDefinitionId.getStringId());
     }
-    protected long getNativePortletDefinitionId(String portletDefinitionId) {
-        return Long.parseLong(portletDefinitionId);
+
+    protected Long getNativePortletDefinitionId(String portletDefinitionId) {
+        Long rslt = null;  // default
+        try {
+            rslt = Long.parseLong(portletDefinitionId);
+        } catch (NumberFormatException nfe) {
+            logger.warn("The portletDefinitionId '{}' is not parsable to a valid portletId (long);  null will be returned", portletDefinitionId);
+        }
+        return rslt;
     }
+
 }
