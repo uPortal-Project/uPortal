@@ -181,6 +181,7 @@
                                     <entry key="EXTERNAL_LOGIN_URL" value="${org.jasig.portal.channels.CLogin.CasLoginUrl}" />
                                     <entry key="useTabGroups" value="${org.jasig.portal.layout.useTabGroups}"/>
                                     <entry key="UP_VERSION" value="${org.jasig.portal.version}"/>
+                                    <entry key="USE_FLYOUT_MENUS" value="${org.jasig.portal.layout.useFlyoutMenus:false}" />
                                 </map>
                             </property>
                             <property name="parameterExpressions">
