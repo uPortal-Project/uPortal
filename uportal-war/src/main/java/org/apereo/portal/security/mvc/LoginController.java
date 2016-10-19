@@ -37,7 +37,6 @@ import org.apereo.portal.url.IPortalUrlBuilder;
 import org.apereo.portal.url.IPortalUrlProvider;
 import org.apereo.portal.url.UrlType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -62,9 +61,6 @@ public class LoginController {
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.apereo.portal.portlets.swapper");
 
-    // Disallow /Login/refUrl=//location which could maliciously redirect user's browser to another site
-    // by whitelisting a refUrl of nothing, /, or / plus anything other than either / or \
-//    private static final Pattern LOCAL_URL_PATTERN = Pattern.compile("|/|/[^/\\\\].*");
     private IPortalUrlProvider portalUrlProvider;
     private IPersonManager personManager;
 
