@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.spring.security.preauth;
+package org.apereo.portal.spring.security.preauth;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,7 +25,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import org.jasig.portal.layout.profile.ProfileSelectionEvent;
+import org.apereo.portal.layout.profile.ProfileSelectionEvent;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
 

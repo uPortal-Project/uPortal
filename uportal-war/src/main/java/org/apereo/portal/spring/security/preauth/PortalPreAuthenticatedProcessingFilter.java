@@ -61,9 +61,9 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
  * 
  * @author Jen Bourey, jennifer.bourey@gmail.com
  */
-public class PortalPreAuthenticatedProcessingFilter
-        extends AbstractPreAuthenticatedProcessingFilter {
-    protected final Log swapperLog = LogFactory.getLog("org.apereo.portal.portlets.swapper");
+public class PortalPreAuthenticatedProcessingFilter extends AbstractPreAuthenticatedProcessingFilter {
+
+    protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
 
     private String loginPath = "/Login";
     private String logoutPath = "/Logout";
@@ -71,10 +71,12 @@ public class PortalPreAuthenticatedProcessingFilter
     protected HashMap<String, String> credentialTokens;
     protected HashMap<String, String> principalTokens;
     protected Authentication authenticationService = null;
+
     private IPersonManager personManager;
     private IdentitySwapperManager identitySwapperManager;
-
     private ApplicationEventPublisher eventPublisher;
+
+    private boolean clearSecurityContextPriorToPortalAuthentication = true; //default
 
     @Autowired
     public void setIdentitySwapperManager(IdentitySwapperManager identitySwapperManager) {
@@ -91,38 +93,16 @@ public class PortalPreAuthenticatedProcessingFilter
         this.authenticationService = authenticationService;
     }
 
+    public void setClearSecurityContextPriorToPortalAuthentication(boolean b) {
+        this.clearSecurityContextPriorToPortalAuthentication = b;
+    }
+
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
-
         this.credentialTokens = new HashMap<String,String>(1);
         this.principalTokens = new HashMap<String,String>(1);
-
-        try {
-            String key;
-            // We retrieve the tokens representing the credential and principal
-            // parameters from the security properties file.
-            Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
-            Enumeration<?> propNames = props.propertyNames();
-            while (propNames.hasMoreElements()) {
-                String propName = (String) propNames.nextElement();
-                String propValue = props.getProperty(propName);
-                if (propName.startsWith("credentialToken.")) {
-                    key = propName.substring(16);
-                    this.credentialTokens.put(key, propValue);
-                }
-                if (propName.startsWith("principalToken.")) {
-                    key = propName.substring(15);
-                    this.principalTokens.put(key, propValue);
-                }
-            }
-        }
-        catch (PortalException pe) {
-            logger.error("LoginServlet::static ", pe);
-        }
-        catch (IOException ioe) {
-            logger.error("LoginServlet::static ", ioe);
-        }
+        this.retrieveCredentialAndPrincipalTokensFromPropertiesFile();
     }
 
     /**
@@ -166,38 +146,23 @@ public class PortalPreAuthenticatedProcessingFilter
          * is useful.
          */
         if (loginPath.equals(currentPath)) {
-
-            SecurityContextHolder.clearContext();
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
-                " so we can re-establish it once the new session is established.");
+            final org.springframework.security.core.Authentication originalAuthentication =
+                    SecurityContextHolder.getContext().getAuthentication();
+            if (this.clearSecurityContextPriorToPortalAuthentication) {
+                SecurityContextHolder.clearContext();
             }
-
-            this.doPortalAuthentication((HttpServletRequest)request);
+            this.logForLoginPath(currentPath);
+            this.doPortalAuthentication((HttpServletRequest)request, originalAuthentication);
             chain.doFilter(request, response);
         }
-
         else if (logoutPath.equals(currentPath)) {
-
             SecurityContextHolder.clearContext();
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Path [" + currentPath + "] is logoutPath, so cleared security context" +
-                        " so can re-establish it once the new session is established.");
-            }
-
-
+            this.logForLogoutPath(currentPath);
             chain.doFilter(request, response);
         }
-
         // otherwise, call the base class logic
         else {
-            if (logger.isTraceEnabled()) {
-                logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
-                        " so no uPortal-custom filtering.");
-            }
-
+            this.logForNonLoginOrLogoutPath(currentPath);
             super.doFilter(request, response, chain);
         }
 
@@ -205,140 +170,60 @@ public class PortalPreAuthenticatedProcessingFilter
             final HttpServletRequest httpr = (HttpServletRequest) request;
             logger.debug("FINISHED [" + uuid.toString() + "] for URI=" + httpr.getRequestURI() + " in " + Long.toString(System.currentTimeMillis() - timestamp) + "ms #milestone");
         }
-
     }
 
     @Override
     protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-        // if there's no session, the user hasn't yet visited the login 
-        // servlet and we should just give up
+        // if there's no session, the user hasn't yet visited the login servlet and we should just give up
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
         }
-
-        // otherwise, use the person's current SecurityContext as the 
-        // credentials
+        // otherwise, use the person's current SecurityContext as the credentials
         final IPerson person = personManager.getPerson(request);
         return person.getSecurityContext();
     }
 
     @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-        // if there's no session, the user hasn't yet visited the login 
-        // servlet and we should just give up
+        // if there's no session, the user hasn't yet visited the login servlet and we should just give up
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
         }
-
         // otherwise, use the current IPerson as the UserDetails
-        final IPerson person = personManager.getPerson(request);       
+        final IPerson person = personManager.getPerson(request);
         final UserDetails details = new PortalPersonUserDetails(person);
         return details;
     }
 
-    private void doPortalAuthentication(HttpServletRequest request) {
-        // Clear out the existing session for the user if they have one
-        String targetUid = null;
-        String originalUid = null;
-        boolean swap = false;
-        String swapperProfile = null;
+    private void doPortalAuthentication(
+            final HttpServletRequest request,
+            final org.springframework.security.core.Authentication originalAuthentication) {
 
+        IdentitySwapHelper identitySwapHelper = null;
         final String requestedSessionId = request.getRequestedSessionId();
-
         if (request.isRequestedSessionIdValid()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("doPortalAuthentication for valid requested session id " + requestedSessionId);
             }
-
-            try {
-                HttpSession s = request.getSession(false);
-
-                if (s != null) {
-                    //Check if this is a swapped user hitting the Login servlet
-                    originalUid = this.identitySwapperManager.getOriginalUsername(s);
-                }
-
-                //No original person in session so check for swap request
-                if (originalUid == null) {
-                    targetUid = this.identitySwapperManager.getTargetUsername(s);
-                    if (targetUid != null) {
-                        final IPerson person = personManager.getPerson(request);
-                        originalUid = person.getName();
-                        swap = true;
-                        swapperProfile = identitySwapperManager.getTargetProfile(s);
-                    }
-                }
-                //Original person in session so this must be an un-swap request
-                else {
-                    if (logger.isDebugEnabled()) {
-                        logger.trace("This is an un-swap request swapping back from impersonated " + targetUid
-                                + " to original user " + originalUid + ".");
-                    }
-
-                    final IPerson person = personManager.getPerson(request);
-                    targetUid = person.getName();
-                }
-
-                if (s != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Invalidating the impersonated session in un-swapping.");
-                    }
-
-                    s.invalidate();
-                }
-            }
-            catch (IllegalStateException ise) {
-                // ISE indicates session was already invalidated.
-                // This is fine.  This servlet trying to guarantee that the session has been invalidated;
-                // it doesn't have to insist that it is the one that invalidated it.
-                if (logger.isTraceEnabled()) {
-                    logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
-                }
-            }
+            identitySwapHelper = getIdentitySwapDataAndInvalidateSession(request, originalAuthentication);
         } else {
             if (logger.isTraceEnabled()) {
                 logger.trace("Requested session id " + requestedSessionId + " was not valid " +
                         "so no attempt to apply swapping rules.");
             }
-
         }
 
-        //  Create the user's session
         HttpSession s = request.getSession(true);
-
         IPerson person = null;
         try {
             final HashMap<String, String> principals;
             final HashMap<String, String> credentials;
-
-            // Get the person object associated with the request
             person = personManager.getPerson(request);
 
-            //If doing an identity swap
-            if (targetUid != null && originalUid != null) {
-                if (swap) {
-                    swapperLog.warn("Swapping identity for '" + originalUid + "' to '" + targetUid + "'");
-
-                    //Track the originating user
-                    this.identitySwapperManager.setOriginalUser(s, originalUid, targetUid);
-
-                    //Setup the swapped person
-                    person.setUserName(targetUid);
-                }
-                else {
-                    swapperLog.warn("Reverting swapped identity from '" + targetUid + "' to '" + originalUid + "'");
-
-                    person.setUserName(originalUid);
-                }
-
-                //Setup the custom security context
-                final IdentitySwapperPrincipal identitySwapperPrincipal = new IdentitySwapperPrincipal(person);
-                final IdentitySwapperSecurityContext identitySwapperSecurityContext = new IdentitySwapperSecurityContext(
-                        identitySwapperPrincipal);
-                person.setSecurityContext(identitySwapperSecurityContext);
-
+            if (identitySwapHelper != null && identitySwapHelper.isSwapOrUnswapRequest()) {
+                this.handleIdentitySwap(person, s, identitySwapHelper);
                 principals = new HashMap<String, String>();
                 credentials = new HashMap<String, String>();
             }
@@ -362,40 +247,201 @@ public class PortalPreAuthenticatedProcessingFilter
             request.getSession(true).setAttribute(LoginController.AUTH_ERROR_KEY, Boolean.TRUE);
         }
 
+        this.publishProfileSelectionEvent(person, request, identitySwapHelper);
+    }
+
+    /**
+     * Helper inner class for encapsulating logic for determining whether or not the request is for an identity "swap" 
+     * or "unswap", and determining the "swap from" and "swap to" values.
+     */
+    class IdentitySwapHelper {
+        private String originalUsername;
+        private String personName;
+        private String targetProfile;
+        private String targetUsername;
+        private org.springframework.security.core.Authentication originalAuthenticationForSwap;
+        private org.springframework.security.core.Authentication originalAuthenticationForUnswap;
+
+        IdentitySwapHelper(
+                final HttpSession s,
+                final String personName) {
+            // must pull out session data during creation because session may later be invalidated
+            this.originalAuthenticationForUnswap = identitySwapperManager.getOriginalAuthentication(s);
+            this.originalUsername = identitySwapperManager.getOriginalUsername(s);
+            this.personName = personName;
+            this.targetUsername = identitySwapperManager.getTargetUsername(s);
+            this.targetProfile = identitySwapperManager.getTargetProfile(s);
+        }
+        public boolean isSwapRequest() {
+            return this.originalUsername == null && this.targetUsername != null;
+        }
+        public boolean isUnswapRequest() {
+            return this.originalUsername != null;
+        }
+        public boolean isSwapOrUnswapRequest() {
+            return this.isSwapRequest() || this.isUnswapRequest();
+        }
+        public org.springframework.security.core.Authentication getOriginalAuthenticationForSwap() {
+            return this.originalAuthenticationForSwap;
+        }
+        public org.springframework.security.core.Authentication getOriginalAuthenticationForUnswap() {
+            return this.originalAuthenticationForUnswap;
+        }
+        public String getSwapFromUid() {
+            if (this.isSwapRequest()) {
+                return this.personName;
+            }
+            if (this.isUnswapRequest()) {
+                return this.targetUsername;
+            }
+            return null;
+        }
+        public String getSwapToUid() {
+            if (this.isSwapRequest()) {
+                return this.targetUsername;
+            }
+            if (this.isUnswapRequest()) {
+                return this.originalUsername;
+            }
+            return null;
+        }
+        public String getTargetProfile() {
+            return this.targetProfile;
+        }
+        public void setOriginalAuthenticationForSwap(final org.springframework.security.core.Authentication auth) {
+            this.originalAuthenticationForSwap = auth;
+        }
+    }
+
+    private IdentitySwapHelper getIdentitySwapDataAndInvalidateSession(
+            final HttpServletRequest request, final org.springframework.security.core.Authentication originalAuth) {
+        IdentitySwapHelper identitySwapHelper = null;
+        try {
+            HttpSession s = request.getSession(false);
+            if (s != null) {
+                final IPerson person = personManager.getPerson(request);
+                identitySwapHelper = new IdentitySwapHelper(s, person.getName());
+                if (identitySwapHelper.isSwapRequest()) {
+                    identitySwapHelper.setOriginalAuthenticationForSwap(originalAuth);
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Invalidating the impersonated session in un-swapping.");
+                }
+                s.invalidate();
+            }
+        }
+        catch (IllegalStateException ise) {
+            // ISE indicates session was already invalidated.
+            // This is fine.  This servlet trying to guarantee that the session has been invalidated;
+            // it doesn't have to insist that it is the one that invalidated it.
+            if (logger.isTraceEnabled()) {
+                logger.trace("LoginServlet attempted to invalidate an already invalid session.", ise);
+            }
+        }
+        return identitySwapHelper;
+    }
+
+    private void handleIdentitySwap(
+            final IPerson person, final HttpSession session , final IdentitySwapHelper identitySwapHelper) {
+        String msgFormat;
+        if (identitySwapHelper.isSwapRequest()) {
+            msgFormat = "Swapping identity for '%s' to '%s'";
+            this.identitySwapperManager.setOriginalUser(
+                session,
+                identitySwapHelper.getSwapFromUid(),
+                identitySwapHelper.getSwapToUid(),
+                identitySwapHelper.getOriginalAuthenticationForSwap());
+        }
+        else {
+            msgFormat = "Reverting swapped identity from '%s' to '%s'";
+            if (identitySwapHelper.getOriginalAuthenticationForUnswap() != null) {
+                SecurityContextHolder.getContext().setAuthentication(
+                        identitySwapHelper.getOriginalAuthenticationForUnswap());
+            }
+        }
+        person.setUserName(identitySwapHelper.getSwapToUid());
+        final String msg = String.format(
+                msgFormat, identitySwapHelper.getSwapFromUid(), identitySwapHelper.getSwapToUid());
+        swapperLog.warn(msg);
+
+        //Setup the custom security context
+        final IdentitySwapperPrincipal identitySwapperPrincipal = new IdentitySwapperPrincipal(person);
+        final IdentitySwapperSecurityContext identitySwapperSecurityContext =
+                new IdentitySwapperSecurityContext(identitySwapperPrincipal);
+        person.setSecurityContext(identitySwapperSecurityContext);
+    }
+
+    private void publishProfileSelectionEvent(
+            final IPerson person, final HttpServletRequest request, final IdentitySwapHelper identitySwapHelper) {
         final String requestedProfile = request.getParameter(LoginController.REQUESTED_PROFILE_KEY);
-
         if (requestedProfile != null) {
-
             final ProfileSelectionEvent event = new ProfileSelectionEvent(this, requestedProfile, person, request);
-
-            try {
-                this.eventPublisher.publishEvent(event);
-            } catch (final Exception exceptionFiringProfileSelection) {
-                // failing to register a profile selection is bad,
-                // but preventing login entirely is worse.  Log the exception and continue.
-                logger.error("Exception on firing profile selection event " + event,
-                    exceptionFiringProfileSelection);
-            }
-
-
-        } else if(swapperProfile != null) {
-
-            final ProfileSelectionEvent event = new ProfileSelectionEvent(this, swapperProfile, person, request);
-
-            try {
-                this.eventPublisher.publishEvent(event);
-            } catch (final Exception exceptionFiringSwappedProfileSelection) {
-                // failing to swap as the desired profile selection is bad,
-                // but preventing login entirely is worse.  Log the exception and continue.
-                logger.error("Exception on firing profile selection event " + event,
-                    exceptionFiringSwappedProfileSelection);
-            }
-
-
+            this.publishProfileSelectionEvent(event);
+        } else if(identitySwapHelper != null && identitySwapHelper.isSwapRequest()) {
+            final ProfileSelectionEvent event =
+                    new ProfileSelectionEvent(this, identitySwapHelper.getTargetProfile(), person, request);
+            this.publishProfileSelectionEvent(event);
         } else {
             if (logger.isTraceEnabled()) {
                 logger.trace("No requested or swapper profile requested so no profile selection event.");
             }
+        }
+    }
+    private void publishProfileSelectionEvent(final ProfileSelectionEvent event) {
+        try {
+            this.eventPublisher.publishEvent(event);
+        } catch (final Exception exceptionFiringProfileSelection) {
+            // failing to swap as the desired profile selection is bad,
+            // but preventing login entirely is worse.  Log the exception and continue.
+            logger.error("Exception on firing profile selection event " + event,
+                exceptionFiringProfileSelection);
+        }
+    }
+
+    private void logForLoginPath(final String currentPath) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Path [" + currentPath + "] is loginPath, so cleared security context" +
+                    " so we can re-establish it once the new session is established.");
+        }
+    }
+    private void logForLogoutPath(final String currentPath) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Path [" + currentPath + "] is logoutPath, so cleared security context" +
+                    " so can re-establish it once the new session is established.");
+        }
+    }
+    private void logForNonLoginOrLogoutPath(final String currentPath) {
+        if (logger.isTraceEnabled()) {
+            logger.trace("Path [" + currentPath  + "] is neither a login nor a logout path," +
+                    " so no uPortal-custom filtering.");
+        }
+    }
+
+    private void retrieveCredentialAndPrincipalTokensFromPropertiesFile() {
+        try {
+            String key;
+            // We retrieve the tokens representing the credential and principal
+            // parameters from the security properties file.
+            Properties props = ResourceLoader.getResourceAsProperties(getClass(), "/properties/security.properties");
+            Enumeration<?> propNames = props.propertyNames();
+            while (propNames.hasMoreElements()) {
+                String propName = (String) propNames.nextElement();
+                String propValue = props.getProperty(propName);
+                if (propName.startsWith("credentialToken.")) {
+                    key = propName.substring(16);
+                    this.credentialTokens.put(key, propValue);
+                }
+                if (propName.startsWith("principalToken.")) {
+                    key = propName.substring(15);
+                    this.principalTokens.put(key, propValue);
+                }
+            }
+        }
+        catch (PortalException pe) {
+            logger.error("LoginServlet::static ", pe);
+        }
+        catch (IOException ioe) {
+            logger.error("LoginServlet::static ", ioe);
         }
     }
 
@@ -469,3 +515,4 @@ public class PortalPreAuthenticatedProcessingFilter
         return this.eventPublisher;
     }
 }
+

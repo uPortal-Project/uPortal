@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.spring.security.preauth;
+package org.apereo.portal.spring.security.preauth;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;

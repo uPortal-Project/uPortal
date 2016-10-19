@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.spring.security.preauth;
+package org.apereo.portal.spring.security.preauth;
 
 import static org.mockito.Mockito.when;
 
@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.jasig.portal.security.IPerson;
-import org.jasig.portal.security.IPersonManager;
-import org.jasig.portal.security.ISecurityContext;
-import org.jasig.portal.security.IdentitySwapperManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.ISecurityContext;
+import org.apereo.portal.security.IdentitySwapperManager;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,7 +40,8 @@ import org.springframework.security.core.context.SecurityContext;
 
 public abstract class PortalPreAuthenticatedProcessingFilterTestBase {
 
-    @InjectMocks PortalPreAuthenticatedProcessingFilter filter;
+    @InjectMocks
+    org.apereo.portal.spring.security.preauth.PortalPreAuthenticatedProcessingFilter filter;
 
     @Mock FilterChain filterChain;
     @Mock HttpServletRequest request;
@@ -61,7 +62,7 @@ public abstract class PortalPreAuthenticatedProcessingFilterTestBase {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         this.username = "testuser";
-        filter.setAuthenticationService(new org.jasig.portal.services.Authentication());
+        filter.setAuthenticationService(new org.apereo.portal.services.Authentication());
         filter.setApplicationEventPublisher(eventPublisher);
         filter.setIdentitySwapperManager(identitySwapperManager);
         filter.afterPropertiesSet();
