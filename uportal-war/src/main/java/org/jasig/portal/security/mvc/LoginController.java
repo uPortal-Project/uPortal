@@ -20,12 +20,14 @@
 package  org.jasig.portal.security.mvc;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
@@ -42,7 +44,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * The form presented by org.jasig.portal.channels.CLogin is typically used
  * to generate the post to this servlet.
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu)
  * Added properties in the security properties file that hold the tokens used to
  * represent the principal and credential for each security context.
@@ -59,7 +60,6 @@ public class LoginController {
     
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
-    
     private IPortalUrlProvider portalUrlProvider;
     private IPersonManager personManager;
 
@@ -91,13 +91,9 @@ public class LoginController {
         String redirectTarget = null;
 
         final String refUrl = request.getParameter(REFERER_URL_PARAM);
-        if (refUrl != null) {
-            if (refUrl.startsWith("/")) {
-                redirectTarget = refUrl;
-            }
-            else {
-                log.warn("Refernce URL passed in does not start with a / and will be ignored: " + refUrl);
-            }
+        final URL redirectLocation = parseLocalRefUrl(request, refUrl);
+        if (redirectLocation != null) {
+            redirectTarget = redirectLocation.toString();
         }
 
         if (redirectTarget == null) {
@@ -154,5 +150,34 @@ public class LoginController {
 
     }
 
+    /**
+     * Analyzes the <code>refUrl</code> parameter, if any, and attempts to
+     * produce a local (same protocol, host, and port) URL based on it.
+     *
+     * @param request The current {@link HttpServletRequest}
+     * @param refUrl The <code>refUrl</code> parameter passed on the querry string
+     * @return A valid local {@link URL} or null
+     */
+    /* package-private */ URL parseLocalRefUrl(final HttpServletRequest request, final String refUrl) {
+        URL rslt = null;  // default
+        if (StringUtils.isNotBlank(refUrl)) {
+            try {
+                final URL context = new URL(request.getRequestURL().toString());
+                final URL location = new URL(context, refUrl);
+
+                if (location.getProtocol().equals(context.getProtocol())
+                        && location.getHost().equals(context.getHost())
+                        && location.getPort() == context.getPort()) {
+                    rslt = location;
+                } else {
+                    log.warn("The specified refUrl is not local:  " + refUrl);
+                }
+            } catch (Exception e) {
+                log.warn("Unable to analyze specified refUrl:  " + refUrl);
+                log.debug(e);
+            }
+        }
+        return rslt;
+    }
 
 }
