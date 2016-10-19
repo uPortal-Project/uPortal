@@ -54,7 +54,12 @@
     <portlet-preference>
         <name>PREFdynamicSkinName</name>
         <readOnly>false</readOnly>
-        <value></value>
+        <value>myskin.css</value>
+    </portlet-preference>
+    <portlet-preference>
+        <name>dynamicSkinCssFileName</name>
+        <readOnly>true</readOnly>
+        <value>myskin.css</value>
     </portlet-preference>
     -->
 </portlet-definition>
