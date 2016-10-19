@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.apereo.portal.portlets.dynamicskin;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,7 +47,7 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
     }
 
     /**
-     * @see org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData#getPortletAbsolutePathRoot()
+     * @see DynamicSkinInstanceData#getPortletAbsolutePathRoot()
      */
     @Override
     public String getPortletAbsolutePathRoot() {
@@ -55,7 +55,7 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
     }
 
     /**
-     * @see org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData#getSkinName()
+     * @see DynamicSkinInstanceData#getSkinName()
      */
     @Override
     public String getSkinName() {
@@ -68,7 +68,7 @@ public class DefaultDynamicSkinInstanceDataImpl implements DynamicSkinInstanceDa
     }
 
     /**
-     * @see org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData#getVariablesValuesMap()
+     * @see DynamicSkinInstanceData#getVariablesValuesMap()
      */
     @Override
     public Map<String, String> getVariableNameToValueMap() {

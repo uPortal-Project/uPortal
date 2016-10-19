@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.apereo.portal.portlets.dynamicskin;
 
 /**
  * Defines constants used with the Dynamic Respondr Skin Portlet.

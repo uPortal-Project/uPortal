@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin.storage.s3;
+package org.apereo.portal.portlets.dynamicskin.storage.s3;
 
 import java.io.File;
 import java.io.FileReader;
@@ -40,12 +40,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
-import org.jasig.portal.portlets.dynamicskin.storage.AbstractDynamicSkinService;
-import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
-import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinService;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinException;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
+import org.apereo.portal.portlets.dynamicskin.storage.AbstractDynamicSkinService;
+import org.apereo.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
+import org.apereo.portal.portlets.dynamicskin.storage.DynamicSkinService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +80,7 @@ public class AwsS3DynamicSkinService extends AbstractDynamicSkinService {
             final DynamicSkinAwsS3BucketConfig config,
             final DynamicSkinUniqueTokenGenerator uniqueTokenGenerator,
             final DynamicSkinCssFileNamer namer,
-            @Qualifier("org.jasig.portal.skinManager.failureCache") final Cache failureCache) {
+            @Qualifier("org.apereo.portal.skinManager.failureCache") final Cache failureCache) {
         super(uniqueTokenGenerator, namer, failureCache);
         Assert.notNull(client);
         Assert.notNull(config);

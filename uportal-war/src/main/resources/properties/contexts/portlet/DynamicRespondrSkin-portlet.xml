@@ -64,7 +64,7 @@
          | credentials. Otherwise, the default behavior (which searches a number of sources) will be used.
          | See: http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/s3/AmazonS3Client.html#AmazonS3Client()
          +-->
-        <!-- <constructor-arg ref="awsCredentialsConfig" /> -->
+         <!--<constructor-arg ref="awsCredentialsConfig" />-->
     <!--
     </bean>
     -->

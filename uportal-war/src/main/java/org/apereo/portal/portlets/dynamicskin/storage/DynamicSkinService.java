@@ -16,13 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin.storage;
+package org.apereo.portal.portlets.dynamicskin.storage;
 
 import java.util.SortedSet;
 
 import javax.portlet.PortletRequest;
 
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
 
 /**
  * Services for the DynamicRespondrSkin portlet.

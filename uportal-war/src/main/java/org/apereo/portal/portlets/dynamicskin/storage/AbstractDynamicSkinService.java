@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin.storage;
+package org.apereo.portal.portlets.dynamicskin.storage;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,10 +39,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.portal.portlets.dynamicskin.DynamicRespondrSkinConstants;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
+import org.apereo.portal.portlets.dynamicskin.DynamicRespondrSkinConstants;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinException;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinUniqueTokenGenerator;
 import org.lesscss.LessCompiler;
 import org.lesscss.LessException;
 import org.lesscss.LessSource;

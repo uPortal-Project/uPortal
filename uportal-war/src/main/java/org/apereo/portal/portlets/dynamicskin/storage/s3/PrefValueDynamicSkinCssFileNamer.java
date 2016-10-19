@@ -16,14 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin.storage.s3;
+package org.apereo.portal.portlets.dynamicskin.storage.s3;
 
 import javax.portlet.PortletPreferences;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinException;
-import org.jasig.portal.portlets.dynamicskin.DynamicSkinInstanceData;
-import org.jasig.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinException;
+import org.apereo.portal.portlets.dynamicskin.DynamicSkinInstanceData;
+import org.apereo.portal.portlets.dynamicskin.storage.DynamicSkinCssFileNamer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 

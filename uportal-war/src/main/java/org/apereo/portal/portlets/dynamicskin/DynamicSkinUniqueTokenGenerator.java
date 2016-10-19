@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.portal.portlets.dynamicskin;
+package org.apereo.portal.portlets.dynamicskin;
 
 /**
  * Interface for classes used to generate a unique token for a dynamic skin using the {@link DynamicSkinInstanceData}.
