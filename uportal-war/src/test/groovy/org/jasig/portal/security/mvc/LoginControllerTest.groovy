@@ -18,17 +18,26 @@
  */
 package org.jasig.portal.security.mvc
 
-import org.junit.Test
+import javax.servlet.http.HttpServletRequest
+
+import org.junit.Test;
 
 class LoginControllerTest extends GroovyTestCase {
 
     @Test
-    void testLocalUrlCheck() {
-        assertTrue("'' is local", LoginController.isLocalUrl(""))
-        assertTrue("'/' is local", LoginController.isLocalUrl("/"))
-        assertTrue("'/foo' is local", LoginController.isLocalUrl("/foo"))
-        assertTrue("'/foo/bar' is local", LoginController.isLocalUrl("/foo/bar"))
-        assertFalse("'http://www.google.com/' is not local", LoginController.isLocalUrl("http://www.google.com/"))
-        assertFalse("'//www.google.com/' is not local", LoginController.isLocalUrl("//www.google.com/"))
+    void testParseLocalRefUrl() {
+
+        final HttpServletRequest req = [
+            getRequestURL: { return new StringBuffer('http://localhost:8080/uPortal'); }
+        ] as HttpServletRequest;
+
+        final LoginController loginController = new LoginController();
+        assertNull("'' is blank", loginController.parseLocalRefUrl(req, ""))
+        assertNotNull("'/' is local", loginController.parseLocalRefUrl(req, "/"))
+        assertNotNull("'/foo' is local", loginController.parseLocalRefUrl(req, "/foo"))
+        assertNotNull("'/foo/bar' is local", loginController.parseLocalRefUrl(req, "/foo/bar"))
+        assertNull("'http://www.apereo.org/' is not local", loginController.parseLocalRefUrl(req, "http://www.apereo.org/"))
+        assertNull("'//www.apereo.org/' is not local", loginController.parseLocalRefUrl(req, "//www.apereo.org/"))
+
     }
 }

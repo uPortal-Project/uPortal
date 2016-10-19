@@ -19,6 +19,7 @@
 package  org.jasig.portal.security.mvc;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jasig.portal.security.IPerson;
@@ -43,7 +45,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * The form presented by org.jasig.portal.channels.CLogin is typically used to generate the post to this servlet.
  * Actual login processing occurs in PortalPreAuthenticatedProcessingFilter.
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
- * @version $Revision$
  * @author Don Fracapane (df7@columbia.edu)
  */
 @Controller
@@ -59,9 +60,6 @@ public class LoginController {
     protected final Log log = LogFactory.getLog(getClass());
     protected final Log swapperLog = LogFactory.getLog("org.jasig.portal.portlets.swapper");
 
-    // Disallow /Login/refUrl=//location which could maliciously redirect user's browser to another site
-    // by whitelisting a refUrl of nothing, /, or / plus anything other than another /
-    private static final Pattern LOCAL_URL_PATTERN = Pattern.compile("|/|/[^/].*");
     private IPortalUrlProvider portalUrlProvider;
     private IPersonManager personManager;
 
@@ -93,13 +91,9 @@ public class LoginController {
         String redirectTarget = null;
 
         final String refUrl = request.getParameter(REFERER_URL_PARAM);
-        if (refUrl != null) {
-            if (isLocalUrl(refUrl)) {
-                redirectTarget = refUrl;
-            }
-            else {
-                log.warn("Reference URL passed in does not start with a / and will be ignored: " + refUrl);
-            }
+        final URL redirectLocation = parseLocalRefUrl(request, refUrl);
+        if (redirectLocation != null) {
+            redirectTarget = redirectLocation.toString();
         }
 
         if (redirectTarget == null) {
@@ -160,13 +154,32 @@ public class LoginController {
     }
 
     /**
-     * Test if URL string is a local URL.
+     * Analyzes the <code>refUrl</code> parameter, if any, and attempts to
+     * produce a local (same protocol, host, and port) URL based on it.
      *
-     * @param url   URL to check
-     * @return      {@code True} if it is local, else return {@code False}
+     * @param request The current {@link HttpServletRequest}
+     * @param refUrl The <code>refUrl</code> parameter passed on the querry string
+     * @return A valid local {@link URL} or null
      */
-    static boolean isLocalUrl(final String url) {
-        Matcher m = LOCAL_URL_PATTERN.matcher(url);
-        return m.matches();
+    /* package-private */ URL parseLocalRefUrl(final HttpServletRequest request, final String refUrl) {
+        URL rslt = null;  // default
+        if (StringUtils.isNotBlank(refUrl)) {
+            try {
+                final URL context = new URL(request.getRequestURL().toString());
+                final URL location = new URL(context, refUrl);
+
+                if (location.getProtocol().equals(context.getProtocol())
+                        && location.getHost().equals(context.getHost())
+                        && location.getPort() == context.getPort()) {
+                    rslt = location;
+                } else {
+                    log.warn("The specified refUrl is not local:  " + refUrl);
+                }
+            } catch (Exception e) {
+                log.warn("Unable to analyze specified refUrl:  " + refUrl);
+                log.debug(e);
+            }
+        }
+        return rslt;
     }
 }
