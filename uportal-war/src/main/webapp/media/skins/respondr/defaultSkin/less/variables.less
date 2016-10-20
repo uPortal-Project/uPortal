@@ -154,7 +154,8 @@
  * Page-level styles
  */
 @body-background-color: @footer-secondary-background-color;  // default to match footer-second;  prevents 'gaps' at the bottom of short pages
-@body-background-image: url(./common/images/furley_bg.png);
+@body-background-image: none;
+@portal-page-body-background-image: url(./common/images/furley_bg.png);
 /* Using the furley pattern from http://subtlepatterns.com */
 
 /**
@@ -177,6 +178,13 @@
 /**
  * Nav
  */
+@mobile-navbar-top-position: -148px; /* Active only on mobile : if you need to custumize region header height (big banner, small logo etc.), you need to modify this value. default is -148px. */
+
+@mobile-navbar-item-active-background-color: @color1;
+@mobile-navbar-item-active-text-color: @white;
+@mobile-navbar-item-background-color: @offcanvas-background-color;
+@mobile-navbar-flyout-item-active-hover-text-color: @white;
+
 @navbar-background-color: @color1-dark;
 @navbar-border-color: transparent;
 @navbar-border-size: 0;
@@ -190,7 +198,7 @@
 @navbar-item-hover-background-color: @color1-light;
 
 @navbar-item-active-background-color: @color1-darker;
-@navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 5%);
+@navbar-item-active-hover-background-color: lighten(@navbar-item-active-background-color, 50%);
 
 @navbar-item-active-text-color: @white;
 @navbar-item-active-hover-text-color: inherit;
