@@ -40,23 +40,27 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 
 <!-- Portlet -->
 <div class="fl-widget portlet prm-mgr view-listperms container-fluid" role="section">
-    
+
   <!-- Portlet Titlebar -->
   <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
       <h2 role="heading" class="title"><spring:message code="permissions.by.category"/></h2>
   </div>
   <!-- end: portlet-titlebar -->
-  
+
   <!-- Portlet Content -->
   <div class="fl-widget-content portlet-content row" role="main">
-	
-    <div class="permission-lookup">  
+
+    <div class="permission-lookup">
         <form id="${n}permissionLookupForm" class="form-inline" action="${permissionLookupUrl}" method="POST">
             <div id="${n}principalSuggest" class="principal-input form-group">
-                <label for="${n}principalSuggest"><spring:message code="permission.suggest.principal"/></label>
-                <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="John" autocomplete="off"/>
+                <label for="${n}principalSuggest">
+                  <spring:message code="permission.suggest.principal"/>
+                </label>
+                <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="<spring:message code="permission.suggest.principal.value"/>" title="<spring:message code="permission.suggest.principal.label"/>" autocomplete="off"/>
                 <input class="form-control" type="hidden" name="principal"/>
-                <label for="${n}permissionSuggest"><spring:message code="permission.suggest.permission"/></label>
+                <label for="${n}permissionSuggest">
+                  <spring:message code="permission.suggest.permission"/>
+                </label>
                 <div class="up-autocomplete-dropdown">
                     <div class="up-autocomplete-noresults portlet-msg info alert alert-danger" role="alert">
                         <p><spring:message code="no.matches"/></p>
@@ -73,7 +77,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </div>
             <div id="${n}permissionSuggest" class="activity-input form-group">
-                <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission"/>" autocomplete="off"/>
+                <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission.suggest.permission.value"/>" title="<spring:message code="permission.suggest.permission.label"/>" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
                 <span class="punctuation">?</span>
                 <input type="submit" class="btn btn-primary" value="<spring:message code="show.me"/>"/>
@@ -95,10 +99,10 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </form>
         <span class="permission-lookup-error-container" style="font-size: 13px; color: #dd7615;"></span>
     </div>
-  
+
   	<!-- Panel list -->
-    <div class="fl-col-flex2 panel-list icon-large"> 
-    
+    <div class="fl-col-flex2 panel-list icon-large">
+
         <!-- 2 column layout -->
         <div class="fl-col fl-force-left">
             <c:set var="numOwners" value="${ fn:length(owners) }" />
@@ -114,7 +118,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <portlet:param name="ownerFname" value="${ owner.fname }"/>
                             </portlet:actionURL>
                             <a href="${ ownerUrl }">${ fn:escapeXml(owner.name )}</a>
-                        </h2>    
+                        </h2>
                         <h3 class="subtitle">${ fn:escapeXml(owner.description )}</h3>
                     </div>
                     <div class="content">
@@ -136,11 +140,11 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                     <!-- Second column -->
                     <div class="fl-col">
                 </c:if>
-                
+
             </c:forEach>
-            
+
             </div>
-    
+
         </div> <!-- end: panel list -->
 
   </div> <!-- end: portlet-content -->
@@ -164,7 +168,7 @@ up.jQuery(function() {
         };
 
         var principalSuggest = up.Autocomplete(
-            "#${n}principalSuggest", 
+            "#${n}principalSuggest",
             {
                 initialText: "John",
                 searchFunction: function(searchterm) {
@@ -191,7 +195,7 @@ up.jQuery(function() {
         );
 
         var permissionSuggest = up.Autocomplete(
-            "#${n}permissionSuggest", 
+            "#${n}permissionSuggest",
             {
                 initialText: '<spring:message code="permission" htmlEscape="false" javaScriptEscape="true"/>',
                 searchFunction: function(searchterm) {
@@ -215,7 +219,7 @@ up.jQuery(function() {
             var form, errorContainer;
             form = this;
             errorContainer = $(form).find(".permission-lookup-error-container");
-            
+
             if ( principalSuggest.getValue() && permissionSuggest.getValue() ) {
                 submitForm(form);
             } else {
@@ -226,7 +230,6 @@ up.jQuery(function() {
             }
         });
     });
-    
+
 });
 </script>
-
