@@ -56,7 +56,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 <label for="${n}principalSuggest">
                   <spring:message code="permission.suggest.principal"/>
                 </label>
-                <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="<spring:message code="permission.suggest.principal.value"/>" title="<spring:message code="permission.suggest.principal.label"/>" autocomplete="off"/>
+                <input class="up-autocomplete-searchterm form-control" type="text" name="principalDisplayName" value="<spring:message code="permission.suggest.principal.value"/>" aria-labelledby="<spring:message code="permission.suggest.principal.label"/>" autocomplete="off"/>
                 <input class="form-control" type="hidden" name="principal"/>
                 <label for="${n}permissionSuggest">
                   <spring:message code="permission.suggest.permission"/>
@@ -77,7 +77,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 </div>
             </div>
             <div id="${n}permissionSuggest" class="activity-input form-group">
-                <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission.suggest.permission.value"/>" title="<spring:message code="permission.suggest.permission.label"/>" autocomplete="off"/>
+                <input class="up-autocomplete-searchterm form-control" type="text" name="activityDisplayName" value="<spring:message code="permission.suggest.permission.value"/>" aria-labelledby="<spring:message code="permission.suggest.permission.label"/>" autocomplete="off"/>
                 <input type="hidden" name="activity"/>
                 <span class="punctuation">?</span>
                 <input type="submit" class="btn btn-primary" value="<spring:message code="show.me"/>"/>
