@@ -61,7 +61,7 @@
                         </c:if>
                         <c:forEach items="${ people }" var="person">
                             <div class="person-search-result">
-                                <h3><a class="person-link" href="javascript:;">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
+                                <h3><a class="person-link" href="#">${fn:escapeXml(person.attributes.displayName[0])}</a></h3>
                                 <table>
                                     <c:forEach items="${ attributeNames }" var="attribute">
                                         <c:if test="${ fn:length(person.attributes[attribute.key]) > 0 }">
