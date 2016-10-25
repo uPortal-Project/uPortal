@@ -64,7 +64,7 @@ var up = up || {};
             markup = '<span class="selection" title="' + that.options.messages.nothingSelected + '">' + that.options.messages.nothingSelected + '</span>';
             break;
         case true:
-            markup = '<a href="javascript:;" title="' + that.options.messages.removeSelection + '" key="' + getKey(entity) + '" class="' + that.options.styles.selection + '">' + entity.name + '</a>' +
+            markup = '<a href="#" title="' + that.options.messages.removeSelection + '" key="' + getKey(entity) + '" class="' + that.options.styles.selection + '">' + entity.name + '</a>' +
                      '<input type="hidden" name="groups" value="' + getKey(entity) + '"/>';
             break;
         }//end:switch.
@@ -203,7 +203,7 @@ var up = up || {};
                 that.options.selected.push(key);
 
                 // Add an element to the user-visible select list.
-                li = $('<li><a href="javascript:;" key="' + getKey(entity) + '">' + entity.name + '</a><input type="hidden" name="groups" value="' + getKey(entity) + '"/></li>');
+                li = $('<li><a href="#" key="' + getKey(entity) + '">' + entity.name + '</a><input type="hidden" name="groups" value="' + getKey(entity) + '"/></li>');
 
                 // Append li to selectionBasket.
                 selectionBasket.find("ul").append(li);
@@ -253,7 +253,7 @@ var up = up || {};
      */
     var buildBreadCrumb = function (that, key, entityName, breadcrumbs, browseFn) {
         var breadcrumb;
-        breadcrumb = '<span><a href="javascript:;" title="' + entityName + '" key="' + key + '">' + entityName + '</a> &gt; </span>';
+        breadcrumb = '<span><a href="#" title="' + entityName + '" key="' + key + '">' + entityName + '</a> &gt; </span>';
         breadcrumbs.append(breadcrumb);
 
         // Breadcrumb click event.
@@ -456,7 +456,7 @@ var up = up || {};
 
         // Loop through each entity. Build list items.
         $.each(entities, function (idx, obj) {
-            listItem += '<li class="' + obj.entityType + '"><a href="javascript:;" title="' + obj.name + '"><span key="' + getKey(obj) + '">' + obj.name + '</span></a></li>';
+            listItem += '<li class="' + obj.entityType + '"><a href="#" title="' + obj.name + '"><span key="' + getKey(obj) + '">' + obj.name + '</span></a></li>';
         });//end:loop.
         list.html(listItem);
 
