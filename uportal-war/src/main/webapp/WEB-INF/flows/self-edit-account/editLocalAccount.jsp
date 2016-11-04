@@ -32,7 +32,7 @@
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="edit.my.account"/></h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
 
@@ -44,14 +44,14 @@
                     <form:errors path="*" element="div"/>
                 </div> <!-- end: portlet-msg -->
             </spring:hasBindErrors>
-        
+
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
                     <h3 class="title" role="heading"><spring:message code="my.account.details"/></h3>
                 </div>
                 <div id="${n}userAttributes" class="content">
-                
+
                     <table class="portlet-table table table-hover">
                         <tbody>
 
@@ -59,16 +59,23 @@
                             <c:forEach items="${ editAttributes }" var="attribute">
                                 <tr>
                                     <td class="attribute-name">
-                                        <strong><spring:message code="${ attribute.label }"/></strong>
+                                        <label for="${ n }${ attribute.name }">
+                                            <strong>
+                                                <spring:message code="${ attribute.label }"/>
+                                            </strong>
+                                        </label>
                                     </td>
                                     <td>
-                                          <c:set var="paramPath" value="attributes['${ attribute.name }'].value"/>
-                                          <editPortlet:preferenceInput input="${ attribute.preferenceInput.value }" 
-                                            path="${ paramPath }" values="${ accountForm.attributes[attribute.name].value }"/>
+                                        <c:set var="paramPath" value="attributes['${ attribute.name }'].value"/>
+                                        <editPortlet:preferenceInput
+                                            id="${ n }${ attribute.name }"
+                                            input="${ attribute.preferenceInput.value }"
+                                            path="${ paramPath }"
+                                            values="${ accountForm.attributes[attribute.name].value }" />
                                     </td>
                                 </tr>
                             </c:forEach>
-                            
+
                         </tbody>
                     </table>
 
@@ -84,31 +91,51 @@
                     <table class="portlet-table table table-hover">
                         <thead>
                             <tr>
-                                <th><spring:message code="attribute.name"/></th>
-                                <th><spring:message code="attribute.value"/></th>
+                                <th>
+                                    <spring:message code="attribute.name"/>
+                                </th>
+                                <th>
+                                    <spring:message code="attribute.value"/>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
 
                             <!--  Password and confirm password -->
                             <tr>
-                                <td class="attribute-name"><strong><spring:message code="password"/></strong></td>
-                                <td><form:password id="${n}password" path="password"/></td>
+                                <td class="attribute-name">
+                                  <label for="${n}password">
+                                      <strong>
+                                          <spring:message code="password"/>
+                                      </strong>
+                                  </label>
+                                </td>
+                                <td>
+                                    <form:password autocomplete="new-password" id="${n}password" path="password"/>
+                                </td>
                             </tr>
                             <tr>
-                                <td class="attribute-name"><strong><spring:message code="confirm.password"/></strong></td>
-                                <td><form:password id="${n}confirmPassword" path="confirmPassword"/></td>
+                                <td class="attribute-name">
+                                    <label for="${n}confirmPassword">
+                                        <strong>
+                                            <spring:message code="confirm.password"/>
+                                        </strong>
+                                    </label>
+                                </td>
+                                <td>
+                                    <form:password autcomplete="new-password" id="${n}confirmPassword" path="confirmPassword"/>
+                                </td>
                             </tr>
 
                         </tbody>
                     </table>
                 </div>
-            </div>    
-            
+            </div>
+
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-            
+
                     <div class="buttons">
                         <input class="button btn primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         <input class="button btn" type="submit" value="<spring:message code="cancel"/>" name="_eventId_cancel"/>
@@ -117,7 +144,7 @@
             </div>
 
         </form:form>
-        
+
     </div>
 
     <div id="${n}parameterForm" style="display:none">
@@ -125,8 +152,8 @@
             <spring:message code="attribute.name"/>: <input name="name"/>
             <input type="submit" value="<spring:message code="add"/>"/>
         </form>
-    </div>    
-    
+    </div>
+
 </div>
 
 <script type="text/javascript">
@@ -134,7 +161,7 @@
         var $ = up.jQuery;
         $(document).ready(function(){
             up.ParameterEditor(
-                $("#${n}userAttributes"), 
+                $("#${n}userAttributes"),
                 {
                     parameterBindName: 'attributes',
                     multivalued: true,
