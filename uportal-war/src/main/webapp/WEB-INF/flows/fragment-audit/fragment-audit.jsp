@@ -21,7 +21,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <c:set var="n"><portlet:namespace/></c:set>
-        
+
 <!-- Portlet -->
 <div class="fl-widget portlet" role="section">
     <!-- Portlet Body -->
@@ -81,6 +81,9 @@
                 var templateDiv = $("#${n}template");
                 $(data.fragments).each(function(index, frag) {
                     var copy = templateDiv.clone();
+                    // create unique id for each copy
+                    copy.attr("id", copy.attr("id") + index);
+
                     copy.find(".name").text(frag.name);
                     copy.find(".owner").text(frag.ownerId);
                     copy.find(".precedence").text(frag.precedence);
