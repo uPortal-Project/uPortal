@@ -142,8 +142,14 @@
 
                 <!-- Action buttons -->
                 <div class="fl-uploader-btns btn-inline-group">
-                    <button type="submit" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim btn btn-success" disabled="disabled">Upload <i class="fa fa-upload"></i></button>
-                    <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden btn btn-danger">Stop Upload <i class="fa fa-stop"></i></button>
+                    <button type="submit" class="flc-uploader-button-upload fl-uploader-upload fl-uploader-button-default fl-uploader-dim btn btn-success" disabled="disabled">
+                        <spring:message code="import.button.submit.upload"/>
+                        <i class="fa fa-upload"></i>
+                    </button>
+                    <button type="button" class="flc-uploader-button-pause fl-uploader-pause fl-uploader-hidden btn btn-danger">
+                        <spring:message code="import.button.submit.stop.upload"/>
+                        <i class="fa fa-stop"></i>
+                    </button>
                 </div>
 
                 <div class="flc-uploader-status-region fl-offScreen-hidden"></div>
