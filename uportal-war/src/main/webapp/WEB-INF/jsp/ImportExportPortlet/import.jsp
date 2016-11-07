@@ -27,23 +27,37 @@
 </style>
 
 <!-- Portlet -->
-<div class="fl-widget portlet imp-exp view-import" role="section">
+<section class="fl-widget portlet imp-exp view-import">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="manage.portlet.entities"/></h2>
-        <div class="toolbar" role="toolbar">
+    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+        <h2 class="title">
+            <spring:message code="manage.portlet.entities"/>
+        </h2>
+        <nav class="toolbar">
             <ul class="btn-group">
-                <li class="btn"><a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>"><spring:message code="export"/> <i class="fa fa-download"></i></a></li>
-                <li class="btn"><a class="button btn btn-default" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>"><spring:message code="delete"/> <i class="fa fa-trash-o"></i></a></li>
+                <li class="btn">
+                    <a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>">
+                        <spring:message code="export"/>
+                        <i class="fa fa-download"></i>
+                    </a>
+                </li>
+                <li class="btn">
+                    <a class="button btn btn-default" href="<portlet:renderURL><portlet:param name="action" value="delete"/></portlet:renderURL>">
+                        <spring:message code="delete"/>
+                        <i class="fa fa-trash-o"></i>
+                    </a>
+                </li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
 
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="fl-widget-content content portlet-content">
 
-        <h2 class="title" role="heading"><spring:message code="upload.an.entity.to.be.imported"/></h2>
+        <h2 class="title">
+            <spring:message code="upload.an.entity.to.be.imported"/>
+        </h2>
         <div id="uploader-contents">
 
             <!-- This is the markup for the Fluid Uploader component itself. -->
@@ -97,7 +111,9 @@
                     </div>
 
                     <div class="flc-uploader-browse-instructions fl-uploader-browse-instructions">
-                        <p><spring:message htmlEscape="false" code="choose.files"/></p>
+                        <p>
+                            <spring:message htmlEscape="false" code="choose.files"/>
+                        </p>
                     </div>
 
                     <!-- Foot of the queue -->
@@ -114,28 +130,30 @@
                         </table>
                         <div class="flc-uploader-total-progress fl-uploader-total-progress-okay">&nbsp;</div>
                         <div class="flc-uploader-errorsPanel fl-uploader-errorsPanel">
-                             <div class="fl-uploader-errorsPanel-header"><span class="flc-uploader-errorPanel-header">Warnings:</span></div>
+                            <div class="fl-uploader-errorsPanel-header">
+                                <span class="flc-uploader-errorPanel-header">Warnings:</span>
+                            </div>
 
-                             <!-- The markup for each error section will be rendered into these containers. -->
-                             <div class="flc-uploader-errorPanel-section-fileSize"></div>
-                             <div class="flc-uploader-errorPanel-section-numFiles"></div>
+                            <!-- The markup for each error section will be rendered into these containers. -->
+                            <div class="flc-uploader-errorPanel-section-fileSize"></div>
+                            <div class="flc-uploader-errorPanel-section-numFiles"></div>
 
-                             <!-- Error section template.-->
-                             <div class="flc-uploader-errorPanel-section-tmplt fl-uploader-hidden-templates">
-                                 <div class="flc-uploader-errorPanel-section-title fl-uploader-errorPanel-section-title">
-                                     <p>x files were too y and were not added to the queue.</p>
-                                 </div>
+                            <!-- Error section template.-->
+                            <div class="flc-uploader-errorPanel-section-tmplt fl-uploader-hidden-templates">
+                                <div class="flc-uploader-errorPanel-section-title fl-uploader-errorPanel-section-title">
+                                    <p>x files were too y and were not added to the queue.</p>
+                                </div>
 
-                                 <div class="flc-uploader-errorPanel-section-details fl-uploader-errorPanel-section-details">
-                                     <p>The following files were not added:</p>
-                                     <p class="flc-uploader-errorPanel-section-files">file_1, file_2, file_3, file_4, file_5 </p>
-                                 </div>
+                                <div class="flc-uploader-errorPanel-section-details fl-uploader-errorPanel-section-details">
+                                    <p>The following files were not added:</p>
+                                    <p class="flc-uploader-errorPanel-section-files">file_1, file_2, file_3, file_4, file_5 </p>
+                                </div>
 
-                                 <button type="button" class="flc-uploader-errorPanel-section-toggleDetails fl-uploader-errorPanel-section-toggleDetails btn btn-default">Hide this list <i class="fa fa-eye-slash"></i></button>
-                                 <button type="button" class="flc-uploader-errorPanel-section-removeButton fl-uploader-errorPanel-section-removeButton btn btn-warning">
-                                     <span class="flc-uploader-erroredButton-text fl-uploader-hidden">Remove error <i class="fa fa-remove"></i></span>
-                                 </button>
-                             </div>
+                                <button type="button" class="flc-uploader-errorPanel-section-toggleDetails fl-uploader-errorPanel-section-toggleDetails btn btn-default">Hide this list <i class="fa fa-eye-slash"></i></button>
+                                <button type="button" class="flc-uploader-errorPanel-section-removeButton fl-uploader-errorPanel-section-removeButton btn btn-warning">
+                                    <span class="flc-uploader-erroredButton-text fl-uploader-hidden">Remove error <i class="fa fa-remove"></i></span>
+                                </button>
+                            </div>
                          </div>
                     </div>
                 </div>
@@ -157,7 +175,7 @@
         </div>
 
     </div> <!-- end: portlet-content -->
-</div> <!-- end: portlet -->
+</section> <!-- end: portlet -->
 
 <script type="text/javascript">
     up.jQuery(document).ready(function () {
