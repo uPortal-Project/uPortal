@@ -80,7 +80,7 @@
 #${n}marketplace .sorting_desc_disabled {
     background: url('<c:url value="/media/org/jasig/portal/channels/marketplace/sort_desc_disabled.png"/>') no-repeat center right;
 }
- 
+
 #${n}marketplace table.display thead th:active,
 #${n}marketplace table.display thead td:active {
     outline: none;
@@ -100,7 +100,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Misc
  */
- 
+
 #${n}marketplace .top{
     background-color: #F5F5F5;
  }
@@ -164,7 +164,7 @@
 #${n}marketplace .paging_full_numbers a.paginate_active {
     background-color: #99B3FF;
 }
- 
+
 @media only screen and (max-width: 768px) {
     #${n}marketplace #unseen table th:nth-child(1),
     #unseen table th:nth-child(3),
@@ -181,7 +181,7 @@
         width: 90%;
         float: right:
     }
-    
+
     #${n}marketplacem tr.odd {
         background-color: #fff;
     }
@@ -290,7 +290,12 @@
 <c:if test="${fn:length(featuredList) > 0}">
     <div id="${n}featured" class="marketplaceSection">
         <div>
-            <h3><strong><spring:message code="featured" text="Featured" /></strong></h3><br>
+            <h3>
+                <strong>
+                    <spring:message code="marketplace.featured"/>
+                </strong>
+            </h3>
+            <br>
         </div>
         <div class="row">
             <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
@@ -333,22 +338,32 @@
 <div class="sort_filter_group">
     <div class="row">
         <div class="col-sm-1">
-            <p><strong><spring:message code="label.browseBy" text="Browse By"/></strong></p>
+            <p>
+                <strong>
+                    <spring:message code="marketplace.browseBy"/>
+                </strong>
+            </p>
         </div>
         <div class="col-sm-8">
             <div class="sort_buttons_group">
-                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default"><spring:message code="label.azIndex" text="A-Z Index" /></button>
+                <button type="button" id="${n}alphabetical-sort-button" class="btn btn-default">
+                    <spring:message code="marketplace.azIndex" />
+                </button>
                 <!-- Offer Browse By: Category (but only if there are categories in the list) -->
                 <c:if test="${not empty categoryList}">
-                <button type="button" id="${n}category-sort-button" class="btn btn-default"><spring:message code="label.category" text="Categories" /></button>
+                    <button type="button" id="${n}category-sort-button" class="btn btn-default">
+                        <spring:message code="marketplace.categories" />
+                    </button>
                 </c:if>
             </div>
         </div>
         <div class="col-sm-3">
             <div class="input-group">
-                <input type="text" class="form-control" id="${n}portletTable_filter" placeholder="Search Portlets">
+                <input type="search" class="form-control" id="${n}portletTable_filter" placeholder="<spring:message code="marketplace.searchPortlets"/>" aria-label="<spring:message code="marketplace.searchPortlets"/>">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" id="${n}clear_filter_button"><spring:message code="label.clear" text="Clear" /></button>
+                    <button class="btn btn-default" id="${n}clear_filter_button">
+                        <spring:message code="marketplace.clear" />
+                    </button>
                 </span>
             </div>
         </div>
@@ -365,7 +380,9 @@
                     <div class="col-xs-0 col-md-2"></div>
             </c:if>
             <div class="col-xs-6 col-sm-3 col-md-2">
-                <a class="${n}marketplace_category_link">${category.name}</a>
+                <a class="${n}marketplace_category_link">
+                    ${category.name}
+                </a>
             </div>
             <c:if test="${(categoryCount+1) mod 4 == 0}">
                 </div>
@@ -383,10 +400,10 @@
         <thead>
             <tr>
                 <th class="essential" style="border:none;">
-                    <spring:message code="label.title" text="Title" />
+                    <spring:message code="marketplace.title" />
                 </th>
                 <th class="optional" style="border:none;">
-                    <spring:message code="label.description" text="Description" />
+                    <spring:message code="marketplace.description" />
                 </th>
                     <th class="essential" style="border:none;">
                 </th>
@@ -406,7 +423,10 @@
                         <portlet:param name="fName" value="${portlet.fname}"/>
                     </portlet:renderURL>
                     <td class="essential" style="border:none;">
-                        <a href="${entryURL}"><spring:message code="label.details" text="Details" /> <i class="fa fa-edit"></i></a>
+                        <a href="${entryURL}">
+                            <spring:message code="marketplace.details" />
+                            <i class="fa fa-edit"></i>
+                        </a>
                     </td>
                     <td>
                         <c:forEach var="category" items="${portlet.marketplacePortletDefinition.parentCategories}">
@@ -420,8 +440,8 @@
     </div>
 </div>
 
-<spring:message code="label.mostPopular" var="mostPopular" text="Most Popular" />
-<spring:message code="label.audience" var="audience" text="Audience" />
+<spring:message code="marketplace.mostPopular" var="mostPopular" />
+<spring:message code="marketplace.audience" var="audience" />
 
 <script type="text/javascript">
     var $ = up.jQuery;
@@ -512,5 +532,3 @@
     });
 })(up.jQuery);
 </script>
-
-
