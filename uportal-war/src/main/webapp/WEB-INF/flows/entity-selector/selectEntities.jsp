@@ -96,7 +96,7 @@
                                 </div>
                                 <div id="${n}portletSearch" class="portlet-search">
                                     <form id="${n}searchForm" class="form-inline" role="form">
-                                        <input type="text" class="form-control" name="searchterm" value="<spring:message code="enter.name"/>"/>
+                                        <input type="search" class="form-control" name="searchterm" value="<spring:message code="enter.name"/>" aria-label="<spring:message code="enter.name"/>"/>
                                         <input type="submit" class="button btn" value="<spring:message code="go"/>" />
                                     </form>
                                     <div id="${n}searchDropDown" class="search-dropdown">
