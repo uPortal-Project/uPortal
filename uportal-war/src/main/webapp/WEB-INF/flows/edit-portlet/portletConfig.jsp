@@ -213,8 +213,13 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                             <label for="portletTimeout">
                                                 <spring:message code="portlet.timeout"/>
                                             </label>
-                                            <span class="glyphicon glyphicon-info-sign" title="<spring:message code='portlet.timeout.tooltip'/>"
-                                                  data-toggle="tooltip" data-placement="top"></span>
+                                            <span
+                                                aria-label="<spring:message code='portlet.timeout.tooltip'/>"
+                                                class="glyphicon glyphicon-info-sign"
+                                                data-placement="top"
+                                                data-toggle="tooltip"
+                                                title="<spring:message code='portlet.timeout.tooltip'/>">
+                                            </span>
                                         </span>
                                         <div class="col-sm-4">
                                             <form:input path="timeout" type="text" class="form-control" id="portletTimeout"/>
