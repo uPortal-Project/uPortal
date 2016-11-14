@@ -140,12 +140,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-            1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
-                portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-                portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
-                return portletDef;
-            };
-            1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
+                pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+                assert pd.getName() == 'test'
+                assert pd.getTitle() == 'title'
+                assert pd.getFName() == 'test-new'
+                assert pd.getDescription() == 'desc'
+                assert pd.getType() == portletType
                 // If no lifecycle specified, defaults to published by System user at current date/time
                 checkDateTimeInRange(pd.getApprovalDate())
                 assert pd.getApproverId() == 0  // During testing System user = 0
@@ -153,15 +154,16 @@ public class PortletDefinitionImporterExporterTest extends Specification {
                 assert pd.getPublisherId() == 0 // During testing System user = 0
                 assert pd.getExpirationDate() == null
                 assert pd.getExpirerId() < 1
-                return pd;
+                portletDef = pd;
+                return portletDef;
             };
             1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-            1 * portletDefEntity.getAncestorGroups() >> [];
+            0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
             1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-            1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
-            1 * updatingPermissionManager.removePermissions(_);
+            0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
+            0 * updatingPermissionManager.removePermissions(_); // should only be called for existing portlet definitions, not new ones
             1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
                 return permArray.size() == 0;
             });
@@ -204,12 +206,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
-            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
-            return portletDef;
-        };
-        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+        1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            assert pd.getName() == 'test'
+            assert pd.getTitle() == 'title'
+            assert pd.getFName() == 'test-new'
+            assert pd.getDescription() == 'desc'
+            assert pd.getType() == portletType
             // Future date allowed only for expiration
             checkDateTimeInRange(pd.getApprovalDate())
             assert pd.getApproverId() == 0  // During testing System user = 0
@@ -217,15 +220,16 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             assert pd.getPublisherId() == 0 // During testing System user = 0
             assert pd.getExpirationDate() == futureTime
             assert pd.getExpirerId() == 0  // During testing System user = 0
-            return pd;
+            portletDef = pd;
+            return portletDef;
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [];
+        0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
-        1 * updatingPermissionManager.removePermissions(_);
+        0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
+        0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
             return permArray.size() == 0;
         });
@@ -258,27 +262,29 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
-            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
-            return portletDef;
-        };
-        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+        1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            assert pd.getName() == 'test'
+            assert pd.getTitle() == 'title'
+            assert pd.getFName() == 'test-new'
+            assert pd.getDescription() == 'desc'
+            assert pd.getType() == portletType
             assert pd.getApprovalDate() == null
             assert pd.getApproverId() < 1
             assert pd.getPublishDate() == null
             assert pd.getPublisherId() < 1
             assert pd.getExpirationDate() == null
             assert pd.getExpirerId() < 1
-            return pd;
+            portletDef = pd;
+            return portletDef;
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [];
+        0 * portletDefEntity.getAncestorGroups() >> [];  // should only be called for existing portlet definitions, not new ones
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
-        1 * updatingPermissionManager.removePermissions(_);
+        0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
+        0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
             return permArray.size() == 0;
         });
@@ -313,12 +319,13 @@ public class PortletDefinitionImporterExporterTest extends Specification {
         1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
         2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-        1 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _) >> { type, fname, name, title, app, portlet, framework ->
-            portletDef = new PortletDefinitionImpl(portletType, 'fname', 'name', 'title', 'webapp', 'portletName', true);
-            portletDef.portletDefinitionId = new MockPortletDefinitionId(100l);
-            return portletDef;
-        };
-        1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+        1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
+            pd.portletDefinitionId = new MockPortletDefinitionId(100l);
+            assert pd.getName() == 'test'
+            assert pd.getTitle() == 'title'
+            assert pd.getFName() == 'test-new'
+            assert pd.getDescription() == 'desc'
+            assert pd.getType() == portletType
             // Only approved has value
             assert pd.getApprovalDate() == testStart
             assert pd.getApproverId() == 0  // During testing System user = 0
@@ -326,15 +333,16 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             assert pd.getPublisherId() < 1
             assert pd.getExpirationDate() == null
             assert pd.getExpirerId() < 1
-            return pd;
+            portletDef = pd;
+            return portletDef;
         };
         1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;
 
-        1 * portletDefEntity.getAncestorGroups() >> [];
+        0 * portletDefEntity.getAncestorGroups() >> []; // should only be called for existing portlet definitions, not new ones
 
         1 * authorizationService.newUpdatingPermissionManager(_) >> updatingPermissionManager;
-        1 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];
-        1 * updatingPermissionManager.removePermissions(_);
+        0 * updatingPermissionManager.getPermissions(ExternalPermissionDefinition.SUBSCRIBE.getActivity(), _) >> [];  // should only be called for existing portlet definitions, not new ones
+        0 * updatingPermissionManager.removePermissions(_);  // should only be called for existing portlet definitions, not new ones
         1 * updatingPermissionManager.addPermissions({ IPermission[] permArray ->
             return permArray.size() == 0;
         });
@@ -389,9 +397,8 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-            0 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _);
 
-            1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
                 // verify the result
                 // Only published specified so only approved around now
                 checkDateTimeInRange(pd.getApprovalDate())
@@ -489,9 +496,8 @@ public class PortletDefinitionImporterExporterTest extends Specification {
             1 * typeRegistry.getPortletType('Portlet') >> portletType;
 
             2 * definitionDao.getPortletDefinitionByFname(_) >> { return portletDef; }
-            0 * definitionDao.createPortletDefinition(_, _, _, _, _, _, _);
 
-            1 * definitionDao.updatePortletDefinition(_) >> { IPortletDefinition pd ->
+            1 * definitionDao.savePortletDefinition(_) >> { IPortletDefinition pd ->
                 return pd;
             };
             1 * compositeGroupService.getEntity(_, _, _) >> portletDefEntity;

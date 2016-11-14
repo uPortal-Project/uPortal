@@ -33,9 +33,9 @@ import org.jasig.portal.persondir.ILocalAccountPerson;
 import org.jasig.portal.portlet.dao.IMarketplaceRatingDao;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
+import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletType;
-import org.jasig.portal.portlet.marketplace.IMarketplaceRating;
 import org.jasig.portal.test.BasePortalJpaDaoTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,15 +99,17 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
         this.execute(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-            	List<IPortletDefinition> portletList = portletDefinitionDao.getPortletDefinitions();
-            	//Just a quick assertion that this is utilizing the correct db
-        		assertEquals(portletList.size(), 0);
+                List<IPortletDefinition> portletList = portletDefinitionDao.getPortletDefinitions();
+                //Just a quick assertion that this is utilizing the correct db
+                assertEquals(portletList.size(), 0);
                 //Create portletType
-            	final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
-            	//Create a definition
-                portletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
+                //Create a definition
+                final IPortletDefinition portletDef1 = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                portletDefinitionDao.savePortletDefinition(portletDef1);
                 //Create a second definition with the same app/portlet
-                portletDefinitionDao.createPortletDefinition(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                final IPortletDefinition portletDef2 = new PortletDefinitionImpl(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                portletDefinitionDao.savePortletDefinition(portletDef2);
                 return null;
             }
         });

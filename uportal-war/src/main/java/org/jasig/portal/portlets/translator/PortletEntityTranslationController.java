@@ -95,7 +95,7 @@ public class PortletEntityTranslationController {
             definition.addLocalizedTitle(locale, request.getParameter("title"));
             definition.addLocalizedName(locale, request.getParameter("name"));
             definition.addLocalizedDescription(locale, request.getParameter("description"));
-            portletDefinitionDao.updatePortletDefinition(definition);
+            portletDefinitionDao.savePortletDefinition(definition);
         }
         
         return new ModelAndView("json");
