@@ -106,15 +106,17 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
                 
                 //Create a definition
-                final IPortletDefinition chanDef1 = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
-                
+                final IPortletDefinition chanDef1 = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                jpaPortletDefinitionDao.savePortletDefinition(chanDef1);
+
                 //Try all of the retrieval options
                 final IPortletDefinition portDef1a = jpaPortletDefinitionDao.getPortletDefinition(chanDef1.getPortletDefinitionId());
+                jpaPortletDefinitionDao.savePortletDefinition(chanDef1);
                 assertEquals(chanDef1, portDef1a);
                 
                 //Create a second definition with the same app/portlet
-                final IPortletDefinition chanDef2 = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
-                
+                final IPortletDefinition chanDef2 = new PortletDefinitionImpl(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                jpaPortletDefinitionDao.savePortletDefinition(chanDef2);
                 return chanDef2.getPortletDefinitionId();
             }
         });
@@ -129,7 +131,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 prefsList2.add(new PortletPreferenceImpl("prefName1", false, "val1", "val2"));
                 prefsList2.add(new PortletPreferenceImpl("prefName2", true, "val3", "val4"));
                 
-                jpaPortletDefinitionDao.updatePortletDefinition(chanDef2);
+                jpaPortletDefinitionDao.savePortletDefinition(chanDef2);
             }
         });
         
@@ -162,7 +164,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 prefsList3.remove(1);
                 prefsList3.add(new PortletPreferenceImpl("prefName3", false, "val5", "val6"));
                 
-                jpaPortletDefinitionDao.updatePortletDefinition(portDef3);
+                jpaPortletDefinitionDao.savePortletDefinition(portDef3);
             }
         });
         
@@ -192,7 +194,8 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
                 
                 //Create a definition
-                final IPortletDefinition chanDef1 = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                final IPortletDefinition chanDef1 = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                jpaPortletDefinitionDao.savePortletDefinition(chanDef1);
                 return chanDef1.getPortletDefinitionId();
             }
         });
@@ -236,7 +239,7 @@ public class JpaPortletDaoTest extends BasePortalJpaDaoTest {
                 //Add entity and preferences
                 final IPortletDefinition portDef1 = jpaPortletDefinitionDao.getPortletDefinition(portletDefinitionId);
                 portDef1.getPortletPreferences().add(new PortletPreferenceImpl("defpref1", false, "dpv1", "dpv2"));
-                jpaPortletDefinitionDao.updatePortletDefinition(portDef1);
+                jpaPortletDefinitionDao.savePortletDefinition(portDef1);
                 
                 final IPortletEntity portEnt1 = jpaPortletEntityDao.getPortletEntity(portletEntityId);
                 portEnt1.getPortletPreferences().add(new PortletPreferenceImpl("entpref1", false, "epv1", "epv2"));
