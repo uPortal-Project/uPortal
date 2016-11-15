@@ -36,6 +36,7 @@ import org.apereo.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.dao.IPortletEntityDao;
 import org.apereo.portal.portlet.dao.IPortletTypeDao;
+import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
@@ -138,7 +139,8 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 final IPortletType channelType = jpaPortletTypeDao.createPortletType("BaseType", "foobar");
                 
                 //Create a definition
-                final IPortletDefinition portletDef = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                final IPortletDefinition portletDef = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                jpaPortletDefinitionDao.savePortletDefinition(portletDef);
                 final IPortletDefinitionId portletDefinitionId = portletDef.getPortletDefinitionId();
 
                 when(portletDefinitionRegistry.getPortletDefinition(portletDefinitionId)).thenReturn(portletDef);

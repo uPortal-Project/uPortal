@@ -93,7 +93,7 @@ import org.springframework.util.StringUtils;
 @NaturalIdCache(region = "org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl-NaturalId")
 @Cacheable
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-class PortletDefinitionImpl implements IPortletDefinition {
+public class PortletDefinitionImpl implements IPortletDefinition {
     //Properties are final to stop changes in code, hibernate overrides the final via reflection to set their values
     @Id
     @GeneratedValue(generator = "UP_PORTLET_DEF_GEN")
