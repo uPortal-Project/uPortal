@@ -25,13 +25,17 @@
 <div class="fl-widget portlet" id="${ns}container">
   <form id="${ns}form" class="portlet-form" style="position: relative;">
     <c:set var="entityTypeSelection">
-      <select id="${ns}entityType">
-        <option value="portlet"><spring:message code="portlet" /></option>
-        <option value="message"><spring:message code="message" /></option>
+      <select id="${ns}entityType" class="form-control" aria-label="<spring:message code="translator.portlet.or.message" />">
+        <option value="portlet">
+          <spring:message code="portlet" />
+        </option>
+        <option value="message">
+          <spring:message code="message" />
+        </option>
       </select>
     </c:set>
     <c:set var="localeSelection">
-      <select id="${ns}locale">
+      <select id="${ns}locale" class="form-control" aria-label="<spring:message code="translator.language" />">
           <c:forEach items="${ locales }" var="locale">
              <option value="${ fn:escapeXml(locale.code) }">${ fn:escapeXml(locale.displayLanguage) }</option>
           </c:forEach>
@@ -39,7 +43,7 @@
     </c:set>
     <spring:message code="translate.x.into.y" arguments="${entityTypeSelection},${localeSelection}" htmlEscape="false" />
   </form>
-  
+
   <div class="uptrans-form-container-wrapper">
     <div class="uptrans-form-container" id="${ns}formContainer">
       <!-- Portlet entity translation form -->
@@ -47,30 +51,55 @@
         <h3>
           <spring:message code="translating.portlet.definition" />: <span class="uptrans-pfrm-orig-title"></span>
         </h3>
-      
+
         <div class="portlet-form">
           <fieldset>
-            <div><label><spring:message code="title" />:</label> <span class="uptrans-pfrm-orig-title"></span></div>
-            <div><input type="text" name="title" class="uptrans-pfrm-loc-title" /></div>
+            <legend>
+              <label for="${ns}TranslationTitle">
+                <spring:message code="title" />
+              </label>
+            </legend>
+            <strong>
+              <spring:message code="translator.original.message" />:
+            </strong>
+            <span class="uptrans-pfrm-orig-title"></span>
+            <input id="${ns}TranslationTitle" type="text" name="title" class="uptrans-pfrm-loc-title form-control" />
           </fieldset>
-          
+          <br />
+
           <fieldset>
-            <div><label><spring:message code="name" />:</label> <span class="uptrans-pfrm-orig-name"></span></div>
-            <div><input type="text" name="name" class="uptrans-pfrm-loc-name" /></div>
+            <legend>
+              <label for="${ns}TranslationName">
+                <spring:message code="name" />
+              </label>
+            </legend>
+            <strong>
+              <spring:message code="translator.original.message" />:
+            </strong>
+            <span class="uptrans-pfrm-orig-name"></span>
+            <input id="${ns}TranslationName" type="text" name="name" class="uptrans-pfrm-loc-name form-control" />
           </fieldset>
-          
+          <br />
+
           <fieldset>
-            <div><label><spring:message code="description" />:</label> <span class="uptrans-pfrm-orig-descr"></span></div>
-            <textarea name="description" class="uptrans-pfrm-loc-descr"></textarea>
+            <legend>
+              <label for="${ns}TranslationDescription">
+                <spring:message code="description" />
+              </label>
+            </legend>
+            <strong>
+              <spring:message code="translator.original.message" />:
+            </strong>
+            <span class="uptrans-pfrm-orig-descr"></span>
+            <textarea id="${ns}TranslationDescription" name="description" class="uptrans-pfrm-loc-descr form-control"></textarea>
           </fieldset>
-          
-          <div class="buttons">
-            <input type="submit" value="<spring:message code="submit" />" />
-          </div>          
+          <br />
+
+          <input class="btn btn-default" type="submit" value="<spring:message code="submit" />" />
         </div>
-        <input type="hidden" name="id" class="uptrans-pfrm-id" /><br />
-        <input type="hidden" name="locale" class="uptrans-pfrm-loc" /><br />
-        <input type="hidden" name="entity" value="portlet" /><br />
+        <input type="hidden" name="id" class="uptrans-pfrm-id" />
+        <input type="hidden" name="locale" class="uptrans-pfrm-loc" />
+        <input type="hidden" name="entity" value="portlet" />
         <input type="hidden" name="action" value="postTranslation" />
       </form>
 
@@ -79,40 +108,48 @@
         <h3>
           <spring:message code="translating.message" />: <span class="uptrans-mfrm-code"></span>
         </h3>
-              
+
         <div class="portlet-form">
           <fieldset class="uptrans-mfrm-code-fieldset">
-            <div><label><spring:message code="code" />:</label></div>
-            <div><input type="text" name="id" class="uptrans-mfrm-code" /></div>
+            <legend>
+              <label for="${ns}TranslationCode">
+                <spring:message code="code" />
+              </label>
+            </legend>
+            <input id="${ns}TranslationCode" type="text" name="id" class="uptrans-mfrm-code form-control" />
           </fieldset>
           <fieldset>
-            <div><label><spring:message code="value" />:</label></div>
-            <textarea name="value" class="uptrans-mfrm-value"></textarea>
+            <legend>
+              <label for="${ns}TranslationValue">
+                <spring:message code="value" />
+              </label>
+            </legend>
+            <textarea id="${ns}TranslationValue" name="value" class="uptrans-mfrm-value form-control"></textarea>
           </fieldset>
-          <div class="buttons">          
-            <input type="submit" value="<spring:message code="submit" />" />
-          </div>
+          <input class="btn btn-default" type="submit" value="<spring:message code="submit" />" />
         </div>
-        <input type="hidden" name="locale" class="uptrans-mfrm-loc" /><br />
-        <input type="hidden" name="entity" value="message" /><br />
+        <input type="hidden" name="locale" class="uptrans-mfrm-loc" />
+        <input type="hidden" name="entity" value="message" />
         <input type="hidden" name="action" value="postTranslation" />
         <input type="hidden" name="type" value="modify" />
       </form>
-      
+
       <div class="portlet-msg-success" style="display: none;"></div>
     </div>
   </div>
-  
+
   <div class="uptrans-entities-wrapper">
     <div id="${ns}entities" class="uptrans-entities">
       <div id="${ns}entityList" class="uptrans-entity"></div>
     </div>
     <div class="ui-helper-clearfix">
-      <button id="${ns}addMessage" style="display:none;"><spring:message code="add.message" /></button>
+      <button id="${ns}addMessage" class="btn btn-default" style="display:none;">
+        <spring:message code="add.message" />
+      </button>
     </div>
   </div>
   <div class="ui-helper-clearfix"></div>
-  
+
   <script type="text/javascript"><rs:compressJs>
   up.jQuery(function($) {
       up.TranslatorPortlet("#${ns}container",  {
