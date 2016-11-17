@@ -16,7 +16,7 @@
     <!-- Generic uPortal Schemas -->
     <jaxb:bindings schemaLocation="../resources/xsd/portal-search-4.0.xsd">
         <jaxb:schemaBindings>
-            <jaxb:package name="org.jasig.portal.search" />
+            <jaxb:package name="org.apereo.portal.search" />
         </jaxb:schemaBindings>
     </jaxb:bindings>
 

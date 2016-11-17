@@ -22,5 +22,5 @@
 <portlet-type xmlns="https://source.jasig.org/schemas/uportal/io/portlet-type" xmlns:ns2="https://source.jasig.org/schemas/uportal/io/permission-owner" xmlns:ns3="https://source.jasig.org/schemas/uportal/io/stylesheet-descriptor" xmlns:ns4="https://source.jasig.org/schemas/uportal/io/portlet-definition" xmlns:ns5="https://source.jasig.org/schemas/uportal" xmlns:ns6="https://source.jasig.org/schemas/uportal/io/user" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://source.jasig.org/schemas/uportal/io/portlet-type https://source.jasig.org/schemas/uportal/io/portlet-type/portlet-type-4.0.xsd">
     <name>CMS</name>
     <description>Displays configured HTML content after performing validation.</description>
-    <uri>/org/jasig/portal/portlets/CMS/CMSPortlet.cpd.xml</uri>
+    <uri>/org/apereo/portal/portlets/CMS/CMSPortlet.cpd.xml</uri>
 </portlet-type>

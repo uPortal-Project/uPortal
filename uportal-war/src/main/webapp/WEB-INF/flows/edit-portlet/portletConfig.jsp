@@ -20,7 +20,7 @@
 --%>
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <%@ taglib prefix="editPortlet" tagdir="/WEB-INF/tags/edit-portlet" %>
-<%@ page import="org.jasig.portal.portlet.om.PortletLifecycleState,java.util.Set" %>
+<%@ page import="org.apereo.portal.portlet.om.PortletLifecycleState,java.util.Set" %>
 
 <%-- Portlet Namespace  --%>
 <c:set var="n"><portlet:namespace/></c:set>

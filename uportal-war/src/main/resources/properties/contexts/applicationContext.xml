@@ -33,19 +33,22 @@
     <aop:aspectj-autoproxy/>
     
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets">
+    <context:component-scan base-package="org.apereo.portal.portlets">
         <context:include-filter type="regex" expression=".*\.PortletPreferencesJsonDao" />
         <context:include-filter type="regex" expression=".*\.account\.UserAccountHelper" />
     </context:component-scan>
+    <context:component-scan base-package="org.apereo.portal">
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.portlets\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.mvc\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.json\.rendering\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.layout\.dlm\.remoting\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.security\.remoting\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rest\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.redirect\..+"/>
+        <context:exclude-filter type="regex" expression="org\.apereo\.portal\.rendering\..+"/>
+    </context:component-scan>
+    <!-- TODO:  Remove! -->
     <context:component-scan base-package="org.jasig.portal">
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.portlets\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.mvc\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.json\.rendering\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.layout\.dlm\.remoting\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.security\.remoting\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rest\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.redirect\..+"/>
-        <context:exclude-filter type="regex" expression="org\.jasig\.portal\.rendering\..+"/>
     </context:component-scan>
     
     <bean id="primaryPropertyPlaceholderConfigurer" class="org.springframework.context.support.PortalPropertySourcesPlaceholderConfigurer">
@@ -87,7 +90,7 @@
     <!-- resolver that can be used to dynamically look up property values at run-time -->
     <bean id="propertyResolver" factory-bean="primaryPropertyPlaceholderConfigurer" factory-method="getPropertyResolver"/>
 
-    <bean id="systemPropertySetter" class="org.jasig.portal.spring.context.SystemPropertySetter">
+    <bean id="systemPropertySetter" class="org.apereo.portal.spring.context.SystemPropertySetter">
         <property name="systemProperties">
             <props>
                 <prop key="uPortal.cacheManager.jgroups.fd_sock.start_port">${uPortal.cacheManager.jgroups.fd_sock.start_port:}</prop>
@@ -96,30 +99,30 @@
         </property>
     </bean>
     
-    <util:map id="productVersions" value-type="org.jasig.portal.version.om.Version">
+    <util:map id="productVersions" value-type="org.apereo.portal.version.om.Version">
     	<entry value="4.1.0">
-    		<key><util:constant static-field="org.jasig.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    		<key><util:constant static-field="org.apereo.portal.jpa.BasePortalJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     	<entry value="4.1.0">
-    		<key><util:constant static-field="org.jasig.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseRawEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     	<entry value="4.1.0">
-    		<key><util:constant static-field="org.jasig.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
+    		<key><util:constant static-field="org.apereo.portal.jpa.BaseAggrEventsJpaDao.PERSISTENCE_UNIT_NAME"/></key>
     	</entry>
     </util:map>
     
     <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" lazy-init="false" />
     
-    <bean id="portalPropertyEditorRegistrar" class="org.jasig.portal.spring.properties.PortalPropertyEditorRegistrar">
+    <bean id="portalPropertyEditorRegistrar" class="org.apereo.portal.spring.properties.PortalPropertyEditorRegistrar">
         <property name="propertyEditors">
             <map key-type="java.lang.Class">
-                <entry key="javax.portlet.PortletMode"><bean class="org.jasig.portal.spring.properties.PortletModeEditor" /></entry>
-                <entry key="javax.portlet.WindowState"><bean class="org.jasig.portal.spring.properties.WindowStateEditor" /></entry>
-                <entry key="org.joda.time.ReadablePeriod"><bean class="org.jasig.portal.spring.properties.ReadablePeriodEditor" /></entry>
-                <entry key="org.joda.time.ReadableDuration"><bean class="org.jasig.portal.spring.properties.ReadableDurationEditor" /></entry>
-                <entry key="org.jasig.portal.version.om.Version"><bean class="org.jasig.portal.spring.properties.VersionEditor"/></entry>
+                <entry key="javax.portlet.PortletMode"><bean class="org.apereo.portal.spring.properties.PortletModeEditor" /></entry>
+                <entry key="javax.portlet.WindowState"><bean class="org.apereo.portal.spring.properties.WindowStateEditor" /></entry>
+                <entry key="org.joda.time.ReadablePeriod"><bean class="org.apereo.portal.spring.properties.ReadablePeriodEditor" /></entry>
+                <entry key="org.joda.time.ReadableDuration"><bean class="org.apereo.portal.spring.properties.ReadableDurationEditor" /></entry>
+                <entry key="org.apereo.portal.version.om.Version"><bean class="org.apereo.portal.spring.properties.VersionEditor"/></entry>
                 <entry key="com.fasterxml.jackson.databind.JsonNode">
-                    <bean class="org.jasig.portal.spring.properties.MappingJackson2JsonTreeEditor">
+                    <bean class="org.apereo.portal.spring.properties.MappingJackson2JsonTreeEditor">
                         <property name="objectMapper" ref="objectMapper" />
                     </bean>
                 </entry>
@@ -139,23 +142,23 @@
         <property name="scopes">
             <map>
                 <entry key="globalSession">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
-                            <bean class="org.jasig.portal.spring.web.context.support.PortalSessionScope">
+                            <bean class="org.apereo.portal.spring.web.context.support.PortalSessionScope">
                                 <property name="portalRequestUtils" ref="portalRequestUtils" />
                             </bean>
                         </constructor-arg>
                     </bean>
                 </entry>
                 <entry key="session">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
                             <bean class="org.springframework.web.context.request.SessionScope" />
                         </constructor-arg>
                     </bean>
                 </entry>
                 <entry key="request">
-                    <bean class="org.jasig.portal.spring.web.context.support.FailsafeSingletonScope">
+                    <bean class="org.apereo.portal.spring.web.context.support.FailsafeSingletonScope">
                         <constructor-arg>
                             <bean class="org.springframework.web.context.request.RequestScope" />
                         </constructor-arg>
@@ -165,5 +168,5 @@
         </property>
     </bean>
     
-    <bean id="objectMapper" class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+    <bean id="objectMapper" class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
 </beans>

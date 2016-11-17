@@ -60,7 +60,7 @@
          oob_thread_pool.queue_max_size="100"
          oob_thread_pool.rejection_policy="discard"/>
 
-    <org.jasig.portal.jgroups.protocols.DAO_PING timeout="3000" />
+    <org.apereo.portal.jgroups.protocols.DAO_PING timeout="3000" />
     <MERGE2  min_interval="10000"
              max_interval="30000"/>
     <FD_SOCK start_port="${uPortal.cacheManager.jgroups.fd_sock.start_port}"/>
@@ -73,7 +73,7 @@
     <UNICAST />
     <pbcast.STABLE stability_delay="1000" desired_avg_gossip="50000"
                    max_bytes="4M"/>
-    <!-- <AUTH auth_class="org.jasig.portal.jgroups.auth.HashedDaoAuthToken"/> -->
+    <!-- <AUTH auth_class="org.apereo.portal.jgroups.auth.HashedDaoAuthToken"/> -->
     <pbcast.GMS print_local_addr="true" join_timeout="3000"
 
                 view_bundling="true"/>

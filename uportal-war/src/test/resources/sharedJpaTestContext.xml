@@ -51,7 +51,7 @@
         <property name="poolPreparedStatements" value="false" />
     </bean>
     
-    <bean id="factoryBean" class="org.jasig.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
+    <bean id="factoryBean" class="org.apereo.portal.jpa.EventingLocalContainerEntityManagerFactoryBean" depends-on="" autowire="byType">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="persistenceUnitName" value="${persistenceUnitName}" />
         <property name="jpaProperties">
@@ -76,15 +76,15 @@
         <property name="entityManagerFactory" ref="factoryBean" />
     </bean>
     
-    <bean class="org.jasig.portal.hibernate.HibernateConfigurationAwareInjector" />
+    <bean class="org.apereo.portal.hibernate.HibernateConfigurationAwareInjector" />
     
-    <bean class="org.jasig.portal.jpa.OpenEntityManagerAspect" />
+    <bean class="org.apereo.portal.jpa.OpenEntityManagerAspect" />
 
     <!-- This mimics what <tx:annotation-driven/> does but uses our custom TransactionManagerCachingTransactionInterceptor -->    
     <bean id="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" 
             class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
     <bean id="org.springframework.transaction.interceptor.TransactionInterceptor#0"
-            class="org.jasig.portal.spring.tx.DialectAwareTransactionInterceptor">
+            class="org.apereo.portal.spring.tx.DialectAwareTransactionInterceptor">
         <property name="transactionAttributeSource" ref="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource#0" />
         <property name="transactionManagerBeanName" value="transactionManager" />
     </bean>
@@ -96,27 +96,27 @@
     
     <aop:config>
         <aop:pointcut id="daoExecution" 
-            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.jasig.portal..*.*(..))"/>
+            expression="within(@org.springframework.stereotype.Repository *) &amp;&amp; execution(* org.apereo.portal..*.*(..))"/>
             
         <aop:aspect ref="sqlNextExceptionLoggerAspect">
             <aop:after-throwing pointcut-ref="daoExecution" method="logBatchUpdateExceptions" throwing="t"/>
         </aop:aspect>
     </aop:config>
     
-    <bean id="sqlNextExceptionLoggerAspect" class="org.jasig.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
+    <bean id="sqlNextExceptionLoggerAspect" class="org.apereo.portal.portlet.dao.jpa.SQLNextExceptionLoggerAspect" />
     
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" lazy-init="false" />
     
-    <bean class="org.jasig.portal.jpa.cache.EntityManagerCacheImpl">
+    <bean class="org.apereo.portal.jpa.cache.EntityManagerCacheImpl">
         <property name="contentCache">
-            <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
+            <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
                 <constructor-arg value="net.sf.ehcache.Ehcache" />
             </bean>
         </property>
     </bean>
     
-    <bean id="taggedCacheEntryPurger" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.utils.cache.TaggedCacheEntryPurger" />
+    <bean id="taggedCacheEntryPurger" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.utils.cache.TaggedCacheEntryPurger" />
     </bean>
 </beans>
 

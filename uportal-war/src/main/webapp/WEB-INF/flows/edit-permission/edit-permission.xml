@@ -27,7 +27,7 @@
      | permissionForm input 
      |
      | This object encapsulates stateful information about this subflow;  must be an 
-     | instance of org.jasig.portal.portlets.permissionsadmin.PermissionDefinitionForm.
+     | instance of org.apereo.portal.portlets.permissionsadmin.PermissionDefinitionForm.
      +-->
     <input name="owner" required="true"/>
     <input name="activity" required="true"/>

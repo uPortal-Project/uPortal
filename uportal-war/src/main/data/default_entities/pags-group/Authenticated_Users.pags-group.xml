@@ -26,7 +26,7 @@
     <test-group>
       <test>
         <attribute-name></attribute-name>
-        <tester-class>org.jasig.portal.groups.pags.testers.GuestUserTester</tester-class>
+        <tester-class>org.apereo.portal.groups.pags.testers.GuestUserTester</tester-class>
         <test-value>false</test-value>
       </test>
     </test-group>

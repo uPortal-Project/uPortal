@@ -125,7 +125,7 @@
         <on-entry>
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('category')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'category', T(org.jasig.portal.security.IPermission).PORTAL_PUBLISH, T(org.jasig.portal.security.IPermission).PORTLET_MANAGER_MANAGE_ACTIVITIES)"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'category', T(org.apereo.portal.security.IPermission).PORTAL_PUBLISH, T(org.apereo.portal.security.IPermission).PORTLET_MANAGER_MANAGE_ACTIVITIES)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
@@ -158,7 +158,7 @@
             <set name="flashScope.entityTypes" value="new java.util.HashSet()"/>
             <evaluate expression="entityTypes.add('person')"/>
             <evaluate expression="entityTypes.add('group')"/>
-            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'group', T(org.jasig.portal.security.IPermission).PORTAL_GROUPS, T(org.jasig.portal.security.IPermission).VIEW_GROUP_ACTIVITY)"/>
+            <set name="flashScope.rootEntity" value="groupListHelper.getIndividualBestRootEntity(person, 'group', T(org.apereo.portal.security.IPermission).PORTAL_GROUPS, T(org.apereo.portal.security.IPermission).VIEW_GROUP_ACTIVITY)"/>
         </on-entry>
         <!-- View Parameters -->
         <input name="selectTypes" value="entityTypes"/>
@@ -208,7 +208,7 @@
 
     <view-state id="configModeResourceRequest" view="portletDelegationView">
         <on-entry>
-            <set name="viewScope[T(org.jasig.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
+            <set name="viewScope[T(org.apereo.portal.portlet.delegation.PortletDelegationView).DELEGATE_PORTLET_WINDOW_ID]"
                 value="portletAdministrationHelper.getDelegateWindowId(externalContext, portlet.getFname())"/>
         </on-entry>
     </view-state>

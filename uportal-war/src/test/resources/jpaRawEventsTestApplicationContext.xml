@@ -30,11 +30,11 @@
 
     <!-- JPA Test Context for DAOs that use the RawEventsDb PersistenceContext -->
 
-    <bean class="org.jasig.portal.events.handlers.db.JpaPortalEventStore">
+    <bean class="org.apereo.portal.events.handlers.db.JpaPortalEventStore">
         <property name="aggregationFlushPeriod" value="5" />
     </bean>
     
-    <bean class="org.jasig.portal.spring.beans.factory.ObjectMapperFactoryBean" />
+    <bean class="org.apereo.portal.spring.beans.factory.ObjectMapperFactoryBean" />
     
     
     <bean id="localPropertyPlaceholderConfigurer" parent="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">

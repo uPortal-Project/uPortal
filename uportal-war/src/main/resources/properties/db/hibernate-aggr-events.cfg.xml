@@ -42,25 +42,25 @@
         
         <mapping resource="properties/db/global.hbm.xml"/>
         
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.tabs.AggregatedTabMappingImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.portlets.AggregatedPortletMappingImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.session.EventSessionImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.login.LoginAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.tabrender.TabRenderAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.action.SearchRequestAggregationImpl"/>
-        <mapping class="org.jasig.portal.events.aggr.UniqueStrings"/>
-        <mapping class="org.jasig.portal.events.aggr.UniqueStringsSegment"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.EventAggregatorStatusImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.TimeDimensionImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.DateDimensionImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.AggregatedGroupConfigImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.AggregatedIntervalConfigImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.QuarterDetailImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.dao.jpa.AcademicTermDetailImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.groups.AggregatedGroupMappingImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.tabs.AggregatedTabMappingImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.portlets.AggregatedPortletMappingImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.session.EventSessionImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.login.LoginAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.concuser.ConcurrentUserAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.tabrender.TabRenderAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.portletexec.PortletExecutionAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.portletlayout.PortletLayoutAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.action.SearchRequestAggregationImpl"/>
+        <mapping class="org.apereo.portal.events.aggr.UniqueStrings"/>
+        <mapping class="org.apereo.portal.events.aggr.UniqueStringsSegment"/>
     </session-factory>
 </hibernate-configuration>
 

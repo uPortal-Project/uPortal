@@ -36,7 +36,7 @@
         <property name="portletModeMap">
             <map>
                 <entry key="view">
-                    <bean class="org.jasig.portal.portlets.flow.ParamaterizableFlowHandler">
+                    <bean class="org.apereo.portal.portlets.flow.ParamaterizableFlowHandler">
                         <property name="flowId" value="fragment-audit" />
                     </bean>
                 </entry>

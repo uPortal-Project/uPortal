@@ -40,20 +40,20 @@
         <property name="allowCoreThreadTimeOut" value="true" />
     </bean>
     
-    <bean id="clusterLockService" class="org.jasig.portal.concurrency.locking.ClusterLockServiceImpl">
+    <bean id="clusterLockService" class="org.apereo.portal.concurrency.locking.ClusterLockServiceImpl">
         <qualifier value="normal" />
     </bean>
     
-    <bean id="dbOnlyClusterLockService" class="org.jasig.portal.concurrency.locking.DbOnlyClusterLockServiceImpl">
+    <bean id="dbOnlyClusterLockService" class="org.apereo.portal.concurrency.locking.DbOnlyClusterLockServiceImpl">
         <qualifier value="dbOnly" />
     </bean>
 
-    <bean id="clusterLockDao" class="org.jasig.portal.concurrency.locking.JpaClusterLockDao">
+    <bean id="clusterLockDao" class="org.apereo.portal.concurrency.locking.JpaClusterLockDao">
         <property name="abandonedLockAge" value="PT0.100S" />
     </bean>
     
-    <bean id="portalInfoProvider" class="org.jasig.portal.spring.MockitoFactoryBean">
-        <constructor-arg value="org.jasig.portal.IPortalInfoProvider" />
+    <bean id="portalInfoProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.IPortalInfoProvider" />
     </bean>
     
     

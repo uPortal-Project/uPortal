@@ -21,14 +21,14 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <%@ tag dynamic-attributes="attributes" isELIgnored="false" %>
-<%@ attribute name="input"   required="true" type="org.jasig.portal.portletpublishing.xml.PreferenceInputType" %>
+<%@ attribute name="input"   required="true" type="org.apereo.portal.portletpublishing.xml.PreferenceInputType" %>
 <%@ attribute name="path"    required="true" %>
 <%@ attribute name="name"    required="false" %>
 <%@ attribute name="values"  required="false" type="java.util.Collection" %>
 
 <c:choose>
 
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.MultiTextPreferenceInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.MultiTextPreferenceInput') }">
     <c:forEach items="${ values }" var="val">
       <div>
          <input name="${ fn:escapeXml(path )}" value="${ fn:escapeXml(val )}" class="form-control" />
@@ -44,7 +44,7 @@
     </a>
   </c:when>
 
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleTextPreferenceInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.SingleTextPreferenceInput') }">
   <!-- Single-value text input types -->
     <c:choose>
       <c:when test="${ input.display == 'TEXTAREA' }">
@@ -72,7 +72,7 @@
     </c:choose>
   </c:when>
   
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleChoicePreferenceInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.SingleChoicePreferenceInput') }">
   <!-- Single-value choice input types -->
     <c:choose>
       <c:when test="${ input.display == 'RADIO' }">
@@ -91,7 +91,7 @@
     </c:choose>
   </c:when>
   
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.MultiChoicePreferenceInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.MultiChoicePreferenceInput') }">
   <!-- Multi-value choice input types -->
     <c:choose>
       <c:when test="${ input.display == 'CHECKBOX' }">

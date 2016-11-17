@@ -29,39 +29,39 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
            
     <!-- Generic Web-Flow helper beans -->
-    <bean id="portletUrlFlowHelper" class="org.jasig.portal.portlets.flow.PortletUrlFlowHelper" />
+    <bean id="portletUrlFlowHelper" class="org.apereo.portal.portlets.flow.PortletUrlFlowHelper" />
                       
 
     <!-- Beans for the person-lookup flow -->       
-    <bean id="personLookupHelper" class="org.jasig.portal.portlets.lookup.PersonLookupHelperImpl">
+    <bean id="personLookupHelper" class="org.apereo.portal.portlets.lookup.PersonLookupHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
-        <property name="maxResults" value="${org.jasig.portal.portlets.lookup.PersonLookup.maxResults}"/>
+        <property name="maxResults" value="${org.apereo.portal.portlets.lookup.PersonLookup.maxResults}"/>
     </bean>
     
-    <bean id="personQueryValidator" class="org.jasig.portal.portlets.lookup.PersonQueryValidator" />
+    <bean id="personQueryValidator" class="org.apereo.portal.portlets.lookup.PersonQueryValidator" />
     
     <!--  Beans for the group-selector flow -->
     <bean name="groupListHelper"
-        class="org.jasig.portal.layout.dlm.remoting.GroupListHelperImpl"/>
+        class="org.apereo.portal.layout.dlm.remoting.GroupListHelperImpl"/>
     
     
     <!-- Beans for the attribute-swapper flow -->       
-    <bean id="attributeSwapperHelper" class="org.jasig.portal.portlets.swapper.AttributeSwapperHelperImpl">
+    <bean id="attributeSwapperHelper" class="org.apereo.portal.portlets.swapper.AttributeSwapperHelperImpl">
         <property name="personAttributeDao" ref="personAttributeDao" />
     </bean>   
-    <bean id="attributeSwapRequestValidator" class="org.jasig.portal.portlets.swapper.AttributeSwapRequestValidator">
+    <bean id="attributeSwapRequestValidator" class="org.apereo.portal.portlets.swapper.AttributeSwapRequestValidator">
         <property name="attributeSwapperHelper" ref="attributeSwapperHelper" />
     </bean>
      
-    <bean id="personValidator" class="org.jasig.portal.portlets.account.PersonFormValidator"/>
+    <bean id="personValidator" class="org.apereo.portal.portlets.account.PersonFormValidator"/>
 
-    <bean id="groupValidator" class="org.jasig.portal.portlets.groupadmin.GroupFormValidator"/>
+    <bean id="groupValidator" class="org.apereo.portal.portlets.groupadmin.GroupFormValidator"/>
 
     <bean id="portalConversionService"
-        class="org.jasig.portal.utils.web.flow.PortalConversionService"/>
+        class="org.apereo.portal.utils.web.flow.PortalConversionService"/>
     
     <!-- bean for reset-user-layout flow -->
-    <bean id="userLayoutHelper" class="org.jasig.portal.layout.UserLayoutHelperImpl">
+    <bean id="userLayoutHelper" class="org.apereo.portal.layout.UserLayoutHelperImpl">
         <property name="dataSource" ref="PortalDb"/>
     </bean>   
     
@@ -82,7 +82,7 @@
         conversion-service="portalConversionService" />
 
     <!-- Custom view factory creator that allows us to configure the flow beans in the top level application context -->
-    <bean id="viewFactoryCreator" class="org.jasig.portal.utils.web.flow.RuntimeMvcViewFactoryCreator">
+    <bean id="viewFactoryCreator" class="org.apereo.portal.utils.web.flow.RuntimeMvcViewFactoryCreator">
         <property name="viewResolvers">
             <ref bean="xmlViewResolver" />
         </property>

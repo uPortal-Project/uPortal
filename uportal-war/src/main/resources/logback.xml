@@ -105,28 +105,28 @@
   </root>
   
   <!-- Log use of the identity and attribute swapper -->
-  <logger name="org.jasig.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
+  <logger name="org.apereo.portal.portlets.swapper" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="SWAPPER"/>
   </logger>
 
   <!--  Portal Event aggregation -->
-  <logger name="org.jasig.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
+  <logger name="org.apereo.portal.events" additivity="false" level="${environment.build.log.rootLevel}">
     <appender-ref ref="EVENT"/>
   </logger>
   
   <!--  Portal Tin Can Events -->
-  <logger name="org.jasig.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.events.tincan.providers.LogEventTinCanAPIProvider" additivity="false" level="DEBUG">
     <appender-ref ref="TINCAN"/>
   </logger>
  
   <!-- Debug CAS Clearpass
-  <logger name="org.jasig.portal.security.provider.cas" additivity="false" level="TRACE">
+  <logger name="org.apereo.portal.security.provider.cas" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
   </logger>
   <logger name="org.jasig.cas.client" additivity="false" level="TRACE">
     <appender-ref ref="PORTAL"/>
   </logger>
-  <logger name="org.jasig.portal.portlet.container.services" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.container.services" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
@@ -153,28 +153,28 @@
    -->
    
   <!-- Portlet Event handling logging
-  <logger name="org.jasig.portal.portlet.rendering.PortletEventCoordinatationService" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.rendering.PortletEventCoordinatationService" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
   
   <!-- Uncomment to see the XML at various stages in the rendering pipeline
-  <logger name="org.jasig.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.rendering.LoggingStAXComponent" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
 
   <!-- Uncomment to see fragment activation errors
-  <logger name="org.jasig.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.layout.dlm.FragmentActivator" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
   
   <!-- Uncomment to monitor portlet-spec caching behavior
-  <logger name="org.jasig.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.rendering.PortletRendererImpl" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
-  <logger name="org.jasig.portal.portlet.container.cache" additivity="false" level="DEBUG">
+  <logger name="org.apereo.portal.portlet.container.cache" additivity="false" level="DEBUG">
     <appender-ref ref="PORTAL"/>
   </logger>
   -->
