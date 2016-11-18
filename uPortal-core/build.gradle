@@ -1,0 +1,9 @@
+description = "Apereo uPortal Core"
+
+dependencies {
+    compile "com.googlecode.ehcache-spring-annotations:ehcache-spring-annotations:${ehcacheSpringAnnotationsVersion}"
+    compile "org.apache.commons:commons-lang3:${commonsLang3Version}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-jdbc:${springVersion}"
+}

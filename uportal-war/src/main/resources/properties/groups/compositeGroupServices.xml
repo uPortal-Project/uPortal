@@ -25,15 +25,15 @@ This list of component group services is processed by the composite, or "root" s
 -->
 
 <servicelist defaultService="local"
-             compositeFactory="org.jasig.portal.groups.ReferenceCompositeGroupServiceFactory"
+             compositeFactory="org.apereo.portal.groups.ReferenceCompositeGroupServiceFactory"
              nodeSeparator=".">
   <!-- IMPORTANT: The local service is REQUIRED for uPortal to correctly function, do not comment this service out -->
   <service>
     <name>local</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.ReferenceEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.ReferenceEntityGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.ReferenceEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.ReferenceEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.ReferenceEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.ReferenceEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>true</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
@@ -50,10 +50,10 @@ This list of component group services is processed by the composite, or "root" s
  +-->
   <service>
     <name>pags</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.pags.dao.EntityPersonAttributesEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.pags.dao.EntityPersonAttributesEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
@@ -68,10 +68,10 @@ This list of component group services is processed by the composite, or "root" s
 <!--
   <service>
     <name>pags</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.pags.PersonAttributesEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.pags.PersonAttributesGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.pags.PersonAttributesEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.pags.PersonAttributesEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.pags.PersonAttributesGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.pags.PersonAttributesEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
@@ -80,10 +80,10 @@ This list of component group services is processed by the composite, or "root" s
 <!--
   <service>
     <name>ldap</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.ldap.LDAPEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.ldap.LDAPGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.ldap.LDAPEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
@@ -93,10 +93,10 @@ This list of component group services is processed by the composite, or "root" s
 <!--
   <service groupsRoot="C:/groups">
     <name>filesystem</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.filesystem.FileSystemGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.filesystem.FileSystemEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.filesystem.FileSystemGroupStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.filesystem.FileSystemGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.filesystem.FileSystemEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>false</caching_enabled>
   </service>
@@ -113,10 +113,10 @@ This list of component group services is processed by the composite, or "root" s
 <!--
   <service>
     <name>smartldap</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.smartldap.SmartLdapEntityStore$Factory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.smartldap.SmartLdapGroupStore$Factory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.smartldap.SmartLdapEntitySearcher$Factory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.smartldap.SmartLdapEntityStore$Factory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.smartldap.SmartLdapGroupStore$Factory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.smartldap.SmartLdapEntitySearcher$Factory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>
@@ -133,10 +133,10 @@ This list of component group services is processed by the composite, or "root" s
 <!-- 
   <service>
     <name>grouper</name>
-    <service_factory>org.jasig.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
-    <entity_store_factory>org.jasig.portal.groups.grouper.GrouperEntityStoreFactory</entity_store_factory>
-    <group_store_factory>org.jasig.portal.groups.grouper.GrouperEntityGroupStoreFactory</group_store_factory>
-    <entity_searcher_factory>org.jasig.portal.groups.grouper.GrouperEntitySearcherFactory</entity_searcher_factory>
+    <service_factory>org.apereo.portal.groups.ReferenceIndividualGroupServiceFactory</service_factory>
+    <entity_store_factory>org.apereo.portal.groups.grouper.GrouperEntityStoreFactory</entity_store_factory>
+    <group_store_factory>org.apereo.portal.groups.grouper.GrouperEntityGroupStoreFactory</group_store_factory>
+    <entity_searcher_factory>org.apereo.portal.groups.grouper.GrouperEntitySearcherFactory</entity_searcher_factory>
     <internally_managed>false</internally_managed>
     <caching_enabled>true</caching_enabled>
   </service>

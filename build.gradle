@@ -1,0 +1,46 @@
+description = "Apereo uPortal $version"
+
+// Build Scans provide detailed information about many aspects of your
+// build right in your browser.  (https://scans.gradle.com/plugin)
+apply plugin: 'com.gradle.build-scan'
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+    dependencies {
+        classpath 'com.gradle:build-scan-plugin:1.0'
+    }
+}
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    configurations {
+        /*
+         * Defines a 'provided' scope similar to the one in Maven.  Dependencies
+         * defined using provided will not become transitive dependencies.
+         */
+        provided
+
+        /*
+         * Makes provided dependencies available on the compile classpath in a way
+         * that works both from the command line and in Buildship.
+         */
+        compile.extendsFrom provided
+    }
+
+}

@@ -21,14 +21,14 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <%@ tag dynamic-attributes="attributes" isELIgnored="false" %>
-<%@ attribute name="input"   required="true" type="org.jasig.portal.portletpublishing.xml.ParameterInputType" %>
+<%@ attribute name="input"   required="true" type="org.apereo.portal.portletpublishing.xml.ParameterInputType" %>
 <%@ attribute name="path"    required="true" %>
 <%@ attribute name="name"    required="false" %>
 <%@ attribute name="cssClass" required="false" %>
 
 <c:choose>
 
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleTextParameterInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.SingleTextParameterInput') }">
   <!-- Single-value text input types -->
     <c:choose>
       <c:when test="${ input.display == 'TEXTAREA' }">
@@ -42,7 +42,7 @@
     </c:choose>
   </c:when>
   
-  <c:when test="${ up:instanceOf(input, 'org.jasig.portal.portletpublishing.xml.SingleChoiceParameterInput') }">
+  <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.SingleChoiceParameterInput') }">
   <!-- Single-value choice input types -->
     <c:choose>
       <c:when test="${ input.display == 'RADIO' }">

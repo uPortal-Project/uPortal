@@ -129,14 +129,14 @@
 					| edu.someschool.its.cas.MySpecialHandler here, or you might use one of the handlers provided in the adaptors modules.
 					+-->
 				<bean
-					class="org.jasig.portal.cas.authentication.handler.support.PersonDirAuthenticationHandler" 
+					class="org.apereo.portal.cas.authentication.handler.support.PersonDirAuthenticationHandler"
                     p:user-password-dao-ref="userPasswordDao" />
 			</list>
 		</property>
         
 	</bean>
     
-    <bean id="userPasswordDao" class="org.jasig.portal.cas.authentication.handler.support.PortalPersonDirUserPasswordDao" 
+    <bean id="userPasswordDao" class="org.apereo.portal.cas.authentication.handler.support.PortalPersonDirUserPasswordDao"
         p:data-source-ref="dataSource" />
     
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">

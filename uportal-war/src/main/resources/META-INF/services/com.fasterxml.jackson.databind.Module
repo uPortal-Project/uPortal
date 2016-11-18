@@ -1,2 +1,2 @@
-org.jasig.portal.json.WindowStateModule
-org.jasig.portal.json.PortletModeModule
+org.apereo.portal.json.WindowStateModule
+org.apereo.portal.json.PortletModeModule

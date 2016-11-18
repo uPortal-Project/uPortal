@@ -50,9 +50,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:dlm="http://www.uportal.org/layout/dlm"
-    xmlns:upAuth="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanAuthorizationHelper"
-    xmlns:upGroup="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanGroupMembershipHelper"
-    xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
+    xmlns:upAuth="http://xml.apache.org/xalan/java/org.apereo.portal.security.xslt.XalanAuthorizationHelper"
+    xmlns:upGroup="http://xml.apache.org/xalan/java/org.apereo.portal.security.xslt.XalanGroupMembershipHelper"
+    xmlns:upMsg="http://xml.apache.org/xalan/java/org.apereo.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xsi:schemaLocation="https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg dlm xsi"
@@ -106,7 +106,7 @@
      | This template renders portlets in the top-right greeting area.
     -->
     <xsl:template name="region.pre-header">
-        <xsl:if test="//region[@name='page-top']/channel">
+        <xsl:if test="//region[@name='pre-header']/channel">
             <div id="region-pre-header" class="portal-user">
                 <xsl:for-each select="//region[@name='pre-header']/channel">
                     <xsl:call-template name="regions.portlet.decorator" />

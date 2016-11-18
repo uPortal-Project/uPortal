@@ -21,7 +21,7 @@
 -->
 <group script="classpath://org/jasig/portal/io/import-group_membership_v3-2.crn">
   <name>Testing</name>
-  <entity-type>org.jasig.portal.portlet.om.IPortletDefinition</entity-type>
+  <entity-type>org.apereo.portal.portlet.om.IPortletDefinition</entity-type>
   <creator>system</creator>
   <description>Testing Portlets</description>
   <children/>

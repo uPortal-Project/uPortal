@@ -80,7 +80,7 @@
     <xs:simpleType name="urlType">
         <xs:annotation>
             <xs:documentation>
-                Corresponds to org.jasig.portal.url.UrlType
+                Corresponds to org.apereo.portal.url.UrlType
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:token">

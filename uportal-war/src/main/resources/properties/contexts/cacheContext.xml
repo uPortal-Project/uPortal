@@ -27,7 +27,7 @@
 		http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.2.xsd">
 
     <!-- This bean CANNOT be autowired or it will not function correctly -->
-    <bean class="org.jasig.portal.utils.cache.EhcacheManagerBeanConfigurer">
+    <bean class="org.apereo.portal.utils.cache.EhcacheManagerBeanConfigurer">
         <property name="cacheManager" ref="cacheManager" />
     </bean>
 
@@ -40,14 +40,14 @@
           depends-on="systemPropertySetter, pingDao, authDao"
           p:shared="true"
           p:configLocation="classpath:/properties/ehcache.xml" />
-    <bean id="cacheManagerExpiredElementEvictor" class="org.jasig.portal.utils.cache.ExpiredElementEvictor">
+    <bean id="cacheManagerExpiredElementEvictor" class="org.apereo.portal.utils.cache.ExpiredElementEvictor">
         <property name="cacheManager" ref="cacheManager"></property>
     </bean>
 
-    <bean id="pingDao" class="org.jasig.portal.jgroups.protocols.JdbcPingDao">
+    <bean id="pingDao" class="org.apereo.portal.jgroups.protocols.JdbcPingDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
-    <bean id="authDao" class="org.jasig.portal.jgroups.auth.JdbcAuthDao">
+    <bean id="authDao" class="org.apereo.portal.jgroups.auth.JdbcAuthDao">
         <property name="jdbcOperations" ref="jdbcOperations" />
     </bean>
 
@@ -56,33 +56,33 @@
      +-->
     <ehcache:annotation-driven default-cache-key-generator="portalCacheKeyGenerator" cache-manager="cacheManager" />
 
-    <bean id="portalCacheKeyGenerator" class="org.jasig.portal.utils.cache.PortalCacheKeyGenerator"/>
+    <bean id="portalCacheKeyGenerator" class="org.apereo.portal.utils.cache.PortalCacheKeyGenerator"/>
 
-    <bean class="org.jasig.portal.utils.ResourceLoader">
+    <bean class="org.apereo.portal.utils.ResourceLoader">
         <property name="resourceUrlCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
+                <property name="cacheName" value="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_CACHE" />
             </bean>
         </property>
         <property name="resourceUrlNotFoundCache">
-            <bean class="org.jasig.portal.utils.cache.MapCacheFactoryBean">
+            <bean class="org.apereo.portal.utils.cache.MapCacheFactoryBean">
                 <property name="cacheFactory" ref="cacheFactory" />
-                <property name="cacheName" value="org.jasig.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
+                <property name="cacheName" value="org.apereo.portal.utils.ResourceLoader.RESOURCE_URL_NOT_FOUND_CACHE" />
             </bean>
         </property>
     </bean>
 
-    <bean id="pageCachingFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
+    <bean id="pageCachingFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.cache.ConfigurablePageCachingFilter">
                 <constructor-arg ref="cacheManager"/>
-                <constructor-arg value="org.jasig.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"/>
+                <constructor-arg value="org.apereo.portal.utils.cache.ConfigurablePageCachingFilter.PAGE_CACHE"/>
             </bean>
         </property>
     </bean>
 
-    <bean id="CacheExpiresFilter" class="org.jasig.portal.web.skin.AggregationAwareFilterBean">
+    <bean id="CacheExpiresFilter" class="org.apereo.portal.web.skin.AggregationAwareFilterBean">
         <property name="filter">
             <bean class="org.jasig.resourceserver.utils.filter.PathBasedCacheExpirationFilter">
                 <property name="cacheMaxAges">

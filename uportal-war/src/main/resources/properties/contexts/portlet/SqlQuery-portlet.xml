@@ -31,10 +31,10 @@
     
     <!-- main portlet view -->
     <bean id="sqlController"
-        class="org.jasig.portal.portlets.sqlquery.SqlQueryPortletController"/>
+        class="org.apereo.portal.portlets.sqlquery.SqlQueryPortletController"/>
 
     <bean id="sqlConfigController"
-        class="org.jasig.portal.portlets.sqlquery.SqlQueryConfigurationController">
+        class="org.apereo.portal.portlets.sqlquery.SqlQueryConfigurationController">
     </bean>
     
     <!-- Handler Mapping -->

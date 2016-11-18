@@ -1,0 +1,155 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+ | NOTICE:  This file represents a contractual API that is leveraged by more 
+ | than one caller.  Please do not refactor this file in a way that changes 
+ | the number or nature of arguments expected.
+ |
+ | These are:
+ |   - ${Attributes.NODE}=XML Element that defines the entity to import
+ |   - ${PORTAL_CONTEXT}=uPortal's Spring ApplicationContext
+ |   - ${SqlAttributes.DATA_SOURCE}=the DataSource for the PortalDb
+ |   - ${SqlAttributes.TRANSACTION_MANAGER}=PlatformTransactionManager in use
+ |
+ | To debug, it is probably easier to change log.debug to log.error within this script because the script
+ | classname is dynamic; e.g. Script1, Script 13, etc., so it is a pain to have the right value in logback.xml.
+ +-->
+<!-- Group membership processing is done in two steps in an initdb.  All groups are created in one pass.
+     In a second pass, the child elements are processed because they can reference the now-created groups. -->
+<choose>
+    <when test="${jexl(IMPORT_ACTION.equals('GROUP'))}">
+        <!-- The group creation/update is done with sql as opposed to GroupService.newGroup() and group.update() like
+             GroupAdministrationHelper because there are special groups that have a system-assigned id and there is
+             not much value in modifying GroupService group creation methods to accept creating a group with
+             a specific id. The only downside to using sql for creating or editing the group as opposed to
+             GroupService and group.update() is that you can change the creator or description and the cached
+             values may not be updated.  Not a big deal.-->
+        <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
+        <with>
+            <attribute key="CREATOR">${valueOf(creator)}</attribute>
+            <attribute key="DESCRIPTION">${valueOf(description)}</attribute>
+            <attribute key="ENTITY_TYPE_NAME">${ENTITY_TYPE}</attribute>
+            <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+            <subtasks>
+                <with-attribute key="ENTITY_TYPE_ID" value="${crn(lookup-entity_type_id.crn)}">
+                    <sql-transaction>
+                        <sql-upsert>
+                            <update-statement>
+                                UPDATE up_group
+                                SET creator_id = ?, description = ?
+                                WHERE entity_type_id = ? AND group_name = ?
+                            </update-statement>
+                            <insert-statement>
+                                INSERT INTO up_group(creator_id, description, entity_type_id, group_name, group_id)
+                                VALUES(?, ?, ?, ?, ?)
+                            </insert-statement>
+
+                            <update-parameter value="${CREATOR}"/>
+                            <update-parameter value="${DESCRIPTION}"/>
+                            <update-parameter value="${ENTITY_TYPE_ID}"/>
+                            <update-parameter value="${GROUP_NAME}"/>
+
+                            <insert-parameter value="${CREATOR}"/>
+                            <insert-parameter value="${DESCRIPTION}"/>
+                            <insert-parameter value="${ENTITY_TYPE_ID}"/>
+                            <insert-parameter value="${GROUP_NAME}"/>
+                            <insert-parameter value="${crn(generate-group-id.crn)}"/>
+                        </sql-upsert>
+                    </sql-transaction>
+                </with-attribute>
+            </subtasks>
+        </with>
+        </with-attribute>
+    </when>
+    <when test="${jexl(IMPORT_ACTION.equals('MEMBERS'))}">
+        <with-attribute key="ENTITY_TYPE" value="${valueOf(entity-type)}">
+            <with>
+                <attribute key="GROUP_NAME">${valueOf(name)}</attribute>
+                <attribute key="ENTITY_TYPE_NAME">${ENTITY_TYPE}</attribute>
+                <attribute key="MEMBER_COUNT">${valueOf(count(children/*))}</attribute>
+                <subtasks>
+                    <!-- If there are no members, don't delete existing members.  The reason for this has to do with
+                         the current duplication of group data between required_entities and quickstart_entities.
+                         In particular it affects groups of portlets. Without this test, the portlet groups would
+                         be empty. Portlet definitions in required_entities would add portlets to portlet groups defined
+                         in required_entities, then repeat definitions of the portlet groups in quickstart,
+                         such as Administration.group-membership.xml, would remove all the members added during the
+                         required_entities/portlet-definitions and add only those in the
+                         quickstart_entities/portlet-definitions.
+
+                         At this point I don't see trying to fix the data as the best solution for now as it might mess
+                         up existing installations. The use case (removing all members as part of an import/update)
+                         is apparently not frequent. In the future when we do a major release and adopters would probably
+                         need to do an initdb, it would be good to eliminate the duplication of group definitions
+                         in quickstart and the below if condition could be removed.  -->
+                    <if test="${jexl(MEMBER_COUNT > 0)}">
+                        <!-- Use methods similar to GroupAdministrationHelper to reflect updates through the GroupServices
+                             so caches get cleared and replicated to other nodes. -->
+                        <with>
+                            <attribute key="group">${groovy(org.apereo.portal.services.GroupService.findGroup(org.apereo.portal.services.GroupService.searchForGroups(GROUP_NAME, org.apereo.portal.groups.IGroupConstants.IS, Class.forName(ENTITY_TYPE_NAME))[0].key))}</attribute>
+                            <subtasks>
+                                <groovy>
+                                    <script>
+                                        import org.apereo.portal.groups.IEntityGroup
+                                        import org.apereo.portal.groups.IGroupConstants
+                                        import org.apereo.portal.groups.IGroupMember
+                                        import org.apereo.portal.io.GetMemberIsGroupPhrase
+                                        import org.apereo.portal.io.GetMemberKeyPhrase
+                                        import org.apereo.portal.io.GetMemberServicePhrase
+                                        import org.apereo.portal.services.GroupService
+                                        import org.slf4j.LoggerFactory
+
+                                        def log = LoggerFactory.getLogger(this.getClass());
+
+                                        log.debug("Removing members from group $group")
+                                        group.getChildren().each() {group.removeChild(it)}
+
+                                        Attributes.NODE.selectNodes('children/*').each {
+                                        String groupService = GetMemberServicePhrase.getPhrase(it.getName(),
+                                        it.getText())
+                                        String memberId = GetMemberKeyPhrase.getPhrase(it.getName(), it.getText())
+                                        log.debug("Found service=$groupService, memberId=$memberId")
+
+                                        if (GetMemberIsGroupPhrase.phraseIsGroup(it.getName())) {
+                                        String key = groupService + '.' + memberId
+                                        log.debug("Created key $key")
+                                        IEntityGroup member = GroupService.findGroup(key)
+                                        log.debug("Adding group $member")
+                                        group.addChild(member)
+                                        } else {
+                                        IGroupMember member = GroupService.getGroupMember(memberId,
+                                        Class.forName(ENTITY_TYPE_NAME))
+                                        log.debug("Adding entity $member")
+                                        group.addChild(member)
+                                        }
+                                        }
+                                        group.updateMembers()
+
+                                    </script>
+                                </groovy>
+                            </subtasks>
+                        </with>
+                    </if>
+                </subtasks>
+            </with>
+        </with-attribute>
+    </when>
+</choose>

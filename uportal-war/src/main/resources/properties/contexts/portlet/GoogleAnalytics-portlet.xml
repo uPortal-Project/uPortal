@@ -28,7 +28,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
            
     <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.portal.portlets.googleanalytics"/>
+    <context:component-scan base-package="org.apereo.portal.portlets.googleanalytics"/>
     
     <mvc:annotation-driven />
     <bean id="annotationMethodHandlerAdapter" class="org.springframework.web.portlet.mvc.annotation.AnnotationMethodHandlerAdapter">

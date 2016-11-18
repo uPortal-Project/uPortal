@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+                           
+    <alias name="staxSerializingComponent" alias="renderingPipeline"/>
+    
+    <bean id="portletContentPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletContentPlaceholderEventSource" />
+    <bean id="portletHeaderPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHeaderPlaceholderEventSource" />
+    <bean id="portletTitlePlaceholderEventSource" class="org.apereo.portal.character.stream.PortletTitlePlaceholderEventSource" />
+    <bean id="portletHelpPlaceholderEventSource" class="org.apereo.portal.character.stream.PortletHelpPlaceholderEventSource" />
+    
+    <!-- StAX to String serialization -->
+    <bean id="staxSerializingComponent" class="org.apereo.portal.rendering.StAXSerializingComponent">
+        <property name="wrappedComponent" ref="postThemeTransformLogger" />
+        <property name="chunkingElements">
+            <map>
+                <entry value-ref="portletContentPlaceholderEventSource">
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL" /></key>
+                </entry>
+                <entry value-ref="portletHeaderPlaceholderEventSource">
+                    <key><util:constant static-field="org.apereo.portal.layout.IUserLayoutManager.CHANNEL_HEADER" /></key>
+                </entry>
+            </map>
+        </property>
+        <property name="chunkingPatterns">
+            <map>
+                <entry key="\{up-portlet-title\(([^\)]+)\)\}" value-ref="portletTitlePlaceholderEventSource" />
+                <entry key="\{up-portlet-help\(([^\)]+)\)\}" value-ref="portletHelpPlaceholderEventSource" />
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="postThemeTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_THEME" />
+        <property name="wrappedComponent" ref="themeTransformComponent" />
+    </bean>
+    
+    <!-- theme transformation -->
+    <bean id="themeTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
+        <property name="wrappedComponent" ref="postStructureTransformLogger" />
+        <property name="transformerSource">
+            <bean class="org.apereo.portal.rendering.StaticTransformerSource">
+                <property name="stylesheet" value="classpath:/layout/theme/respondr/respondr.xsl" />
+            </bean>
+        </property>
+        <property name="xsltParameterSource">
+            <bean class="org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry>
+                                        <key><util:constant static-field="org.apereo.portal.url.xml.XsltPortalUrlProvider.XSLT_PORTAL_URL_PROVIDER" /></key>
+                                        <ref bean="xslPortalUrlProvider"/>
+                                    </entry>
+                                    <entry key="EXTERNAL_LOGIN_URL" value="Login" />
+                                    <entry key="CONTEXT_PATH" value="/uPortal" />
+                                    <entry key="CURRENT_REQUEST">
+                                        <bean class="org.springframework.mock.web.MockHttpServletRequest" />
+                                    </entry>
+                                </map>
+                            </property>
+                        </bean>
+                        <bean class="org.apereo.portal.web.skin.ResourcesElementsXsltcHelper" />
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="postStructureTransformLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_STRUCT" />
+        <property name="wrappedComponent" ref="structureTransformComponent" />
+    </bean>
+    
+    <bean id="structureTransformComponent" class="org.apereo.portal.rendering.xslt.XSLTComponent">
+        <property name="wrappedComponent" ref="postStructureAttributeIncorporationLogger" />
+        <property name="transformerSource">
+            <bean class="org.apereo.portal.rendering.StaticTransformerSource">
+                <property name="stylesheet" value="classpath:/layout/structure/columns/columns.xsl" />
+            </bean>
+        </property>
+        <property name="xsltParameterSource">
+            <bean class="org.apereo.portal.rendering.xslt.MergingTransformerConfigurationSource">
+                <property name="sources">
+                    <list>
+                        <bean class="org.apereo.portal.rendering.xslt.StaticTransformerConfigurationSource">
+                            <property name="parameters">
+                                <map>
+                                    <entry key="version-UP_FRAMEWORK" value="3.3.0-SNAPSHOT"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="postStructureAttributeIncorporationLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_SAI" />
+        <property name="wrappedComponent" ref="structureAttributeIncorporationComponent" />
+    </bean>
+    
+    <!-- structure attribute incorporation -->
+    <bean id="structureAttributeIncorporationComponent" class="org.apereo.portal.rendering.StAXAttributeIncorporationComponent">
+        <property name="wrappedComponent" ref="postUserLayoutStoreLogger" />
+        <property name="attributeSource">
+            <bean class="org.apereo.portal.rendering.StaticAttributeSource">
+                <property name="attributes">
+                    <map>
+                        <entry key="folder">
+                            <map>
+                                <entry key="width" value="100%"/>
+                            </map>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="postUserLayoutStoreLogger" class="org.apereo.portal.rendering.LoggingStAXComponent">
+        <property name="loggerName" value="org.apereo.portal.rendering.LoggingStAXComponent.POST_LAYOUT" />
+        <property name="wrappedComponent" ref="userLayoutStoreComponent" />
+    </bean>
+
+    <!-- Start of the rendering pipeline, provides the user's layout -->
+    <bean id="userLayoutStoreComponent" class="org.apereo.portal.rendering.StaticDocumentComponent">
+        <property name="document" value="classpath:/org/apereo/portal/rendering/guestLayout.xml" />
+    </bean>
+
+
+    <!-- Utility Beans -->
+    <bean class="org.apereo.portal.xml.XmlUtilitiesImpl" />
+    
+    <bean class="org.apereo.portal.utils.cache.resource.TemplatesBuilder">
+        <!-- 
+        <property name="transformerAttributes">
+            <map>
+                <entry key="generate-translet" value="true" />
+                <entry key="package-name" value="org.jasig.universality" />
+                <entry key="jar-name" value="uportal-xsl.jar" />
+                <entry key="destination-directory" value="xsltc" />
+                <entry key="debug" value="true" />
+            </map>
+        </property>
+         -->
+    </bean>
+    
+    <bean class="org.apereo.portal.utils.cache.resource.CachingResourceLoaderImpl" />
+    
+    <bean id="testSpelService" class="org.apereo.portal.spring.spel.PortalSpELServiceImpl" />
+    
+    <bean class="org.apereo.portal.url.PortalRequestUtilsImpl" />
+    
+    <bean id="org.apereo.portal.utils.cache.resource.CachingResourceLoader" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
+    <bean id="SpELExpressionCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean" />
+
+    <bean id="xslPortalUrlProvider" class="org.apereo.portal.url.xml.XsltPortalUrlProvider" />
+    
+    <bean id="xalanMessageHelper" class="org.apereo.portal.security.xslt.XalanMessageHelper"/>
+    <bean id="xalanAuthorizationHelper" class="org.apereo.portal.security.xslt.XalanAuthorizationHelper" />
+    <bean id="xalanLayoutElementTitleHelper" class="org.apereo.portal.security.xslt.XalanLayoutElementTitleHelper"/>
+    <bean id="xalanRestJsonHelper" class="org.apereo.portal.security.xslt.XalanRestJsonHelper"/>
+    <bean id="xalanGroupMembershipHelper" class="org.apereo.portal.security.xslt.XalanGroupMembershipHelper"/>
+    
+    
+    <bean id="userInstanceManager" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.user.IUserInstanceManager" />
+    </bean>
+    
+    <bean id="portalUrlProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.url.IPortalUrlProvider" />
+    </bean>
+    
+    <bean id="portletWindowRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.portlet.registry.IPortletWindowRegistry" />
+    </bean>
+    
+    <bean id="portletEntityRegistry" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.portlet.registry.IPortletEntityRegistry" />
+    </bean>
+    
+    <bean id="resourcesElementsProvider" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.jasig.resourceserver.utils.aggr.ResourcesElementsProvider" />
+    </bean>
+    
+    <bean id="xalanMessageHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.security.xslt.IXalanMessageHelper" />
+    </bean>
+    
+    <bean id="xalanAuthorizationHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.security.xslt.IXalanAuthorizationHelper" />
+    </bean>
+    
+    <bean id="xalanGroupMembershipHelperBean" class="org.apereo.portal.spring.MockitoFactoryBean">
+        <constructor-arg value="org.apereo.portal.security.xslt.IXalanGroupMembershipHelper" />
+    </bean>
+    
+    
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="alwaysUseMessageFormat" value="true" />
+        <property name="cacheSeconds" value="60" />
+        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="fallbackToSystemLocale" value="false" />
+        <property name="basenames">
+            <list>
+                <value>classpath:/properties/i18n/Messages</value>
+            </list>
+        </property>                                     
+    </bean>
+    
+    
+</beans>

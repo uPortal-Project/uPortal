@@ -536,7 +536,7 @@ var up = up || {};
         var tests = [];
         $.each(groupNames, function (i, name) {
             tests.push( { "testValue": name, "attributeName": testAttr,
-                          "testerClassName" : "org.jasig.portal.groups.pags.testers.AdHocGroupTester" } );
+                          "testerClassName" : "org.apereo.portal.groups.pags.testers.AdHocGroupTester" } );
         });
         return tests;
     };

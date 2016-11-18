@@ -38,7 +38,7 @@
             <script>
                 import org.dom4j.DocumentHelper;
                 import org.dom4j.io.DOMWriter;
-                import org.jasig.portal.layout.dlm.FragmentDefinition;
+                import org.apereo.portal.layout.dlm.FragmentDefinition;
                 
                 // Convert dom4j document to w3c document
                 org.dom4j.Document doc1 = DocumentHelper.createDocument();

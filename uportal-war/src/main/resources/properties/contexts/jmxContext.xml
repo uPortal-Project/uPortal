@@ -94,9 +94,9 @@
     </bean>
 
     <!-- uPortal framework statistics -->
-    <bean id="portalFrameworkMBean" class="org.jasig.portal.jmx.FrameworkMBeanImpl" />
+    <bean id="portalFrameworkMBean" class="org.apereo.portal.jmx.FrameworkMBeanImpl" />
     
-    <bean id="characterDataEventCacheStatsBean" class="org.jasig.portal.character.stream.events.CharacterDataEventCacheStatsBean" />
+    <bean id="characterDataEventCacheStatsBean" class="org.apereo.portal.character.stream.events.CharacterDataEventCacheStatsBean" />
 
     <!-- EhCache management and statistics -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

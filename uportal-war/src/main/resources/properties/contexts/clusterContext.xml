@@ -26,13 +26,13 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
     
     <bean id="uPortalLockExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean">
-        <property name="corePoolSize" value="${org.jasig.portal.cluster.lock.threadPool.initialThreads}" />
-        <property name="maxPoolSize" value="${org.jasig.portal.cluster.lock.threadPool.maxThreads}" />
+        <property name="corePoolSize" value="${org.apereo.portal.cluster.lock.threadPool.initialThreads}" />
+        <property name="maxPoolSize" value="${org.apereo.portal.cluster.lock.threadPool.maxThreads}" />
         <property name="queueCapacity" value="0" />
         <property name="threadGroupName" value="uP-LockExecTG" />
         <property name="threadNamePrefix" value="uP-LockExec-" />
-        <property name="threadPriority" value="${org.jasig.portal.cluster.lock.threadPool.threadPriority}" />
-        <property name="keepAliveSeconds" value="${org.jasig.portal.cluster.lock.threadPool.keepAliveSeconds}" />
+        <property name="threadPriority" value="${org.apereo.portal.cluster.lock.threadPool.threadPriority}" />
+        <property name="keepAliveSeconds" value="${org.apereo.portal.cluster.lock.threadPool.keepAliveSeconds}" />
         <property name="daemon" value="true" />
         <property name="allowCoreThreadTimeOut" value="true" />
         <property name="rejectedExecutionHandler" ref="loggingAbortHandler" />

@@ -29,14 +29,14 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
         <property name="interceptors">
             <list>
-                <bean class="org.jasig.portal.url.GuestSessionExpirationInterceptor">
+                <bean class="org.apereo.portal.url.GuestSessionExpirationInterceptor">
                     <!-- 
-                    <property name="unauthenticatedUserSessionTimeout" value="${org.jasig.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
+                    <property name="unauthenticatedUserSessionTimeout" value="${org.apereo.portal.PortalSessionManager.unauthenticatedUserSessionTimeout}" />
                      -->
                 </bean>
-                <bean class="org.jasig.portal.url.MaxInactiveInterceptor"/>
+                <bean class="org.apereo.portal.url.MaxInactiveInterceptor"/>
                 <ref bean="requestParameterProcessorInterceptor"/>
-                <bean class="org.jasig.portal.i18n.LocaleManagementInterceptor" />
+                <bean class="org.apereo.portal.i18n.LocaleManagementInterceptor" />
                 <ref bean="portletExecutionManager"/>
             </list>
         </property>
@@ -45,6 +45,6 @@
     
     <!-- even though context:component-scan is defined in applicationContext, we need an additional reference
     for this context as it's unique to the DispatcherServlet -->
-    <context:component-scan base-package="org.jasig.portal.rendering"/>
+    <context:component-scan base-package="org.apereo.portal.rendering"/>
 
 </beans>

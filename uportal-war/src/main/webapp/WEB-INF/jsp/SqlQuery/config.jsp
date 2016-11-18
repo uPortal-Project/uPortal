@@ -74,7 +74,7 @@
         <p>
             <label class="portlet-form-field-label">Cache name:</label>
             <form:input path="cacheName" size="50"/>
-            <div><em>Enter 'org.jasig.portal.portlets.sqlquery.SqlQueryPortletController.queryResults' for preconfigured cache.</em> If other than the preconfigured cache name, you must create a cache in ehcache.xml with the name you enter here.
+            <div><em>Enter 'org.apereo.portal.portlets.sqlquery.SqlQueryPortletController.queryResults' for preconfigured cache.</em> If other than the preconfigured cache name, you must create a cache in ehcache.xml with the name you enter here.
                  <br/>Leave empty to disable caching. <em>WARNING!</em> This would impact performance and scalability!
              </div>
 

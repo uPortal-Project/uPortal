@@ -24,7 +24,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <bean id="compositeGroupService" class="org.jasig.portal.services.GroupService" factory-method="getCompositeGroupService" lazy-init="true">
+    <bean id="compositeGroupService" class="org.apereo.portal.services.GroupService" factory-method="getCompositeGroupService" lazy-init="true">
         <aop:scoped-proxy/>
     </bean>
 
@@ -34,7 +34,7 @@
      | to 'true' in the context of command line tools.  If SmartLDAP is in use (i.e. configured in
      | compositeGroupServices.xml), the bean MUST be initialized before GroupService attempts to use it.
      +-->
-    <bean id="smartLdapGroupStore" class="org.jasig.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false">
+    <bean id="smartLdapGroupStore" class="org.apereo.portal.groups.smartldap.SmartLdapGroupStore" lazy-init="false">
 
         <!--
          | This property is the ContextSource instance that will be used to connect to LDAP.  Uncomment the
@@ -91,7 +91,7 @@
          | implementation used in reading the groups records from LDAP.
          +-->
         <property name="attributesMapper">
-            <bean id="attributesMapper" class="org.jasig.portal.groups.smartldap.SimpleAttributesMapper">
+            <bean id="attributesMapper" class="org.apereo.portal.groups.smartldap.SimpleAttributesMapper">
                 <!--
                  | Name of the group attribute that tells you its key.
                  +-->

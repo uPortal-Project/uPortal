@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.jasig.portal.portlets-overlay</groupId>
         <artifactId>uportal-portlets-overlay</artifactId>
-        <version>4.4.0-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -43,13 +43,6 @@
             <type>war</type>
         </dependency>
         
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uportal-db</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
     
 
@@ -90,13 +83,6 @@
                     <dependentWarExcludes>
                         WEB-INF/lib/hsqldb-*.jar
                     </dependentWarExcludes>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
            <plugin>
