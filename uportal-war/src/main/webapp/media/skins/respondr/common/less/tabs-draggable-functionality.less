@@ -1,0 +1,243 @@
+
+/*fl-theme-mist is used within responder, hence namespaving to it. */
+
+#portalNavigation{
+	
+/* 	.fl-tabs{
+		padding:0;
+		text-align:left;		
+		li{
+			display:inline-block;
+			position:relative;
+			background-color:#ededed;
+			padding:5px 20px 5px 20px;
+			border-left:1px solid #efefef;
+			border-right:1px solid #d3d3d3;
+			border-top:1px solid #d3d3d3;
+			cursor:pointer;
+			white-space:nowrap;
+			&:hover{
+				background-color:#dadada
+			}
+			&.fl-tabs-active,.fl-theme-mist .fl-tabs li.fl-tabs-active:hover,
+			&.fl-activeTab,.fl-theme-mist .fl-tabs li.fl-activeTab:hover{
+				background-color:#FFF
+			}
+		}
+	}*/
+	
+	portal-navigation-add{
+		display:none;
+	}
+	.portal-navigation-delete{
+		display:none;
+		//display:block;
+		position:absolute;
+		text-decoration:none;
+		border:0;
+		span{
+			visibility:hidden;
+			display:block;
+			width:16px;
+			height:16px;
+			overflow:hidden;
+		}
+	}
+	.portal-navigation-gripper{
+ 		display:none; /*by default these are hidden. */
+	}
+	/*when the li is active do this */
+	.active{
+		&.deletable{
+			.portal-navigation-delete{
+				/*position in the top right of the tab */
+				top:0;
+				right:0;
+				cursor:pointer;
+				padding:0;
+				display:block;
+			}
+		}
+		&.movable{
+			.portal-navigation-gripper{
+				height: 36px;
+			    overflow: hidden;
+			    width: 17px;
+			   /* display:block !important;*/
+				display:inline-block;
+			    z-index: 10000;
+			}						
+		}
+		&.editable{
+			.fl-inlineEditContainer{
+			/*	display:inline-block !important;*/
+			}
+			
+		}
+		.portal-navigation-gripper{
+			span{
+				visibility:hidden;
+				display:block;
+				width:16px;
+				height:16px;
+				overflow:hidden;
+			}
+		}		
+	}
+	/*end active */
+	
+	.portal-flyout-container {
+		.portal-subnav-list{
+			#movePageLeftLink,
+			#movePageRightLink,
+			#editPageLink,
+			#deletePageLink{
+				display:none;
+			}		
+		
+		}
+	}
+	.on-top{
+		z-index:1000000;
+	}
+	
+}
+
+/*ghost avater styling of tabs */
+.portlet.ui-draggable-dragging{
+	border:1px solid #f68923;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius-topright:0;
+	-moz-border-radius-topright:0;
+	-webkit-border-top-right-radius:0;
+	padding:0;
+	margin:0;
+	list-style:none;
+	-moz-box-shadow:0 0 4px 0 #333;
+	-webkit-box-shadow:0 0 4px 0 #333;
+	box-shadow:0 0 4px 0 #333;
+	background:#333;
+	position:relative;
+	background-image:-moz-linear-gradient(90deg,#000,#333);
+	background-image:-webkit-gradient(linear,0% 0,0% 100%,from(#000),to(#333));
+	height:80px;width:auto;
+	overflow:hidden;
+	-ms-filter:"alpha(opacity=80)";
+	filter:alpha(opacity=80);
+	.portlet-thumb-link{
+		position:absolute;
+		top:0;
+		right:0;
+		display:block;
+		color:#000;
+		text-decoration:none;
+		font-size:77%;
+		padding:2px 8px;
+		background:#666;
+		background-image:-moz-linear-gradient(90deg,#666,#fff);
+		background-image:-webkit-gradient(linear,0% 0,0% 100%,from(#666),to(#fff));
+		text-align:center;
+		cursor:move;
+		background:#f68923;
+		background-image:-moz-linear-gradient(90deg,#f68923,#fff);
+		background-image:-webkit-gradient(linear,0% 0,0% 100%,from(#f68923),to(#fff))
+	}
+
+	.portlet-thumb-gripper{
+		display:block;
+		background:url("/uPortal/media/skins/manchester/common/images/icon-grab-01-01.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0) 5px 0 no-repeat;
+		cursor:move;
+		-moz-border-radius-topleft:5px;
+		-webkit-border-top-left-radius:5px;
+		border-top-left-radius:5px;
+		span{
+			display:block;
+			width:16px;
+			height:16px;
+			overflow:hidden;
+			visibility:hidden;
+		}
+	}
+	.portlet-thumb-titlebar{
+		padding:5px 8px 3px 8px;
+		font-size:11px;
+		font-weight:bold;
+		color:#DDD;
+	}
+	
+}
+
+.fl-reorderer-header-avatar .portal-navigation-delete,
+.fl-reorderer-header-avatar .portal-navigation-gripper
+
+{display:block;position:absolute;padding:0;border:0;text-decoration:none}
+
+.fl-reorderer-header-avatar{
+	display:inline;
+	position:relative;
+	padding:5px 20px 5px 20px;
+	cursor:pointer;
+	background-color:#FFF;
+	border:2px solid #660099;
+	filter:alpha(opacity=70);
+	opacity:.7;
+	.portal-navigation-delete{
+		display:block;
+		width:16px;
+		height:16px;
+		overflow:hidden;
+		top:0;
+		right:0;
+		cursor:pointer;
+		background:transparent url("../images/remove.png") 0 0 no-repeat;/*get remove img, or use font awesome content */
+		span{
+			visibility:hidden;
+						/*if this doesnt work, put 		display:block;
+		width:16px;
+		height:16px;
+		overflow:hidden;
+		* 
+		* here */
+		}
+	}
+	.portal-navigation-gripper{
+		display:block;
+		width:16px;
+		height:16px;
+		overflow:hidden;
+		background:url("/uPortal/media/skins/manchester/common/images/icon-grab-01-01.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0) 5px 0 no-repeat;
+		span{
+			visibility:hidden;
+			/*if this doesnt work, put 		display:block;
+		width:16px;
+		height:16px;
+		overflow:hidden;
+		* 
+		* here */
+		}
+	}
+	.portal-navigation-link{
+		color:#222!important;
+		text-decoration:none;
+	}
+	.portal-flyout-container{
+		display:none!important;
+	}
+}
+
+.fl-reorderer-header-dropMarker{
+	//+display:block;
+	float:left;
+	//+border:1px solid #d26600!important;
+	background-color:#660099!important;
+	margin:0 2px!important;
+	filter:alpha(opacity=80)!important;
+	opacity:.8!important;
+	padding:.5em .5em!important;
+	/*display:inline!important;
+	*height:10px;
+	*padding:0 .13em!important;
+	*zoom:1!important*/
+}
