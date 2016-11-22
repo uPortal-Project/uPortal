@@ -21,250 +21,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <c:set var="n"><portlet:namespace/></c:set>
 <c:set var="rootContext">${pageContext.request.contextPath}</c:set>
-<style>
-
-    #${n}{
-        min-height:250px;
-    }
-    #${n} .marketplace_portlet_title{
-        font-family: 'Arial Bold', 'Arial';
-        font-weight:700;
-        font-size:18px;
-        color:#26507D;
-        text-align:left;
-    }
-    #${n} .marketplace_description_body{
-        font-family:'Arial';
-        font-weight:400;
-        font-size:12px;
-        color:#000000;
-        text-align:left;
-    }
-    #${n} .marketplace_dropdown_menu li a{
-        font-size:14px;
-        text-align:left;
-        color:#000000;
-    }
-    #${n} .marketplace_dropdown_button{
-        background-color:#666666;
-        color:#FFFFFF
-    }
-    <%--#${n} .marketplace_dropdown_button:first-child{--%>
-        <%--color:#FFFFFF--%>
-    <%--}--%>
-    #${n} .marketplace_button_group>.btn-group:last-child>.btn:first-child{
-        border-bottom-left-radius:5px;
-        border-top-left-radius:5px;
-    }
-    #${n} .marketplace_button_group>.btn-group:first-child>.dropdown-toggle{
-        border-top-right-radius:5px;
-        border-bottom-right-radius:5px;
-    }
-    #${n} .marketplace_carousel_inner div img{
-        margin:auto;
-    }
-    #${n} .marketplace_section_header{
-        font-family:'Arial Bold', 'Arial';
-        font-weight:700;
-        font-size: 16px;
-        color:#000000;
-        text-align:left;
-        font-style: normal;
-        text-transform:uppercase;
-    }
-    #${n} .marketplace_release_date{
-        font-family:'Arial';
-        font-weight:400;
-        font-size:14px;
-        color: #000000;
-        text-align:left;
-        font-style:normal;
-        padding-left:5px;
-    }
-    #${n} .marketplace_release_notes{
-        padding-left:0px;
-    }
-
-    #${n} .marketplace_release_note{
-        display:none;
-    }
-
-    #${n} li{
-        font-family:'Arial';
-        font-weight:400;
-        font-size:14px;
-        color:#000000;
-        text-align:left;
-        font-style:normal;
-        list-style:none;
-        padding-left:20px;
-    }
-
-    #${n} .marketplace_show{
-        display:block;
-    }
-    
-    #${n} #marketplace_show_more_less_link{
-        font-family: 'Arial';
-        font-weight: 400;
-        font-size: 14px;
-        color: #26507D;
-        float: right;
-        cursor: pointer;
-    }
-    
-    #${n} .marketplace_average_rating .rating-input{
-       padding: 0;
-    }
-    
-    #${n} .marketplace_user_rating {
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin: 10px;
-    }
-
-    #${n} .carousel-container {
-        margin: 0 auto;
-    }
-
-    #${n} .marketplace_carousel_inner .carousel-caption {
-        background-color: rgba(32, 32, 32, 0.2);
-        border-radius: 25px;
-        -moz-border-radius: 25px;
-        -webkit-border-radius: 25px;
-    }
-    
-    #${n} .marketplace_carousel_inner img {
-        max-height : 20em;
-        position:absolute;
-        top:0;
-        bottom:0;
-        right:0;
-        left:0;
-    }
-    
-    #${n} .marketplace_carousel_inner .item{
-        height: 20em;
-    }
-
-    #${n} #${n}marketplace_user_review_input, #${n}marketplace_user_rating_submit_button{
-        margin-top: 1em;
-        margin-bottom: 1em;
-    }
-
-    #${n} .marketplace_dropdown_menu {
-        margin: 0;
-        padding: 0;
-    }
-
-    #${n} .marketplace_dropdown_menu li {
-        margin: 0;
-        padding: 0;
-    }
-
-    #${n} .marketplace_dropdown_menu li a[disabled] {
-        color: #666666;
-        background-color: #c0c0c0;
-    }
-
-    #${n} .marketplace_section.row {
-        margin-right: 15px;
-        padding: 20px 0;
-    }
-
-    #${n} .marketplace_section .panel {
-        border: none;
-        border-radius: 0;
-        -webkit-border-radius: 0;
-        -moz-border-radius: 0;
-        box-shadow: none;
-        -webkit-box-shadow: none;
-        -moz-box-shadoe: none;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box {
-        height: 112px;
-        max-height: 112px;
-        margin: 0;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #dddddd;
-        -webkit-border-radius: 8px;
-        -moz-border-radius: 8px;
-        box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-        -webkit-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-        -moz-box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
-        overflow: hidden;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box:hover {
-        background-color: #eee;
-        cursor: pointer;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box a {
-        width: 100%;
-        display: block;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box a:hover {
-        text-decoration: none;
-        color: #000000;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box .portlet-icon {
-        width: 92px;
-        height: 92px;
-        max-height: 92px;
-        background-color: #eee;
-        margin-right: 15px;
-        float: left;
-        border:3px solid #999;
-        text-align: center;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box .portlet-icon img {
-        width: 72px;
-        height: 72px;
-        margin-top: 7px;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box .portlet-details {
-        text-align: left;
-        color: #000;
-        margin-right: 0;
-    }
-
-    #${n} .marketplace_section .panel .portlet-box .portlet-details h5 {
-        font-size: 16px;
-        margin: 0 0 3px 0;
-    }
-
-
-    #${n} .marketplace_section .panel .portlet-box .portlet-details p {
-        font-size: 11px;
-        margin: 0;
-    }
-
-    #${n} .header-info-wrapper {
-        margin-top: 20px;
-    }
-
-    #${n} .header-info-wrapper .header-img {
-        padding-right: 0;
-    }
-
-    #${n} .header-info-wrapper img {
-        margin-top: 20px;
-        float: right;
-    }
-
-    #${n} .spacer {
-        display: block;
-        margin-top: 20px;
-    }
-</style>
 
 <script type="text/template" id="${n}options-menu">
     <li>
@@ -309,9 +65,9 @@
     {% if (screenShots.length > 0) { %}
         <div class="row">
             <div class="col-md-12">
-                <h1>
+                <h2>
                     <spring:message code="screenshots.cap" text="Screenshots/Videos"/>
-                </h1>
+                </h2>
             </div>
         </div>
         <div class="row">
@@ -358,22 +114,8 @@
                 <portlet:renderURL var="initialViewURL" windowState="MAXIMIZED"/>
                 <a class="btn btn-default" href="${initialViewURL}"><i class="fa fa-arrow-left"></i> <spring:message code="back.to.list" text="Back to List"/></a>
             </div>
-            <div class="col-md-offset-5 col-md-6 col-xs-6" class="${n}go_button">
-                <div class="btn-group marketplace_button_group" style="float:right">
-                    <a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button"
-                       class="btn btn-default marketplace_dropdown_button" role="button">
-                        <spring:message code="go" text="Go"/>
-                    </a>
-                    <button type="button" class="btn btn-default dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
-                        <spring:message code="options" text="Options"/>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu marketplace_dropdown_menu" role="menu" style="right: 0; left: auto;">
-                    </ul>
-                </div>
-            </div>
         </div>
-        <div class="row header-info-wrapper">
+        <div class="row header-info-wrapper margin-top">
             <div class="col-sm-1 header-img">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                     <c:choose>
@@ -387,19 +129,78 @@
             </div>
             <div class="col-sm-11">
                 <div class="marketplace_description_title">
-                    <h1>${marketplaceEntry.title}</h1>
+                    <h1 class = "fivepx-margin-top">${marketplaceEntry.title}</h1>
                 </div>
                 <div class="marketplace_description_body">
                     <p>${marketplaceEntry.description}</p>
                 </div>
             </div>
-        </div>
+			<div class="${n}go_button margin-top col-xs-12">
+				<div class="btn-group marketplace_button_group">
+					<a href="${marketplaceEntry.renderUrl}" id="marketplace_go_button" class="btn btn-default btn-sm marketplace_dropdown_button" role="button">
+						<spring:message code="go" text="Go"/>
+					</a>
+					<button type="button" class="btn btn-default btn-sm dropdown-toggle marketplace_dropdown_button" data-toggle="dropdown">
+						<spring:message code="options" text="Options"/>
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu marketplace_dropdown_menu" role="menu">
+					</ul>
+					<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#${n}-feedback-modal"><span class = "fa fa-pencil"></span><span class = "padding-left">Rate this application</span></button>
+				</div>
+  				<!-- Modal -->
+				<div class="modal fade" id="${n}-feedback-modal" role="dialog">
+					<div class="modal-dialog">
+    
+						<!-- Modal content-->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;
+								</button>
+									<h4 class="modal-title">Rate the ${marketplaceEntry.title}
+									</h4>
+ 							</div>
+								<div class="modal-body">
+          					<!-- 	<div class="row">
+				            <div class="col-xs-12"> -->
+									<div class="marketplace_user_rating">
+										<h3><spring:message code="rate.this.portlet" text="Rate this portlet"/>
+										</h3>
+										<div id="${n}marketplace_rating_instructions" class="help-block">
+										</div>
+										<form id="${n}save_rating_form">
+											<div class="form-group">
+												<input id="${n}marketplace_user_rating" placeholder="Write a review.." type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
+											</div>
+											<c:if test="${enableReviews}">
+												<div class="form-group">
+													<textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-md-6" rows="3"></textarea>
+														<div id="${n}input_chars_remaining" class = "character-limit"></div>
+												</div>
+											</c:if>				                      
+										</form>
+									</div>
+				
+				          <!--   </div>
+				        </div> -->
+								</div>
+								<div class="modal-footer">
+									<a id="${n}marketplace_user_rating_submit_button" class="btn btn-primary disabled" href = "#">Submit</a>
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							</div>
+      
+						</div>
+					</div>
+				
+				</div>
+			</div>
         <div class="row">
             <div class="col-sm-12 screen-shot-section"></div>
         </div>
         <div class="row">
             <div class="col-xs-12">
-                <h1><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h1>
+                <h2><spring:message code="rating.and.review.cap" text="Ratings & Reviews"/></h2>
                 <div class="col-xs-3 marketplace_average_rating">
                     <div>
                         <input type="number" data-max="5" data-min="1" value="${marketplaceEntry.rating}" data-readonly="true" name="My Rating System" id="Demo" class="rating"/>
@@ -410,32 +211,8 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="marketplace_user_rating">
-                    <h4><spring:message code="rate.this.portlet" text="Rate this portlet"/></h4>
-                    <div id="${n}marketplace_rating_instructions" class="help-block"></div>
-                    <form id="${n}save_rating_form">
-                        <div class="form-group">
-                            <input id="${n}marketplace_user_rating" type="number" data-max="5" data-min="1" value="${marketplaceRating.rating}" name="rating" class="rating"/>
-                        </div>
-                        <c:if test="${enableReviews}">
-                        <div class="form-group">
-                            <textarea id="${n}marketplace_user_review_input" name="review" class="form-control col-xs-12 col-med-6" rows="3"></textarea>
-                            <div id="${n}input_chars_remaining"></div>
-                        </div>
-                        </c:if>
-                        <div class="form-group">
-                            <button id="${n}marketplace_user_rating_submit_button" type="submit" class="btn btn-default disabled"><spring:message code="submit" text="Submit"/></button>
-                        </div>
-                    </form>
-                    <div class="clearfix"></div>
-                </div>
-
-            </div>
-        </div>
         <c:if test="${not empty  marketplaceEntry.portletReleaseNotes.releaseNotes}">
-            <div class="row clearfix">
+            <div class="row">
                 <div class = "col-xs-12 col-md-4">
                     <br>
                     <p>
@@ -462,42 +239,52 @@
                 </div>
             </div>
         </c:if>
-
-        <div class="spacer clearfix"></div>
-
+        
         <c:set var="relatedPortlets" value="${marketplaceEntry.relatedPortlets}"/>
         <c:if test="${not empty relatedPortlets}">
-            <h1><spring:message code="related.portlets" text="Related Portlets"/></h1>
-            <div class="marketplace_section row clearfix">
+            <h2><spring:message code="related.portlets" text="Related Portlets"/></h2>
+            <div class="row releated-portlets">
                 <c:url value="/media/skins/icons/mobile/default.png" var="defaultIcon"/>
                 <c:forEach var="relatedPortlet" items="${relatedPortlets}" varStatus="status">
                     <portlet:renderURL var="entryURL" windowState="MAXIMIZED" >
                         <portlet:param name="action" value="view"/>
                         <portlet:param name="fName" value="${relatedPortlet.fname}"/>
                     </portlet:renderURL>
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="panel panel-default">
-                            <div class="row portlet-box">
-                                <a href="${entryURL}">
-                                    <div class="portlet-icon">
-                                        <c:choose>
-                                            <c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
-                                                <img src="${defaultIcon}">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                    <div class="portlet-details">
-                                        <h5><c:out value="${relatedPortlet.title}"/></h5>
-                                        <p><c:out value="${relatedPortlet.description}"/></p>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <c:if test="${(status.index + 1) mod 4 == 0}">
+                    
+                    <div class = "image-panel-container">
+	                    <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 image-panel">
+							<a href="${entryURL}">
+								<div>
+									<div class="embed-responsive embed-responsive-4by3">
+										<div class="embed-responsive-item image-background-styles">
+											<c:choose>
+												<c:when test="${empty relatedPortlet.getParameter('mobileIconUrl')}">
+													<img src="${defaultIcon}">
+												</c:when>
+												<c:otherwise>
+													<img src="${relatedPortlet.getParameter('mobileIconUrl').value}">
+												</c:otherwise>
+											</c:choose>
+											<h3 class = "header">
+												<c:out value="${relatedPortlet.title}"/>
+											</h3>
+										</div>
+									</div>
+									<div class="embed-responsive embed-responsive-16by9 description-background">
+										<div class="embed-responsive-item description-text">
+											<c:out value="${relatedPortlet.description}"/>
+										</div>
+									</div>
+									<div class = "call-to-action">
+										<a href="${entryURL}" class = "goto">
+											Read more
+										</a>
+									</div>
+								</div>
+							</a>
+	                    </div>
+	                  </div>
+                    <c:if test="${(status.index + 1) mod 6 == 0}">
                         <div class="clearfix"></div>
                     </c:if>
                 </c:forEach>
@@ -506,27 +293,23 @@
         <c:set var="portletCategories" value="${marketplaceEntry.categories}"/>
         <c:if test="${not empty portletCategories}">
             <div class="row">
-            <div class = "col-xs-12 col-md-4">
-                <span class="marketplace_section_header"><spring:message code="categories" text="CATEGORIES" /></span>
-                    <c:forEach var="portletCategory" items="${portletCategories}">
-                        <portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
-                            <portlet:param name="initialFilter" value="${portletCategory}"/>
-                        </portlet:renderURL>
-                        <li>- <a href="${initialViewWithFilterURL}">${portletCategory}</a></li>
-                    </c:forEach>
-                </div>
+	            <div class = "col-xs-12 col-md-4">
+	                <h3>
+	                	<spring:message code="categories" text="CATEGORIES" />
+	                </h3>
+	                <ul class = "list-unstyled">
+						<c:forEach var="portletCategory" items="${portletCategories}">
+							<portlet:renderURL var="initialViewWithFilterURL" windowState="MAXIMIZED">
+								<portlet:param name="initialFilter" value="${portletCategory}"/>
+							</portlet:renderURL>
+							 <li>
+							 	<a href="${initialViewWithFilterURL}">${portletCategory}</a>
+							 </li>
+						</c:forEach>
+					</ul>
+				</div>
             </div>
-            <br>
         </c:if>
-        <div class="row col-xs-12" style="clear:both;">
-            <div class="col-xs-4">
-            </div>
-            <div class="col-xs-4">
-            </div>
-            <div class="col-xs-4" style="float:left">
-
-            </div>
-        </div>
     </div>                      
 </div>
 <div class="modal fade" id="${n}copy-modal" tabindex="-1" role="dialog" aria-labelledby="LinkToModal" aria-hidden="true">
@@ -891,32 +674,35 @@
         }
 
         <c:if test="${enableReviews}">
-        // Optional Reviews feature...
-        var updateCharactersRemaining = function() {
-            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit) {
-                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
-            }
-            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
-            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
-            if(remainingCharsAvailable <= 10) {
-                $("#${n}input_chars_remaining").css("color","red");
-            }
-            else{
-                $("#${n}input_chars_remaining").css("color","black");
-            }
-        };
-        updateCharactersRemaining();
-        $("#${n}marketplace_user_review_input").keyup(function() {
-            updateCharactersRemaining();
-        });
+	        // Optional Reviews feature...
+	        var updateCharactersRemaining = function() {
+	            if($("#${n}marketplace_user_review_input").val().length > defaults.textReviewCharLimit) {
+	                $("#${n}marketplace_user_review_input").val($("#${n}marketplace_user_review_input").val().substr(0, defaults.textReviewCharLimit));
+	            }
+	            remainingCharsAvailable = defaults.textReviewCharLimit - $("#${n}marketplace_user_review_input").val().length;
+	            $("#${n}input_chars_remaining").html('<spring:message code="characters.remaining" text="Characters Remaining: "/> &nbsp' + remainingCharsAvailable);
+	            if(remainingCharsAvailable <= 10) {
+	                $("#${n}input_chars_remaining").css("color","red");
+	            }
+	            else{
+	                $("#${n}input_chars_remaining").css("color","black");
+	            }
+	        };
+	        updateCharactersRemaining();
+	        $("#${n}marketplace_user_review_input").keyup(function() {
+	            updateCharactersRemaining();
+	        });
         </c:if>
 
+        
         // Submit function
-        $("#${n}save_rating_form").submit(function (e) {
+        $("#${n}marketplace_user_rating_submit_button").click(function (e) {
+        	
             var reviewText = $("#${n}marketplace_user_review_input").val();
             $.ajax({
                 url: '${saveRatingUrl}',
-                data: {rating: $("#${n}marketplace_user_rating").val(),
+                data: {
+                	rating: $("#${n}marketplace_user_rating").val(),
                     portletFName: "${marketplaceEntry.fname}",
                     review: reviewText ? reviewText.trim() : ''},
                 type: 'POST',
@@ -931,6 +717,8 @@
                      arguments="${marketplaceEntry.title}"
                      htmlEscape="false"
                  />');
+                     $('#${n}-feedback-modal').modal('toggle');
+                     reviewText.val("");
                 },
                 error: function() {
                     $('#up-notification').noty({
@@ -938,6 +726,8 @@
                         layout: 'TopCenter',
                         type: 'error'
                     });
+                    $('#${n}-feedback-modal').modal('toggle');
+                    reviewText.val("");
                 }
             });
             e.preventDefault();
