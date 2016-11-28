@@ -307,18 +307,31 @@
     <div id="toolbar_{@ID}" class="fl-widget-titlebar up-portlet-titlebar up-standard-chrome round-top"> <!-- Portlet toolbar. -->
       <!-- Portlet Title -->
       <h2 class="portlet-title round-top">
-        <xsl:variable name="portletMaxUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-              <url:portal-url>
-                <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-              </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
         <!-- Reference anchor for page focus on refresh and link to focused view of channel. -->
-        <a id="{@ID}" href="{$portletMaxUrl}"><xsl:value-of select="@title"/></a>
+        <xsl:element name="a">
+          <xsl:attribute name="id"><xsl:value-of select="@ID"/></xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
+              <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
+              <xsl:attribute name="target">_blank</xsl:attribute>
+              <xsl:attribute name="class">externalLink</xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:variable name="portletMaxUrl">
+                <xsl:call-template name="portalUrl">
+                  <xsl:with-param name="url">
+                    <url:portal-url>
+                      <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                      <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+                    </url:portal-url>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:variable>
+              <xsl:attribute name="href"><xsl:value-of select="$portletMaxUrl" /></xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:value-of select="@title"/>
+        </xsl:element>
         <xsl:call-template name="controls">
           <xsl:with-param name="STYLE">standard</xsl:with-param>
         </xsl:call-template>
@@ -505,18 +518,32 @@
 
       <!-- Focus Icon -->
       <xsl:if test="not(//focused) and not(//layout_fragment) and @windowState!='minimized'">
-        <xsl:variable name="portletMaxUrl">
-          <xsl:call-template name="portalUrl">
-            <xsl:with-param name="url">
-                <url:portal-url>
-                    <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
-                    <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
-                </url:portal-url>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:variable>
         <li>
-          <a href="{$portletMaxUrl}" title="{upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)}" class="up-portlet-control focus"><xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/></a>
+          <xsl:element name="a">
+            <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('enter.maximized.mode.for.this.portlet', $USER_LANG)" /></xsl:attribute>
+            <xsl:choose>
+              <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
+                <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
+                <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:attribute name="class">up-portlet-control focus externalLink</xsl:attribute>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:variable name="portletMaxUrl">
+                  <xsl:call-template name="portalUrl">
+                    <xsl:with-param name="url">
+                      <url:portal-url>
+                        <url:layoutId><xsl:value-of select="@ID"/></url:layoutId>
+                        <url:portlet-url state="MAXIMIZED" copyCurrentRenderParameters="true" />
+                      </url:portal-url>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </xsl:variable>
+                <xsl:attribute name="href"><xsl:value-of select="$portletMaxUrl" /></xsl:attribute>
+                <xsl:attribute name="class">up-portlet-control focus</xsl:attribute>
+              </xsl:otherwise>
+            </xsl:choose>
+            <xsl:value-of select="upMsg:getMessage('maximize', $USER_LANG)"/>
+          </xsl:element>
         </li>
       </xsl:if>
 
