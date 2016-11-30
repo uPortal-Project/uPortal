@@ -36,7 +36,7 @@
 
     <!-- Portlet Body -->
     <div class="fl-widget-content portlet-body" role="main">
-  
+
         <!-- Portlet Section -->
         <div id="${n}search" class="portlet-section" role="region">
 
@@ -44,7 +44,7 @@
 
                 <form id="${n}searchForm" action="${ formUrl }" class="form-inline" style="margin-bottom:10px;" method="POST">
                     <div class="form-group">
-                        <input id="${n}searchInput" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}"/>
+                        <input id="${n}searchInput" type="search" class="searchInput form-control" name="query" value="${ fn:escapeXml(query )}" aria-label="<spring:message code="search"/>"/>
                         <input id="${n}searchButton" type="submit" class="btn btn-default" value="<spring:message code="search.submit"/>"/>
                     </div>
                 </form>
