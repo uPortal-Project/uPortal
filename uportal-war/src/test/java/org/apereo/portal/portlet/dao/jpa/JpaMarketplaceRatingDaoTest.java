@@ -103,11 +103,13 @@ public class JpaMarketplaceRatingDaoTest extends BasePortalJpaDaoTest{
             	//Just a quick assertion that this is utilizing the correct db
         		assertEquals(portletList.size(), 0);
                 //Create portletType
-            	final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
-            	//Create a definition
-                portletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                final IPortletType channelType = jpaChannelTypeDao.createPortletType("BaseType", "foobar");
+                //Create a definition
+                final IPortletDefinition portletDef1 = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                portletDefinitionDao.savePortletDefinition(portletDef1);
                 //Create a second definition with the same app/portlet
-                portletDefinitionDao.createPortletDefinition(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                final IPortletDefinition portletDef2 = new PortletDefinitionImpl(channelType, "fname2", "Test Portlet 2", "Test Portlet 2 Title", "/uPortal", "portletName2", true);
+                portletDefinitionDao.savePortletDefinition(portletDef2);
                 return null;
             }
         });
