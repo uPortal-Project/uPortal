@@ -25,6 +25,7 @@
 <%@ attribute name="path"    required="true" %>
 <%@ attribute name="name"    required="false" %>
 <%@ attribute name="values"  required="false" type="java.util.Collection" %>
+<%@ attribute name="id"    required="false" %>
 
 <c:choose>
 
@@ -51,10 +52,10 @@
       <!-- Textarea -->
         <c:choose>
             <c:when test="${ values != null }">
-                <textarea class="form-control">${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
+                <textarea id="${ id }" class="form-control">${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}</textarea>
             </c:when>
             <c:otherwise>
-                <form:textarea path="${path}"/>
+                <form:textarea id="${ id }" path="${path}"/>
             </c:otherwise>
         </c:choose>
       </c:when>
@@ -62,16 +63,16 @@
       <!-- Text input -->
         <c:choose>
             <c:when test="${ values != null }">
-                <input name="${fn:escapeXml(path)}" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" class="form-control" />
+                <input name="${fn:escapeXml(path)}" id="${ id }" value="${ fn:escapeXml(fn:length(values) > 0 ? values[0] : '' )}" class="form-control" />
             </c:when>
             <c:otherwise>
-                <form:input path="${path}"/>
+                <form:input id="${ id }" path="${ path }"/>
             </c:otherwise>
         </c:choose>
       </c:otherwise>
     </c:choose>
   </c:when>
-  
+
   <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.SingleChoicePreferenceInput') }">
   <!-- Single-value choice input types -->
     <c:choose>
@@ -90,7 +91,7 @@
       </c:otherwise>
     </c:choose>
   </c:when>
-  
+
   <c:when test="${ up:instanceOf(input, 'org.apereo.portal.portletpublishing.xml.MultiChoicePreferenceInput') }">
   <!-- Multi-value choice input types -->
     <c:choose>
@@ -109,5 +110,5 @@
       </c:otherwise>
     </c:choose>
   </c:when>
-  
+
 </c:choose>
