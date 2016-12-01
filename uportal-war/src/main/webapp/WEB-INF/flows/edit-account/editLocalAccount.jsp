@@ -62,17 +62,7 @@
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="attribute.name"/>
-                                </th>
-                                <th>
-                                    <spring:message code="attribute.value"/>
-                                </th>
-                            </tr>
-                        </thead>
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
                             <c:if test="${ accountForm.id < 0 }">
                                 <tr>
@@ -120,17 +110,7 @@
                 </div>
                 <div id="${n}standardAttributes" class="content">
 
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="attribute.name"/>
-                                </th>
-                                <th>
-                                    <spring:message code="attribute.value"/>
-                                </th>
-                            </tr>
-                        </thead>
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
 
                             <!-- Print out each attribute -->
@@ -169,17 +149,7 @@
                 </div>
                 <div id="${n}customAttributes" class="content">
 
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <spring:message code="attribute.name"/>
-                                </th>
-                                <th colspan="2">
-                                    <spring:message code="attribute.value"/>
-                                </th>
-                            </tr>
-                        </thead>
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
 
                             <!-- Print out each attribute -->
