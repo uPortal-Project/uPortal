@@ -128,7 +128,7 @@
         <div id="column_{@ID}" class="portal-page-column {$POSITION_CSS_CLASS} {$WIDTH_CSS_CLASS} {$MOVABLE} {$DELETABLE} {$EDITABLE} {$CAN_ADD_CHILDREN} {$FRAGMENT_OWNER_CSS}"> <!-- Unique column_ID needed for drag and drop. -->
           <div id="inner-column_{@ID}" class="portal-page-column-inner"> <!-- Column inner div for additional presentation/formatting options.  -->
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
-                <div class="column-permissions"><a class="button portal-column-permissions-link" href="javascript:;"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
+                <div class="column-permissions"><a class="button portal-column-permissions-link" href="#"><span class="icon permissions"></span><xsl:value-of select="upMsg:getMessage('edit.column.x.permissions', $USER_LANG, $NUMBER)"/></a></div>
             </xsl:if>
             <xsl:apply-templates select="channel|blocked-channel"/> <!-- Render the column's portlets.  -->
           </div>
@@ -439,7 +439,7 @@
 
           <xsl:if test="$AUTHENTICATED='true'">
             <li>
-              <a href="javascript:;" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
+              <a href="#" title="{upMsg:getMessage('rate.this.portlet', $USER_LANG)}" class="rateThisPortlet{@ID}" data-toggle="modal" data-target="#ratePortletModal{@ID}">
                 <span><xsl:value-of select="upMsg:getMessage('rate.this.portlet', $USER_LANG)"/></span>
               </a>
             </li>
@@ -450,7 +450,7 @@
               <xsl:choose>
                   <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
                       <li>
-                          <a href="javascript:;" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
+                          <a href="#" title="{upMsg:getMessage('add.this.portlet.to.my.favorite', $USER_LANG)}"
                              class="addToFavoriteLink{@chanID}">
                               <span><xsl:value-of select="upMsg:getMessage('add.to.my.favorites', $USER_LANG)"/></span>
                           </a>
@@ -469,7 +469,7 @@
                   </xsl:when>
                   <xsl:otherwise><!-- Remove From favorites. -->
                       <li>
-                          <a href="javascript:;"
+                          <a href="#"
                              title="{upMsg:getMessage('remove.this.portlet.from.my.favorite', $USER_LANG)}"
                              class="removeFromFavoriteLink{@chanID}">
                               <span><xsl:value-of select="upMsg:getMessage('remove.from.my.favorites', $USER_LANG)"/></span>
@@ -498,7 +498,7 @@
           <!-- Add if not in layout and user has BROWSE permission to portlet -->
           <xsl:if test="//focused[@in-user-layout='no'] and $AUTHENTICATED='true' and upAuth:hasPermission('UP_PORTLET_SUBSCRIBE', 'BROWSE', $permissionChannelId)">
               <li>
-                  <a id="focusedContentDialogLink" href="javascript:;"
+                  <a id="focusedContentDialogLink" href="#"
                      title="{upMsg:getMessage('add.this.portlet.to.my.layout', $USER_LANG)}" class="up-portlet-control add">
                       <span><xsl:value-of select="upMsg:getMessage('add.to.my.layout', $USER_LANG)"/></span>
                   </a>
@@ -691,7 +691,7 @@
 
           <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
             <li>
-              <a class="up-portlet-control permissions portlet-permissions-link" href="javascript:;" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
+              <a class="up-portlet-control permissions portlet-permissions-link" href="#" title="{upMsg:getMessage('edit.permissions.for.this.portlet', $USER_LANG)}"><xsl:value-of select="upMsg:getMessage('edit.permissions', $USER_LANG)"/></a>
             </li>
           </xsl:if>
         </ul>

@@ -157,10 +157,10 @@
                                                 <c:forEach var="value" items="${ attribute.value.value }">
                                                     <div>
                                                          <input type="text" name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
-                                                         <a class="delete-attribute-value-link" href="javascript:;"><spring:message code="remove"/></a>
+                                                         <a class="delete-attribute-value-link" href="#"><spring:message code="remove"/></a>
                                                     </div>
                                                 </c:forEach>
-                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+                                                <a class="add-attribute-value-link" href="#" paramName="${fn:escapeXml(name)}">
                                                 <spring:message code="add.value"/></a>
                                             </c:when>
                                             <c:otherwise>
@@ -170,13 +170,13 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td><a class="delete-attribute-link" href="javascript:;"><spring:message code="remove"/></a></td>
+                                    <td><a class="delete-attribute-link" href="#"><spring:message code="remove"/></a></td>
                                 </tr>
                             </c:forEach>
 
                             <tfoot>
                                 <td colspan="3">
-                                    <a class="add-attribute-link" href="javascript:;">
+                                    <a class="add-attribute-link" href="#">
                                     <spring:message code="add.attribute"/></a>
                                 </td>
                             </tfoot>

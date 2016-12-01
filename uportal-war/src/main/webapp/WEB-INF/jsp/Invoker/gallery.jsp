@@ -25,16 +25,16 @@
         <div class="fl-col-side fl-force-left menu-wrapper">
             <ul class="menu" role="menu">
                 <li class="add-content-link active" role="tab">
-                    <a href="javascript:;"><span><spring:message code="add.stuff"/></span></a>
+                    <a href="#"><span><spring:message code="add.stuff"/></span></a>
                 </li>
                 <li class="use-content-link" role="tab">
-                    <a href="javascript:;"><span><spring:message code="use.it"/></span></a>
+                    <a href="#"><span><spring:message code="use.it"/></span></a>
                 </li>
                 <li class="skin-link" role="tab">
-                    <a href="javascript:;"><span><spring:message code="colors"/></span></a>
+                    <a href="#"><span><spring:message code="colors"/></span></a>
                 </li>
                 <li class="layout-link last" role="tab">
-                    <a href="javascript:;"><span><spring:message code="layouts"/></span></a>
+                    <a href="#"><span><spring:message code="layouts"/></span></a>
                 </li>
             </ul>
             <!--div class="close-button">
@@ -61,7 +61,7 @@
                                         <div class="category-choice-container">
                                             <ul>
                                                 <li class="category-choice">
-                                                    <a href="javascript:;" class="category-choice-link">
+                                                    <a href="#" class="category-choice-link">
                                                         <span class="category-choice-name"></span>
                                                     </a>
                                                 </li>
@@ -97,16 +97,16 @@
                                                 <div class="pager flc-pager-top">
                                                     <!--Previous-->
                                                     <div class="pager-button-up flc-pager-previous">
-                                                        <a class="pager-button-up-inner" href="javascript:;">
+                                                        <a class="pager-button-up-inner" href="#">
                                                             <span><spring:message code="up"/></span>
                                                         </a>
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
                                                         <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
                                                             <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
                                                         </ul>
                                                     </div>
                                                     <!--Pagination-->
@@ -118,7 +118,7 @@
                                                     </div>
                                                     <!--Next-->
                                                     <div class="pager-button-down flc-pager-next">
-                                                        <a class="pager-button-down-inner" href="javascript:;">
+                                                        <a class="pager-button-down-inner" href="#">
                                                             <span><spring:message code="down"/></span>
                                                         </a>
                                                     </div>
@@ -129,8 +129,8 @@
                                             <ul id="addContentPortletList" class="results-list portlet-list">
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">
-                                                        <a class="ri-utility portlet-thumb-gripper" href="javascript:;" title="<spring:message code="drag.to.add.content"/>"><span>Drag Handle</span></a>
-                                                        <a href="javascript:;" class="ri-link portlet-thumb-link">
+                                                        <a class="ri-utility portlet-thumb-gripper" href="#" title="<spring:message code="drag.to.add.content"/>"><span>Drag Handle</span></a>
+                                                        <a href="#" class="ri-link portlet-thumb-link">
                                                             <span>
                                                                 <spring:message code="add"/>
                                                             </span>
@@ -152,16 +152,16 @@
                                                 <div class="pager flc-pager-top">
                                                     <!--Previous-->
                                                     <div class="pager-button-up flc-pager-previous">
-                                                        <a class="pager-button-up-inner" href="javascript:;">
+                                                        <a class="pager-button-up-inner" href="#">
                                                             <span><spring:message code="up"/></span>
                                                         </a>
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
                                                         <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
                                                             <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
                                                         </ul>
                                                     </div>
                                                     <!--Pagination-->
@@ -173,7 +173,7 @@
                                                     </div>
                                                     <!--Next-->
                                                     <div class="pager-button-down flc-pager-next">
-                                                        <a class="pager-button-down-inner" href="javascript:;">
+                                                        <a class="pager-button-down-inner" href="#">
                                                             <span><spring:message code="down"/></span>
                                                         </a>
                                                     </div>
@@ -185,7 +185,7 @@
                                                 <li class="results-item package">
                                                    <div class="ri-wrapper package-wrapper">
                                                        <div class="ri-utility"></div>
-                                                       <a href="javascript:;" class="ri-link package-link"><span><spring:message code="subscribe"/></span></a>
+                                                       <a href="#" class="ri-link package-link"><span><spring:message code="subscribe"/></span></a>
                                                        <div class="ri-content package-content ui-helper-clearfix">
                                                            <div class="ri-titlebar package-titlebar">Titlebar</div>
                                                            <div class="ri-icon package-icon"><span>Thumbnail</span></div>
@@ -222,7 +222,7 @@
                                     <div class="category-choice-container">
                                         <ul>
                                             <li class="category-choice">
-                                                <a href="javascript:;" class="category-choice-link">
+                                                <a href="#" class="category-choice-link">
                                                     <span class="category-choice-name"></span>
                                                 </a>
                                             </li>
@@ -250,16 +250,16 @@
                                                 <div class="pager flc-pager-top">
                                                     <!--Previous-->
                                                     <div class="pager-button-up flc-pager-previous">
-                                                        <a class="pager-button-up-inner" href="javascript:;">
+                                                        <a class="pager-button-up-inner" href="#">
                                                             <span><spring:message code="up"/></span>
                                                         </a>
                                                     </div>
                                                     <!--Pager Links-->
                                                     <div style="display:none">
                                                         <ul class="fl-pager-links flc-pager-links" style="margin:0; display:inline">
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">1</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">1</a></li>
                                                             <li class="flc-pager-pageLink-disabled">2</li>
-                                                            <li class="flc-pager-pageLink"><a href="javascript:;">3</a></li>
+                                                            <li class="flc-pager-pageLink"><a href="#">3</a></li>
                                                         </ul>
                                                     </div>
                                                     <!--Pagination-->
@@ -271,7 +271,7 @@
                                                     </div>
                                                     <!--Next-->
                                                     <div class="pager-button-down flc-pager-next">
-                                                        <a class="pager-button-down-inner" href="javascript:;">
+                                                        <a class="pager-button-down-inner" href="#">
                                                             <span><spring:message code="down"/></span>
                                                         </a>
                                                     </div>
@@ -283,7 +283,7 @@
                                                 <li class="result-item portlet">
                                                     <div class="ri-wrapper portlet-wrapper">
                                                         <div class="ri-utility"></div>
-                                                        <a href="javascript:;" class="ri-link portlet-thumb-link">
+                                                        <a href="#" class="ri-link portlet-thumb-link">
                                                             <span>
                                                                 <spring:message code="use"/>
                                                             </span>
@@ -312,7 +312,7 @@
                                 <ul class="results-list skins-list">
                                     <li class="results-item skin">
                                         <div class="ri-wrapper skins-wrapper">
-                                            <a class="ri-link skin-link" href="javascript:;">
+                                            <a class="ri-link skin-link" href="#">
                                                 <div class="ri-titlebar skin-titlebar"></div>
                                                 <div class="ri-content">
                                                     <div class="ri-icon skin-thumb">
@@ -335,7 +335,7 @@
                                 <ul class="results-list layouts-list">
                                     <li class="results-item layout">
                                         <div class="ri-wrapper layout-wrapper">
-                                            <a class="ri-link layout-link" href="javascript:;">
+                                            <a class="ri-link layout-link" href="#">
                                                 <div class="ri-titlebar layout-titlebar"></div>
                                                 <div class="ri-content">
                                                     <div class="ri-icon layout-thumb">
