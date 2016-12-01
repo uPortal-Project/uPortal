@@ -13,10 +13,10 @@
 5.  Edit the imports in the skin file to point to the skin folder. e.g. *wolverine.less*
 
     ``` less
-    /** DO NOT REMOVE THIS INCLUDE ****************/
+    /** DO NOT REMOVE OR ALTER THESE INCLUDES **/
     @import "defaultSkin/less/variables.less";
     @import "common/common.less";
-    /**********************************************/
+    /*******************************************/
 
     @import "wolverine/less/variables.less";
     @import "wolverine/less/skin.less";
