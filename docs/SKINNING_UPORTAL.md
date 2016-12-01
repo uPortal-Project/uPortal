@@ -14,9 +14,11 @@
 
     ``` less
     /** DO NOT REMOVE THIS INCLUDE ****************/
-    @import "wolverine/less/variables.less";
-    /**********************************************/
+    @import "defaultSkin/less/variables.less";
     @import "common/common.less";
+    /**********************************************/
+
+    @import "wolverine/less/variables.less";
     @import "wolverine/less/skin.less";
     ```
 
