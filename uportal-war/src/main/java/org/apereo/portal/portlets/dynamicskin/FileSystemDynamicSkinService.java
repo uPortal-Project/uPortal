@@ -225,8 +225,8 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
             String result = lessSource.getNormalizedContent();
             File lessSourceOutput = new File(outputFilepath + ".lesssource");
             IOUtils.write(result, new FileOutputStream(lessSourceOutput));
-            log.debug("Full Less source from include file {0}, using lessCssJavascript at {1}"
-                    + ", is at {2}, output css will be written to {3}",
+            log.debug("Full Less source from include file {}, using lessCssJavascript at {}"
+                    + ", is at {}, output css will be written to {}",
                     lessIncludeFilepath, lessCssJavascriptUrl.toString(), lessSourceOutput, outputFilepath);
         }
         LessCompiler compiler = new LessCompiler();
