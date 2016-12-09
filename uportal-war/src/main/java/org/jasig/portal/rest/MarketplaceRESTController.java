@@ -103,7 +103,7 @@ public class MarketplaceRESTController {
     /**
      * @since 5.0
      */
-    @RequestMapping(value="/v5-0/marketplace/{fname}/ratings", method = RequestMethod.GET)
+    @RequestMapping(value="/v4-3/marketplace/{fname}/ratings", method = RequestMethod.GET)
     public ModelAndView getPortletRatings(HttpServletRequest request, @PathVariable String fname) {
 
         // TODO:  This method should send 404 or 403 in appropriate circumstances
