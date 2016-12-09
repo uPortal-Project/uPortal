@@ -46,8 +46,8 @@ import java.util.Map;
  * @since 5.0
  */
 @Controller
-@RequestMapping("/v5-0/people")
-public final class PeopleRESTControllerV50 {
+@RequestMapping("/v4-3/people")
+public final class PeopleRESTControllerV43 {
 
     private ObjectMapper jsonMapper;
     private IPersonManager personManager;
