@@ -79,10 +79,16 @@
         </property>
     </bean>
 
-    <!-- This is used in CasAssertionSecurityContext.  Putting it here just to avoid
+    <!-- These are used in CasAssertionSecurityContext.  Putting them here just to avoid
          introducing static variables, or re-reading security.properties repeatedly. -->
     <bean id="casCopyAssertionAttributesToUserAttributes" class="java.lang.String">
         <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.copyAttributesToUserAttributes:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPassword" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPassword:false}"/>
+    </bean>
+    <bean id="decryptCredentialToPasswordPrivateKey" class="java.lang.String">
+        <constructor-arg index="0" value="${org.apereo.portal.security.cas.assertion.decryptCredentialToPasswordPrivateKey:''}"/>
     </bean>
 
     <!-- 

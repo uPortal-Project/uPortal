@@ -14,6 +14,7 @@ below.
 * [Using Angular](USING_ANGULAR.md)
 * [Supported web browsers](SUPPORTED_BROWSERS.md)
 * [Configuring using JNDI](configure-using-jndi.md)
+* [CAS 5 ClearPass: Credential Caching and Replay](Cas5ClearPass.md)
 * [Developer's Guide](developer/README.md)
 
 ## External Links
