@@ -45,7 +45,7 @@
         </parameter>
 
         <parameter>
-            <name>alternativeMaximixedLink</name>
+            <name>alternativeMaximizedLink</name>
             <label>open.alternative.url.in.maximized.view</label>
             <description>Alternate URL to display when the portlet is in MAXIMIZED mode.</description>
             <single-text-parameter-input display="text"/>
