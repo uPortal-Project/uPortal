@@ -68,7 +68,7 @@
 ## Skin Configuration
 
 uPortal uses [Less variables](http://lesscss.org/features/#variables-feature) to handle global skin changes.
-Changes can be made to override the [Bootstrap variables](uportal-war/src/main/webapp/media/skins/respondr/common/bootstrap/variables.less) or the [uPortal variables](uportal-war/src/main/webapp/media/skins/respondr/defaultSkin/less/variables.less), changes should be made to the skin's `variable.less` file.
+Changes can be made to override the [Bootstrap variables](/uportal-war/src/main/webapp/media/skins/respondr/common/bootstrap/variables.less) or the [uPortal variables](/uportal-war/src/main/webapp/media/skins/respondr/defaultSkin/less/variables.less), changes should be made to the skin's `variable.less` file.
 
 ## Special Notes
 
@@ -85,13 +85,13 @@ The color variables 1-6 are the values that the dynamic respondr skin portlet cu
 @color6
 ```
 
-![Dynamic Respondr Skin Portlet Page](docs/images/dynamic-respondr-skin.png)
+![Dynamic Respondr Skin Portlet Page](images/dynamic-respondr-skin.png)
 
 ### Page Effects
 
 Portal background color and image can have special effects applied.
 Setting `@portal-page-body-background-image-filter` allows for any combination [css filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) to be applied.
 
-![No background effect](docs/images/background-filter-none.png)
+![No background effect](images/background-filter-none.png)
 
-![Sepia background effect](docs/images/background-filter-sepia.png)
+![Sepia background effect](images/background-filter-sepia.png)
