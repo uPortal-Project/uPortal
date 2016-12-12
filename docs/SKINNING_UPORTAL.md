@@ -3,6 +3,10 @@
 ## Table of Contents
 
 1.  [Creating a skin](#creating-a-skin)
+2.  [Skin Configuration](#skin-configuration)
+3.  [Special Notes](#special-notes)
+    1.  [Dyanamic Respondr Skin](#dynamic-respondr-skin)
+    2.  [Page Effects](#page-effects)
 
 ## Creating a skin
 
@@ -60,3 +64,34 @@
 12. Run `ant initdb` to apply the changes to the database.
 13. Run `ant clean deploy-war` to build uPortal with the new skin
 14. :warning: **Don’t forget to add the new skin to Git!**
+
+## Skin Configuration
+
+uPortal uses [Less variables](http://lesscss.org/features/#variables-feature) to handle global skin changes.
+Changes can be made to override the [Bootstrap variables](uportal-war/src/main/webapp/media/skins/respondr/common/bootstrap/variables.less) or the [uPortal variables](uportal-war/src/main/webapp/media/skins/respondr/defaultSkin/less/variables.less), changes should be made to the skin's `variable.less` file.
+
+## Special Notes
+
+### Dynamic Respondr Skin
+
+The color variables 1-6 are the values that the dynamic respondr skin portlet customizes.
+
+``` less
+@color1
+@color2
+@color3
+@color4
+@color5
+@color6
+```
+
+![Dynamic Respondr Skin Portlet Page](docs/images/dynamic-respondr-skin.png)
+
+### Page Effects
+
+Portal background color and image can have special effects applied.
+Setting `@portal-page-body-background-image-filter` allows for any combination [css filters](https://developer.mozilla.org/en-US/docs/Web/CSS/filter) to be applied.
+
+![No background effect](docs/images/background-filter-none.png)
+
+![Sepia background effect](docs/images/background-filter-sepia.png)
