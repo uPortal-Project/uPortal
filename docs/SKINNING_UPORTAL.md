@@ -5,7 +5,7 @@
 1.  [Creating a skin](#creating-a-skin)
 2.  [Skin Configuration](#skin-configuration)
 3.  [Special Notes](#special-notes)
-    1.  [Dyanamic Respondr Skin](#dynamic-respondr-skin)
+    1.  [Dynamic Respondr Skin](#dynamic-respondr-skin)
     2.  [Page Effects](#page-effects)
 
 ## Creating a skin
