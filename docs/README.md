@@ -1,6 +1,6 @@
 # uPortal Documentation
 
-## Table of Contents
+## Pages
 
 *   [Ant Help](antHelp.txt)
 *   [Skinning uPortal](SKINNING_UPORTAL.md)
