@@ -85,6 +85,11 @@
                         </option>
                     </c:forEach>
                 </select>
+                <label class="portlet-form-label" for="${n}sysid">
+                    <spring:message code="id"/>:
+                </label>
+                &nbsp;
+                <input type="text" id="${n}sysid" class="form-control" name="sysid"/>
                 <button class="button btn primary" type="submit">
                     <spring:message code="delete"/>
                     <i class="fa fa-trash-o"></i>
