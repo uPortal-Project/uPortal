@@ -33,13 +33,13 @@
                 <li class="btn">
                     <a class="button btn btn-primary" href="<portlet:renderURL/>">
                         <spring:message code="import"/>
-                        <i class="fa fa-upload"></i>
+                        <i class="fa fa-upload" aria-hidden="true"></i>
                     </a>
                 </li>
                 <li class="btn">
                     <a class="button btn btn-primary" href="<portlet:renderURL><portlet:param name="action" value="export"/></portlet:renderURL>">
                         <spring:message code="export"/>
-                        <i class="fa fa-download"></i>
+                        <i class="fa fa-download" aria-hidden="true"></i>
                     </a>
                 </li>
             </ul>
@@ -53,12 +53,14 @@
         <div class="portlet-msg-error portlet-msg error alert alert-danger" role="alert">
             <div class="titlebar">
                 <h3 class="title">
-                    Warning
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                    <spring:message code="warning"/>
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                 </h3>
             </div>
             <div class="content">
                 <p>
-                    Deleting some entities can do very bad things to your portal.  By default, all delete operations are disabled;  use this feature with caution.
+                    <spring:message code="delete.portlet.warning.explanations"/>
                 </p>
             </div>
         </div>
@@ -66,7 +68,7 @@
         <!-- Note -->
         <div class="note" role="note">
             <p>
-                Select an entity to delete.
+                <spring:message code="delete.portlet.note.select.entity"/>
             </p>
         </div>
 
@@ -92,7 +94,7 @@
                 <input type="text" id="${n}sysid" class="form-control" name="sysid"/>
                 <button class="button btn primary" type="submit">
                     <spring:message code="delete"/>
-                    <i class="fa fa-trash-o"></i>
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
                 </button>
             </form>
         </div>
