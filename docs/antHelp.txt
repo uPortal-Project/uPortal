@@ -74,6 +74,20 @@ Deployment Targets:
     Example:
         ant deployPortletApp -DportletApp=C:/TEMP/myPortlet.war
 
+"spring4-soffit" - The "spring4-soffit" target will switch the version of Spring
+    to build the uPortal-soffit* projects with Spring 4 for Soffit development.
+    There are 2 arguments that you can pass to this task:
+
+    1. spring3version
+    2. spring4version
+
+    These arguments can be used to control the versions of Spring that are being
+    swapped out.
+
+    Example:
+        ant spring4-soffit
+        ant spring4-soffit -Dspring3version=3.2.8.RELEASE -Dspring4version=4.3.1.RELEASE
+
 Database Targets:
 ----------------
 
