@@ -38,6 +38,13 @@ then deploys the uPortal WAR to the container.
 * **deployPortletApp** - Deploys the specified portlet application to the container.
 This is the required process to deploy any portlet to a uPortal instance.
         ex: ant deployPortletApp -DportletApp=/path/to/portlet.war
+* **spring4-soffit** - The "spring4-soffit" target will switch the version of Spring
+    to build the uPortal-soffit* projects with Spring 4 for Soffit development.
+    There are 2 arguments that you can pass to this task: spring3version & spring4version
+    These arguments can be used to control the versions of Spring that are being
+    swapped out.
+        ex: ant spring4-soffit
+        ex: ant spring4-soffit -Dspring3version=3.2.8.RELEASE -Dspring4version=4.3.1.RELEASE
 
 
 ## Help and Support
