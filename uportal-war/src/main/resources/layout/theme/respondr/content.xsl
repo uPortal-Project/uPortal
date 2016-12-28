@@ -446,7 +446,7 @@
           </xsl:if>
 
           <!-- Favorites -->
-          <xsl:if test="$hasFavorites='true' and $AUTHENTICATED='true'">
+          <xsl:if test="$hasFavorites='true' and upAuth:hasPermission('UP_SYSTEM', 'FAVORITE', $permissionChannelId)">
               <xsl:choose>
                   <xsl:when test="$isInFavorites!='true'"><!-- Add to favorite. -->
                       <li>

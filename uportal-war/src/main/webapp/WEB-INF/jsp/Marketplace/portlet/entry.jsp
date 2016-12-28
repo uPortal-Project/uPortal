@@ -273,6 +273,7 @@
         </a>
     </li>
     <li class="divider"></li>
+    {% if (canFavorite) { %}
     <li>
         <spring:message code="add.this.portlet.to.my.favorite" text="Add this Portlet to My Favorites" var="atptmfTitle"/>
         <a href="javascript:;" title="${atptmfTitle}"
@@ -287,6 +288,7 @@
             </span>
         </a>
     </li>
+    {% } %}
     <li>
         <a href="javascript://" disabled>
                 <span>
@@ -576,6 +578,7 @@
         var MenuModel = Backbone.Model.extend({
             defaults: {
                 loading: true,
+                canFavorite: ${canFavorite},
                 isFavorite: false,
                 fname: null,
                 tabs: []
