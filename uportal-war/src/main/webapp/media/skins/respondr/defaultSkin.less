@@ -16,24 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Default Skin file.  The default skin is available in two flavors:  dynamic and 
- * static.  See skinList.xml for more information.
- */
 
 /**
- * Import order:
- * 1. defaultSkin/less/variables.less
- * 2. common/less/common.less  - see comments in common.less file for more information
- * 3. defaultSkin/less/skin.less
- *
- * See https://wiki.jasig.org/display/UPC/Respondr+Skinning+Process for instructions on creating a custom skin.
+ * For information on how to skin uPortal
+ * @see docs/SKINNING_UPORTAL.md
  */
 
-/** DO NOT REMOVE THIS INCLUDE ****************/
-@import "defaultSkin/less/variables.less"; 
-/**********************************************/
-
+/** DO NOT REMOVE OR ALTER THESE INCLUDES **/
+@import "defaultSkin/less/variables.less";
 @import "common/common.less";
+/*******************************************/
 
 @import "defaultSkin/less/skin.less";
