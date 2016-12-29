@@ -9,7 +9,7 @@ Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 ##### Checklist
 <!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->
 
--   [ ] [individual contributor license agreement] is signed
+-   [ ] the [individual contributor license agreement] is signed
 -   [ ] commit message follows [commit guidelines]
 -   [ ] tests are included
 -   [ ] documentation is changed or added
