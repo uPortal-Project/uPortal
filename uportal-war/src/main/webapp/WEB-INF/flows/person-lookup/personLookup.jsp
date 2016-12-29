@@ -33,69 +33,16 @@
 
 <c:set var="n"><portlet:namespace/></c:set>
 
-<style>
-#${n}personBrowser .dataTables_filter, #${n}personBrowser .first.paginate_button, #${n}personBrowser .last.paginate_button{
-    display: none;
-}
-#${n}personBrowser .dataTables-inline, #${n}personBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}personBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}personBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}personBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}personBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}personBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}personBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}personBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}personBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}personBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}personBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
-
 <!-- Portlet -->
-<div id="${n}personBrowser" class="fl-widget portlet prs-lkp view-lookup" role="section">
+<div id="${n}personBrowser" class="portlet prs-lkp view-lookup" role="section">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
+    <div class="titlebar portlet-titlebar" role="sectionhead">
         <h2 class="title" role="heading"><spring:message code="search.for.users" /></h2>
     </div>
     
     <!-- Portlet Content -->
-    <div class="fl-widget-content content portlet-content" role="main">
+    <div class="content portlet-content" role="main">
 
         <div class="portlet-content">
             <form id="${n}searchForm" action="javascript:;">
@@ -112,9 +59,9 @@
                 <!-- Buttons -->
                 <div class="buttons">
                     <spring:message var="searchButtonText" code="search" />
-                    <input class="button primary btn" type="submit" value="${searchButtonText}" />
+                    <input class="btn btn-primary" type="submit" value="${searchButtonText}" />
 
-                    <a class="button btn" href="${ cancelUrl }">
+                    <a class="btn btn-default" href="${ cancelUrl }">
                         <spring:message code="cancel" />
                     </a>
                 </div>
@@ -125,7 +72,7 @@
             <div class="titlebar">
                 <h3 role="heading" class="title">Search Results</h3>
             </div>
-                <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
+                <table id="${n}resultsTable" class="portlet-table table table-striped table-bordered table-hover">
                     <thead>
                         <tr>
                             <th><spring:message code="name"/></th>
@@ -160,71 +107,61 @@ up.jQuery(function() {
     };
     var showSearchResults = function (queryData) {
         personList_configuration.main.table = $("#${n}resultsTable").dataTable({
-            iDisplayLength: personList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '<c:url value="/api/people.json"/>',
-            sAjaxDataProp: "people",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: personList_configuration.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+        	ajax: {
+        		url: '<c:url value="/api/people.json"/>',
+        		dataSrc: "people",
+        		data: queryData
+        	},
+            processing: true,
+            autoWidth: false,
+            pagingType: 'full_numbers',
+            language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'attributes.displayName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'attributes.username', sType: 'string', sWidth: '50%' }  // User Name 
+            columns: [
+                //setting default column content prevents popup errors when user has no 
+                //name or when username attribute is not available or mapped.
+                //actual content is overritten later
+                { 	data: 'attributes.displayName',
+                	type: 'string',
+                	width: '50%',
+                	defaultContent: "<i>Not set</i>",
+                	render: function ( data, type, row, meta ) {
+                		return getSelectPersonAnchorTag(data, row.attributes.username);		
+                	}
+                },  // Name
+                { 	data: 'attributes.username', 
+                	type: 'string', 
+                	width: '50%', 
+                	defaultContent: "<i>Not set</i>",
+                	render: function ( data, type, row, meta ) {
+						return getSelectPersonAnchorTag(data, data);                
+                	}  // User Name 
+                }
             ],
-            fnInitComplete: function (oSettings) {
+            initComplete: function (settings, json) {
+            	$(".column-filter-widgets").prepend('<label><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></label>');                
+                $(".column-filter-widget select").addClass("form-control input-sm");
                 personList_configuration.main.table.fnDraw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: queryData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create links to user
-                $('td:eq(0)', nRow).html( getSelectPersonAnchorTag(aData.attributes.displayName, aData.attributes.username) );
-                $('td:eq(1)', nRow).html( getSelectPersonAnchorTag(aData.attributes.username, aData.attributes.username) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>'
+         	// this is the default except with an extra row for the add-portlet button placeholder
+            // and a 'W' (filter plugin) inserted next to the 'l - length changing input control'
+           	dom: 	"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+			responsive: true
         });
         $("#${n}searchResults").show();
-        // Adding formatting to sDom
-        $("div.toolbar-br").html('<BR>');
-        $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
     };
 
     $(document).ready(function(){

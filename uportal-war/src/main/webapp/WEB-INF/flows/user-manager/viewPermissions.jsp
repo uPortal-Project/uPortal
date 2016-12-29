@@ -47,62 +47,6 @@
     <portlet:param name="target" value="TARGET"/>
     <portlet:param name="permissionType" value="PERMISSIONTYPE"/>
 </portlet:actionURL>
-<style>
-#${n}permissionBrowser .dataTables_filter, #${n}permissionBrowser .first.paginate_button, #${n}permissionBrowser .last.paginate_button{
-    display: none;
-}
-#${n}permissionBrowser .dataTables-inline, #${n}permissionBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}permissionBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}permissionBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}permissionBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}permissionBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}permissionBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}permissionBrowser .dataTables-left {
-    float:left;
-}
-#${n}permissionBrowser .row {
-    margin-left:0px;
-    margin-right:0px;
-}
-
-#${n}permissionBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}permissionBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}permissionBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}permissionBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
 
 <!--
 PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
@@ -154,7 +98,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                                 <th><spring:message code="owner"/></th>
                                 <th><spring:message code="principal"/></th>
                                 <th><spring:message code="activity"/></th>
-                                <th><spring:message code="target"/></th>
+				<th><spring:message code="target"/></th>
                                 <th><spring:message code="edit"/></th>
                             </tr>
                             </thead>
@@ -232,89 +176,63 @@ up.jQuery(function() {
             config = targetList_configuration;
         }
         config.main.table = $("#${n}" + tableName + "permissionsTable").dataTable({
-            iDisplayLength: config.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: config.url,
-            sAjaxDataProp: "assignments",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: config.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+        	ajax: {
+        		url: config.url,
+        		dataSrc: "assignments",
+        		data: tableName
+        	},
+            processing: true,
+            autoWidth: false,
+            pagingType: 'full_numbers',
+            language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'ownerName', sType: 'html', sWidth: '25%' },  // Owner
-                { mData: 'principalName', sType: 'html', sWidth: '25%', bVisible: config.showPrincipal },  // Principal 
-                { mData: 'activityName', sType: 'html', sWidth: '25%' },  // Activity
-                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%', bVisible: config.showTarget },  // Target
-                { mData: 'targetName', sType: 'html', bSearchable: false, sWidth: '25%' }  // Edit Link
+            columns: [
+                { 	data: 'ownerName', type: 'html', width: '25%'}, // Owner
+                { 	data: 'principalName', type: 'html', width: '25%', visible: config.showPrincipal},  // Principal 
+                { 	data: 'activityName', type: 'html', width: '25%',
+                	render: function ( data, type, row, meta ) {
+                		return getActivityValue(row.activityName, row.inherited);
+                	}
+                },  // Activity
+                { 	data: 'targetName', type: 'html', searchable: false, width: '25%', visible: config.showTarget},  // Target
+                { 	data: 'targetName', type: 'html', searchable: false, width: '25%',
+                	render: function ( data, type, row, meta ) {
+                		return getEditAnchorTag(row.ownerKey, row.activityKey, row.targetKey);
+                	}
+                }  // Edit Link
             ],
-            fnInitComplete: function (oSettings) {
+            initComplete: function (oSettings) {
                 config.main.table.fnDraw();
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: aoData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create edit link
-                $('td:eq(3)', nRow).html( getEditAnchorTag(aData.ownerKey, aData.activityKey, aData.targetKey) );
-                // Set activity inherited markup
-                if (config.showPrincipal) {
-                    $('td:eq(2)', nRow).html( getActivityValue(aData.activityName, aData.inherited) );
-                } else {
-                    $('td:eq(1)', nRow).html( getActivityValue(aData.activityName, aData.inherited) );
-                }
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><W><"toolbar-br"><"dataTables-inline dataTables-left"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>>',
+            // this is the default except with an extra row for the add-portlet button placeholder
+            // and a 'W' (filter plugin) inserted next to the 'l - length changing input control'
+            dom: 	"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
             // Filtering
             oColumnFilterWidgets: {
                 sSeparator: ',', // Used for multivalue column Categories
                 aiExclude: [config.column.placeHolderForEditLink,
                             config.searchExclude]
-            }
+            },
+            responsive: true
         });
     };
 
     initializeTable('principal');
     initializeTable('target');
     $("#${n}assignmentTabs").tabs({ active: 0 });
-    // Adding formatting to sDom
-    $("div.toolbar-br").html('<BR>');
-    $("div.toolbar-filter").html('<B><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></B>:');
 });
 </script>
 

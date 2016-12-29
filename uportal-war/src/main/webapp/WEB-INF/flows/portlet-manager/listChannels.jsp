@@ -43,117 +43,37 @@
 </portlet:actionURL>
 <!-- END: VALUES BEING PASSED FROM BACKEND -->
 
-<!--
-PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
-| For the standards and guidelines that govern
-| the user interface of this portlet
-| including HTML, CSS, JavaScript, accessibilty,
-| naming conventions, 3rd Party libraries
-| (like jQuery and the Fluid Skinning System)
-| and more, refer to:
-| http://www.ja-sig.org/wiki/x/cQ
--->
-
-<style>
-#${n}portletBrowser .dataTables_filter, #${n}portletBrowser .first.paginate_button, #${n}portletBrowser .last.paginate_button{
-    display: none;
-}
-#${n}portletBrowser .dataTables-inline, #${n}portletBrowser .column-filter-widgets {
-    display: inline-block;
-}
-#${n}portletBrowser .dataTables_wrapper {
-    width: 100%;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_button {
-    margin: 2px;
-    color: #428BCA;
-    cursor: pointer;
-    *cursor: hand;
-}
-#${n}portletBrowser .dataTables_paginate .paginate_active {
-    margin: 2px;
-    color:#000;
-}
-
-#${n}portletBrowser .dataTables_paginate .paginate_active:hover {
-    text-decoration: line-through;
-}
-
-#${n}portletBrowser table tr td a {
-    color: #428BCA;
-}
-
-#${n}portletBrowser .dataTables-left {
-    float:left;
-}
-
-#${n}portletBrowser .column-filter-widget {
-    vertical-align: top;
-    display: inline-block;
-    overflow: hidden;
-    margin-right: 5px;
-}
-
-#${n}portletBrowser .filter-term {
-    display: block;
-    text-align:bottom;
-}
-
-#${n}portletBrowser .dataTables_length label {
-    font-weight: normal;
-}
-#${n}portletBrowser .datatable-search-view {
-    text-align:right;
-}
-</style>
-
 <!-- Portlet -->
-<div id="${n}portletBrowser" class="fl-widget portlet ptl-mgr view-home" role="section">
+<div id="${n}portletBrowser" class="portlet ptl-mgr view-home" role="section">
+
   <c:if test="${not empty statusMsgCode}">
+   <div class="row">
+   <div class="col-xs-12">
     <div class="alert alert-success alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <spring:message code="${statusMsgCode}" arguments="${portlet.name}" htmlEscape="true"/>
       <c:if test="${not empty layoutURL}">
         <spring:message code="add.portlet.to.layout" arguments="${layoutURL}" htmlEscape="false"/>
       </c:if>
+	</div>
+    </div>
     </div>
   </c:if>
-  <!-- Portlet Titlebar -->
-  <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-    <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
-    <div class="fl-col-flex2 toolbar" role="toolbar">
-      <div class="fl-col">
-        <ul class="btn-group">
-          <li class="btn"><a class="btn btn-primary button" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a></li>
-        </ul>
-      </div>
-      <div class="fl-col fl-text-align-right datatable-search-view">
-        <form class="portlet-search-form form-inline" style="display:inline">
-          <label><spring:message code="search"/></label>
-          <input type="text" class="portlet-search-input form-control"/>
-        </form>
-      </div>
-    </div>
-    <div style="clear:both"></div>
-  </div>
 
-  <!-- Portlet Content -->
-  <div class="fl-widget-content content portlet-content" role="main">
-      <div>
-        <table id="${n}portletsList" class="portlet-table table table-bordered table-striped table-hover" style="width:100%;">
-          <thead>
-            <tr>
-              <th><spring:message code="name"/></th>
-              <th><spring:message code="type"/></th>
-              <th><spring:message code="state"/></th>
-              <th><spring:message code="edit"/></th>
-              <th><spring:message code="delete"/></th>
-              <th><spring:message code="category"/></th>
-            </tr>
-          </thead>
-        </table>
-      </div>
-  </div> <!-- end: portlet-body -->
+  <h2 class="title" role="heading"><spring:message code="portlet.registry"/></h2>
+  
+  <table id="${n}portletsList" class="table table-striped table-hover table-bordered">
+     <thead>
+       <tr>
+         <th><spring:message code="name"/></th>
+         <th><spring:message code="type"/></th>
+         <th><spring:message code="state"/></th>
+         <th><spring:message code="edit"/></th>
+         <th><spring:message code="delete"/></th>
+         <th><spring:message code="category"/></th>
+       </tr>
+     </thead>
+   </table>
 
 </div> <!-- end: portlet -->
 
@@ -190,104 +110,86 @@ up.jQuery(function() {
     // Created as its own 
     var initializeTable = function() {
         portletList_configuration.main.table = $("#${n}portletsList").dataTable({
-            iDisplayLength: portletList_configuration.main.pageSize,
-            aLengthMenu: [5, 10, 20, 50],
-            bServerSide: false,
-            sAjaxSource: '<c:url value="/api/portlets.json"/>',
-            sAjaxDataProp: "portlets",
-            bDeferRender: false,
-            bProcessing: true,
-            bAutoWidth:false,
-            sPaginationType: 'full_numbers',
-            oLanguage: {
-                sLengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
-                oPaginate: {
-                    sPrevious: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
-                    sNext: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
+        	pageLength: portletList_configuration.main.pageSize,
+        	lengthMenu: [5, 10, 20, 50],
+            ajax: {
+            	url: '<c:url value="/api/portlets.json"/>',
+            	dataSrc: "portlets"
+            },
+            processing: true,
+            autoWidth: false,
+            pagingType: "full_numbers",
+            language: {
+            	info: '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	lengthMenu: '<spring:message code="datatables.length-menu.message" htmlEscape="false" javaScriptEscape="true"/>',
+            	search: '<spring:message code="datatables.search" htmlEscape="false" javaScriptEscape="true"/>',
+            	paginate: {
+            		first: '<spring:message code="datatables.paginate.first" htmlEscape="false" javaScriptEscape="true"/>',
+                    last: '<spring:message code="datatables.paginate.last" htmlEscape="false" javaScriptEscape="true"/>',
+                    previous: '<spring:message code="datatables.paginate.previous" htmlEscape="false" javaScriptEscape="true"/>',
+                    next: '<spring:message code="datatables.paginate.next" htmlEscape="false" javaScriptEscape="true"/>'
                 }
             },
-            aoColumns: [
-                { mData: 'name', sType: 'html', sWidth: '30%' },  // Name
-                { mData: 'type', sType: 'html', sWidth: '30%' },  // Type 
-                { mData: 'lifecycleState', sType: 'html', sWidth: '20%' },  // Lifecycle State
-                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Edit Link
-                { mData: 'id', sType: 'html', bSearchable: false, sWidth: '10%' },  // Delete Link
+            columns: [
+                { data: 'name', type: 'html', width: '30%' },  // Name
+                { data: 'type', type: 'html', width: '30%' },  // Type 
+                { data: 'lifecycleState', type: 'html', width: '20%' },  // Lifecycle State
+                { 	data: 'id', 
+                	type: 'html', 
+                	searchable: false,
+                	width: '10%',
+                	render: function ( data, type, row, meta ) {
+                		return getEditURL(data)
+                	}
+                },  // Edit Link
+                { data: 'id', 
+                	type: 'html', 
+                	searchable: false, 
+                	width: '10%',
+                	render: function ( data, type, row, meta ) {
+                		return getDeleteURL(data);
+                	}
+                },  // Delete Link
                 {
-                    mData: function(source, type) {
+                    data: function(row, type, set, meta) {
                         // this function sets the value (set), returns original source of value (undefined), and then returns the value
                         if (type === undefined) {
-                            return source.categories;
+                            return row.categories.join(); //join into string only to be split later by oColumnFilterWidgets sSeparator
                         } else if (type === 'set') {
-                            source.display = source.categories.join();
+                        	row.display = row.categories.join();
                             return;
                         }
                         // 'display', 'filter', 'sort', and 'type' all just use the formatted string
-                        return source.display;
+                        return row.categories;
                     },
-                    bSearchable: true,
-                    bVisible: false,
-                    asSorting: [ "desc", "asc" ]
+                    searchable: true,
+                    visible: false,
+                    orderSequence: [ "desc", "asc" ]
                 }  // Categories - hidden 
             ],
-            fnInitComplete: function (oSettings) {
-                //portletList_configuration.main.table.fnDraw();
-                // Adding formatting to sDom
-                $("div.toolbar-br").html('<BR>');
-                $("div.toolbar-filter").html('<h4><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></h4>');
-                $(".column-filter-widget select").addClass("form-control");
+            initComplete: function (settings, json) {
+                $(".column-filter-widgets").prepend('<label><spring:message code="filters" htmlEscape="false" javaScriptEscape="true"/></label>');                
+                $(".column-filter-widget select").addClass("form-control input-sm");
+                $(".add-portlet").html('<a class="btn btn-primary button pull-right" href="${ newPortletUrl }" title="<spring:message code="register.new.portlet"/>"><span><spring:message code="register.new.portlet"/></span>&nbsp;&nbsp;<i class="fa fa-plus-circle"></i></a>');
             },
-            fnServerData: function (sUrl, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    url: sUrl,
-                    data: aoData,
-                    dataType: "json",
-                    cache: false,
-                    type: oSettings.sServerMethod,
-                    success: function (json) {
-                        if (json.sError) {
-                            oSettings.oApi._fnLog(oSettings, 0, json.sError);
-                        }
-
-                        $(oSettings.oInstance).trigger('xhr', [oSettings, json]);
-                        fnCallback(json);
-                    },
-                    error: function (xhr, error, thrown) {
-                        lib.handleError(xhr, error, thrown);
-                    }
-                });
-            },
-            fnInfoCallback: function( oSettings, iStart, iEnd, iMax, iTotal, sPre ) {
-                var infoMessage = '<spring:message code="datatables.info.message" htmlEscape="false" javaScriptEscape="true"/>';
-                var iCurrentPage = Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength) + 1;
-                infoMessage = infoMessage.replace(/_START_/g, iStart).
-                                      replace(/_END_/g, iEnd).
-                                      replace(/_TOTAL_/g, iTotal).
-                                      replace(/_CURRENT_PAGE_/g, iCurrentPage);
-                return infoMessage;
-            },
-            // Add links to the proper columns after we get the data
-            fnRowCallback: function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-                // Create edit and delete links
-                $('td:eq(3)', nRow).html( getEditURL(aData.id) );
-                $('td:eq(4)', nRow).html( getDeleteURL(aData.id) );
-            },
-            // Setting the top and bottom controls
-            sDom: 'r<"row alert alert-info view-filter"<"toolbar-filter"><"toolbar-filter-options"W><"toolbar-br"><"dataTables-inline dataTables-right"p><"dataTables-inline dataTables-left"i><"dataTables-inline dataTables-left"l>><"row"<"span12"t>>',
+            // this is the default except with an extra row for the add-portlet button placeholder
+            // and a 'W' (filter plugin) inserted next to the 'l - length changing input control'
+            dom: 	"<'row'<'col-xs-12 add-portlet'>>" +
+            		"<'row column-filter-container'<'col-sm-6'Wl><'col-sm-6'f>>" +
+					"<'row'<'col-sm-12'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
             // Filtering
             oColumnFilterWidgets: {
-                sSeparator: ',', // Used for multivalue column Categories
+                sSeparator: ',',
                 aiExclude: [portletList_configuration.column.name,
                                 portletList_configuration.column.type,
                                 portletList_configuration.column.placeHolderForEditLink,
                                 portletList_configuration.column.placeHolderForDeleteLink]
-            }
+            },
+            responsive: true
         });
     };
 
     initializeTable();
-    // Hide the out of the box search and populate it with our text box
-    $('#${n}portletBrowser .portlet-search-input').keyup(function(){
-        portletList_configuration.main.table.fnFilter( $(this).val() );
-    });
 });
 </script>
