@@ -60,6 +60,10 @@ Consider pushing your changes to a topic branch in your (public) fork of the rep
 
 _Prior to committing, if you want to pull in the latest upstream changes  (highly appreciated btw), please use rebasing rather than merging.  Merging creates "merge commits" that really muck up the project timeline._
 
+## Test
+
+If your change is to a user-facing experience in MyUW, it should not regress support for [supported browser versions](http://jasig.github.io/uPortal/SUPPORTED_BROWSERS.html).
+
 ## Submit
 
 * You submitted a [Contributor License Agreement][], right?  Seriously, Apereo cannot accept your contribution other than under a Contributor License Agreement.

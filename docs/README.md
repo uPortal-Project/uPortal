@@ -5,6 +5,7 @@
 *   [Ant Help](antHelp.txt)
 *   [Skinning uPortal](SKINNING_UPORTAL.md)
 *   [Using Angular](USING_ANGULAR.md)
+*   [Supported web browsers](SUPPORTED_BROWSERS.md)
 
 ## External Links
 
