@@ -62,7 +62,7 @@ _Prior to committing, if you want to pull in the latest upstream changes  (highl
 
 ## Test
 
-If your change is to a user-facing experience in MyUW, it should not regress support for [supported browser versions](http://jasig.github.io/uPortal/SUPPORTED_BROWSERS.html).
+If your change is to a user-facing experience, it should not regress support for [supported browser versions](http://jasig.github.io/uPortal/SUPPORTED_BROWSERS.html).
 
 ## Submit
 
