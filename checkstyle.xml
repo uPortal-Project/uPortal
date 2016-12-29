@@ -20,6 +20,10 @@
 
     <property name="severity" value="warning"/>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="checkstyle-suppression.xml"/>
+    </module>
+
     <property name="fileExtensions" value="java, properties, xml"/>
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.sf.net/config_whitespace.html -->
