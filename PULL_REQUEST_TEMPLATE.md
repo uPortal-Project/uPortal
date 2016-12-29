@@ -9,8 +9,8 @@ Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 ##### Checklist
 <!-- Remove items that do not apply. For completed items, change [ ] to [x]. -->
 
--   [ ] [individual contributor license agreement][icla] is signed
--   [ ] commit message follows [commit guidelines][guidelines]
+-   [ ] the [individual contributor license agreement] is signed
+-   [ ] commit message follows [commit guidelines]
 -   [ ] tests are included
 -   [ ] documentation is changed or added
 
@@ -19,5 +19,5 @@ Contributors guide: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md
 
 
 <!-- Reference Links -->
-[icla]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#individual-contributor-license-agreement
-[guidelines]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#commit
+[individual contributor license agreement]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#individual-contributor-license-agreement
+[commit guidelines]: https://github.com/Jasig/uPortal/blob/master/CONTRIBUTING.md#commit
