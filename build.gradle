@@ -4,6 +4,9 @@ description = "Apereo uPortal $version"
 // build right in your browser.  (https://scans.gradle.com/plugin)
 apply plugin: 'com.gradle.build-scan'
 
+// Adds support for Node.js scripts
+apply plugin: 'com.moowork.node'
+
 buildscript {
     repositories {
         maven {
@@ -12,7 +15,17 @@ buildscript {
     }
     dependencies {
         classpath 'com.gradle:build-scan-plugin:1.0'
+        classpath "com.moowork.gradle:gradle-node-plugin:0.13"
     }
+}
+
+node {
+  // Version of node to use.
+  version = '6.9.1'
+
+  // If true, it will download node using above parameters.
+  // If false, it will try to use globally installed node.
+  download = true
 }
 
 buildScan {
