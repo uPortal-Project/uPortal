@@ -27,9 +27,9 @@ import org.apereo.portal.portlets.groupselector.EntityEnum;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,9 +50,6 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
     public void setGroupListHelper(IGroupListHelper groupListHelper) {
         this.groupListHelper = groupListHelper;
     }
-
-    @Value("${org.apereo.portal.security.PersonFactory.guest_user_name}")
-    private String anonymousUsername;
 
     private AuthorizationService authorizationService;
 
@@ -138,7 +135,7 @@ public class PortalPermissionEvaluator implements PermissionEvaluator {
      * Prepare a uPortal IAuthorizationPrincipal based in the Spring principal
      */
     private IAuthorizationPrincipal getAuthorizationPrincipal(Authentication authentication) {
-        String username = anonymousUsername;  // default -- unauthenticated user
+        String username = PersonFactory.GUEST_USERNAMES.get(0);  // default -- unauthenticated user
         Object authPrincipal = authentication.getPrincipal();
         if (authPrincipal instanceof UserDetails) {
             // User is authenticated

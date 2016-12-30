@@ -25,17 +25,19 @@ import java.util.Map;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.portal.EntityIdentifier;
 import org.apereo.portal.groups.IEntityGroup;
 import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.portlets.PortletPreferencesJsonDao;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IPersonManager;
 import org.apereo.portal.services.GroupService;
+import org.apereo.portal.url.IPortalRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +52,11 @@ public class GoogleAnalyticsController {
     
     private PortletPreferencesJsonDao portletPreferencesJsonDao;
 
-    @Value("${org.apereo.portal.security.PersonFactory.guest_user_name:guest}")
-    private String guestUserName;
+    @Autowired
+    private IPortalRequestUtils portalRequestUtils;
+
+    @Autowired
+    private IPersonManager personManager;
 
     @Autowired
     public void setPortletPreferencesJsonDao(PortletPreferencesJsonDao portletPreferencesJsonDao) {
@@ -62,14 +67,12 @@ public class GoogleAnalyticsController {
     public String renderAnalyticsHeader(RenderRequest request, ModelMap model) throws IOException {
 
         // For which user account are we logging portal activity?
-        String remoteUser = request.getRemoteUser();
-        if (remoteUser == null) {
-            // User is not authenticated;  log for the guest user
-            remoteUser = guestUserName;
-        }
+        final HttpServletRequest req = portalRequestUtils.getCurrentPortalRequest();
+        final IPerson person = personManager.getPerson(req);
+        final String username = person.getUserName();
 
-        final IGroupMember groupMember = GroupService.getGroupMember(remoteUser, IPerson.class);
-        final Map<String, Boolean> isMemberCache = new HashMap<String, Boolean>();
+        final IGroupMember groupMember = GroupService.getGroupMember(username, IPerson.class);
+        final Map<String, Boolean> isMemberCache = new HashMap<>();
         
         final PortletPreferences preferences = request.getPreferences();
         final JsonNode config = this.portletPreferencesJsonDao.getJsonNode(preferences, GoogleAnalyticsConfigController.CONFIG_PREF_NAME);
@@ -98,7 +101,7 @@ public class GoogleAnalyticsController {
     /**
      * Remove groups from the AnalyticsConfig that the current user is not a member of
      */
-    protected void filterAnalyticsGroups(IGroupMember groupMember, JsonNode config, Map<String, Boolean> isMemberCache) {
+    private void filterAnalyticsGroups(IGroupMember groupMember, JsonNode config, Map<String, Boolean> isMemberCache) {
         if (config == null) {
             return;
         }
@@ -133,7 +136,7 @@ public class GoogleAnalyticsController {
     /**
      * Check if the user is a member of the specified group name
      */
-    protected boolean isMember(IGroupMember groupMember, String groupName) {
+    private boolean isMember(IGroupMember groupMember, String groupName) {
         try {
             IEntityGroup group = GroupService.findGroup(groupName);
             if (group != null) {

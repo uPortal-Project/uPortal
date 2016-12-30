@@ -18,12 +18,13 @@
  */
 package org.apereo.portal.security;
 
-import org.apereo.portal.IUserIdentityStore;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apereo.portal.properties.PropertiesManager;
 import org.apereo.portal.security.provider.PersonImpl;
 import org.apereo.portal.security.provider.RestrictedPerson;
-import org.apereo.portal.spring.locator.UserIdentityStoreLocator;
-import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
 
 /**
  * Creates a person.
@@ -39,33 +40,22 @@ import org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator;
  *       <code>org.apereo.portal.security.PersonFactory.guest_user_name</code>
  *       in <code>portal.properties</code>.</li>
  * </ol>
+ *
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class PersonFactory {
-    
+
+    private static final String GUEST_USERNAMES_PROPERTY =
+            PropertiesManager.getProperty("org.apereo.portal.security.PersonFactory.guest_user_names", "guest");
+
     /**
-     * The guest user name specified in portal.properties.
+     * The guest user names specified in portal.properties.
      */
-    public static final String GUEST_USERNAME = 
-        PropertiesManager.getProperty("org.apereo.portal.security.PersonFactory.guest_user_name", "guest");
-    
-    private static final SingletonDoubleCheckedCreator<Integer> GUEST_USER_ID_LOADER = new SingletonDoubleCheckedCreator<Integer>() {
-        /* (non-Javadoc)
-         * @see org.apereo.portal.utils.threading.SingletonDoubleCheckedCreator#createSingleton(java.lang.Object[])
-         */
-        @Override
-        protected Integer createSingleton(Object... args) {
-            final IPerson person = (IPerson)args[0];
-            final IUserIdentityStore userIdentityStore = UserIdentityStoreLocator.getUserIdentityStore();
-            try {
-                return userIdentityStore.getPortalUID(person);
-            }
-            catch (Exception e) {
-                throw new RuntimeException("Error while finding user id for person: "  + person, e);
-            }
-        }
-    };
+    public static final List<String> GUEST_USERNAMES = Collections.unmodifiableList(
+            Arrays.asList(
+                    GUEST_USERNAMES_PROPERTY.split(",")
+            )
+    );
 
     /**
      * Creates an empty <code>IPerson</code> implementation. 
@@ -87,26 +77,11 @@ public class PersonFactory {
     }
 
     /**
-     * Creates a <i>guest</i> user.
-     * @return <i>guest</i> user
-     * @throws Exception
-     */
-    public static IPerson createGuestPerson() throws Exception {
-        IPerson person = createPerson();
-        person.setAttribute(IPerson.USERNAME, GUEST_USERNAME);
-        final int guestUserId = GUEST_USER_ID_LOADER.get(person);
-        person.setID(guestUserId);
-        person.setSecurityContext(InitialSecurityContextFactory.getInitialContext("root"));
-        return person;
-    }
-    
-    /**
      * Creates a <i>restricted</i> user.
      * @return <i>restricted</i> user
      */
     public static RestrictedPerson createRestrictedPerson() {
         IPerson person = createPerson();
-        
         return new RestrictedPerson(person);
     }
     
