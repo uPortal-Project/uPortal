@@ -271,14 +271,14 @@
                             <xsl:sort select="number(@dlm:precedence)" order="descending"/>
                             <sidebarChannel name="{@name}" title="{@title}" ID="{@ID}" fname="{@fname}" description="{@description}">
                                 <xsl:choose>
-                                    <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
-                                        <xsl:attribute name="alternativeMaximixedLink">
-                                            <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
+                                    <xsl:when test="parameter[@name='PORTLET.alternativeMaximizedLink']">
+                                        <xsl:attribute name="alternativeMaximizedLink">
+                                            <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximizedLink']/@value"/>
                                         </xsl:attribute>
                                     </xsl:when>
-                                    <xsl:when test="parameter[@name='alternativeMaximixedLink']">
-                                        <xsl:attribute name="alternativeMaximixedLink">
-                                            <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
+                                    <xsl:when test="parameter[@name='alternativeMaximizedLink']">
+                                        <xsl:attribute name="alternativeMaximizedLink">
+                                            <xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value"/>
                                         </xsl:attribute>
                                     </xsl:when>
                                 </xsl:choose>
@@ -427,14 +427,14 @@
                         </xsl:when>
                     </xsl:choose>
                     <xsl:choose>
-                        <xsl:when test="parameter[@name='PORTLET.alternativeMaximixedLink']">
-                            <xsl:attribute name="alternativeMaximixedLink">
-                                <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximixedLink']/@value"/>
+                        <xsl:when test="parameter[@name='PORTLET.alternativeMaximizedLink']">
+                            <xsl:attribute name="alternativeMaximizedLink">
+                                <xsl:value-of select="parameter[@name='PORTLET.alternativeMaximizedLink']/@value"/>
                             </xsl:attribute>
                         </xsl:when>
-                        <xsl:when test="parameter[@name='alternativeMaximixedLink']">
-                            <xsl:attribute name="alternativeMaximixedLink">
-                                <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value"/>
+                        <xsl:when test="parameter[@name='alternativeMaximizedLink']">
+                            <xsl:attribute name="alternativeMaximizedLink">
+                                <xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value"/>
                             </xsl:attribute>
                         </xsl:when>
                     </xsl:choose>

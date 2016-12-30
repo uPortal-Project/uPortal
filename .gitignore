@@ -4,7 +4,6 @@
 .gradle
 .idea
 .project
-.project
 .settings
 *.iml
 *.sass-cache
@@ -17,6 +16,6 @@ data
 logs
 node_modules
 npm-debug.log
-target
+target/
 uportal-impl
 uportal-portlets-overlay/*/overlays

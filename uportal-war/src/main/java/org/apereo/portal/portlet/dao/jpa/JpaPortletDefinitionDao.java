@@ -37,7 +37,6 @@ import org.apereo.portal.jpa.OpenEntityManager;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
-import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.spring.tx.DialectAwareTransactional;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
@@ -160,7 +159,6 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
     @PortalTransactionalReadOnly
     @OpenEntityManager(unitName = PERSISTENCE_UNIT_NAME)
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString) {
-
         Validate.notNull(portletDefinitionIdString, "portletDefinitionIdString can not be null");
 
         PortletDefinitionImpl rslt = null;  // default
@@ -245,28 +243,15 @@ public class JpaPortletDefinitionDao extends BasePortalJpaDao implements IPortle
         final List<PortletDefinitionImpl> portletDefinitions = query.getResultList();
         return new ArrayList<IPortletDefinition>(new LinkedHashSet<IPortletDefinition>(portletDefinitions));
 	}
-	
-    @Override
-    @PortalTransactional
-    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
-        Validate.notNull(portletType, "portletType can not be null");
-        Validate.notEmpty(fname, "fname can not be null");
-        Validate.notEmpty(name, "name can not be null");
-        Validate.notEmpty(title, "title can not be null");
-        
-        final PortletDefinitionImpl portletDefinition = new PortletDefinitionImpl(portletType, fname, name, title, applicationId, portletName, isFramework);
-        
-        this.getEntityManager().persist(portletDefinition);
-        
-        return portletDefinition;
-    }
-
 
     @Override
     @PortalTransactional
-    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
+    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        
+        Validate.notNull(portletDefinition.getType(), "portletDefinition portlet type can not be null");
+        Validate.notEmpty(portletDefinition.getFName(), "portletDefinition fname can not be null");
+        Validate.notEmpty(portletDefinition.getName(), "portletDefinition name can not be null");
+        Validate.notEmpty(portletDefinition.getTitle(), "portletDefinition title can not be null");
         this.getEntityManager().persist(portletDefinition);
         return portletDefinition;
     }

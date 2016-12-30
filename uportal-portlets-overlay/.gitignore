@@ -1,6 +1,6 @@
-/.settings
-/.project
 /.classpath
+/.project
+/.settings
 /bin
-/target
 /RssPortlet
+/target

@@ -116,8 +116,8 @@
             <div class="portlet">
               <xsl:variable name="defaultPortletUrl">
                 <xsl:choose>
-                  <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
-                    <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value" />
+                  <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
+                    <xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" />
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:call-template name="portalUrl">
@@ -147,7 +147,7 @@
                 <xsl:attribute name="href"><xsl:value-of select="$portletUrl" /></xsl:attribute>
                 <xsl:attribute name="title"><xsl:value-of select="upMsg:getMessage('to.view', $USER_LANG)" /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
                 <xsl:choose>
-                  <xsl:when test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
+                  <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
                     <xsl:attribute name="target">_blank</xsl:attribute>
                   </xsl:when>
                   <xsl:otherwise></xsl:otherwise>
@@ -174,9 +174,9 @@
                             <xsl:variable name="defaultPortletUrl">
                               <xsl:choose>
                                 <xsl:when
-                                     test="parameter[@name='alternativeMaximixedLink']
-                                         and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
-                                  <xsl:value-of select="parameter[@name='alternativeMaximixedLink']/@value" />
+                                     test="parameter[@name='alternativeMaximizedLink']
+                                         and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
+                                  <xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" />
                                 </xsl:when>
                                 <xsl:otherwise>
                                   <xsl:call-template name="portalUrl">
@@ -209,7 +209,7 @@
                                    /><xsl:text> </xsl:text><xsl:value-of select="@title" /></xsl:attribute>
                               <xsl:choose>
                                 <xsl:when
-                                     test="parameter[@name='alternativeMaximixedLink'] and string-length(parameter[@name='alternativeMaximixedLink']/@value) > 0">
+                                     test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
                                   <xsl:attribute name="target">_blank</xsl:attribute>
                                 </xsl:when>
                                 <xsl:otherwise></xsl:otherwise>
