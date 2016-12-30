@@ -21,14 +21,14 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
 <!-- Portlet -->
-<div class="fl-widget portlet imp-exp view-delete" role="section">
+<section class="fl-widget portlet imp-exp view-delete">
 
     <!-- Portlet Titlebar -->
-    <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading">
+    <header class="fl-widget-titlebar titlebar portlet-titlebar">
+        <h2 class="title">
             <spring:message code="delete.portlet.entities"/>
         </h2>
-        <div class="toolbar" role="toolbar">
+        <nav class="toolbar">
             <ul class="btn-group">
                 <li class="btn">
                     <a class="button btn btn-primary" href="<portlet:renderURL/>">
@@ -43,8 +43,8 @@
                     </a>
                 </li>
             </ul>
-        </div>
-    </div>
+        </nav>
+    </header>
 
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
@@ -66,11 +66,11 @@
         </div>
 
         <!-- Note -->
-        <div class="note" role="note">
+        <aside class="note" role="note">
             <p>
                 <spring:message code="delete.portlet.note.select.entity"/>
             </p>
-        </div>
+        </aside>
 
         <div class="portlet-form">
             <form id="${n}form" class="form-inline" method="POST">
@@ -100,7 +100,7 @@
         </div>
 
     </div> <!-- end: portlet-content -->
-</div> <!-- end:portlet -->
+</section> <!-- end:portlet -->
 
 <script type="text/javascript">
     up.jQuery(document).ready(function () {
