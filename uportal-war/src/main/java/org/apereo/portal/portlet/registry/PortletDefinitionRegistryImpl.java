@@ -34,7 +34,6 @@ import org.apereo.portal.concurrency.caching.RequestCache;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
 import org.apereo.portal.portlet.om.IPortletDefinition;
 import org.apereo.portal.portlet.om.IPortletDefinitionId;
-import org.apereo.portal.portlet.om.IPortletType;
 import org.apereo.portal.utils.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -134,18 +133,13 @@ public class PortletDefinitionRegistryImpl implements IPortletDefinitionRegistry
     	return this.portletDefinitionDao.getPortletDefinitions();
     }
 
-    @Override
-    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework) {
-        return this.portletDefinitionDao.createPortletDefinition(portletType, fname, name, title, applicationId, portletName, isFramework);
-    }
-
 	/* (non-Javadoc)
      * @see org.apereo.portal.portlet.registry.IPortletDefinitionRegistry#savePortletDefinition(org.apereo.portal.portlet.om.IPortletDefinition)
      */
     @Override
-    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition) {
+    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition) {
         Validate.notNull(portletDefinition, "portletDefinition can not be null");
-        return this.portletDefinitionDao.updatePortletDefinition(portletDefinition);
+        return this.portletDefinitionDao.savePortletDefinition(portletDefinition);
     }
 
     /* (non-Javadoc)

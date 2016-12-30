@@ -1,0 +1,14 @@
+{
+  "name": "uportal",
+  "private": true,
+  "devDependencies": {
+    "eslint": "3.8.1",
+    "eslint-config-google": "0.7.0"
+  },
+  "scripts": {
+    "test": "eslint . --ignore-path .gitignore"
+  },
+  "eslintConfig": {
+    "extends": "google"
+  }
+}

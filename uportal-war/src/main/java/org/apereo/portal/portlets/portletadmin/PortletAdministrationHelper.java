@@ -67,6 +67,7 @@ import org.apereo.portal.groups.IGroupMember;
 import org.apereo.portal.layout.dlm.remoting.IGroupListHelper;
 import org.apereo.portal.layout.dlm.remoting.JsonEntityBean;
 import org.apereo.portal.portlet.PortletUtils;
+import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.delegation.jsp.RenderPortletTag;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -349,34 +350,33 @@ public final class PortletAdministrationHelper implements ServletContextAware {
             categories.add(portletCategoryRegistry.getPortletCategory(iCatID));
         }
 
-        IPortletDefinition portletDef;
-        if (form.getId() == null) {
-            final String fname = form.getFname();
-            final String name = form.getName();
-            final String title = form.getTitle();
-            final String applicationId = form.getApplicationId();
-            final String portletName = form.getPortletName();
-            final boolean isFramework = form.isFramework();
-
-            final IPortletType type = portletTypeRegistry.getPortletType(form.getTypeId());
-            portletDef = portletDefinitionRegistry.createPortletDefinition(type, fname, name, title, applicationId, portletName, isFramework);
-        } else {
-            portletDef = portletDefinitionRegistry.getPortletDefinition(form.getId());
-        }
-        portletDef.setDescription(form.getDescription());
-        portletDef.setFName(form.getFname());
-        portletDef.setName(form.getName());
-        portletDef.setTimeout(form.getTimeout());
-        portletDef.setTitle(form.getTitle());
-        portletDef.getPortletDescriptorKey().setWebAppName(form.getApplicationId());
-        portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
-        portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
-
         final IPortletType portletType = portletTypeRegistry.getPortletType(form.getTypeId());
         if (portletType == null) {
             throw new IllegalArgumentException("No IPortletType exists for ID " + form.getTypeId());
         }
-        portletDef.setType(portletType);
+
+        IPortletDefinition portletDef;
+        if (form.getId() == null) {
+            portletDef = new PortletDefinitionImpl(
+                    portletType,
+                    form.getFname(),
+                    form.getName(),
+                    form.getTitle(),
+                    form.getApplicationId(),
+                    form.getPortletName(),
+                    form.isFramework());
+        } else {
+            portletDef = portletDefinitionRegistry.getPortletDefinition(form.getId());
+            portletDef.setType(portletType);
+            portletDef.setFName(form.getFname());
+            portletDef.setName(form.getName());
+            portletDef.setTitle(form.getTitle());
+            portletDef.getPortletDescriptorKey().setWebAppName(form.getApplicationId());
+            portletDef.getPortletDescriptorKey().setPortletName(form.getPortletName());
+            portletDef.getPortletDescriptorKey().setFrameworkPortlet(form.isFramework());
+        }
+        portletDef.setDescription(form.getDescription());
+        portletDef.setTimeout(form.getTimeout());
 
         // Make parameters (NB:  these are different from preferences) in the
         // portletDef reflect the state of the form, in case any have changed.

@@ -91,48 +91,57 @@
 
     <!-- Portlet Titlebar -->
     <div class="fl-widget-titlebar titlebar portlet-titlebar" role="sectionhead">
-        <h2 class="title" role="heading"><spring:message code="search.for.users" /></h2>
+        <h2 class="title" role="heading">
+            <spring:message code="search.for.users" />
+        </h2>
     </div>
-    
+
     <!-- Portlet Content -->
     <div class="fl-widget-content content portlet-content" role="main">
 
         <div class="portlet-content">
             <form id="${n}searchForm" action="javascript:;">
-                <select id="${n}queryAttribute" name="queryAttribute">
-                        <option value=""><spring:message code="default.directory.attributes"/></option>
-                    <c:forEach var="queryAttribute" items="${queryAttributes}">
-                        <option value="${ queryAttribute }">
-                            <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/>
+                <div class="col-md-6">
+                    <select id="${n}queryAttribute" class="form-control" name="queryAttribute" aria-label="<spring:message code="type"/>">
+                        <option value="">
+                            <spring:message code="default.directory.attributes"/>
                         </option>
-                    </c:forEach>
-                </select>
-                <input id="${n}queryValue" type="text" name="queryValue"/>
-                
-                <!-- Buttons -->
-                <div class="buttons">
-                    <spring:message var="searchButtonText" code="search" />
-                    <input class="button primary btn" type="submit" value="${searchButtonText}" />
-
-                    <a class="button btn" href="${ cancelUrl }">
-                        <spring:message code="cancel" />
-                    </a>
+                        <c:forEach var="queryAttribute" items="${queryAttributes}">
+                            <option value="${ queryAttribute }">
+                                <spring:message code="attribute.displayName.${queryAttribute}" text="${queryAttribute}"/>
+                            </option>
+                        </c:forEach>
+                    </select>
                 </div>
-                
+                <div class="col-md-6">
+                    <input id="${n}queryValue" aria-label="<spring:message code="search.terms"/>" class="form-control" type="search" name="queryValue"/>
+                </div>
+
+                <div class="col-md-6">
+                    <!-- Buttons -->
+                    <div class="buttons">
+                        <spring:message var="searchButtonText" code="search" />
+                        <input class="button primary btn" type="submit" value="${searchButtonText}" />
+
+                        <a class="button btn" href="${ cancelUrl }">
+                            <spring:message code="cancel" />
+                        </a>
+                    </div>
+                </div>
             </form>
-        
+
         <div id="${n}searchResults" class="portlet-section" style="display:none" role="region">
             <div class="titlebar">
                 <h3 role="heading" class="title">Search Results</h3>
             </div>
-                <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th><spring:message code="name"/></th>
-                            <th><spring:message code="username"/></th>
-                        </tr>
-                    </thead>
-                </table>
+            <table id="${n}resultsTable" class="portlet-table table table-bordered table-hover" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th><spring:message code="name"/></th>
+                        <th><spring:message code="username"/></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
 
     </div>
@@ -178,7 +187,7 @@ up.jQuery(function() {
             },
             aoColumns: [
                 { mData: 'attributes.displayName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'attributes.username', sType: 'string', sWidth: '50%' }  // User Name 
+                { mData: 'attributes.username', sType: 'string', sWidth: '50%' }  // User Name
             ],
             fnInitComplete: function (oSettings) {
                 personList_configuration.main.table.fnDraw();
@@ -257,7 +266,7 @@ up.jQuery(function() {
             }
             showSearchResults(queryData);
             return false;
-        }); 
+        });
     });
 });
 </script>

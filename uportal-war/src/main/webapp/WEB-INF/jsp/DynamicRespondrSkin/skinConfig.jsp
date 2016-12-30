@@ -62,6 +62,7 @@
                             </c:forEach>
                         </select>
                     </div>
+                    <!-- WARNING:  If you remove any of the following HTML inputs, you must also remove them from portlet.xml. -->
                     <div class="dynamicItems hidden">
                         <div class="row">
                             <div class="col-md-6">
