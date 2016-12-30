@@ -1,4 +1,6 @@
-# Policy
+# Supported Browsers
+
+## Policy
 
 uPortal supports **the latest general audience release** and **one prior release** of these major browsers:
 
@@ -8,7 +10,7 @@ uPortal supports **the latest general audience release** and **one prior release
 + Internet Explorer (on Windows)
 + Edge (on Windows)
 
-# Practice
+## Practice
 
 This policy means that if there are problems with 
 
@@ -22,7 +24,7 @@ Likewise, when evaluating adopting new technologies or accepting changesets, bre
 
 uPortal ecosystem products might or might not work on other non-supported browsers or browser versions and the projects may or may not accept and prioritize issues reported as only affecting non-supported browsers or browser versions.
 
-# Rationale
+## Rationale
 
 The web is getting better through better technology. uPortal wishes to take best advantage of that technology. Therefore uPortal works to support modern browsers.
 
