@@ -49,7 +49,11 @@ public class PersonFactory {
             PropertiesManager.getProperty("org.apereo.portal.security.PersonFactory.guest_user_names", "guest");
 
     /**
-     * The guest user names specified in portal.properties.
+     * Collection of guest user names specified in portal.properties as
+     * <code>org.apereo.portal.security.PersonFactory.guest_user_names</code>.
+     * The value of this property is a comma-delimited list.
+     *
+     * @since 5.0
      */
     public static final List<String> GUEST_USERNAMES = Collections.unmodifiableList(
             Arrays.asList(GUEST_USERNAMES_PROPERTY.split(","))

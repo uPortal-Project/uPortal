@@ -56,7 +56,12 @@ public abstract class AbstractPersonManager implements IPersonManager {
     }
 
     /**
-     * Creates a <i>guest</i> user.
+     * Creates a new <i>guest</i> user based on the value of the
+     * <code>org.apereo.portal.security.PersonFactory.guest_user_names</code>
+     * property in portal.properties and (optionally) any beans that implement
+     * {@link IGuestUsernameSelector}.  This approach supports pluggable,
+     * open-ended strategies for multiple guest users who may have different
+     * content.
      *
      * @since 5.0
      */
