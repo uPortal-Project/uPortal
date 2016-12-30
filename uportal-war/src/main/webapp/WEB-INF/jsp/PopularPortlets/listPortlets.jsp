@@ -87,19 +87,21 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
 | and more, refer to:
 | http://www.ja-sig.org/wiki/x/cQ
 -->
-    
+
 <!-- Portlet -->
 <div id="${n}portletBrowser" class="fl-widget portlet" role="section">
 <form id="${n}form">
-  
+
   <!-- Portlet Title -->
   <div class="fl-widget-titlebar portlet-title" role="sectionhead">
     <h2 role="heading"><spring:message code="most.frequently.added"/></h2>
   </div> <!-- end: portlet-title -->
-  
+
   <!-- Portlet Toolbar -->
   <div class="portlet-toolbar" role="toolbar">
-    <spring:message code="previous"/>
+    <label for="${n}days">
+      <spring:message code="previous"/>
+    </label>
     <select id="${n}days" name="days">
       <option value="1">1</option>
       <option value="7">7</option>
@@ -108,12 +110,12 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
       <option value="365">365</option>
     </select>
   </div> <!-- end: portlet-toolbar -->
-        
+
     <!-- Portlet Body -->
   <div class="fl-widget-content portlet-body" role="main">
 
     <!-- Portlet Section -->
-    <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">      
+    <div id="${n}popularPortlets" class="portlet-section fl-pager" role="region">
 
       <div class="portlet-section-body">
         <table id="${n}portletsTable" style="width:100%;">
@@ -136,7 +138,7 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
         </div>
       </c:if>
     </div> <!-- end: portlet-section -->
-    
+
   </div> <!-- end: portlet-body -->
 
 </form>
@@ -191,7 +193,7 @@ up.jQuery(function() {
             },
             aoColumns: [
                 { mData: 'portletFName', sType: 'string', sWidth: '50%' },  // Name
-                { mData: 'count', sType: 'string', sWidth: '50%' }  // Times 
+                { mData: 'count', sType: 'string', sWidth: '50%' }  // Times
             ],
             fnInitComplete: function (oSettings) {
                 portletList_configuration.main.table.fnDraw();
