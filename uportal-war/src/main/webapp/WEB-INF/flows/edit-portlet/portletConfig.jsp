@@ -977,7 +977,8 @@ PORTLET DEVELOPMENT STANDARDS AND GUIDELINES
                 if ($(this).val()) $(this).next().css("display", "inline");
                 else $(this).next().css("display", "none");
             });
-            $("#${n}PortletLifecycle .clear-date").click(function () {
+            $("#${n}PortletLifecycle .clear-date").click(function (e) {
+                e.preventDefault();
                 $(this).parent().css("display", "none").prev().val("");
             });
             $("#${n}PortletLifecycle .lifecycle-state").click(function () {
