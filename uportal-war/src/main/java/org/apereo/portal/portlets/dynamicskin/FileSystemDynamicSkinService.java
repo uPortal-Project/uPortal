@@ -186,7 +186,13 @@ public class FileSystemDynamicSkinService implements DynamicSkinService {
             String prefName = prefNames.nextElement();
             if (prefName.startsWith(DynamicSkinService.CONFIGURABLE_PREFIX)) {
                 String nameWithoutPrefix = prefName.substring(DynamicSkinService.CONFIGURABLE_PREFIX.length());
-                str.append("@").append(nameWithoutPrefix).append(": ").append(prefs.getValue(prefName, "")).append(";\n");
+                String value = prefs.getValue(prefName, "");
+
+                if (value.trim().equals("")) {
+                    log.warn("Dynamic Skin Variable \"{}\" is not set", nameWithoutPrefix);
+                } else {
+                    str.append("@").append(nameWithoutPrefix).append(": ").append(value).append(";\n");
+                }
             }
         }
 
