@@ -52,9 +52,7 @@ public class PersonFactory {
      * The guest user names specified in portal.properties.
      */
     public static final List<String> GUEST_USERNAMES = Collections.unmodifiableList(
-            Arrays.asList(
-                    GUEST_USERNAMES_PROPERTY.split(",")
-            )
+            Arrays.asList(GUEST_USERNAMES_PROPERTY.split(","))
     );
 
     /**
