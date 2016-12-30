@@ -138,7 +138,7 @@
         <sakai-connector-portlet.version>1.5.2</sakai-connector-portlet.version>
         <SimpleContentPortlet.version>2.0.2</SimpleContentPortlet.version>
         <WeatherPortlet.version>1.1.5</WeatherPortlet.version>
-        <WebProxyPortlet.version>2.1.1</WebProxyPortlet.version>
+        <WebProxyPortlet.version>2.2.2</WebProxyPortlet.version>
 
         <!-- Project Dependency Version Properties -->
         <aopalliance.version>1.0</aopalliance.version>
@@ -212,7 +212,7 @@
         <person-directory.version>1.7.1</person-directory.version>
         <pluto.version>2.1.0-M3</pluto.version>
         <quartz.version>2.2.1</quartz.version>
-        <resource-server.version>1.0.43</resource-server.version>
+        <resource-server.version>1.0.44</resource-server.version>
         <servlet-api.version>3.0.1</servlet-api.version>
         <slf4j.version>1.7.7</slf4j.version>
         <spring-framework.version>3.2.9.RELEASE</spring-framework.version>

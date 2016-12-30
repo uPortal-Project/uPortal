@@ -27,8 +27,6 @@ import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.ehcache.Ehcache;
-
 import org.jasig.portal.IUserPreferencesManager;
 import org.jasig.portal.layout.IUserLayoutManager;
 import org.jasig.portal.layout.node.IUserLayoutChannelDescription;
@@ -36,6 +34,7 @@ import org.jasig.portal.layout.node.IUserLayoutNodeDescription.LayoutNodeType;
 import org.jasig.portal.portlet.dao.IPortletDefinitionDao;
 import org.jasig.portal.portlet.dao.IPortletEntityDao;
 import org.jasig.portal.portlet.dao.IPortletTypeDao;
+import org.jasig.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.jasig.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
@@ -58,6 +57,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import net.sf.ehcache.Ehcache;
 
 /**
  * @author Eric Dalquist
@@ -138,7 +139,8 @@ public class PortletEntityRegistryImplTest extends BasePortalJpaDaoTest {
                 final IPortletType channelType = jpaPortletTypeDao.createPortletType("BaseType", "foobar");
                 
                 //Create a definition
-                final IPortletDefinition portletDef = jpaPortletDefinitionDao.createPortletDefinition(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                final IPortletDefinition portletDef = new PortletDefinitionImpl(channelType, "fname1", "Test Portlet 1", "Test Portlet 1 Title", "/context1", "portletName1", false);
+                jpaPortletDefinitionDao.savePortletDefinition(portletDef);
                 final IPortletDefinitionId portletDefinitionId = portletDef.getPortletDefinitionId();
 
                 when(portletDefinitionRegistry.getPortletDefinition(portletDefinitionId)).thenReturn(portletDef);

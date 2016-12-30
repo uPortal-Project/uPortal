@@ -22,13 +22,11 @@ import java.util.List;
 
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionId;
-import org.jasig.portal.portlet.om.IPortletType;
 
 /**
  * Provides APIs for creating, storing and retrieving {@link IPortletDefinition} objects.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 public interface IPortletDefinitionDao {
     /**
@@ -37,9 +35,9 @@ public interface IPortletDefinitionDao {
      * @param portletDefinition The portlet definition to store the changes for
      * @throws IllegalArgumentException if portletDefinition is null.
      */
-    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition);
+    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
 
-	public void deletePortletDefinition(IPortletDefinition definition);
+    public void deletePortletDefinition(IPortletDefinition definition);
 
     /**
      * Get a {@link IPortletDefinition} for the specified {@link IPortletDefinitionId}.
@@ -49,9 +47,9 @@ public interface IPortletDefinitionDao {
      * @throws IllegalArgumentException if portletDefinitionId is null.
      */
     public IPortletDefinition getPortletDefinition(IPortletDefinitionId portletDefinitionId);
-    
+
     public IPortletDefinition getPortletDefinition(String portletDefinitionIdString);
-    
+
     public IPortletDefinition getPortletDefinitionByFname(String fname);
 
     public IPortletDefinition getPortletDefinitionByName(String name);
@@ -59,8 +57,5 @@ public interface IPortletDefinitionDao {
     public List<IPortletDefinition> getPortletDefinitions();
 
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
-
-    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title,
-            String applicationId, String portletName, boolean isFramework);
 
 }
