@@ -61,9 +61,7 @@ public interface IPortletDefinitionRegistry {
      * @param portletDefinition The IPortletDefinition to store changes to.
      * @throws IllegalArgumentException If portletDefinition is null
      */
-    public IPortletDefinition updatePortletDefinition(IPortletDefinition portletDefinition);
-
-    public IPortletDefinition createPortletDefinition(IPortletType portletType, String fname, String name, String title, String applicationId, String portletName, boolean isFramework);
+    public IPortletDefinition savePortletDefinition(IPortletDefinition portletDefinition);
 
     public List<IPortletDefinition> searchForPortlets(String term, boolean allowPartial);
 

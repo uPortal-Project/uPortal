@@ -48,14 +48,31 @@
                 <c:forEach var="collection" items="${collections}">
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-chevron-right pull-right"></span>
-                        <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">${collection.name}</a>
+                        <a href="${renderRequest.contextPath}/f/${collection.id}/render.uP">
+                            <span class="favorites-icon">
+                                <i class="fa fa-sitemap" aria-hidden="true"></i>
+                            </span>
+                            <c:out value="${collection.name}" />
+                        </a>
                     </li>
                 </c:forEach>
 
                 <c:forEach var="favorite" items="${favorites}">
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-star pull-right"></span>
-                        <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">${favorite.name}</a>
+                        <a href="${renderRequest.contextPath}/p/${favorite.functionalName}/render.uP">
+                            <span class="favorites-icon">
+                                <c:choose>
+                                    <c:when test="${favorite.parameterMap['iconUrl'] ne null}">
+                                        <img src="${favorite.parameterMap['iconUrl']}" class="img-responsive" alt="Icon for ${favorite.name}" aria-hidden="true" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                                    </c:otherwise>
+                                </c:choose>
+                            </span>
+                            <c:out value="${favorite.name}" />
+                        </a>
                     </li>
                 </c:forEach>
             </ul>

@@ -46,7 +46,7 @@
             </c:choose>
         </h2>
     </div> <!-- end: portlet-titlebar -->
-    
+
     <!-- Portlet Body -->
     <div class="fl-widget-content content portlet-content" role="main">
 
@@ -62,62 +62,78 @@
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-
-                    <table class="portlet-table table table-hover">
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
-
                             <c:if test="${ accountForm.id < 0 }">
                                 <tr>
-                                    <td class="attribute-name"><spring:message code="username"/></td>
-                                    <td><form:input path="username"/></td>
+                                    <td class="attribute-name">
+                                        <label for="${n}userUsername">
+                                            <spring:message code="username" />
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <form:input path="username" id="${n}userUsername" class="form-control"/>
+                                    </td>
                                 </tr>
                             </c:if>
                             <!--  Password and confirm password -->
                             <tr>
-                                <td class="attribute-name"><spring:message code="password"/></td>
-                                <td><form:password path="password"/></td>
+                                <td class="attribute-name">
+                                    <label for="${n}userPassword">
+                                        <spring:message code="password"/>
+                                    </label>
+                                </td>
+                                <td>
+                                    <form:password path="password" id="${n}userPassword" class="form-control"/>
+                                </td>
                             </tr>
                             <tr>
-                                <td class="attribute-name"><spring:message code="confirm.password"/></td>
-                                <td><form:password path="confirmPassword"/></td>
+                                <td class="attribute-name">
+                                    <label for="${n}userConfirmPassword">
+                                        <spring:message code="confirm.password"/>
+                                    </label>
+                                </td>
+                                <td>
+                                    <form:password path="confirmPassword" id="${n}userConfirmPassword" class="form-control"/>
+                                </td>
                             </tr>
-
                         </tbody>
                     </table>
 
                 </div>
             </div>
-        
+
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
                     <h3 class="title" role="heading"><spring:message code="standard.attributes"/></h3>
                 </div>
                 <div id="${n}standardAttributes" class="content">
-                
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                            <tr>
-                                <th><spring:message code="attribute.name"/></th>
-                                <th><spring:message code="attribute.value"/></th>
-                            </tr>
-                        </thead>
+
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
 
                             <!-- Print out each attribute -->
                             <c:forEach items="${ editAttributes }" var="attribute">
                                 <tr>
                                     <td class="attribute-name">
-                                        <strong><spring:message code="${ attribute.label }"/></strong>
+                                        <strong>
+                                            <label for="${ n }${ attribute.name }">
+                                                <spring:message code="${ attribute.label }"/>
+                                            </label>
+                                        </strong>
                                     </td>
                                     <td>
                                           <c:set var="paramPath" value="attributes['${ attribute.name }'].value"/>
-                                          <editPortlet:preferenceInput input="${ attribute.preferenceInput.value }" 
-                                            path="${ paramPath }" values="${ accountForm.attributes[attribute.name].value }"/>
+                                          <editPortlet:preferenceInput
+                                              id="${ n }${ attribute.name }"
+                                              input="${ attribute.preferenceInput.value }"
+                                              path="${ paramPath }"
+                                              values="${ accountForm.attributes[attribute.name].value }"/>
                                     </td>
                                 </tr>
                             </c:forEach>
-                            
+
                         </tbody>
                     </table>
 
@@ -127,18 +143,13 @@
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="titlebar">
-                    <h3 class="title" role="heading"><spring:message code="custom.attributes"/></h3>
+                    <h3 class="title" role="heading">
+                        <spring:message code="custom.attributes"/>
+                    </h3>
                 </div>
                 <div id="${n}customAttributes" class="content">
-                
-                    <table class="portlet-table table table-hover">
-                        <thead>
-                            <tr>
-                                <th><spring:message code="attribute.name"/></th>
-                                <th><spring:message code="attribute.value"/></th>
-                                <th></th>
-                            </tr>
-                        </thead>
+
+                    <table class="portlet-table table table-hover" role="presentation">
                         <tbody>
 
                             <!-- Print out each attribute -->
@@ -146,9 +157,12 @@
                                 <tr>
 
                                     <td class="attribute-name">
-
                                         <c:set var="attrName" value="${ attribute.key }"/>
-                                        <strong><spring:message code="attribute.displayName.${attrName}" text="${attrName}"/></strong>
+                                        <strong>
+                                            <label for="${ n }${ attrName }">
+                                                <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/>
+                                            </label>
+                                        </strong>
                                         ${ fn:escapeXml(attribute.key)}
                                     </td>
                                     <td>
@@ -156,8 +170,10 @@
                                             <c:when test="${ fn:length(attribute.value.value) > 0 }">
                                                 <c:forEach var="value" items="${ attribute.value.value }">
                                                     <div>
-                                                         <input type="text" name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
-                                                         <a class="delete-attribute-value-link" href="#"><spring:message code="remove"/></a>
+                                                         <input type="text" id="${ n }${ attrName }" class="form-control" name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
+                                                         <a class="delete-attribute-value-link" href="#">
+                                                            <spring:message code="remove"/>
+                                                         </a>
                                                     </div>
                                                 </c:forEach>
                                                 <a class="add-attribute-value-link" href="#" paramName="${fn:escapeXml(name)}">
@@ -165,12 +181,16 @@
                                             </c:when>
                                             <c:otherwise>
                                                 <div>
-                                                    <input type="text" name="attributes['${fn:escapeXml(attribute.key)}'].value" value=""/>
+                                                    <input type="text" id="${ n }${ attrName }" class="form-control" name="attributes['${fn:escapeXml(attribute.key)}'].value" value=""/>
                                                 </div>
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td><a class="delete-attribute-link" href="#"><spring:message code="remove"/></a></td>
+                                    <td>
+                                        <a class="delete-attribute-link" aria-label="<spring:message code="remove"/> <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/>" href="#">
+                                            <spring:message code="remove"/>
+                                        </a>
+                                    </td>
                                 </tr>
                             </c:forEach>
 
@@ -190,7 +210,7 @@
             <!-- Portlet Section -->
             <div class="portlet-section" role="region">
                 <div class="content">
-            
+
                     <div class="buttons">
                         <input class="button btn primary" type="submit" value="<spring:message code="save"/>" name="_eventId_save"/>
                         <c:choose>
@@ -207,7 +227,7 @@
             </div>
 
         </form:form>
-        
+
     </div>
 
     <div id="${n}parameterForm" style="display:none">
@@ -215,8 +235,8 @@
             <spring:message code="attribute.name"/>: <input name="name"/>
             <input type="submit" value="<spring:message code="add"/>"/>
         </form>
-    </div>    
-    
+    </div>
+
 </div>
 
 <script type="text/javascript">

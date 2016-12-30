@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apereo.portal.EntityIdentifier;
-import org.apereo.portal.security.*;
 import org.apereo.portal.IUserIdentityStore;
 import org.apereo.portal.channel.IPortletPublishingService;
 import org.apereo.portal.groups.IEntity;
@@ -50,6 +49,7 @@ import org.apereo.portal.io.xml.PortalDataKey;
 import org.apereo.portal.io.xml.portlettype.ExternalPermissionDefinition;
 import org.apereo.portal.portlet.dao.IMarketplaceRatingDao;
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao;
+import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionParameterImpl;
 import org.apereo.portal.portlet.dao.jpa.PortletPreferenceImpl;
 import org.apereo.portal.portlet.om.IPortletDefinition;
@@ -62,6 +62,14 @@ import org.apereo.portal.portlet.om.PortletCategory;
 import org.apereo.portal.portlet.om.PortletLifecycleState;
 import org.apereo.portal.portlet.registry.IPortletCategoryRegistry;
 import org.apereo.portal.portlet.registry.IPortletTypeRegistry;
+import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
+import org.apereo.portal.security.IPermissionManager;
+import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.IUpdatingPermissionManager;
+import org.apereo.portal.security.PermissionHelper;
+import org.apereo.portal.security.PersonFactory;
+import org.apereo.portal.security.SystemPerson;
 import org.apereo.portal.services.AuthorizationService;
 import org.apereo.portal.services.EntityNameFinderService;
 import org.apereo.portal.services.GroupService;
@@ -157,11 +165,11 @@ public class PortletDefinitionImporterExporter
         if (portletType == null) {
         	throw new IllegalArgumentException("No portlet type registered for: " + portletRep.getType());
         }
-        
+
         final List<PortletCategory> categories = new ArrayList<PortletCategory>();
         for (String categoryName : portletRep.getCategories()) {
             EntityIdentifier[] cats = GroupService.searchForGroups(categoryName, IGroupConstants.IS, IPortletDefinition.class);
-            
+
             PortletCategory category = null;
             if (cats != null && cats.length > 0) {
                 category = portletCategoryRegistry.getPortletCategory(cats[0].getKey());
@@ -169,15 +177,12 @@ public class PortletDefinitionImporterExporter
             else {
                 category = portletCategoryRegistry.getPortletCategory(categoryName);
             }
-            
             if (category == null) {
                 throw new IllegalArgumentException("No category '" + categoryName + "' found when importing portlet: " + portletRep.getFname());
             }
-            
             categories.add(category);
         }
 
-        
         final String fname = portletRep.getFname();
         final Map<ExternalPermissionDefinition, Set<IGroupMember>> permissions = new HashMap<>();
         final Set<IGroupMember> subscribeMembers = toGroupMembers(portletRep.getGroups(), fname);
@@ -198,7 +203,7 @@ public class PortletDefinitionImporterExporter
 
         IPortletDefinition def = portletDefinitionDao.getPortletDefinitionByFname(fname);
         if (def == null) {
-            def = portletDefinitionDao.createPortletDefinition(
+            def = new PortletDefinitionImpl(
                     portletType, 
                     fname, 
                     portletRep.getName(),
@@ -218,10 +223,11 @@ public class PortletDefinitionImporterExporter
                 portletDescriptorKey.setFrameworkPortlet(false);
                 portletDescriptorKey.setWebAppName(portletDescriptor.getWebAppName());
             }
+            def.setName(portletRep.getName());
+            def.setTitle(portletRep.getTitle());
+            def.setType(portletType);
         }
-        
-        def.setName(portletRep.getName());
-        def.setTitle(portletRep.getTitle());
+
         def.setDescription(portletRep.getDesc());
         final BigInteger timeout = portletRep.getTimeout();
         if (timeout != null) {
@@ -243,7 +249,6 @@ public class PortletDefinitionImporterExporter
         if (resourceTimeout != null) {
             def.setResourceTimeout(resourceTimeout.intValue());
         }
-        def.setType(portletType);
 
         handleLifecycleApproval(def, portletRep.getLifecycle());
         handleLifecyclePublished(def, portletRep.getLifecycle());
@@ -254,7 +259,7 @@ public class PortletDefinitionImporterExporter
             parameters.add(new PortletDefinitionParameterImpl(param.getName(), param.getValue()));
         }
         def.setParameters(parameters);
-        
+
         final ArrayList<IPortletPreference> preferenceList = new ArrayList<IPortletPreference>();
         for (ExternalPortletPreference pref : portletRep.getPortletPreferences()) {
             final List<String> valueList = pref.getValues();
@@ -418,15 +423,19 @@ public class PortletDefinitionImporterExporter
      * @param permissionMap a map of permission name -> list of groups who are granted that permission
      *                      (Note: for now, only grant is supported and only for the FRAMEWORK_OWNER perm manager)
      */
-    private IPortletDefinition savePortletDefinition(IPortletDefinition definition, IPerson publisher, List<PortletCategory> categories, Map<ExternalPermissionDefinition, Set<IGroupMember>> permissionMap) {
-        final IPortletDefinitionId portletDefinitionId = definition.getPortletDefinitionId();
-        boolean newChannel = (portletDefinitionId == null);
+    private IPortletDefinition savePortletDefinition(
+            IPortletDefinition definition,
+            IPerson publisher,
+            List<PortletCategory> categories,
+            Map<ExternalPermissionDefinition,
+            Set<IGroupMember>> permissionMap) {
+        boolean newChannel = (definition.getPortletDefinitionId() == null);
 
         // save the channel
-        definition = portletDefinitionDao.updatePortletDefinition(definition);
+        definition = portletDefinitionDao.savePortletDefinition(definition);
         definition = portletDefinitionDao.getPortletDefinitionByFname(definition.getFName());
 
-        final String defId = portletDefinitionId.getStringId();
+        final String defId = definition.getPortletDefinitionId().getStringId();
         final IEntity portletDefEntity = GroupService.getEntity(defId, IPortletDefinition.class);
 
         //Sync on groups during update. This really should be a portal wide thread-safety check or
