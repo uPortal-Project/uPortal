@@ -35,7 +35,7 @@ var uportal = uportal || {};
     /*
      * A deletable column must either:
      *   (1) be marked deletable and contain no locked children; or
-     *   (2) be marked up-fragment-admin, indicating the user is the fragment owner 
+     *   (2) be marked up-fragment-admin, indicating the user is the fragment owner
      */
     var deletableColumnsSelector = ".deletable:not(:has(.locked)),.up-fragment-admin";
 
@@ -648,7 +648,8 @@ var uportal = uportal || {};
         that.components = {};
 
         // initialize the focused content adding dialog link
-        $("#focusedContentDialogLink").click(function () {
+        $("#focusedContentDialogLink").click(function (e) {
+            e.preventDefault();
 
             // initialize the dialog
             $(".focused-content-dialog").dialog({ width: 500, modal: true });

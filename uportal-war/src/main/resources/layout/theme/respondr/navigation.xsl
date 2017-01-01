@@ -117,7 +117,7 @@
                     and navigation element is flagged as allowing tab-adding -->
                      <xsl:if test="@allowAddTab = 'true' and upAuth:hasPermission('UP_SYSTEM', 'ADD_TAB', 'ALL') and not($PORTAL_VIEW='focused')">
                         <li class="portal-navigation-add-item list-group-item">
-                            <a href="javascript:;" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
+                            <a href="#" title="{upMsg:getMessage('add.tab', $USER_LANG)}" class="portal-navigation-add">
                               <i class="fa fa-plus-circle"></i>
                             </a>
                         </li>
@@ -262,7 +262,7 @@
       </a> <!-- Navigation item link. -->
       <xsl:if test="$AUTHENTICATED='true' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:moveAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-          <a href="javascript:;" class="nav-tab-controls portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
+          <a href="#" class="nav-tab-controls portal-navigation-gripper {$NAV_ACTIVE}" title="{upMsg:getMessage('move.this.tab', $USER_LANG)}">
             <i class="fa fa-align-justify"></i>
             <span><xsl:value-of select="upMsg:getMessage('move', $USER_LANG)"/></span>
           </a> <!-- Drag & drop gripper handle. -->
@@ -270,7 +270,7 @@
       </xsl:if>
       <xsl:if test="$AUTHENTICATED='true' and @activeTab='true' and $NAV_POSITION != 'single' and not($PORTAL_VIEW='focused')">
         <xsl:if test="not(@dlm:deleteAllowed='false') or $IS_FRAGMENT_ADMIN_MODE='true'">
-          <a href="javascript:;" class="nav-tab-controls portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
+          <a href="#" class="nav-tab-controls portal-navigation-delete" title="{upMsg:getMessage('remove.this.tab', $USER_LANG)}">
             <i class="fa fa-times"></i>
             <span><xsl:value-of select="upMsg:getMessage('remove', $USER_LANG)"/></span>
           </a><!-- Remove tab icon. -->

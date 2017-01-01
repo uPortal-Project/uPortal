@@ -171,12 +171,12 @@
                                                 <c:forEach var="value" items="${ attribute.value.value }">
                                                     <div>
                                                          <input type="text" id="${ n }${ attrName }" class="form-control" name="attributes['${fn:escapeXml(attribute.key)}'].value" value="${ fn:escapeXml(value )}" />
-                                                         <a class="delete-attribute-value-link" href="javascript:;">
+                                                         <a class="delete-attribute-value-link" href="#">
                                                             <spring:message code="remove"/>
                                                          </a>
                                                     </div>
                                                 </c:forEach>
-                                                <a class="add-attribute-value-link" href="javascript:;" paramName="${fn:escapeXml(name)}">
+                                                <a class="add-attribute-value-link" href="#" paramName="${fn:escapeXml(name)}">
                                                 <spring:message code="add.value"/></a>
                                             </c:when>
                                             <c:otherwise>
@@ -187,7 +187,7 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <a class="delete-attribute-link" aria-label="<spring:message code="remove"/> <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/>" href="javascript:;">
+                                        <a class="delete-attribute-link" aria-label="<spring:message code="remove"/> <spring:message code="attribute.displayName.${attrName}" text="${attrName}"/>" href="#">
                                             <spring:message code="remove"/>
                                         </a>
                                     </td>
@@ -196,7 +196,7 @@
 
                             <tfoot>
                                 <td colspan="3">
-                                    <a class="add-attribute-link" href="javascript:;">
+                                    <a class="add-attribute-link" href="#">
                                     <spring:message code="add.attribute"/></a>
                                 </td>
                             </tfoot>

@@ -100,11 +100,11 @@
                                         <input type="submit" class="button btn" value="<spring:message code="go"/>" />
                                     </form>
                                     <div id="${n}searchDropDown" class="search-dropdown">
-                                        <div id="${n}closeDropDown" class="search-close"><a href="javascript:;">Close</a></div>
+                                        <div id="${n}closeDropDown" class="search-close"><a href="#">Close</a></div>
                                         <div id="${n}searchResultsNoMembers" class="portlet-msg info" role="alert"><p><spring:message code="no.members"/></p></div>
                                             <ul id="${n}searchResults" class="search-list">
                                                 <li class="group">
-                                                    <a href="javascript:;" title="&nbsp;"><span>&nbsp;</span></a>
+                                                    <a href="#" title="&nbsp;"><span>&nbsp;</span></a>
                                                 </li>
                                             </ul>
                                         <div id="${n}searchLoader" class="search-loader"><span>&nbsp;</span></div>
@@ -173,7 +173,7 @@
                                             <c:otherwise>
                                                 <c:forEach items="${groups}" var="group">
                                                     <li>
-                                                        <a key="${group.entityType}:${group.id}" href="javascript:;"><c:out value="${group.name}"/></a>
+                                                        <a key="${group.entityType}:${group.id}" href="#"><c:out value="${group.name}"/></a>
                                                         <input type="hidden" name="groups" value="${group.entityType}:${group.id}"/>
                                                     </li>
                                                 </c:forEach>
