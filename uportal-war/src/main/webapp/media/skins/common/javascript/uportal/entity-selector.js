@@ -23,7 +23,7 @@ var up = up || {};
 
     /**
      * Private. Returns type from key.
-     * 
+     *
      * @param {String} key - reference to entity key.
      */
     var getTypeFromKey = function (key) {
@@ -33,12 +33,12 @@ var up = up || {};
 
     /**
      * Private. Returns ID.
-     * 
+     *
      * @param {String} key
      */
     var getIdFromKey = function (key) {
         var separatorIndex = key.indexOf(":");
-        return key.substring(separatorIndex + 1, key.length); 
+        return key.substring(separatorIndex + 1, key.length);
     };//end:function.
 
     /**
@@ -52,7 +52,7 @@ var up = up || {};
 
     /**
      * Private. Outputs selection markup snippet.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} entity - reference to currently selected entity object.
      */
@@ -125,7 +125,7 @@ var up = up || {};
 
     /**
      * Private. Remove an entity from the selection list.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to passed anchor tag attribute. ex: group:local.17
      */
@@ -169,7 +169,7 @@ var up = up || {};
 
     /**
      * Private. Add an entity to the selected list.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to currrently 'selected' entity. ex: group:local.17
      */
@@ -224,7 +224,7 @@ var up = up || {};
 
     /**
      * Private. Remove breadcrumb from breadcrumb lists.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} anchor - reference to <a> element.
      @ @param {Function} browseFn - function to associate with anchor
@@ -245,7 +245,7 @@ var up = up || {};
 
     /**
      * Private. Builds mark-up string for breadCrumb.
-     * 
+     *
      * @param {Object} key - reference to entity key.
      * @param {Object} entityName - reference to entity name.
      * @param {Object} breadcrumbs - DOM object of breadcrumbs
@@ -264,7 +264,7 @@ var up = up || {};
 
     /**
      * Private. Update the breadcrumb trail.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {Object} entity - reference to the entity object.
      * @param {String} breadcrumbsSel - selector name of breadcrumb
@@ -392,7 +392,7 @@ var up = up || {};
 
     /**
      * Private. Renders 'selected' search items to the end user.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var updateSearchView = function (that) {
@@ -411,7 +411,7 @@ var up = up || {};
 
     /**
      * Private. Determines which action, selection or deselection, executes.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} key - reference to key attribute passed over when search link is clicked.
      */
@@ -435,7 +435,7 @@ var up = up || {};
 
     /**
      * Private. Search for a specific entity.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      * @param {String} searchTerm - reference to search term.
      */
@@ -486,7 +486,7 @@ var up = up || {};
 
     /**
      * Private. Initializes search feature.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var searchEntity = function (that) {
@@ -495,7 +495,7 @@ var up = up || {};
         // Cache.
         closeSearch = that.locate("closeSearch");
         searchForm = that.locate("searchForm");
-        searchField = searchForm.find("input[type=text]");
+        searchField = searchForm.find("input[type=search]");
         loader = that.locate("searchLoader");
         searchDropDown = that.locate("searchDropDown");
 
@@ -543,7 +543,7 @@ var up = up || {};
 
     /**
      * Private. Runs initialization functions.
-     * 
+     *
      * @param {Object} that - reference to an instance of the up.entityselection component.
      */
     var initialize = function (that) {
