@@ -500,13 +500,7 @@ var up = up || {};
         searchDropDown = that.locate("searchDropDown");
 
         // Apply.
-        searchField.val(that.options.messages.searchValue);
         searchDropDown.css({'top': searchField.outerHeight()});
-
-        // Binds 'click' & 'focus' events to input field.
-        searchField.bind("click focus", function () {
-            $(this).val("");
-        });//end:listener.
 
         // Binds 'submit' event.
         searchForm.submit(function () {
