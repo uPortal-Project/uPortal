@@ -19,9 +19,6 @@
     "presets": [
       "remark-preset-lint-recommended",
       "remark-preset-lint-consistent"
-    ],
-    "lint": {
-      "no-shortcut-reference-link": false
-    }
+    ]
   }
 }
