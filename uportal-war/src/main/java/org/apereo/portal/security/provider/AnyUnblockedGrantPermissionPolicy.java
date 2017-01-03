@@ -155,7 +155,7 @@ public class AnyUnblockedGrantPermissionPolicy implements IPermissionPolicy {
         boolean rslt;
         try {
             // Track groups we've already explored to avoid infinite loop
-            final Set<IGroupMember> seenGroups = new HashSet<>(100);
+            final Set<IGroupMember> seenGroups = new HashSet<>();
             rslt = hasUnblockedPathToGrantWithCache(service, principal, owner, activity, target, seenGroups);
         } catch (Exception e) {
             log.error("Error searching for unblocked path to grant for principal [" + principal + "]", e);
