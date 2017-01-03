@@ -64,8 +64,10 @@ import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.rest.layout.MarketplaceEntry;
 import org.apereo.portal.security.AuthorizationPrincipalHelper;
 import org.apereo.portal.security.IAuthorizationPrincipal;
+import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
 import org.apereo.portal.security.IPersonManager;
+import org.apereo.portal.security.PermissionHelper;
 import org.apereo.portal.services.GroupService;
 import org.apereo.portal.url.IPortalRequestUtils;
 import org.apereo.portal.user.IUserInstance;
@@ -220,6 +222,12 @@ public class PortletMarketplaceController {
         model.addAttribute("reviewMaxLength", IMarketplaceRating.REVIEW_MAX_LENGTH);
         model.addAttribute("marketplaceEntry", marketplaceEntry);
         model.addAttribute("shortURL", mpDefinition.getShortURL());
+
+        // User allowed to favorite this portlet?
+        final String targetString = PermissionHelper.permissionTargetIdForPortletDefinition(mpDefinition);
+        final boolean canFavorite = principal.hasPermission(IPermission.PORTAL_SYSTEM,
+                                IPermission.PORTLET_FAVORITE_ACTIVITY, targetString);
+        model.addAttribute("canFavorite", canFavorite);
 
         // Reviews feature enabled?
         final PortletPreferences prefs = renderRequest.getPreferences();

@@ -23,27 +23,49 @@ import java.util.Date;
 /**
  * @author Bernie Durfee (bdurfee@interactivebusiness.com)
  * @author Dan Ellentuck
- * @version $Revision$
  */
 public interface IPermission {
-  /*
-    Activity names for Permissions whose targets are portlets.
-  */
-  public static final String PORTLET_MANAGER_ACTIVITY = "MANAGE";
-  public static final String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
 
   /*
-   * Portlet subscribe permissions by lifecycle state
+   * Portlet subscribe permissions listed
+   * hierarchically by lifecycle state
+   */
+
+  /**
+   * Allows the user to view or add to his or her layout a portlet that is in
+   * the <code>CREATED</code> lifecycle state.
    */
   public static final String PORTLET_SUBSCRIBER_CREATED_ACTIVITY = "SUBSCRIBE_CREATED";
+  /**
+   * Allows the user to view or add to his or her layout a portlet that is in
+   * the <code>APPROVED</code> lifecycle state.
+   */
   public static final String PORTLET_SUBSCRIBER_APPROVED_ACTIVITY = "SUBSCRIBE_APPROVED";
+  /**
+   * The standard <code>SUBSCRIBE</code> activity.  Allows the user to view or
+   * add to his or her layout a portlet that is in the <code>PUBLISHED</code>
+   * lifecycle state.
+   */
+  public static final String PORTLET_SUBSCRIBER_ACTIVITY = "SUBSCRIBE";
+  /**
+   * Allows the user to view or add to his or her layout a portlet that is in
+   * the <code>EXPIRED</code> lifecycle state.
+   */
   public static final String PORTLET_SUBSCRIBER_EXPIRED_ACTIVITY = "SUBSCRIBE_EXPIRED";
 
   /**
    * Portlet subscribe permission to view ("browse") marketplace entry.
+   *
    * @since uPortal 4.1
    */
   public static final String PORTLET_BROWSE_ACTIVITY = "BROWSE";
+
+  /**
+   * Permission to favorite/star a portlet.
+   *
+   * @since uPortal 5.0
+   */
+  public static final String PORTLET_FAVORITE_ACTIVITY = "FAVORITE";
 
   /*
    * Portlet management permissions by portlet type.
@@ -51,12 +73,35 @@ public interface IPermission {
   public static final String PORTLET_MANAGER_SELECT_PORTLET_TYPE = "SELECT_PORTLET_TYPE";
 
   /*
-   * Portlet management permissions by lifecycle state.
+   * Portlet management permissions listed
+   * hierarchically by lifecycle state
+   */
+
+  /**
+   * Allows the user to edit the publication metadata of a portlet that is in
+   * the <code>CREATED</code> lifecycle state.
    */
   public static final String PORTLET_MANAGER_CREATED_ACTIVITY = "MANAGE_CREATED";
+  /**
+   * Allows the user to edit the publication metadata of a portlet that is in
+   * the <code>APPROVED</code> lifecycle state.
+   */
   public static final String PORTLET_MANAGER_APPROVED_ACTIVITY = "MANAGE_APPROVED";
+  /**
+   * The standard <code>MANAGE</code> activity.  Allows the user to edit the
+   * publication metadata of a portlet that is in the <code>PUBLISHED</code>
+   * lifecycle state.
+   */
+  public static final String PORTLET_MANAGER_ACTIVITY = "MANAGE";
+  /**
+   * Allows the user to edit the publication metadata of a portlet that is in
+   * the <code>EXPIRED</code> lifecycle state.
+   */
   public static final String PORTLET_MANAGER_EXPIRED_ACTIVITY = "MANAGE_EXPIRED";
   /**
+   * Allows the user to edit the publication metadata of a portlet that is in
+   * the <code>MAINTENANCE</code> lifecycle state.
+   *
    * @since 4.2
    */
   public static final String PORTLET_MANAGER_MAINTENANCE_ACTIVITY = "MANAGE_MAINTENANCE";

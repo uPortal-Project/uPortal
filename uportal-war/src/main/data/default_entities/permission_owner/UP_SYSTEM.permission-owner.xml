@@ -44,6 +44,12 @@
         <targetProvider>portalSystemTargetProvider</targetProvider>
     </activity>
     <activity>
+        <name>Favorite</name>
+        <fname>FAVORITE</fname>
+        <desc>Allow the user to add a portlet to his or her favorites</desc>
+        <targetProvider>channelsAndCategoriesTargetProvider</targetProvider>
+    </activity>
+    <activity>
         <name>Import Entity</name>
         <fname>IMPORT_ENTITY</fname>
         <desc>Allow the user to import entity XML using the ImportExportPortlet</desc>

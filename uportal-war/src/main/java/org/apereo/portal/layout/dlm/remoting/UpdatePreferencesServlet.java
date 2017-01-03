@@ -70,6 +70,7 @@ import org.apereo.portal.portlets.favorites.FavoritesUtils;
 import org.apereo.portal.security.IAuthorizationPrincipal;
 import org.apereo.portal.security.IPermission;
 import org.apereo.portal.security.IPerson;
+import org.apereo.portal.security.PermissionHelper;
 import org.apereo.portal.security.PersonFactory;
 import org.apereo.portal.security.provider.RestrictedPerson;
 import org.apereo.portal.services.AuthorizationService;
@@ -106,7 +107,7 @@ public class UpdatePreferencesServlet {
     private static final String TAB_GROUP_PARAMETER = "tabGroup";  // matches incoming JS
     private static final String TAB_GROUP_DEFAULT = "DEFAULT_TABGROUP";  // matches default in structure transform
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IPortletDefinitionRegistry portletDefinitionRegistry;
     private IUserIdentityStore userIdentityStore;
@@ -204,7 +205,7 @@ public class UpdatePreferencesServlet {
                 // Delete the requested element node.  This code is the same for
                 // all node types, so we can just have a generic action.
                if (!ulm.deleteNode(elementId)) {
-                   log.info("Failed to remove element ID {} from layout root folder ID {}, delete node returned false", elementId, ulm.getRootFolderId());
+                   logger.info("Failed to remove element ID {} from layout root folder ID {}, delete node returned false", elementId, ulm.getRootFolderId());
                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
                    return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.element.update", "Unable to update element", RequestContextUtils.getLocale(request))));
                }
@@ -241,7 +242,7 @@ public class UpdatePreferencesServlet {
         // an IPerson object representing that user
         String fragmentOwnerName = request.getParameter("sourceID");
         if (StringUtils.isBlank(fragmentOwnerName)) {
-            log.warn("Attempted to subscribe to tab with null owner ID");
+            logger.warn("Attempted to subscribe to tab with null owner ID");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return new ModelAndView("jsonView", Collections.singletonMap("error", "Attempted to subscribe to tab with null owner ID"));
         }
@@ -504,7 +505,7 @@ public class UpdatePreferencesServlet {
                 Element folder = ulm.getUserLayoutDOM().getElementById(columnId);
                 UserPrefsHandler.setUserPreference(folder, "width", per);
             } catch (Exception e) {
-                log.error("Error saving new column widths", e);
+                logger.error("Error saving new column widths", e);
             }
             count++;
         }
@@ -512,7 +513,7 @@ public class UpdatePreferencesServlet {
         try {
             ulm.saveUserLayout();
         } catch (PortalException e) {
-            log.warn("Error saving layout", e);
+            logger.warn("Error saving layout", e);
         }
 
         return new ModelAndView("jsonView", model);
@@ -552,7 +553,7 @@ public class UpdatePreferencesServlet {
         try {
             // move the node as requested and save the layout
             if (!ulm.moveNode(sourceId, ulm.getParentId(destinationId), siblingId)) {
-                log.warn("Failed to move tab in user layout. moveNode returned false");
+                logger.warn("Failed to move tab in user layout. moveNode returned false");
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return new ModelAndView("jsonView",
                         Collections.singletonMap("response", getMessage("error.move.tab",
@@ -568,23 +569,33 @@ public class UpdatePreferencesServlet {
     }
 
     @RequestMapping(method= RequestMethod.POST , params = "action=addFavorite")
-    public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) {
-        //setup
-        IUserInstance ui = userInstanceManager.getUserInstance(request);
+    public ModelAndView addFavorite(@RequestParam String channelId, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
-        IUserLayoutManager ulm = upm.getUserLayoutManager();
-
-        IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(portletDefinitionRegistry.getPortletDefinition(channelId));
-
+        final IUserInstance ui = userInstanceManager.getUserInstance(request);
+        final IPerson person = getPerson(ui, response);
+        final IPortletDefinition pdef = portletDefinitionRegistry.getPortletDefinition(channelId);
         final Locale locale = RequestContextUtils.getLocale(request);
 
+        final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(person.getUserName());
+        final String targetString = PermissionHelper.permissionTargetIdForPortletDefinition(pdef);
+        if (!authPrincipal.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.PORTLET_FAVORITE_ACTIVITY, targetString)) {
+            logger.warn("Unauthorized attempt to favorite portlet '{}' through the REST API by user '{}'", pdef.getFName(), person.getUserName());
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            return new ModelAndView("jsonView", Collections.singletonMap("response",
+                    getMessage("error.favorite.not.permitted", "Favorite not permitted", locale)));
+        }
+
+        final UserPreferencesManager upm = (UserPreferencesManager) ui.getPreferencesManager();
+        final IUserLayoutManager ulm = upm.getUserLayoutManager();
+
+        final IUserLayoutChannelDescription channel = new UserLayoutChannelDescription(pdef);
+
         //get favorite tab
-        String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
+        final String favoriteTabNodeId = FavoritesUtils.getFavoriteTabNodeId(ulm.getUserLayout());
 
         if(favoriteTabNodeId != null) {
             //add portlet to favorite tab
-            IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
+            final IUserLayoutNodeDescription node = addNodeToTab(ulm, channel, favoriteTabNodeId);
 
             if (node == null) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -600,7 +611,7 @@ public class UpdatePreferencesServlet {
             }
 
             //document success for notifications
-            Map<String, String> model = new HashMap<String, String>();
+            final Map<String, String> model = new HashMap<String, String>();
             final String channelTitle = channel.getTitle();
             model.put("response", getMessage("favorites.added.favorite", channelTitle,
                             "Added " + channelTitle + " as a favorite.", locale));
@@ -640,7 +651,7 @@ public class UpdatePreferencesServlet {
                 UserLayoutChannelDescription channelDescription = (UserLayoutChannelDescription)result;
                 try {
                     if (!ulm.deleteNode(channelDescription.getChannelSubscribeId())) {
-                        log.warn("Error deleting the node" + channelId + "from favorites for user " + (upm.getPerson() == null ? "unknown" : upm.getPerson().getID()));
+                        logger.warn("Error deleting the node" + channelId + "from favorites for user " + (upm.getPerson() == null ? "unknown" : upm.getPerson().getID()));
                         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                         return new ModelAndView("jsonView", Collections.singletonMap("response", getMessage("error.remove.favorite", "Can''t remove favorite", locale)));
                     }
@@ -696,7 +707,7 @@ public class UpdatePreferencesServlet {
         else if (fname != null)
             definition = portletDefinitionRegistry.getPortletDefinitionByFname(fname);
         else {
-            log.error("SourceId or fname invalid when adding a portlet");
+            logger.error("SourceId or fname invalid when adding a portlet");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new ModelAndView("jsonView", Collections.singletonMap("error", "SourceId or fname invalid"));
         }
@@ -712,7 +723,7 @@ public class UpdatePreferencesServlet {
 
             //If neither an insert or type folder - Can't "insert into" non-folder
             if (!(isInsert || isFolder(ulm, destinationId))) {
-                log.error("Cannot insert into portlet element");
+                logger.error("Cannot insert into portlet element");
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return new ModelAndView("jsonView", Collections.singletonMap("error", "Cannot insert into portlet element"));
             }
@@ -821,7 +832,7 @@ public class UpdatePreferencesServlet {
         // Verify that the user has permission to add this tab
         final IAuthorizationPrincipal authPrincipal = this.getUserPrincipal(per.getUserName());
         if (!authPrincipal.hasPermission(IPermission.PORTAL_SYSTEM, IPermission.ADD_TAB_ACTIVITY, IPermission.ALL_TARGET)) {
-            log.warn("Attempt to add a tab through the REST API by unauthorized user '" + per.getUserName() + "'");
+            logger.warn("Attempt to add a tab through the REST API by unauthorized user '" + per.getUserName() + "'");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return new ModelAndView("jsonView", Collections.singletonMap("error", "Add tab disabled"));
         }
@@ -872,7 +883,7 @@ public class UpdatePreferencesServlet {
                 Element folder = ulm.getUserLayoutDOM().getElementById(newColumn.getId());
                 UserPrefsHandler.setUserPreference(folder, "width", per);
             } catch (Exception e) {
-                log.error("Error saving new column widths", e);
+                logger.error("Error saving new column widths", e);
             }
 
         }
@@ -883,8 +894,8 @@ public class UpdatePreferencesServlet {
         if (request.getParameter(TAB_GROUP_PARAMETER)!= null) {
 
             String tabGroup = request.getParameter(TAB_GROUP_PARAMETER).trim();
-            if (log.isDebugEnabled()) {
-                log.debug(TAB_GROUP_PARAMETER + "=" + tabGroup);
+            if (logger.isDebugEnabled()) {
+                logger.debug(TAB_GROUP_PARAMETER + "=" + tabGroup);
             }
 
             if (!TAB_GROUP_DEFAULT.equals(tabGroup) && tabGroup.length() != 0) {
@@ -974,7 +985,7 @@ public class UpdatePreferencesServlet {
               BeanUtils.setProperty(node, name, attributes.get(name));
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                log.warn("Unable to set attribute: " + name + "on object of type: " + node.getType());
+                logger.warn("Unable to set attribute: " + name + "on object of type: " + node.getType());
             }
         }
 
@@ -1019,7 +1030,7 @@ public class UpdatePreferencesServlet {
         // Update the attributes based on the supplied JSON (request body name-value pairs)
         IUserLayoutNodeDescription node = ulm.getNode(targetId);
         if (node == null) {
-            log.warn("[updateAttributes()] Unable to locate node with id: " + targetId);
+            logger.warn("[updateAttributes()] Unable to locate node with id: " + targetId);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return new ModelAndView("jsonView", Collections.singletonMap("error", "Unable to locate node with id: " + targetId));
         } else {
@@ -1059,7 +1070,7 @@ public class UpdatePreferencesServlet {
         String tabName = request.getParameter("tabName");
 
         if (!ulm.canUpdateNode(tab)) {
-            log.warn("Attempting to rename an immutable tab");
+            logger.warn("Attempting to rename an immutable tab");
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return new ModelAndView("jsonView", Collections.singletonMap("error", getMessage("error.element.update", "Unable to update element", RequestContextUtils.getLocale(request))));
         }
@@ -1098,7 +1109,7 @@ public class UpdatePreferencesServlet {
         IUserLayoutNodeDescription node = ulm.getNode(elementId);
 
         if (node == null){
-            log.warn("Failed to locate node for permissions update");
+            logger.warn("Failed to locate node for permissions update");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return new ModelAndView("jsonView", Collections.singletonMap("error", "Invalid node id " + elementId));
         }
@@ -1137,7 +1148,7 @@ public class UpdatePreferencesServlet {
     }
 
     private ModelAndView handlePersistError(HttpServletRequest request, HttpServletResponse response, Exception e) {
-        log.warn("Error saving layout", e);
+        logger.warn("Error saving layout", e);
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return new ModelAndView("jsonView", Collections.singletonMap("error",
                 getMessage("error.persisting.attribute.change", "Unable to save attribute changes",
@@ -1206,7 +1217,7 @@ public class UpdatePreferencesServlet {
             return messageSource.getMessage(key, new Object[] {}, defaultMessage, locale);
         } catch (Exception e) {
             // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
-            log.error("Error resolving message with key {}.", key, e);
+            logger.error("Error resolving message with key {}.", key, e);
             return defaultMessage;
         }
     }
@@ -1224,7 +1235,7 @@ public class UpdatePreferencesServlet {
             return messageSource.getMessage(key, new String[] {argument}, defaultMessage, locale);
         } catch (Exception e) {
             // sadly, messageSource.getMessage can throw e.g. when message is ill formatted.
-            log.error("Error resolving message with key {}.", key, e);
+            logger.error("Error resolving message with key {}.", key, e);
             return defaultMessage;
         }
     }
@@ -1271,11 +1282,11 @@ public class UpdatePreferencesServlet {
                     }
                 }
             } catch (Exception e) {
-                log.error("Error getting the nodeID of the tab name " + tabName, e);
+                logger.error("Error getting the nodeID of the tab name " + tabName, e);
             }
         }
 
-        log.warn("Tab " + tabName + " was searched for but not found");
+        logger.warn("Tab " + tabName + " was searched for but not found");
         return null; //didn't find tab
     }
 
@@ -1295,7 +1306,7 @@ public class UpdatePreferencesServlet {
                                         String destinationId,
                                         String method) {
 
-      log.debug("moveElementInternal invoked for sourceId={}, destinationId={}, method={}",
+      logger.debug("moveElementInternal invoked for sourceId={}, destinationId={}, method={}",
                                                       sourceId, destinationId, method);
 
       if(StringUtils.isEmpty(destinationId)) {//shortcut for beginning and end
@@ -1330,7 +1341,7 @@ public class UpdatePreferencesServlet {
               if (col != null) {
                   success = attemptNodeMove(ulm, sourceId, col.getId(), null);
               } else {
-                  log.info("Unable to move item into existing columns on tab {} and unable to create new column",
+                  logger.info("Unable to move item into existing columns on tab {} and unable to create new column",
                           destinationId);
               }
           }
@@ -1351,7 +1362,7 @@ public class UpdatePreferencesServlet {
               ulm.saveUserLayout();
           }
       } catch (PortalException e) {
-          log.warn("Error saving layout", e);
+          logger.warn("Error saving layout", e);
           return false;
       }
 
@@ -1361,7 +1372,7 @@ public class UpdatePreferencesServlet {
     private boolean attemptNodeMove(IUserLayoutManager ulm, String sourceId, String destinationId, String beforeNode) {
         boolean success = ulm.moveNode(sourceId, destinationId, beforeNode);
         if (!success) {
-            log.warn("moveNode returned false for sourceId={}, destinationId={}, method={};  "
+            logger.warn("moveNode returned false for sourceId={}, destinationId={}, method={};  "
                     + "Aborting node movement", sourceId, destinationId, beforeNode);
         }
         return success;
