@@ -30,7 +30,6 @@ import org.apereo.portal.security.ISecurityContext;
  * object and prevents access to the
  * underlying security context.
  * @author Ken Weiner, kweiner@unicon.net
- * @version $Revision$
  */
 public class RestrictedPerson implements IPerson {
     private static final long serialVersionUID = 1L;

@@ -65,7 +65,7 @@ public class ExtendedPersonManager extends AbstractPersonManager {
 		if (person == null) {
 			try {
 				// Create a guest person
-				person = PersonFactory.createGuestPerson();
+				person = createGuestPerson(request);
 				merger.mergeAttributes(person.getAttributeMap(), descriptors.getAttributes());
 			} catch (Exception e) {
 				// Log the exception

@@ -69,7 +69,7 @@ public class RemoteUserPersonManager extends AbstractPersonManager {
 
 		try {
 			// Create a new instance of a person
-			person = PersonFactory.createGuestPerson();
+			person = createGuestPerson(request);
 			
 			// If the user has authenticated with the server which has implemented web authentication,
 			// the REMOTE_USER environment variable will be set.			
