@@ -166,7 +166,7 @@ public class PersonImpl implements IPerson {
          * elsewhere -- to initialize a valid IPerson in the portal.  We want
          * to *fail fast* if there's something wrong with that process.
          */
-        validateUsername(); 
+        validateUsername();
     }
 
     /**
@@ -233,22 +233,19 @@ public class PersonImpl implements IPerson {
      * This person is a "guest" if both of the following are true:
      * <ol>
      *   <li>This person's user name is listed as a guest user account.</li>
-     *   <li>This person does not have a live instance ISecurityContext that 
-     *       states he/she has been successfully authenticated.  (It can be 
+     *   <li>This person does not have a live instance ISecurityContext that
+     *       states he/she has been successfully authenticated.  (It can be
      *       either null or unauthenticated.)</li>
      * </ol>
-     * 
+     *
      * @return <code>true</code> If person is a guest, otherwise <code>false</code>
      */
     @Override
     public boolean isGuest() {
-        boolean rslt = false;  // default
         String userName = (String) getAttribute(IPerson.USERNAME);
-        if (PersonFactory.GUEST_USERNAMES.contains(userName) &&
-                (m_securityContext == null || !m_securityContext.isAuthenticated())) {
-            rslt = true;
-        }
-        return rslt;
+        boolean isGuestUsername = PersonFactory.GUEST_USERNAMES.contains(userName);
+        boolean isAuthenticated  = m_securityContext != null && m_securityContext.isAuthenticated();
+        return isGuestUsername && !isAuthenticated;
     }
 
     /**
