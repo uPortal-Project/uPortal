@@ -43,7 +43,7 @@
             <label for="query">
                  <spring:message code='search.directory'/>
             </label>
-            <input name="query" value="${ fn:escapeXml(query )}"/>
+            <input id="query" name="query" value="${ fn:escapeXml(query )}"/>
             <input type="submit" value="<spring:message code='search.directory.submit'/>"/>            
         </form>
 
