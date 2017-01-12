@@ -346,6 +346,7 @@
               <xsl:when test="@alternativeMaximizedLink and string-length(@alternativeMaximizedLink) > 0">
                 <xsl:attribute name="href"><xsl:value-of select="@alternativeMaximizedLink" /></xsl:attribute>
                 <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
                 <xsl:attribute name="class">portal-subnav-link externalLink</xsl:attribute>
               </xsl:when>
               <xsl:otherwise>

@@ -149,6 +149,7 @@
                 <xsl:choose>
                   <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
                     <xsl:attribute name="target">_blank</xsl:attribute>
+                    <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
                   </xsl:when>
                   <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
@@ -210,7 +211,8 @@
                               <xsl:choose>
                                 <xsl:when
                                      test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
-                                  <xsl:attribute name="target">_blank</xsl:attribute>
+                                     <xsl:attribute name="target">_blank</xsl:attribute>
+                                     <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
                                 </xsl:when>
                                 <xsl:otherwise></xsl:otherwise>
                               </xsl:choose>

@@ -84,10 +84,10 @@
         </xsl:variable>
         <!-- Determine column place in the layout and add appropriate class. -->
         <xsl:variable name="POSITION_CSS_CLASS">column-<xsl:value-of select="$NUMBER" /></xsl:variable>
-        <!-- 
+        <!--
          | Per up-layout-selector.js, current valid width selections are 25%,
          | 33%, 34%, 40%, 50%, 60%, and 100%.  The following approach works
-         | with all of those.  (8.3333 == percentage of total width occupied 
+         | with all of those.  (8.3333 == percentage of total width occupied
          | by 1 column in a 12-column grid.)
          +-->
         <xsl:variable name="WIDTH_CSS_CLASS">col-md-<xsl:value-of select="round(number(substring-before(@width,'%')) div 8.3333)" /></xsl:variable>
@@ -147,10 +147,10 @@
   <xsl:template match="channel|blocked-channel">
 
     <xsl:variable name="PORTLET_LOCKED"> <!-- Test to determine if the portlet is locked in the layout. -->
-      <xsl:choose> 
-        <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when> 
-        <xsl:otherwise>movable</xsl:otherwise> 
-      </xsl:choose> 
+      <xsl:choose>
+        <xsl:when test="@dlm:moveAllowed='false'">locked</xsl:when>
+        <xsl:otherwise>movable</xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
 
     <xsl:variable name="DELETABLE">
@@ -236,7 +236,7 @@
              data-rating.instructions.rated =
                      "{upMsg:getMessage('rating.instructions.rated', $USER_LANG, $portletName)}"
                 />
-        
+
         <script type="text/javascript">
             (function($) {
                 $( document ).ready(function() {
@@ -314,6 +314,7 @@
             <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
               <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
               <xsl:attribute name="target">_blank</xsl:attribute>
+              <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
               <xsl:attribute name="class">externalLink</xsl:attribute>
             </xsl:when>
             <xsl:otherwise>
@@ -377,7 +378,7 @@
     </div>
   </xsl:template>
   <!-- ============================================== -->
-  
+
   <!-- ========== TEMPLATE: PORTLET CONTROLS ========== -->
 
   <!-- This template renders portlet controls.  Each control has a unique class for assigning icons or other specific presentation. -->
@@ -525,6 +526,7 @@
               <xsl:when test="parameter[@name='alternativeMaximizedLink'] and string-length(parameter[@name='alternativeMaximizedLink']/@value) > 0">
                 <xsl:attribute name="href"><xsl:value-of select="parameter[@name='alternativeMaximizedLink']/@value" /></xsl:attribute>
                 <xsl:attribute name="target">_blank</xsl:attribute>
+                <xsl:attribute name="rel">noopener noreferrer</xsl:attribute>
                 <xsl:attribute name="class">up-portlet-control focus externalLink</xsl:attribute>
               </xsl:when>
               <xsl:otherwise>
