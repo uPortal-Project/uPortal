@@ -61,7 +61,7 @@
                 </div>
                 <div class="form-group">
                     <div class="buttons">
-                        <a id="${n}exportLink" class="button btn btn-primary" target="_blank" href=""><spring:message code="export"/> <i class="fa fa-download"></i></a>
+                        <a id="${n}exportLink" class="button btn btn-primary" target="_blank" rel="noopener noreferrer" href=""><spring:message code="export"/> <i class="fa fa-download"></i></a>
                     </div>
                 </div>
             </form>
