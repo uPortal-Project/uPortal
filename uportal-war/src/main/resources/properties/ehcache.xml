@@ -1983,7 +1983,11 @@
      +-->
     <cache name="org.apereo.portal.groups.pags.dao.EntityPersonAttributesGroupStore.membership"
            eternal="false" overflowToDisk="false" diskPersistent="false"
-           maxElementsInMemory="312500" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true" />
+           maxElementsInMemory="312500" timeToIdleSeconds="0" timeToLiveSeconds="300" memoryStoreEvictionPolicy="LRU" statistics="true">
+        <searchable>
+            <searchAttribute name="memberId" class="org.apereo.portal.groups.pags.dao.EhcacheMemberIdAttributeExtractor"/>
+        </searchable>
+    </cache>
 
     <!--
      | Stores objects of type PagsGroup, which are the Hibernate/JPA-managed
