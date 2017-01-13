@@ -61,9 +61,13 @@ public class PagsMembershipCacheAuthenticationListener implements IAuthenticatio
         usernameSearchAttribute = membershipCache.getSearchAttribute(SEARCH_ATTRIBUTE_NAME);
     }
 
-    @Override
-    public void userAuthenticateed(IPerson user) {
+    public void userAuthenticated(IPerson user) {
 
+        /*
+         * Used to log the time it takes to complete this operation;  the author
+         * has some anxiety about running time with large numbers of elements in
+         * the cache.
+         */
         final long timestamp = System.currentTimeMillis();
 
         /*

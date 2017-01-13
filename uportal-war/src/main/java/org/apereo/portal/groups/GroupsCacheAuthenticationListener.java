@@ -41,19 +41,32 @@ import org.springframework.stereotype.Component;
 @Component
 public class GroupsCacheAuthenticationListener implements IAuthenticationListener {
 
-    @Autowired
-    @Qualifier(value = "org.apereo.portal.groups.GroupMemberImpl.parentGroups")
     private Cache parentGroupsCache;
 
-    @Autowired
-    @Qualifier(value = "org.apereo.portal.groups.EntityGroupImpl.children")
     private Cache childrenCache;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Override
-    public void userAuthenticateed(IPerson user) {
+    @Autowired
+    @Qualifier(value = "org.apereo.portal.groups.GroupMemberImpl.parentGroups")
+    public void setParentGroupsCache(Cache parentGroupsCache) {
+        this.parentGroupsCache = parentGroupsCache;
+    }
 
+    @Autowired
+    @Qualifier(value = "org.apereo.portal.groups.EntityGroupImpl.children")
+    public void setChildrenCache(Cache childrenCache) {
+        this.childrenCache = childrenCache;
+    }
+
+    @Override
+    public void userAuthenticated(IPerson user) {
+
+        /*
+         * Used to log the time it takes to complete this operation;  the author
+         * has some anxiety about running time with large numbers of elements in
+         * the cache.
+         */
         final long timestamp = System.currentTimeMillis();
 
         /*

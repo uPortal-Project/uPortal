@@ -28,6 +28,6 @@ import org.apereo.portal.security.IPerson;
  */
 public interface IAuthenticationListener {
 
-    void userAuthenticateed(IPerson user);
+    void userAuthenticated(IPerson user);
 
 }

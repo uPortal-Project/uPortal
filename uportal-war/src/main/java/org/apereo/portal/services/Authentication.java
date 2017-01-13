@@ -154,7 +154,7 @@ public class Authentication {
              */
             GroupService.finishedSession(person);  // Old system
             for (IAuthenticationListener authListener : authenticationListeners) {  // New system
-                authListener.userAuthenticateed(person);
+                authListener.userAuthenticated(person);
             }
 
             //Clear all existing cached data about the person
