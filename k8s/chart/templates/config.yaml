@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: uportal-conf
+  namespace: {{ .Release.Namespace }}
+data:
+  overrides.properties: |
+    uportal.server=uportal.{{ .Values.global.dnsSuffix }}
+    uportal.protocol=https
+    cas.server=uportal.{{ .Values.global.dnsSuffix }}
+    cas.protocol=https
+
+    uportal.proto=https
+    uportal.base=${uportal.proto}://uportal.{{ .Values.global.dnsSuffix }}
+
+    cas.webapp=${uportal.base}/cas
+    uportal.webapp=${uportal.base}/uPortal
+
+    # Clustering (these should not need to be changed for your installation
+    hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+    hibernate.connection.driver_class=org.postgresql.Driver
+    hibernate.connection.url=jdbc:postgresql://updb/uportal
+    hibernate.connection.username=uportal
+    hibernate.connection.password=un1c0n
+    hibernate.connection.validationQuery=select 1
+    RawEventsJdbcUrl=jdbc:postgresql://updb/uportal
+    AggrEventsJdbcUrl=jdbc:postgresql://updb/uportal
+    RawEventsJdbcUser=uportal
+    RawEventsJdbcPassword=un1c0n
+    AggrEventsJdbcUser=uportal
+    AggrEventsJdbcPassword=un1c0n

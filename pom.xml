@@ -108,6 +108,7 @@
         <!-- The final name of the uPortal web-application -->
         <uportal.docbase>uPortal</uportal.docbase>
         <project-site-path>/uportal/${project.version}</project-site-path>
+        <postgres.version>9.4.1212</postgres.version>
 
         <!--
          | Environment name and filters file for environment-specific build
@@ -256,6 +257,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>stringtemplate</artifactId>

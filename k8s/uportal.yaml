@@ -1,0 +1,104 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: uportal
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: uportal
+      annotations:
+        # Use 
+        scheduler.alpha.kubernetes.io/affinity: |
+          {
+            "podAntiAffinity": {
+              "preferedDuringSchedulingIgnoredDuringExecution": [
+                {
+                  "labelSelector": {
+                    "matchExpressions": [
+                      {
+                        "key": "app",
+                        "operator": "In",
+                        "values": ["uportal"]
+                      }
+                    ]
+                  },
+                  "topologyKey": "kubernetes.io/hostname"
+               }
+              ]
+             }
+           }
+    spec:
+      containers:
+      - name: uportal
+        image: andrewstuart/uportal:5
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 2
+            memory: 2Gi
+        livenessProbe: &lp
+          httpGet: 
+            port: 8080
+            path: /ResourceServingWebapp/rs/jqueryui/1.10.3/jquery-ui-1.10.3.min.js
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 18
+        readinessProbe: *lp
+        env:
+        - name: CATALINA_OPTS
+          value: |
+            -Duportal.webapp=https://uportal.astuart.co/uPortal
+            -Duportal.base=https://uportal.astuart.co
+            -Duportal.secureCooke=true
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: cfg
+          mountPath: /usr/local/tomcat/portal/
+      volumes:
+      - name: cfg
+        configMap:
+          name: uportal-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uportal
+spec:
+  # To expose publicly, uncomment the line below
+  # type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: uportal
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: uportal
+  annotations:
+    # If you use an ingress controller and an addon like kube-lego
+    # (https://github.com/jetstack/kube-lego), your certificates can be
+    # automatically generated and renewed via LetsEncrypt
+    kubernetes.io/tls-acme: "true"
+spec:
+  tls:
+  - secretName: uportal.astuart.co.tls
+    hosts:
+    - uportal.astuart.co
+  rules:
+  - host: uportal.astuart.co
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: uportal
+          servicePort: 80

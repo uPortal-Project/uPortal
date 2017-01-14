@@ -53,13 +53,13 @@
          | deployments.  (Add all thaat are needed.)  Don't forget to add appropriate  .version 
          | properties to the root pom.xml, or simply enter the appropriate version below.
          +-->
-	    <!--
 	    <dependency>
             <groupId>org.postgresql</groupId>
 	        <artifactId>postgresql</artifactId>
 	        <version>${postgres.version}</version>
 	        <scope>compile</scope>
 	    </dependency>
+	    <!--
 	    <dependency>
 	        <groupId>com.ibm.db2</groupId>
 	        <artifactId>db2-jdbc</artifactId>
