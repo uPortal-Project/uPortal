@@ -563,7 +563,6 @@ public class PositionManager {
                  ( ! child.getAttribute( "chanID" ).equals( "" ) ||
                    child.getAttribute( "type" ).equals( "regular" ) ) ) {
                 final NodeInfo nodeInfo = new NodeInfo(child, indexInCVP++);
-
                 tracker.track(nodeInfo, order, compViewParent, positionSet);
 
                 final NodeInfo prevNode = available.put( nodeInfo.getId(), nodeInfo );

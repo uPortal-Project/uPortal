@@ -40,7 +40,11 @@
       <div class="portlet-section-body">
 
         <form action="${ formUrl }" method="POST">
-            <input name="query" value="${ fn:escapeXml(query )}"/> <input type="submit" value="<spring:message code='search.directory.submit'/>"/>
+            <label for="query">
+                 <spring:message code='search.directory'/>
+            </label>
+            <input id="query" name="query" value="${ fn:escapeXml(query )}"/>
+            <input type="submit" value="<spring:message code='search.directory.submit'/>"/>            
         </form>
 
         <c:if test="${not empty query}">
