@@ -31,16 +31,10 @@
 
     /* Styles to set the background to the previously-selected image */
     <c:if test="${backgroundImage ne null}">
-    ${backgroundContainerSelector}::before,
-    html.um-dashboard {
+    ${backgroundContainerSelector}::before {
         background-image: url("${backgroundImage}");
     }
     </c:if>
-
-    html.um-dashboard,
-    html.um-dashboard body {
-        background-color: transparent;
-    }
 
     /* Syles for the background selector widget itself  */
     #${n}background-edit-control {
