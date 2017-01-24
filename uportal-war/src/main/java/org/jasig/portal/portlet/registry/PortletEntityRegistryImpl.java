@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.regex.Pattern;
 
 import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
@@ -82,23 +81,17 @@ import com.google.common.base.Function;
  * The portlet adaptor channel will be responsible for listenting to unsubscribe events and cleaning up entity objects
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 @Service
 public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
-    static final char ID_PART_SEPERATOR = '_';
-    static final Pattern ID_PART_SEPERATOR_PATTERN = Pattern.compile(Pattern.quote(String.valueOf(ID_PART_SEPERATOR)));
-    
-    static final char DELEGATE_LAYOUT_NODE_ID_SEPERATOR = '-';
-    static final String DELEGATE_LAYOUT_NODE_ID_PREFIX = "dlg" + DELEGATE_LAYOUT_NODE_ID_SEPERATOR;
-    
-    static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
-    static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
-    static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
-    static final String PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE";
-    
+
+    private static final String PORTLET_ENTITY_DATA_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_DATA";
+    private static final String PORTLET_ENTITY_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY.thread-";
+    private static final String PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_ENTITY_LOCK_MAP_ATTRIBUTE";
+    private static final String PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE = PortletEntityRegistryImpl.class.getName() + ".PORTLET_DEFINITION_LOOKUP_MAP_ATTRIBUTE";
+
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
+
     private IUserInstanceManager userInstanceManager;
     private IPortletEntityDao portletEntityDao;
     private IPortletDefinitionRegistry portletDefinitionRegistry;
@@ -278,7 +271,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     @Override
     public IPortletEntity getOrCreateDelegatePortletEntity(HttpServletRequest request, IPortletWindowId parentPortletWindowId, IPortletDefinitionId delegatePortletDefinitionId) {
         //Create a special synthetic layout node ID for the delegate entity
-        final String layoutNodeId = DELEGATE_LAYOUT_NODE_ID_PREFIX + parentPortletWindowId.getStringId().replace(ID_PART_SEPERATOR, DELEGATE_LAYOUT_NODE_ID_SEPERATOR);
+        final String layoutNodeId = PortletWindowIdStringUtils.convertToDelegateLayoutNodeId(parentPortletWindowId.toString());
         
         //Grab the current user
         final IUserInstance userInstance = this.userInstanceManager.getUserInstance(request);
@@ -625,8 +618,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     }
 
     protected IPortletEntityId createConsistentPortletEntityId(IPortletDefinitionId portletDefinitionId, String layoutNodeId, int userId) {
-        final String compositeId = portletDefinitionId.getStringId() + ID_PART_SEPERATOR + layoutNodeId + ID_PART_SEPERATOR + userId;
-        return new PortletEntityIdImpl(portletDefinitionId, layoutNodeId, userId, compositeId);
+        return new PortletEntityIdImpl(portletDefinitionId, layoutNodeId, userId);
     }
 
     protected IPortletEntityId parseConsistentPortletEntityId(HttpServletRequest request, String consistentEntityIdString) {
@@ -641,13 +633,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
             }
         }
         
-        final String[] idParts = ID_PART_SEPERATOR_PATTERN.split(consistentEntityIdString);
-        if (idParts.length != 3) {
+        if (!PortletEntityIdStringUtils.hasCorrectNumberOfParts(consistentEntityIdString)) {
             throw new IllegalArgumentException("consistentEntityIdString does not have 3 parts and is invalid: " + consistentEntityIdString);
         }
         
         //Verify the portlet definition id
-        final String portletDefinitionIdString = idParts[0];
+        final String portletDefinitionIdString = PortletEntityIdStringUtils.parsePortletDefinitionId(consistentEntityIdString);
         final IPortletDefinition portletDefinition = this.getPortletDefinition(request, portletDefinitionIdString);
         if (portletDefinition == null) {
             throw new IllegalArgumentException("No parent IPortletDefinition found for " + portletDefinitionIdString + " from entity id string: " + consistentEntityIdString);
@@ -659,8 +650,8 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         final IUserLayoutManager userLayoutManager = preferencesManager.getUserLayoutManager();
         
         //Verify non-delegate layout node id exists and is for a portlet
-        final String layoutNodeId = idParts[1];
-        if (!layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
+        final String layoutNodeId = PortletEntityIdStringUtils.parseLayoutNodeId(consistentEntityIdString);
+        if (!PortletEntityIdStringUtils.isDelegateLayoutNode(layoutNodeId)) {
             final IUserLayoutNodeDescription node = userLayoutManager.getNode(layoutNodeId);
             if (node == null || node.getType() != LayoutNodeType.PORTLET) {
                 throw new IllegalArgumentException("No portlet layout node found for " + layoutNodeId + " from entity id string: " + consistentEntityIdString);
@@ -678,11 +669,12 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
         //TODO when there is a JPA backed user dao actually verify this mapping
         //User just conver to an int
         final int userId;
+        final String userIdAsString = PortletEntityIdStringUtils.parseUserIdAsString(consistentEntityIdString);
         try {
-            userId = Integer.parseInt(idParts[2]);
+            userId = Integer.parseInt(userIdAsString);
         }
         catch (NumberFormatException e) {
-            throw new IllegalArgumentException("The user id " + idParts[2] + " is not a valid integer from entity id string: " + consistentEntityIdString, e);
+            throw new IllegalArgumentException("The user id " + userIdAsString + " is not a valid integer from entity id string: " + consistentEntityIdString, e);
         }
         
         final IPortletEntityId portletEntityId = createConsistentPortletEntityId(portletDefinitionId, layoutNodeId, userId);
@@ -745,7 +737,7 @@ public class PortletEntityRegistryImpl implements IPortletEntityRegistry {
     public boolean shouldBePersisted(IPortletEntity portletEntity) {
         //Delegate entities should NEVER be persisted
         final String layoutNodeId = portletEntity.getLayoutNodeId();
-        if (layoutNodeId.startsWith(DELEGATE_LAYOUT_NODE_ID_PREFIX)) {
+        if (PortletEntityIdStringUtils.isDelegateLayoutNode(layoutNodeId)) {
             return false;
         }
         

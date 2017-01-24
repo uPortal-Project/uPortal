@@ -23,13 +23,11 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
  * Tests if any of the possibly multiple values of the attribute are GE
- * (greater than or equal to) the test value.  
- * <p>
+ * (greater than or equal to) the test value.
+ *
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public class IntegerGETester extends IntegerTester {
+public class IntegerGETester extends AbstractIntegerTester {
 
     /**
      * @since 4.3
@@ -47,6 +45,6 @@ public class IntegerGETester extends IntegerTester {
         super(attribute, test); 
     }
     public boolean test(int attributeValue) {
-        return ! (attributeValue < testInteger);
+        return ! (attributeValue < getTestInteger());
     }
 }

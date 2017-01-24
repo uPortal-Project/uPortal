@@ -18,17 +18,26 @@
  */
 package org.jasig.portal.rest.layout;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang.StringUtils;
 import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.IPortletDefinitionParameter;
 import org.jasig.portal.portlet.om.IPortletPreference;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 public class LayoutPortlet {
     private static final String CONTENT_PORTLET_PREFERENCE = "content";
     private static final String PITHY_CONTENT_PORTLET_PREFERENCE = "pithyContent";
+    private static final String WIDGET_URL_PORLTET_PREFERENCE = "widgetURL";
+    private static final String WIDGET_TYPE_PORTLET_PREFERENCE = "widgetType";
+    private static final String WIDGET_CONFIG_PORTLET_PREFERENCE = "widgetConfig";
+    private static final String WIDGET_TEMPLATE_PORTLET_PREFERENCE = "widgetTemplate";
+    private static final String RENDER_ON_WEB_PORTLET_PREFERENCE = "renderOnWeb";
     private static final String STATIC_CONTENT_PORTLET_WEBAPP_NAME = "/SimpleContentPortlet";
+
     private String nodeId;
     private String title;
     private String description;
@@ -37,7 +46,14 @@ public class LayoutPortlet {
     private String faIcon;
     private String fname;
     private String target;
+    private String widgetURL;
+    private String widgetType;
+    private String widgetTemplate;
+    @JsonRawValue
+    private Object widgetConfig;
+
     private boolean isAltMaxUrl = false;
+    private boolean isRenderOnWeb;
 
     /**
      * Fuller static content that you might display in a lightbox or so.
@@ -48,14 +64,14 @@ public class LayoutPortlet {
      * Pithy static content that you might display on a dashboard mosaic view or so.
      */
     private String pithyStaticContent;
-    
+
     public LayoutPortlet() {
-      
+
     }
 
     public LayoutPortlet(IPortletDefinition portletDef) {
       if(portletDef != null) {
-        
+
         nodeId = "-1";
         title = portletDef.getTitle();
         description = portletDef.getDescription();
@@ -67,31 +83,72 @@ public class LayoutPortlet {
         if (iconParam != null) {
             this.setIconUrl(iconParam.getValue());
         }
-        
+
         IPortletDefinitionParameter faIconParam = portletDef.getParameter("faIcon");
         if(faIconParam != null) {
             this.setFaIcon(faIconParam.getValue());
         }
-        
-        boolean[] efficencyFlag = {false, false};
-        efficencyFlag[0] = !STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(portletDef.getPortletDescriptorKey().getWebAppName());
+
+        boolean[] efficencyFlag = {false, false, false, false, false, false, false};
+        efficencyFlag[0] = !(portletDef.getPortletDescriptorKey() != null && STATIC_CONTENT_PORTLET_WEBAPP_NAME.equals(portletDef.getPortletDescriptorKey().getWebAppName()));
         for(IPortletPreference pref : portletDef.getPortletPreferences()) {
           if(!efficencyFlag[0] && CONTENT_PORTLET_PREFERENCE.equals(pref.getName()) && pref.getValues().length == 1) {
               this.setStaticContent(pref.getValues()[0]);
               efficencyFlag[0] = true;
-          } else if (PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName())
-              && 1 == pref.getValues().length) {
+          } else if (!efficencyFlag[1] && PITHY_CONTENT_PORTLET_PREFERENCE.equals(pref.getName()) && 1 == pref.getValues().length) {
               this.setPithyStaticContent(pref.getValues()[0]);
               efficencyFlag[1] = true;
+          } else if (!efficencyFlag[2] && WIDGET_URL_PORLTET_PREFERENCE.equals(pref.getName())) {
+              this.setWidgetURL(pref.getValues()[0]);
+              efficencyFlag[2] = true;
+          } else if(!efficencyFlag[3] && WIDGET_TYPE_PORTLET_PREFERENCE.equals(pref.getName())) {
+              this.setWidgetType(pref.getValues()[0]);
+              efficencyFlag[3] = true;
+          } else if(!efficencyFlag[4] && WIDGET_CONFIG_PORTLET_PREFERENCE.equals(pref.getName())) {
+              if(isValidJSON(pref.getValues()[0])) {
+                this.setWidgetConfig(pref.getValues()[0]);
+              } else {
+                this.setWidgetConfig("{\"error\" : \"config JSON not valid, syntax error? Double quotes not escaped?\"}");
+              }
+              efficencyFlag[4] = true;
+          } else if (!efficencyFlag[5] && WIDGET_TEMPLATE_PORTLET_PREFERENCE.equals(pref.getName())) {
+              this.setWidgetTemplate(pref.getValues()[0]);
+              efficencyFlag[5] = true;
+          } else if (!efficencyFlag[6] && RENDER_ON_WEB_PORTLET_PREFERENCE.equals(pref.getName())) {
+              efficencyFlag[6] = true;
+              this.setRenderOnWeb(Boolean.valueOf(pref.getValues()[0]));
           }
-          
-          if(efficencyFlag[0] && efficencyFlag[1]) {
+
+          if(allTrue(efficencyFlag)) {
             break;
           }
-      }
-        
+        }
       }
     }
+
+    private boolean allTrue(boolean[] arr) {
+      for(int i = 0 ; i < arr.length; i++) {
+        if(arr[i] == false) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private boolean isValidJSON(final String json) {
+      boolean valid = false;
+      try {
+         final JsonParser parser = new ObjectMapper().getFactory().createParser(json);
+         while (parser.nextToken() != null) {
+         }
+         valid = true;
+      } catch (Exception jpe) {
+         //eat error
+         valid = false;
+      }
+
+      return valid;
+   }
 
     public String getNodeId() {
         return nodeId;
@@ -179,6 +236,46 @@ public class LayoutPortlet {
 
     public void setAltMaxUrl(boolean isAltMaxUrl) {
       this.isAltMaxUrl = isAltMaxUrl;
+    }
+
+    public String getWidgetURL() {
+        return widgetURL;
+    }
+
+    public void setWidgetURL(String widgetURL) {
+        this.widgetURL = widgetURL;
+    }
+
+    public String getWidgetType() {
+        return widgetType;
+    }
+
+    public void setWidgetType(String widgetType) {
+        this.widgetType = widgetType;
+    }
+
+    public String getWidgetConfig() {
+      return (String)widgetConfig;
+    }
+
+    public void setWidgetConfig(String widgetConfig) {
+      this.widgetConfig = widgetConfig;
+    }
+
+    public String getWidgetTemplate() {
+      return widgetTemplate;
+    }
+
+    public void setWidgetTemplate(String widgetTemplate) {
+      this.widgetTemplate = widgetTemplate;
+    }
+
+    public boolean isRenderOnWeb() {
+      return isRenderOnWeb;
+    }
+
+    public void setRenderOnWeb(boolean setter) {
+      this.isRenderOnWeb = setter;
     }
 
 }

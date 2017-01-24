@@ -21,11 +21,18 @@ package org.jasig.portal.portlets.backgroundpreference;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.jasig.portal.spring.spel.IPortalSpELService;
+import org.jasig.portal.spring.spel.PortalSpELServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
+import javax.servlet.ServletContext;
 
 /**
  * Determines set of images to display by checking to see if user is in a mobile user group as determined by the
@@ -75,22 +82,45 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
+    @Autowired
+    private ServletContext servletContext;
+
+    @Autowired
+    private IPortalSpELService portalSpELService;
+
+    final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+
+    @PostConstruct
+    public void init() {
+        final String contextPath = servletContext.getContextPath();
+        evaluationContext.setRootObject(new RootObjectImpl(contextPath));
+    }
+
     @Override
     public String[] getImageSet(PortletRequest req) {
-        PreferenceNames names = PreferenceNames.getInstance(req);
-        PortletPreferences prefs = req.getPreferences();
-        return prefs.getValues(names.getImageSetPreferenceName(), null);
+        final PreferenceNames names = PreferenceNames.getInstance(req);
+        final PortletPreferences prefs = req.getPreferences();
+        final String[] images = prefs.getValues(names.getImageSetPreferenceName(), EMPTY_STRING_ARRAY);
+        for (int i=0; i<images.length; i++) {
+            images[i] = evaluateImagePath(images[i]);
+        }
+        return images;
     }
 
     @Override
     public String[] getImageThumbnailSet(PortletRequest req) {
         PreferenceNames names = PreferenceNames.getInstance(req);
         PortletPreferences prefs = req.getPreferences();
-        return prefs.getValues(names.getImageThumbnailSetPreferenceName(), null);
+        final String[] images = prefs.getValues(names.getImageThumbnailSetPreferenceName(), null);
+        for (int i=0; i<images.length; i++) {
+            images[i] = evaluateImagePath(images[i]);
+        }
+        return images;
     }
 
     @Override
     public String getSelectedImage(PortletRequest req) {
+        // No evaluation required (already processed)
         PreferenceNames names = PreferenceNames.getInstance(req);
         PortletPreferences prefs = req.getPreferences();
         return prefs.getValue(names.getSelectedBackgroundImagePreferenceName(), null);
@@ -113,6 +143,9 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
             // We are trying to choose a background;  first verify the requested image is actually in the set...
             String[] images = prefs.getValues(names.getImageSetPreferenceName(), EMPTY_STRING_ARRAY);
+            for (int i=0; i<images.length; i++) {
+                images[i] = evaluateImagePath(images[i]);
+            }
             if (Arrays.asList(images).contains(backgroundImage)) {
                 try {
                     prefs.setValue(names.getSelectedBackgroundImagePreferenceName(), backgroundImage);
@@ -124,7 +157,7 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
         } else {
 
-            // We trying to clear a previous selection
+            // We are trying to clear a previous selection
             try {
                 prefs.reset(names.getSelectedBackgroundImagePreferenceName());
                 prefs.store();
@@ -134,6 +167,35 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
 
         }
 
+    }
+
+    /*
+     * Implementation
+     */
+
+    private String evaluateImagePath(String pathBeforeProcessing) {
+        final Expression x = portalSpELService.parseExpression(pathBeforeProcessing, PortalSpELServiceImpl.TemplateParserContext.INSTANCE);
+        final String rslt = x.getValue(evaluationContext, String.class);
+        return rslt;
+    }
+
+    /*
+     * Nested Types
+     */
+
+    /**
+     * Allows us to evaluate '${portalContext}' to '/uPortal' (or whatever it
+     * is) within image paths.
+     */
+    private static final class RootObjectImpl {
+        private final String portalContext;
+        public RootObjectImpl(String portalContext) {
+            this.portalContext = portalContext;
+        }
+        @SuppressWarnings("unused")
+        public String getPortalContext() {
+            return portalContext;
+        }
     }
 
 }

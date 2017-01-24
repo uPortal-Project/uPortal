@@ -30,6 +30,9 @@
      | Determine if a named environment has been specified in the command.  
      | Examples:  dev, test, prod, local, etc.
      +-->
+    <!-- Load build properties here to be able to load the env property if defined -->
+    <property file="${basedir}/build.properties" />
+
     <condition property="environment.token" value="${env}">
         <isset property="env" />
     </condition>
@@ -49,7 +52,7 @@
      +-->
     <property environment="env" />
     <property file="${basedir}/filters/${environment.token}.properties" />
-    <property file="${basedir}/build.properties" />
+    <!-- Removed as loaded before : <property file="${basedir}/build.properties" />-->
     <property name="targetdir" value="${basedir}/target"/>
 
     <!--
@@ -1683,30 +1686,29 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
         <property name="goal8" value="-Djasig.ignore" />
         <property name="goal9" value="-Djasig.ignore" />
 
-        <condition property="test.skip" value="-Dmaven.test.skip=true">
+        <condition property="threads" value="-T ${maven.threads.per.cpu}C" else="-T 1.5C">
+            <isset property="maven.threads.per.cpu" />
+        </condition>
+
+        <condition property="test.skip" value="-Dmaven.test.skip=true" else="-Dmaven.test.skip=false">
             <isset property="maven.test.skip" />
         </condition>
-        <property name="test.skip" value="-Dmaven.test.skip=false" />
 
-        <condition property="offline" value="-o">
+        <condition property="offline" value="-o" else="-Djasig.ignore">
             <isset property="maven.offline" />
         </condition>
-        <property name="offline" value="-Djasig.ignore" />
 
-        <condition property="env.arg" value="-Denv=${env}">
+        <condition property="env.arg" value="-Denv=${env}" else="-Djasig.ignore">
             <isset property="env" />
         </condition>
-        <property name="env.arg" value="-Djasig.ignore" />
 
-        <condition property="filters.arg" value="-Dfilters.file=${filters.file}">
+        <condition property="filters.arg" value="-Dfilters.file=${filters.file}" else="-Djasig.ignore">
             <isset property="filters.file" />
         </condition>
-        <property name="filters.arg" value="-Djasig.ignore" />
 
-        <condition property="maven.verbosity" value="-q">
+        <condition property="maven.verbosity" value="-q" else="-Djasig.ignore">
             <isset property="maven.quiet" />
         </condition>
-        <property name="maven.verbosity" value="-Djasig.ignore" />
 
         <!--
          | Shell to execute maven.  Do not use mvn ant task.  See http://jira.codehaus.org/browse/MANTTASKS-246.
@@ -1715,15 +1717,14 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
          | the full path to the mvn bat file. Per uPortal installation documentation, ${maven.home}/bin should be in
          | the path environment variable so we just need the executable name.
          +-->
-        <condition property="mvnExecutable" value="cmd">
+        <condition property="mvnExecutable" value="cmd" else="mvn">
             <os family="windows"/>
         </condition>
-        <property name="mvnExecutable" value="mvn"/>
 
-        <condition property="windowsCmdArg1" value="/c">
+        <condition property="windowsCmdArg1" value="/c" else="-Djasig.ignore">
             <os family="windows"/>
         </condition>
-        <property name="windowsCmdArg1" value="-Djasig.ignore"/>
+
         <condition property="windowsCmdArg2" value="mvn.bat">
             <and>
               <os family="windows"/>
@@ -1753,6 +1754,7 @@ IMPORTANT: The '-Dpattern=' property is no longer a regular expression and is a 
             <arg value="-Djava.awt.headless=true"/>
             <arg value="-s${maven.settings}" />
             <arg value="-B"/>
+            <arg value="${threads}" />
             <arg value="${test.skip}" />
             <arg value="${offline}" />
             <arg value="${env.arg}" />

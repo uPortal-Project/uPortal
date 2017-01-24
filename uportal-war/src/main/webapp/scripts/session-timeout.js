@@ -25,7 +25,27 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
         MINUTES = 60 * SECONDS,
         timeoutDialog,
         timerId,
+        LOCAL_STORAGE_LOGOUT_KEY = "UportalSessionTimeoutLogoutTime",
+        saveLogoutTime,
+        getSavedLogoutTime,
         that = {};
+
+
+    /**
+     * Save the logout time to the browser's localStorage.
+     * @param logoutTime to save.
+     */
+    saveLogoutTime = function(logoutTime) {
+        localStorage.setItem(LOCAL_STORAGE_LOGOUT_KEY, logoutTime);
+    }
+
+    /**
+     * Load the logout time from the browser's localStorage.
+     * @returns the logoutTime previously saved.
+     */
+    getSavedLogoutTime = function() {
+        return localStorage.getItem(LOCAL_STORAGE_LOGOUT_KEY);
+    }
 
 
     /**
@@ -39,7 +59,8 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
             doLogout,
             doRefresh,
             hideDialog,
-            countdownTimerId;
+            countdownTimerId,
+            newerTimerExists;
 
 
         /**
@@ -85,14 +106,35 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
 
 
         /**
+         *    Checks if a newer timer instance exists (from another browser tab).
+         *    If so, restart this instance of the timer using the newer logoutTime.
+         */
+        newerTimerExists = function() {
+            var savedLogoutTime = getSavedLogoutTime();
+
+            if (savedLogoutTime > config.logoutTime) {
+                config.restartTimer(savedLogoutTime);
+                return true;
+            } else {
+                return false;
+            }
+        };
+
+
+        /**
          * Update the countdown time on the dialog.  If countdown
          * reaches 0, will auto-logout.
          */
         updateCountdown = function() {
-            var now,
+            var now = new Date().getTime(),
                 remaining;
 
-            now = new Date().getTime();
+            //Bail out if a newer timer exists.
+            if (newerTimerExists()) {
+                hideDialog();
+                return;
+            }
+
             // # of seconds before auto-logout...
             remaining = Math.round((config.logoutTime - now) / 1000);
 
@@ -112,6 +154,11 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
          * Display the timeout dialog.
          */
         display = function() {
+            //Bail out if a newer timer exists.
+            if (newerTimerExists()) {
+                return;
+            }
+
             config.dialogEl.find('.refresh-session').click(doRefresh);
             config.dialogEl.find('.logout').click(doLogout);
             // grr.  would prefer to use bootstrap, but doesn't work well
@@ -149,7 +196,7 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
         var startTimer;
 
         // start the timer that tracks when a session has expired.
-        startTimer = function() {
+        startTimer = function(newLogoutTime) {
             var showTimeoutDialog,
                 sessionTimeoutMS,
                 dialogDisplayMS,
@@ -158,15 +205,31 @@ up.SessionTimeout = up.SessionTimeout || (function($) {
                 now = new Date().getTime(),
                 logoutTime;
 
-            // figure out when the dialog should pop and how long it should remain visible.
+            // Load timeout values from config.
             sessionTimeoutMS = config.sessionTimeoutMS || 30 * MINUTES;
             bufferMS = config.bufferTimeMS || 30 * SECONDS;
             dialogDisplayMS = config.dialogDisplayMS || 1 * MINUTES;
 
-            sleepMS = Math.max(sessionTimeoutMS - bufferMS - dialogDisplayMS, 0);
 
-            // calculate when auto-logout should occur...
-            logoutTime = now + sleepMS + dialogDisplayMS;
+            //If a specific logoutTime was passed in, use that.
+            //This happens when a newer browser tab has started a SessionTimeout instance.
+            if (newLogoutTime) {
+                logoutTime = newLogoutTime;
+
+                sleepMS = Math.max(logoutTime - dialogDisplayMS - now, 0);
+            }
+
+            //If no specific logoutTime was passed in, calculate it based on the normal config options.
+            //This will always run on the initial page load to set up the timeout values.
+            else {
+                sleepMS = Math.max(sessionTimeoutMS - bufferMS - dialogDisplayMS, 0);
+
+                // calculate when auto-logout should occur...
+                logoutTime = now + sleepMS + dialogDisplayMS;
+
+                //Save the newly calculated logout time to localStorage so other instances of the SessionTimeout code can use it.
+                saveLogoutTime(logoutTime);
+            }
 
 
             showTimeoutDialog = function() {

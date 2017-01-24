@@ -24,12 +24,10 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 /**
  * Tests if any of the possibly multiple values of the attribute are LT
  * (less than) the test value.  
- * <p>
+ *
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public class IntegerLTTester extends IntegerTester {
+public class IntegerLTTester extends AbstractIntegerTester {
 
     /**
      * @since 4.3
@@ -47,6 +45,6 @@ public class IntegerLTTester extends IntegerTester {
         super(attribute, test); 
     }
     public boolean test(int attributeValue) {
-        return attributeValue < testInteger;
+        return attributeValue < getTestInteger();
     }
 }

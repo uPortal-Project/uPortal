@@ -59,6 +59,9 @@
         <property name="subMappers">
             <util:list>
                 <ref bean="sessionAttributeProfileMapper" />
+                
+                <!-- If the user's server dictates to use a profile, apply it -->
+                <!-- <ref bean="serverProfileMapper" />  -->
 
                 <!--
                  | uPortal 4.1 promotes a responsive design theme Respondr.  The older uPortal 3.x, 4.0x
@@ -92,6 +95,14 @@
             </util:list>
         </property>
     </bean>
+    
+    <!-- Example of how to use serverProfileMapper.  This puts users on profile=default
+    for any server that matches the regex (everything not *.wisconsin.edu* for example -->
+    <!-- 
+    <bean id="serverProfileMapper" class="org.jasig.portal.layout.profile.ServerProfileMapperImpl"
+        p:serverRegex="^((?!.\\.wisconsin\\.edu).)*$"
+        p:profile="default" />
+    -->
 
     <bean id="sessionAttributeProfileMapper" class="org.jasig.portal.layout.profile.SessionAttributeProfileMapperImpl"
         p:mappings-ref="profileKeyMappings"/>

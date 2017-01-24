@@ -23,15 +23,20 @@ import com.google.common.collect.ImmutableSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
+import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.apache.commons.lang3.Validate;
 import org.jasig.portal.concurrency.caching.RequestCache;
 import org.jasig.portal.events.LoginEvent;
-import org.jasig.portal.portlet.om.IPortletDefinition;
 import org.jasig.portal.portlet.om.PortletCategory;
 import org.jasig.portal.portlet.registry.IPortletCategoryRegistry;
 import org.jasig.portal.portlet.registry.IPortletDefinitionRegistry;
 import org.jasig.portal.rest.layout.MarketplaceEntry;
-import org.jasig.portal.security.*;
+import org.jasig.portal.security.AuthorizationPrincipalHelper;
+import org.jasig.portal.security.IAuthorizationPrincipal;
+import org.jasig.portal.security.IAuthorizationService;
+import org.jasig.portal.security.IPermission;
+import org.jasig.portal.security.IPerson;
+import org.jasig.portal.security.PermissionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +68,7 @@ public class MarketplaceService implements IMarketplaceService, ApplicationListe
     private IPortletDefinitionRegistry portletDefinitionRegistry;
 
     private IPortletCategoryRegistry portletCategoryRegistry;
-    
+
     private IAuthorizationService authorizationService;
     private boolean enableMarketplacePreloading = false;
 

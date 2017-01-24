@@ -73,6 +73,7 @@
     xmlns:upMsg="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanMessageHelper"
     xmlns:url="https://source.jasig.org/schemas/uportal/layout/portal-url"
     xmlns:upElemTitle="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanLayoutElementTitleHelper"
+    xmlns:upJsonTool="http://xml.apache.org/xalan/java/org.jasig.portal.security.xslt.XalanRestJsonHelper"
     xsi:schemaLocation="
             https://source.jasig.org/schemas/uportal/layout/portal-url https://source.jasig.org/schemas/uportal/layout/portal-url-4.0.xsd"
     exclude-result-prefixes="url upAuth upGroup upMsg upElemTitle" 
@@ -188,7 +189,7 @@
             },
             "folders": [
                 <xsl:for-each select="//navigation/tab">
-                { "id": "<xsl:value-of select="@ID"/>", "title": "<xsl:value-of select="upElemTitle:getTitle(@ID, $USER_LANG, @name)"/>",
+                { "id": "<xsl:value-of select="@ID"/>", "title": "<xsl:value-of select="upJsonTool:escapeForJson(upElemTitle:getTitle(@ID, $USER_LANG, @name))"/>",
                 "portlets": [
                     <xsl:apply-templates select="channel" />
                 ]}<xsl:if test="position() != last()">,</xsl:if>
@@ -233,9 +234,9 @@
     </xsl:variable>
                     {
                         "fname": "<xsl:value-of select="@fname"/>",
-                        "title": "<xsl:value-of select="@title"/>",
+                        "title": "<xsl:value-of select="upJsonTool:escapeForJson(@title)"/>",
                         "url": "<xsl:value-of select="$portletUrl"/>",
-                        "description": "<xsl:value-of select="@description"/>",
+                        "description": "<xsl:value-of select="upJsonTool:escapeForJson(@description)"/>",
                         "iconUrl": "<xsl:value-of select="$iconUrl"/>"
                     }<xsl:if test="position() != last()">,</xsl:if>
 </xsl:template>

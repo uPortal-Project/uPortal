@@ -25,8 +25,8 @@ import org.jasig.portal.security.IPerson;
 /**
  * Tests whether the attribute is null or none of the
  * values of the attribute equal the specified attribute value.
+ *
  * @author Eric Dalquist, edalquist@unicon.net
- * @version $Revision$
  */
 public class ValueMissingTester extends BaseAttributeTester {
 

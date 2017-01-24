@@ -25,7 +25,7 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
     metadata-complete="true"
     version="3.0">
-    
+
     <display-name>uPortal</display-name>
 
     <context-param>
@@ -365,7 +365,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-        
+
     <servlet>
         <servlet-name>JsonRenderingDispatcherServlet</servlet-name>
         <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
@@ -375,7 +375,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-        
+
     <servlet>
         <servlet-name>RedirectionDispatcherServlet</servlet-name>
         <servlet-class>org.jasig.portal.spring.web.servlet.NoMultipartDispatcherServlet</servlet-class>
@@ -385,7 +385,7 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-        
+
     <!-- Serves static resource content from .jar files such as spring-js.jar -->
     <servlet>
         <servlet-name>Resources Servlet</servlet-name>
@@ -399,7 +399,7 @@
         <servlet-name>ViewRendererServlet</servlet-name>
         <url-pattern>/WEB-INF/servlet/view</url-pattern>
     </servlet-mapping>
-    
+
     <!-- Map all /resources requests to the Resource Servlet for handling -->
     <servlet-mapping>
         <servlet-name>Resources Servlet</servlet-name>
@@ -439,17 +439,22 @@
         <extension>wbmp</extension>
         <mime-type>image/vnd.wap.wbmp</mime-type>
     </mime-mapping>
-    
+
     <error-page>
         <error-code>500</error-code>
         <location>/500.html</location>
     </error-page>
 
     <session-config>
+      <cookie-config>
+        <http-only>true</http-only>
+        <!-- Should match the value of org.jasig.portal.portlet.container.services.PortletCookieServiceImpl.portalCookieAlwaysSecure in portal.properties. -->
+        <secure>${environment.build.uportal.secureSessionCookie}</secure>
+      </cookie-config>
       <tracking-mode>COOKIE</tracking-mode>
-      <!-- Specify the HTTP session duration in <tomcatHome>/conf/web.xml so it is the same for all webapps. -->
+      <!-- NOTE:  Specify the HTTP session duration in <tomcatHome>/conf/web.xml so it is the same for all webapps. -->
     </session-config>
-    
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>

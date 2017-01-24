@@ -26,10 +26,8 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * attribute equals the test value. 
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public class StringEqualsTester extends StringTester {
+public class StringEqualsTester extends AbstractStringTester {
 
     /**
      * @since 4.3

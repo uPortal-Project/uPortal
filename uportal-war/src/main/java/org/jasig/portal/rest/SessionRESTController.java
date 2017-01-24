@@ -75,7 +75,7 @@ public class SessionRESTController {
         final ModelAndView mv = new ModelAndView();
         
         HttpSession session = request.getSession(false);
-        
+
         if (session == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -83,18 +83,23 @@ public class SessionRESTController {
         else {
             final IPerson person = personManager.getPerson(request);
             final String key = portalEventFactory.getPortalEventSessionId(request, person);
-            final Map<String, String> attributes = new HashMap<String, String>();
+            final Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("userName", person.getUserName());
             attributes.put("displayName", person.isGuest() ? "Guest" : person.getFullName());
             attributes.put("sessionKey", person.isGuest() ? null: key); //only provide keys to non guest users
             attributes.put("version", uPortalVersion);
+
             if(swapperManager != null) {
               String originalUsername = swapperManager.getOriginalUsername(session);
               if(originalUsername != null) {
                 attributes.put("originalUsername", originalUsername);
               }
             }
-            
+
+            // Timing information for smarter frontends
+            long timeoutMS = 1000l * (long)session.getMaxInactiveInterval();
+            attributes.put("timeoutMS", timeoutMS);
+
             try {
                 attributes.put("serverName", InetAddress.getLocalHost().getHostName());
             } catch (UnknownHostException e) {

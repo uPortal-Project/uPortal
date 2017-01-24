@@ -16,28 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 import org.jasig.portal.security.IPerson;
 
 /**
- * Abstract class tests the possibly multiple values of an 
- * <code>IPerson</code> integer attribute. 
+ * Abstract class tests a possibly multi-valued attribute against
+ * a test value.
  * <p>
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public abstract class IntegerTester extends BaseAttributeTester {
-    protected int testInteger = Integer.MIN_VALUE;
+public abstract class AbstractStringTester extends BaseAttributeTester {
 
     /**
      * @since 4.3
      */
-    public IntegerTester(IPersonAttributesGroupTestDefinition definition) {
+    public AbstractStringTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
-        this.testInteger = Integer.parseInt(definition.getTestValue());
     }
 
     /**
@@ -45,38 +42,35 @@ public abstract class IntegerTester extends BaseAttributeTester {
      * the single-argument constructor.
      */
     @Deprecated
-    public IntegerTester(String attribute, String test) {
-        super(attribute, test); 
-        testInteger = Integer.parseInt(test);
+    public AbstractStringTester(String attribute, String test) {
+        super(attribute, test);
     }
-    public int getTestInteger() {
-        return testInteger;
-    }
-    public boolean test(IPerson person) {
+
+    public final boolean test(IPerson person) {
         boolean result = false;
         Object[] atts = person.getAttributeValues(getAttributeName());
         if ( atts != null )
         {
             for (int i=0; i<atts.length && result == false; i++)
-            {
-                try 
-                {
-                    int integerAtt = Integer.parseInt((String)atts[i]);
-                    result = test( integerAtt );
-                    
-                    // Assume that we should perform OR matching on multi-valued 
-                    // attributes.  If the current attribute matches, return true
-                    // for the person.
-                    if (result) {
-                        return true;
-                    }
-                    
+            { 
+                String att = (String)atts[i];
+                result = test(att);
+
+                // Assume that we should perform OR matching on multi-valued 
+                // attributes.  If the current attribute matches, return true
+                // for the person.
+                if (result) {
+                    return true;
                 }
-                catch (NumberFormatException nfe) {  } // result stays false
             }
         }
         return result;
     }
-    public boolean test(int attributeValue) {return false;}
+
+    /**
+     * Subclasses provide a concrete implementation of this method to perform
+     * their testing.
+     */
+    public abstract boolean test(String att);
 
 }

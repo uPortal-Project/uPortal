@@ -553,35 +553,34 @@ var up = up || {};
 
         if (that.options.enableAdHocGroups) {
             var jsTreeIncludes = false, jsTreeExcludes = false;
+
             var entityToJSTreeNode = function (entity) {
-                var child, childNodes;
-                childNodes = [];
-                $.each(entity.children, function (idx, obj) {
-                    // re-acquire child to get it's children
-                    if (obj.entityType == "GROUP") {
-                        child = that.registry.getEntity(obj.entityType, obj.id);
-                        childNodes.push(entityToJSTreeNode(child));
+                var childNodes = [];
+                $.each(entity.children, function (idx, child) {
+                    if (child.entityType == "GROUP") {
+                        childNodes.push( { "id" : getKey(child), "text" : child.name, "state" : { "loaded" : false}  } );
                     }
                 });
                 return { "id" : getKey(entity), "text" : entity.name, "children" : childNodes };
             };
 
             var callback = function (obj, cb) {
-                var key, entity, childNodes;
-                if (obj && obj.id && obj.id.length > 5) {
-                    key = obj.id;
-                    entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
-                    childNodes = [];
-                    $.each(entity.children, function (idx, obj) {
-                        childNodes.push(entityToJSTreeNode(obj));
-                    });
-                } else {
+               var key, entity, childNodes = [];
+               if (obj.id === '#') {
                     // root tree node, so send back initial node
-                    key = that.options.initialFocusedEntity;
-                    entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
-                    childNodes = [ entityToJSTreeNode(entity) ];
-                }
-                cb.call(this, childNodes);
+                   key = that.options.initialFocusedEntity;
+                   entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
+                   childNodes.push(entityToJSTreeNode(entity));
+               } else {
+                   key = obj.id;
+                   entity = that.registry.getEntity(getTypeFromKey(key), getIdFromKey(key));
+                   $.each(entity.children, function (idx, child) {
+                       if (child.entityType == "GROUP") {
+                           childNodes.push(entityToJSTreeNode(child));
+                       }
+                   });
+               }
+               cb.call(this, childNodes);
             };
 
             var displayResponseMessage = function(xmlhttp) {

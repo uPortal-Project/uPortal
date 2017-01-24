@@ -26,7 +26,7 @@
             SET_KEY_PARTS.put("ENTITY_TYPE_NAME", keyParts[1]);
             SET_KEY_PARTS.put("PRINCIPAL_KEY", keyParts[2]);
             SET_KEY_PARTS.put("ACTIVITY", keyParts[3]);
-            SET_KEY_PARTS.put("PRINCIPAL_TYPE", keyParts[4]);
+            SET_KEY_PARTS.put("PRINCIPAL_TYPE", keyParts[4].toInteger());
         </script>
         <subtasks>
             <with>

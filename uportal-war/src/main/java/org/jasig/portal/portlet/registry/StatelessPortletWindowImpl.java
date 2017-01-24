@@ -37,13 +37,12 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * state of the portlet.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class StatelessPortletWindowImpl implements IPortletWindow, PortletWindow {
     private final PortletDefinition portletDefinition;
     private final IPortletEntity portletEntity;
     private final PortletWindowData portletWindowData;
-    
+
     /**
      * Creates a new PortletWindow with the default settings
      * 

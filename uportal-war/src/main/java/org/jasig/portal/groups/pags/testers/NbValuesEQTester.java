@@ -16,25 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.groups.pags.testers;
 
+import org.jasig.portal.groups.pags.dao.EntityPersonAttributesGroupStore;
 import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
-import org.jasig.portal.security.IPerson;
 
 /**
- * Abstract class tests a possibly multi-valued attribute against
- * a test value.
- * <p>
- * @author Dan Ellentuck
- * @version $Revision$
+ * A tester for examining if an <code>IPerson</code> attribute has exactly nth values.
+ *
+ * @author GIP RECIA - Julien Gribonvald
+ * @since 5.0
  */
+public final class NbValuesEQTester extends AbstractNbValuesTester {
 
-public abstract class StringTester extends BaseAttributeTester {
-
-    /**
-     * @since 4.3
-     */
-    public StringTester(IPersonAttributesGroupTestDefinition definition) {
+    public NbValuesEQTester(IPersonAttributesGroupTestDefinition definition) {
         super(definition);
     }
 
@@ -43,30 +39,13 @@ public abstract class StringTester extends BaseAttributeTester {
      * the single-argument constructor.
      */
     @Deprecated
-    public StringTester(String attribute, String test) {
+    public NbValuesEQTester(String attribute, String test) {
         super(attribute, test);
     }
 
-    public boolean test(IPerson person) {
-        boolean result = false;
-        Object[] atts = person.getAttributeValues(getAttributeName());
-        if ( atts != null )
-        {
-            for (int i=0; i<atts.length && result == false; i++)
-            { 
-                String att = (String)atts[i];
-                result = test(att); 
-                
-                // Assume that we should perform OR matching on multi-valued 
-                // attributes.  If the current attribute matches, return true
-                // for the person.
-                if (result) {
-                    return true;
-                }
-            }
-        }
-        return result;
+    @Override
+    protected boolean test(int numValues) {
+        return numValues == getTestInteger();
     }
-    public boolean test(String att) { return false; }
 
 }

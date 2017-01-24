@@ -58,7 +58,7 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
  * @author Misagh Moayyed
  * @see EagerRegexTester
  */
-public class RegexTester extends StringTester {
+public class RegexTester extends AbstractStringTester {
     protected Pattern pattern;
 
     /**

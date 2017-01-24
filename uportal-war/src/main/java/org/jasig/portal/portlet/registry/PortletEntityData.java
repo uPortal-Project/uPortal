@@ -28,7 +28,6 @@ import org.jasig.portal.portlet.om.IPortletEntityId;
  * Session persistent data stored for portlet entities
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletEntityData implements Serializable, IPortletEntityDescriptor {
     private static final long serialVersionUID = 1L;

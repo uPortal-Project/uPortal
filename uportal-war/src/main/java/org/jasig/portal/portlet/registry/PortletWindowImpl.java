@@ -39,21 +39,19 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * in the backing object.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletWindowImpl implements IPortletWindow, PortletWindow {
-    private static final long serialVersionUID = 1L;
 
     private final PortletDefinition portletDefinition;
     private final IPortletEntity portletEntity;
     private final PortletWindowData portletWindowData;
-    
+
     private Map<String, String[]> renderParameters = null;
     private Map<String, String[]> publicRenderParameters = null;
     private PortletMode portletMode = null;
     private WindowState windowState = null;
     private Integer expirationCache = null;
-    
+
     public PortletWindowImpl(
             PortletDefinition portletDefinition, 
             IPortletEntity portletEntity, 

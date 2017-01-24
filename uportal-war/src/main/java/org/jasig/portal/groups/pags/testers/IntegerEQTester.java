@@ -23,13 +23,11 @@ import org.jasig.portal.groups.pags.dao.IPersonAttributesGroupTestDefinition;
 
 /**
  * Tests if any of the possibly multiple values of the attribute are EQ
- * (equal to) the test value.  
- * <p>
+ * (equal to) the test value.
+ *
  * @author Dan Ellentuck
- * @version $Revision$
  */
-
-public class IntegerEQTester extends IntegerTester {
+public class IntegerEQTester extends AbstractIntegerTester {
 
     /**
      * @since 4.3
@@ -47,6 +45,6 @@ public class IntegerEQTester extends IntegerTester {
         super(attribute, test); 
     }
     public boolean test(int attributeValue) {
-        return attributeValue == testInteger;
+        return attributeValue == getTestInteger();
     }
 }

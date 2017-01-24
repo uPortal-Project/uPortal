@@ -549,14 +549,14 @@
         up.jQuery(document).ready(function() {
         
             if(window.location.search.indexOf('redirectToDefault=true') > 0) {
-              up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessage('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
+              up.jQuery('#up-notification').noty({text: '<xsl:value-of select="upMsg:getMessageForEmacsScript('error.redirectinfo', $USER_LANG)"/>', type: 'information'});
             }
 
             <xsl:if test="$IS_FRAGMENT_ADMIN_MODE='true'">
             up.FragmentPermissionsManager("body", {
                 savePermissionsUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
                 messages: {
-                    columnX: '<xsl:value-of select="upMsg:getMessage('column.x', $USER_LANG)"/>',
+                    columnX: '<xsl:value-of select="upMsg:getMessageForEmacsScript('column.x', $USER_LANG)"/>',
                 }
             });
             </xsl:if>
@@ -576,20 +576,20 @@
                     return 'col-md-' + Math.round(column / 8.3333);
                 },
                 messages: {
-                    confirmRemoveTab: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.tab', $USER_LANG)"/>',
-                    confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessage('are.you.sure.remove.portlet', $USER_LANG)"/>',
-                    movePortletError: '<xsl:value-of select="upMsg:getMessage('move.this.portlet.error', $USER_LANG)"/>',
-                    addTabLabel: '<xsl:value-of select="upMsg:getMessage('my.tab', $USER_LANG)"/>',
-                    column: '<xsl:value-of select="upMsg:getMessage('column', $USER_LANG)"/>',
-                    columns: '<xsl:value-of select="upMsg:getMessage('columns', $USER_LANG)"/>',
-                    fullWidth: '<xsl:value-of select="upMsg:getMessage('full.width', $USER_LANG)"/>',
-                    narrowWide: '<xsl:value-of select="upMsg:getMessage('narrow.wide', $USER_LANG)"/>',
-                    even: '<xsl:value-of select="upMsg:getMessage('even', $USER_LANG)"/>',
-                    wideNarrow: '<xsl:value-of select="upMsg:getMessage('wide.narrow', $USER_LANG)"/>',
-                    narrowWideNarrow: '<xsl:value-of select="upMsg:getMessage('narrow.wide.narrow', $USER_LANG)"/>',
-                    searchForStuff: '<xsl:value-of select="upMsg:getMessage('search.for.stuff', $USER_LANG)"/>',
-                    allCategories: '<xsl:value-of select="upMsg:getMessage('all(categories)', $USER_LANG)"/>',
-                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+                    confirmRemoveTab: '<xsl:value-of select="upMsg:getMessageForEmacsScript('are.you.sure.remove.tab', $USER_LANG)"/>',
+                    confirmRemovePortlet: '<xsl:value-of select="upMsg:getMessageForEmacsScript('are.you.sure.remove.portlet', $USER_LANG)"/>',
+                    movePortletError: '<xsl:value-of select="upMsg:getMessageForEmacsScript('move.this.portlet.error', $USER_LANG)"/>',
+                    addTabLabel: '<xsl:value-of select="upMsg:getMessageForEmacsScript('my.tab', $USER_LANG)"/>',
+                    column: '<xsl:value-of select="upMsg:getMessageForEmacsScript('column', $USER_LANG)"/>',
+                    columns: '<xsl:value-of select="upMsg:getMessageForEmacsScript('columns', $USER_LANG)"/>',
+                    fullWidth: '<xsl:value-of select="upMsg:getMessageForEmacsScript('full.width', $USER_LANG)"/>',
+                    narrowWide: '<xsl:value-of select="upMsg:getMessageForEmacsScript('narrow.wide', $USER_LANG)"/>',
+                    even: '<xsl:value-of select="upMsg:getMessageForEmacsScript('even', $USER_LANG)"/>',
+                    wideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('wide.narrow', $USER_LANG)"/>',
+                    narrowWideNarrow: '<xsl:value-of select="upMsg:getMessageForEmacsScript('narrow.wide.narrow', $USER_LANG)"/>',
+                    searchForStuff: '<xsl:value-of select="upMsg:getMessageForEmacsScript('search.for.stuff', $USER_LANG)"/>',
+                    allCategories: '<xsl:value-of select="upMsg:getMessageForEmacsScript('all(categories)', $USER_LANG)"/>',
+                    persistenceError: '<xsl:value-of select="upMsg:getMessageForEmacsScript('error.persisting.layout.change', $USER_LANG)"/>'
                 }
             };
             var layoutPreferences = up.LayoutPreferences("body", options);
@@ -653,7 +653,7 @@
                 portalContext: '<xsl:value-of select="$CONTEXT_PATH"/>',
                 layoutPersistenceUrl: '<xsl:value-of select="$CONTEXT_PATH"/>/api/layout',
                 messages: {
-                    persistenceError: '<xsl:value-of select="upMsg:getMessage('error.persisting.layout.change', $USER_LANG)"/>'
+                    persistenceError: '<xsl:value-of select="upMsg:getMessageForEmacsScript('error.persisting.layout.change', $USER_LANG)"/>'
                 }
             });
         });
@@ -702,7 +702,7 @@
                  'flicker' on the interface because of the time delay from the start of this script to when all
                  CSS files present get re-loaded after being processed by this script, but that's OK since we
                  aren't committing to support IE8 and this minor change makes IE8 work better. -->
-            <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
+            <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
         </head>
         <body class="up dashboard portal fl-theme-mist">
           <div class="row-offcanvas">
@@ -846,7 +846,7 @@
              'flicker' on the interface because of the time delay from the start of this script to when all
              CSS files present get re-loaded after being processed by this script, but that's OK since we
              aren't committing to support IE8 and this minor change makes IE8 work better. -->
-        <script src="/uPortal/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
+        <script src="{$CONTEXT_PATH}/scripts/respond-1.4.2.min.js" type="text/javascript"></script>
     </head>
     <body class="up dashboard portal fl-theme-mist detachedHeader">
         <div id="wrapper">
@@ -859,7 +859,7 @@
                                     <div class="container-fluid">
                                         <div class="portal-user">
                                             <div class="navbar-header">
-                                                <a href="javascript:window.location = document.referrer || '/uPortal';" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
+                                                <a href="javascript:window.location = document.referrer || '{$CONTEXT_PATH}';" title="{upMsg:getMessage('return.to.dashboard.view', $USER_LANG)}" class="up-portlet-control hide-content pull-left fa fa-home portal-return-to-dashboard"></a>
                                             </div>
                                             <div class="navbar-collapse collapse">
                                                 <xsl:choose>

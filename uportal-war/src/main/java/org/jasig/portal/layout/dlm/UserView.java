@@ -23,7 +23,7 @@ import org.w3c.dom.Document;
 /**
  * @since uPortal 2.5
  */
-/* package-private */ class UserView {
+public class UserView {
 
     private final int userId;
     private Document layout = null;

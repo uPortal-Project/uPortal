@@ -27,6 +27,8 @@
     
     <view-state id="reset-confirm">
         <transition on="confirm" to="reset-result">
+            <!-- Choose resetUserLayoutAllProfiles if on layout reset, you need
+            to reset all layouts on user's profiles, not just the default profile -->
             <evaluate expression="userLayoutHelper.resetUserLayout(person)"/>
         </transition>
         <transition on="cancel" to="reset-complete"/>

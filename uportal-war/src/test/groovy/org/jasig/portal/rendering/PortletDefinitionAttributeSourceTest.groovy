@@ -76,4 +76,19 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
         assert attributeMap[PortletDefinitionAttributeSource.PORTLET_NAME_ATTRIBUTE] == 'portletName'
         assert attributeMap[PortletDefinitionAttributeSource.FRAMEWORK_PORTLET_ATTRIBUTE] == 'true'
     }
+
+        void testGetAdditionalAttributesDoesNotThrowExceptionIfNoPortletDefinitionFound() {
+        def portletDefn = null
+        def portletDefinitionDao = [
+                getPortletDefinitionByFname: { String fname ->
+                    assert 'theFname' == fname
+                    portletDefn }] as IPortletDefinitionDao
+        def testClass = new PortletDefinitionAttributeSource()
+        testClass.setPortletDefinitionDao(portletDefinitionDao)
+        def factory = XMLEventFactory.newFactory()
+        def attr = factory.createAttribute('fname', 'theFname')
+        def element = factory.createStartElement('', '', 'channel',attr.iterator(), null)
+        def attrIterator = testClass.getAdditionalAttributes(null, null, element)
+    }
+
 }

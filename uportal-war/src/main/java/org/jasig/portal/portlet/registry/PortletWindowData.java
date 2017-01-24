@@ -39,7 +39,6 @@ import org.jasig.portal.portlet.om.IPortletWindowId;
  * Serializable persistent portlet window data. This class MUST be thread safe.
  * 
  * @author Eric Dalquist
- * @version $Revision$
  */
 class PortletWindowData implements IPortletWindowDescriptor, Serializable {
     private static final long serialVersionUID = 1L;

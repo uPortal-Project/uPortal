@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.portal.portlet.dao;
 
 import java.util.Set;
@@ -29,6 +30,13 @@ public interface IMarketplaceRatingDao {
      * @return all ratings. Not null
      */
     Set<IMarketplaceRating> getAllRatings();
+
+    /**
+     * @return all ratings for a particular portlet
+     *
+     * @since 4.4
+     */
+    public Set<IMarketplaceRating> getRatingsByFname(String fname);
 
     /**
      * @param IMarketplaceRating. Can not be null
@@ -61,11 +69,11 @@ public interface IMarketplaceRatingDao {
      * @param portletDefinition
      * @return - can be null
      */
-    IMarketplaceRating getRating(String userName,
-            IPortletDefinition portletDefinition);
+    IMarketplaceRating getRating(String userName, IPortletDefinition portletDefinition);
 
     /**
      * Aggregates the IMarketplaceRating into IPortletDefinition
      */
     void aggregateMarketplaceRating();
+
 }

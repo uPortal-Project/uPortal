@@ -66,6 +66,16 @@ public class PipelineStylesheetTest {
     public void testThemeRespondrCompile() throws Exception {
         this.testXslCompile("/layout/theme/respondr/respondr.xsl");
     }
+
+    @Test
+    public void testThemeJsonCompile() throws Exception {
+        this.testXslCompile("/layout/theme/json/json.xsl");
+    }
+
+    @Test
+    public void testThemeJson43Compile() throws Exception {
+        this.testXslCompile("/layout/theme/json/json-v4-3.xsl");
+    }
     
     private void testXslCompile(String file) throws Exception {
         final Resource resource = new ClassPathResource(file);
