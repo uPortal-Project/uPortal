@@ -16,6 +16,7 @@ buildscript {
     dependencies {
         classpath 'com.gradle:build-scan-plugin:1.0'
         classpath "com.moowork.gradle:gradle-node-plugin:0.13"
+        classpath "com.bmuschko:gradle-cargo-plugin:2.2.3"
     }
 }
 
@@ -71,4 +72,49 @@ subprojects {
         compile.extendsFrom provided
     }
 
+}
+
+// Deployment support via Tomcat Manager
+def tomcats_file = new File('tomcats.groovy')
+def tomcats_config = tomcats_file.exists() ? new ConfigSlurper().parse(tomcats_file.toURL()) : null
+def deployables_file = new File('deployables.groovy')
+def deployables_config = deployables_file.exists() ? new ConfigSlurper().parse(deployables_file.toURL()) : null
+
+apply plugin: 'com.bmuschko.cargo-base'
+repositories {
+    mavenCentral()
+}
+
+import com.bmuschko.gradle.cargo.convention.Deployable
+import com.bmuschko.gradle.cargo.tasks.remote.CargoDeployRemote
+import com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote
+
+if (tomcats_config && deployables_config) {
+    def wars = []
+    deployables_config.each {context_name, deployable ->
+        wars << new Deployable(context: context_name, file: file(deployable.file))
+    }
+
+    tomcats_config.each {name, tomcat ->
+        task "deployTo${name}"(type: CargoDeployRemote) {
+            description = "Deploys uPortal WAR files to remote Tomcat '${name}'."
+            containerId = 'tomcat8x'
+            hostname = tomcat.server
+            port = tomcat.port
+            username = tomcat.username
+            password = tomcat.password
+            deployables = wars
+            group = 'deployment'
+        }
+        task "redeployTo${name}"(type: CargoRedeployRemote) {
+            description = "Redeploys uPortal WAR files to remote Tomcat '${name}'."
+            containerId = 'tomcat8x'
+            hostname = tomcat.server
+            port = tomcat.port
+            username = tomcat.username
+            password = tomcat.password
+            deployables = wars
+            group = 'deployment'
+        }
+    }
 }
