@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation that binds a bean or the return value of a bean method to a named
  * model attribute, exposed to a web view.  This annotation is inspired by
- * Spring's <code>@ModelAttribute</code>.  Methods marked with this annotation
+ * Spring MVC's <code>ModelAttribute</code>.  Methods marked with this annotation
  * support a similar, flexible list of optional parameters (below):
  *
  * <ul>
@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
 public @interface SoffitModelAttribute {
 
     /**
-     * The name of the model attribute to bind to.
+     * The name of the model attribute to bind to.  Required.
      */
     String value();
 
