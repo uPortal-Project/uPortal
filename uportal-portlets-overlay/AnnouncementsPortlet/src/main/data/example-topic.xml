@@ -50,8 +50,8 @@
 </ul>
 <p>There are many other portlets that we may add to the portal.&nbsp; You can view a list of available portlets at the <a href="https://wiki.jasig.org/display/PLT/Home" target="_blank">Apereo Portlet page</a>, then submit your suggestions using the Suggestions portlet.</p>
             ]]></message>
-            <startDisplay>2013-08-01</startDisplay>
-            <endDisplay>2016-12-31</endDisplay>
+            <startDisplay>2016-08-01</startDisplay>
+            <endDisplay>2019-12-31</endDisplay>
             <published>true</published>
             <link>https://wiki.jasig.org/display/PLT/Home</link>
             <author>admin</author>

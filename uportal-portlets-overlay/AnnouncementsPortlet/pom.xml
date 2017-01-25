@@ -62,7 +62,6 @@
                 <excludes>
                     <!-- This list needs to be identical to the one below...  -->
                     <exclude>*.properties</exclude>
-                    <exclude>logback.xml</exclude>
                 </excludes>
             </resource>
             <resource>
@@ -72,7 +71,6 @@
                     <!-- List files or patterns to be filtered here. Restrict the list to avoid accidentally
                          substituting maven or other environmental tokens in other files.-->
                     <include>*.properties</include>
-                    <include>logback.xml</include>
                 </includes>
             </resource>
         </resources>
@@ -169,7 +167,6 @@
                                     </classpath>
 
                                     <arg value="${dir}" />
-                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>
@@ -206,7 +203,6 @@
                                     </classpath>
 
                                     <arg value="${dir}" />
-                                    <arg value="importExportContext.xml" />
                                 </java>
                             </tasks>
                         </configuration>

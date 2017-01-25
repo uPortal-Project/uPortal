@@ -124,7 +124,7 @@
         <filters.file>filters/${env}.properties</filters.file>
 
         <!-- WAR Dependency Version Properties -->
-        <AnnouncementsPortlet.version>2.2.0-M2</AnnouncementsPortlet.version>
+        <AnnouncementsPortlet.version>2.2.2</AnnouncementsPortlet.version>
         <basiclti-portlet.version>1.4.2</basiclti-portlet.version>
         <BookmarksPortlet.version>1.1.1</BookmarksPortlet.version>
         <CalendarPortlet.version>2.3.3</CalendarPortlet.version>
