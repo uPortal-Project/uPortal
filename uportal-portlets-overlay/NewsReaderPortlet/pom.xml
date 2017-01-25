@@ -198,7 +198,6 @@
 
                             <arg value="classpath://org/jasig/portlet/newsreader/io/import.crn.xml" />
                             <arg value="${dir}" />
-                            <arg value="${project.build.directory}/${project.artifactId}/WEB-INF/context/importExportContext.xml" />
                         </java>
                     </tasks>
                 </configuration>
