@@ -280,7 +280,7 @@ section.emergency-alert {
  * (Corresponds to the smallest breakpoint in Bootstrap)
  */
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: @screen-sm-min) {
     #portalTip,
     #region-customize {
         display: block;
@@ -293,14 +293,14 @@ section.emergency-alert {
 }
 
 /* large screens show all 6 columns. */
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: @screen-sm-min) {
     .portal-page-column.col-md-2 {
         width: 16.6666667%;
         float: left;
     }
 }
 
-@media only screen and (max-width: 769px) {
+@media only screen and (max-width: @screen-sm-max) {
     /* collapse from 6 to 3 columns */
     .portal-page-column.col-md-2 {
         width: 33.3%;
@@ -308,7 +308,7 @@ section.emergency-alert {
     }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: @screen-sm-max - 167) {
     /* collapse from 6 to 2 columns */
     .portal-page-column.col-md-2 {
         width: 50%;
@@ -316,7 +316,7 @@ section.emergency-alert {
     }
 }
 
-@media only screen and (max-width: 240px) {
+@media only screen and (max-width: @screen-xs-max - 239) {
     /* on really small screen collapse to a single column */
     .portal-page-column.col-md-2 {
         width: 100%;
