@@ -57,6 +57,7 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
     public static final String WEBAPP_NAME_ATTRIBUTE = "webAppName";
     public static final String PORTLET_NAME_ATTRIBUTE = "portletName";
     public static final String FRAMEWORK_PORTLET_ATTRIBUTE = "frameworkPortlet";
+    public static final String PORTLET_LIFECYCLE_ATTRIBUTE = "lifecycleState";
 
     private final XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
     private IPortletDefinitionDao portletDefinitionDao;
@@ -101,6 +102,7 @@ public class PortletDefinitionAttributeSource implements AttributeSource, BeanNa
             } else {
                 IPortletDescriptorKey descriptorKey = def.getPortletDescriptorKey();
                 attributes.add(xmlEventFactory.createAttribute(PORTLET_NAME_ATTRIBUTE, descriptorKey.getPortletName()));
+                attributes.add(xmlEventFactory.createAttribute(PORTLET_LIFECYCLE_ATTRIBUTE, def.getLifecycleState().toString()));
                 if (descriptorKey.isFrameworkPortlet()) {
                     attributes.add(xmlEventFactory.createAttribute(FRAMEWORK_PORTLET_ATTRIBUTE, "true"));
                 } else {
