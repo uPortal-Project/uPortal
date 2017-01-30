@@ -21,6 +21,7 @@ package org.apereo.portal.rendering
 import org.apereo.portal.portlet.dao.IPortletDefinitionDao
 import org.apereo.portal.portlet.dao.jpa.PortletDefinitionImpl
 import org.apereo.portal.portlet.dao.jpa.PortletTypeImpl
+import org.apereo.portal.portlet.om.PortletLifecycleState
 import org.apereo.portal.rendering.PortletDefinitionAttributeSource
 
 import javax.xml.stream.XMLEventFactory
@@ -50,9 +51,10 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
             def attrItem = attrIterator.next()
             attributeMap[attrItem.getName().getLocalPart()] = attrItem.getValue()
         }
-        assert attributeMap.size() == 2
+        assert attributeMap.size() == 3
         assert attributeMap[PortletDefinitionAttributeSource.PORTLET_NAME_ATTRIBUTE] == 'portletName'
         assert attributeMap[PortletDefinitionAttributeSource.WEBAPP_NAME_ATTRIBUTE] == 'webappName'
+        assert attributeMap[PortletDefinitionAttributeSource.PORTLET_LIFECYCLE_ATTRIBUTE] == PortletLifecycleState.CREATED.toString()
     }
 
     void testGetAdditionalAttributesFrameworkPortlet() {
@@ -73,7 +75,7 @@ class PortletDefinitionAttributeSourceTest extends GroovyTestCase {
             def attrItem = attrIterator.next()
             attributeMap[attrItem.getName().getLocalPart()] = attrItem.getValue()
         }
-        assert attributeMap.size() == 2
+        assert attributeMap.size() == 3
         assert attributeMap[PortletDefinitionAttributeSource.PORTLET_NAME_ATTRIBUTE] == 'portletName'
         assert attributeMap[PortletDefinitionAttributeSource.FRAMEWORK_PORTLET_ATTRIBUTE] == 'true'
     }
