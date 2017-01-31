@@ -27,7 +27,7 @@
         <version>41</version>
         <relativePath />
     </parent>
-    
+
     <prerequisites>
         <maven>3.2.2</maven>
     </prerequisites>
@@ -41,7 +41,7 @@
     <name>uPortal Parent</name>
     <description>The root project definition for the uPortal project.</description>
     <url>${jasig-site-base}/uportal/${project.version}</url>
-    
+
     <scm>
         <connection>scm:git:git://github.com/Jasig/uPortal.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/uPortal.git</developerConnection>
@@ -53,7 +53,7 @@
         <url>${jasig-issues-base}/UP</url>
         <system>${jasig-issues-system}</system>
     </issueManagement>
-    
+
     <ciManagement>
         <system>bamboo</system>
         <url>http://developer.jasig.org/bamboo/browse/UP</url>
@@ -70,14 +70,14 @@
     </ciManagement>
 
     <repositories>
-        <repository>            
+        <repository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </repository>
-        <repository>            
+        <repository>
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
@@ -87,14 +87,14 @@
     </repositories>
 
     <pluginRepositories>
-        <pluginRepository>            
+        <pluginRepository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>false</enabled></snapshots>
         </pluginRepository>
-        <pluginRepository>            
+        <pluginRepository>
             <id>apache-snapshots</id>
             <name>Apache Snapshots</name>
             <url>http://repository.apache.org/snapshots</url>
@@ -111,20 +111,20 @@
 
         <!--
          | Environment name and filters file for environment-specific build
-         | settings.  By default <environment.name> is blank, and the filters 
+         | settings.  By default <environment.name> is blank, and the filters
          | file is build.properties.
          |
-         | You can override the default by passing a -Denvironment.name 
-         | parameter, which Ant will do for you if you invoke Ant with 
-         | -Denv={something}.  NOTE that Ant also adds a suffixed period (.) 
-         | character.  If you want to override the default environment.name by 
+         | You can override the default by passing a -Denvironment.name
+         | parameter, which Ant will do for you if you invoke Ant with
+         | -Denv={something}.  NOTE that Ant also adds a suffixed period (.)
+         | character.  If you want to override the default environment.name by
          | invoking Maven directly, you will have to append a period yourself.
          +-->
         <env>local</env>
         <filters.file>filters/${env}.properties</filters.file>
 
         <!-- WAR Dependency Version Properties -->
-        <AnnouncementsPortlet.version>2.2.2</AnnouncementsPortlet.version>
+        <AnnouncementsPortlet.version>2.2.3</AnnouncementsPortlet.version>
         <basiclti-portlet.version>1.4.2</basiclti-portlet.version>
         <BookmarksPortlet.version>1.1.1</BookmarksPortlet.version>
         <CalendarPortlet.version>2.3.5</CalendarPortlet.version>
@@ -230,13 +230,13 @@
         <xmlunit.version>1.5</xmlunit.version>
         <xstream.version>1.4.7</xstream.version>
 
-        <!-- 
+        <!--
          | When a user-agent profile mapping is enabled (see userContext.xml), uPortal uses this expression to
          | determine whether the user is on a mobile device, such as a phone or a tablet, or a desktop/laptop
          | browser;  users may also choose the mobile/non-mobile experience when they log in.
          +-->
         <mobile.user.agent.regex>(.*iPhone.*)|(.*Android.*)|(.*IEMobile.*)|(.*Safari.*Pre.*)|(.*Nokia.*AppleWebKit.*)|(.*Black[Bb]erry.*)|(.*Opera Mobile.*)|(.*Windows Phone.*)|(.*Fennec.*)|(.*Minimo.*)</mobile.user.agent.regex>
-        
+
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -527,7 +527,7 @@
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>jsp-api</artifactId>
                 <version>${jsp-api.version}</version>
-            </dependency> 
+            </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
@@ -893,11 +893,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency> 
-                <groupId>org.jasypt</groupId> 
-                <artifactId>jasypt</artifactId> 
-                <version>${jasypt.version}</version> 
-            </dependency> 
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>${jasypt.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.core</artifactId>
@@ -1210,7 +1210,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -1455,7 +1455,7 @@
                     <groupId>org.apache.portals.pluto</groupId>
                     <artifactId>maven-pluto-plugin</artifactId>
                     <version>${pluto.version}</version>
-                </plugin>  
+                </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
@@ -1571,7 +1571,7 @@
     </build>
 
     <profiles>
-        <!-- 
+        <!--
          | Used by the continuous integrations server to deploy the project site.
          +-->
         <profile>
@@ -1583,7 +1583,7 @@
                 </site>
             </distributionManagement>
         </profile>
-        <!-- 
+        <!--
          | Should be activated manually by a developer that wishes to deploy a maven site for
          | the project
          +-->
