@@ -6,6 +6,7 @@
 *   [Skinning uPortal](SKINNING_UPORTAL.md)
 *   [Using Angular](USING_ANGULAR.md)
 *   [Supported web browsers](SUPPORTED_BROWSERS.md)
+*   [Configuring using JNDI](configure-using-jndi.md)
 
 ## External Links
 
