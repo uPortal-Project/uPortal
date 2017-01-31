@@ -19,3 +19,6 @@ npm-debug.log
 target/
 uportal-impl
 uportal-portlets-overlay/*/overlays
+docs/_site
+.ruby-version
+Gemfile.lock
