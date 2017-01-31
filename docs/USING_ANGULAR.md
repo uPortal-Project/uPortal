@@ -1,4 +1,5 @@
 # Strategy for employing Angular.js in portal skins and/or portlets.
+
 ## Definitions
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
