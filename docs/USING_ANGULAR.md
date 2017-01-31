@@ -1,4 +1,5 @@
 # Strategy for employing Angular.js in portal skins and/or portlets.
+
 ## Definitions
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
@@ -109,7 +110,8 @@ $controllerProvider, $provide) {
 
 
 #### Inline script
-```jsp
+
+```html
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -179,7 +181,8 @@ $controllerProvider, $provide) {
 ```
 
 ### External scripts
-```jsp
+
+```html
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
