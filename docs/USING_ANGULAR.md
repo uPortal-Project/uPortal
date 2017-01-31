@@ -109,7 +109,8 @@ $controllerProvider, $provide) {
 
 
 #### Inline script
-```jsp
+
+```html
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -179,7 +180,8 @@ $controllerProvider, $provide) {
 ```
 
 ### External scripts
-```jsp
+
+```html
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
