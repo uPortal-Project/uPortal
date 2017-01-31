@@ -295,7 +295,7 @@ section.emergency-alert {
 /* large screens show all 6 columns. */
 @media only screen and (min-width: @screen-sm-min) {
     .portal-page-column.col-md-2 {
-        width: 16.6666667%;
+        width: (1 / 6) * 100%;
         float: left;
     }
 }
@@ -303,22 +303,23 @@ section.emergency-alert {
 @media only screen and (max-width: @screen-sm-max) {
     /* collapse from 6 to 3 columns */
     .portal-page-column.col-md-2 {
-        width: 33.3%;
+        width: (1 / 3) * 100%;
         float: left;
     }
 }
 
-@media only screen and (max-width: @screen-sm-max - 167) {
+// average between small and extra small
+@media only screen and (max-width: (@screen-sm-max + @screen-xs-max) / 2) {
     /* collapse from 6 to 2 columns */
     .portal-page-column.col-md-2 {
-        width: 50%;
+        width: (1 / 2) * 100%;
         float: left;
     }
 }
 
-@media only screen and (max-width: @screen-xs-max - 239) {
+@media only screen and (max-width: @screen-xs-max / 2) {
     /* on really small screen collapse to a single column */
     .portal-page-column.col-md-2 {
-        width: 100%;
+        width: (1 / 1) * 100%;
     }
 }
