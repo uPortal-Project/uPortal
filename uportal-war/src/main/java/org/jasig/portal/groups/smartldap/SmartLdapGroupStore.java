@@ -18,9 +18,6 @@
  */
 package org.jasig.portal.groups.smartldap;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
@@ -139,7 +139,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
     public void setDisplayPersonMembers(boolean displayPersonMembers) {
         this.displayPersonMembers = displayPersonMembers;
     }
-    private Map<String,IEntity> persons = Collections.synchronizedMap(new HashMap<String,IEntity>());
+    private Map<String,IEntity> persons = Collections.synchronizedMap(new HashMap<String, IEntity>());
 
     /*
      * Indexed Collections.
@@ -586,6 +586,12 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
 
     }
 
+    /**
+     * Get parent group name from a group name, used to produce a group tree from ldap when all groups are at the same level branch in LDAP.
+     * The parent group name is obtained by decomposition from a separator, this doesn't watch on ldap membership attributes.
+     * @param groupName
+     * @return The parent group name String, an empty String means we are at the "root" tree group !
+     */
     private String getContainingFolder(final String groupName) {
             final int index = groupName.lastIndexOf(this.groupTreeSeparator);
             return (index > 0) ? groupName.substring(0, index) : "";
@@ -664,7 +670,7 @@ public final class SmartLdapGroupStore implements IEntityGroupStore {
                     isAFolder = true;
                 }
 
-                if ("".equals(containingFolder)) {
+                if (StringUtils.isEmpty(containingFolder)) {
                     // We reached the root folder.
                     stop=true;
                 } else {
