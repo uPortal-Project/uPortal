@@ -31,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * Add this single class to your application context, rather than several
  * individual beans.
  *
+ * @since 5.0
  * @author drewwills
  */
 @Configuration

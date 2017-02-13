@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 /**
  * Encapsulates username, user attributes, and group affiliations.
  *
+ * @since 5.0
  * @author drewwills
  */
 public class Bearer extends AbstractTokenizable {

@@ -28,6 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+/**
+ * @since 5.0
+ * @author drewwills
+ */
 public abstract class AbstractHeaderProvider implements IHeaderProvider {
 
     @Value("${org.apereo.portal.security.PersonFactory.guest_user_name:guest}")

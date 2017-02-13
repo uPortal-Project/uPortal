@@ -57,6 +57,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
+/**
+ * @since 5.0
+ * @author drewwills
+ */
 @Controller
 @RequestMapping(value={"VIEW","EDIT","HELP"})
 public class SoffitConnectorController implements ApplicationContextAware {

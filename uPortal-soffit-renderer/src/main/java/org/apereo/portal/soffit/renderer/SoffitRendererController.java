@@ -58,6 +58,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * <code>Controller</code> bean for remote soffits.  This class is provided as a
+ * convenience.
+ *
+ * @since 5.0
+ * @author drewwills
+ */
 @Controller
 @RequestMapping("/soffit")
 public class SoffitRendererController {

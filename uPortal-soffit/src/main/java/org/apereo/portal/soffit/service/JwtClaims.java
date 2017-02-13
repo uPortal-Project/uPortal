@@ -22,6 +22,7 @@ package org.apereo.portal.soffit.service;
 /**
  * Set of all the JWT claims in use within Soffit.
  *
+ * @since 5.0
  * @author drewwills
  */
 public enum JwtClaims {

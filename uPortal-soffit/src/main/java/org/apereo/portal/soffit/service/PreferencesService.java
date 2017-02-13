@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 /**
  * Responsible for issuing and parsing the collection of preferences.
  *
+ * @since 5.0
  * @author drewwills
  */
 @Service

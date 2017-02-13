@@ -36,6 +36,7 @@ import java.lang.annotation.Target;
  *   <li>Soffit Data Model objects, i.e. PortalRequest, Bearer, Preferences, and Definition</li>
  * </ul>
  *
+ * @since 5.0
  * @author drewwills
  */
 @Target(value={ElementType.TYPE,ElementType.METHOD})

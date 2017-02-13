@@ -30,6 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * respond using output from the soffit.  This information is organized into
  * three collections:  properties, attributes, and parameters.
  *
+ * @since 5.0
  * @author drewwills
  */
 public class PortalRequest extends AbstractTokenizable {

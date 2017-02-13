@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Defines beans for the Soffit Connector, which runs inside uPortal
  *
+ * @since 5.0
  * @author drewwills
  */
 @Configuration
