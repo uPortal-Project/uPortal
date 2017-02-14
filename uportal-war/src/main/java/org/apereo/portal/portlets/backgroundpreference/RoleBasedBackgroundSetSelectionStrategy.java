@@ -78,6 +78,10 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
         public String getBackgroundContainerSelectorPreferenceName() {
             return prefix + "BackgroundContainerSelector";
         }
+
+        public String getImageCaptionsName() {
+            return "backgroundImageCaptions";
+        }
     }
 
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
@@ -116,6 +120,13 @@ public class RoleBasedBackgroundSetSelectionStrategy implements BackgroundSetSel
             images[i] = evaluateImagePath(images[i]);
         }
         return images;
+    }
+
+    @Override
+    public String[] getImageCaptions(PortletRequest req) {
+        PreferenceNames names = PreferenceNames.getInstance(req);
+        PortletPreferences prefs = req.getPreferences();
+        return prefs.getValues(names.getImageCaptionsName(), null);
     }
 
     @Override
