@@ -38,11 +38,6 @@ import org.springframework.context.annotation.Configuration;
 public class SoffitRendererConfiguration {
 
     @Bean
-    public SoffitRendererController soffitRendererController() {
-        return new SoffitRendererController();
-    }
-
-    @Bean
     public BearerService bearerService() {
         return new BearerService();
     }
@@ -60,6 +55,16 @@ public class SoffitRendererConfiguration {
     @Bean
     public DefinitionService definitionService() {
         return new DefinitionService();
+    }
+
+    @Bean
+    public ModelAttributeService modelAttributeService() {
+        return new ModelAttributeService();
+    }
+
+    @Bean
+    public SoffitRendererController soffitRendererController() {
+        return new SoffitRendererController();
     }
 
 }
