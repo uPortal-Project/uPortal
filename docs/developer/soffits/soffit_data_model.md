@@ -4,14 +4,14 @@ To be of any use, real soffits must go beyond _Hello World!_  Soffit provides a
 rich data model for sharing data from the portal with your application.  There
 are (currently) four objects in this data model:
 
-* The [`Bearer`][] contains information about the user:  _username_,
+* The [Bearer][] contains information about the user:  _username_,
   _user attributes_, and _group affiliations_ in the portal
-* The [`PortalRequest`][] contains information about the request your soffit is
+* The [PortalRequest][] contains information about the request your soffit is
   filling, like _parameters_, _mode_, and _window state_
-* The [`Preferences`][] object contains a collection of publish-time settings
+* The [Preferences][] object contains a collection of publish-time settings
   for your soffit chosen by the administrator;  these are options you define for
   your needs;  using preferences is optional
-* The [`Definition`][] contains publish-time metadata about your soffit in the
+* The [Definition][] contains publish-time metadata about your soffit in the
   portal;  these are settings defined by and consumed by the portal itself, like
   _title_ and _chrome style_
 
@@ -29,7 +29,7 @@ example...
 
 Sometimes the Data Model provided by Soffit is not enough -- sometimes you need
 to define your own objects for rendering a JSP.  For Spring Boot-based Soffit
-applications, the [`@SoffitModelAttribute`] annotation satisfies this need.
+applications, the [@SoffitModelAttribute][] annotation satisfies this need.
 
 ### `@SoffitModelAttribute` Examples
 
