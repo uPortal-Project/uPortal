@@ -21,7 +21,7 @@ Each of these objects is defined within the Expression Language (EL) Context in
 which your `.jsp` files execute.  Use camel-case spelling to reference them, for
 example...
 
-```jsp
+``` jsp
 <h2>Hello ${bearer.username}</h2>
 ```
 
@@ -36,7 +36,7 @@ applications, the [@SoffitModelAttribute][] annotation satisfies this need.
 Annotate a Spring bean with `@SoffitModelAttribute` to make the entire bean
 available within your JSP.
 
-```
+``` java
 @SoffitModelAttribute("settings")
 @Component
 public class Settings {
@@ -51,7 +51,7 @@ public class Settings {
 Annotate a method on a Spring bean with `@SoffitModelAttribute` to have Soffit
 invoke the method and make the return value available within your JSP.
 
-```
+``` java
 @Component
 public class Attributes {
 
