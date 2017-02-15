@@ -2,7 +2,9 @@
 
 ## Caching
 
-Caching in soffits is available _via_ the standard HTTP header `Cache-Control`.
+Caching soffit content in the portal is available _via_ the standard HTTP header
+`Cache-Control`.  You must set `Cache-Control` as an HTTP response header to
+take advantage of this feature.
 
 ### Example
 
@@ -10,7 +12,8 @@ Caching in soffits is available _via_ the standard HTTP header `Cache-Control`.
 Cache-Control: public, max-age=300
 ```
 
-Cache scope may be `public` (shared by all users) or `private` (cached per-user).  Specify `max-age` in seconds.
+Cache scope may be `public` (shared by all users) or `private` (cached
+per-user).  Specify `max-age` in seconds.
 
 Cache re-validation is not yet supported, so...
 
