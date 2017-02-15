@@ -32,10 +32,9 @@ develop soffits mostly with [Java][] and [Spring Boot][].
    application
 
 That's it!  You now have a functioning, minimal Soffit application running on
-`localhost` at `server.port` (specify as a `-D` parameter or configure in
-`application.properties`).
+`localhost` at `server.port`.
 
-##### Adding the Soffit dependency
+### Adding the Soffit dependency
 
 Gradle Example:
 
@@ -53,7 +52,7 @@ Maven Example:
 </dependency>
 ```
 
-##### Adding the `tomcat-embed-jasper` dependency
+### Adding the `tomcat-embed-jasper` dependency
 
 Gradle Example:
 
