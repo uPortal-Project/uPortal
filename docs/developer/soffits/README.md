@@ -6,7 +6,7 @@ is intended as an alternative to [JSR-286 portlet development][].
 ## Why Would I Want Soffits?
 
 You are a Java web application developer.  You are tasked with developing content
-for [Apereo uPortal]].
+for [Apereo uPortal][].
 
 You are not excited about doing Java Portlet development
 [in the traditional way][] or even using [Spring Portlet MVC][].  You correctly
@@ -19,10 +19,10 @@ is not based on JSR-286 or the portlet container.
 
 ## Topics
 
-1. Minimal Soffit
-1. Publishing a Soffit
-1. Soffit Data Model
-1. Configuration Options
+1. [Minimal Soffit](minimal_soffit.md)
+1. [Publishing a Soffit](publishing_a_soffit.md)
+1. [Soffit Data Model](soffit_data_model.md)
+1. [Configuration Options](configuration_options.md)
 
 ## A Word on Modern Web User Interfaces
 
@@ -30,7 +30,7 @@ Soffit assumes that you want to develop user interfaces using Javascript and
 modern frameworks like [React][], [AngularJS][], [Backbone.js][], _etc_.
 Normally a Soffit component will render one time;  considerations like state
 changes, transactions, persistence, _etc_. are typically handled with Javascript
-and REST.
+and REST APIs.
 
 ## Sample Soffit Applications
 
