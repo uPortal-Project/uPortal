@@ -139,7 +139,7 @@
         </a>
         <c:forEach var="image" items="${thumbnailImages}" varStatus="status">
             <a href="#">
-                <img src="${image}" alt=${imageCaptions[status.index]}/>
+                <img src="${image}" alt=""/>
                 <span class="caption">${imageCaptions[status.index]}</span>
             </a>
         </c:forEach>
