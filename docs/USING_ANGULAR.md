@@ -1,6 +1,7 @@
 # Strategy for employing Angular.js in portal skins and/or portlets.
 
 ## Definitions
+
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in RFC 2119.
@@ -18,21 +19,22 @@ Angular, and may coexist without conflicting.
 
 Practically this means that:
 
-- Angular may be used in portal skins
-- Angular portlets may be used, even multiple on the same page without conflict
-- Angular portlets may be used in an Angular portal skin without conflict
+-   Angular may be used in portal skins
+-   Angular portlets may be used, even multiple on the same page without conflict
+-   Angular portlets may be used in an Angular portal skin without conflict
 
 ## Skins/Portal
-- MUST enable angular portlets doing one of the following:
-  - Check portlet content for the `<!-- uportal-use-angular -->` comment
-      "directive," and if found, use the $compile service on the DOM nodes.
-  - Use the `$compile` service to compile DOM nodes of all loaded portlets.
-    - This has the added benefit of allowing a portal to apply directives to
-      existing standard portlet content if desired.
-- MUST create a global window.up.ngApp directive that exposes the Angular
-  functions `$controllerProvider.register` (with name controller),
-  `$provide.service`, `$provide.factory`, `$provide.value`, and
-  `$compileProvider.directive`. See the code directly below for an example.
+
+-   MUST enable angular portlets doing one of the following:
+    -   Check portlet content for the `<!-- uportal-use-angular -->` comment
+        "directive," and if found, use the $compile service on the DOM nodes.
+    -   Use the `$compile` service to compile DOM nodes of all loaded portlets.
+    -   This has the added benefit of allowing a portal to apply directives to
+        existing standard portlet content if desired.
+-   MUST create a global window.up.ngApp directive that exposes the Angular
+    functions `$controllerProvider.register` (with name controller),
+    `$provide.service`, `$provide.factory`, `$provide.value`, and
+    `$compileProvider.directive`. See the code directly below for an example.
 
 ```javascript
 angular.module('foo').config(function getLazyLoaders($compileProvider,
@@ -59,59 +61,62 @@ $controllerProvider, $provide) {
 ```
 
 ## Portlets
-- MUST check for existence of Angular in two ways.
-  - On global window object (`window.angular`)
-  - As an as-yet-unloaded script tag with id 'uportal-Angular-script'.
-- MUST NOT use the ng-app directive or attempt to bootstrap outside their boundaries/chrome.
-- MUST be written as portably as possible and will be expected to work well
-  with any version of Angular 1.x, as the precise version of Angular is unknown
-  for most implementations.
-- MUST namespace their module names if bootstrapping, as recommended in
-  [JavaScript Best
-  Practices](https://wiki.jasig.org/display/UPM41/JavaScript+Best+Practices)
-- SHOULD use the `<!-- uportal-use-angular -->` "directive" as an indicator to
-  portals that do not $compile all portlet content.
+
+-   MUST check for existence of Angular in two ways.
+    -   On global window object (`window.angular`)
+    -   As an as-yet-unloaded script tag with id 'uportal-Angular-script'.
+-   MUST NOT use the ng-app directive or attempt to bootstrap outside their boundaries/chrome.
+-   MUST be written as portably as possible and will be expected to work well
+    with any version of Angular 1.x, as the precise version of Angular is unknown
+    for most implementations.
+-   MUST namespace their module names if bootstrapping, as recommended in
+    [JavaScript Best
+    Practices](https://wiki.jasig.org/display/UPM41/JavaScript+Best+Practices)
+-   SHOULD use the `<!-- uportal-use-angular -->` "directive" as an indicator to
+    portals that do not $compile all portlet content.
 
 ### Behavior for Angular checks
-- If Angular is found, (e.g. `window.Angular === undefined`, or `typeof Angular
-  === 'undefined'`) portlets MUST check for the lazy-loader window.up.ngApp
-  and, if found, use the lazy-loader to register its components.
-- If Angular is found, and lazy-loader is not found, then the portlet SHOULD
-  assume that another portlet is using Angular, proceed to register its own
-  module, and MUST use Angular.bootstrap to attach itself to the portlet
-  fragment. For an example, see the bootstrap() function in the [code below](#boilerplate-portal-code).
-- If Angular is not found but an existing script element with id
-  'uportal-Angular-script' is found, the portlet MUST NOT create a new script
-  element but rather attach its event handler to the existing script tag.
-- If Angular is not found on global scope, portlet MUST create a script DOM
-  element with id 'uportal-Angular-script', and attach to said DOM element a
-  'load' event handler to bootstrap itself, or use `$(window).load` to do so.
+
+-   If Angular is found, (e.g. `window.Angular === undefined`, or `typeof Angular
+    === 'undefined'`) portlets MUST check for the lazy-loader window.up.ngApp
+    and, if found, use the lazy-loader to register its components.
+-   If Angular is found, and lazy-loader is not found, then the portlet SHOULD
+    assume that another portlet is using Angular, proceed to register its own
+    module, and MUST use Angular.bootstrap to attach itself to the portlet
+    fragment. For an example, see the bootstrap() function in the [code below](#boilerplate-portal-code).
+-   If Angular is not found but an existing script element with id
+    'uportal-Angular-script' is found, the portlet MUST NOT create a new script
+    element but rather attach its event handler to the existing script tag.
+-   If Angular is not found on global scope, portlet MUST create a script DOM
+    element with id 'uportal-Angular-script', and attach to said DOM element a
+    'load' event handler to bootstrap itself, or use `$(window).load` to do so.
 
 ### External Script Files
-- External script files:
-  - MUST safely create a `window.up.ngBootstrap` object for registration of
-    bootstrap functions.
-  - MUST register a `bootstrap` function that takes as a parameter the instance
-    id as a string.
-  - MUST check for `up.ngApp` lazy loaders and use them to register if
-    available.
-- JSP files:
-  - MUST wait until all scripts are loaded (e.g.
-    `$(window).load` , and then call the given bootstrap function, passing in
-    its instance id.
-  - MUST still check for the existence of Angular, and add the script tag if
-    needed.
+
+-   External script files:
+    -   MUST safely create a `window.up.ngBootstrap` object for registration of
+        bootstrap functions.
+    -   MUST register a `bootstrap` function that takes as a parameter the instance
+        id as a string.
+    -   MUST check for `up.ngApp` lazy loaders and use them to register if
+        available.
+-   JSP files:
+    -   MUST wait until all scripts are loaded (e.g.
+        `$(window).load` , and then call the given bootstrap function, passing in
+        its instance id.
+    -   MUST still check for the existence of Angular, and add the script tag if
+        needed.
 
 
 ### Boilerplate Portal Code
 
-- [Also available](https://github.com/andrewstuart/generator-ng-portlet) as a
-  [yeoman](http://yeoman.io) generator for convenience.
+-   [Also available](https://github.com/andrewstuart/generator-ng-portlet) as a
+    [yeoman](http://yeoman.io) generator for convenience.
 
 
 #### Inline script
 
-```html
+```jsp
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -182,7 +187,7 @@ $controllerProvider, $provide) {
 
 ### External scripts
 
-```html
+```jsp
 <%@ page contentType="text/html" isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -222,7 +227,7 @@ $controllerProvider, $provide) {
         up.ngBootstrap.test('${n}');
       }
     });
-    
+
   })(window, up.jQuery);
 </script>
 
@@ -271,6 +276,7 @@ $controllerProvider, $provide) {
 ```
 
 ## Administrators
-- Administrators SHOULD be warned that any portlets they add to their portal
-  should be checked in a safe environment to ensure functionality and
-  compatibility
+
+-   Administrators SHOULD be warned that any portlets they add to their portal
+    should be checked in a safe environment to ensure functionality and
+    compatibility
