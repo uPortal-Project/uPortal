@@ -82,8 +82,6 @@ public class SoffitRendererController {
      */
     public static final String CACHE_MAXAGE_PROPERTY_FORMAT = PROPERTY_PREFIX + "%s.cache.max-age";
 
-    private static final String PORTAL_REQUEST_MODEL_NAME = "portalRequest";
-
     private static final String DEFAULT_MODE = "view";
     private static final String DEFAULT_WINDOW_STATE = "normal";
 
@@ -123,8 +121,10 @@ public class SoffitRendererController {
         // Set up cache headers appropriately
         configureCacheHeaders(res, module);
 
-        return new ModelAndView(viewName.toString(), PORTAL_REQUEST_MODEL_NAME, portalRequest);
+        ModelAndView mav = new ModelAndView(viewName.toString());
+        mav.addObject("token", getBearer(req).getEncryptedToken());
 
+        return mav;
     }
 
     @ModelAttribute("bearer")
