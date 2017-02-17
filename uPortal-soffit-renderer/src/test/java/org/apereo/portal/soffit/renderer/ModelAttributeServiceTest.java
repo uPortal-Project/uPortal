@@ -35,9 +35,6 @@ import org.apereo.portal.soffit.model.v1_0.Preferences;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-/**
- * @author drewwills
- */
 public class ModelAttributeServiceTest extends ModelAttributeService {
 
     private final Object returnValue = new Object();
